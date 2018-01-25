@@ -18,6 +18,10 @@ import Table, {
   TableSortLabel
 } from "material-ui/Table";
 
+const linkStyle = {
+  textDecoration: "none"
+};
+
 class CoursesTable extends React.PureComponent {
   static propTypes = {
     courses: PropTypes.any.isRequired
@@ -47,8 +51,8 @@ class CoursesTable extends React.PureComponent {
                     {this.props.courses[courseId].instructorName}
                   </TableCell>
                   <TableCell>
-                    <Link to={`/courses/${courseId}`}>
-                      <Button>View</Button>
+                    <Link to={`/courses/${courseId}`} style={linkStyle}>
+                      <Button raised>View</Button>
                     </Link>
                   </TableCell>
                 </TableRow>

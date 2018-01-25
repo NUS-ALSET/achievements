@@ -7,11 +7,15 @@ import PropTypes from "prop-types";
 
 import StarIcon from "material-ui-icons/Star";
 
+const linkStyle = {
+  textDecoration: "none"
+};
+
 export const DrawerMenuItems = onRequestClose => (
   <div>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to="/home">
+      <Link to="/home" style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -19,7 +23,7 @@ export const DrawerMenuItems = onRequestClose => (
           <ListItemText primary="Home" />
         </ListItem>
       </Link>
-      <Link to="/courses">
+      <Link to="/courses" style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -30,7 +34,7 @@ export const DrawerMenuItems = onRequestClose => (
     </List>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to="/profile">
+      <Link to="/profile" style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -38,7 +42,7 @@ export const DrawerMenuItems = onRequestClose => (
           <ListItemText primary="Profile" />
         </ListItem>
       </Link>
-      <Link to="/about">
+      <Link to="/about" style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -55,7 +59,7 @@ const AppBarMenuItems = ({ onClick, logout, login, isAuth }) => (
     {isAuth ? (
       // Here should be <Fragment> from react 16, I guess
       <div>
-        <Link to="/account">
+        <Link to="/account" style={linkStyle}>
           <MenuItem
             onClick={() => {
               onClick();

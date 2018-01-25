@@ -13,9 +13,11 @@ import {
 } from "./actions";
 import { AddCourseDialog } from "../../components/AddCourseDialog";
 import CoursesTable from "../../components/CoursesTable";
+import { coursesService } from "../../services/courses";
 
 class Courses extends React.Component {
   static propTypes = {
+    auth: PropTypes.object,
     dispatch: PropTypes.func,
     showNewDialog: PropTypes.bool,
     newCourseValues: PropTypes.object,
@@ -32,15 +34,11 @@ class Courses extends React.Component {
     this.props.dispatch(courseHideNewdialog());
   };
   newDialogRequest = () => {
-    /*
-    const { name, password } = this.props.newCourseValues;
-    this.props.dispatch(courseNewRequest(name, password));
-    */
-
-    this.props.firebase.push("courses", {
-      name: this.props.newCourseValues.name,
-      password: this.props.newCourseValues.password
-    });
+    const { newCourseValues } = this.props;
+    coursesService.createNewCourse(
+      newCourseValues.name,
+      newCourseValues.password
+    );
   };
   onDialogFieldChange = (field, value) => {
     this.props.dispatch(courseNewDialogChange(field, value));
@@ -71,6 +69,7 @@ class Courses extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  auth: state.firebase.auth,
   courses: state.firebase.data.courses,
   instructorName: state.firebase.auth.displayName,
   ownerId: state.firebase.auth.uid,

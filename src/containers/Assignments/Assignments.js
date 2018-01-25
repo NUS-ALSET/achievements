@@ -2,17 +2,33 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import withStyles from "material-ui/styles/withStyles";
 import { LinearProgress } from "material-ui/Progress";
 import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
 import Grid from "material-ui/Grid";
 
+import { Link } from "react-router-dom";
 import TextField from "material-ui/TextField";
 import AssignementsTable from "../../components/AssignementsTable";
+import ChevronRightIcon from "material-ui-icons/ChevronRight";
+import Typography from "material-ui/Typography";
+
+const styles = theme => ({
+  breadcrumbLink: {
+    textDecoration: "none"
+  },
+  breadcrumbText: {
+    margin: theme.spacing.unit,
+    textTransform: "uppercase",
+    fontSize: "0.875rem"
+  }
+});
 
 class Assignments extends React.Component {
   static propTypes = {
+    classes: PropTypes.any,
     course: PropTypes.any,
     match: PropTypes.any,
     courseId: PropTypes.string,
@@ -46,12 +62,21 @@ class Assignments extends React.Component {
     }
   };
   render() {
-    const { courseLoaded } = this.props;
+    const { courseLoaded, classes } = this.props;
     if (!courseLoaded) {
       return <LinearProgress />;
     }
     return (
       <Fragment>
+        <Toolbar>
+          <Link to="/Courses" className={classes.breadcrumbLink}>
+            <Typography className={classes.breadcrumbText}>Courses</Typography>
+          </Link>
+          <ChevronRightIcon />
+          <Typography className={classes.breadcrumbText}>
+            Course name
+          </Typography>
+        </Toolbar>
         {this.props.course.ownerId === this.props.userId ||
         (this.props.course.participants &&
           this.props.course.participants[this.props.userId]) ||
@@ -110,6 +135,8 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-export default compose(firebaseConnect(), connect(mapStateToProps))(
-  Assignments
-);
+export default compose(
+  withStyles(styles),
+  firebaseConnect(),
+  connect(mapStateToProps)
+)(Assignments);

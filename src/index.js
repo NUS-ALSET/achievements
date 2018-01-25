@@ -3,6 +3,7 @@ import { render } from "react-dom";
 import { Provider } from "react-redux";
 
 import AppFrame from "./containers/AppFrame/AppFrame";
+import AuthCheck from "./containers/AuthCheck/AuthCheck";
 
 import { configureStore } from "./achievementsApp/store";
 
@@ -12,7 +13,9 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <AppFrame />
+        <AuthCheck>
+          <AppFrame />
+        </AuthCheck>
       </Provider>
     );
   }

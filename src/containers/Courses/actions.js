@@ -21,3 +21,16 @@ export const courseNewRequest = (name, password) => ({
   name,
   password
 });
+
+export const COURSE_NEW_SUCCESS = "COURSE_NEW_SUCCESS";
+export const courseNewSuccess = (name) => ({
+  type: COURSE_NEW_SUCCESS,
+  name
+});
+
+export const COURSE_NEW_FAIL = "COURSE_NEW_FAIL";
+export const courseNewFail = (name, error) => ({
+  type: COURSE_NEW_FAIL,
+  name,
+  error
+});
