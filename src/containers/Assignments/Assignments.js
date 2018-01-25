@@ -9,11 +9,12 @@ import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
 import Grid from "material-ui/Grid";
 
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import TextField from "material-ui/TextField";
 import AssignementsTable from "../../components/AssignementsTable";
 import ChevronRightIcon from "material-ui-icons/ChevronRight";
 import Typography from "material-ui/Typography";
+import { coursesService } from "../../services/courses";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -34,7 +35,9 @@ class Assignments extends React.Component {
     courseId: PropTypes.string,
     courseLoaded: PropTypes.any,
     firebase: PropTypes.any,
-    userId: PropTypes.string
+    userId: PropTypes.string,
+    courseMembers: PropTypes.object,
+    history: PropTypes.any
   };
 
   // Force show assignments (when become participant)
@@ -48,23 +51,24 @@ class Assignments extends React.Component {
     });
 
   submitPassword = () => {
-    const { courseId, firebase, userId, course } = this.props;
-    if (this.state.value === course.password) {
-      firebase.update(
-        `/courses/${courseId}/participants`,
-        {
-          [userId]: new Date()
-        },
-
-        // Force show assignments
-        () => this.setState({ showAssignments: true })
-      );
-    }
+    const { courseId } = this.props;
+    coursesService.tryCoursePassword(courseId, this.state.value);
   };
   render() {
-    const { courseLoaded, classes } = this.props;
+    const {
+      history,
+      course,
+      courseLoaded,
+      classes,
+      courseMembers,
+      userId
+    } = this.props;
+
     if (!courseLoaded) {
       return <LinearProgress />;
+    }
+    if (!course) {
+      history.push("/courses");
     }
     return (
       <Fragment>
@@ -74,13 +78,11 @@ class Assignments extends React.Component {
           </Link>
           <ChevronRightIcon />
           <Typography className={classes.breadcrumbText}>
-            Course name
+            {course.name}
           </Typography>
         </Toolbar>
-        {this.props.course.ownerId === this.props.userId ||
-        (this.props.course.participants &&
-          this.props.course.participants[this.props.userId]) ||
-        this.state.showAssignments ? (
+        {course.owner === userId ||
+        (courseMembers && courseMembers[this.props.userId]) ? (
           <Fragment>
             <Toolbar>
               <Button raised>Create assignment</Button>
@@ -127,8 +129,11 @@ class Assignments extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     userId: state.firebase.auth.uid,
-    courseLoaded: isLoaded(state.firebase.data.courses),
+    courseLoaded: isLoaded(state.firebase.data.courseMembers),
     courseId: ownProps.match.params.courseId,
+    courseMembers: (state.firebase.data.courseMembers || {})[
+      ownProps.match.params.courseId
+    ],
     course:
       isLoaded(state.firebase.data.courses) &&
       state.firebase.data.courses[ownProps.match.params.courseId]
@@ -136,7 +141,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default compose(
+  withRouter,
   withStyles(styles),
-  firebaseConnect(),
+  firebaseConnect(["/courseMembers"]),
   connect(mapStateToProps)
 )(Assignments);

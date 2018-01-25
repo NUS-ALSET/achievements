@@ -55,7 +55,10 @@ class Courses extends React.Component {
             Add new course
           </Button>
         </Toolbar>
-        <CoursesTable courses={this.props.courses || {}} />
+        <CoursesTable
+          ownerId={this.props.ownerId}
+          courses={this.props.courses || {}}
+        />
         <AddCourseDialog
           values={this.props.newCourseValues}
           onFieldChange={this.onDialogFieldChange}

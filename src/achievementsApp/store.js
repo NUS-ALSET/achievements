@@ -4,6 +4,7 @@ import rootReducer from "./reducer";
 import firebase from "firebase";
 import { reactReduxFirebase } from "react-redux-firebase";
 import { sagaMiddleware, sagaInjector } from "../services/saga";
+import { actionsService } from "../services/actions";
 
 const rrfConfig = {
   userProfile: "users"
@@ -16,7 +17,7 @@ if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
 }
 
 export const configureStore = initialState => {
-  const middlewares = [sagaMiddleware, logger];
+  const middlewares = [sagaMiddleware, logger, actionsService.catchAction];
   const store = compose(reactReduxFirebase(firebase, rrfConfig))(createStore)(
     rootReducer,
     initialState,

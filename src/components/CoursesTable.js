@@ -24,6 +24,7 @@ const linkStyle = {
 
 class CoursesTable extends React.PureComponent {
   static propTypes = {
+    ownerId: PropTypes.string.isRequired,
     courses: PropTypes.any.isRequired
   };
 
@@ -54,6 +55,12 @@ class CoursesTable extends React.PureComponent {
                     <Link to={`/courses/${courseId}`} style={linkStyle}>
                       <Button raised>View</Button>
                     </Link>
+                    {this.props.courses[courseId].owner ===
+                    this.props.ownerId ? (
+                      <Button raised>Delete</Button>
+                    ) : (
+                      undefined
+                    )}
                   </TableCell>
                 </TableRow>
               );
