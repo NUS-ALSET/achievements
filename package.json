@@ -7,6 +7,7 @@
     "classnames": "2.2.5",
     "downshift": "1.25.0",
     "firebase": "4.9.0",
+    "json-stringify-safe": "^5.0.1",
     "material-ui": "^1.0.0-beta.29",
     "material-ui-icons": "latest",
     "mdi-react": "^2.1.19",

@@ -44,11 +44,7 @@ class AuthCheck extends React.PureComponent {
           handleClose={this.handleNotificationClose}
           message={this.props.notificationMessage}
         />
-        {this.props.auth.uid ? (
-          this.props.children
-        ) : (
-          <AuthDialog authClick={this.authClick} />
-        )}
+        {this.props.children}
       </Fragment>
     );
   }
