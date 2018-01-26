@@ -1,4 +1,5 @@
 import firebase from "firebase";
+import jsonStringifySage from "json-stringify-safe";
 
 export class ActionsService {
   bannedActions = ["MAIN_DRAWER_TOGGLE"];
@@ -8,7 +9,10 @@ export class ActionsService {
   }
 
   removeEmpty(obj) {
-    Object.keys(obj).forEach(function(key) {
+    Object.keys(obj).forEach(key => {
+      if (obj[key] instanceof HTMLElement) {
+        obj[key] = "htmlElement";
+      }
       if (obj[key] && typeof obj[key] === "object") {
         this.removeEmpty(obj[key]);
       } else if (obj[key] === undefined) {
@@ -31,7 +35,7 @@ export class ActionsService {
         .ref("/logged_events")
         .push({
           createdAt: new Date().getTime(),
-          action: this.removeEmpty(action)
+          action: this.removeEmpty(Object.assign({}, action))
         });
     }
     return next(action);

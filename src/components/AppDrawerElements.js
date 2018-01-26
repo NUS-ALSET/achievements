@@ -1,9 +1,10 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
 import Divider from "material-ui/Divider";
 import { MenuItem } from "material-ui/Menu";
 import PropTypes from "prop-types";
+import Button from "material-ui/Button";
 
 import StarIcon from "material-ui-icons/Star";
 
@@ -57,8 +58,7 @@ export const DrawerMenuItems = onRequestClose => (
 const AppBarMenuItems = ({ onClick, logout, login, isAuth }) => (
   <div>
     {isAuth ? (
-      // Here should be <Fragment> from react 16, I guess
-      <div>
+      <Fragment>
         <Link to="/account" style={linkStyle}>
           <MenuItem
             onClick={() => {
@@ -76,16 +76,16 @@ const AppBarMenuItems = ({ onClick, logout, login, isAuth }) => (
         >
           Logout
         </MenuItem>
-      </div>
+      </Fragment>
     ) : (
-      <MenuItem
+      <Button
         onClick={() => {
           onClick();
           login();
         }}
       >
         Login
-      </MenuItem>
+      </Button>
     )}
   </div>
 );

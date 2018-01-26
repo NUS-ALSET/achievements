@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import firebase from "firebase";
@@ -8,6 +8,7 @@ import AppBar from "material-ui/AppBar";
 import Toolbar from "material-ui/Toolbar";
 import Hidden from "material-ui/Hidden";
 import Menu from "material-ui/Menu";
+import Button from "material-ui/Button";
 
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -142,29 +143,37 @@ class AppFrame extends React.Component {
                 >
                   Achievements
                 </Typography>
-                <IconButton
-                  aria-label="More"
-                  aria-owns="Open right Menu"
-                  aria-haspopup="true"
-                  onClick={this.handleMenuOpen}
-                  className={classes.menuButtonRight}
-                >
-                  <MoreVertIcon />
-                </IconButton>
 
-                <Menu
-                  id="menuRight"
-                  anchorEl={this.props.anchorEl || document.body}
-                  open={!!this.props.anchorEl}
-                  onClose={this.handleMenuClose}
-                >
-                  <AppBarMenuItemsExport
-                    isAuth={!!this.props.userName}
-                    onClick={this.handleMenuClose}
-                    login={this.handleLogin}
-                    logout={this.handleLogout}
-                  />
-                </Menu>
+                {this.props.userName ? (
+                  <Fragment>
+                    <IconButton
+                      aria-label="More"
+                      aria-owns="Open right Menu"
+                      aria-haspopup="true"
+                      onClick={this.handleMenuOpen}
+                      className={classes.menuButtonRight}
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                    <Menu
+                      id="menuRight"
+                      anchorEl={this.props.anchorEl || document.body}
+                      open={!!this.props.anchorEl}
+                      onClose={this.handleMenuClose}
+                    >
+                      <AppBarMenuItemsExport
+                        isAuth={!!this.props.userName}
+                        onClick={this.handleMenuClose}
+                        login={this.handleLogin}
+                        logout={this.handleLogout}
+                      />
+                    </Menu>
+                  </Fragment>
+                ) : (
+                  <Button color="contrast" onClick={this.handleLogin}>
+                    Login
+                  </Button>
+                )}
               </Toolbar>
             </AppBar>
             <AppDrawer
