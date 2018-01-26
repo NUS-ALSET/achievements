@@ -1,11 +1,12 @@
 import firebase from "firebase";
-import jsonStringifySage from "json-stringify-safe";
 
 export class ActionsService {
   bannedActions = ["MAIN_DRAWER_TOGGLE"];
 
-  setStore(store) {
-    this.store = store;
+  static pickActionData(action) {
+    action = Object.assign({}, action);
+    delete action.type;
+    return action;
   }
 
   removeEmpty(obj) {
@@ -24,19 +25,28 @@ export class ActionsService {
 
   // eslint-disable-next-line no-unused-vars
   catchAction = store => next => action => {
+    const currentUser =
+      firebase.auth().currentUser && firebase.auth().currentUser.uid;
+
     if (
+      // eslint-disable-next-line no-magic-numbers
       action.type.indexOf("@@reactReduxFirebase") === -1 &&
       !this.bannedActions.includes(action.type) &&
-      firebase.auth().currentUser &&
-      firebase.auth().currentUser.uid
+      currentUser
     ) {
       firebase
         .database()
         .ref("/logged_events")
         .push({
           createdAt: new Date().getTime(),
-          action: this.removeEmpty(Object.assign({}, action))
-        });
+          type: action.type,
+          uid: (currentUser && currentUser.uid) || null,
+          isAnonymous: !currentUser,
+          otherActionData: this.removeEmpty(
+            ActionsService.pickActionData(action)
+          )
+        })
+        .catch(err => console.error(err));
     }
     return next(action);
   };

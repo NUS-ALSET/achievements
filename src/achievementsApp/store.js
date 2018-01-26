@@ -17,11 +17,7 @@ if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
 }
 
 export const configureStore = initialState => {
-  const middlewares = [
-    sagaMiddleware,
-    logger,
-    actionsService.catchAction.bind(actionsService)
-  ];
+  const middlewares = [sagaMiddleware, logger, actionsService.catchAction];
   const store = compose(reactReduxFirebase(firebase, rrfConfig))(createStore)(
     rootReducer,
     initialState,
