@@ -1,19 +1,23 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Provider } from "react-redux";
+import AppFrame from "./containers/AppFrame/AppFrame";
+import AuthCheck from "./containers/AuthCheck/AuthCheck";
 
-class App extends Component {
+import { configureStore } from "./achievementsApp/store";
+import { coursesService } from "./services/courses";
+
+const store = configureStore();
+
+coursesService.setStore(store);
+
+class App extends React.Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <Provider store={store}>
+        <AuthCheck>
+          <AppFrame />
+        </AuthCheck>
+      </Provider>
     );
   }
 }
