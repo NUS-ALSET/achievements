@@ -18,10 +18,11 @@ import MoreVertIcon from "material-ui-icons/MoreVert";
 
 import AppDrawer from "../../components/AppDrawer";
 import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
-import Account from "../../components/Account";
 
 import { APP_SETTING, authProvider } from "../../achievementsApp/config";
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
+
+import Account from "../../containers/Account/Account";
 import Assignments from "../Assignments/Assignments";
 import Courses from "../Courses/Courses";
 import { Home } from "../../components/Home";
@@ -81,6 +82,8 @@ const styles = theme => ({
     [theme.breakpoints.up("sm")]: {
       height: "calc(100% - 64px)",
       marginTop: 64,
+
+      // eslint-disable-next-line no-magic-numbers
       padding: theme.spacing.unit * 3
     }
   }
@@ -110,7 +113,15 @@ class AppFrame extends React.Component {
   };
 
   handleLogin = () => {
-    firebase.auth().signInWithPopup(authProvider);
+    firebase
+      .auth()
+      .signInWithPopup(authProvider)
+      .then(ref =>
+        firebase.update(`/users/${ref.user.uid}`, {
+          displayName: ref.user.displayName,
+          email: ref.user.email
+        })
+      );
   };
 
   handleLogout = () => {
@@ -128,7 +139,6 @@ class AppFrame extends React.Component {
               <Toolbar>
                 <Hidden lgUp implementation="css">
                   <IconButton
-                    color="contrast"
                     aria-label="Open Drawer"
                     onClick={this.handleDrawerToggle}
                   >
@@ -170,9 +180,7 @@ class AppFrame extends React.Component {
                     </Menu>
                   </Fragment>
                 ) : (
-                  <Button color="contrast" onClick={this.handleLogin}>
-                    Login
-                  </Button>
+                  <Button onClick={this.handleLogin}>Login</Button>
                 )}
               </Toolbar>
             </AppBar>
