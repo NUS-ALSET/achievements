@@ -8,21 +8,16 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firebaseConnect } from "react-redux-firebase";
-import TextField from "material-ui/TextField";
 import Button from "material-ui/Button";
 import withStyles from "material-ui/styles/withStyles";
 import { codeCombatService } from "../../services/codeCombat";
-import CloseIcon from "material-ui-icons/Close";
-import DoneIcon from "material-ui-icons/Done";
 import Grid from "material-ui/Grid";
+import Card, { CardMedia, CardContent, CardActions } from "material-ui/Card";
+import Typography from "material-ui/Typography";
 
 const styles = theme => ({
-  field: {
+  card: {
     margin: theme.spacing.unit
-  },
-  checkIcon: {
-    position: "relative",
-    top: "20px"
   }
 });
 
@@ -32,6 +27,7 @@ class Account extends React.PureComponent {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func,
     user: PropTypes.object,
+    auth: PropTypes.object,
     uid: PropTypes.string,
     userName: PropTypes.string
   };
@@ -63,48 +59,60 @@ class Account extends React.PureComponent {
   render() {
     const { user, classes } = this.props;
 
+    console.log(user);
+
     return (
       <Grid container>
-        <Grid item xs={9}>
-          <TextField
-            label="Display name"
-            className={classes.field}
-            value={(user && user.displayName) || ""}
-            fullWidth
-            disabled
-          />
+        <Grid item xs={3}>
+          <Card className={classes.card}>
+            <CardMedia
+              style={{ height: 240 }}
+              image={this.props.auth.photoURL}
+              title={this.props.userName}
+            />
+            <CardContent>
+              <Typography>{this.props.userName}</Typography>
+            </CardContent>
+          </Card>
         </Grid>
-        <Grid item xs={9}>
-          <TextField
-            label="Code combat login"
-            className={classes.field}
-            value={
-              this.state.codeCombatLogin ||
-              (this.state.codeCombatLogin === null &&
-                user &&
-                user.codeCombatLogin) ||
-              ""
-            }
-            onChange={this.handleCodeCombatLoginChange}
-            autoFocus
-            fullWidth
-          />
-        </Grid>
-        <Grid item xs={1}>
-          {this.state.userChecked ? (
-            <DoneIcon className={classes.checkIcon} />
-          ) : (
-            <CloseIcon className={classes.checkIcon} />
-          )}
-        </Grid>
-        <Grid item xs={9}>
-          <Button
-            className={classes.field}
-            onClick={this.accountDataCommit}
-            disabled={!user}
-          >
-            Commit
-          </Button>
+        <Grid item xs={6}>
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography type="title">Free Code Camp</Typography>
+              <Typography>Registered as </Typography>
+              <Typography>319 achievements </Typography>
+            </CardContent>
+            <CardActions>
+              <Button raised>Refresh Achievements</Button>
+              <Button raised color="secondary">
+                Remove
+              </Button>
+            </CardActions>
+          </Card>
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography type="title">Pivotal Expert</Typography>
+              <Typography>Registered as </Typography>
+              <Typography>319 achievements </Typography>
+            </CardContent>
+            <CardActions>
+              <Button raised>Refresh Achievements</Button>
+              <Button raised color="secondary">
+                Remove
+              </Button>
+            </CardActions>
+          </Card>
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography type="title">Code Combat</Typography>
+              <Typography>319 achievements </Typography>
+            </CardContent>
+            <CardActions>
+              <Button color="primary" raised>
+                Add Profile
+              </Button>
+            </CardActions>
+          </Card>
         </Grid>
       </Grid>
     );
@@ -114,6 +122,7 @@ class Account extends React.PureComponent {
 const mapStateToProps = state => ({
   userName: state.firebase.auth.displayName,
   uid: state.firebase.auth.uid,
+  auth: state.firebase.auth,
   user: (state.firebase.data.users || {})[state.firebase.auth.uid]
 });
 

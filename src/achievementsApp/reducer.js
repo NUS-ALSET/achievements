@@ -3,10 +3,12 @@ import { appFrame } from "../containers/AppFrame/reducer";
 import { firebaseReducer as firebase } from "react-redux-firebase";
 import { courses } from "../containers/Courses/reducer";
 import { authCheck } from "../containers/AuthCheck/reducer";
+import { assignments } from "../containers/Assignments/reducer";
 
 export default combineReducers({
   appFrame,
   firebase,
   courses,
-  authCheck
+  authCheck,
+  assignments
 });

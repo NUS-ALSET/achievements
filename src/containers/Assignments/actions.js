@@ -15,3 +15,8 @@ export const coursePasswordEnterFail = error => ({
   type: COURSE_PASSWORD_ENTER_FAIL,
   error
 });
+
+export const ASSIGNMENT_ADD_REQUEST = "ASSIGNMENT_ADD_REQUEST";
+export const assignmentAddRequest = () => ({
+  type: ASSIGNMENT_ADD_REQUEST
+});
