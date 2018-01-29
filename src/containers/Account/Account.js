@@ -59,8 +59,6 @@ class Account extends React.PureComponent {
   render() {
     const { user, classes } = this.props;
 
-    console.log(user);
-
     return (
       <Grid container>
         <Grid item xs={3}>
