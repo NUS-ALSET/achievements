@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { withFirebase } from "react-redux-firebase";
-import AuthDialog from "../../components/AuthDialog";
+// import AuthDialog from "../../components/AuthDialog";
 import { authProvider } from "../../achievementsApp/config";
 import NotificationArea from "../../components/NotificationArea";
 import { riseErrorMessage } from "./actions";
