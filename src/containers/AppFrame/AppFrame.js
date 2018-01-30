@@ -124,6 +124,15 @@ class AppFrame extends React.Component {
       );
   };
 
+  // Temporary solution. It will be removed next PR
+  handleClearCache = () => {
+    caches
+      .keys()
+      .then(cacheNames =>
+        Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)))
+      );
+  };
+
   handleLogout = () => {
     // Same as above, here should be action handling by services
     firebase.auth().signOut();
@@ -131,6 +140,8 @@ class AppFrame extends React.Component {
 
   render() {
     const { classes } = this.props;
+
+    window.firebase = firebase;
     return (
       <Router>
         <div className={classes.root}>
@@ -180,7 +191,10 @@ class AppFrame extends React.Component {
                     </Menu>
                   </Fragment>
                 ) : (
-                  <Button onClick={this.handleLogin}>Login</Button>
+                  <Fragment>
+                    <Button onClick={this.handleLogin}>Login</Button>
+                    <Button onClick={this.handleClearCache}>Clear cache</Button>
+                  </Fragment>
                 )}
               </Toolbar>
             </AppBar>

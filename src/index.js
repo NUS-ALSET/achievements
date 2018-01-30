@@ -5,3 +5,8 @@ import App from "./App";
 
 ReactDOM.render(<App />, document.getElementById("root"));
 // registerServiceWorker();
+
+// Dirty workaround to clear cache
+if (window.location.href.indexOf("/__/auth/handler") !== -1) {
+  window.location.reload(true);
+}
