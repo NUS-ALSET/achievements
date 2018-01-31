@@ -1,6 +1,129 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    "api_tokens": {
+      ".read": "false",
+      ".write": "false"
+    },
+    "logged_events": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": "createdAt"
+    },
+    "problems": {
+      ".read": "auth != null",
+      "$problemKey": {
+        ".write": "auth != null && (
+        newData.child('owner').val() == auth.uid ||
+        data.exists() && data.child('owner').val() == auth.uid
+        )"
+      }
+    },
+    "paths": {
+      ".read": "auth != null",
+      "$pathKey": {
+        ".read": "auth != null && data.exists() && (data.child('owner').val() == auth.uid || data.child('isFeatured').val() == true)",
+        ".write": "auth != null && (
+        !data.exists() && newData.child('owner').val() == auth.uid ||
+        data.exists() && (
+        data.child('owner').val() == auth.uid ||
+        data.child('assistants/').exists() && data.child('assistants/' + auth.uid).val() == true
+        )
+        )"
+      }
+    },
+    "pathProblems": {
+      ".read": "auth != null",
+      "$pathKey": {
+        ".write": "auth != null && (
+        data.exists() && root.child('problems/' + data.child('problemKey').val()).exists() && (
+        root.child('problems/' + data.child('problemKey').val() + '/owner').val() == auth.uid ||
+        data.child('assistants/').exists() &&
+        root.child('problems/' + data.child('problemKey').val() + '/assistants/' + auth.uid).val() == auth.uid
+        ) ||
+        !data.exists() && newData.child('problemKey').exists() && (
+        root.child('problems/' + newData.child('problemKey').val()).exists() && (
+        root.child('problems/' + newData.child('problemKey').val() + '/owner').val() == auth.uid ||
+        data.child('assistants/').exists() &&
+        root.child('problems/' + newData.child('problemKey').val() + '/assistants/' + auth.uid).val() == auth.uid
+        )
+        )
+        )"
+      }
+    },
+    "courses": {
+      ".read": "auth != null",
+      "$courseKey": {
+        ".write": "auth != null && (
+        !data.exists() && newData.child('owner').exists() && newData.child('owner').val() == auth.uid ||
+        data.exists() && data.child('owner').val() == auth.uid
+        )"
+      }
+    },
+    "studentCoursePasswords": {
+      ".read": "false",
+      "$courseKey": {
+        "$studentKey": {
+          ".write": "auth != null && !data.exists() && $studentKey == auth.uid &&
+          root.child('coursePasswords/' + $courseKey).exists() &&
+          root.child('coursePasswords/' + $courseKey).val() == newData.val()"
+        }
+      }
+    },
+    "courseMembers": {
+      ".read": "auth != null",
+      "$courseKey": {
+        "$studentKey": {
+          ".write": "auth != null && $studentKey == auth.uid &&
+          root.child('studentCoursePasswords/' + $courseKey).exists() &&
+          root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
+          "
+        }
+      }
+    },
+    "solutions": {
+      ".read": "false",
+      "$userKey": {
+        ".read": "auth != null && $userKey == auth.uid",
+        ".write": "auth != null && $userKey == auth.uid",
+        "$pathKey": {
+          ".read": "auth != null && root.child('paths/' + $pathKey).exists() &&
+          root.child('paths/' + $pathKey + '/owner').val() == auth.uid
+          ",
+        }
+      }
+    },
+    "coursePasswords": {
+      ".read": "false",
+      "$courseKey": {
+        ".write": "auth != null && (
+        !root.child('courses/' + $courseKey).exists() ||
+        root.child('courses/' + $courseKey).exists() &&
+        root.child('courses/' + $courseKey + '/owner').val() == auth.uid)"
+      }
+    },
+    "users": {
+      ".read": "auth != null",
+      "$userKey": {
+        ".write": "auth != null && auth.uid == $userKey",
+      }
+    },
+    "userAchievements": {
+      "$userKey": {
+        // Temporary solution
+        ".write": "auth != null && auth.uid == $userKey",
+        ".read": "auth != null && auth.uid == $userKey"
+      }
+    },
+    "assignments": {
+      "$courseKey": {
+        ".read": "auth != null && root.child('courses/' + $courseKey).exists() &&
+        root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
+        ".write": "auth != null && root.child('courses/' + $courseKey).exists() &&
+        root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
+        "$assignmentKey": {
+          ".read": "auth != null && root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()"
+        }
+      }
+    }
   }
 }

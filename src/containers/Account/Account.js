@@ -8,12 +8,13 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firebaseConnect } from "react-redux-firebase";
-import Button from "material-ui/Button";
 import withStyles from "material-ui/styles/withStyles";
 import { codeCombatService } from "../../services/codeCombat";
 import Grid from "material-ui/Grid";
 import Card, { CardMedia, CardContent, CardActions } from "material-ui/Card";
 import Typography from "material-ui/Typography";
+import { accountService } from "../../services/account";
+import ExternalSourceCard from "../../components/ExternalSourceCard";
 
 const styles = theme => ({
   card: {
@@ -29,7 +30,8 @@ class Account extends React.PureComponent {
     user: PropTypes.object,
     auth: PropTypes.object,
     uid: PropTypes.string,
-    userName: PropTypes.string
+    userName: PropTypes.string,
+    externalSources: PropTypes.object
   };
 
   state = {
@@ -57,7 +59,7 @@ class Account extends React.PureComponent {
   };
 
   render() {
-    const { user, classes } = this.props;
+    const { user, classes, externalSources } = this.props;
 
     return (
       <Grid container>
@@ -74,43 +76,13 @@ class Account extends React.PureComponent {
           </Card>
         </Grid>
         <Grid item xs={6}>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography type="title">Free Code Camp</Typography>
-              <Typography>Registered as </Typography>
-              <Typography>319 achievements </Typography>
-            </CardContent>
-            <CardActions>
-              <Button raised>Refresh Achievements</Button>
-              <Button raised color="secondary">
-                Remove
-              </Button>
-            </CardActions>
-          </Card>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography type="title">Pivotal Expert</Typography>
-              <Typography>Registered as </Typography>
-              <Typography>319 achievements </Typography>
-            </CardContent>
-            <CardActions>
-              <Button raised>Refresh Achievements</Button>
-              <Button raised color="secondary">
-                Remove
-              </Button>
-            </CardActions>
-          </Card>
-          <Card className={classes.card}>
-            <CardContent>
-              <Typography type="title">Code Combat</Typography>
-              <Typography>319 achievements </Typography>
-            </CardContent>
-            <CardActions>
-              <Button color="primary" raised>
-                Add Profile
-              </Button>
-            </CardActions>
-          </Card>
+          {Object.keys(externalSources).map(externalSourceKey => (
+            <ExternalSourceCard
+              classes={classes}
+              key={externalSourceKey}
+              externalSource={externalSources[externalSourceKey]}
+            />
+          ))}
         </Grid>
       </Grid>
     );
@@ -121,11 +93,18 @@ const mapStateToProps = state => ({
   userName: state.firebase.auth.displayName,
   uid: state.firebase.auth.uid,
   auth: state.firebase.auth,
+
+  // That should be in firebase
+  externalSources: accountService.fetchExternalSources(),
+  userAchievements: state.firebase.data.userAchievements,
   user: (state.firebase.data.users || {})[state.firebase.auth.uid]
 });
 
 export default compose(
-  firebaseConnect(["/users"]),
+  firebaseConnect((props, store) => [
+    "/users",
+    `/userAchievements/${store.getState().firebase.auth.uid}`
+  ]),
   withStyles(styles),
   connect(mapStateToProps)
 )(Account);

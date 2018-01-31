@@ -7,12 +7,32 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-class AddProfileDialog extends React.PureComponent {
+import Dialog, {
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from "material-ui/Dialog/index";
+import Button from "material-ui/Button";
+import TextField from "material-ui/TextField";
 
-  static propTypes = {};
+class AddProfileDialog extends React.PureComponent {
+  static propTypes = {
+    externalSource: PropTypes.object
+  };
 
   render() {
-    return <div>AddProfileDialog</div>;
+    return (
+      <Dialog open={true}>
+        <DialogTitle>Add Profile</DialogTitle>
+        <DialogContent>
+          <TextField label="Profile" />
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary">Cancel</Button>
+          <Button>Commit</Button>
+        </DialogActions>
+      </Dialog>
+    );
   }
 }
 
