@@ -15,6 +15,7 @@ script:
 before_deploy:
 - cp src/achievementsApp/altConfig.js src/achievementsApp/config.js
 
+
 deploy:
   skip_cleanup: true
   provider: firebase
