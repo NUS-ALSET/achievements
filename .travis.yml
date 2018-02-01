@@ -14,7 +14,7 @@ script:
 
 before_deploy:
 - cp src/achievementsApp/altConfig.js src/achievementsApp/config.js
-
+- ./scripts/travis-install-functions.sh
 
 deploy:
   skip_cleanup: true
