@@ -150,6 +150,7 @@ class AppFrame extends React.Component {
               <Toolbar>
                 <Hidden lgUp implementation="css">
                   <IconButton
+                    style={{ color: "white" }}
                     aria-label="Open Drawer"
                     onClick={this.handleDrawerToggle}
                   >

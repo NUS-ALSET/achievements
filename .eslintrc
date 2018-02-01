@@ -82,7 +82,7 @@
     "no-extra-semi": 1,
     "no-unreachable": 1,
     "no-unused-expressions": 1,
-    "no-magic-numbers": 1,
+    "no-magic-numbers": [1, {"ignore": [0, -1, 1]}],
     "max-len": [
       2,
       80,

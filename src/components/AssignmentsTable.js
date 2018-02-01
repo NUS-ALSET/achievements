@@ -23,6 +23,7 @@ class AssignmentsTable extends React.PureComponent {
   render() {
     return (
       <Grid
+        style={{ height: "100%" }}
         rows={this.props.assignments}
         columns={[
           { name: "studentName", title: "Student" },
