@@ -29,7 +29,6 @@ export class ActionsService {
       firebase.auth().currentUser && firebase.auth().currentUser.uid;
 
     if (
-      // eslint-disable-next-line no-magic-numbers
       action.type.indexOf("@@reactReduxFirebase") === -1 &&
       !this.bannedActions.includes(action.type) &&
       currentUser
