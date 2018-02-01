@@ -109,7 +109,6 @@
     },
     "userAchievements": {
       "$userKey": {
-        // Temporary solution
         ".write": "auth != null && auth.uid == $userKey",
         ".read": "auth != null && auth.uid == $userKey"
       }
@@ -122,6 +121,20 @@
         root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
         "$assignmentKey": {
           ".read": "auth != null && root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()"
+        }
+      }
+    },
+    "updateProfileQueue": {
+      "tasks": {
+        ".indexOn": ["_state"],
+        "$taskKey": {
+          ".read": "auth != null",
+          ".write": "(
+          	auth != null &&
+            newData.exists() &&
+            newData.hasChild('uid') &&
+            newData.child('uid').val() == auth.uid
+          )"
         }
       }
     }

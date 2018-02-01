@@ -78,7 +78,13 @@ class Account extends React.PureComponent {
     this.props.dispatch(externalProfileDialogShow(externalProfile));
   };
   refreshAchievementsRequest = externalProfile => {
-    accountService.refreshAchievements(externalProfile, this.props.uid);
+    const { uid, userAchievements } = this.props;
+
+    accountService.refreshAchievements(
+      externalProfile,
+      uid,
+      userAchievements[externalProfile.id].id
+    );
   };
   removeExternalProfileRequest = externalProfile => {
     this.showConfirmation(
