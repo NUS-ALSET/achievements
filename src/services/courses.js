@@ -74,6 +74,15 @@ export class CoursesService {
         this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
       );
   }
+
+  addAssignment(courseId, assignment) {
+    return firebase
+      .ref(`/assignments/${courseId}`)
+      .push(assignment)
+      .catch(err =>
+        this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
+      );
+  }
 }
 
 export const coursesService = new CoursesService();

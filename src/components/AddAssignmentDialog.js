@@ -12,86 +12,149 @@ import Dialog, {
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog/index";
+import format from "date-fns/format";
 import Button from "material-ui/Button";
-import Radio from "material-ui/Radio";
 import TextField from "material-ui/TextField";
 import MenuItem from "material-ui/Menu/MenuItem";
-import { FormControlLabel, FormLabel } from "material-ui/Form";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
+    userAchievements: PropTypes.object,
     handleCommit: PropTypes.func.isRequired,
     handleCancel: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired
   };
   state = {
-    questionType: "short"
+    name: "",
+    details: "",
+    deadline: "",
+    questionType: "Text",
+    level: ""
   };
-  handleChange = event => {
-    this.setState({ questionType: event.target.value });
+  handleChange = name => event => {
+    // Reset default `name` and `details` for `Profile` question type
+    if (
+      name === "questionType" &&
+      this.state.questionType === "Profile" &&
+      event.target.value !== "Profile" &&
+      this.state.name === "Enter CodeCombat profile" &&
+      this.state.details === "https://codecombat.com/"
+    ) {
+      this.setState({
+        name: "",
+        details: ""
+      });
+    }
+
+    // Set default `name` and `details` for `Profile` question type
+    if (
+      name === "questionType" &&
+      event.target.value === "Profile" &&
+      !(this.state.name || this.state.details)
+    ) {
+      return this.setState({
+        questionType: "Profile",
+        name: "Enter CodeCombat profile",
+        details: "https://codecombat.com/"
+      });
+    }
+
+    this.setState({ [name]: event.target.value });
+  };
+
+  clearState = () => {
+    this.setState({
+      name: "",
+      details: "",
+      deadline: "",
+      questionType: "Text",
+      level: ""
+    });
+  };
+
+  commit = () => {
+    this.props.handleCommit(this.state);
+    this.clearState();
   };
 
   render() {
+    let { userAchievements, open, handleCancel } = this.props;
+
+    userAchievements = userAchievements || {};
+    userAchievements = userAchievements[this.state.questionType] || {};
+    userAchievements = userAchievements.achievements || {};
+
     return (
-      <Dialog open={this.props.open}>
+      <Dialog open={open}>
         <DialogTitle>New Assignment</DialogTitle>
         <DialogContent>
-          <div>
-            <FormLabel>Type of Question</FormLabel>
-          </div>
-          <FormControlLabel
-            onChange={this.handleChange}
-            checked={this.state.questionType === "short"}
-            value="short"
-            control={<Radio />}
-            label="Short answer"
+          <TextField
+            autoFocus
+            margin="normal"
+            select
+            value={this.state.questionType}
+            onChange={this.handleChange("questionType")}
+            label="Type of question"
+            fullWidth
+          >
+            <MenuItem value="Text">Text</MenuItem>
+            <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
+            <MenuItem value="CodeCombat">Complete Code Combat Level</MenuItem>
+          </TextField>
+          <TextField
+            onChange={this.handleChange("name")}
+            margin="normal"
+            label="Name"
+            value={this.state.name}
+            fullWidth
           />
-          <FormControlLabel
-            onChange={this.handleChange}
-            checked={this.state.questionType === "essay"}
-            value="essay"
-            control={<Radio />}
-            label="Essay"
+          <TextField
+            onChange={this.handleChange("details")}
+            margin="normal"
+            label="Details/Links"
+            value={this.state.details}
+            fullWidth
           />
-          <TextField autoFocus margin="normal" label="Name" fullWidth />
-          <TextField margin="normal" label="Details/Links" fullWidth />
-          {this.state.questionType === "essay" ? (
+          {this.state.questionType === "CodeCombat" ? (
             <TextField
-              fullWidth
               margin="normal"
               select
-              value="Path 1"
-              label="Choose Path"
+              value={this.state.level || ""}
+              onChange={this.handleChange("level")}
+              label="Choose Level"
+              fullWidth
             >
-              <MenuItem>Path 1</MenuItem>
+              {Object.keys(userAchievements).map(achievementId => (
+                <MenuItem key={achievementId} value={achievementId}>
+                  {userAchievements[achievementId].name}
+                </MenuItem>
+              ))}
             </TextField>
           ) : (
             undefined
           )}
           <TextField
             fullWidth
-            label="Open"
+            label="Deadline"
             margin="normal"
             type="datetime-local"
-            defaultValue="2017-05-24T10:30"
-            InputLabelProps={{
-              shrink: true
-            }}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Close"
-            type="datetime-local"
-            defaultValue="2017-05-24T10:30"
+            onChange={this.handleChange("deadline")}
+            defaultValue={format(new Date(), "YYYY-MM-DDTHH:mm")}
             InputLabelProps={{
               shrink: true
             }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.props.handleCancel}>Cancel</Button>
-          <Button onClick={this.props.handleCommit}>Commit</Button>
+          <Button
+            onClick={() => {
+              this.clearState();
+              handleCancel();
+            }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={this.commit}>Commit</Button>
         </DialogActions>
       </Dialog>
     );

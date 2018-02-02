@@ -9,6 +9,7 @@
     "autosuggest-highlight": "3.1.1",
     "axios": "^0.17.1",
     "classnames": "2.2.5",
+    "date-fns": "^1.29.0",
     "downshift": "1.25.0",
     "firebase": "4.9.0",
     "json-stringify-safe": "^5.0.1",

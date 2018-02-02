@@ -115,7 +115,8 @@ class Assignments extends React.Component {
     userId: PropTypes.string,
     courseMembers: PropTypes.object,
     history: PropTypes.any,
-    currentTab: PropTypes.number
+    currentTab: PropTypes.number,
+    userAchievements: PropTypes.object
   };
 
   // Force show assignments (when become participant)
@@ -143,8 +144,16 @@ class Assignments extends React.Component {
       value: event.currentTarget.value
     });
 
+  createAssignment = assignmentDetails => {
+    const { courseId } = this.props;
+
+    coursesService.addAssignment(courseId, assignmentDetails);
+    this.setState({ dialogOpen: false });
+  };
+
   submitPassword = () => {
     const { courseId } = this.props;
+
     coursesService.tryCoursePassword(courseId, this.state.value);
   };
   render() {
@@ -154,7 +163,8 @@ class Assignments extends React.Component {
       courseLoaded,
       classes,
       courseMembers,
-      userId
+      userId,
+      userAchievements
     } = this.props;
 
     if (!courseLoaded) {
@@ -210,7 +220,8 @@ class Assignments extends React.Component {
                 assignments={testAssignmentDefinitions}
               />
               <AddAssignmentDialog
-                handleCommit={() => this.setState({ dialogOpen: false })}
+                userAchievements={userAchievements}
+                handleCommit={this.createAssignment}
                 handleCancel={() => this.setState({ dialogOpen: false })}
                 open={this.state.dialogOpen}
               />
@@ -272,6 +283,9 @@ const mapStateToProps = (state, ownProps) => {
     courseMembers: (state.firebase.data.courseMembers || {})[
       ownProps.match.params.courseId
     ],
+    userAchievements: (state.firebase.data.userAchievements || {})[
+      state.firebase.auth.uid
+    ],
     course:
       isLoaded(state.firebase.data.courses) &&
       state.firebase.data.courses[ownProps.match.params.courseId]
@@ -281,6 +295,9 @@ const mapStateToProps = (state, ownProps) => {
 export default compose(
   withRouter,
   withStyles(styles),
-  firebaseConnect(["/courseMembers"]),
+  firebaseConnect((props, store) => [
+    "/courseMembers",
+    `/userAchievements/${store.getState().firebase.auth.uid}`
+  ]),
   connect(mapStateToProps)
 )(Assignments);
