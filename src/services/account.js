@@ -3,7 +3,6 @@
  */
 
 import firebase from "firebase";
-import data from "./data/singpath-cboesch-export";
 
 /**
  * @typedef {Object} ExternalProfile external profile definition
@@ -38,15 +37,14 @@ export class AccountService {
    *
    * @param {ExternalProfile} externalProfile
    * @param {String} uid
+   * @param {String} login
    */
-  refreshAchievements(externalProfile, uid) {
-    return firebase
-      .ref(`/userAchievements/${uid}/${externalProfile.id}`)
-      .update({
-        achievements: data.achievements,
-        totalAchievements: data.totalAchievements,
-        lastUpdate: new Date().getTime()
-      });
+  refreshAchievements(externalProfile, uid, login) {
+    return firebase.ref("updateProfileQueue/tasks").push({
+      service: externalProfile.id,
+      serviceId: login,
+      uid: uid
+    });
   }
 
   /**

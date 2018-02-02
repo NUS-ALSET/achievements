@@ -124,15 +124,6 @@ class AppFrame extends React.Component {
       );
   };
 
-  // Temporary solution. It will be removed next PR
-  handleClearCache = () => {
-    caches
-      .keys()
-      .then(cacheNames =>
-        Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)))
-      );
-  };
-
   handleLogout = () => {
     // Same as above, here should be action handling by services
     firebase.auth().signOut();
@@ -150,7 +141,7 @@ class AppFrame extends React.Component {
               <Toolbar>
                 <Hidden lgUp implementation="css">
                   <IconButton
-                    style={{ color: "white" }}
+                    color="inherit"
                     aria-label="Open Drawer"
                     onClick={this.handleDrawerToggle}
                   >
@@ -173,6 +164,7 @@ class AppFrame extends React.Component {
                       aria-owns="Open right Menu"
                       aria-haspopup="true"
                       onClick={this.handleMenuOpen}
+                      color="inherit"
                       className={classes.menuButtonRight}
                     >
                       <MoreVertIcon />
@@ -193,8 +185,9 @@ class AppFrame extends React.Component {
                   </Fragment>
                 ) : (
                   <Fragment>
-                    <Button onClick={this.handleLogin}>Login</Button>
-                    <Button onClick={this.handleClearCache}>Clear cache</Button>
+                    <Button color="inherit" onClick={this.handleLogin}>
+                      Login
+                    </Button>
                   </Fragment>
                 )}
               </Toolbar>
