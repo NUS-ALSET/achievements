@@ -29,6 +29,7 @@ export class ActionsService {
       firebase.auth().currentUser && firebase.auth().currentUser.uid;
 
     if (
+      action.type &&
       action.type.indexOf("@@reactReduxFirebase") === -1 &&
       !this.bannedActions.includes(action.type) &&
       currentUser

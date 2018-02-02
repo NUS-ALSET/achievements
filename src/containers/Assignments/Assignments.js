@@ -87,22 +87,6 @@ const testAssignments = [
   }
 ];
 
-const testAssignmentDefinitions = {
-  test1: {
-    name: "Test Assignment 1",
-    open: new Date(),
-    close: new Date(),
-    visible: true
-  },
-  test2: {
-    name: "Test Assignment 2",
-    open: new Date(),
-    close: new Date(),
-    visible: false,
-    solutionVisible: true
-  }
-};
-
 class Assignments extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
@@ -116,7 +100,8 @@ class Assignments extends React.Component {
     courseMembers: PropTypes.object,
     history: PropTypes.any,
     currentTab: PropTypes.number,
-    userAchievements: PropTypes.object
+    userAchievements: PropTypes.object,
+    assignments: PropTypes.object
   };
 
   // Force show assignments (when become participant)
@@ -126,7 +111,7 @@ class Assignments extends React.Component {
     dialogOpen: false
   };
 
-  handleAssignmentAddRequest = () => {
+  onAddAssignmentClick = () => {
     this.props.dispatch(assignmentAddRequest());
     this.setState({
       dialogOpen: true
@@ -151,15 +136,23 @@ class Assignments extends React.Component {
     this.setState({ dialogOpen: false });
   };
 
+  onUpdateAssignment = (assignmentId, field, value) => {
+    const { courseId } = this.props;
+
+    coursesService.updateAssignment(courseId, assignmentId, field, value);
+  };
+
   submitPassword = () => {
     const { courseId } = this.props;
 
     coursesService.tryCoursePassword(courseId, this.state.value);
   };
+
   render() {
     const {
       history,
       course,
+      courseId,
       courseLoaded,
       classes,
       courseMembers,
@@ -216,8 +209,9 @@ class Assignments extends React.Component {
           instructorTab = (
             <Fragment>
               <AssignmentsEditorTable
-                addAssignmentHandler={this.handleAssignmentAddRequest}
-                assignments={testAssignmentDefinitions}
+                onAddAssignmentClick={this.onAddAssignmentClick}
+                onUpdateAssignment={this.onUpdateAssignment}
+                assignments={this.props.assignments[courseId] || {}}
               />
               <AddAssignmentDialog
                 userAchievements={userAchievements}
@@ -249,9 +243,6 @@ class Assignments extends React.Component {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
         <Fragment>
-          <Toolbar>
-            <Button raised>Create assignment</Button>
-          </Toolbar>
           <AssignmentsTable assignments={testAssignments} />
         </Fragment>
       );
@@ -283,6 +274,7 @@ const mapStateToProps = (state, ownProps) => {
     courseMembers: (state.firebase.data.courseMembers || {})[
       ownProps.match.params.courseId
     ],
+    assignments: state.firebase.data.assignments,
     userAchievements: (state.firebase.data.userAchievements || {})[
       state.firebase.auth.uid
     ],
@@ -295,9 +287,12 @@ const mapStateToProps = (state, ownProps) => {
 export default compose(
   withRouter,
   withStyles(styles),
-  firebaseConnect((props, store) => [
-    "/courseMembers",
-    `/userAchievements/${store.getState().firebase.auth.uid}`
-  ]),
+  firebaseConnect((ownProps, store) => {
+    return [
+      "/courseMembers",
+      `/assignments/${ownProps.match.params.courseId}`,
+      `/userAchievements/${store.getState().firebase.auth.uid}`
+    ];
+  }),
   connect(mapStateToProps)
 )(Assignments);

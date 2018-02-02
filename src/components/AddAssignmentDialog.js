@@ -27,7 +27,9 @@ class AddAssignmentDialog extends React.PureComponent {
   state = {
     name: "",
     details: "",
-    deadline: "",
+    solutionVisible: false,
+    visible: false,
+    deadline: format(new Date(), "YYYY-MM-DDTHH:mm"),
     questionType: "Text",
     level: ""
   };
@@ -66,7 +68,7 @@ class AddAssignmentDialog extends React.PureComponent {
     this.setState({
       name: "",
       details: "",
-      deadline: "",
+      deadline: format(new Date(), "YYYY-MM-DDTHH:mm"),
       questionType: "Text",
       level: ""
     });
@@ -139,7 +141,7 @@ class AddAssignmentDialog extends React.PureComponent {
             margin="normal"
             type="datetime-local"
             onChange={this.handleChange("deadline")}
-            defaultValue={format(new Date(), "YYYY-MM-DDTHH:mm")}
+            value={this.state.deadline}
             InputLabelProps={{
               shrink: true
             }}
