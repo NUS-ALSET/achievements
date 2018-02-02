@@ -4,7 +4,7 @@ node_js:
 
 branches:
  only:
-  - develop
+  - master
 
 install:
 - npm install
@@ -13,7 +13,6 @@ script:
 - npm run-script build
 
 before_deploy:
-- cp src/achievementsApp/altConfig.js src/achievementsApp/config.js
 - ./scripts/travis-install-functions.sh
 
 deploy:
@@ -21,4 +20,4 @@ deploy:
   provider: firebase
   token:
     secure: "$FIREBASE_SECRET"
-  project: "fir-project-3d2a4"
+  project: "achievements-dev"
