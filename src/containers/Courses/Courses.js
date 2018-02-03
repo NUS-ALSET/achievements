@@ -14,6 +14,7 @@ import {
 import { AddCourseDialog } from "../../components/AddCourseDialog";
 import CoursesTable from "../../components/CoursesTable";
 import { coursesService } from "../../services/courses";
+import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 class Courses extends React.Component {
   static propTypes = {
@@ -25,6 +26,47 @@ class Courses extends React.Component {
     firebase: PropTypes.object,
     instructorName: PropTypes.string,
     ownerId: PropTypes.string
+  };
+
+  state = {
+    confirmation: {
+      open: false,
+      message: "",
+      resolve: () => {}
+    }
+  };
+
+  onDeleteCourseClick = courseId => {
+    this.showConfirmation("Are you sure you want to remove the course?").then(
+      result => {
+        if (result) {
+          coursesService.deleteCourse(courseId);
+        }
+        this.closeConfirmation();
+      }
+    );
+  };
+
+  showConfirmation = message => {
+    return new Promise(resolve =>
+      this.setState({
+        confirmation: {
+          open: true,
+          message,
+          resolve
+        }
+      })
+    );
+  };
+
+  closeConfirmation = () => {
+    this.setState({
+      confirmation: {
+        open: false,
+        message: "",
+        resolve: () => {}
+      }
+    });
   };
 
   showNewCourseDialog = () => {
@@ -56,6 +98,7 @@ class Courses extends React.Component {
           </Button>
         </Toolbar>
         <CoursesTable
+          onDeleteCourseClick={this.onDeleteCourseClick}
           ownerId={this.props.ownerId}
           courses={this.props.courses || {}}
         />
@@ -65,6 +108,11 @@ class Courses extends React.Component {
           requestCreation={this.newDialogRequest}
           open={this.props.showNewDialog}
           requestClose={this.closeNewCourseDialog}
+        />
+        <ConfirmationDialog
+          message={this.state.confirmation.message}
+          open={this.state.confirmation.open}
+          resolve={this.state.confirmation.resolve}
         />
       </Fragment>
     );

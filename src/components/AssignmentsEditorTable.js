@@ -25,14 +25,15 @@ const dateEditStyle = {
 class AssignmentsEditorTable extends React.PureComponent {
   static propTypes = {
     assignments: PropTypes.any.isRequired,
-    addAssignmentHandler: PropTypes.func.isRequired
+    onUpdateAssignment: PropTypes.func.isRequired,
+    onAddAssignmentClick: PropTypes.func.isRequired
   };
 
   render() {
     return (
       <Fragment>
         <Toolbar>
-          <Button raised onClick={this.props.addAssignmentHandler}>
+          <Button raised onClick={this.props.onAddAssignmentClick}>
             Add assignment
           </Button>
         </Toolbar>
@@ -42,8 +43,7 @@ class AssignmentsEditorTable extends React.PureComponent {
               <TableCell>Name</TableCell>
               <TableCell>Assignment Visible</TableCell>
               <TableCell>Solution Visible</TableCell>
-              <TableCell>Assignment Open</TableCell>
-              <TableCell>Assignment Close</TableCell>
+              <TableCell>Deadline</TableCell>
               <TableCell>Details</TableCell>
               <TableCell>Order</TableCell>
             </TableRow>
@@ -60,28 +60,41 @@ class AssignmentsEditorTable extends React.PureComponent {
                   <TableRow key={assignmentId}>
                     <TableCell>{assignment.name}</TableCell>
                     <TableCell>
-                      <Switch checked={assignment.visible} />
+                      <Switch
+                        onChange={(event, checked) =>
+                          this.props.onUpdateAssignment(
+                            assignmentId,
+                            "visible",
+                            checked
+                          )
+                        }
+                        checked={assignment.visible}
+                      />
                     </TableCell>
                     <TableCell>
-                      <Switch checked={assignment.solutionVisible} />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        style={dateEditStyle}
-                        label="Next appointment"
-                        type="datetime-local"
-                        defaultValue="2017-05-24T10:30"
-                        InputLabelProps={{
-                          shrink: true
-                        }}
+                      <Switch
+                        onChange={(event, checked) =>
+                          this.props.onUpdateAssignment(
+                            assignmentId,
+                            "solutionVisible",
+                            checked
+                          )
+                        }
+                        checked={assignment.solutionVisible}
                       />
                     </TableCell>
                     <TableCell>
                       <TextField
                         style={dateEditStyle}
-                        label="Next appointment"
                         type="datetime-local"
-                        defaultValue="2017-05-24T10:30"
+                        onChange={event =>
+                          this.props.onUpdateAssignment(
+                            assignmentId,
+                            "deadline",
+                            event.target.value
+                          )
+                        }
+                        defaultValue={assignment.deadline}
                         InputLabelProps={{
                           shrink: true
                         }}

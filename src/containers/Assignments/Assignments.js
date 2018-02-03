@@ -87,22 +87,6 @@ const testAssignments = [
   }
 ];
 
-const testAssignmentDefinitions = {
-  test1: {
-    name: "Test Assignment 1",
-    open: new Date(),
-    close: new Date(),
-    visible: true
-  },
-  test2: {
-    name: "Test Assignment 2",
-    open: new Date(),
-    close: new Date(),
-    visible: false,
-    solutionVisible: true
-  }
-};
-
 class Assignments extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
@@ -115,7 +99,9 @@ class Assignments extends React.Component {
     userId: PropTypes.string,
     courseMembers: PropTypes.object,
     history: PropTypes.any,
-    currentTab: PropTypes.number
+    currentTab: PropTypes.number,
+    userAchievements: PropTypes.object,
+    assignments: PropTypes.object
   };
 
   // Force show assignments (when become participant)
@@ -125,7 +111,7 @@ class Assignments extends React.Component {
     dialogOpen: false
   };
 
-  handleAssignmentAddRequest = () => {
+  onAddAssignmentClick = () => {
     this.props.dispatch(assignmentAddRequest());
     this.setState({
       dialogOpen: true
@@ -143,18 +129,35 @@ class Assignments extends React.Component {
       value: event.currentTarget.value
     });
 
+  createAssignment = assignmentDetails => {
+    const { courseId } = this.props;
+
+    coursesService.addAssignment(courseId, assignmentDetails);
+    this.setState({ dialogOpen: false });
+  };
+
+  onUpdateAssignment = (assignmentId, field, value) => {
+    const { courseId } = this.props;
+
+    coursesService.updateAssignment(courseId, assignmentId, field, value);
+  };
+
   submitPassword = () => {
     const { courseId } = this.props;
+
     coursesService.tryCoursePassword(courseId, this.state.value);
   };
+
   render() {
     const {
       history,
       course,
+      courseId,
       courseLoaded,
       classes,
       courseMembers,
-      userId
+      userId,
+      userAchievements
     } = this.props;
 
     if (!courseLoaded) {
@@ -206,11 +209,13 @@ class Assignments extends React.Component {
           instructorTab = (
             <Fragment>
               <AssignmentsEditorTable
-                addAssignmentHandler={this.handleAssignmentAddRequest}
-                assignments={testAssignmentDefinitions}
+                onAddAssignmentClick={this.onAddAssignmentClick}
+                onUpdateAssignment={this.onUpdateAssignment}
+                assignments={this.props.assignments[courseId] || {}}
               />
               <AddAssignmentDialog
-                handleCommit={() => this.setState({ dialogOpen: false })}
+                userAchievements={userAchievements}
+                handleCommit={this.createAssignment}
                 handleCancel={() => this.setState({ dialogOpen: false })}
                 open={this.state.dialogOpen}
               />
@@ -238,9 +243,6 @@ class Assignments extends React.Component {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
         <Fragment>
-          <Toolbar>
-            <Button raised>Create assignment</Button>
-          </Toolbar>
           <AssignmentsTable assignments={testAssignments} />
         </Fragment>
       );
@@ -272,6 +274,10 @@ const mapStateToProps = (state, ownProps) => {
     courseMembers: (state.firebase.data.courseMembers || {})[
       ownProps.match.params.courseId
     ],
+    assignments: state.firebase.data.assignments,
+    userAchievements: (state.firebase.data.userAchievements || {})[
+      state.firebase.auth.uid
+    ],
     course:
       isLoaded(state.firebase.data.courses) &&
       state.firebase.data.courses[ownProps.match.params.courseId]
@@ -281,6 +287,12 @@ const mapStateToProps = (state, ownProps) => {
 export default compose(
   withRouter,
   withStyles(styles),
-  firebaseConnect(["/courseMembers"]),
+  firebaseConnect((ownProps, store) => {
+    return [
+      "/courseMembers",
+      `/assignments/${ownProps.match.params.courseId}`,
+      `/userAchievements/${store.getState().firebase.auth.uid}`
+    ];
+  }),
   connect(mapStateToProps)
 )(Assignments);

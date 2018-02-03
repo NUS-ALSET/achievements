@@ -58,6 +58,14 @@ export class CoursesService {
         this.dispatchErrorMessage(courseNewFail(name, err.message))
       );
   }
+
+  deleteCourse(courseId) {
+    return firebase
+      .ref(`/courses/${courseId}`)
+      .remove()
+      .catch(err => this.dispatchErrorMessage(err.message));
+  }
+
   tryCoursePassword(courseId, password) {
     coursePasswordEnterRequest(courseId);
 
@@ -73,6 +81,21 @@ export class CoursesService {
       .catch(err =>
         this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
       );
+  }
+
+  addAssignment(courseId, assignment) {
+    return firebase
+      .ref(`/assignments/${courseId}`)
+      .push(assignment)
+      .catch(err =>
+        this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
+      );
+  }
+
+  updateAssignment(courseId, assignmentId, field, value) {
+    return firebase.ref(`/assignments/${courseId}/${assignmentId}`).update({
+      [field]: value
+    });
   }
 }
 
