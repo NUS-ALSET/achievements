@@ -82,13 +82,26 @@
     },
     "solutions": {
       ".read": "false",
-      "$userKey": {
-        ".read": "auth != null && $userKey == auth.uid",
-        ".write": "auth != null && $userKey == auth.uid",
-        "$pathKey": {
-          ".read": "auth != null && root.child('paths/' + $pathKey).exists() &&
-          root.child('paths/' + $pathKey + '/owner').val() == auth.uid
+      "$courseKey": {
+        "$userKey": {
+          ".read": "auth != null  &&
+          	(($userKey == auth.uid &&
+            root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()) ||
+            root.child('courses' + $courseKey + '/owner').val() == auth.uid )
           ",
+          ".write": "auth != null && $userKey == auth.uid",
+        }
+      }
+    },
+    "visibleSolutions": {
+      ".read": "false",
+      "$courseKey": {
+        ".read": "auth != null  &&
+          (root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists() ||
+          root.child('courses' + $courseKey + '/owner').val() == auth.uid )
+        ",
+        "$userKey": {
+	        ".write": "auth != null && $userKey == auth.uid",
         }
       }
     },
@@ -116,12 +129,10 @@
     "assignments": {
       "$courseKey": {
         ".read": "auth != null && root.child('courses/' + $courseKey).exists() &&
-          root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
+          (root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
+           root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists())",
         ".write": "auth != null && root.child('courses/' + $courseKey).exists() &&
-          root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
-        "$assignmentKey": {
-          ".read": "auth != null && root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()"
-        }
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid"
       }
     },
     "updateProfileQueue": {

@@ -151,18 +151,21 @@ class Assignments extends React.Component {
           studentName: members[i].displayName,
           assignment: assignment.name,
           solution: solution || unknownSolution,
-          actions: (
-            <Button
-              onClick={() =>
-                this.submitSolution(courseId, {
-                  ...assignment,
-                  id: assignmentId
-                })
-              }
-            >
-              {solutions[assignmentId] ? "Update" : "Submit"}
-            </Button>
-          )
+          actions:
+            members[i].id === userId ? (
+              <Button
+                onClick={() =>
+                  this.submitSolution(courseId, {
+                    ...assignment,
+                    id: assignmentId
+                  })
+                }
+              >
+                {solutions[assignmentId] ? "Update" : "Submit"}
+              </Button>
+            ) : (
+              ""
+            )
         };
 
         if (userData.studentName === userName) {
