@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -36,57 +37,6 @@ const styles = theme => ({
   }
 });
 
-const testAssignments = [
-  {
-    studentName: "Chris",
-    assignment: "Test Assignment 1",
-    team: "Team 1"
-  },
-  {
-    studentName: "Chris",
-    assignment: "Test Assignment 2",
-    team: "Team 1"
-  },
-  {
-    studentName: "Doug",
-    assignment: "Test Assignment 1",
-    team: (
-      <Button raised assignment="TestAssignment1" student="Doug">
-        Submit
-      </Button>
-    )
-  },
-  {
-    studentName: "Doug",
-    assignment: "Test Assignment 2",
-    team: "Team 1"
-  },
-  {
-    studentName: "Ellen",
-    assignment: "Test Assignment 1",
-    team: "Team 1"
-  },
-  {
-    studentName: "Ellen",
-    assignment: "Test Assignment 2",
-    team: (
-      <Button raised assignment="TestAssignment2" student="Ellen">
-        Submit
-      </Button>
-    )
-  },
-  {
-    studentName: "Ginger",
-    assignment: "Test Assignment 1",
-    team: "Team 1"
-  },
-  {
-    studentName: "Ginger",
-    assignment: "Test Assignment 2",
-    team: "Team 1"
-  }
-];
-
 class Assignments extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
@@ -97,11 +47,14 @@ class Assignments extends React.Component {
     courseLoaded: PropTypes.any,
     firebase: PropTypes.any,
     userId: PropTypes.string,
+    userName: PropTypes.string,
+    users: PropTypes.object,
     courseMembers: PropTypes.object,
     history: PropTypes.any,
     currentTab: PropTypes.number,
     userAchievements: PropTypes.object,
-    assignments: PropTypes.object
+    assignments: PropTypes.object,
+    solutions: PropTypes.object
   };
 
   // Force show assignments (when become participant)
@@ -142,21 +95,97 @@ class Assignments extends React.Component {
     coursesService.updateAssignment(courseId, assignmentId, field, value);
   };
 
+  submitSolution = (sourceId, assignment) => {
+    coursesService.submitSolution(sourceId, assignment, this.props.userId);
+  };
+
   submitPassword = () => {
     const { courseId } = this.props;
 
     coursesService.tryCoursePassword(courseId, this.state.value);
   };
 
+  getAssignments = () => {
+    const {
+      assignments,
+      courseMembers,
+      users,
+      courseId,
+      userName,
+      userId,
+      solutions
+    } = this.props;
+    const members = Object.keys(courseMembers).map(userId =>
+      Object.assign({ id: userId }, users[userId])
+    );
+    const result = [];
+    let currentUserData = [];
+
+    for (let i = 0; i < members.length; i++) {
+      _.each(assignments, (assignment, assignmentId) => {
+        let solution = solutions[members[i].id];
+
+        solution = solution && solution[assignmentId];
+
+        const unknownSolution =
+          assignment.solutionVisible || members[i].id === userId
+            ? "Incomplete"
+            : "Who knows";
+
+        switch (assignment.questionType) {
+          case "Profile":
+            if (solution) {
+              solution = (
+                <a href={`https://codecombat.com/user/${solution}`}>
+                  {solution}
+                </a>
+              );
+            }
+
+            break;
+          default:
+            solution = solution || unknownSolution;
+        }
+
+        const userData = {
+          studentName: members[i].displayName,
+          assignment: assignment.name,
+          solution: solution || unknownSolution,
+          actions: (
+            <Button
+              onClick={() =>
+                this.submitSolution(courseId, {
+                  ...assignment,
+                  id: assignmentId
+                })
+              }
+            >
+              {solutions[assignmentId] ? "Update" : "Submit"}
+            </Button>
+          )
+        };
+
+        if (userData.studentName === userName) {
+          currentUserData.push(userData);
+        } else {
+          result.push(userData);
+        }
+      });
+    }
+
+    return currentUserData.concat(result);
+  };
+
   render() {
     const {
       history,
       course,
-      courseId,
       courseLoaded,
       classes,
+      assignments,
       courseMembers,
       userId,
+      userName,
       userAchievements
     } = this.props;
 
@@ -203,7 +232,9 @@ class Assignments extends React.Component {
 
       switch (this.state.currentTab) {
         case INSTRUCTOR_TAB_ASSIGNMENTS:
-          instructorTab = <AssignmentsTable assignments={testAssignments} />;
+          instructorTab = (
+            <AssignmentsTable assignments={this.getAssignments()} />
+          );
           break;
         case INSTRUCTOR_TAB_EDIT:
           instructorTab = (
@@ -211,7 +242,7 @@ class Assignments extends React.Component {
               <AssignmentsEditorTable
                 onAddAssignmentClick={this.onAddAssignmentClick}
                 onUpdateAssignment={this.onUpdateAssignment}
-                assignments={this.props.assignments[courseId] || {}}
+                assignments={assignments || {}}
               />
               <AddAssignmentDialog
                 userAchievements={userAchievements}
@@ -239,12 +270,13 @@ class Assignments extends React.Component {
           {instructorTab}
         </Fragment>
       );
-    } else if (courseMembers && courseMembers[this.props.userId]) {
+    } else if (courseMembers && courseMembers[userId]) {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
-        <Fragment>
-          <AssignmentsTable assignments={testAssignments} />
-        </Fragment>
+        <AssignmentsTable
+          studentName={userName}
+          assignments={this.getAssignments()}
+        />
       );
     }
 
@@ -265,22 +297,30 @@ class Assignments extends React.Component {
   }
 }
 
+// Returns value from
+const getFrom = (source, field) => {
+  return (source || {})[field] || {};
+};
+
 const mapStateToProps = (state, ownProps) => {
+  const courseId = ownProps.match.params.courseId;
+  const userId = state.firebase.auth.uid;
+
   return {
     currentTab: state.assignments.currentTab,
     userId: state.firebase.auth.uid,
+    userName: state.firebase.auth.displayName,
     courseLoaded: isLoaded(state.firebase.data.courseMembers),
-    courseId: ownProps.match.params.courseId,
-    courseMembers: (state.firebase.data.courseMembers || {})[
-      ownProps.match.params.courseId
-    ],
-    assignments: state.firebase.data.assignments,
-    userAchievements: (state.firebase.data.userAchievements || {})[
-      state.firebase.auth.uid
-    ],
+    courseId,
+    courseMembers: getFrom(state.firebase.data.courseMembers, courseId),
+    assignments: getFrom(state.firebase.data.assignments, courseId),
+    solutions: getFrom(state.firebase.data.solutions, courseId),
+    solutionStatuses: getFrom(state.firebase.data.solutions, courseId),
+    userAchievements: getFrom(state.firebase.data.userAchievements, userId),
+    users: state.firebase.data.users || {},
     course:
       isLoaded(state.firebase.data.courses) &&
-      state.firebase.data.courses[ownProps.match.params.courseId]
+      getFrom(state.firebase.data.courses, courseId)
   };
 };
 
@@ -288,10 +328,14 @@ export default compose(
   withRouter,
   withStyles(styles),
   firebaseConnect((ownProps, store) => {
+    const courseId = ownProps.match.params.courseId;
+    const userId = store.getState().firebase.auth.uid;
     return [
-      "/courseMembers",
-      `/assignments/${ownProps.match.params.courseId}`,
-      `/userAchievements/${store.getState().firebase.auth.uid}`
+      `/courseMembers/${courseId}`,
+      `/solutions/${courseId}/${userId}`,
+      "/users",
+      `/assignments/${courseId}`,
+      `/userAchievements/${userId}`
     ];
   }),
   connect(mapStateToProps)
