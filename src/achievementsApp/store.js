@@ -7,7 +7,8 @@ import { sagaMiddleware, sagaInjector } from "../services/saga";
 import { actionsService } from "../services/actions";
 
 const rrfConfig = {
-  userProfile: "users"
+  userProfile: "courseMembers",
+  profileParamsToPopulate: ["members:users"]
 };
 
 let composeEnhancers = compose;

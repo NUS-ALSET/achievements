@@ -4,14 +4,15 @@ import PropTypes from "prop-types";
 import { GroupingState, IntegratedGrouping } from "@devexpress/dx-react-grid";
 import {
   Grid,
-  VirtualTable,
+  Table,
   TableHeaderRow,
   TableGroupRow
 } from "@devexpress/dx-react-grid-material-ui";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
-    assignments: PropTypes.any.isRequired
+    assignments: PropTypes.any.isRequired,
+    studentName: PropTypes.string
   };
 
   state = {
@@ -28,12 +29,16 @@ class AssignmentsTable extends React.PureComponent {
         columns={[
           { name: "studentName", title: "Student" },
           { name: "assignment", title: "Assignment" },
-          { name: "team", title: "Team" }
+          { name: "solution", title: "Solution" },
+          { name: "actions", title: "Actions" }
         ]}
       >
-        <GroupingState defaultGrouping={[{ columnName: "studentName" }]} />
+        <GroupingState
+          defaultGrouping={[{ columnName: "studentName" }]}
+          defaultExpandedGroups={[this.props.studentName]}
+        />
         <IntegratedGrouping />
-        <VirtualTable />
+        <Table />
         <TableHeaderRow />
         <TableGroupRow />
       </Grid>
