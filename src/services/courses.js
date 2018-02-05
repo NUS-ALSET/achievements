@@ -97,6 +97,46 @@ export class CoursesService {
       [field]: value
     });
   }
+
+  getProfileStatus(userId) {
+    return firebase
+      .ref(`/userAchievements/${userId}/CodeCombat/id`)
+      .once("value")
+      .then(id => {
+        if (id.val()) {
+          return id.val();
+        }
+        throw new Error("Missing CodeCombat profile to submit");
+      });
+  }
+
+  submitSolution(courseId, assignment, userId, value) {
+    let solutionValue;
+
+    return Promise.resolve()
+      .then(() => {
+        switch (assignment.questionType) {
+          case "Profile":
+            return this.getProfileStatus(userId);
+          default:
+            return value;
+        }
+      })
+      .then(value => {
+        solutionValue = value;
+        return firebase
+          .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
+          .set(solutionValue);
+      })
+      .then(() => {
+        if (assignment.solutionVisible) {
+          return firebase
+            .ref(`/visibleSolutions/${courseId}/${userId}/${assignment.id}`)
+            .set(solutionValue);
+        }
+      })
+      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+  }
 }
 
 export const coursesService = new CoursesService();
