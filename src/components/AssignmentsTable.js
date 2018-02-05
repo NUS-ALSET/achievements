@@ -37,6 +37,7 @@ class AssignmentsTable extends React.PureComponent {
       case "Profile":
         return solution.value ? (
           <a
+            rel="noopener noreferrer"
             target="_blank"
             href={`https://codecombat.com/user/${solution.value.replace(
               / \(\d+\)$/,
@@ -98,7 +99,11 @@ class AssignmentsTable extends React.PureComponent {
                   {assignment.name}
                 </TableSortLabel>
                 <div>
-                  <a target="_blank" href={assignment.details}>
+                  <a
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    href={assignment.details}
+                  >
                     details
                   </a>
                 </div>
