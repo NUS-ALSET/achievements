@@ -1,11 +1,43 @@
+import {
+  ASSIGNMENT_CLOSE_DIALOG,
+  ASSIGNMENT_SUBMIT_REQUEST,
+  ASSIGNMENTS_SORT_CHANGE
+} from "./actions";
+
 export const assignments = (
-  store = {
-    currentTab: 0
+  state = {
+    currentTab: 0,
+    dialog: false,
+    sort: {
+      field: "studentName",
+      direction: "asc"
+    }
   },
   action
 ) => {
   switch (action.type) {
+    case ASSIGNMENTS_SORT_CHANGE:
+      return {
+        ...state,
+        sort: {
+          field: action.sortField,
+          direction: state.sort.direction === "asc" ? "desc" : "asc"
+        }
+      };
+    case ASSIGNMENT_SUBMIT_REQUEST:
+      return {
+        ...state,
+        dialog: {
+          type: action.dialogType,
+          value: action.value
+        }
+      };
+    case ASSIGNMENT_CLOSE_DIALOG:
+      return {
+        ...state,
+        dialog: false
+      };
     default:
-      return store;
+      return state;
   }
 };

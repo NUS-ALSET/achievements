@@ -3,6 +3,7 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  */
 
+import each from "lodash/each";
 import firebase from "firebase";
 import { courseNewFail, courseNewSuccess } from "../containers/Courses/actions";
 import { riseErrorMessage } from "../containers/AuthCheck/actions";
@@ -14,14 +15,17 @@ import {
 
 const ERROR_TIMEOUT = 6000;
 
-export class CoursesService {
+class CoursesService {
   errorTimeout = false;
+
   setStore(store) {
     this.store = store;
   }
+
   dispatch(action) {
     this.store.dispatch(action);
   }
+
   dispatchErrorMessage(action) {
     this.store.dispatch(action);
     this.store.dispatch(riseErrorMessage(action.error));
@@ -33,7 +37,12 @@ export class CoursesService {
       this.errorTimeout = false;
     }, ERROR_TIMEOUT);
   }
-  // noinspection JSMethodCanBeStatic
+
+  /**
+   * Returns current authorized user or one of its field
+   * @param {String} [field] requested field
+   * @returns {*} user or single field
+   */
   getUser(field) {
     const user = firebase.auth().currentUser;
     if (field) {
@@ -41,6 +50,7 @@ export class CoursesService {
     }
     return user;
   }
+
   createNewCourse(name, password) {
     return firebase
       .push("/courses", {
@@ -137,6 +147,214 @@ export class CoursesService {
       })
       .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
   }
+
+  /**
+   *
+   * @param {Object} config
+   * @param {Boolean} config.assignment
+   * @param {String} config.userId current authenticated
+   * @param {Object} config.visibleSolutions
+   * @param {Object} config.userAchievements
+   * @param {String} config.studentId student id
+   * @param {String} config.assignmentId
+   */
+  getSolution(config) {
+    const {
+      userId,
+      assignment,
+      visibleSolutions,
+      studentId,
+      userAchievements,
+      assignmentId
+    } = config;
+    const isOwner = userId === studentId;
+
+    let solution =
+      visibleSolutions[studentId] && visibleSolutions[studentId][assignmentId];
+
+    switch (assignment.questionType) {
+      case "Profile":
+        if (solution) {
+          const profileSourse =
+            userAchievements[studentId] &&
+            userAchievements[studentId].CodeCombat &&
+            userAchievements[studentId].CodeCombat;
+
+          if (!profileSourse) {
+            solution = "";
+          } else {
+            solution = `${profileSourse && profileSourse.id} (${profileSourse &&
+              profileSourse.totalAchievements})`;
+          }
+        }
+        break;
+    }
+
+    return {
+      showActions: isOwner,
+      value: solution
+        ? assignment.solutionVisible || isOwner ? solution : "Complete"
+        : ""
+    };
+  }
+
+  /**
+   * Returns list of assignments
+   *
+   * @param {Object} config
+   * @param {Boolean} config.instructorView
+   * @param {Object} config.assignments
+   * @param {Object} config.courseMembers
+   * @param {Object} config.users
+   * @param {String} config.userName
+   * @param {String} config.userId
+   * @param {Object} config.visibleSolutions
+   * @param {Object} config.sortState
+   * @param {Object} config.userAchievements
+   *
+   * @returns {Array<Object>} list of assignments
+   */
+  getStudentsAssignments(config) {
+    const {
+      assignments,
+      courseMembers,
+      users,
+      userId,
+      userAchievements,
+      visibleSolutions,
+      sortState
+    } = config;
+
+    return Object.keys(courseMembers)
+      .map(courseMemberId => {
+        const student = { ...users[courseMemberId], id: courseMemberId };
+        const result = {
+          studentId: student.id,
+          studentName: student.displayName
+        };
+
+        Object.keys(assignments).forEach(assignmentId => {
+          result[assignmentId] = this.getSolution({
+            assignment: assignments[assignmentId],
+            studentId: student.id,
+            userId,
+            userAchievements,
+            visibleSolutions,
+            assignmentId
+          });
+        });
+        return result;
+      })
+      .sort((a, b) => {
+        let result = 0;
+        let aValue = a[sortState.field];
+        let bValue = b[sortState.field];
+
+        aValue = (aValue && aValue.value) || aValue;
+        bValue = (bValue && bValue.value) || bValue;
+
+        if (aValue > bValue) {
+          result = 1;
+        } else if (aValue < bValue) {
+          result = -1;
+        } else {
+          result = 0;
+        }
+        return sortState.direction === "asc" ? result : -result;
+      });
+  }
+
+  // noinspection JSUnusedGlobalSymbols
+  /**
+   * Returns list of assignments
+   *
+   * @param {Object} config
+   * @param {Boolean} config.instructorView
+   * @param {Object} config.assignments
+   * @param {Object} config.courseMembers
+   * @param {Object} config.users
+   * @param {Object} config.course
+   * @param {String} config.userName
+   * @param {String} config.userId
+   * @param {Object} config.visibleSolutions
+   *
+   * @param {Object} tools
+   * @param {Function} tools.getAnchor
+   * @param {Function} tools.getButton
+   *
+   * @returns {Array<Object>} list of assignments
+   */
+  getAltAssignments(config, tools) {
+    const {
+      assignments,
+      courseMembers,
+      users,
+      course,
+      userName,
+      userId,
+      visibleSolutions,
+      instructorView
+    } = config;
+
+    const members = Object.keys(courseMembers).map(userId =>
+      Object.assign({ id: userId }, users[userId])
+    );
+    const result = [];
+    let currentUserData = [];
+
+    for (let i = 0; i < members.length; i++) {
+      each(assignments, (assignment, assignmentId) => {
+        let solution = visibleSolutions[members[i].id];
+
+        if (!(instructorView || assignment.visible)) {
+          return;
+        }
+
+        solution = solution && solution[assignmentId];
+
+        const unknownSolution =
+          assignment.solutionVisible ||
+          members[i].id === userId ||
+          (instructorView && course.owner === userId)
+            ? "Incomplete"
+            : "Who knows";
+
+        switch (assignment.questionType) {
+          case "Profile":
+            if (solution) {
+              solution = tools.getAnchor(solution);
+            }
+
+            break;
+          default:
+            solution = solution || unknownSolution;
+        }
+
+        const userData = {
+          studentId: members[i].id,
+          studentName: members[i].displayName,
+          assignment: assignment.name,
+          assignmentId,
+          solution: solution || unknownSolution,
+          actions:
+            members[i].id === userId
+              ? tools.getButton(assignment, assignmentId)
+              : ""
+        };
+
+        if (userData.studentName === userName) {
+          currentUserData.push(userData);
+        } else {
+          result.push(userData);
+        }
+      });
+    }
+
+    return currentUserData.concat(result);
+  }
 }
 
+/**
+ * @type {CoursesService}
+ */
 export const coursesService = new CoursesService();

@@ -14,15 +14,18 @@ import Dialog, {
 } from "material-ui/Dialog/index";
 import Button from "material-ui/Button";
 import TextField from "material-ui/TextField";
+import { accountService } from "../services/account";
 
 const STRING_MAX = 32;
 
 class AddProfileDialog extends React.PureComponent {
   static propTypes = {
+    uid: PropTypes.string.isRequired,
     open: PropTypes.bool.isRequired,
     externalProfile: PropTypes.object.isRequired,
-    onCommit: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired
+    onError: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    defaultValue: PropTypes.string
   };
 
   state = {
@@ -41,9 +44,22 @@ class AddProfileDialog extends React.PureComponent {
     });
   };
 
+  onCommitClick = () => {
+    const { externalProfile, uid, onError } = this.props;
+    const { login } = this.state;
+
+    return Promise.resolve()
+      .then(() =>
+        accountService.addExternalProfile(externalProfile, uid, login)
+      )
+      .catch(err => {
+        onError(err.message);
+      });
+  };
+
   render() {
     const url = `${this.props.externalProfile.url}/user/${this.state.login}`;
-    const { externalProfile, onCommit, onCancel } = this.props;
+    const { onClose } = this.props;
 
     return (
       <Dialog open={this.props.open}>
@@ -68,15 +84,17 @@ class AddProfileDialog extends React.PureComponent {
             color="secondary"
             onClick={() => {
               this.clearState();
-              onCancel();
+              this.props.onClose();
             }}
           >
             Cancel
           </Button>
           <Button
             onClick={() => {
-              onCommit(this.state.login, externalProfile);
-              this.clearState();
+              this.onCommitClick().then(() => {
+                this.clearState();
+                onClose();
+              });
             }}
           >
             Commit
