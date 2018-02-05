@@ -4,7 +4,6 @@ node_js:
 
 branches:
  only:
-  - develop
   - master
 
 install:
@@ -20,8 +19,8 @@ deploy:
 - skip_cleanup: true
   provider: firebase
   on:
-    branch: develop
+    branch: master
   token:
     secure: "$FIREBASE_SECRET"
-  project: "fir-project-3d2a4"
+  project: "achievements-dev"
 
