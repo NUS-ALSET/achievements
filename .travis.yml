@@ -23,10 +23,4 @@ deploy:
   token:
     secure: "$FIREBASE_SECRET"
   project: "fir-project-3d2a4"
-- skip_cleanup: true
-  provider: firebase
-  on:
-    branch: master
-  token:
-    secure: "$FIREBASE_SECRET"
-  project: "achievement-app"
+

@@ -97,28 +97,10 @@ class Account extends React.PureComponent {
     });
   };
 
-  /**
-   *
-   * @param {String} login
-   * @param {ExternalProfile} externalProfile
-   * @returns {Promise<void>}
-   */
-  commitNewProfile = (login, externalProfile) => {
-    const { uid, dispatch } = this.props;
-
-    return Promise.resolve()
-      .then(() =>
-        accountService.addExternalProfile(externalProfile, uid, login)
-      )
-      .catch(err => {
-        dispatch(riseErrorMessage(err.message));
-      })
-      .then(() => this.closeExternalProfileDialog());
-  };
-
   closeExternalProfileDialog = () => {
     this.props.dispatch(externalProfileDialogHide());
   };
+  showError = error => this.props.dispatch(riseErrorMessage(error));
 
   render() {
     const { classes, userAchievements, externalProfiles } = this.props;
@@ -156,8 +138,9 @@ class Account extends React.PureComponent {
                 <AddProfileDialog
                   open={this.props.showDialog}
                   externalProfile={externalProfiles[externalProfileKey]}
-                  onCancel={this.closeExternalProfileDialog}
-                  onCommit={this.commitNewProfile}
+                  onError={this.showError}
+                  uid={this.props.uid}
+                  onClose={this.closeExternalProfileDialog}
                 />
               </Fragment>
             ))}
