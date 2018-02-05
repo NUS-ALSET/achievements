@@ -59,7 +59,12 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
                     .update({
                       achievements,
                       lastUpdate: new Date().getTime(),
-                      totalAchievements: levels.length
+                      totalAchievements: levels.filter(
+                        levelInfo =>
+                          levelInfo &&
+                          levelInfo.state &&
+                          levelInfo.state.complete
+                      ).length
                     });
                 })
                 .then(() => resolve());

@@ -188,6 +188,7 @@ class CoursesService {
           }
         }
         break;
+      default:
     }
 
     return {
