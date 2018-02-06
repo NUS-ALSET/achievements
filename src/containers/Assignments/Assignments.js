@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import withStyles from "material-ui/styles/withStyles";
-import { LinearProgress } from "material-ui/Progress";
-import { firebaseConnect, isLoaded } from "react-redux-firebase";
+// import { LinearProgress } from "material-ui/Progress";
+import { firebaseConnect } from "react-redux-firebase";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
@@ -27,6 +27,7 @@ import {
 import AddAssignmentDialog from "../../components/AddAssignmentDialog";
 import AddProfileDialog from "../../components/AddProfileDialog";
 import { riseErrorMessage } from "../AuthCheck/actions";
+import { getAssignments } from "./selectors";
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
@@ -47,26 +48,8 @@ class Assignments extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     classes: PropTypes.any,
-    course: PropTypes.any,
-    match: PropTypes.any,
-    courseId: PropTypes.string,
-    courseLoaded: PropTypes.any,
-    firebase: PropTypes.any,
-    userId: PropTypes.string,
-    userName: PropTypes.string,
-    users: PropTypes.object,
-    courseMembers: PropTypes.object,
     history: PropTypes.any,
-    currentTab: PropTypes.number,
-    userAchievements: PropTypes.object,
-
-    // FixIt: decide where public achievements data should be stored and place only it
-    allAchievements: PropTypes.object,
-    assignments: PropTypes.object,
-    solutions: PropTypes.object,
-    visibleSolutions: PropTypes.object,
-    sortState: PropTypes.object,
-    dialog: PropTypes.any
+    data: PropTypes.object
   };
 
   // Force show assignments (when become participant)
@@ -95,27 +78,33 @@ class Assignments extends React.Component {
     });
 
   createAssignment = assignmentDetails => {
-    const { courseId } = this.props;
+    /** @type AssignmentProps */
+    const data = this.props.data;
 
-    coursesService.addAssignment(courseId, assignmentDetails);
+    coursesService.addAssignment(data.course.id, assignmentDetails);
     this.setState({ dialogOpen: false });
   };
 
   onUpdateAssignment = (assignmentId, field, value) => {
-    const { courseId } = this.props;
+    /** @type AssignmentProps */
+    const { data } = this.props;
 
-    coursesService.updateAssignment(courseId, assignmentId, field, value);
+    coursesService.updateAssignment(data.course.id, assignmentId, field, value);
   };
 
   // noinspection JSUnusedGlobalSymbols
   submitSolution = (sourceId, assignment) => {
-    coursesService.submitSolution(sourceId, assignment, this.props.userId);
+    /** @type AssignmentProps */
+    const { data } = this.props;
+
+    coursesService.submitSolution(sourceId, assignment, data.currentUser.id);
   };
 
   submitPassword = () => {
-    const { courseId } = this.props;
+    /** @type AssignmentProps */
+    const { data } = this.props;
 
-    coursesService.tryCoursePassword(courseId, this.state.value);
+    coursesService.tryCoursePassword(data.course.id, this.state.value);
   };
 
   onSortClick = assignment => {
@@ -132,35 +121,6 @@ class Assignments extends React.Component {
 
   closeDialog = () => {
     this.props.dispatch(assignmentCloseDialog());
-  };
-
-  getAssignments = instructorView => {
-    const {
-      assignments,
-      courseMembers,
-      users,
-      course,
-      courseId,
-      userName,
-      userId,
-      allAchievements,
-      visibleSolutions,
-      sortState
-    } = this.props;
-
-    return coursesService.getStudentsAssignments({
-      assignments,
-      courseMembers,
-      users,
-      course,
-      courseId,
-      userName,
-      userId,
-      visibleSolutions,
-      userAchievements: allAchievements,
-      instructorView,
-      sortState
-    });
   };
 
   getPasswordView() {
@@ -195,24 +155,17 @@ class Assignments extends React.Component {
   }
 
   getInstructorTab() {
-    const {
-      assignments,
-      userId,
-      visibleSolutions,
-      sortState,
-      userAchievements
-    } = this.props;
+    /** @type AssignmentProps */
+    const data = this.props.data;
 
     switch (this.state.currentTab) {
       case INSTRUCTOR_TAB_ASSIGNMENTS:
         return (
           <AssignmentsTable
-            sortState={sortState}
             instructorView={false}
-            userId={userId}
-            solutions={visibleSolutions}
-            assignmentDefinitions={assignments}
-            studentAssignments={this.getAssignments(false)}
+            sortState={data.ui.sortState}
+            currentUser={data.currentUser}
+            course={data.course}
             onSortClick={this.onSortClick}
             onSubmitClick={this.onSubmitClick}
           />
@@ -223,10 +176,10 @@ class Assignments extends React.Component {
             <AssignmentsEditorTable
               onAddAssignmentClick={this.onAddAssignmentClick}
               onUpdateAssignment={this.onUpdateAssignment}
-              assignments={assignments || {}}
+              assignments={data.course.assignments || {}}
             />
             <AddAssignmentDialog
-              userAchievements={userAchievements}
+              userAchievements={data.currentUser.achievements}
               handleCommit={this.createAssignment}
               handleCancel={() => this.setState({ dialogOpen: false })}
               open={this.state.dialogOpen}
@@ -237,11 +190,9 @@ class Assignments extends React.Component {
         return (
           <AssignmentsTable
             instructorView={true}
-            sortState={sortState}
-            userId={userId}
-            solutions={visibleSolutions}
-            assignmentDefinitions={assignments}
-            studentAssignments={this.getAssignments(false)}
+            sortState={data.ui.sortState}
+            currentUser={data.currentUser}
+            course={data.course}
             onSortClick={this.onSortClick}
             onSubmitClick={this.onSubmitClick}
           />
@@ -253,31 +204,26 @@ class Assignments extends React.Component {
 
   render() {
     const {
-      history,
-      course,
-      courseLoaded,
+      // history,
       classes,
-      assignments,
-      courseMembers,
-      userId,
-      dialog,
-      userName,
-      visibleSolutions,
-      sortState
+      /** @type AssignmentProps */
+      data
     } = this.props;
 
-    if (!courseLoaded) {
-      return <LinearProgress />;
-    }
-    if (!course) {
-      history.push("/courses");
-    }
+    console.log(data);
+
+    // if (!courseLoaded) {
+    //   return <LinearProgress />;
+    // }
+    // if (!course) {
+    //   history.push("/courses");
+    // }
 
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
 
     // If owner match user id then we suppose use as instructor and give him special view
-    if (course.owner === userId) {
+    if (data.course.owner === data.currentUser.id) {
       AssignmentView = (
         <Fragment>
           <Tabs
@@ -294,17 +240,17 @@ class Assignments extends React.Component {
           {this.getInstructorTab()}
         </Fragment>
       );
-    } else if (courseMembers && courseMembers[userId]) {
+    } else if (
+      data.course.members &&
+      data.course.members[data.currentUser.id]
+    ) {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
         <AssignmentsTable
-          sortState={sortState}
           instructorView={false}
-          userId={userId}
-          studentName={userName}
-          solutions={visibleSolutions}
-          assignmentDefinitions={assignments}
-          studentAssignments={this.getAssignments(false)}
+          sortState={data.ui.sortState}
+          currentUser={data.currentUser}
+          course={data.course}
           onSortClick={this.onSortClick}
           onSubmitClick={this.onSubmitClick}
         />
@@ -319,14 +265,14 @@ class Assignments extends React.Component {
           </Link>
           <ChevronRightIcon />
           <Typography className={classes.breadcrumbText}>
-            {course.name}
+            {data.course.name}
           </Typography>
         </Toolbar>
         {AssignmentView}
         <AddProfileDialog
-          uid={userId}
-          defaultValue={(dialog && dialog.value) || ""}
-          open={dialog && dialog.type === "Profile"}
+          uid={data.currentUser.id}
+          defaultValue={(data.ui.dialog && data.ui.dialog.value) || ""}
+          open={data.ui.dialog && data.ui.dialog.type === "Profile"}
           externalProfile={{
             url: "https://codecombat.com",
             id: "CodeCombat"
@@ -339,35 +285,15 @@ class Assignments extends React.Component {
   }
 }
 
-// Returns value from
-const getFrom = (source, field) => {
-  return (source || {})[field] || {};
-};
-
-const mapStateToProps = (state, ownProps) => {
-  const courseId = ownProps.match.params.courseId;
-  const userId = state.firebase.auth.uid;
-
-  return {
-    currentTab: state.assignments.currentTab,
-    userId: state.firebase.auth.uid,
-    userName: state.firebase.auth.displayName,
-    courseLoaded: isLoaded(state.firebase.data.courseMembers),
-    courseId,
-    dialog: state.assignments.dialog,
-    sortState: state.assignments.sort,
-    courseMembers: getFrom(state.firebase.data.courseMembers, courseId),
-    assignments: getFrom(state.firebase.data.assignments, courseId),
-    solutions: getFrom(state.firebase.data.solutions, courseId),
-    visibleSolutions: getFrom(state.firebase.data.visibleSolutions, courseId),
-    userAchievements: getFrom(state.firebase.data.userAchievements, userId),
-    allAchievements: state.firebase.data.userAchievements || {},
-    users: state.firebase.data.users || {},
-    course:
-      isLoaded(state.firebase.data.courses) &&
-      getFrom(state.firebase.data.courses, courseId)
-  };
-};
+/**
+ *
+ * @param {ReduxState} state
+ * @param ownProps
+ * @returns {*} props
+ */
+const mapStateToProps = (state, ownProps) => ({
+  data: getAssignments(state, ownProps)
+});
 
 export default compose(
   withRouter,
