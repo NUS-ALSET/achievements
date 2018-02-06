@@ -98,7 +98,7 @@
       "$courseKey": {
         ".read": "auth != null  &&
           (root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists() ||
-          root.child('courses' + $courseKey + '/owner').val() == auth.uid )
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid )
         ",
         "$userKey": {
 	        ".write": "auth != null && $userKey == auth.uid",
@@ -121,9 +121,10 @@
       }
     },
     "userAchievements": {
+      ".read": "auth != null",
       "$userKey": {
         ".write": "auth != null && auth.uid == $userKey",
-        ".read": "auth != null && auth.uid == $userKey"
+        ".read": "auth != null"
       }
     },
     "assignments": {

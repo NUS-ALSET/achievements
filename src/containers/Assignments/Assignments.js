@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -19,8 +18,15 @@ import { coursesService } from "../../services/courses";
 
 import AssignmentsTable from "../../components/AssignmentsTable";
 import AssignmentsEditorTable from "../../components/AssignmentsEditorTable";
-import { assignmentAddRequest } from "./actions";
+import {
+  assignmentAddRequest,
+  assignmentCloseDialog,
+  assignmentsSortChange,
+  assignmentSubmitRequest
+} from "./actions";
 import AddAssignmentDialog from "../../components/AddAssignmentDialog";
+import AddProfileDialog from "../../components/AddProfileDialog";
+import { riseErrorMessage } from "../AuthCheck/actions";
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
@@ -53,8 +59,14 @@ class Assignments extends React.Component {
     history: PropTypes.any,
     currentTab: PropTypes.number,
     userAchievements: PropTypes.object,
+
+    // FixIt: decide where public achievements data should be stored and place only it
+    allAchievements: PropTypes.object,
     assignments: PropTypes.object,
-    solutions: PropTypes.object
+    solutions: PropTypes.object,
+    visibleSolutions: PropTypes.object,
+    sortState: PropTypes.object,
+    dialog: PropTypes.any
   };
 
   // Force show assignments (when become participant)
@@ -95,6 +107,7 @@ class Assignments extends React.Component {
     coursesService.updateAssignment(courseId, assignmentId, field, value);
   };
 
+  // noinspection JSUnusedGlobalSymbols
   submitSolution = (sourceId, assignment) => {
     coursesService.submitSolution(sourceId, assignment, this.props.userId);
   };
@@ -105,108 +118,59 @@ class Assignments extends React.Component {
     coursesService.tryCoursePassword(courseId, this.state.value);
   };
 
-  getAssignments = () => {
+  onSortClick = assignment => {
+    this.props.dispatch(
+      assignmentsSortChange((assignment && assignment.id) || "studentName")
+    );
+  };
+
+  onSubmitClick = (assignment, solution) => {
+    this.props.dispatch(assignmentSubmitRequest(assignment, solution));
+  };
+
+  showError = error => this.props.dispatch(riseErrorMessage(error));
+
+  closeDialog = () => {
+    this.props.dispatch(assignmentCloseDialog());
+  };
+
+  getAssignments = instructorView => {
     const {
       assignments,
       courseMembers,
       users,
+      course,
       courseId,
       userName,
       userId,
-      solutions
+      allAchievements,
+      visibleSolutions,
+      sortState
     } = this.props;
-    const members = Object.keys(courseMembers).map(userId =>
-      Object.assign({ id: userId }, users[userId])
-    );
-    const result = [];
-    let currentUserData = [];
 
-    for (let i = 0; i < members.length; i++) {
-      _.each(assignments, (assignment, assignmentId) => {
-        let solution = solutions[members[i].id];
-
-        solution = solution && solution[assignmentId];
-
-        const unknownSolution =
-          assignment.solutionVisible || members[i].id === userId
-            ? "Incomplete"
-            : "Who knows";
-
-        switch (assignment.questionType) {
-          case "Profile":
-            if (solution) {
-              solution = (
-                <a href={`https://codecombat.com/user/${solution}`}>
-                  {solution}
-                </a>
-              );
-            }
-
-            break;
-          default:
-            solution = solution || unknownSolution;
-        }
-
-        const userData = {
-          studentName: members[i].displayName,
-          assignment: assignment.name,
-          solution: solution || unknownSolution,
-          actions:
-            members[i].id === userId ? (
-              <Button
-                onClick={() =>
-                  this.submitSolution(courseId, {
-                    ...assignment,
-                    id: assignmentId
-                  })
-                }
-              >
-                {solutions[assignmentId] ? "Update" : "Submit"}
-              </Button>
-            ) : (
-              ""
-            )
-        };
-
-        if (userData.studentName === userName) {
-          currentUserData.push(userData);
-        } else {
-          result.push(userData);
-        }
-      });
-    }
-
-    return currentUserData.concat(result);
-  };
-
-  render() {
-    const {
-      history,
-      course,
-      courseLoaded,
-      classes,
+    return coursesService.getStudentsAssignments({
       assignments,
       courseMembers,
-      userId,
+      users,
+      course,
+      courseId,
       userName,
-      userAchievements
-    } = this.props;
+      userId,
+      visibleSolutions,
+      userAchievements: allAchievements,
+      instructorView,
+      sortState
+    });
+  };
 
-    if (!courseLoaded) {
-      return <LinearProgress />;
-    }
-    if (!course) {
-      history.push("/courses");
-    }
-
-    // Default view with password enter
-    let AssignmentView = (
+  getPasswordView() {
+    return (
       <Fragment>
         <TextField
           onChange={this.handlePasswordChange}
           type="password"
           autoFocus
-          fullWidth={true}
+          fullWidth
           label="Enter password"
         />
         <Grid container>
@@ -228,57 +192,121 @@ class Assignments extends React.Component {
         </Grid>
       </Fragment>
     );
+  }
+
+  getInstructorTab() {
+    const {
+      assignments,
+      userId,
+      visibleSolutions,
+      sortState,
+      userAchievements
+    } = this.props;
+
+    switch (this.state.currentTab) {
+      case INSTRUCTOR_TAB_ASSIGNMENTS:
+        return (
+          <AssignmentsTable
+            sortState={sortState}
+            instructorView={false}
+            userId={userId}
+            solutions={visibleSolutions}
+            assignmentDefinitions={assignments}
+            studentAssignments={this.getAssignments(false)}
+            onSortClick={this.onSortClick}
+            onSubmitClick={this.onSubmitClick}
+          />
+        );
+      case INSTRUCTOR_TAB_EDIT:
+        return (
+          <Fragment>
+            <AssignmentsEditorTable
+              onAddAssignmentClick={this.onAddAssignmentClick}
+              onUpdateAssignment={this.onUpdateAssignment}
+              assignments={assignments || {}}
+            />
+            <AddAssignmentDialog
+              userAchievements={userAchievements}
+              handleCommit={this.createAssignment}
+              handleCancel={() => this.setState({ dialogOpen: false })}
+              open={this.state.dialogOpen}
+            />
+          </Fragment>
+        );
+      case INSTRUCTOR_TAB_VIEW:
+        return (
+          <AssignmentsTable
+            instructorView={true}
+            sortState={sortState}
+            userId={userId}
+            solutions={visibleSolutions}
+            assignmentDefinitions={assignments}
+            studentAssignments={this.getAssignments(false)}
+            onSortClick={this.onSortClick}
+            onSubmitClick={this.onSubmitClick}
+          />
+        );
+      default:
+        return <div>Something goes wrong</div>;
+    }
+  }
+
+  render() {
+    const {
+      history,
+      course,
+      courseLoaded,
+      classes,
+      assignments,
+      courseMembers,
+      userId,
+      dialog,
+      userName,
+      visibleSolutions,
+      sortState
+    } = this.props;
+
+    if (!courseLoaded) {
+      return <LinearProgress />;
+    }
+    if (!course) {
+      history.push("/courses");
+    }
+
+    // Default view with password enter
+    let AssignmentView = this.getPasswordView();
 
     // If owner match user id then we suppose use as instructor and give him special view
     if (course.owner === userId) {
-      let instructorTab;
-
-      switch (this.state.currentTab) {
-        case INSTRUCTOR_TAB_ASSIGNMENTS:
-          instructorTab = (
-            <AssignmentsTable assignments={this.getAssignments()} />
-          );
-          break;
-        case INSTRUCTOR_TAB_EDIT:
-          instructorTab = (
-            <Fragment>
-              <AssignmentsEditorTable
-                onAddAssignmentClick={this.onAddAssignmentClick}
-                onUpdateAssignment={this.onUpdateAssignment}
-                assignments={assignments || {}}
-              />
-              <AddAssignmentDialog
-                userAchievements={userAchievements}
-                handleCommit={this.createAssignment}
-                handleCancel={() => this.setState({ dialogOpen: false })}
-                open={this.state.dialogOpen}
-              />
-            </Fragment>
-          );
-          break;
-        case INSTRUCTOR_TAB_VIEW:
-          instructorTab = <div>Not implemented</div>;
-          break;
-        default:
-          instructorTab = <div>Something goes wrong</div>;
-      }
-
       AssignmentView = (
         <Fragment>
-          <Tabs value={this.state.currentTab} onChange={this.handleTabChange}>
-            <Tab label={"Assignments"} />
+          <Tabs
+            fullWidth
+            indicatorColor="primary"
+            textColor="primary"
+            value={this.state.currentTab}
+            onChange={this.handleTabChange}
+          >
+            <Tab label="Assignments" />
             <Tab label="Edit" />
             <Tab label="Instructor view" />
           </Tabs>
-          {instructorTab}
+          {this.getInstructorTab()}
         </Fragment>
       );
     } else if (courseMembers && courseMembers[userId]) {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
         <AssignmentsTable
+          sortState={sortState}
+          instructorView={false}
+          userId={userId}
           studentName={userName}
-          assignments={this.getAssignments()}
+          solutions={visibleSolutions}
+          assignmentDefinitions={assignments}
+          studentAssignments={this.getAssignments(false)}
+          onSortClick={this.onSortClick}
+          onSubmitClick={this.onSubmitClick}
         />
       );
     }
@@ -295,6 +323,17 @@ class Assignments extends React.Component {
           </Typography>
         </Toolbar>
         {AssignmentView}
+        <AddProfileDialog
+          uid={userId}
+          defaultValue={(dialog && dialog.value) || ""}
+          open={dialog && dialog.type === "Profile"}
+          externalProfile={{
+            url: "https://codecombat.com",
+            id: "CodeCombat"
+          }}
+          onError={this.showError}
+          onClose={this.closeDialog}
+        />
       </Fragment>
     );
   }
@@ -315,11 +354,14 @@ const mapStateToProps = (state, ownProps) => {
     userName: state.firebase.auth.displayName,
     courseLoaded: isLoaded(state.firebase.data.courseMembers),
     courseId,
+    dialog: state.assignments.dialog,
+    sortState: state.assignments.sort,
     courseMembers: getFrom(state.firebase.data.courseMembers, courseId),
     assignments: getFrom(state.firebase.data.assignments, courseId),
     solutions: getFrom(state.firebase.data.solutions, courseId),
-    solutionStatuses: getFrom(state.firebase.data.solutions, courseId),
+    visibleSolutions: getFrom(state.firebase.data.visibleSolutions, courseId),
     userAchievements: getFrom(state.firebase.data.userAchievements, userId),
+    allAchievements: state.firebase.data.userAchievements || {},
     users: state.firebase.data.users || {},
     course:
       isLoaded(state.firebase.data.courses) &&
@@ -336,9 +378,10 @@ export default compose(
     return [
       `/courseMembers/${courseId}`,
       `/solutions/${courseId}/${userId}`,
+      `/visibleSolutions/${courseId}`,
       "/users",
       `/assignments/${courseId}`,
-      `/userAchievements/${userId}`
+      "/userAchievements"
     ];
   }),
   connect(mapStateToProps)

@@ -20,3 +20,21 @@ export const ASSIGNMENT_ADD_REQUEST = "ASSIGNMENT_ADD_REQUEST";
 export const assignmentAddRequest = () => ({
   type: ASSIGNMENT_ADD_REQUEST
 });
+
+export const ASSIGNMENTS_SORT_CHANGE = "ASSIGNMENTS_SORT_CHANGE";
+export const assignmentsSortChange = sortField => ({
+  type: ASSIGNMENTS_SORT_CHANGE,
+  sortField
+});
+
+export const ASSIGNMENT_SUBMIT_REQUEST = "ASSIGNMENT_SUBMIT_REQUEST";
+export const assignmentSubmitRequest = (assignment, solution) => ({
+  type: ASSIGNMENT_SUBMIT_REQUEST,
+  dialogType: assignment.questionType === "Profile" ? "Profile" : "",
+  value: solution.value
+});
+
+export const ASSIGNMENT_CLOSE_DIALOG = "ASSIGNMENT_CLOSE_DIALOG";
+export const assignmentCloseDialog = () => ({
+  type: ASSIGNMENT_CLOSE_DIALOG
+});
