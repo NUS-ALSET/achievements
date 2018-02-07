@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import withStyles from "material-ui/styles/withStyles";
-// import { LinearProgress } from "material-ui/Progress";
+import { LinearProgress } from "material-ui/Progress";
 import { firebaseConnect } from "react-redux-firebase";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Toolbar from "material-ui/Toolbar";
@@ -28,6 +28,7 @@ import AddAssignmentDialog from "../../components/AddAssignmentDialog";
 import AddProfileDialog from "../../components/AddProfileDialog";
 import { riseErrorMessage } from "../AuthCheck/actions";
 import { getAssignments } from "./selectors";
+import AddTextSolutionDialog from "../../components/AddTextSolutionDialog";
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
@@ -92,14 +93,6 @@ class Assignments extends React.Component {
     coursesService.updateAssignment(data.course.id, assignmentId, field, value);
   };
 
-  // noinspection JSUnusedGlobalSymbols
-  submitSolution = (sourceId, assignment) => {
-    /** @type AssignmentProps */
-    const { data } = this.props;
-
-    coursesService.submitSolution(sourceId, assignment, data.currentUser.id);
-  };
-
   submitPassword = () => {
     /** @type AssignmentProps */
     const { data } = this.props;
@@ -115,6 +108,14 @@ class Assignments extends React.Component {
 
   onSubmitClick = (assignment, solution) => {
     this.props.dispatch(assignmentSubmitRequest(assignment, solution));
+  };
+
+  onAcceptClick = (assignment, studentId) => {
+    coursesService.acceptSolution(
+      this.props.data.course.id,
+      assignment,
+      studentId
+    );
   };
 
   showError = error => this.props.dispatch(riseErrorMessage(error));
@@ -193,6 +194,7 @@ class Assignments extends React.Component {
             sortState={data.ui.sortState}
             currentUser={data.currentUser}
             course={data.course}
+            onAcceptClick={this.onAcceptClick}
             onSortClick={this.onSortClick}
             onSubmitClick={this.onSubmitClick}
           />
@@ -204,20 +206,18 @@ class Assignments extends React.Component {
 
   render() {
     const {
-      // history,
+      history,
       classes,
       /** @type AssignmentProps */
       data
     } = this.props;
 
-    console.log(data);
-
-    // if (!courseLoaded) {
-    //   return <LinearProgress />;
-    // }
-    // if (!course) {
-    //   history.push("/courses");
-    // }
+    if (!data.course.members) {
+      return <LinearProgress />;
+    }
+    if (!data.course.owner) {
+      history.push("/courses");
+    }
 
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
@@ -280,6 +280,12 @@ class Assignments extends React.Component {
           onError={this.showError}
           onClose={this.closeDialog}
         />
+        <AddTextSolutionDialog
+          open={data.ui.dialog && data.ui.dialog.type === "Text"}
+          courseId={data.course.id}
+          assignment={data.ui.currentAssignment}
+          onClose={this.closeDialog}
+        />
       </Fragment>
     );
   }
@@ -298,12 +304,11 @@ const mapStateToProps = (state, ownProps) => ({
 export default compose(
   withRouter,
   withStyles(styles),
-  firebaseConnect((ownProps, store) => {
+  firebaseConnect(ownProps => {
     const courseId = ownProps.match.params.courseId;
-    const userId = store.getState().firebase.auth.uid;
     return [
       `/courseMembers/${courseId}`,
-      `/solutions/${courseId}/${userId}`,
+      `/solutions/${courseId}`,
       `/visibleSolutions/${courseId}`,
       "/users",
       `/assignments/${courseId}`,

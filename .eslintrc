@@ -14,6 +14,7 @@
       2,
       "safe"
     ],
+    "array-callback-return": 2,
     "no-console": [
       2,
       {
@@ -22,6 +23,7 @@
         ]
       }
     ],
+    "default-case": 2,
     "no-debugger": 2,
     "brace-style": [
       2,

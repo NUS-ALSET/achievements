@@ -108,6 +108,16 @@ class CoursesService {
     });
   }
 
+  /**
+   * This method accepts student's solution and put's it at public section
+   * @param courseId
+   * @param assignment
+   * @param studentId
+   */
+  acceptSolution(courseId, assignment, studentId) {
+    console.error(courseId, assignment, studentId);
+  }
+
   getProfileStatus(userId) {
     return firebase
       .ref(`/userAchievements/${userId}/CodeCombat/id`)
@@ -120,8 +130,9 @@ class CoursesService {
       });
   }
 
-  submitSolution(courseId, assignment, userId, value) {
+  submitSolution(courseId, assignment, value) {
     let solutionValue;
+    const userId = this.getUser("uid");
 
     return Promise.resolve()
       .then(() => {
@@ -139,11 +150,12 @@ class CoursesService {
           .set(solutionValue);
       })
       .then(() => {
-        if (assignment.solutionVisible) {
-          return firebase
-            .ref(`/visibleSolutions/${courseId}/${userId}/${assignment.id}`)
-            .set(solutionValue);
-        }
+        // Fixit: remove solution visible and add it to assignment view
+        // if (assignment.solutionVisible) {
+        return firebase
+          .ref(`/visibleSolutions/${courseId}/${userId}/${assignment.id}`)
+          .set(solutionValue);
+        // }
       })
       .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
   }
@@ -199,6 +211,7 @@ class CoursesService {
     };
   }
 
+  // noinspection JSUnusedGlobalSymbols
   /**
    * Returns list of assignments
    *

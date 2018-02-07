@@ -30,7 +30,8 @@ export const assignments = (
         dialog: {
           type: action.dialogType,
           value: action.value
-        }
+        },
+        currentAssignment: action.assignment
       };
     case ASSIGNMENT_CLOSE_DIALOG:
       return {

@@ -14,6 +14,8 @@ class AssignmentsTable extends React.PureComponent {
   static propTypes = {
     onSortClick: PropTypes.func.isRequired,
     onSubmitClick: PropTypes.func.isRequired,
+    onAcceptClick: PropTypes.func,
+    instructorView: PropTypes.bool.isRequired,
     sortState: PropTypes.object,
     currentUser: PropTypes.object,
     course: PropTypes.object
@@ -42,10 +44,10 @@ class AssignmentsTable extends React.PureComponent {
             {solution}
           </a>
         ) : (
-          <span />
+          undefined
         );
       default:
-        return solution || <span />;
+        return solution;
     }
   }
 
@@ -55,6 +57,9 @@ class AssignmentsTable extends React.PureComponent {
       course,
       currentUser,
       sortState,
+      instructorView,
+
+      onAcceptClick,
       onSortClick,
       onSubmitClick
     } = this.props;
@@ -118,6 +123,19 @@ class AssignmentsTable extends React.PureComponent {
                     <TableCell key={assignment.id}>
                       <Fragment>
                         {this.getSolution(assignment, studentInfo.solutions)}
+                        {this.getSolution(assignment, studentInfo.solutions) &&
+                          instructorView && (
+                            <Fragment>
+                              <Button
+                                onClick={() =>
+                                  onAcceptClick(assignment, studentInfo.id)
+                                }
+                              >
+                                Accept
+                              </Button>
+                            </Fragment>
+                          )}
+
                         {studentInfo.id === currentUser.id && (
                           <Button
                             onClick={() =>

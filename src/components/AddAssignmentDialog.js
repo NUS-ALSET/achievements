@@ -16,6 +16,10 @@ import format from "date-fns/format";
 import Button from "material-ui/Button";
 import TextField from "material-ui/TextField";
 import MenuItem from "material-ui/Menu/MenuItem";
+import Select from "material-ui/Select";
+import Input, { InputLabel } from "material-ui/Input";
+import { FormControl } from "material-ui/Form";
+import Chip from "material-ui/Chip";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
@@ -31,7 +35,7 @@ class AddAssignmentDialog extends React.PureComponent {
     visible: false,
     deadline: format(new Date(), "YYYY-MM-DDTHH:mm"),
     questionType: "Text",
-    level: ""
+    levels: []
   };
   handleChange = name => event => {
     // Reset default `name` and `details` for `Profile` question type
@@ -118,20 +122,29 @@ class AddAssignmentDialog extends React.PureComponent {
             fullWidth
           />
           {this.state.questionType === "CodeCombat" ? (
-            <TextField
-              margin="normal"
-              select
-              value={this.state.level || ""}
-              onChange={this.handleChange("level")}
-              label="Choose Level"
-              fullWidth
-            >
-              {Object.keys(userAchievements).map(achievementId => (
-                <MenuItem key={achievementId} value={achievementId}>
-                  {userAchievements[achievementId].name}
-                </MenuItem>
-              ))}
-            </TextField>
+            <FormControl fullWidth>
+              <InputLabel htmlFor="select-multiple-levels">Levels</InputLabel>
+              <Select
+                multiple
+                value={this.state.levels}
+                onChange={this.handleChange("levels")}
+                input={<Input id="select-multiple-levels" />}
+                renderValue={selected => (
+                  <div>
+                    {selected.map(value => <Chip key={value} label={value} />)}
+                  </div>
+                )}
+              >
+                {Object.keys(userAchievements).map(id => (
+                  <MenuItem
+                    key={userAchievements[id].name}
+                    value={userAchievements[id].name}
+                  >
+                    {userAchievements[id].name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           ) : (
             undefined
           )}

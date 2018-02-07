@@ -30,8 +30,9 @@ export const assignmentsSortChange = sortField => ({
 export const ASSIGNMENT_SUBMIT_REQUEST = "ASSIGNMENT_SUBMIT_REQUEST";
 export const assignmentSubmitRequest = (assignment, solution) => ({
   type: ASSIGNMENT_SUBMIT_REQUEST,
-  dialogType: assignment.questionType === "Profile" ? "Profile" : "",
-  value: solution.value
+  assignment: assignment,
+  dialogType: assignment.questionType,
+  value: solution
 });
 
 export const ASSIGNMENT_CLOSE_DIALOG = "ASSIGNMENT_CLOSE_DIALOG";

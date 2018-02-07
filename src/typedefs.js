@@ -43,6 +43,7 @@
  * @property {Object} sort
  * @property {String} sort.field
  * @property {String} sort.direction
+ * @property {Object} currentAssignment
  */
 
 /**
