@@ -1,6 +1,8 @@
 import {
   ASSIGNMENT_CLOSE_DIALOG,
+  ASSIGNMENT_DELETE_REQUEST,
   ASSIGNMENT_SUBMIT_REQUEST,
+  ASSIGNMENT_SWITCH_TAB,
   ASSIGNMENTS_SORT_CHANGE
 } from "./actions";
 
@@ -30,6 +32,20 @@ export const assignments = (
         dialog: {
           type: action.dialogType,
           value: action.value
+        },
+        currentAssignment: action.assignment
+      };
+    case ASSIGNMENT_SWITCH_TAB:
+      return {
+        ...state,
+        currentTab: action.tabIndex
+      };
+    case ASSIGNMENT_DELETE_REQUEST:
+      return {
+        ...state,
+        dialog: {
+          type: "DeleteAssignment",
+          value: action.assignment
         }
       };
     case ASSIGNMENT_CLOSE_DIALOG:

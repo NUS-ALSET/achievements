@@ -35,20 +35,20 @@ export const DrawerMenuItems = onRequestClose => (
     </List>
     <Divider />
     <List onClick={onRequestClose}>
+      <Link to="/cohorts" style={linkStyle}>
+        <ListItem button>
+          <ListItemIcon>
+            <StarIcon />
+          </ListItemIcon>
+          <ListItemText primary="Cohorts" />
+        </ListItem>
+      </Link>
       <Link to="/profile" style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
           </ListItemIcon>
           <ListItemText primary="Profile" />
-        </ListItem>
-      </Link>
-      <Link to="/about" style={linkStyle}>
-        <ListItem button>
-          <ListItemIcon>
-            <StarIcon />
-          </ListItemIcon>
-          <ListItemText primary="About" />
         </ListItem>
       </Link>
     </List>
