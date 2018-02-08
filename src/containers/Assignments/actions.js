@@ -16,6 +16,12 @@ export const coursePasswordEnterFail = error => ({
   error
 });
 
+export const ASSIGNMENT_SWITCH_TAB = "ASSIGNMENT_SWITCH_TAB";
+export const assignmentSwitchTab = tabIndex => ({
+  type: ASSIGNMENT_SWITCH_TAB,
+  tabIndex
+});
+
 export const ASSIGNMENT_ADD_REQUEST = "ASSIGNMENT_ADD_REQUEST";
 export const assignmentAddRequest = () => ({
   type: ASSIGNMENT_ADD_REQUEST
@@ -38,4 +44,16 @@ export const assignmentSubmitRequest = (assignment, solution) => ({
 export const ASSIGNMENT_CLOSE_DIALOG = "ASSIGNMENT_CLOSE_DIALOG";
 export const assignmentCloseDialog = () => ({
   type: ASSIGNMENT_CLOSE_DIALOG
+});
+
+export const ASSIGNMENT_DELETE_REQUEST = "ASSIGNMENT_DELETE_REQUEST";
+export const assignmentDeleteRequest = assignment => ({
+  type: ASSIGNMENT_DELETE_REQUEST,
+  assignment
+});
+
+export const ASSIGNMENT_DELETE_SUCCESS = "ASSIGNMENT_DELETE_SUCCESS";
+// noinspection JSUnusedGlobalSymbols
+export const assignmentDeleteSuccess = () => ({
+  type: ASSIGNMENT_DELETE_SUCCESS
 });

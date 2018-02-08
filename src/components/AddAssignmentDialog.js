@@ -136,10 +136,7 @@ class AddAssignmentDialog extends React.PureComponent {
                 )}
               >
                 {Object.keys(userAchievements).map(id => (
-                  <MenuItem
-                    key={userAchievements[id].name}
-                    value={userAchievements[id].name}
-                  >
+                  <MenuItem key={userAchievements[id].name} value={id}>
                     {userAchievements[id].name}
                   </MenuItem>
                 ))}

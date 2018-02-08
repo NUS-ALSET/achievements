@@ -25,6 +25,7 @@ class AddProfileDialog extends React.PureComponent {
     externalProfile: PropTypes.object.isRequired,
     onError: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
+    onCommit: PropTypes.func,
     defaultValue: PropTypes.string
   };
 
@@ -45,13 +46,13 @@ class AddProfileDialog extends React.PureComponent {
   };
 
   onCommitClick = () => {
-    const { externalProfile, uid, onError } = this.props;
+    const { externalProfile, uid, onError, onCommit } = this.props;
     const { login } = this.state;
 
     return Promise.resolve()
       .then(() =>
         accountService.addExternalProfile(externalProfile, uid, login)
-      )
+      ).then(()=> onCommit && onCommit())
       .catch(err => {
         onError(err.message);
       });

@@ -1,5 +1,16 @@
 /**
+ * @typedef {Object} Assignment
+ * @property {String} id
+ * @property {String} questionType
+ * @property {String} name
+ * @property {String} deadline
+ * @property {Array<String>} levels
+ * @property {String} details
+ */
+
+/**
  * @typedef {Object} FirebaseState
+ *
  * @property {Object} auth
  * @property {String} auth.displayName
  * @property {String} auth.uid

@@ -108,6 +108,13 @@ class CoursesService {
     });
   }
 
+  removeAssignment(courseId, assignmentId) {
+    return firebase
+      .ref(`/assignments/${courseId}/${assignmentId}`)
+      .remove()
+      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+  }
+
   /**
    * This method accepts student's solution and put's it at public section
    * @param courseId
@@ -115,7 +122,15 @@ class CoursesService {
    * @param studentId
    */
   acceptSolution(courseId, assignment, studentId) {
-    console.error(courseId, assignment, studentId);
+    return firebase
+      .ref(`/solutions/${courseId}/${studentId}/${assignment.id}`)
+      .once("value")
+      .then(solution => {
+        return firebase
+          .ref(`/visibleSolutions/${courseId}/${studentId}/${assignment.id}`)
+          .set(solution.val());
+      })
+      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
   }
 
   getProfileStatus(userId) {
@@ -130,6 +145,33 @@ class CoursesService {
       });
   }
 
+  /**
+   * This method checks requested levels complete status and throws and error if something incomplete
+   * @param userId
+   * @param levels
+   */
+  getAchievementsStatus(userId, levels) {
+    if (!Array.isArray(levels)) {
+      levels = [levels];
+    }
+    return firebase
+      .ref(`/userAchievements/${userId}/CodeCombat`)
+      .once("value")
+      .then(profileData => {
+        const profile = profileData.val() || {};
+        const achievements = profile.achievements || {};
+
+        levels.forEach(level => {
+          const achievement = achievements[level];
+
+          if (!(achievement && achievement.complete))
+            throw new Error(`Not finished required level "${level}"`);
+        });
+
+        return profile.id;
+      });
+  }
+
   submitSolution(courseId, assignment, value) {
     let solutionValue;
     const userId = this.getUser("uid");
@@ -139,6 +181,11 @@ class CoursesService {
         switch (assignment.questionType) {
           case "Profile":
             return this.getProfileStatus(userId);
+          case "CodeCombat":
+            return this.getAchievementsStatus(
+              userId,
+              assignment.level || assignment.levels
+            );
           default:
             return value;
         }
@@ -148,14 +195,14 @@ class CoursesService {
         return firebase
           .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
           .set(solutionValue);
-      })
-      .then(() => {
-        // Fixit: remove solution visible and add it to assignment view
-        // if (assignment.solutionVisible) {
-        return firebase
-          .ref(`/visibleSolutions/${courseId}/${userId}/${assignment.id}`)
-          .set(solutionValue);
-        // }
+        // })
+        // .then(() => {
+        //   Fixit: remove solution visible and add it to assignment view
+        //   if (assignment.solutionVisible) {
+        //   return firebase
+        //     .ref(`/visibleSolutions/${courseId}/${userId}/${assignment.id}`)
+        //     .set(solutionValue);
+        //   }
       })
       .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
   }

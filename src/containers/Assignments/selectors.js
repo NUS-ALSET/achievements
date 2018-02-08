@@ -1,14 +1,40 @@
-// Returns value from
-const getFrom = (source, field) => {
-  return (source || {})[field] || {};
-};
+// Tab with instructor view
+const INSTRUCTOR_TAB_VIEW = 2;
 
-const processSolutions = (solutions, assignments, achievements) => {
-  // Clone solutions to keep it immutable
-  solutions = { ...solutions };
-  Object.keys(solutions).forEach(assignmentId => {
+/**
+ * Get Solutions (or single solution)
+ *
+ * @param {ReduxState} state
+ * @param {String} courseId
+ * @param {String} studentId
+ * @param {Object} [options]
+ * @param {Boolean} [options.onlyVisible]
+ * @returns {*}
+ */
+const getStudentSolutions = (state, courseId, studentId, options) => {
+  let result;
+  options = options || {};
+  const achievements = getFrom(state.firebase.data.userAchievements, studentId);
+  const assignments = getFrom(state.firebase.data.assignments, courseId);
+
+  if (!options.onlyVisible) {
+    result = getFrom(
+      getFrom(state.firebase.data.solutions, courseId),
+      studentId
+    );
+  }
+  result =
+    result ||
+    getFrom(getFrom(state.firebase.data.visibleSolutions, courseId), studentId);
+
+  Object.keys(result).forEach(assignmentId => {
     const assignment = assignments[assignmentId] || {};
-    const solution = solutions[assignmentId];
+    const solution = result[assignmentId];
+
+    if (options.onlyVisible && !assignment.solutionVisible) {
+      result[assignmentId] = solution ? "Complete" : "";
+      return true;
+    }
 
     if (!achievements.CodeCombat) {
       return true;
@@ -17,20 +43,27 @@ const processSolutions = (solutions, assignments, achievements) => {
     switch (assignment.questionType) {
       case "Profile":
         if (solution) {
-          solutions[assignmentId] = `${achievements.CodeCombat.id} (${
+          result[assignmentId] = `${achievements.CodeCombat.id} (${
             achievements.CodeCombat.totalAchievements
           })`;
         }
         return true;
-      default:
+      case "CodeCombat":
         if (solution) {
-          solutions[assignmentId] = "Complete";
+          result[assignmentId] = "Complete";
         }
+        return true;
+      default:
         return true;
     }
   });
 
-  return solutions;
+  return result;
+};
+
+// Returns value from
+const getFrom = (source, field) => {
+  return (source || {})[field] || {};
 };
 
 /**
@@ -42,25 +75,30 @@ const processSolutions = (solutions, assignments, achievements) => {
 export const getAssignments = (state, ownProps) => {
   const courseId = ownProps.match.params.courseId;
   const assignments = getFrom(state.firebase.data.assignments, courseId);
-  const members = state.firebase.data.courseMembers;
   const sortedMembers = {};
-
-  Object.keys(getFrom(members, courseId))
+  const instructorView = state.assignments.currentTab === INSTRUCTOR_TAB_VIEW;
+  const members = Object.keys(
+    getFrom(state.firebase.data.courseMembers, courseId)
+  )
+    .map(id => ({
+      id: id,
+      name: getFrom(state.firebase.data.users, id).displayName,
+      achievements: getFrom(state.firebase.data.userAchievements, id),
+      solutions: getStudentSolutions(state, courseId, id, {
+        onlyVisible: !(instructorView || id === state.firebase.auth.uid)
+      })
+    }))
     .sort((a, b) => {
-      let aValue = getFrom(state.firebase.data.users, a).displayName;
-      let bValue = getFrom(state.firebase.data.users, b).displayName;
+      let aValue = a.name;
+      let bValue = b.name;
       let result = 0;
 
       if (state.assignments.sort.field !== "studentName") {
-        aValue = getFrom(
-          getFrom(getFrom(state.firebase.data.visibleSolutions, courseId), a),
-          state.assignments.sort.field
-        );
-        bValue = getFrom(
-          getFrom(getFrom(state.firebase.data.visibleSolutions, courseId), b),
-          state.assignments.sort.field
-        );
+        aValue = a.solutions[state.assignments.sort.field];
+        bValue = b.solutions[state.assignments.sort.field];
       }
+      aValue = aValue || "";
+      bValue = bValue || "";
 
       if (aValue > bValue) {
         result = 1;
@@ -68,21 +106,12 @@ export const getAssignments = (state, ownProps) => {
         result = -1;
       }
       return state.assignments.sort.direction === "asc" ? result : -result;
-    })
-    .forEach(id => {
-      const achievements = getFrom(state.firebase.data.userAchievements, id);
-      sortedMembers[id] = {
-        id,
-        name: getFrom(state.firebase.data.users, id).displayName,
-        achievements,
-        solutions: processSolutions(
-          getFrom(getFrom(state.firebase.data.visibleSolutions, courseId), id),
-          assignments,
-          achievements
-        )
-      };
-      return true;
     });
+
+  members.forEach(member => {
+    sortedMembers[member.id] = member;
+    return true;
+  });
 
   return {
     currentUser: {
@@ -102,7 +131,7 @@ export const getAssignments = (state, ownProps) => {
     course: {
       id: courseId,
       ...getFrom(state.firebase.data.courses, courseId),
-      members: members ? sortedMembers : false,
+      members: members.length ? sortedMembers : false,
       assignments: Object.keys(assignments).map(id => ({
         ...assignments[id],
         id

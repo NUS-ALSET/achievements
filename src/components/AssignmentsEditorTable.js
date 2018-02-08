@@ -15,6 +15,8 @@ import Table, {
   TableRow
 } from "material-ui/Table";
 
+import EditIcon from "material-ui-icons/Edit";
+import DeleteIcon from "material-ui-icons/Delete";
 import ExpandLessIcon from "material-ui-icons/ExpandLess";
 import ExpandMoreIcon from "material-ui-icons/ExpandMore";
 
@@ -26,14 +28,17 @@ class AssignmentsEditorTable extends React.PureComponent {
   static propTypes = {
     assignments: PropTypes.any.isRequired,
     onUpdateAssignment: PropTypes.func.isRequired,
-    onAddAssignmentClick: PropTypes.func.isRequired
+    onAddAssignmentClick: PropTypes.func.isRequired,
+    onDeleteAssignmentClick: PropTypes.func.isRequired
   };
 
   render() {
+    const { onAddAssignmentClick, onDeleteAssignmentClick } = this.props;
+
     return (
       <Fragment>
         <Toolbar>
-          <Button raised onClick={this.props.onAddAssignmentClick}>
+          <Button raised onClick={() => onAddAssignmentClick()}>
             Add assignment
           </Button>
         </Toolbar>
@@ -45,7 +50,13 @@ class AssignmentsEditorTable extends React.PureComponent {
               <TableCell>Solution Visible</TableCell>
               <TableCell>Deadline</TableCell>
               <TableCell>Details</TableCell>
-              <TableCell>Order</TableCell>
+              <TableCell
+                style={{
+                  minWidth: 240
+                }}
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -98,10 +109,18 @@ class AssignmentsEditorTable extends React.PureComponent {
                       }}
                     />
                   </TableCell>
+                  <TableCell>{assignment.details}</TableCell>
                   <TableCell>
-                    <Button>Edit</Button>
-                  </TableCell>
-                  <TableCell>
+                    <IconButton>
+                      <EditIcon
+                        onClick={() => onAddAssignmentClick(assignment)}
+                      />
+                    </IconButton>
+                    <IconButton>
+                      <DeleteIcon
+                        onClick={() => onDeleteAssignmentClick(assignment)}
+                      />
+                    </IconButton>
                     <IconButton>
                       <ExpandLessIcon />
                     </IconButton>
