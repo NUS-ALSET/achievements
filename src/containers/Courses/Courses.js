@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { firebaseConnect } from "react-redux-firebase";
+import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import { compose } from "redux";
 import { LinearProgress } from "material-ui/Progress";
 import Toolbar from "material-ui/Toolbar";
@@ -86,7 +86,12 @@ class Courses extends React.Component {
     this.props.dispatch(courseNewDialogChange(field, value));
   };
   render() {
-    if (!this.props.courses) {
+    const { auth, courses } = this.props;
+    if (!auth.isLoaded) {
+      return <LinearProgress />;
+    } else if (auth.isEmpty) {
+      return <div>Login required to display this page</div>;
+    } else if (!isLoaded(courses)) {
       return <LinearProgress />;
     }
 
