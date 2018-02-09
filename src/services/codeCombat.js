@@ -24,7 +24,7 @@ export class CodeCombatService {
         )}/level.sessions?project=state.complete,created`
       )
       .then(() => true)
-      .catch(err => console.error(err) || false);
+      .catch(err => err.message);
   }, THROTTLE_WAIT);
 }
 

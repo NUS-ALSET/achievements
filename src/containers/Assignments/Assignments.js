@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import withStyles from "material-ui/styles/withStyles";
-import { LinearProgress } from "material-ui/Progress";
+// import { LinearProgress } from "material-ui/Progress";
 import { firebaseConnect } from "react-redux-firebase";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Toolbar from "material-ui/Toolbar";
@@ -114,7 +114,7 @@ class Assignments extends React.Component {
 
   onProfileCommit = value => {
     /** @type AssignmentProps */
-    const data = this.props.data();
+    const data = this.props.data;
 
     coursesService.submitSolution(
       data.course.id,
@@ -247,9 +247,9 @@ class Assignments extends React.Component {
       data
     } = this.props;
 
-    if (!data.course.members) {
-      return <LinearProgress />;
-    }
+    // if (!data.course.members) {
+    //   return <LinearProgress />;
+    // }
     if (!data.course.owner) {
       history.push("/courses");
     }

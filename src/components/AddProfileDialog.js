@@ -52,7 +52,8 @@ class AddProfileDialog extends React.PureComponent {
     return Promise.resolve()
       .then(() =>
         accountService.addExternalProfile(externalProfile, uid, login)
-      ).then(()=> onCommit && onCommit())
+      )
+      .then(() => onCommit && onCommit())
       .catch(err => {
         onError(err.message);
       });
