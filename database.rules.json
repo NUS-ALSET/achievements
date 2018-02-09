@@ -83,13 +83,13 @@
     "solutions": {
       ".read": "false",
       "$courseKey": {
+        ".read": "auth != null && root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
         "$userKey": {
           ".read": "auth != null  &&
           	(($userKey == auth.uid &&
             root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()) ||
-            root.child('courses' + $courseKey + '/owner').val() == auth.uid )
-          ",
-          ".write": "auth != null && $userKey == auth.uid",
+            root.child('courses/' + $courseKey + '/owner').val() == auth.uid )",
+          ".write": "auth != null && $userKey == auth.uid"
         }
       }
     },
@@ -101,7 +101,7 @@
           root.child('courses/' + $courseKey + '/owner').val() == auth.uid )
         ",
         "$userKey": {
-	        ".write": "auth != null && $userKey == auth.uid",
+	        ".write": "auth != null && root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
         }
       }
     },

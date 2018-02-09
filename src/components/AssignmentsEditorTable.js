@@ -15,6 +15,8 @@ import Table, {
   TableRow
 } from "material-ui/Table";
 
+import EditIcon from "material-ui-icons/Edit";
+import DeleteIcon from "material-ui-icons/Delete";
 import ExpandLessIcon from "material-ui-icons/ExpandLess";
 import ExpandMoreIcon from "material-ui-icons/ExpandMore";
 
@@ -26,14 +28,17 @@ class AssignmentsEditorTable extends React.PureComponent {
   static propTypes = {
     assignments: PropTypes.any.isRequired,
     onUpdateAssignment: PropTypes.func.isRequired,
-    onAddAssignmentClick: PropTypes.func.isRequired
+    onAddAssignmentClick: PropTypes.func.isRequired,
+    onDeleteAssignmentClick: PropTypes.func.isRequired
   };
 
   render() {
+    const { onAddAssignmentClick, onDeleteAssignmentClick } = this.props;
+
     return (
       <Fragment>
         <Toolbar>
-          <Button raised onClick={this.props.onAddAssignmentClick}>
+          <Button raised onClick={() => onAddAssignmentClick()}>
             Add assignment
           </Button>
         </Toolbar>
@@ -45,7 +50,13 @@ class AssignmentsEditorTable extends React.PureComponent {
               <TableCell>Solution Visible</TableCell>
               <TableCell>Deadline</TableCell>
               <TableCell>Details</TableCell>
-              <TableCell>Order</TableCell>
+              <TableCell
+                style={{
+                  minWidth: 240
+                }}
+              >
+                Actions
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -54,66 +65,71 @@ class AssignmentsEditorTable extends React.PureComponent {
                 <TableCell>Empty list</TableCell>
               </TableRow>
             ) : (
-              Object.keys(this.props.assignments).map(assignmentId => {
-                const assignment = this.props.assignments[assignmentId];
-                return (
-                  <TableRow key={assignmentId}>
-                    <TableCell>{assignment.name}</TableCell>
-                    <TableCell>
-                      <Switch
-                        onChange={(event, checked) =>
-                          this.props.onUpdateAssignment(
-                            assignmentId,
-                            "visible",
-                            checked
-                          )
-                        }
-                        checked={assignment.visible}
+              this.props.assignments.map(assignment => (
+                <TableRow key={assignment.id}>
+                  <TableCell>{assignment.name}</TableCell>
+                  <TableCell>
+                    <Switch
+                      onChange={(event, checked) =>
+                        this.props.onUpdateAssignment(
+                          assignment.id,
+                          "visible",
+                          checked
+                        )
+                      }
+                      checked={assignment.visible}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Switch
+                      onChange={(event, checked) =>
+                        this.props.onUpdateAssignment(
+                          assignment.id,
+                          "solutionVisible",
+                          checked
+                        )
+                      }
+                      checked={assignment.solutionVisible}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      style={dateEditStyle}
+                      type="datetime-local"
+                      onChange={event =>
+                        this.props.onUpdateAssignment(
+                          assignment.id,
+                          "deadline",
+                          event.target.value
+                        )
+                      }
+                      defaultValue={assignment.deadline}
+                      InputLabelProps={{
+                        shrink: true
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell>{assignment.details}</TableCell>
+                  <TableCell>
+                    <IconButton>
+                      <EditIcon
+                        onClick={() => onAddAssignmentClick(assignment)}
                       />
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        onChange={(event, checked) =>
-                          this.props.onUpdateAssignment(
-                            assignmentId,
-                            "solutionVisible",
-                            checked
-                          )
-                        }
-                        checked={assignment.solutionVisible}
+                    </IconButton>
+                    <IconButton>
+                      <DeleteIcon
+                        onClick={() => onDeleteAssignmentClick(assignment)}
                       />
-                    </TableCell>
-                    <TableCell>
-                      <TextField
-                        style={dateEditStyle}
-                        type="datetime-local"
-                        onChange={event =>
-                          this.props.onUpdateAssignment(
-                            assignmentId,
-                            "deadline",
-                            event.target.value
-                          )
-                        }
-                        defaultValue={assignment.deadline}
-                        InputLabelProps={{
-                          shrink: true
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Button>Edit</Button>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton>
-                        <ExpandLessIcon />
-                      </IconButton>
-                      <IconButton>
-                        <ExpandMoreIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
+                    </IconButton>
+                    <IconButton>
+                      <ExpandLessIcon />
+                    </IconButton>
+                    <IconButton>
+                      <ExpandMoreIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>
