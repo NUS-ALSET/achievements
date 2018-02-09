@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import withStyles from "material-ui/styles/withStyles";
 import { LinearProgress } from "material-ui/Progress";
-import { firebaseConnect } from "react-redux-firebase";
+import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
@@ -52,8 +52,10 @@ class Assignments extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     classes: PropTypes.any,
-    history: PropTypes.any,
-    data: PropTypes.object
+    data: PropTypes.object,
+    firebase: PropTypes.object,
+    auth: PropTypes.object,
+    courseMembers: PropTypes.object
   };
 
   // Force show assignments (when become participant)
@@ -114,7 +116,7 @@ class Assignments extends React.Component {
 
   onProfileCommit = value => {
     /** @type AssignmentProps */
-    const data = this.props.data();
+    const data = this.props.data;
 
     coursesService.submitSolution(
       data.course.id,
@@ -150,6 +152,13 @@ class Assignments extends React.Component {
     this.props.dispatch(assignmentCloseDialog());
   };
 
+  // componentDidMount() {
+  //   this.props.firebase.watchEvent(
+  //     "value",
+  //     `courses/${this.props.match.params.courseId}`
+  //   );
+  // }
+  //
   getPasswordView() {
     return (
       <Fragment>
@@ -241,17 +250,19 @@ class Assignments extends React.Component {
 
   render() {
     const {
-      history,
       classes,
+      courseMembers,
+      auth,
       /** @type AssignmentProps */
       data
     } = this.props;
 
-    if (!data.course.members) {
+    if (!auth.isLoaded) {
       return <LinearProgress />;
-    }
-    if (!data.course.owner) {
-      history.push("/courses");
+    } else if (auth.isEmpty) {
+      return <div>Login required to display this page</div>;
+    } else if (!isLoaded(courseMembers)) {
+      return <LinearProgress />;
     }
 
     // Default view with password enter
@@ -333,7 +344,9 @@ class Assignments extends React.Component {
  * @returns {*} props
  */
 const mapStateToProps = (state, ownProps) => ({
-  data: getAssignments(state, ownProps)
+  data: getAssignments(state, ownProps),
+  auth: state.firebase.auth,
+  courseMembers: state.firebase.data.courseMembers
 });
 
 export default compose(
@@ -345,6 +358,7 @@ export default compose(
     const course = (state.firebase.data.courses || {})[courseId] || {};
     const uid = state.firebase.auth.uid;
     return [
+      `/courses/${courseId}`,
       `/courseMembers/${courseId}`,
       `/solutions/${courseId}${course.owner === uid ? "" : `/${uid}`}`,
       `/visibleSolutions/${courseId}`,
