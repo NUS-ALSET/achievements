@@ -28,7 +28,7 @@ import {
 } from "./actions";
 import AddAssignmentDialog from "../../components/AddAssignmentDialog";
 import AddProfileDialog from "../../components/AddProfileDialog";
-import { riseErrorMessage } from "../AuthCheck/actions";
+import { notificationShow } from "../Root/actions";
 import { getAssignments } from "./selectors";
 import AddTextSolutionDialog from "../../components/AddTextSolutionDialog";
 import DeleteAssignmentDialog from "../../components/DeleteAssignmentDialog";
@@ -146,7 +146,7 @@ class Assignments extends React.Component {
     );
   };
 
-  showError = error => this.props.dispatch(riseErrorMessage(error));
+  showError = error => this.props.dispatch(notificationShow(error));
 
   closeDialog = () => {
     this.props.dispatch(assignmentCloseDialog());
@@ -320,6 +320,7 @@ class Assignments extends React.Component {
           open={data.ui.dialog && data.ui.dialog.type === "Profile"}
           externalProfile={{
             url: "https://codecombat.com",
+            name: "Code Combat",
             id: "CodeCombat"
           }}
           onError={this.showError}
@@ -362,7 +363,7 @@ export default compose(
       `/courseMembers/${courseId}`,
       `/solutions/${courseId}${course.owner === uid ? "" : `/${uid}`}`,
       `/visibleSolutions/${courseId}`,
-      "/users",
+      // "/users",
       `/assignments/${courseId}`,
       "/userAchievements"
     ];

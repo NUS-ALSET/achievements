@@ -1,7 +1,7 @@
 import React from "react";
 import { Provider } from "react-redux";
 import AppFrame from "./containers/AppFrame/AppFrame";
-import AuthCheck from "./containers/AuthCheck/AuthCheck";
+import Root from "./containers/Root/Root";
 
 import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
@@ -14,9 +14,9 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <AuthCheck>
+        <Root>
           <AppFrame />
-        </AuthCheck>
+        </Root>
       </Provider>
     );
   }

@@ -3,19 +3,36 @@
  */
 
 import firebase from "firebase";
-
-/**
- * @typedef {Object} ExternalProfile external profile definition
- *
- * @property {String} url url of external profile ( e.g. https://codecombat.com)
- * @property {String} id id of external profile ( e.g. CodeCombat)
- * @property {String} name name of external profile ( e.g. Code Combat)
- * @property {String} description description of external profile ( e.g. learn to code )
- */
+import { authProvider } from "../achievementsApp/config";
 
 export class AccountService {
-  setStore(store) {
-    this.store = store;
+  signIn() {
+    return firebase
+      .auth()
+      .signInWithPopup(authProvider)
+      .then(ref =>
+        firebase.update(`/users/${ref.user.uid}`, {
+          displayName: ref.user.displayName,
+          email: ref.user.email
+        })
+      );
+  }
+
+  checkEULAAgreement() {
+    return firebase
+      .ref(`/users/${firebase.auth().currentUser.uid}/acceptedEULA`)
+      .once("value")
+      .then(data => data.val());
+  }
+
+  acceptEULA() {
+    return firebase
+      .ref(`/users/${firebase.auth().currentUser.uid}`)
+      .update({ acceptedEULA: true });
+  }
+
+  signOut() {
+    return firebase.auth().signOut();
   }
 
   /**
@@ -83,4 +100,7 @@ export class AccountService {
   }
 }
 
+/**
+ * @type {AccountService}
+ */
 export const accountService = new AccountService();

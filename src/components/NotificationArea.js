@@ -12,6 +12,7 @@ import CloseIcon from "material-ui-icons/Close";
 
 class NotificationArea extends React.PureComponent {
   static propTypes = {
+    open: PropTypes.bool.isRequired,
     message: PropTypes.string.isRequired,
     handleClose: PropTypes.func.isRequired
   };
@@ -23,8 +24,7 @@ class NotificationArea extends React.PureComponent {
           vertical: "bottom",
           horizontal: "left"
         }}
-        open={!!this.props.message}
-        autoHideDuration={6000}
+        open={this.props.open}
         SnackbarContentProps={{
           "aria-describedby": "message-id"
         }}

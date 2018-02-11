@@ -19,7 +19,7 @@ import {
   externalProfileDialogShow
 } from "./actions";
 import AddProfileDialog from "../../components/AddProfileDialog";
-import { riseErrorMessage } from "../AuthCheck/actions";
+import { notificationShow } from "../Root/actions";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
 
 const styles = theme => ({
@@ -100,7 +100,7 @@ class Account extends React.PureComponent {
   closeExternalProfileDialog = () => {
     this.props.dispatch(externalProfileDialogHide());
   };
-  showError = error => this.props.dispatch(riseErrorMessage(error));
+  showError = error => this.props.dispatch(notificationShow(error));
 
   render() {
     const { classes, userAchievements, externalProfiles } = this.props;
@@ -173,7 +173,7 @@ const mapStateToProps = state => ({
 
 export default compose(
   firebaseConnect((props, store) => [
-    "/users",
+    //    "/users",
     `/userAchievements/${store.getState().firebase.auth.uid}`
   ]),
   withStyles(styles),

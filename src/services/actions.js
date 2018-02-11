@@ -1,7 +1,7 @@
 import firebase from "firebase";
 
 export class ActionsService {
-  bannedActions = ["MAIN_DRAWER_TOGGLE"];
+  bannedActions = [];
 
   static pickActionData(action) {
     action = Object.assign({}, action);
@@ -30,6 +30,7 @@ export class ActionsService {
 
     if (
       action.type &&
+      // Ignore react-redux-firebase builtin actions
       action.type.indexOf("@@reactReduxFirebase") === -1 &&
       !this.bannedActions.includes(action.type) &&
       currentUser
@@ -50,6 +51,21 @@ export class ActionsService {
     }
     return next(action);
   };
+
+  constructor() {
+    // Refresh blacklist actions on start
+    firebase
+      .database()
+      .ref("/blacklistActions")
+      .once("value")
+      .then(actions => {
+        this.bannedActions = Object.keys(actions.val());
+      });
+  }
 }
 
+/**
+ * For some reason IDEA doesn't catch correct type
+ * @type {ActionsService}
+ */
 export const actionsService = new ActionsService();

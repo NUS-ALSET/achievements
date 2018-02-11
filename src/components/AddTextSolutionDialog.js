@@ -47,7 +47,7 @@ class AddTextSolutionDialog extends React.PureComponent {
 
     return (
       <Dialog open={open}>
-        <DialogTitle>New Assignment</DialogTitle>
+        <DialogTitle>Set Assignment Solution</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
@@ -63,7 +63,7 @@ class AddTextSolutionDialog extends React.PureComponent {
           <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommitClick}>
+          <Button raised color="primary" onClick={this.onCommitClick}>
             Commit
           </Button>
         </DialogActions>
