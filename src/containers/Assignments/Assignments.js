@@ -22,9 +22,11 @@ import {
   assignmentAddRequest,
   assignmentCloseDialog,
   assignmentDeleteRequest,
+  assignmentShowAddDialog,
   assignmentsSortChange,
   assignmentSubmitRequest,
-  assignmentSwitchTab
+  assignmentSwitchTab,
+  updateNewAssignmentField
 } from "./actions";
 import AddAssignmentDialog from "../../components/AddAssignmentDialog";
 import AddProfileDialog from "../../components/AddProfileDialog";
@@ -36,6 +38,8 @@ import {
 } from "./selectors";
 import AddTextSolutionDialog from "../../components/AddTextSolutionDialog";
 import DeleteAssignmentDialog from "../../components/DeleteAssignmentDialog";
+import { sagaInjector } from "../../services/saga";
+import sagas from "./sagas";
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
@@ -66,15 +70,11 @@ class Assignments extends React.Component {
 
   // Force show assignments (when become participant)
   state = {
-    showAssignments: false,
-    dialogOpen: false
+    showAssignments: false
   };
 
   onAddAssignmentClick = () => {
-    this.props.dispatch(assignmentAddRequest());
-    this.setState({
-      dialogOpen: true
-    });
+    this.props.dispatch(assignmentShowAddDialog());
   };
 
   handleTabChange = (event, tabIndex) => {
@@ -86,16 +86,19 @@ class Assignments extends React.Component {
       value: event.currentTarget.value
     });
 
-  createAssignment = assignmentDetails => {
+  createAssignment = () => {
     /** @type AssignmentProps */
-    const course = this.props.course;
+    const { dispatch, course, ui } = this.props;
 
-    coursesService.addAssignment(course.id, assignmentDetails);
-    this.setState({ dialogOpen: false });
+    dispatch(assignmentAddRequest(course.id, ui.dialog.value));
   };
 
   onDeleteAssignment = assignment => {
     this.props.dispatch(assignmentDeleteRequest(assignment));
+  };
+
+  updateNewAssignmentField = field => e => {
+    this.props.dispatch(updateNewAssignmentField(field, e.target.value));
   };
 
   onUpdateAssignment = (assignmentId, field, value) => {
@@ -209,9 +212,11 @@ class Assignments extends React.Component {
             />
             <AddAssignmentDialog
               userAchievements={currentUser.achievements}
-              handleCommit={this.createAssignment}
-              handleCancel={() => this.setState({ dialogOpen: false })}
-              open={this.state.dialogOpen}
+              assignment={ui.dialog && ui.dialog.value}
+              onFieldChange={this.updateNewAssignmentField}
+              onCommit={this.createAssignment}
+              onClose={this.closeDialog}
+              open={ui.dialog && ui.dialog.type === "AddAssignment"}
             />
             <DeleteAssignmentDialog
               courseId={course.id}
@@ -325,6 +330,8 @@ class Assignments extends React.Component {
     );
   }
 }
+
+sagaInjector.inject(sagas);
 
 /**
  *

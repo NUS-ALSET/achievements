@@ -22,9 +22,34 @@ export const assignmentSwitchTab = tabIndex => ({
   tabIndex
 });
 
+export const ASSIGNMENT_SHOW_ADD_DIALOG = "ASSIGNMENT_SHOW_ADD_DIALOG";
+export const assignmentShowAddDialog = () => ({
+  type: ASSIGNMENT_SHOW_ADD_DIALOG
+});
+
+export const UPDATE_NEW_ASSIGNMENT_FIELD = "UPDATE_NEW_ASSIGNMENT_FIELD";
+export const updateNewAssignmentField = (field, value) => ({
+  type: UPDATE_NEW_ASSIGNMENT_FIELD,
+  field,
+  value
+});
+
 export const ASSIGNMENT_ADD_REQUEST = "ASSIGNMENT_ADD_REQUEST";
-export const assignmentAddRequest = () => ({
-  type: ASSIGNMENT_ADD_REQUEST
+export const assignmentAddRequest = (courseId, assignment) => ({
+  type: ASSIGNMENT_ADD_REQUEST,
+  courseId,
+  assignment
+});
+
+export const ASSIGNMENT_ADD_SUCCESS = "ASSIGNMENT_ADD_SUCCESS";
+export const assignmentAddSuccess = () => ({
+  type: ASSIGNMENT_ADD_SUCCESS
+});
+
+export const ASSIGNMENT_ADD_FAIL = "ASSIGNMENT_ADD_FAIL";
+export const assignmentAddFail = error => ({
+  type: ASSIGNMENT_ADD_FAIL,
+  error
 });
 
 export const ASSIGNMENTS_SORT_CHANGE = "ASSIGNMENTS_SORT_CHANGE";

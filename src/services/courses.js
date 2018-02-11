@@ -98,13 +98,17 @@ class CoursesService {
       );
   }
 
+  validateAssignment(assignment) {
+    if (!assignment.name) {
+      throw new Error("Name required for Assignment");
+    }
+    if (assignment.questionType === "CodeCombat" && !assignment.levels.length) {
+      throw new Error("Levels required for Code Combat Assignment");
+    }
+  }
+
   addAssignment(courseId, assignment) {
-    return firebase
-      .ref(`/assignments/${courseId}`)
-      .push(assignment)
-      .catch(err =>
-        this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
-      );
+    return firebase.ref(`/assignments/${courseId}`).push(assignment);
   }
 
   updateAssignment(courseId, assignmentId, field, value) {
