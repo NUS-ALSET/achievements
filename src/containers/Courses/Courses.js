@@ -118,7 +118,7 @@ class Courses extends React.Component {
         />
         <DeleteCourseDialog
           open={false}
-          course={null}
+          course={{}}
           onClose={() => {}}
           onCommit={() => {}}
         />

@@ -159,6 +159,7 @@ class AddAssignmentDialog extends React.PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
+            color="secondary"
             onClick={() => {
               this.clearState();
               handleCancel();
@@ -166,7 +167,9 @@ class AddAssignmentDialog extends React.PureComponent {
           >
             Cancel
           </Button>
-          <Button onClick={this.commit}>Commit</Button>
+          <Button raised color="primary" onClick={this.commit}>
+            Commit
+          </Button>
         </DialogActions>
       </Dialog>
     );
