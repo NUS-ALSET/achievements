@@ -29,7 +29,11 @@ import {
 import AddAssignmentDialog from "../../components/AddAssignmentDialog";
 import AddProfileDialog from "../../components/AddProfileDialog";
 import { notificationShow } from "../Root/actions";
-import { getAssignments } from "./selectors";
+import {
+  getAssignmentsUIProps,
+  getCourseProps,
+  getCurrentUserProps
+} from "./selectors";
 import AddTextSolutionDialog from "../../components/AddTextSolutionDialog";
 import DeleteAssignmentDialog from "../../components/DeleteAssignmentDialog";
 
@@ -52,7 +56,9 @@ class Assignments extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func,
     classes: PropTypes.any,
-    data: PropTypes.object,
+    ui: PropTypes.object.isRequired,
+    currentUser: PropTypes.object.isRequired,
+    course: PropTypes.object.isRequired,
     firebase: PropTypes.object,
     auth: PropTypes.object,
     courseMembers: PropTypes.object
@@ -82,30 +88,26 @@ class Assignments extends React.Component {
 
   createAssignment = assignmentDetails => {
     /** @type AssignmentProps */
-    const data = this.props.data;
+    const course = this.props.course;
 
-    coursesService.addAssignment(data.course.id, assignmentDetails);
+    coursesService.addAssignment(course.id, assignmentDetails);
     this.setState({ dialogOpen: false });
   };
 
   onDeleteAssignment = assignment => {
-    // const { data } = this.props;
-    // coursesService.removeAssignment(data.course.id, assignment.id);
     this.props.dispatch(assignmentDeleteRequest(assignment));
   };
 
   onUpdateAssignment = (assignmentId, field, value) => {
-    /** @type AssignmentProps */
-    const { data } = this.props;
+    const { course } = this.props;
 
-    coursesService.updateAssignment(data.course.id, assignmentId, field, value);
+    coursesService.updateAssignment(course.id, assignmentId, field, value);
   };
 
   submitPassword = () => {
-    /** @type AssignmentProps */
-    const { data } = this.props;
+    const { course } = this.props;
 
-    coursesService.tryCoursePassword(data.course.id, this.state.value);
+    coursesService.tryCoursePassword(course.id, this.state.value);
   };
 
   onSortClick = assignment => {
@@ -115,23 +117,17 @@ class Assignments extends React.Component {
   };
 
   onProfileCommit = value => {
-    /** @type AssignmentProps */
-    const data = this.props.data;
+    const { course, ui } = this.props;
 
-    coursesService.submitSolution(
-      data.course.id,
-      data.ui.currentAssignment,
-      value
-    );
+    coursesService.submitSolution(course.id, ui.currentAssignment, value);
   };
 
   onSubmitClick = (assignment, solution) => {
-    /** @type AssignmentProps */
-    const data = this.props.data;
+    const course = this.props.course;
 
     switch (assignment.questionType) {
       case "CodeCombat":
-        coursesService.submitSolution(data.course.id, assignment, "Complete");
+        coursesService.submitSolution(course.id, assignment, "Complete");
         break;
       default:
         this.props.dispatch(assignmentSubmitRequest(assignment, solution));
@@ -139,11 +135,7 @@ class Assignments extends React.Component {
   };
 
   onAcceptClick = (assignment, studentId) => {
-    coursesService.acceptSolution(
-      this.props.data.course.id,
-      assignment,
-      studentId
-    );
+    coursesService.acceptSolution(this.props.course.id, assignment, studentId);
   };
 
   showError = error => this.props.dispatch(notificationShow(error));
@@ -192,16 +184,16 @@ class Assignments extends React.Component {
 
   getInstructorTab() {
     /** @type AssignmentProps */
-    const data = this.props.data;
+    const { course, ui, currentUser } = this.props;
 
-    switch (data.ui.currentTab) {
+    switch (ui.currentTab) {
       case INSTRUCTOR_TAB_ASSIGNMENTS:
         return (
           <AssignmentsTable
             instructorView={false}
-            sortState={data.ui.sortState}
-            currentUser={data.currentUser}
-            course={data.course}
+            sortState={ui.sortState}
+            currentUser={currentUser}
+            course={course}
             onSortClick={this.onSortClick}
             onSubmitClick={this.onSubmitClick}
           />
@@ -213,20 +205,18 @@ class Assignments extends React.Component {
               onAddAssignmentClick={this.onAddAssignmentClick}
               onDeleteAssignmentClick={this.onDeleteAssignment}
               onUpdateAssignment={this.onUpdateAssignment}
-              assignments={data.course.assignments || {}}
+              assignments={course.assignments || {}}
             />
             <AddAssignmentDialog
-              userAchievements={data.currentUser.achievements}
+              userAchievements={currentUser.achievements}
               handleCommit={this.createAssignment}
               handleCancel={() => this.setState({ dialogOpen: false })}
               open={this.state.dialogOpen}
             />
             <DeleteAssignmentDialog
-              courseId={data.course.id}
-              assignment={data.ui.dialog && data.ui.dialog.value}
-              open={
-                data.ui.dialog && data.ui.dialog.type === "DeleteAssignment"
-              }
+              courseId={course.id}
+              assignment={ui.dialog && ui.dialog.value}
+              open={ui.dialog && ui.dialog.type === "DeleteAssignment"}
               onClose={this.closeDialog}
             />
           </Fragment>
@@ -235,9 +225,9 @@ class Assignments extends React.Component {
         return (
           <AssignmentsTable
             instructorView={true}
-            sortState={data.ui.sortState}
-            currentUser={data.currentUser}
-            course={data.course}
+            sortState={ui.sortState}
+            currentUser={currentUser}
+            course={course}
             onAcceptClick={this.onAcceptClick}
             onSortClick={this.onSortClick}
             onSubmitClick={this.onSubmitClick}
@@ -250,11 +240,12 @@ class Assignments extends React.Component {
 
   render() {
     const {
+      ui,
       classes,
       courseMembers,
       auth,
-      /** @type AssignmentProps */
-      data
+      course,
+      currentUser
     } = this.props;
 
     if (!auth.isLoaded) {
@@ -269,14 +260,14 @@ class Assignments extends React.Component {
     let AssignmentView = this.getPasswordView();
 
     // If owner match user id then we suppose use as instructor and give him special view
-    if (data.course.owner === data.currentUser.id) {
+    if (course.owner === currentUser.id) {
       AssignmentView = (
         <Fragment>
           <Tabs
             fullWidth
             indicatorColor="primary"
             textColor="primary"
-            value={data.ui.currentTab}
+            value={ui.currentTab}
             onChange={this.handleTabChange}
           >
             <Tab label="Assignments" />
@@ -286,17 +277,14 @@ class Assignments extends React.Component {
           {this.getInstructorTab()}
         </Fragment>
       );
-    } else if (
-      data.course.members &&
-      data.course.members[data.currentUser.id]
-    ) {
+    } else if (course.members && course.members[currentUser.id]) {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
         <AssignmentsTable
           instructorView={false}
-          sortState={data.ui.sortState}
-          currentUser={data.currentUser}
-          course={data.course}
+          sortState={ui.sortState}
+          currentUser={currentUser}
+          course={course}
           onSortClick={this.onSortClick}
           onSubmitClick={this.onSubmitClick}
         />
@@ -311,13 +299,13 @@ class Assignments extends React.Component {
           </Link>
           <ChevronRightIcon />
           <Typography className={classes.breadcrumbText}>
-            {data.course.name}
+            {course.name}
           </Typography>
         </Toolbar>
         {AssignmentView}
         <AddProfileDialog
-          uid={data.currentUser.id}
-          open={data.ui.dialog && data.ui.dialog.type === "Profile"}
+          uid={currentUser.id}
+          open={ui.dialog && ui.dialog.type === "Profile"}
           externalProfile={{
             url: "https://codecombat.com",
             name: "Code Combat",
@@ -328,9 +316,9 @@ class Assignments extends React.Component {
           onCommit={this.onProfileCommit}
         />
         <AddTextSolutionDialog
-          open={data.ui.dialog && data.ui.dialog.type === "Text"}
-          courseId={data.course.id}
-          assignment={data.ui.currentAssignment}
+          open={ui.dialog && ui.dialog.type === "Text"}
+          courseId={course.id}
+          assignment={ui.currentAssignment}
           onClose={this.closeDialog}
         />
       </Fragment>
@@ -340,12 +328,14 @@ class Assignments extends React.Component {
 
 /**
  *
- * @param {ReduxState} state
+ * @param {AchievementsAppState} state
  * @param ownProps
  * @returns {*} props
  */
 const mapStateToProps = (state, ownProps) => ({
-  data: getAssignments(state, ownProps),
+  ui: getAssignmentsUIProps(state),
+  currentUser: getCurrentUserProps(state),
+  course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
   courseMembers: state.firebase.data.courseMembers
 });
@@ -356,14 +346,14 @@ export default compose(
   firebaseConnect((ownProps, store) => {
     const courseId = ownProps.match.params.courseId;
     const state = store.getState();
-    const course = (state.firebase.data.courses || {})[courseId] || {};
     const uid = state.firebase.auth.uid;
     return [
       `/courses/${courseId}`,
       `/courseMembers/${courseId}`,
-      `/solutions/${courseId}${course.owner === uid ? "" : `/${uid}`}`,
+      `/solutions/${courseId}`,
+      `/solutions/${courseId}/${uid}`,
       `/visibleSolutions/${courseId}`,
-      // "/users",
+      "/users",
       `/assignments/${courseId}`,
       "/userAchievements"
     ];

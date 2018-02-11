@@ -51,10 +51,15 @@ class CoursesService {
     return user;
   }
 
-  createNewCourse(name, password) {
+  validateNewCourse(name, password) {
     if (!(name && password)) {
       throw new Error("Missing name or password");
     }
+    return true;
+  }
+
+  createNewCourse(name, password) {
+    this.validateNewCourse(name, password);
     return firebase
       .push("/courses", {
         name,
@@ -73,10 +78,7 @@ class CoursesService {
   }
 
   deleteCourse(courseId) {
-    return firebase
-      .ref(`/courses/${courseId}`)
-      .remove()
-      .catch(err => this.dispatchErrorMessage(err.message));
+    return firebase.ref(`/courses/${courseId}`).remove();
   }
 
   tryCoursePassword(courseId, password) {

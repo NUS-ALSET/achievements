@@ -41,7 +41,7 @@ export class ActionsService {
         .push({
           createdAt: new Date().getTime(),
           type: action.type,
-          uid: (currentUser && currentUser.uid) || null,
+          uid: currentUser,
           isAnonymous: !currentUser,
           otherActionData: this.removeEmpty(
             ActionsService.pickActionData(action)

@@ -11,6 +11,7 @@ install:
 
 script:
 - npm run-script build
+- npm test
 
 before_deploy:
 - ./scripts/prepare-deployment.sh

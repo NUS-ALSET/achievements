@@ -1,8 +1,12 @@
 {
   "rules": {
     "api_tokens": {
-      ".read": "false",
-      ".write": "false"
+      ".read": false,
+      ".write": false
+    },
+    "blacklistActions": {
+      ".read": true,
+      ".write": false
     },
     "logged_events": {
       ".read": "auth != null",

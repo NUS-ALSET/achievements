@@ -14,10 +14,10 @@ import Dialog, {
 import Typography from "material-ui/Typography";
 import Button from "material-ui/Button";
 
-class DeleteCourseDialog extends React.PureComponent {
+class RemoveCourseDialog extends React.PureComponent {
   static propTypes = {
     open: PropTypes.bool.isRequired,
-    course: PropTypes.object.isRequired,
+    course: PropTypes.any,
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired
   };
@@ -28,15 +28,14 @@ class DeleteCourseDialog extends React.PureComponent {
       <Dialog open={open}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
-          <Typography>{`This action will delete the course "${
-            course.name
-          }". Are you sure?`}</Typography>
+          <Typography>{`This action will delete the course "${course &&
+            course.name}". Are you sure?`}</Typography>
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button raised color="primary" onClick={onCommit}>
+          <Button raised color="primary" onClick={() => onCommit(course)}>
             Commit
           </Button>
         </DialogActions>
@@ -45,4 +44,4 @@ class DeleteCourseDialog extends React.PureComponent {
   }
 }
 
-export default DeleteCourseDialog;
+export default RemoveCourseDialog;
