@@ -4,7 +4,7 @@ export const courseShowNewDialog = () => ({
 });
 
 export const COURSE_HIDE_NEWDIALOG = "COURSE_HIDE_NEWDIALOG";
-export const courseHideNewdialog = () => ({
+export const courseHideNewDialog = () => ({
   type: COURSE_HIDE_NEWDIALOG
 });
 

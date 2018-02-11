@@ -9,6 +9,15 @@
  */
 
 /**
+ * @typedef {Object} ExternalProfile external profile definition
+ *
+ * @property {String} url url of external profile ( e.g. https://codecombat.com)
+ * @property {String} id id of external profile ( e.g. CodeCombat)
+ * @property {String} name name of external profile ( e.g. Code Combat)
+ * @property {String} description description of external profile ( e.g. learn to code )
+ */
+
+/**
  * @typedef {Object} FirebaseState
  *
  * @property {Object} auth
@@ -41,7 +50,7 @@
  */
 
 /**
- * @typedef {Object} AuthCheckState
+ * @typedef {Object} RootState
  *
  * @property {String} notificationMessage
  */
@@ -69,7 +78,7 @@
  * @property {FirebaseState} firebase
  * @property {AppFrameState} appFrame
  * @property {CoursesState} courses
- * @property {AuthCheckState} authCheck
+ * @property {RootState} root
  * @property {AssignmentsState} assignments
  * @property {AccountState} account
  */

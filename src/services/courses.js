@@ -6,7 +6,7 @@
 import each from "lodash/each";
 import firebase from "firebase";
 import { courseNewFail, courseNewSuccess } from "../containers/Courses/actions";
-import { riseErrorMessage } from "../containers/AuthCheck/actions";
+import { notificationShow } from "../containers/Root/actions";
 import {
   coursePasswordEnterFail,
   coursePasswordEnterRequest,
@@ -28,12 +28,12 @@ class CoursesService {
 
   dispatchErrorMessage(action) {
     this.store.dispatch(action);
-    this.store.dispatch(riseErrorMessage(action.error));
+    this.store.dispatch(notificationShow(action.error));
     if (this.errorTimeout) {
       clearTimeout(this.errorTimeout);
     }
     this.errorTimeout = setTimeout(() => {
-      this.dispatch(riseErrorMessage(""));
+      this.dispatch(notificationShow(""));
       this.errorTimeout = false;
     }, ERROR_TIMEOUT);
   }
@@ -52,6 +52,9 @@ class CoursesService {
   }
 
   createNewCourse(name, password) {
+    if (!(name && password)) {
+      throw new Error("Missing name or password");
+    }
     return firebase
       .push("/courses", {
         name,
@@ -112,7 +115,7 @@ class CoursesService {
     return firebase
       .ref(`/assignments/${courseId}/${assignmentId}`)
       .remove()
-      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+      .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
   /**
@@ -130,7 +133,7 @@ class CoursesService {
           .ref(`/visibleSolutions/${courseId}/${studentId}/${assignment.id}`)
           .set(solution.val());
       })
-      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+      .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
   getProfileStatus(userId) {
@@ -204,7 +207,7 @@ class CoursesService {
         //     .set(solutionValue);
         //   }
       })
-      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+      .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
   /**

@@ -19,13 +19,14 @@ import MoreVertIcon from "material-ui-icons/MoreVert";
 import AppDrawer from "../../components/AppDrawer";
 import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
 
-import { APP_SETTING, authProvider } from "../../achievementsApp/config";
+import { APP_SETTING } from "../../achievementsApp/config";
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
 
 import Account from "../../containers/Account/Account";
 import Assignments from "../Assignments/Assignments";
 import Courses from "../Courses/Courses";
 import { Home } from "../../components/Home";
+import { signInRequest, signOutRequest } from "../Root/actions";
 
 const styles = theme => ({
   "@global": {
@@ -113,20 +114,11 @@ class AppFrame extends React.Component {
   };
 
   handleLogin = () => {
-    firebase
-      .auth()
-      .signInWithPopup(authProvider)
-      .then(ref =>
-        firebase.update(`/users/${ref.user.uid}`, {
-          displayName: ref.user.displayName,
-          email: ref.user.email
-        })
-      );
+    this.props.dispatch(signInRequest());
   };
 
   handleLogout = () => {
-    // Same as above, here should be action handling by services
-    firebase.auth().signOut();
+    this.props.dispatch(signOutRequest());
   };
 
   render() {

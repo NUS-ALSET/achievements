@@ -1,20 +1,23 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { firebaseConnect, isLoaded } from "react-redux-firebase";
+import { firebaseConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import { LinearProgress } from "material-ui/Progress";
 import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
 import {
-  courseHideNewdialog,
+  courseHideNewDialog,
   courseNewDialogChange,
+  courseNewRequest,
   courseShowNewDialog
 } from "./actions";
-import { AddCourseDialog } from "../../components/AddCourseDialog";
+import AddCourseDialog from "../../components/AddCourseDialog";
 import CoursesTable from "../../components/CoursesTable";
 import { coursesService } from "../../services/courses";
 import ConfirmationDialog from "../../components/ConfirmationDialog";
+import sagas from "./sagas";
+import { sagaInjector } from "../../services/saga";
+import DeleteCourseDialog from "../../components/DeleteCourseDialog";
 
 class Courses extends React.Component {
   static propTypes = {
@@ -73,26 +76,25 @@ class Courses extends React.Component {
     this.props.dispatch(courseShowNewDialog());
   };
   closeNewCourseDialog = () => {
-    this.props.dispatch(courseHideNewdialog());
+    this.props.dispatch(courseHideNewDialog());
   };
   newDialogRequest = () => {
-    const { newCourseValues } = this.props;
-    coursesService.createNewCourse(
-      newCourseValues.name,
-      newCourseValues.password
-    );
+    const { dispatch, newCourseValues } = this.props;
+    dispatch(courseNewRequest(newCourseValues.name, newCourseValues.password));
   };
   onDialogFieldChange = (field, value) => {
     this.props.dispatch(courseNewDialogChange(field, value));
   };
   render() {
-    const { auth, courses } = this.props;
-    if (!auth.isLoaded) {
-      return <LinearProgress />;
-    } else if (auth.isEmpty) {
+    const {
+      auth,
+      courses,
+      ownerId,
+      newCourseValues,
+      showNewDialog
+    } = this.props;
+    if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!isLoaded(courses)) {
-      return <LinearProgress />;
     }
 
     return (
@@ -104,15 +106,21 @@ class Courses extends React.Component {
         </Toolbar>
         <CoursesTable
           onDeleteCourseClick={this.onDeleteCourseClick}
-          ownerId={this.props.ownerId}
-          courses={this.props.courses || {}}
+          ownerId={ownerId}
+          courses={courses || {}}
         />
         <AddCourseDialog
-          values={this.props.newCourseValues}
+          values={newCourseValues}
           onFieldChange={this.onDialogFieldChange}
           requestCreation={this.newDialogRequest}
-          open={this.props.showNewDialog}
+          open={showNewDialog}
           requestClose={this.closeNewCourseDialog}
+        />
+        <DeleteCourseDialog
+          open={false}
+          course={null}
+          onClose={() => {}}
+          onCommit={() => {}}
         />
         <ConfirmationDialog
           message={this.state.confirmation.message}
@@ -123,6 +131,8 @@ class Courses extends React.Component {
     );
   }
 }
+
+sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   auth: state.firebase.auth,

@@ -27,11 +27,7 @@ export const courses = (
     case COURSE_HIDE_NEWDIALOG:
       return {
         ...state,
-        showNewDialog: false,
-        newCourseValues: {
-          name: "",
-          password: ""
-        }
+        showNewDialog: false
       };
     case COURSE_NEW_DIALOG_CHANGE:
       return {
