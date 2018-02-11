@@ -33,7 +33,13 @@ class ConfirmationDialog extends React.PureComponent {
           <Button color="secondary" onClick={() => this.props.resolve(false)}>
             Cancel
           </Button>
-          <Button onClick={() => this.props.resolve(true)}>Commit</Button>
+          <Button
+            raised
+            color="primary"
+            onClick={() => this.props.resolve(true)}
+          >
+            Commit
+          </Button>
         </DialogActions>
       </Dialog>
     );

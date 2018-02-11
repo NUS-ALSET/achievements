@@ -73,7 +73,7 @@
  */
 
 /**
- * @typedef {Object} ReduxState
+ * @typedef {Object} AchievementsAppState
  *
  * @property {FirebaseState} firebase
  * @property {AppFrameState} appFrame

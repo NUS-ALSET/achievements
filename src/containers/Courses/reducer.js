@@ -1,12 +1,14 @@
 import {
-  COURSE_HIDE_NEWDIALOG,
+  COURSE_HIDE_DIALOG,
   COURSE_NEW_DIALOG_CHANGE,
+  COURSE_REMOVE_DIALOG_SHOW,
   COURSE_SHOW_NEW_DIALOG
 } from "./actions";
 
 export const courses = (
   state = {
-    showNewDialog: false,
+    dialog: false,
+    removingCourse: false,
     newCourseValues: {
       name: "",
       password: ""
@@ -18,16 +20,16 @@ export const courses = (
     case COURSE_SHOW_NEW_DIALOG:
       return {
         ...state,
-        showNewDialog: true,
+        dialog: "NEW_COURSE",
         newCourseValues: {
           name: "",
           password: ""
         }
       };
-    case COURSE_HIDE_NEWDIALOG:
+    case COURSE_HIDE_DIALOG:
       return {
         ...state,
-        showNewDialog: false
+        dialog: false
       };
     case COURSE_NEW_DIALOG_CHANGE:
       return {
@@ -35,6 +37,15 @@ export const courses = (
         newCourseValues: {
           ...state.newCourseValues,
           [action.field]: action.value
+        }
+      };
+    case COURSE_REMOVE_DIALOG_SHOW:
+      return {
+        ...state,
+        dialog: "REMOVE_COURSE",
+        removingCourse: {
+          id: action.id,
+          name: action.name
         }
       };
     default:

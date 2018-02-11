@@ -28,7 +28,8 @@ class AssignmentsTable extends React.PureComponent {
   };
 
   getSolution(assignment, solutions) {
-    const solution = solutions[assignment.id];
+    let solution = solutions[assignment.id];
+    const result = (solution && solution.value) || "";
 
     switch (assignment.questionType) {
       case "Profile":
@@ -36,18 +37,18 @@ class AssignmentsTable extends React.PureComponent {
           <a
             rel="noopener noreferrer"
             target="_blank"
-            href={`https://codecombat.com/user/${solution.replace(
+            href={`https://codecombat.com/user/${result.replace(
               / \(\d+\)$/,
               ""
             )}`}
           >
-            {solution}
+            {result}
           </a>
         ) : (
           undefined
         );
       default:
-        return solution;
+        return result;
     }
   }
 
