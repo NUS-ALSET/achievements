@@ -1,10 +1,13 @@
 import {
   ASSIGNMENT_CLOSE_DIALOG,
   ASSIGNMENT_DELETE_REQUEST,
+  ASSIGNMENT_SHOW_ADD_DIALOG,
   ASSIGNMENT_SUBMIT_REQUEST,
   ASSIGNMENT_SWITCH_TAB,
-  ASSIGNMENTS_SORT_CHANGE
+  ASSIGNMENTS_SORT_CHANGE,
+  UPDATE_NEW_ASSIGNMENT_FIELD
 } from "./actions";
+import format from "date-fns/format";
 
 export const assignments = (
   state = {
@@ -39,6 +42,33 @@ export const assignments = (
       return {
         ...state,
         currentTab: action.tabIndex
+      };
+    case ASSIGNMENT_SHOW_ADD_DIALOG:
+      return {
+        ...state,
+        dialog: {
+          type: "AddAssignment",
+          value: {
+            name: "",
+            details: "",
+            solutionVisible: false,
+            visible: false,
+            deadline: format(new Date(), "YYYY-MM-DDTHH:mm"),
+            questionType: "Text",
+            levels: []
+          }
+        }
+      };
+    case UPDATE_NEW_ASSIGNMENT_FIELD:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          value: {
+            ...state.dialog.value,
+            [action.field]: action.value
+          }
+        }
       };
     case ASSIGNMENT_DELETE_REQUEST:
       return {

@@ -1,12 +1,11 @@
 /**
- * @file ConfirmationDialog container module
+ * @file DeleteCourseDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
- * @created 01.02.18
+ * @created 11.02.18
  */
 
 import React from "react";
 import PropTypes from "prop-types";
-
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -15,29 +14,28 @@ import Dialog, {
 import Typography from "material-ui/Typography";
 import Button from "material-ui/Button";
 
-class ConfirmationDialog extends React.PureComponent {
+class RemoveCourseDialog extends React.PureComponent {
   static propTypes = {
-    message: PropTypes.string.isRequired,
     open: PropTypes.bool.isRequired,
-    resolve: PropTypes.func.isRequired
+    course: PropTypes.any,
+    onClose: PropTypes.func.isRequired,
+    onCommit: PropTypes.func.isRequired
   };
 
   render() {
+    const { open, course, onClose, onCommit } = this.props;
     return (
-      <Dialog open={this.props.open}>
+      <Dialog open={open}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
-          <Typography>{this.props.message}</Typography>
+          <Typography>{`This action will delete the course "${course &&
+            course.name}". Are you sure?`}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={() => this.props.resolve(false)}>
+          <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            raised
-            color="primary"
-            onClick={() => this.props.resolve(true)}
-          >
+          <Button raised color="primary" onClick={() => onCommit(course)}>
             Commit
           </Button>
         </DialogActions>
@@ -46,4 +44,4 @@ class ConfirmationDialog extends React.PureComponent {
   }
 }
 
-export default ConfirmationDialog;
+export default RemoveCourseDialog;

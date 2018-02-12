@@ -60,12 +60,12 @@ class AddProfileDialog extends React.PureComponent {
   };
 
   render() {
-    const url = `${this.props.externalProfile.url}/user/${this.state.login}`;
-    const { onClose } = this.props;
+    const { externalProfile, onClose } = this.props;
+    const url = `${externalProfile.url}/user/${this.state.login}`;
 
     return (
       <Dialog open={this.props.open}>
-        <DialogTitle>Add Profile</DialogTitle>
+        <DialogTitle>Set {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
           <div>
             <a href={url}>{url}</a>
@@ -92,6 +92,8 @@ class AddProfileDialog extends React.PureComponent {
             Cancel
           </Button>
           <Button
+            color="primary"
+            raised
             onClick={() => {
               this.onCommitClick().then(() => {
                 this.clearState();

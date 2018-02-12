@@ -4,6 +4,8 @@ export const APP_SETTING = {
   DrawerWidth: 250
 };
 
+export const AUTO_HIDE_DURATION = 6000;
+
 // Initialize Firebase
 const config = {
   apiKey: "AIzaSyA232bBlzWT0fl3ST_KVC3Aay41yTMz5vM",

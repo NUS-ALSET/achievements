@@ -6,7 +6,7 @@
 import each from "lodash/each";
 import firebase from "firebase";
 import { courseNewFail, courseNewSuccess } from "../containers/Courses/actions";
-import { riseErrorMessage } from "../containers/AuthCheck/actions";
+import { notificationShow } from "../containers/Root/actions";
 import {
   coursePasswordEnterFail,
   coursePasswordEnterRequest,
@@ -28,12 +28,12 @@ class CoursesService {
 
   dispatchErrorMessage(action) {
     this.store.dispatch(action);
-    this.store.dispatch(riseErrorMessage(action.error));
+    this.store.dispatch(notificationShow(action.error));
     if (this.errorTimeout) {
       clearTimeout(this.errorTimeout);
     }
     this.errorTimeout = setTimeout(() => {
-      this.dispatch(riseErrorMessage(""));
+      this.dispatch(notificationShow(""));
       this.errorTimeout = false;
     }, ERROR_TIMEOUT);
   }
@@ -51,7 +51,15 @@ class CoursesService {
     return user;
   }
 
+  validateNewCourse(name, password) {
+    if (!(name && password)) {
+      throw new Error("Missing name or password");
+    }
+    return true;
+  }
+
   createNewCourse(name, password) {
+    this.validateNewCourse(name, password);
     return firebase
       .push("/courses", {
         name,
@@ -70,10 +78,7 @@ class CoursesService {
   }
 
   deleteCourse(courseId) {
-    return firebase
-      .ref(`/courses/${courseId}`)
-      .remove()
-      .catch(err => this.dispatchErrorMessage(err.message));
+    return firebase.ref(`/courses/${courseId}`).remove();
   }
 
   tryCoursePassword(courseId, password) {
@@ -93,13 +98,17 @@ class CoursesService {
       );
   }
 
+  validateAssignment(assignment) {
+    if (!assignment.name) {
+      throw new Error("Name required for Assignment");
+    }
+    if (assignment.questionType === "CodeCombat" && !assignment.levels.length) {
+      throw new Error("Levels required for Code Combat Assignment");
+    }
+  }
+
   addAssignment(courseId, assignment) {
-    return firebase
-      .ref(`/assignments/${courseId}`)
-      .push(assignment)
-      .catch(err =>
-        this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
-      );
+    return firebase.ref(`/assignments/${courseId}`).push(assignment);
   }
 
   updateAssignment(courseId, assignmentId, field, value) {
@@ -112,7 +121,7 @@ class CoursesService {
     return firebase
       .ref(`/assignments/${courseId}/${assignmentId}`)
       .remove()
-      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+      .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
   /**
@@ -130,7 +139,7 @@ class CoursesService {
           .ref(`/visibleSolutions/${courseId}/${studentId}/${assignment.id}`)
           .set(solution.val());
       })
-      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+      .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
   getProfileStatus(userId) {
@@ -204,7 +213,7 @@ class CoursesService {
         //     .set(solutionValue);
         //   }
       })
-      .catch(err => this.store.dispatch(riseErrorMessage(err.message)));
+      .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
   /**

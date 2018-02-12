@@ -9,11 +9,19 @@ import Button from "material-ui/Button";
 import TextField from "material-ui/TextField/TextField";
 
 export class AddCourseDialog extends React.Component {
+  static propTypes = {
+    requestClose: PropTypes.func.isRequired,
+    requestCreation: PropTypes.func.isRequired,
+    onFieldChange: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    values: PropTypes.object.isRequired
+  };
+
   handleCancel = () => {
     this.props.requestClose();
   };
+
   handleCommit = () => {
-    this.props.requestClose();
     this.props.requestCreation(
       this.props.values.name,
       this.props.values.password
@@ -23,10 +31,11 @@ export class AddCourseDialog extends React.Component {
   render() {
     return (
       <Dialog open={this.props.open}>
-        <DialogTitle id="simple-dialog-title">Add new course</DialogTitle>
+        <DialogTitle id="simple-dialog-title">Add New Course</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
+            error={!this.props.values.name}
             onChange={event =>
               this.props.onFieldChange("name", event.currentTarget.value)
             }
@@ -39,6 +48,7 @@ export class AddCourseDialog extends React.Component {
             onChange={event =>
               this.props.onFieldChange("password", event.currentTarget.value)
             }
+            error={!this.props.values.password}
             value={this.props.values.password}
             margin="dense"
             label="Password"
@@ -47,10 +57,10 @@ export class AddCourseDialog extends React.Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.handleCancel} color="primary">
+          <Button onClick={this.handleCancel} color="secondary">
             Cancel
           </Button>
-          <Button onClick={this.handleCommit} color="primary">
+          <Button onClick={this.handleCommit} color="primary" raised>
             Commit
           </Button>
         </DialogActions>
@@ -58,13 +68,5 @@ export class AddCourseDialog extends React.Component {
     );
   }
 }
-
-AddCourseDialog.propTypes = {
-  requestClose: PropTypes.func.isRequired,
-  requestCreation: PropTypes.func.isRequired,
-  onFieldChange: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  values: PropTypes.object.isRequired
-};
 
 export default AddCourseDialog;

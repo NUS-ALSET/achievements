@@ -12,31 +12,23 @@ import Dialog, {
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog/index";
-import format from "date-fns/format";
 import Button from "material-ui/Button";
 import TextField from "material-ui/TextField";
 import MenuItem from "material-ui/Menu/MenuItem";
 import Select from "material-ui/Select";
 import Input, { InputLabel } from "material-ui/Input";
 import { FormControl } from "material-ui/Form";
-import Chip from "material-ui/Chip";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
+    assignment: PropTypes.any,
     userAchievements: PropTypes.object,
-    handleCommit: PropTypes.func.isRequired,
-    handleCancel: PropTypes.func.isRequired,
+    onFieldChange: PropTypes.func.isRequired,
+    onCommit: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired
   };
-  state = {
-    name: "",
-    details: "",
-    solutionVisible: false,
-    visible: false,
-    deadline: format(new Date(), "YYYY-MM-DDTHH:mm"),
-    questionType: "Text",
-    levels: []
-  };
+  /*
   handleChange = name => event => {
     // Reset default `name` and `details` for `Profile` question type
     if (
@@ -64,30 +56,21 @@ class AddAssignmentDialog extends React.PureComponent {
         details: "https://codecombat.com/"
       });
     }
-
-    this.setState({ [name]: event.target.value });
-  };
-
-  clearState = () => {
-    this.setState({
-      name: "",
-      details: "",
-      deadline: format(new Date(), "YYYY-MM-DDTHH:mm"),
-      questionType: "Text",
-      level: ""
-    });
-  };
-
-  commit = () => {
-    this.props.handleCommit(this.state);
-    this.clearState();
-  };
+  };*/
 
   render() {
-    let { userAchievements, open, handleCancel } = this.props;
+    let {
+      userAchievements,
+      onFieldChange,
+      open,
+      onClose,
+      onCommit,
+      assignment
+    } = this.props;
+    assignment = assignment || {};
 
     userAchievements = userAchievements || {};
-    userAchievements = userAchievements[this.state.questionType] || {};
+    userAchievements = userAchievements[assignment.questionType] || {};
     userAchievements = userAchievements.achievements || {};
 
     return (
@@ -98,8 +81,8 @@ class AddAssignmentDialog extends React.PureComponent {
             autoFocus
             margin="normal"
             select
-            value={this.state.questionType}
-            onChange={this.handleChange("questionType")}
+            value={assignment.questionType || ""}
+            onChange={onFieldChange("questionType")}
             label="Type of question"
             fullWidth
           >
@@ -108,32 +91,36 @@ class AddAssignmentDialog extends React.PureComponent {
             <MenuItem value="CodeCombat">Complete Code Combat Level</MenuItem>
           </TextField>
           <TextField
-            onChange={this.handleChange("name")}
+            onChange={onFieldChange("name")}
             margin="normal"
             label="Name"
-            value={this.state.name}
+            value={assignment.name || ""}
             fullWidth
           />
           <TextField
-            onChange={this.handleChange("details")}
+            onChange={onFieldChange("details")}
             margin="normal"
             label="Details/Links"
-            value={this.state.details}
+            value={assignment.details || ""}
             fullWidth
           />
-          {this.state.questionType === "CodeCombat" ? (
-            <FormControl fullWidth>
+          {assignment.questionType === "CodeCombat" ? (
+            <FormControl fullWidth margin="normal">
               <InputLabel htmlFor="select-multiple-levels">Levels</InputLabel>
               <Select
                 multiple
-                value={this.state.levels}
-                onChange={this.handleChange("levels")}
+                margin="none"
+                value={assignment.levels || ""}
+                onChange={onFieldChange("levels")}
                 input={<Input id="select-multiple-levels" />}
-                renderValue={selected => (
-                  <div>
-                    {selected.map(value => <Chip key={value} label={value} />)}
-                  </div>
-                )}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 224,
+                      width: 250
+                    }
+                  }
+                }}
               >
                 {Object.keys(userAchievements).map(id => (
                   <MenuItem key={userAchievements[id].name} value={id}>
@@ -150,8 +137,8 @@ class AddAssignmentDialog extends React.PureComponent {
             label="Deadline"
             margin="normal"
             type="datetime-local"
-            onChange={this.handleChange("deadline")}
-            value={this.state.deadline}
+            onChange={onFieldChange("deadline")}
+            value={assignment.deadline || ""}
             InputLabelProps={{
               shrink: true
             }}
@@ -159,14 +146,16 @@ class AddAssignmentDialog extends React.PureComponent {
         </DialogContent>
         <DialogActions>
           <Button
+            color="secondary"
             onClick={() => {
-              this.clearState();
-              handleCancel();
+              onClose();
             }}
           >
             Cancel
           </Button>
-          <Button onClick={this.commit}>Commit</Button>
+          <Button raised color="primary" onClick={onCommit}>
+            Commit
+          </Button>
         </DialogActions>
       </Dialog>
     );

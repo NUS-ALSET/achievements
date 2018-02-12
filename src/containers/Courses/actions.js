@@ -3,9 +3,9 @@ export const courseShowNewDialog = () => ({
   type: COURSE_SHOW_NEW_DIALOG
 });
 
-export const COURSE_HIDE_NEWDIALOG = "COURSE_HIDE_NEWDIALOG";
-export const courseHideNewdialog = () => ({
-  type: COURSE_HIDE_NEWDIALOG
+export const COURSE_HIDE_DIALOG = "COURSE_HIDE_DIALOG";
+export const courseHideDialog = () => ({
+  type: COURSE_HIDE_DIALOG
 });
 
 export const COURSE_NEW_DIALOG_CHANGE = "COURSE_NEW_DIALOG_CHANGE";
@@ -33,6 +33,19 @@ export const courseNewFail = (name, error) => ({
   type: COURSE_NEW_FAIL,
   name,
   error
+});
+
+export const COURSE_REMOVE_DIALOG_SHOW = "COURSE_REMOVE_DIALOG_SHOW";
+export const courseRemoveDialogShow = (courseId, courseName) => ({
+  type: COURSE_REMOVE_DIALOG_SHOW,
+  id: courseId,
+  name: courseName
+});
+
+export const COURSE_REMOVE_REQUEST = "COURSE_REMOVE_REQUEST";
+export const courseRemoveRequest = courseId => ({
+  type: COURSE_REMOVE_REQUEST,
+  courseId
 });
 
 export const COURSE_REMOVE_FAIL = "COURSE_REMOVE_FAIL";
