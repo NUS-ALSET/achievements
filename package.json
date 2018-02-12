@@ -46,7 +46,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "mocha --require babel-core/register --recursive ./tests",
+    "test": "mocha --require babel-core/register --require babel-polyfill --recursive ./tests",
     "eject": "react-scripts eject"
   }
 }
