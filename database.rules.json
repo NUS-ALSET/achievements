@@ -134,7 +134,7 @@
     "userAchievements": {
       ".read": "auth != null",
       "$userKey": {
-        ".write": false,
+        ".write": "auth != null && auth.uid == $userKey",
         ".read": "auth != null"
       }
     },

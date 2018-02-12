@@ -59,7 +59,7 @@ export class ActionsService {
       .ref("/blacklistActions")
       .once("value")
       .then(actions => {
-        this.bannedActions = Object.keys(actions.val());
+        this.bannedActions = Object.keys(actions.val() || {});
       });
   }
 }
