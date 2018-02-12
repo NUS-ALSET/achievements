@@ -355,12 +355,12 @@ export default compose(
     const state = store.getState();
     const uid = state.firebase.auth.uid;
     return [
+      "/users",
       `/courses/${courseId}`,
       `/courseMembers/${courseId}`,
       `/solutions/${courseId}`,
       `/solutions/${courseId}/${uid}`,
       `/visibleSolutions/${courseId}`,
-      "/users",
       `/assignments/${courseId}`,
       "/userAchievements"
     ];
