@@ -5,7 +5,6 @@
 
 import each from "lodash/each";
 import firebase from "firebase";
-import { courseNewFail, courseNewSuccess } from "../containers/Courses/actions";
 import { notificationShow } from "../containers/Root/actions";
 import {
   coursePasswordEnterFail,
@@ -70,11 +69,7 @@ class CoursesService {
       })
       .then(ref => {
         return firebase.set(`/coursePasswords/${ref.getKey()}`, password);
-      })
-      .then(() => this.dispatch(courseNewSuccess(name)))
-      .catch(err =>
-        this.dispatchErrorMessage(courseNewFail(name, err.message))
-      );
+      });
   }
 
   deleteCourse(courseId) {

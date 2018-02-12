@@ -31,12 +31,16 @@
     "reselect": "^3.0.1"
   },
   "devDependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.24.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "firebase-admin": "^5.8.1",
     "firebase-json": "^0.4.0",
     "mocha": "^5.0.0",
     "react-scripts": "1.0.0",
+    "sinon": "^4.3.0",
     "targaryen": "^3.0.5"
   },
   "scripts": {
