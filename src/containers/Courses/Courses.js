@@ -69,6 +69,7 @@ class Courses extends React.Component {
       removingCourse,
       dialog
     } = this.props;
+
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
     }
@@ -115,6 +116,10 @@ const mapStateToProps = state => ({
   newCourseValues: state.courses.newCourseValues
 });
 
-export default compose(firebaseConnect(["courses"]), connect(mapStateToProps))(
-  Courses
-);
+export default compose(
+  firebaseConnect(
+    // Pretty dirty hack to get courses fetching after login on `/course` route
+    (ownProps, store) => !store.getState().firebase.auth.isEmpty && ["/courses"]
+  ),
+  connect(mapStateToProps)
+)(Courses);

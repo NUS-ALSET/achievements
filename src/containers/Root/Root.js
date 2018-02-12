@@ -70,6 +70,10 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-  firebaseConnect(["users", "blacklistActions"]),
+  firebaseConnect(
+    // Pretty dirty hack to get data fetching only after login
+    (ownProps, store) =>
+      !store.getState().firebase.auth.isEmpty && ["blacklistActions"]
+  ),
   connect(mapStateToProps)
 )(Root);
