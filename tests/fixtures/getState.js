@@ -68,22 +68,40 @@ export const getTestState = config => ({
       solutions: config.solutions || {
         abcTestCourseId: {
           abcTestUser1: {
-            abcTestAssignmentId: "test-user-1",
-            defTestAssignmentId: "Test User 1"
+            abcTestAssignmentId: {
+              createdAt: 1000,
+              value: "test-user-1"
+            },
+            defTestAssignmentId: {
+              createdAt: 1000,
+              value: "Test User 1"
+            }
           },
           abcTestUser2: {
-            abcTestAssignmentId: "test-user-2"
+            abcTestAssignmentId: {
+              createdAt: 1000,
+              value: "test-user-2"
+            }
           }
         }
       },
       visibleSolutions: config.visibleSolutions || {
         abcTestCourseId: {
           abcTestUser1: {
-            abcTestAssignmentId: "test-user-1",
-            defTestAssignmentId: "Completed"
+            abcTestAssignmentId: {
+              createdAt: 1000,
+              value: "test-user-1"
+            },
+            defTestAssignmentId: {
+              createdAt: 1000,
+              value: "Completed"
+            }
           },
           abcTestUser2: {
-            abcTestAssignmentId: "test-user-2"
+            abcTestAssignmentId: {
+              createdAt: 1000,
+              value: "test-user-2"
+            }
           }
         }
       },
