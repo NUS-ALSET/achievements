@@ -8,6 +8,11 @@ const ERROR_401 = 401;
 
 admin.initializeApp(functions.config().firebase);
 
+exports.handleNewSolution = functions.database
+  .ref("/solutions")
+  // eslint-disable-next-line no-console
+  .onCreate(event => console.log(JSON.stringify(event.data.val(), null, 2)));
+
 exports.handleProfileQueue = functions.https.onRequest((req, res) => {
   const { token } = req.query;
 

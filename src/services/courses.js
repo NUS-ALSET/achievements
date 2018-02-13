@@ -11,6 +11,7 @@ import {
   coursePasswordEnterRequest,
   coursePasswordEnterSuccess
 } from "../containers/Assignments/actions";
+import { solutionsService } from "./solutions";
 
 const ERROR_TIMEOUT = 6000;
 
@@ -62,14 +63,20 @@ class CoursesService {
     return firebase
       .push("/courses", {
         name,
-
-        // Temporary, replace for `populate` and `users`
         instructorName: this.getUser("displayName"),
         owner: this.getUser("uid")
       })
-      .then(ref => {
-        return firebase.set(`/coursePasswords/${ref.getKey()}`, password);
-      });
+      .then(ref =>
+        firebase.set(`/coursePasswords/${ref.getKey()}`, password).then(() =>
+          // Start watch solutions for this course
+          firebase
+            .database()
+            .ref(`/solutions/${ref.getKey()}`)
+            .on("value", data =>
+              solutionsService.processUpdatedSolutions(ref.getKey(), data.val())
+            )
+        )
+      );
   }
 
   deleteCourse(courseId) {
@@ -177,7 +184,6 @@ class CoursesService {
   }
 
   submitSolution(courseId, assignment, value) {
-    let solutionValue;
     const userId = this.getUser("uid");
 
     return Promise.resolve()
@@ -195,10 +201,12 @@ class CoursesService {
         }
       })
       .then(value => {
-        solutionValue = value;
         return firebase
           .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
-          .set(solutionValue);
+          .set({
+            createdAt: new Date().getTime(),
+            value
+          });
         // })
         // .then(() => {
         //   Fixit: remove solution visible and add it to assignment view
