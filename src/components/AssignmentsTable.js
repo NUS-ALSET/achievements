@@ -58,9 +58,6 @@ class AssignmentsTable extends React.PureComponent {
       course,
       currentUser,
       sortState,
-      instructorView,
-
-      onAcceptClick,
       onSortClick,
       onSubmitClick
     } = this.props;
@@ -124,18 +121,6 @@ class AssignmentsTable extends React.PureComponent {
                     <TableCell key={assignment.id}>
                       <Fragment>
                         {this.getSolution(assignment, studentInfo.solutions)}
-                        {this.getSolution(assignment, studentInfo.solutions) &&
-                          instructorView && (
-                            <Fragment>
-                              <Button
-                                onClick={() =>
-                                  onAcceptClick(assignment, studentInfo.id)
-                                }
-                              >
-                                Accept
-                              </Button>
-                            </Fragment>
-                          )}
 
                         {studentInfo.id === currentUser.id && (
                           <Button

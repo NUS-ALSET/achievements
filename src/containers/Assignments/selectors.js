@@ -38,6 +38,8 @@ const getStudentSolutions = (state, courseId, studentId, options = {}) => {
       const userAchievements = achievements.CodeCombat || {};
       const published = !!publishedSolutions[assignmentId];
 
+      solution = solution && solution.value;
+
       if (!solution) {
         return true;
       }
