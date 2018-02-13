@@ -140,6 +140,13 @@ class Assignments extends React.Component {
     this.props.dispatch(assignmentCloseDialog());
   };
 
+  // componentDidMount() {
+  //   this.props.firebase.watchEvent(
+  //     "value",
+  //     `courses/${this.props.match.params.courseId}`
+  //   );
+  // }
+  //
   getPasswordView() {
     return (
       <Fragment>

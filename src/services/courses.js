@@ -114,9 +114,41 @@ class CoursesService {
   }
 
   updateAssignment(courseId, assignmentId, field, value) {
-    return firebase.ref(`/assignments/${courseId}/${assignmentId}`).update({
-      [field]: value
-    });
+    return firebase
+      .ref(`/assignments/${courseId}/${assignmentId}`)
+      .update({
+        [field]: value
+      })
+      .then(
+        // Replace visible solutions if this setting was changed
+        () =>
+          field === "solutionVisible" &&
+          firebase
+            .ref(`/solutions/${courseId}`)
+            .once("value")
+            .then(data =>
+              Promise.all(
+                Object.keys(data.val()).map(studentId => {
+                  const solutions = data.val()[studentId];
+
+                  if (solutions[assignmentId]) {
+                    return firebase
+                      .ref(
+                        "/visibleSolutions/" +
+                          `${courseId}/${studentId}/${assignmentId}`
+                      )
+                      .set({
+                        ...solutions[assignmentId],
+                        value: value
+                          ? solutions[assignmentId].value
+                          : "Completed"
+                      });
+                  }
+                  return Promise.resolve();
+                })
+              )
+            )
+      );
   }
 
   removeAssignment(courseId, assignmentId) {

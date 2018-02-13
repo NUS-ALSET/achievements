@@ -56,6 +56,6 @@ export function* watchSignInSuccess() {
 
 export default [
   watchNewCourseRequest,
-  watchRemoveCourseRequest,
-  watchSignInSuccess
+  watchRemoveCourseRequest
+  // watchSignInSuccess
 ];

@@ -9,9 +9,31 @@ const ERROR_401 = 401;
 admin.initializeApp(functions.config().firebase);
 
 exports.handleNewSolution = functions.database
-  .ref("/solutions")
-  // eslint-disable-next-line no-console
-  .onCreate(event => console.log(JSON.stringify(event.data.val(), null, 2)));
+  .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
+  .onWrite(event => {
+    const { courseId, studentId, assignmentId } = event.params;
+
+    return admin
+      .database()
+      .ref(`/assignments/${courseId}/${assignmentId}`)
+      .once("value")
+      .then(assignment => {
+        assignment = assignment.val();
+        // Fixit: add more assignment conditions
+        // We should process only solutions for actual assignments
+        if (assignment.visible) {
+          return admin
+            .database()
+            .ref(`/visibleSolutions/${courseId}/${studentId}/${assignmentId}`)
+            .set(
+              assignment.solutionVisible
+                ? event.data.val()
+                : Object.assign(event.data.val(), { value: "Complete" })
+            );
+        }
+        return true;
+      });
+  });
 
 exports.handleProfileQueue = functions.https.onRequest((req, res) => {
   const { token } = req.query;

@@ -35,6 +35,16 @@ class AddTextSolutionDialog extends React.PureComponent {
     });
   };
 
+  catchReturn = event => {
+    const { courseId, assignment } = this.props;
+
+    if (event.key !== "Enter") {
+      return;
+    }
+    coursesService.submitSolution(courseId, assignment, this.state.solution);
+    this.props.onClose();
+  };
+
   onCommitClick = () => {
     const { courseId, assignment } = this.props;
 
@@ -46,7 +56,7 @@ class AddTextSolutionDialog extends React.PureComponent {
     const { onClose, open } = this.props;
 
     return (
-      <Dialog open={open}>
+      <Dialog open={open} onClose={onClose}>
         <DialogTitle>Set Assignment Solution</DialogTitle>
         <DialogContent>
           <TextField
@@ -57,6 +67,7 @@ class AddTextSolutionDialog extends React.PureComponent {
             label="Solution"
             value={this.state.solution}
             onChange={this.onChangeSolution}
+            onKeyPress={this.catchReturn}
           />
         </DialogContent>
         <DialogActions>
