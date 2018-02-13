@@ -89,11 +89,18 @@
       "$courseKey": {
         ".read": "auth != null && root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
         "$userKey": {
-          ".read": "auth != null  &&
-          	(($userKey == auth.uid &&
-            root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()) ||
-            root.child('courses/' + $courseKey + '/owner').val() == auth.uid )",
-          ".write": "auth != null && $userKey == auth.uid"
+          ".read": "
+            auth != null &&
+              (
+                ($userKey == auth.uid &&
+                root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()
+              ) || root.child('courses/' + $courseKey + '/owner').val() == auth.uid )
+          ",
+          ".write": "
+            auth != null &&
+            $userKey == auth.uid &&
+            root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()
+          "
         }
       }
     },
@@ -145,12 +152,12 @@
         ".indexOn": ["_state"],
         "$taskKey": {
           ".read": "auth != null",
-          ".write": "(
-          	auth != null &&
-            newData.exists() &&
-            newData.hasChild('uid') &&
-            newData.child('uid').val() == auth.uid
-          )"
+          ".write": "
+            auth != null &&
+              newData.exists() &&
+              newData.hasChild('uid') &&
+              newData.child('uid').val() == auth.uid
+            "
         }
       }
     }
