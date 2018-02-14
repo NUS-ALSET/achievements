@@ -5,7 +5,6 @@ import { compose } from "redux";
 import withStyles from "material-ui/styles/withStyles";
 import { LinearProgress } from "material-ui/Progress";
 import { firebaseConnect, isLoaded } from "react-redux-firebase";
-import Tabs, { Tab } from "material-ui/Tabs";
 import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
 import Grid from "material-ui/Grid";
@@ -17,7 +16,6 @@ import Typography from "material-ui/Typography";
 import { coursesService } from "../../services/courses";
 
 import AssignmentsTable from "../../components/AssignmentsTable";
-import AssignmentsEditorTable from "../../components/AssignmentsEditorTable";
 import {
   assignmentAddRequest,
   assignmentCloseDialog,
@@ -28,7 +26,6 @@ import {
   assignmentSwitchTab,
   updateNewAssignmentField
 } from "./actions";
-import AddAssignmentDialog from "../../components/AddAssignmentDialog";
 import AddProfileDialog from "../../components/AddProfileDialog";
 import { notificationShow } from "../Root/actions";
 import {
@@ -37,13 +34,9 @@ import {
   getCurrentUserProps
 } from "./selectors";
 import AddTextSolutionDialog from "../../components/AddTextSolutionDialog";
-import DeleteAssignmentDialog from "../../components/DeleteAssignmentDialog";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
-
-const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
-const INSTRUCTOR_TAB_EDIT = 1;
-const INSTRUCTOR_TAB_VIEW = 2;
+import InstructorTabs from "../../components/InstructorTabs";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -86,7 +79,7 @@ class Assignments extends React.Component {
       value: event.currentTarget.value
     });
 
-  createAssignment = () => {
+  onCreateAssignmentClick = () => {
     /** @type AssignmentProps */
     const { dispatch, course, ui } = this.props;
 
@@ -97,7 +90,7 @@ class Assignments extends React.Component {
     this.props.dispatch(assignmentDeleteRequest(assignment));
   };
 
-  updateNewAssignmentField = field => e => {
+  onUpdateNewAssignmentField = field => e => {
     this.props.dispatch(updateNewAssignmentField(field, e.target.value));
   };
 
@@ -185,64 +178,6 @@ class Assignments extends React.Component {
     );
   }
 
-  getInstructorTab() {
-    /** @type AssignmentProps */
-    const { course, ui, currentUser } = this.props;
-
-    switch (ui.currentTab) {
-      case INSTRUCTOR_TAB_ASSIGNMENTS:
-        return (
-          <AssignmentsTable
-            instructorView={false}
-            sortState={ui.sortState}
-            currentUser={currentUser}
-            course={course}
-            onSortClick={this.onSortClick}
-            onSubmitClick={this.onSubmitClick}
-          />
-        );
-      case INSTRUCTOR_TAB_EDIT:
-        return (
-          <Fragment>
-            <AssignmentsEditorTable
-              onAddAssignmentClick={this.onAddAssignmentClick}
-              onDeleteAssignmentClick={this.onDeleteAssignment}
-              onUpdateAssignment={this.onUpdateAssignment}
-              assignments={course.assignments || {}}
-            />
-            <AddAssignmentDialog
-              userAchievements={currentUser.achievements}
-              assignment={ui.dialog && ui.dialog.value}
-              onFieldChange={this.updateNewAssignmentField}
-              onCommit={this.createAssignment}
-              onClose={this.closeDialog}
-              open={ui.dialog && ui.dialog.type === "AddAssignment"}
-            />
-            <DeleteAssignmentDialog
-              courseId={course.id}
-              assignment={ui.dialog && ui.dialog.value}
-              open={ui.dialog && ui.dialog.type === "DeleteAssignment"}
-              onClose={this.closeDialog}
-            />
-          </Fragment>
-        );
-      case INSTRUCTOR_TAB_VIEW:
-        return (
-          <AssignmentsTable
-            instructorView={true}
-            sortState={ui.sortState}
-            currentUser={currentUser}
-            course={course}
-            onAcceptClick={this.onAcceptClick}
-            onSortClick={this.onSortClick}
-            onSubmitClick={this.onSubmitClick}
-          />
-        );
-      default:
-        return <div>Something goes wrong</div>;
-    }
-  }
-
   render() {
     const {
       ui,
@@ -267,20 +202,21 @@ class Assignments extends React.Component {
     // If owner match user id then we suppose use as instructor and give him special view
     if (course.owner === currentUser.id) {
       AssignmentView = (
-        <Fragment>
-          <Tabs
-            fullWidth
-            indicatorColor="primary"
-            textColor="primary"
-            value={ui.currentTab}
-            onChange={this.handleTabChange}
-          >
-            <Tab label="Assignments" />
-            <Tab label="Edit" />
-            <Tab label="Instructor view" />
-          </Tabs>
-          {this.getInstructorTab()}
-        </Fragment>
+        <InstructorTabs
+          onSortClick={this.onSortClick}
+          onSubmitClick={this.onSubmitClick}
+          onAddAssignmentClick={this.onAddAssignmentClick}
+          onDeleteAssignment={this.onDeleteAssignment}
+          onUpdateAssignment={this.onUpdateAssignment}
+          onUpdateNewAssignmentField={this.onUpdateNewAssignmentField}
+          onCreateAssignmentClick={this.onCreateAssignmentClick}
+          closeDialog={this.closeDialog}
+          onAcceptClick={this.onAcceptClick}
+          handleTabChange={this.handleTabChange}
+          ui={ui}
+          course={course}
+          currentUser={currentUser}
+        />
       );
     } else if (course.members && course.members[currentUser.id]) {
       // Otherwise - just provide list of assignments for student-member

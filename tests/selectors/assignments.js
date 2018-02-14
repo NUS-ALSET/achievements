@@ -124,12 +124,24 @@ describe("assignments selectors tests", () => {
         solutions: {
           abcTestCourseId: {
             abcTestUser1: {
-              abcTestAssignmentId: "test-user-1",
-              defTestAssignmentId: "Test User 1"
+              abcTestAssignmentId: {
+                value: "test-user-1",
+                createdAt: 1000
+              },
+              defTestAssignmentId: {
+                value: "Test User 1",
+                createdAt: 1000
+              }
             },
             abcTestUser2: {
-              abcTestAssignmentId: "test-user-2",
-              defTestAssignmentId: "Test User 2"
+              abcTestAssignmentId: {
+                value: "test-user-2",
+                createdAt: 1000
+              },
+              defTestAssignmentId: {
+                value: "Test User 2",
+                createdAt: 1000
+              }
             }
           }
         }
@@ -160,12 +172,24 @@ describe("assignments selectors tests", () => {
         solutions: {
           abcTestCourseId: {
             abcTestUser1: {
-              abcTestAssignmentId: "test-user-1",
-              defTestAssignmentId: "Test User 1"
+              abcTestAssignmentId: {
+                value: "test-user-1",
+                createdAt: 1000
+              },
+              defTestAssignmentId: {
+                value: "Test User 1",
+                createdAt: 1000
+              }
             },
             abcTestUser2: {
-              abcTestAssignmentId: "test-user-2",
-              defTestAssignmentId: "Test User 2"
+              abcTestAssignmentId: {
+                value: "test-user-2",
+                createdAt: 1000
+              },
+              defTestAssignmentId: {
+                value: "Test User 2",
+                createdAt: 1000
+              }
             }
           }
         }

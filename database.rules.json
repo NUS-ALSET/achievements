@@ -104,6 +104,8 @@
         }
       }
     },
+    "solutionsQueue": {},
+
     "visibleSolutions": {
       ".read": "false",
       "$courseKey": {
@@ -135,7 +137,15 @@
       ".read": "auth != null",
       "$userKey": {
         ".write": "auth != null && auth.uid == $userKey",
-        ".read": "auth != null"
+        ".read": "auth != null",
+        "CodeCombat": {
+          "achievements": {
+            "$achievementId": {
+              ".write": false,
+              ".validate": false
+            }
+          }
+        }
       }
     },
     "assignments": {

@@ -1,4 +1,4 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { select, call, put, takeLatest } from "redux-saga/effects";
 import {
   COURSE_NEW_REQUEST,
   COURSE_REMOVE_REQUEST,
@@ -9,6 +9,7 @@ import {
 } from "./actions";
 import { coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
+import { solutionsService } from "../../services/solutions";
 
 export function* courseNewRequestHandle(action) {
   try {
@@ -44,4 +45,17 @@ export function* watchRemoveCourseRequest() {
   yield takeLatest(COURSE_REMOVE_REQUEST, courseRemoveRequestHandle);
 }
 
-export default [watchNewCourseRequest, watchRemoveCourseRequest];
+export function* signInSuccessHandle() {
+  const uid = yield select(state => state.firebase.auth.uid);
+  yield call([solutionsService, solutionsService.watchOwnCourses], uid);
+}
+
+export function* watchSignInSuccess() {
+  yield takeLatest("@@reactReduxFirebase/LOGIN", signInSuccessHandle);
+}
+
+export default [
+  watchNewCourseRequest,
+  watchRemoveCourseRequest
+  // watchSignInSuccess
+];

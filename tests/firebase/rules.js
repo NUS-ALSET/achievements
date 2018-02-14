@@ -20,6 +20,45 @@ describe("security rules tests", () => {
     assert.equal(permitted, false);
   });
 
+  describe("userAchievements rules", () => {
+    it("should disallow anonymous write", () => {
+      const { permitted } = database.write(
+        "/userAchievements/testUserId/foo",
+        "bar"
+      );
+
+      assert.equal(permitted, false);
+    });
+
+    it("should disallow non-student write", () => {
+      const { permitted } = database
+        .as({ uid: "abcTestUser2" })
+        .write("/userAchievements/abcTestUser1/foo", "bar");
+
+      assert.equal(permitted, false);
+    });
+
+    it("should allow student write", () => {
+      const { permitted } = database
+        .as({ uid: "abcTestUser1" })
+        .write("/userAchievements/abcTestUser1/foo", "bar");
+
+      assert.equal(permitted, true);
+    });
+
+    it("should disallow student write achievements", () => {
+      const { permitted, validated } = database
+        .as({ uid: "abcTestUser1" })
+        .write(
+          "/userAchievements/abcTestUser1/CodeCombat/achievements/foo",
+          "bar"
+        );
+
+      assert.equal(permitted, true, "permitted");
+      assert.equal(validated, false, "validated");
+    });
+  });
+
   describe("assignments rules", () => {
     it("should disallow anonymous write to assignments", () => {
       const { permitted } = database.write(

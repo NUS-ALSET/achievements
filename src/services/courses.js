@@ -11,6 +11,7 @@ import {
   coursePasswordEnterRequest,
   coursePasswordEnterSuccess
 } from "../containers/Assignments/actions";
+import { solutionsService } from "./solutions";
 
 const ERROR_TIMEOUT = 6000;
 
@@ -62,14 +63,20 @@ class CoursesService {
     return firebase
       .push("/courses", {
         name,
-
-        // Temporary, replace for `populate` and `users`
         instructorName: this.getUser("displayName"),
         owner: this.getUser("uid")
       })
-      .then(ref => {
-        return firebase.set(`/coursePasswords/${ref.getKey()}`, password);
-      });
+      .then(ref =>
+        firebase.set(`/coursePasswords/${ref.getKey()}`, password).then(() =>
+          // Start watch solutions for this course
+          firebase
+            .database()
+            .ref(`/solutions/${ref.getKey()}`)
+            .on("value", data =>
+              solutionsService.processUpdatedSolutions(ref.getKey(), data.val())
+            )
+        )
+      );
   }
 
   deleteCourse(courseId) {
@@ -107,9 +114,41 @@ class CoursesService {
   }
 
   updateAssignment(courseId, assignmentId, field, value) {
-    return firebase.ref(`/assignments/${courseId}/${assignmentId}`).update({
-      [field]: value
-    });
+    return firebase
+      .ref(`/assignments/${courseId}/${assignmentId}`)
+      .update({
+        [field]: value
+      })
+      .then(
+        // Replace visible solutions if this setting was changed
+        () =>
+          field === "solutionVisible" &&
+          firebase
+            .ref(`/solutions/${courseId}`)
+            .once("value")
+            .then(data =>
+              Promise.all(
+                Object.keys(data.val()).map(studentId => {
+                  const solutions = data.val()[studentId];
+
+                  if (solutions[assignmentId]) {
+                    return firebase
+                      .ref(
+                        "/visibleSolutions/" +
+                          `${courseId}/${studentId}/${assignmentId}`
+                      )
+                      .set({
+                        ...solutions[assignmentId],
+                        value: value
+                          ? solutions[assignmentId].value
+                          : "Completed"
+                      });
+                  }
+                  return Promise.resolve();
+                })
+              )
+            )
+      );
   }
 
   removeAssignment(courseId, assignmentId) {
@@ -177,7 +216,6 @@ class CoursesService {
   }
 
   submitSolution(courseId, assignment, value) {
-    let solutionValue;
     const userId = this.getUser("uid");
 
     return Promise.resolve()
@@ -195,10 +233,12 @@ class CoursesService {
         }
       })
       .then(value => {
-        solutionValue = value;
         return firebase
           .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
-          .set(solutionValue);
+          .set({
+            createdAt: new Date().getTime(),
+            value
+          });
         // })
         // .then(() => {
         //   Fixit: remove solution visible and add it to assignment view
