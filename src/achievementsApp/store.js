@@ -18,10 +18,7 @@ if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
 }
 
 export const configureStore = initialState => {
-  const middlewares = [
-    sagaMiddleware,
-    /* logger, */ actionsService.catchAction
-  ];
+  const middlewares = [sagaMiddleware, logger, actionsService.catchAction];
   const store = compose(reactReduxFirebase(firebase, rrfConfig))(createStore)(
     rootReducer,
     initialState,
@@ -31,5 +28,3 @@ export const configureStore = initialState => {
 
   return store;
 };
-
-window.wtf = logger;
