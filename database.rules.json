@@ -57,17 +57,25 @@
     "courses": {
       ".read": "auth != null",
       "$courseKey": {
-        ".write": "auth != null && (
-        !data.exists() && newData.child('owner').exists() && newData.child('owner').val() == auth.uid ||
-        data.exists() && data.child('owner').val() == auth.uid
-        )"
+        ".read": "auth != null",
+        ".write": "
+          auth != null && newData.exists() && !newData.child('isPublic').exists() && (
+            (
+              !data.exists() &&
+                newData.child('owner').exists() &&
+                newData.child('owner').val() == auth.uid
+            ) || (
+              data.exists() && data.child('owner').val() == auth.uid
+            )
+          )
+        "
       }
     },
     "studentCoursePasswords": {
       ".read": "false",
       "$courseKey": {
         "$studentKey": {
-          ".write": "auth != null && !data.exists() && $studentKey == auth.uid &&
+          ".write": "auth != null && $studentKey == auth.uid &&
           root.child('coursePasswords/' + $courseKey).exists() &&
           root.child('coursePasswords/' + $courseKey).val() == newData.val()"
         }
@@ -77,9 +85,22 @@
       ".read": "auth != null",
       "$courseKey": {
         "$studentKey": {
-          ".write": "auth != null && $studentKey == auth.uid &&
-          root.child('studentCoursePasswords/' + $courseKey).exists() &&
-          root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
+          ".write": "auth != null &&
+            $studentKey == auth.uid &&
+            root.child('studentCoursePasswords/' + $courseKey).exists() &&
+            root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
+          "
+        }
+      }
+    },
+    "studentJoinedCourses": {
+      ".read": false,
+      "$studentKey": {
+        "$courseKey": {
+          ".write": "auth != null &&
+            $studentKey == auth.uid &&
+            root.child('studentCoursePasswords/' + $courseKey).exists() &&
+            root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
           "
         }
       }
@@ -104,8 +125,6 @@
         }
       }
     },
-    "solutionsQueue": {},
-
     "visibleSolutions": {
       ".read": "false",
       "$courseKey": {

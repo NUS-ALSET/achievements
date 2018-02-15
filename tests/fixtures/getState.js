@@ -45,6 +45,9 @@ export const getTestState = config => ({
           owner: "abcTestUserOwner"
         }
       },
+      coursePasswords: {
+        abcTestCourseId: "abcTestCoursePassword"
+      },
       userAchievements: config.userAchievements || {
         abcTestUser1: {
           CodeCombat: {

@@ -24,6 +24,7 @@ import {
   assignmentsSortChange,
   assignmentSubmitRequest,
   assignmentSwitchTab,
+  coursePasswordEnterSuccess,
   updateNewAssignmentField
 } from "./actions";
 import AddProfileDialog from "../../components/AddProfileDialog";
@@ -60,10 +61,8 @@ class Assignments extends React.Component {
     auth: PropTypes.object,
     courseMembers: PropTypes.object
   };
-
-  // Force show assignments (when become participant)
   state = {
-    showAssignments: false
+    password: ""
   };
 
   onAddAssignmentClick = () => {
@@ -76,7 +75,7 @@ class Assignments extends React.Component {
 
   handlePasswordChange = event =>
     this.setState({
-      value: event.currentTarget.value
+      password: event.currentTarget.value
     });
 
   onCreateAssignmentClick = () => {
@@ -101,9 +100,36 @@ class Assignments extends React.Component {
   };
 
   submitPassword = () => {
-    const { course } = this.props;
+    const { course, firebase, currentUser, dispatch } = this.props;
 
-    coursesService.tryCoursePassword(course.id, this.state.value);
+    coursesService
+      .tryCoursePassword(course.id, this.state.password)
+      // This ref requires existing courseMember item at `firebaseConnect` rises an error and stops to work
+      // So, we have firstly remove listeners
+      .then(() =>
+        Promise.all(
+          [
+            `solutions/${course.id}`,
+            `solutions/${course.id}/${currentUser.id}`,
+            `visibleSolutions/${course.id}`,
+            `assignments/${course.id}`,
+            "userAchievements"
+          ].map(path => Promise.resolve(firebase.unWatchEvent("value", path)))
+        )
+      )
+      .then(() =>
+        // And then we have to add listeners back
+        Promise.all(
+          [
+            `solutions/${course.id}`,
+            `solutions/${course.id}/${currentUser.id}`,
+            `visibleSolutions/${course.id}`,
+            `assignments/${course.id}`,
+            "userAchievements"
+          ].map(path => Promise.resolve(firebase.watchEvent("value", path)))
+        )
+      )
+      .then(() => dispatch(coursePasswordEnterSuccess()));
   };
 
   onSortClick = assignment => {
@@ -231,7 +257,6 @@ class Assignments extends React.Component {
         />
       );
     }
-
     return (
       <Fragment>
         <Toolbar>
@@ -259,6 +284,7 @@ class Assignments extends React.Component {
         <AddTextSolutionDialog
           open={ui.dialog && ui.dialog.type === "Text"}
           courseId={course.id}
+          solution={ui.dialog && ui.dialog.value}
           assignment={ui.currentAssignment}
           onClose={this.closeDialog}
         />
@@ -290,6 +316,7 @@ export default compose(
     const courseId = ownProps.match.params.courseId;
     const state = store.getState();
     const uid = state.firebase.auth.uid;
+
     return [
       "/users",
       `/courses/${courseId}`,

@@ -1,7 +1,7 @@
 export const LOGIN_MENU_OPEN = "LOGIN_MENU_OPEN";
-export const loginMenuOpen = anchorEl => ({
+export const loginMenuOpen = anchorElId => ({
   type: LOGIN_MENU_OPEN,
-  anchorEl
+  anchorElId
 });
 
 export const LOGIN_MENU_CLOSE = "LOGIN_MENU_CLOSE";

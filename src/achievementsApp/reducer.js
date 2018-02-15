@@ -10,7 +10,7 @@ export default combineReducers({
   firebase,
   appFrame,
   courses,
-  root: root,
+  root,
   assignments,
   account
 });

@@ -18,11 +18,11 @@ import MenuItem from "material-ui/Menu/MenuItem";
 import Select from "material-ui/Select";
 import Input, { InputLabel } from "material-ui/Input";
 import { FormControl } from "material-ui/Form";
+import { APP_SETTING } from "../achievementsApp/config";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
     assignment: PropTypes.any,
-    userAchievements: PropTypes.object,
     onFieldChange: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -59,19 +59,8 @@ class AddAssignmentDialog extends React.PureComponent {
   };*/
 
   render() {
-    let {
-      userAchievements,
-      onFieldChange,
-      open,
-      onClose,
-      onCommit,
-      assignment
-    } = this.props;
+    let { onFieldChange, open, onClose, onCommit, assignment } = this.props;
     assignment = assignment || {};
-
-    userAchievements = userAchievements || {};
-    userAchievements = userAchievements[assignment.questionType] || {};
-    userAchievements = userAchievements.achievements || {};
 
     return (
       <Dialog open={open}>
@@ -89,6 +78,9 @@ class AddAssignmentDialog extends React.PureComponent {
             <MenuItem value="Text">Text</MenuItem>
             <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
             <MenuItem value="CodeCombat">Complete Code Combat Level</MenuItem>
+            <MenuItem value="CodeCombat_Number">
+              Complete Number of Code Combat Levels
+            </MenuItem>
           </TextField>
           <TextField
             onChange={onFieldChange("name")}
@@ -104,14 +96,13 @@ class AddAssignmentDialog extends React.PureComponent {
             value={assignment.details || ""}
             fullWidth
           />
-          {assignment.questionType === "CodeCombat" ? (
+          {assignment.questionType === "CodeCombat" && (
             <FormControl fullWidth margin="normal">
               <InputLabel htmlFor="select-multiple-levels">Levels</InputLabel>
               <Select
-                multiple
                 margin="none"
-                value={assignment.levels || ""}
-                onChange={onFieldChange("levels")}
+                value={assignment.level || ""}
+                onChange={onFieldChange("level")}
                 input={<Input id="select-multiple-levels" />}
                 MenuProps={{
                   PaperProps: {
@@ -122,16 +113,35 @@ class AddAssignmentDialog extends React.PureComponent {
                   }
                 }}
               >
-                {Object.keys(userAchievements).map(id => (
-                  <MenuItem key={userAchievements[id].name} value={id}>
-                    {userAchievements[id].name}
+                {Object.keys(APP_SETTING.levels).map(id => (
+                  <MenuItem key={APP_SETTING.levels[id].name} value={id}>
+                    {APP_SETTING.levels[id].name}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
-          ) : (
-            undefined
           )}
+          {assignment.questionType === "CodeCombat_Number" && (
+            <TextField
+              fullWidth
+              label="Levels amount"
+              margin="normal"
+              type="number"
+              onChange={onFieldChange("count")}
+              value={assignment.count}
+            />
+          )}
+          <TextField
+            fullWidth
+            label="Open"
+            margin="normal"
+            type="datetime-local"
+            onChange={onFieldChange("open")}
+            value={assignment.open || ""}
+            InputLabelProps={{
+              shrink: true
+            }}
+          />
           <TextField
             fullWidth
             label="Deadline"

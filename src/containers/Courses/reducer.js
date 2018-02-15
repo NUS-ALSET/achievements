@@ -1,14 +1,16 @@
 import {
-  COURSE_HIDE_DIALOG,
+  COURSE_HIDE_DIALOG, COURSE_JOINED_FETCH_SUCCESS,
   COURSE_NEW_DIALOG_CHANGE,
   COURSE_REMOVE_DIALOG_SHOW,
-  COURSE_SHOW_NEW_DIALOG
+  COURSE_SHOW_NEW_DIALOG,
+  COURSE_SWITCH_TAB
 } from "./actions";
 
 export const courses = (
   state = {
     dialog: false,
     removingCourse: false,
+    currentTab: 0,
     newCourseValues: {
       name: "",
       password: ""
@@ -25,6 +27,11 @@ export const courses = (
           name: "",
           password: ""
         }
+      };
+    case COURSE_SWITCH_TAB:
+      return {
+        ...state,
+        currentTab: action.tabIndex
       };
     case COURSE_HIDE_DIALOG:
       return {
@@ -47,6 +54,11 @@ export const courses = (
           id: action.id,
           name: action.name
         }
+      };
+    case COURSE_JOINED_FETCH_SUCCESS:
+      return {
+        ...state,
+        joinedCourses: action.courses
       };
     default:
       return state;

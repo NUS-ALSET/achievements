@@ -8,6 +8,7 @@ import {
   UPDATE_NEW_ASSIGNMENT_FIELD
 } from "./actions";
 import format from "date-fns/format";
+import addDays from "date-fns/add_days";
 
 export const assignments = (
   state = {
@@ -53,8 +54,11 @@ export const assignments = (
             details: "",
             solutionVisible: false,
             visible: false,
-            deadline: format(new Date(), "YYYY-MM-DDTHH:mm"),
+            open: format(new Date(), "YYYY-MM-DDTHH:mm"),
+            deadline: format(addDays(new Date(), 1), "YYYY-MM-DDTHH:mm"),
             questionType: "Text",
+            level: "",
+            count: 1,
             levels: []
           }
         }

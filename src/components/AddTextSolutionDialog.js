@@ -20,6 +20,7 @@ class AddTextSolutionDialog extends React.PureComponent {
   static propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
+    solution: PropTypes.any,
 
     courseId: PropTypes.string.isRequired,
     assignment: PropTypes.object
@@ -53,7 +54,7 @@ class AddTextSolutionDialog extends React.PureComponent {
   };
 
   render() {
-    const { onClose, open } = this.props;
+    const { onClose, open, solution } = this.props;
 
     return (
       <Dialog open={open} onClose={onClose}>
@@ -61,11 +62,12 @@ class AddTextSolutionDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             fullWidth
+            autoFocus
             style={{
               width: 320
             }}
             label="Solution"
-            value={this.state.solution}
+            defaultValue={(solution && solution.value) || ""}
             onChange={this.onChangeSolution}
             onKeyPress={this.catchReturn}
           />

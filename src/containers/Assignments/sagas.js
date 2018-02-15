@@ -1,12 +1,15 @@
-import { call, put, takeLatest } from "redux-saga/effects";
+import { select, call, put, takeLatest } from "redux-saga/effects";
 import {
   ASSIGNMENT_ADD_REQUEST,
   assignmentAddFail,
   assignmentAddSuccess,
-  assignmentCloseDialog
+  assignmentCloseDialog,
+  UPDATE_NEW_ASSIGNMENT_FIELD,
+  updateNewAssignmentField
 } from "./actions";
 import { notificationShow } from "../Root/actions";
 import { coursesService } from "../../services/courses";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 export function* addAssignmentRequestHandle(action) {
   try {
@@ -24,8 +27,29 @@ export function* addAssignmentRequestHandle(action) {
   }
 }
 
+export function* updateNewAssignmentFieldHandler(action) {
+  let assignment = yield select(state => state.assignments.dialog.value);
+
+  assignment = assignment || {};
+  if (assignment.questionType === "Profile") {
+    yield put(updateNewAssignmentField("details", "https://codecombat.com"));
+  }
+
+  if (action.field === "level") {
+    yield put(
+      updateNewAssignmentField("details", APP_SETTING.levels[action.value].url)
+    );
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
+  },
+  function* watchUpdateNewAssignmentField() {
+    yield takeLatest(
+      UPDATE_NEW_ASSIGNMENT_FIELD,
+      updateNewAssignmentFieldHandler
+    );
   }
 ];

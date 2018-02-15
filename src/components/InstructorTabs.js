@@ -73,7 +73,6 @@ class InstructorTabs extends React.PureComponent {
               assignments={course.assignments || {}}
             />
             <AddAssignmentDialog
-              userAchievements={currentUser.achievements}
               assignment={ui.dialog && ui.dialog.value}
               onFieldChange={onUpdateNewAssignmentField}
               onCommit={onCreateAssignmentClick}

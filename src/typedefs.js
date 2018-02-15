@@ -36,7 +36,7 @@
  * @property {Object} user
  * @property {String} user.id
  * @property {String} user.displayName
- * @property {HTMLElement | Boolean} dropdownAnchorEl
+ * @property {HTMLElement | Boolean} dropdownAnchorElId
  * @property {Boolean} mainDrawerOpen
  */
 

@@ -8,10 +8,10 @@ import firebase from "firebase";
 import { notificationShow } from "../containers/Root/actions";
 import {
   coursePasswordEnterFail,
-  coursePasswordEnterRequest,
-  coursePasswordEnterSuccess
+  coursePasswordEnterRequest
 } from "../containers/Assignments/actions";
 import { solutionsService } from "./solutions";
+import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
 
 const ERROR_TIMEOUT = 6000;
 
@@ -45,10 +45,40 @@ class CoursesService {
    */
   getUser(field) {
     const user = firebase.auth().currentUser;
+    if (!user) {
+      return false;
+    }
     if (field) {
       return user[field];
     }
     return user;
+  }
+
+  watchJoinedCourses() {
+    return firebase
+      .database()
+      .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
+      .on("value", courses =>
+        Promise.all(
+          Object.keys(courses.val() || {}).map(courseId =>
+            firebase
+              .database()
+              .ref(`/courses/${courseId}`)
+              .once("value")
+              .then(course => ({
+                ...course.val(),
+                courseId
+              }))
+          )
+        ).then(courses => {
+          const map = {};
+          courses.forEach(course => {
+            map[course.courseId] = course;
+            return true;
+          });
+          this.store.dispatch(courseJoinedFetchSuccess(map));
+        })
+      );
   }
 
   validateNewCourse(name, password) {
@@ -86,6 +116,7 @@ class CoursesService {
   tryCoursePassword(courseId, password) {
     coursePasswordEnterRequest(courseId);
 
+    // Good place for firebase function
     return firebase
       .set(
         `/studentCoursePasswords/${courseId}/${this.getUser("uid")}`,
@@ -94,7 +125,12 @@ class CoursesService {
       .then(() =>
         firebase.set(`/courseMembers/${courseId}/${this.getUser("uid")}`, true)
       )
-      .then(() => this.dispatch(coursePasswordEnterSuccess()))
+      .then(() =>
+        firebase.set(
+          `/studentJoinedCourses/${this.getUser("uid")}/${courseId}`,
+          true
+        )
+      )
       .catch(err =>
         this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
       );

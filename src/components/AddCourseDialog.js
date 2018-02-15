@@ -30,11 +30,12 @@ export class AddCourseDialog extends React.Component {
 
   render() {
     return (
-      <Dialog open={this.props.open}>
+      <Dialog open={this.props.open} onClose={this.handleCancel}>
         <DialogTitle id="simple-dialog-title">Add New Course</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
+            required
             error={!this.props.values.name}
             onChange={event =>
               this.props.onFieldChange("name", event.currentTarget.value)
@@ -48,6 +49,7 @@ export class AddCourseDialog extends React.Component {
             onChange={event =>
               this.props.onFieldChange("password", event.currentTarget.value)
             }
+            required
             error={!this.props.values.password}
             value={this.props.values.password}
             margin="dense"

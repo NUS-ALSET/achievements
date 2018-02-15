@@ -85,8 +85,8 @@ class AddProfileDialog extends React.PureComponent {
           <Button
             color="secondary"
             onClick={() => {
-              this.clearState();
               this.props.onClose();
+              this.clearState();
             }}
           >
             Cancel
@@ -96,8 +96,8 @@ class AddProfileDialog extends React.PureComponent {
             raised
             onClick={() => {
               this.onCommitClick().then(() => {
-                this.clearState();
                 onClose();
+                this.clearState();
               });
             }}
           >

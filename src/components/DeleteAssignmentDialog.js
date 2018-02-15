@@ -41,10 +41,10 @@ class DeleteAssignmentDialog extends React.PureComponent {
           }". Are you sure?`}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={onClose}>
+          <Button color="primary" onClick={onClose}>
             Cancel
           </Button>
-          <Button raised color="primary" onClick={this.onCommitClick}>
+          <Button raised color="secondary" onClick={this.onCommitClick}>
             Commit
           </Button>
         </DialogActions>
