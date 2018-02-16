@@ -33,7 +33,7 @@ class DeleteAssignmentDialog extends React.PureComponent {
     const { assignment, onClose } = this.props;
 
     return (
-      <Dialog open={this.props.open}>
+      <Dialog open={this.props.open}  onClose={onClose}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <Typography>{`This action will delete the assignment "${

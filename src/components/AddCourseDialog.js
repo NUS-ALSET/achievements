@@ -10,15 +10,11 @@ import TextField from "material-ui/TextField/TextField";
 
 export class AddCourseDialog extends React.Component {
   static propTypes = {
-    requestClose: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     requestCreation: PropTypes.func.isRequired,
     onFieldChange: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired
-  };
-
-  handleCancel = () => {
-    this.props.requestClose();
   };
 
   handleCommit = () => {
@@ -30,7 +26,7 @@ export class AddCourseDialog extends React.Component {
 
   render() {
     return (
-      <Dialog open={this.props.open} onClose={this.handleCancel}>
+      <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle id="simple-dialog-title">Add New Course</DialogTitle>
         <DialogContent>
           <TextField
@@ -59,7 +55,7 @@ export class AddCourseDialog extends React.Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.handleCancel} color="secondary">
+          <Button onClick={this.props.onClose} color="secondary">
             Cancel
           </Button>
           <Button onClick={this.handleCommit} color="primary" raised>

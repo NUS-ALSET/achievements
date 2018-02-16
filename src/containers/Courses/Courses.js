@@ -23,6 +23,10 @@ import { sagaInjector } from "../../services/saga";
 
 import RemoveCourseDialog from "../../components/RemoveCourseDialog";
 
+const COURSE_TAB_JOINED = 0;
+const COURSE_TAB_OWNED = 1;
+const COURSE_TAB_PUBLIC = 2;
+
 class Courses extends React.Component {
   static propTypes = {
     auth: PropTypes.object,
@@ -91,13 +95,13 @@ class Courses extends React.Component {
     }
 
     switch (currentTab) {
-      case 0:
+      case COURSE_TAB_JOINED:
         courses = joinedCourses;
         break;
-      case 1:
+      case COURSE_TAB_OWNED:
         courses = myCourses;
         break;
-      case 2:
+      case COURSE_TAB_PUBLIC:
         courses = publicCourses;
         break;
       default:
@@ -132,7 +136,7 @@ class Courses extends React.Component {
           onFieldChange={this.onDialogFieldChange}
           requestCreation={this.newDialogRequest}
           open={dialog === "NEW_COURSE"}
-          requestClose={this.closeDialog}
+          onClose={this.closeDialog}
         />
         <RemoveCourseDialog
           open={dialog === "REMOVE_COURSE"}

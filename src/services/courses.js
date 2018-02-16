@@ -54,31 +54,46 @@ class CoursesService {
     return user;
   }
 
+  /**
+   * This method should be invoked at login. It add listener for
+   * `/studentJoinedCourses` and fetches received courses
+   * @returns {*}
+   */
   watchJoinedCourses() {
-    return firebase
-      .database()
-      .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
-      .on("value", courses =>
-        Promise.all(
-          Object.keys(courses.val() || {}).map(courseId =>
-            firebase
-              .database()
-              .ref(`/courses/${courseId}`)
-              .once("value")
-              .then(course => ({
-                ...course.val(),
-                courseId
-              }))
+    if (!this.getUser("uid")) {
+      return Promise.resolve();
+    }
+    return (
+      firebase
+        .database()
+        .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
+
+        // Firebase `on('value')` doesn't return promise
+        .on("value", courses =>
+          // So, we catch errors here
+          Promise.all(
+            Object.keys(courses.val() || {}).map(courseId =>
+              firebase
+                .database()
+                .ref(`/courses/${courseId}`)
+                .once("value")
+                .then(course => ({
+                  ...course.val(),
+                  courseId
+                }))
+            )
           )
-        ).then(courses => {
-          const map = {};
-          courses.forEach(course => {
-            map[course.courseId] = course;
-            return true;
-          });
-          this.store.dispatch(courseJoinedFetchSuccess(map));
-        })
-      );
+            .then(courses => {
+              const map = {};
+              courses.forEach(course => {
+                map[course.courseId] = course;
+                return true;
+              });
+              this.store.dispatch(courseJoinedFetchSuccess(map));
+            })
+            .catch(err => console.error(err.message))
+        )
+    );
   }
 
   validateNewCourse(name, password) {
@@ -140,8 +155,8 @@ class CoursesService {
     if (!assignment.name) {
       throw new Error("Name required for Assignment");
     }
-    if (assignment.questionType === "CodeCombat" && !assignment.levels.length) {
-      throw new Error("Levels required for Code Combat Assignment");
+    if (assignment.questionType === "CodeCombat" && !assignment.level) {
+      throw new Error("Level required for Code Combat Assignment");
     }
   }
 

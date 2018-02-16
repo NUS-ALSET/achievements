@@ -85,7 +85,10 @@ export const assignments = (
     case ASSIGNMENT_CLOSE_DIALOG:
       return {
         ...state,
-        dialog: false
+        dialog: {
+          ...state.dialog,
+          type: ""
+        }
       };
     default:
       return state;

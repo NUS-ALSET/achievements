@@ -63,7 +63,7 @@ class AddAssignmentDialog extends React.PureComponent {
     assignment = assignment || {};
 
     return (
-      <Dialog open={open}>
+      <Dialog open={open} onClose={onClose}>
         <DialogTitle>New Assignment</DialogTitle>
         <DialogContent>
           <TextField
@@ -155,12 +155,7 @@ class AddAssignmentDialog extends React.PureComponent {
           />
         </DialogContent>
         <DialogActions>
-          <Button
-            color="secondary"
-            onClick={() => {
-              onClose();
-            }}
-          >
+          <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button raised color="primary" onClick={onCommit}>

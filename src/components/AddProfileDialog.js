@@ -64,7 +64,7 @@ class AddProfileDialog extends React.PureComponent {
     const url = `${externalProfile.url}/user/${this.state.login}`;
 
     return (
-      <Dialog open={this.props.open}>
+      <Dialog open={this.props.open}  onClose={onClose}>
         <DialogTitle>Set {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
           <div>

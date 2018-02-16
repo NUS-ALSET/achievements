@@ -28,6 +28,10 @@ export function* addAssignmentRequestHandle(action) {
 }
 
 export function* updateNewAssignmentFieldHandler(action) {
+  if (action.field === "details") {
+    return yield Promise.resolve();
+  }
+
   let assignment = yield select(state => state.assignments.dialog.value);
 
   assignment = assignment || {};
