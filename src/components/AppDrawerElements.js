@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import Button from "material-ui/Button";
 
 import StarIcon from "material-ui-icons/Star";
+import { APP_SETTING } from "../achievementsApp/config";
 
 const linkStyle = {
   textDecoration: "none"
@@ -16,7 +17,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
   <div>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to="/home" style={linkStyle}>
+      <Link to={`${APP_SETTING.basename}home`} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -24,7 +25,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Home" />
         </ListItem>
       </Link>
-      <Link to="/courses" style={linkStyle}>
+      <Link to={`${APP_SETTING.basename}courses`} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -35,7 +36,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
     </List>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to="/cohorts" style={linkStyle}>
+      <Link to={`${APP_SETTING.basename}cohorts`} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -43,7 +44,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Cohorts" />
         </ListItem>
       </Link>
-      <Link to={`/profile/${userId}`} style={linkStyle}>
+      <Link to={`${APP_SETTING.basename}profile/${userId}`} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -59,7 +60,10 @@ const AppBarMenuItems = ({ onClick, logout, login, isAuth }) => (
   <div>
     {isAuth ? (
       <Fragment>
-        <Link to="/account" style={linkStyle}>
+        <Link
+          to={`${APP_SETTING.basename}account/${isAuth}`}
+          style={linkStyle}
+        >
           <MenuItem
             onClick={() => {
               onClick();
@@ -94,7 +98,7 @@ AppBarMenuItems.propTypes = {
   onClick: PropTypes.func,
   logout: PropTypes.func,
   login: PropTypes.func,
-  isAuth: PropTypes.bool
+  isAuth: PropTypes.any
 };
 
 export const AppBarMenuItemsExport = AppBarMenuItems;
