@@ -56,45 +56,100 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
         (data, progress, resolve) => {
           switch (data.service) {
             case "CodeCombat":
-              return axios
-                .get(
-                  `https://codecombat.com/db/user/${
-                    data.serviceId
-                  }/level.sessions?project=state.complete,levelID,` +
-                    "levelName,playtime,codeLanguage,created"
+              return admin
+                .database()
+                .ref(
+                  `/userAchievements/${data.uid}/${data.service}/achievements`
                 )
-                .then(response =>
-                  response.data.filter(levelInfo => levelInfo.levelID)
+                .once("value")
+                .then(existing => existing.val() || {})
+                .then(existing =>
+                  axios
+                    .get(
+                      `https://codecombat.com/db/user/${
+                        data.serviceId
+                      }/level.sessions?project=state.complete,levelID,` +
+                        "levelName,playtime,codeLanguage,created"
+                    )
+                    .then(response =>
+                      response.data.filter(levelInfo => levelInfo.levelID)
+                    )
+                    .then(levels => {
+                      let achievements = false;
+                      let events = false;
+
+                      levels.forEach(levelInfo => {
+                        if (!existing[levelInfo.levelID]) {
+                          achievements = achievements || {};
+                          events = events || {};
+                          achievements[levelInfo.levelID] = {
+                            name: levelInfo.levelName,
+                            complete:
+                              (levelInfo &&
+                                levelInfo.state &&
+                                levelInfo.state.complete) ||
+                              false
+                          };
+                          const newEventKey = admin
+                            .database()
+                            .ref("/logged_events")
+                            .push().key;
+                          events[newEventKey] = {
+                            createdAt: {
+                              ".sv": "timestamp"
+                            },
+                            isAnonymous: true,
+                            type: "UPDATE_ACHIEVEMENTS_DATA",
+                            otherActionData: {
+                              complete:
+                                (levelInfo &&
+                                  levelInfo.state &&
+                                  levelInfo.state.complete) ||
+                                false,
+                              playtime: levelInfo && levelInfo.playtime
+                            }
+                          };
+                        }
+                        return true;
+                      });
+
+                      return admin
+                        .database()
+                        .ref(`/userAchievements/${data.uid}/${data.service}`)
+                        .update({
+                          lastUpdate: new Date().getTime(),
+                          totalAchievements: levels.filter(
+                            levelInfo =>
+                              levelInfo &&
+                              levelInfo.state &&
+                              levelInfo.state.complete
+                          ).length
+                        })
+                        .then(
+                          achievements
+                            ? admin
+                                .database()
+                                .ref(
+                                  `/userAchievements/${data.uid}/${
+                                    data.service
+                                  }/achievements`
+                                )
+                                .update(achievements)
+                            : Promise.resolve()
+                        )
+                        .then(
+                          events
+                            ? admin
+                                .database()
+                                .ref("/logged_events")
+                                .update(events)
+                            : Promise.resolve()
+                        );
+                    })
+
+                    .then(() => resolve())
                 )
-                .then(levels => {
-                  const achievements = {};
-
-                  levels.forEach(levelInfo => {
-                    achievements[levelInfo.levelID] = {
-                      name: levelInfo.levelName,
-                      complete:
-                        (levelInfo &&
-                          levelInfo.state &&
-                          levelInfo.state.complete) ||
-                        false
-                    };
-                  });
-
-                  admin
-                    .database()
-                    .ref(`/userAchievements/${data.uid}/${data.service}`)
-                    .update({
-                      achievements,
-                      lastUpdate: new Date().getTime(),
-                      totalAchievements: levels.filter(
-                        levelInfo =>
-                          levelInfo &&
-                          levelInfo.state &&
-                          levelInfo.state.complete
-                      ).length
-                    });
-                })
-                .then(() => resolve());
+                .catch(err => console.error(err.message) || resolve());
             default:
               return resolve();
           }
