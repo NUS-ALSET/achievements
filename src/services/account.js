@@ -37,12 +37,12 @@ export class AccountService {
 
   /**
    *
-   * @param {ExternalProfile} externalProfile
+   * @param {ExternalProfile} externalProfileId
    * @param {String} uid
    * @param {String} login
    */
-  addExternalProfile(externalProfile, uid, login) {
-    return firebase.ref(`/userAchievements/${uid}/${externalProfile.id}`).set({
+  addExternalProfile(externalProfileId, uid, login) {
+    return firebase.ref(`/userAchievements/${uid}/${externalProfileId}`).set({
       id: login,
       lastUpdate: 0,
       totalAchievements: 0,
@@ -52,13 +52,13 @@ export class AccountService {
 
   /**
    *
-   * @param {ExternalProfile} externalProfile
+   * @param {ExternalProfile} externalProfileId
    * @param {String} uid
    * @param {String} login
    */
-  refreshAchievements(externalProfile, uid, login) {
+  refreshAchievements(externalProfileId, uid, login) {
     return firebase.ref("updateProfileQueue/tasks").push({
-      service: externalProfile.id,
+      service: externalProfileId,
       serviceId: login,
       uid: uid
     });
@@ -66,12 +66,12 @@ export class AccountService {
 
   /**
    *
-   * @param {ExternalProfile} externalProfile
+   * @param {ExternalProfile} externalProfileId
    * @param {String} uid
    */
-  removeExternalProfile(externalProfile, uid) {
+  removeExternalProfile(externalProfileId, uid) {
     return firebase
-      .ref(`/userAchievements/${uid}/${externalProfile.id}`)
+      .ref(`/userAchievements/${uid}/${externalProfileId}`)
       .remove();
   }
 

@@ -5,7 +5,7 @@
 
 import each from "lodash/each";
 import firebase from "firebase";
-import { notificationShow } from "../containers/Root/actions";
+import { notificationHide, notificationShow } from "../containers/Root/actions";
 import {
   coursePasswordEnterFail,
   coursePasswordEnterRequest
@@ -33,7 +33,7 @@ class CoursesService {
       clearTimeout(this.errorTimeout);
     }
     this.errorTimeout = setTimeout(() => {
-      this.dispatch(notificationShow(""));
+      this.dispatch(notificationHide());
       this.errorTimeout = false;
     }, ERROR_TIMEOUT);
   }
@@ -241,13 +241,10 @@ class CoursesService {
 
   /**
    * This method checks requested levels complete status and throws and error if something incomplete
-   * @param userId
-   * @param levels
+   * @param {String} userId
+   * @param {Assignment} assignment
    */
-  getAchievementsStatus(userId, levels) {
-    if (!Array.isArray(levels)) {
-      levels = [levels];
-    }
+  getAchievementsStatus(userId, assignment) {
     return firebase
       .ref(`/userAchievements/${userId}/CodeCombat`)
       .once("value")
@@ -255,12 +252,26 @@ class CoursesService {
         const profile = profileData.val() || {};
         const achievements = profile.achievements || {};
 
-        levels.forEach(level => {
-          const achievement = achievements[level];
-
-          if (!(achievement && achievement.complete))
-            throw new Error(`Not finished required level "${level}"`);
-        });
+        switch (assignment.questionType) {
+          case "CodeCombat":
+            if (!achievements[assignment.level]) {
+              throw new Error(
+                `Not finished required level "${assignment.level}"`
+              );
+            }
+            break;
+          case "CodeCombat_Number":
+            if (
+              !profile.totalAchievements ||
+              profile.totalAchievements < assignment.count
+            ) {
+              throw new Error(
+                `Not finished required amount of levels (${assignment.count})`
+              );
+            }
+            break;
+          default:
+        }
 
         return profile.id;
       });
@@ -275,10 +286,8 @@ class CoursesService {
           case "Profile":
             return this.getProfileStatus(userId);
           case "CodeCombat":
-            return this.getAchievementsStatus(
-              userId,
-              assignment.level || assignment.levels
-            );
+          case "CodeCombat_Number":
+            return this.getAchievementsStatus(userId, assignment);
           default:
             return value;
         }
@@ -290,16 +299,7 @@ class CoursesService {
             createdAt: new Date().getTime(),
             value
           });
-        // })
-        // .then(() => {
-        //   Fixit: remove solution visible and add it to assignment view
-        //   if (assignment.solutionVisible) {
-        //   return firebase
-        //     .ref(`/visibleSolutions/${courseId}/${userId}/${assignment.id}`)
-        //     .set(solutionValue);
-        //   }
-      })
-      .catch(err => this.store.dispatch(notificationShow(err.message)));
+      });
   }
 
   /**

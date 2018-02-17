@@ -14,15 +14,18 @@ import Dialog, {
 } from "material-ui/Dialog/index";
 import Button from "material-ui/Button";
 import TextField from "material-ui/TextField";
-import { coursesService } from "../services/courses";
+import {
+  assignmentCloseDialog,
+  assignmentSolutionRequest
+} from "../containers/Assignments/actions";
 
 class AddTextSolutionDialog extends React.PureComponent {
   static propTypes = {
     open: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
     solution: PropTypes.any,
 
     courseId: PropTypes.string.isRequired,
+    dispatch: PropTypes.func.isRequired,
     assignment: PropTypes.object
   };
 
@@ -37,27 +40,28 @@ class AddTextSolutionDialog extends React.PureComponent {
   };
 
   catchReturn = event => {
-    const { courseId, assignment } = this.props;
-
     if (event.key !== "Enter") {
       return;
     }
-    coursesService.submitSolution(courseId, assignment, this.state.solution);
-    this.props.onClose();
+    this.onCommitClick();
   };
 
-  onCommitClick = () => {
-    const { courseId, assignment } = this.props;
+  onClose = () => this.props.dispatch(assignmentCloseDialog());
 
-    coursesService.submitSolution(courseId, assignment, this.state.solution);
-    this.props.onClose();
+  onCommitClick = () => {
+    const { courseId, assignment, dispatch } = this.props;
+
+    dispatch(
+      assignmentSolutionRequest(courseId, assignment.id, this.state.solution)
+    );
+    dispatch(assignmentCloseDialog());
   };
 
   render() {
-    const { onClose, open, solution } = this.props;
+    const { open, solution } = this.props;
 
     return (
-      <Dialog open={open} onClose={onClose}>
+      <Dialog open={open} onClose={this.onClose}>
         <DialogTitle>Set Assignment Solution</DialogTitle>
         <DialogContent>
           <TextField
@@ -73,7 +77,7 @@ class AddTextSolutionDialog extends React.PureComponent {
           />
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={onClose}>
+          <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
           <Button raised color="primary" onClick={this.onCommitClick}>

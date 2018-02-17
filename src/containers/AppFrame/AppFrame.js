@@ -96,7 +96,8 @@ class AppFrame extends React.Component {
     dispatch: PropTypes.func,
     anchorElId: PropTypes.any,
     mainDrawerOpen: PropTypes.bool,
-    userName: PropTypes.string
+    userName: PropTypes.string,
+    userId: PropTypes.string
   };
 
   handleDrawerClose = () => {
@@ -124,7 +125,7 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, userId } = this.props;
 
     return (
       <Router history={history}>
@@ -194,6 +195,7 @@ class AppFrame extends React.Component {
               className={classes.drawer}
               onRequestClose={this.handleDrawerClose}
               mobileDrawerOpen={this.props.mainDrawerOpen}
+              userId={userId}
             />
             <main className={classes.content}>
               <Route exact path="(/|/home)" component={Home} />
@@ -201,7 +203,7 @@ class AppFrame extends React.Component {
               <Route exact path="/courses/:courseId" component={Assignments} />
               <Route
                 exact
-                path="/(account|profile)"
+                path="/(account|profile)/:accountId"
                 render={() => <Account userName={this.props.userName} />}
               />
             </main>
@@ -215,6 +217,7 @@ class AppFrame extends React.Component {
 const mapStateToProps = state => ({
   anchorElId: state.appFrame.dropdownAnchorElId,
   mainDrawerOpen: state.appFrame.mainDrawerOpen,
-  userName: state.firebase.auth.displayName
+  userName: state.firebase.auth.displayName,
+  userId: state.firebase.auth.uid
 });
 export default withStyles(styles)(connect(mapStateToProps)(AppFrame));

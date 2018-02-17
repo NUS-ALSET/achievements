@@ -98,7 +98,7 @@ class AddAssignmentDialog extends React.PureComponent {
           />
           {assignment.questionType === "CodeCombat" && (
             <FormControl fullWidth margin="normal">
-              <InputLabel htmlFor="select-multiple-levels">Levels</InputLabel>
+              <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
               <Select
                 margin="none"
                 value={assignment.level || ""}

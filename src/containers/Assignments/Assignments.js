@@ -21,6 +21,7 @@ import {
   assignmentCloseDialog,
   assignmentDeleteRequest,
   assignmentShowAddDialog,
+  assignmentSolutionRequest,
   assignmentsSortChange,
   assignmentSubmitRequest,
   assignmentSwitchTab,
@@ -28,7 +29,6 @@ import {
   updateNewAssignmentField
 } from "./actions";
 import AddProfileDialog from "../../components/AddProfileDialog";
-import { notificationShow } from "../Root/actions";
 import {
   getAssignmentsUIProps,
   getCourseProps,
@@ -139,28 +139,31 @@ class Assignments extends React.Component {
   };
 
   onProfileCommit = value => {
-    const { course, ui } = this.props;
+    const { course, ui, dispatch } = this.props;
 
-    coursesService.submitSolution(course.id, ui.currentAssignment, value);
+    dispatch(
+      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
+    );
   };
 
   onSubmitClick = (assignment, solution) => {
-    const course = this.props.course;
+    const { course, dispatch } = this.props;
 
     switch (assignment.questionType) {
       case "CodeCombat":
-        coursesService.submitSolution(course.id, assignment, "Complete");
+      case "CodeCombat_Number":
+        dispatch(
+          assignmentSolutionRequest(course.id, assignment.id, "Complete")
+        );
         break;
       default:
-        this.props.dispatch(assignmentSubmitRequest(assignment, solution));
+        dispatch(assignmentSubmitRequest(assignment, solution));
     }
   };
 
   onAcceptClick = (assignment, studentId) => {
     coursesService.acceptSolution(this.props.course.id, assignment, studentId);
   };
-
-  showError = error => this.props.dispatch(notificationShow(error));
 
   closeDialog = () => {
     this.props.dispatch(assignmentCloseDialog());
@@ -210,6 +213,7 @@ class Assignments extends React.Component {
       classes,
       courseMembers,
       auth,
+      dispatch,
       course,
       currentUser
     } = this.props;
@@ -277,8 +281,7 @@ class Assignments extends React.Component {
             name: "Code Combat",
             id: "CodeCombat"
           }}
-          onError={this.showError}
-          onClose={this.closeDialog}
+          dispatch={dispatch}
           onCommit={this.onProfileCommit}
         />
         <AddTextSolutionDialog
@@ -286,7 +289,7 @@ class Assignments extends React.Component {
           courseId={course.id}
           solution={ui.dialog && ui.dialog.value}
           assignment={ui.currentAssignment}
-          onClose={this.closeDialog}
+          dispatch={dispatch}
         />
       </Fragment>
     );

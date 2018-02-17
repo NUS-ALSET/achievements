@@ -9,6 +9,9 @@ import {
 } from "./actions";
 import format from "date-fns/format";
 import addDays from "date-fns/add_days";
+import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
+
+const DAYS_IN_WEEK = 7;
 
 export const assignments = (
   state = {
@@ -55,7 +58,10 @@ export const assignments = (
             solutionVisible: false,
             visible: false,
             open: format(new Date(), "YYYY-MM-DDTHH:mm"),
-            deadline: format(addDays(new Date(), 1), "YYYY-MM-DDTHH:mm"),
+            deadline: format(
+              addDays(new Date(), DAYS_IN_WEEK),
+              "YYYY-MM-DDTHH:mm"
+            ),
             questionType: "Text",
             level: "",
             count: 1,
@@ -82,6 +88,7 @@ export const assignments = (
           value: action.assignment
         }
       };
+    case EXTERNAL_PROFILE_DIALOG_HIDE:
     case ASSIGNMENT_CLOSE_DIALOG:
       return {
         ...state,

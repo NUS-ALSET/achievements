@@ -14,17 +14,18 @@ import Dialog, {
 } from "material-ui/Dialog/index";
 import Button from "material-ui/Button";
 import TextField from "material-ui/TextField";
-import { accountService } from "../services/account";
+import {
+  externalProfileDialogHide,
+  externalProfileUpdateRequest
+} from "../containers/Account/actions";
 
 const STRING_MAX = 32;
 
 class AddProfileDialog extends React.PureComponent {
   static propTypes = {
-    uid: PropTypes.string.isRequired,
     open: PropTypes.bool.isRequired,
     externalProfile: PropTypes.object.isRequired,
-    onError: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     onCommit: PropTypes.func,
     defaultValue: PropTypes.string
   };
@@ -33,38 +34,38 @@ class AddProfileDialog extends React.PureComponent {
     login: ""
   };
 
-  clearState = () => {
-    this.setState({
-      login: ""
-    });
-  };
-
   onProfileChange = e => {
     this.setState({
       login: e.target.value.toLowerCase().slice(0, STRING_MAX)
     });
   };
 
-  onCommitClick = () => {
-    const { externalProfile, uid, onError, onCommit } = this.props;
-    const { login } = this.state;
-
-    return Promise.resolve()
-      .then(() =>
-        accountService.addExternalProfile(externalProfile, uid, login)
-      )
-      .then(() => onCommit && onCommit())
-      .catch(err => {
-        onError(err.message);
-      });
+  catchReturn = event => {
+    if (event.key !== "Enter") {
+      return;
+    }
+    this.onCommitClick();
   };
 
+  onCommitClick = () => {
+    const { externalProfile, dispatch, onCommit } = this.props;
+    const { login } = this.state;
+
+    dispatch(externalProfileUpdateRequest(login, externalProfile.id));
+    if (onCommit) {
+      onCommit(login);
+    }
+    this.onClose();
+  };
+
+  onClose = () => this.props.dispatch(externalProfileDialogHide());
+
   render() {
-    const { externalProfile, onClose } = this.props;
+    const { externalProfile } = this.props;
     const url = `${externalProfile.url}/user/${this.state.login}`;
 
     return (
-      <Dialog open={this.props.open}  onClose={onClose}>
+      <Dialog open={this.props.open} onClose={this.onClose}>
         <DialogTitle>Set {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
           <div>
@@ -75,6 +76,7 @@ class AddProfileDialog extends React.PureComponent {
             style={{
               width: 560
             }}
+            onKeyPress={this.catchReturn}
             value={this.state.login}
             autoFocus
             label="Profile"
@@ -82,25 +84,10 @@ class AddProfileDialog extends React.PureComponent {
           />
         </DialogContent>
         <DialogActions>
-          <Button
-            color="secondary"
-            onClick={() => {
-              this.props.onClose();
-              this.clearState();
-            }}
-          >
+          <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            color="primary"
-            raised
-            onClick={() => {
-              this.onCommitClick().then(() => {
-                onClose();
-                this.clearState();
-              });
-            }}
-          >
+          <Button color="primary" raised onClick={this.onCommitClick}>
             Commit
           </Button>
         </DialogActions>

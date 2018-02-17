@@ -28,11 +28,15 @@ export const getTestState = config => ({
       assignments: config.assignments || {
         abcTestCourseId: {
           abcTestAssignmentId: {
+            open: "1959-06-03T00:00",
+            deadline: "2100-01-01T00:00",
             questionType: "Profile",
             solutionVisible: true,
             visible: true
           },
           defTestAssignmentId: {
+            open: "1959-06-03T00:00",
+            deadline: "2100-01-01T00:00",
             questionType: "Text",
             solutionVisible: false,
             visible: true

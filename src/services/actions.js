@@ -36,7 +36,9 @@ export class ActionsService {
         .database()
         .ref("/logged_events")
         .push({
-          createdAt: new Date().getTime(),
+          createdAt: {
+            ".sv": "timestamp"
+          },
           type: action.type,
           uid: currentUser,
           isAnonymous: !currentUser,

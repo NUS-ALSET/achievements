@@ -3,8 +3,11 @@
  * @property {String} id
  * @property {String} questionType
  * @property {String} name
+ * @property {String} open
  * @property {String} deadline
  * @property {Array<String>} levels
+ * @property {string} level
+ * @property {Number} count
  * @property {String} details
  */
 
@@ -70,6 +73,7 @@
  * @typedef {Object} AccountState
  *
  * @property {Boolean} showExternalProfileDialog
+ * @property {Boolean} showRemoveExternalProfileDialog
  */
 
 /**
