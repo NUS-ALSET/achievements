@@ -128,7 +128,7 @@ class AppFrame extends React.Component {
     const { classes, userId } = this.props;
 
     return (
-      <Router history={history}>
+      <Router basename={APP_SETTING.basename} history={history}>
         <div className={classes.root}>
           <div className={classes.appFrame}>
             <AppBar className={classes.appBar} onClose={this.handleDrawerClose}>
@@ -175,7 +175,7 @@ class AppFrame extends React.Component {
                       onClose={this.handleMenuClose}
                     >
                       <AppBarMenuItemsExport
-                        isAuth={!!this.props.userName}
+                        isAuth={this.props.userId}
                         onClick={this.handleMenuClose}
                         login={this.handleLogin}
                         logout={this.handleLogout}
@@ -198,12 +198,12 @@ class AppFrame extends React.Component {
               userId={userId}
             />
             <main className={classes.content}>
-              <Route exact path="(/|/home)" component={Home} />
-              <Route exact path="/courses" component={Courses} />
-              <Route exact path="/courses/:courseId" component={Assignments} />
+              <Route exact path="*(/|/home)" component={Home} />
+              <Route exact path="*/courses" component={Courses} />
+              <Route exact path="*/courses/:courseId" component={Assignments} />
               <Route
                 exact
-                path="/(account|profile)/:accountId"
+                path="*(account|profile)/:accountId"
                 render={() => <Account userName={this.props.userName} />}
               />
             </main>

@@ -3,7 +3,8 @@ import levels from "./levels";
 
 export const APP_SETTING = {
   DrawerWidth: 250,
-  levels: levels
+  levels: levels,
+  basename: process.env.REACT_APP_BASENAME || "/"
 };
 
 export const AUTO_HIDE_DURATION = 6000;
