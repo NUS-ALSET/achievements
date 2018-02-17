@@ -23,5 +23,5 @@ deploy:
     branch: master
   token:
     secure: "$FIREBASE_SECRET"
-  project: "achievements-dev"
+  project: "achievements-prod"
 
