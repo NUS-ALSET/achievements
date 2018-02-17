@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import firebase from "firebase";
 import withStyles from "material-ui/styles/withStyles";
 import Typography from "material-ui/Typography";
 import AppBar from "material-ui/AppBar";
@@ -10,7 +9,7 @@ import Hidden from "material-ui/Hidden";
 import Menu from "material-ui/Menu";
 import Button from "material-ui/Button";
 
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Router, Route } from "react-router-dom";
 
 import IconButton from "material-ui/IconButton";
 import MenuIcon from "material-ui-icons/Menu";
@@ -27,6 +26,7 @@ import Assignments from "../Assignments/Assignments";
 import Courses from "../Courses/Courses";
 import { Home } from "../../components/Home";
 import { signInRequest, signOutRequest } from "../Root/actions";
+import { history } from "../../services/history";
 
 const styles = theme => ({
   "@global": {
@@ -91,10 +91,13 @@ const styles = theme => ({
 });
 
 class AppFrame extends React.Component {
-  state = {
-    mobileDrawerOpen: false,
-    dropdownAnchorEl: null,
-    dropdownMenuOpen: false
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    dispatch: PropTypes.func,
+    anchorElId: PropTypes.any,
+    mainDrawerOpen: PropTypes.bool,
+    userName: PropTypes.string,
+    userId: PropTypes.string
   };
 
   handleDrawerClose = () => {
@@ -106,7 +109,7 @@ class AppFrame extends React.Component {
   };
 
   handleMenuOpen = event => {
-    this.props.dispatch(loginMenuOpen(event.currentTarget));
+    this.props.dispatch(loginMenuOpen(event.currentTarget.id));
   };
 
   handleMenuClose = () => {
@@ -122,11 +125,10 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, userId } = this.props;
 
-    window.firebase = firebase;
     return (
-      <Router>
+      <Router history={history}>
         <div className={classes.root}>
           <div className={classes.appFrame}>
             <AppBar className={classes.appBar} onClose={this.handleDrawerClose}>
@@ -152,6 +154,7 @@ class AppFrame extends React.Component {
                 {this.props.userName ? (
                   <Fragment>
                     <IconButton
+                      id="loginMenuButton"
                       aria-label="More"
                       aria-owns="Open right Menu"
                       aria-haspopup="true"
@@ -163,8 +166,12 @@ class AppFrame extends React.Component {
                     </IconButton>
                     <Menu
                       id="menuRight"
-                      anchorEl={this.props.anchorEl || document.body}
-                      open={!!this.props.anchorEl}
+                      anchorEl={
+                        (this.props.anchorElId &&
+                          document.getElementById(this.props.anchorElId)) ||
+                        document.body
+                      }
+                      open={!!this.props.anchorElId}
                       onClose={this.handleMenuClose}
                     >
                       <AppBarMenuItemsExport
@@ -188,6 +195,7 @@ class AppFrame extends React.Component {
               className={classes.drawer}
               onRequestClose={this.handleDrawerClose}
               mobileDrawerOpen={this.props.mainDrawerOpen}
+              userId={userId}
             />
             <main className={classes.content}>
               <Route exact path="(/|/home)" component={Home} />
@@ -195,7 +203,7 @@ class AppFrame extends React.Component {
               <Route exact path="/courses/:courseId" component={Assignments} />
               <Route
                 exact
-                path="/(account|profile)"
+                path="/(account|profile)/:accountId"
                 render={() => <Account userName={this.props.userName} />}
               />
             </main>
@@ -206,17 +214,10 @@ class AppFrame extends React.Component {
   }
 }
 
-AppFrame.propTypes = {
-  classes: PropTypes.object.isRequired,
-  dispatch: PropTypes.func,
-  anchorEl: PropTypes.any,
-  mainDrawerOpen: PropTypes.bool,
-  userName: PropTypes.string
-};
-
 const mapStateToProps = state => ({
-  anchorEl: state.appFrame.dropdownAnchorEl,
+  anchorElId: state.appFrame.dropdownAnchorElId,
   mainDrawerOpen: state.appFrame.mainDrawerOpen,
-  userName: state.firebase.auth.displayName
+  userName: state.firebase.auth.displayName,
+  userId: state.firebase.auth.uid
 });
 export default withStyles(styles)(connect(mapStateToProps)(AppFrame));

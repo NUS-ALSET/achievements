@@ -12,7 +12,7 @@ const linkStyle = {
   textDecoration: "none"
 };
 
-export const DrawerMenuItems = onRequestClose => (
+export const DrawerMenuItems = (onRequestClose, userId) => (
   <div>
     <Divider />
     <List onClick={onRequestClose}>
@@ -43,7 +43,7 @@ export const DrawerMenuItems = onRequestClose => (
           <ListItemText primary="Cohorts" />
         </ListItem>
       </Link>
-      <Link to="/profile" style={linkStyle}>
+      <Link to={`/profile/${userId}`} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />

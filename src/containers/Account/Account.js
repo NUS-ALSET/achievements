@@ -12,15 +12,20 @@ import withStyles from "material-ui/styles/withStyles";
 import Grid from "material-ui/Grid";
 import Card, { CardMedia, CardContent } from "material-ui/Card";
 import Typography from "material-ui/Typography";
-import { accountService } from "../../services/account";
 import ExternalProfileCard from "../../components/ExternalProfileCard";
 import {
   externalProfileDialogHide,
-  externalProfileDialogShow
+  externalProfileDialogShow,
+  externalProfileRefreshRequest,
+  externalProfileRemoveDialogShow
 } from "./actions";
 import AddProfileDialog from "../../components/AddProfileDialog";
 import { notificationShow } from "../Root/actions";
-import ConfirmationDialog from "../../components/ConfirmationDialog";
+
+import { accountService } from "../../services/account";
+import { sagaInjector } from "../../services/saga";
+import sagas from "./sagas";
+import RemoveExternalProfileDialog from "../../components/RemoveProfileDialog";
 
 const styles = theme => ({
   card: {
@@ -39,7 +44,8 @@ class Account extends React.PureComponent {
     uid: PropTypes.string,
     userName: PropTypes.string,
     externalProfiles: PropTypes.object,
-    userAchievements: PropTypes.object
+    userAchievements: PropTypes.object,
+    removeRequest: PropTypes.any
   };
 
   state = {
@@ -52,49 +58,36 @@ class Account extends React.PureComponent {
     }
   };
 
-  closeConfirmation = () => {
-    this.setState({
-      confirmation: {
-        open: false,
-        message: "",
-        resolve: () => {}
-      }
-    });
-  };
-
-  showConfirmation = message => {
-    return new Promise(resolve =>
-      this.setState({
-        confirmation: {
-          open: true,
-          message,
-          resolve
-        }
-      })
-    );
-  };
-
   addExternalProfileRequest = externalProfile => {
     this.props.dispatch(externalProfileDialogShow(externalProfile));
   };
   refreshAchievementsRequest = externalProfile => {
-    const { uid, userAchievements } = this.props;
+    const { userAchievements, dispatch } = this.props;
 
-    accountService.refreshAchievements(
-      externalProfile,
-      uid,
-      userAchievements[externalProfile.id].id
+    dispatch(
+      externalProfileRefreshRequest(
+        userAchievements[externalProfile.id].id,
+        externalProfile.id
+      )
     );
   };
   removeExternalProfileRequest = externalProfile => {
-    this.showConfirmation(
-      `Are you sure you want to remove ${externalProfile.name} profile?`
-    ).then(result => {
-      if (result) {
-        accountService.removeExternalProfile(externalProfile, this.props.uid);
-      }
-      this.closeConfirmation();
-    });
+    const { userAchievements, dispatch } = this.props;
+
+    dispatch(
+      externalProfileRemoveDialogShow(
+        userAchievements[externalProfile.id].id,
+        externalProfile.id
+      )
+    );
+    // this.showConfirmation(
+    //   `Are you sure you want to remove ${externalProfile.name} profile?`
+    // ).then(result => {
+    //   if (result) {
+    //     accountService.removeExternalProfile(externalProfile, this.props.uid);
+    //   }
+    //   this.closeConfirmation();
+    // });
   };
 
   closeExternalProfileDialog = () => {
@@ -103,7 +96,13 @@ class Account extends React.PureComponent {
   showError = error => this.props.dispatch(notificationShow(error));
 
   render() {
-    const { classes, userAchievements, externalProfiles } = this.props;
+    const {
+      classes,
+      userAchievements,
+      externalProfiles,
+      removeRequest,
+      dispatch
+    } = this.props;
 
     return (
       <Fragment>
@@ -141,20 +140,24 @@ class Account extends React.PureComponent {
                   onError={this.showError}
                   uid={this.props.uid}
                   onClose={this.closeExternalProfileDialog}
+                  dispatch={dispatch}
                 />
               </Fragment>
             ))}
           </Grid>
         </Grid>
-        <ConfirmationDialog
-          resolve={this.state.confirmation.resolve}
-          message={this.state.confirmation.message}
-          open={this.state.confirmation.open}
+        <RemoveExternalProfileDialog
+          open={removeRequest.actual}
+          externalProfileType={removeRequest.type}
+          externalProfileId={removeRequest.id}
+          dispatch={dispatch}
         />
       </Fragment>
     );
   }
 }
+
+sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   userName: state.firebase.auth.displayName,
@@ -168,6 +171,11 @@ const mapStateToProps = state => ({
     state.firebase.auth.uid
   ],
   showDialog: state.account.showExternalProfileDialog,
+  removeRequest: {
+    actual: state.account.showRemoveExternalProfileDialog,
+    id: state.account.removingProfileId,
+    type: state.account.removingProfileType
+  },
   user: (state.firebase.data.users || {})[state.firebase.auth.uid]
 });
 

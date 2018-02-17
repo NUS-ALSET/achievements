@@ -53,3 +53,21 @@ export const courseRemoveFail = error => ({
   type: COURSE_REMOVE_FAIL,
   error
 });
+
+export const COURSE_SWITCH_TAB = "COURSE_SWITCH_TAB";
+export const courseSwitchTab = tabIndex => ({
+  type: COURSE_SWITCH_TAB,
+  tabIndex
+});
+
+export const COURSE_JOINED_FETCH_REQUEST = "COURSE_JOINED_FETCH_REQUEST";
+export const courseJoinedFetchRequest = courseIds => ({
+  type: COURSE_JOINED_FETCH_REQUEST,
+  courseIds
+});
+
+export const COURSE_JOINED_FETCH_SUCCESS = "COURSE_JOINED_FETCH_SUCCESS";
+export const courseJoinedFetchSuccess = courses => ({
+  type: COURSE_JOINED_FETCH_SUCCESS,
+  courses
+});

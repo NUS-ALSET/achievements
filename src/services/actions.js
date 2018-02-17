@@ -11,9 +11,6 @@ export class ActionsService {
 
   removeEmpty(obj) {
     Object.keys(obj).forEach(key => {
-      if (obj[key] instanceof HTMLElement) {
-        obj[key] = "htmlElement";
-      }
       if (obj[key] && typeof obj[key] === "object") {
         this.removeEmpty(obj[key]);
       } else if (obj[key] === undefined) {
@@ -39,7 +36,9 @@ export class ActionsService {
         .database()
         .ref("/logged_events")
         .push({
-          createdAt: new Date().getTime(),
+          createdAt: {
+            ".sv": "timestamp"
+          },
           type: action.type,
           uid: currentUser,
           isAnonymous: !currentUser,

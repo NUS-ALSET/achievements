@@ -1,4 +1,5 @@
 // Tab with instructor view
+const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
 /**
@@ -66,6 +67,7 @@ const getStudentSolutions = (state, courseId, studentId, options = {}) => {
           };
           return true;
         case "CodeCombat":
+        case "CodeCombat_Number":
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
@@ -117,6 +119,8 @@ export const getCourseProps = (state, ownProps) => {
   const assignments = getFrom(state.firebase.data.assignments, courseId);
   const sortedMembers = {};
   const instructorView = state.assignments.currentTab === INSTRUCTOR_TAB_VIEW;
+  const assignmentsEdit = state.assignments.currentTab === INSTRUCTOR_TAB_EDIT;
+  const now = new Date().getTime();
   const members = Object.keys(
     getFrom(state.firebase.data.courseMembers, courseId)
   )
@@ -159,9 +163,17 @@ export const getCourseProps = (state, ownProps) => {
     id: courseId,
     ...getFrom(state.firebase.data.courses, courseId),
     members: members.length ? sortedMembers : false,
-    assignments: Object.keys(assignments).map(id => ({
-      ...assignments[id],
-      id
-    }))
+    assignments: Object.keys(assignments)
+      .map(id => ({
+        ...assignments[id],
+        id
+      }))
+      .filter(
+        assignment =>
+          assignmentsEdit ||
+          (assignment.visible &&
+            new Date(assignment.open).getTime() < now &&
+            new Date(assignment.deadline).getTime() > now)
+      )
   };
 };
