@@ -5,13 +5,13 @@
 
 import each from "lodash/each";
 import firebase from "firebase";
-import { notificationShow } from "../containers/Root/actions";
+import { notificationHide, notificationShow } from "../containers/Root/actions";
 import {
   coursePasswordEnterFail,
-  coursePasswordEnterRequest,
-  coursePasswordEnterSuccess
+  coursePasswordEnterRequest
 } from "../containers/Assignments/actions";
 import { solutionsService } from "./solutions";
+import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
 
 const ERROR_TIMEOUT = 6000;
 
@@ -33,7 +33,7 @@ class CoursesService {
       clearTimeout(this.errorTimeout);
     }
     this.errorTimeout = setTimeout(() => {
-      this.dispatch(notificationShow(""));
+      this.dispatch(notificationHide());
       this.errorTimeout = false;
     }, ERROR_TIMEOUT);
   }
@@ -45,10 +45,55 @@ class CoursesService {
    */
   getUser(field) {
     const user = firebase.auth().currentUser;
+    if (!user) {
+      return false;
+    }
     if (field) {
       return user[field];
     }
     return user;
+  }
+
+  /**
+   * This method should be invoked at login. It add listener for
+   * `/studentJoinedCourses` and fetches received courses
+   * @returns {*}
+   */
+  watchJoinedCourses() {
+    if (!this.getUser("uid")) {
+      return Promise.resolve();
+    }
+    return (
+      firebase
+        .database()
+        .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
+
+        // Firebase `on('value')` doesn't return promise
+        .on("value", courses =>
+          // So, we catch errors here
+          Promise.all(
+            Object.keys(courses.val() || {}).map(courseId =>
+              firebase
+                .database()
+                .ref(`/courses/${courseId}`)
+                .once("value")
+                .then(course => ({
+                  ...course.val(),
+                  courseId
+                }))
+            )
+          )
+            .then(courses => {
+              const map = {};
+              courses.forEach(course => {
+                map[course.courseId] = course;
+                return true;
+              });
+              this.store.dispatch(courseJoinedFetchSuccess(map));
+            })
+            .catch(err => console.error(err.message))
+        )
+    );
   }
 
   validateNewCourse(name, password) {
@@ -86,6 +131,7 @@ class CoursesService {
   tryCoursePassword(courseId, password) {
     coursePasswordEnterRequest(courseId);
 
+    // Good place for firebase function
     return firebase
       .set(
         `/studentCoursePasswords/${courseId}/${this.getUser("uid")}`,
@@ -94,7 +140,12 @@ class CoursesService {
       .then(() =>
         firebase.set(`/courseMembers/${courseId}/${this.getUser("uid")}`, true)
       )
-      .then(() => this.dispatch(coursePasswordEnterSuccess()))
+      .then(() =>
+        firebase.set(
+          `/studentJoinedCourses/${this.getUser("uid")}/${courseId}`,
+          true
+        )
+      )
       .catch(err =>
         this.dispatchErrorMessage(coursePasswordEnterFail(err.message))
       );
@@ -104,8 +155,8 @@ class CoursesService {
     if (!assignment.name) {
       throw new Error("Name required for Assignment");
     }
-    if (assignment.questionType === "CodeCombat" && !assignment.levels.length) {
-      throw new Error("Levels required for Code Combat Assignment");
+    if (assignment.questionType === "CodeCombat" && !assignment.level) {
+      throw new Error("Level required for Code Combat Assignment");
     }
   }
 
@@ -128,7 +179,7 @@ class CoursesService {
             .once("value")
             .then(data =>
               Promise.all(
-                Object.keys(data.val()).map(studentId => {
+                Object.keys(data.val() || {}).map(studentId => {
                   const solutions = data.val()[studentId];
 
                   if (solutions[assignmentId]) {
@@ -190,13 +241,10 @@ class CoursesService {
 
   /**
    * This method checks requested levels complete status and throws and error if something incomplete
-   * @param userId
-   * @param levels
+   * @param {String} userId
+   * @param {Assignment} assignment
    */
-  getAchievementsStatus(userId, levels) {
-    if (!Array.isArray(levels)) {
-      levels = [levels];
-    }
+  getAchievementsStatus(userId, assignment) {
     return firebase
       .ref(`/userAchievements/${userId}/CodeCombat`)
       .once("value")
@@ -204,12 +252,26 @@ class CoursesService {
         const profile = profileData.val() || {};
         const achievements = profile.achievements || {};
 
-        levels.forEach(level => {
-          const achievement = achievements[level];
-
-          if (!(achievement && achievement.complete))
-            throw new Error(`Not finished required level "${level}"`);
-        });
+        switch (assignment.questionType) {
+          case "CodeCombat":
+            if (!achievements[assignment.level]) {
+              throw new Error(
+                `Not finished required level "${assignment.level}"`
+              );
+            }
+            break;
+          case "CodeCombat_Number":
+            if (
+              !profile.totalAchievements ||
+              profile.totalAchievements < assignment.count
+            ) {
+              throw new Error(
+                `Not finished required amount of levels (${assignment.count})`
+              );
+            }
+            break;
+          default:
+        }
 
         return profile.id;
       });
@@ -224,10 +286,8 @@ class CoursesService {
           case "Profile":
             return this.getProfileStatus(userId);
           case "CodeCombat":
-            return this.getAchievementsStatus(
-              userId,
-              assignment.level || assignment.levels
-            );
+          case "CodeCombat_Number":
+            return this.getAchievementsStatus(userId, assignment);
           default:
             return value;
         }
@@ -239,16 +299,7 @@ class CoursesService {
             createdAt: new Date().getTime(),
             value
           });
-        // })
-        // .then(() => {
-        //   Fixit: remove solution visible and add it to assignment view
-        //   if (assignment.solutionVisible) {
-        //   return firebase
-        //     .ref(`/visibleSolutions/${courseId}/${userId}/${assignment.id}`)
-        //     .set(solutionValue);
-        //   }
-      })
-      .catch(err => this.store.dispatch(notificationShow(err.message)));
+      });
   }
 
   /**

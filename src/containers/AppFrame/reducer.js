@@ -12,7 +12,7 @@ export const appFrame = (
       id: "",
       displayName: ""
     },
-    dropdownAnchorEl: false,
+    dropdownAnchorElId: false,
     mainDrawerOpen: false
   },
   action
@@ -21,12 +21,12 @@ export const appFrame = (
     case LOGIN_MENU_OPEN:
       return {
         ...state,
-        dropdownAnchorEl: action.anchorEl
+        dropdownAnchorElId: action.anchorElId
       };
     case LOGIN_MENU_CLOSE:
       return {
         ...state,
-        dropdownAnchorEl: false
+        dropdownAnchorElId: false
       };
     case LOGIN_AUTHENTICATION:
       return {

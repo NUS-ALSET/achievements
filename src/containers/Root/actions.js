@@ -55,3 +55,10 @@ export const SHOW_ACCEPT_EULA_DIALOG = "SHOW_ACCEPT_EULA_DIALOG";
 export const showAcceptEulaDialog = () => ({
   type: SHOW_ACCEPT_EULA_DIALOG
 });
+
+export const ROUTE_CHANGE = "ROUTE_CHANGE";
+export const routeChange = (pathname, method) => ({
+  type: ROUTE_CHANGE,
+  pathname,
+  method
+});

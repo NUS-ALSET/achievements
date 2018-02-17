@@ -48,6 +48,7 @@ class AssignmentsEditorTable extends React.PureComponent {
               <TableCell>Name</TableCell>
               <TableCell>Assignment Visible</TableCell>
               <TableCell>Solution Visible</TableCell>
+              <TableCell>Open</TableCell>
               <TableCell>Deadline</TableCell>
               <TableCell>Details</TableCell>
               <TableCell
@@ -90,6 +91,23 @@ class AssignmentsEditorTable extends React.PureComponent {
                         )
                       }
                       checked={assignment.solutionVisible}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      style={dateEditStyle}
+                      type="datetime-local"
+                      onChange={event =>
+                        this.props.onUpdateAssignment(
+                          assignment.id,
+                          "open",
+                          event.target.value
+                        )
+                      }
+                      defaultValue={assignment.open || "2018-01-01T09:00"}
+                      InputLabelProps={{
+                        shrink: true
+                      }}
                     />
                   </TableCell>
                   <TableCell>

@@ -66,6 +66,33 @@ export const assignmentSubmitRequest = (assignment, solution) => ({
   value: solution
 });
 
+export const ASSIGNMENT_SOLUTION_REQUEST = "ASSIGNMENT_SOLUTION_REQUEST";
+export const assignmentSolutionRequest = (
+  courseId,
+  assignmentId,
+  solution
+) => ({
+  type: ASSIGNMENT_SOLUTION_REQUEST,
+  courseId,
+  assignmentId,
+  solution
+});
+
+export const ASSIGNMENT_SOLUTION_SUCCESS = "ASSIGNMENT_SOLUTION_SUCCESS";
+export const assignmentSolutionSuccess = (courseId, assignmentId) => ({
+  type: ASSIGNMENT_SOLUTION_SUCCESS,
+  courseId,
+  assignmentId
+});
+
+export const ASSIGNMENT_SOLUTION_FAIL = "ASSIGNMENT_SOLUTION_FAIL";
+export const assignmentSolutionFail = (courseId, assignmentId, reason) => ({
+  type: ASSIGNMENT_SOLUTION_FAIL,
+  courseId,
+  assignmentId,
+  reason
+});
+
 export const ASSIGNMENT_CLOSE_DIALOG = "ASSIGNMENT_CLOSE_DIALOG";
 export const assignmentCloseDialog = () => ({
   type: ASSIGNMENT_CLOSE_DIALOG

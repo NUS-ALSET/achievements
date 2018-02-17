@@ -33,7 +33,13 @@ const styles = theme => ({
 
 class AppDrawer extends React.PureComponent {
   render() {
-    const { classes, className, mobileDrawerOpen, onRequestClose } = this.props;
+    const {
+      classes,
+      className,
+      userId,
+      mobileDrawerOpen,
+      onRequestClose
+    } = this.props;
 
     const drawer = (
       <div>
@@ -44,7 +50,7 @@ class AppDrawer extends React.PureComponent {
             </IconButton>
           </Hidden>
         </div>
-        {DrawerMenuItems(onRequestClose)}
+        {DrawerMenuItems(onRequestClose, userId)}
       </div>
     );
 
@@ -85,6 +91,7 @@ class AppDrawer extends React.PureComponent {
 AppDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   className: PropTypes.string,
+  userId: PropTypes.string,
   mobileDrawerOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired
 };

@@ -44,12 +44,16 @@ const COMMON_PROPS = {
   },
   assignments: [
     {
+      open: "1959-06-03T00:00",
+      deadline: "2100-01-01T00:00",
       questionType: "Profile",
       solutionVisible: true,
       visible: true,
       id: "abcTestAssignmentId"
     },
     {
+      open: "1959-06-03T00:00",
+      deadline: "2100-01-01T00:00",
       questionType: "Text",
       solutionVisible: false,
       visible: true,

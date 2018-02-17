@@ -21,13 +21,14 @@ import {
   assignmentCloseDialog,
   assignmentDeleteRequest,
   assignmentShowAddDialog,
+  assignmentSolutionRequest,
   assignmentsSortChange,
   assignmentSubmitRequest,
   assignmentSwitchTab,
+  coursePasswordEnterSuccess,
   updateNewAssignmentField
 } from "./actions";
 import AddProfileDialog from "../../components/AddProfileDialog";
-import { notificationShow } from "../Root/actions";
 import {
   getAssignmentsUIProps,
   getCourseProps,
@@ -60,10 +61,8 @@ class Assignments extends React.Component {
     auth: PropTypes.object,
     courseMembers: PropTypes.object
   };
-
-  // Force show assignments (when become participant)
   state = {
-    showAssignments: false
+    password: ""
   };
 
   onAddAssignmentClick = () => {
@@ -76,7 +75,7 @@ class Assignments extends React.Component {
 
   handlePasswordChange = event =>
     this.setState({
-      value: event.currentTarget.value
+      password: event.currentTarget.value
     });
 
   onCreateAssignmentClick = () => {
@@ -101,9 +100,36 @@ class Assignments extends React.Component {
   };
 
   submitPassword = () => {
-    const { course } = this.props;
+    const { course, firebase, currentUser, dispatch } = this.props;
 
-    coursesService.tryCoursePassword(course.id, this.state.value);
+    coursesService
+      .tryCoursePassword(course.id, this.state.password)
+      // This ref requires existing courseMember item at `firebaseConnect` rises an error and stops to work
+      // So, we have firstly remove listeners
+      .then(() =>
+        Promise.all(
+          [
+            `solutions/${course.id}`,
+            `solutions/${course.id}/${currentUser.id}`,
+            `visibleSolutions/${course.id}`,
+            `assignments/${course.id}`,
+            "userAchievements"
+          ].map(path => Promise.resolve(firebase.unWatchEvent("value", path)))
+        )
+      )
+      .then(() =>
+        // And then we have to add listeners back
+        Promise.all(
+          [
+            `solutions/${course.id}`,
+            `solutions/${course.id}/${currentUser.id}`,
+            `visibleSolutions/${course.id}`,
+            `assignments/${course.id}`,
+            "userAchievements"
+          ].map(path => Promise.resolve(firebase.watchEvent("value", path)))
+        )
+      )
+      .then(() => dispatch(coursePasswordEnterSuccess()));
   };
 
   onSortClick = assignment => {
@@ -113,28 +139,31 @@ class Assignments extends React.Component {
   };
 
   onProfileCommit = value => {
-    const { course, ui } = this.props;
+    const { course, ui, dispatch } = this.props;
 
-    coursesService.submitSolution(course.id, ui.currentAssignment, value);
+    dispatch(
+      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
+    );
   };
 
   onSubmitClick = (assignment, solution) => {
-    const course = this.props.course;
+    const { course, dispatch } = this.props;
 
     switch (assignment.questionType) {
       case "CodeCombat":
-        coursesService.submitSolution(course.id, assignment, "Complete");
+      case "CodeCombat_Number":
+        dispatch(
+          assignmentSolutionRequest(course.id, assignment.id, "Complete")
+        );
         break;
       default:
-        this.props.dispatch(assignmentSubmitRequest(assignment, solution));
+        dispatch(assignmentSubmitRequest(assignment, solution));
     }
   };
 
   onAcceptClick = (assignment, studentId) => {
     coursesService.acceptSolution(this.props.course.id, assignment, studentId);
   };
-
-  showError = error => this.props.dispatch(notificationShow(error));
 
   closeDialog = () => {
     this.props.dispatch(assignmentCloseDialog());
@@ -184,6 +213,7 @@ class Assignments extends React.Component {
       classes,
       courseMembers,
       auth,
+      dispatch,
       course,
       currentUser
     } = this.props;
@@ -231,7 +261,6 @@ class Assignments extends React.Component {
         />
       );
     }
-
     return (
       <Fragment>
         <Toolbar>
@@ -252,15 +281,15 @@ class Assignments extends React.Component {
             name: "Code Combat",
             id: "CodeCombat"
           }}
-          onError={this.showError}
-          onClose={this.closeDialog}
+          dispatch={dispatch}
           onCommit={this.onProfileCommit}
         />
         <AddTextSolutionDialog
           open={ui.dialog && ui.dialog.type === "Text"}
           courseId={course.id}
+          solution={ui.dialog && ui.dialog.value}
           assignment={ui.currentAssignment}
-          onClose={this.closeDialog}
+          dispatch={dispatch}
         />
       </Fragment>
     );
@@ -290,6 +319,7 @@ export default compose(
     const courseId = ownProps.match.params.courseId;
     const state = store.getState();
     const uid = state.firebase.auth.uid;
+
     return [
       "/users",
       `/courses/${courseId}`,

@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import { firebaseConnect } from "react-redux-firebase";
 import NotificationArea from "../../components/NotificationArea";
-import { acceptEulaRequest, notificationShow, signOutRequest } from "./actions";
+import { acceptEulaRequest, notificationHide, signOutRequest } from "./actions";
 import ConfirmEULADialog from "../../components/ConfirmEULADialog";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
@@ -28,7 +28,7 @@ class Root extends React.PureComponent {
   };
 
   handleNotificationClose = () => {
-    this.props.dispatch(notificationShow(""));
+    this.props.dispatch(notificationHide());
   };
 
   onSignOut = () => {
