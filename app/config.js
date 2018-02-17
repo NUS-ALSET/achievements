@@ -8,9 +8,7 @@ admin.initializeApp({
   databaseURL: "https://fir-project-3d2a4.firebaseio.com"
 });
 
-admin
-  .auth()
-  .setCustomUserClaims("0bL57TWyKuZMGvjIueAs292h95B3", {
-    someCustomToken: true
-  })
-  .then(() => console.log("yay"));
+// admin
+//   .database()
+//   .ref("/test/")
+//   .update();

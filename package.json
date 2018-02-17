@@ -12,6 +12,7 @@
     "date-fns": "^1.29.0",
     "downshift": "1.25.0",
     "firebase": "4.9.0",
+    "firebase-queue": "^1.6.1",
     "history": "^4.7.2",
     "lodash": "^4.17.4",
     "material-ui": "^1.0.0-beta.30",

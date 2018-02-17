@@ -1,5 +1,5 @@
 {
   "projects": {
-    "default": "achievements-dev"
+    "default": "achievements-prod"
   }
 }
