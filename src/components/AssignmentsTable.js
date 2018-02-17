@@ -97,13 +97,15 @@ class AssignmentsTable extends React.PureComponent {
                     {assignment.name}
                   </TableSortLabel>
                   <div>
-                    <a
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      href={assignment.details}
-                    >
-                      details
-                    </a>
+                    {assignment.details && (
+                      <a
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        href={assignment.details}
+                      >
+                        details
+                      </a>
+                    )}
                   </div>
                 </TableCell>
               ))}

@@ -1,0 +1,915 @@
+{
+  "a-mayhem-of-munchkins" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "a-mayhem-of-munchkins",
+    "name" : "A Mayhem of Munchkins",
+    "url" : "http://codecombat.com/play/level/a-mayhem-of-munchkins"
+  },
+  "arcane-ally" : {
+    "iconUrl" : "/assets/icons/taunt_15.png",
+    "id" : "arcane-ally",
+    "name" : "Arcane Ally",
+    "url" : "http://codecombat.com/play/level/arcane-ally"
+  },
+  "back-to-back" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_6.png",
+    "id" : "back-to-back",
+    "name" : "Back to Back",
+    "url" : "http://codecombat.com/play/level/back-to-back"
+  },
+  "backwoods-brawl" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "backwoods-brawl",
+    "name" : "backwoods-brawl",
+    "url" : "http://codecombat.com/play/level/backwoods-brawl"
+  },
+  "backwoods-standoff" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "backwoods-standoff",
+    "name" : "backwoods-standoff",
+    "url" : "http://codecombat.com/play/level/backwoods-standoff"
+  },
+  "backwoods-treasure" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "backwoods-treasure",
+    "name" : "backwoods-treasure",
+    "url" : "http://codecombat.com/play/level/backwoods-treasure"
+  },
+  "basin-stampede" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "basin-stampede",
+    "name" : "Basin Stampede",
+    "url" : "http://codecombat.com/play/level/basin-stampede"
+  },
+  "bonemender" : {
+    "iconUrl" : "/assets/icons/taunt_17.png",
+    "id" : "bonemender",
+    "name" : "Bonemender",
+    "url" : "http://codecombat.com/play/level/bonemender"
+  },
+  "bookkeeper" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "bookkeeper",
+    "name" : "bookkeeper",
+    "url" : "http://codecombat.com/play/level/bookkeeper"
+  },
+  "burls-beets-booleans" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "burls-beets-booleans",
+    "name" : "burls-beets-booleans",
+    "url" : "http://codecombat.com/play/level/burls-beets-booleans"
+  },
+  "cavern-survival" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "cavern-survival",
+    "name" : "Cavern Survival",
+    "url" : "http://codecombat.com/play/level/cavern-survival"
+  },
+  "clash-of-clones" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "clash-of-clones",
+    "name" : "clash-of-clones",
+    "url" : "http://codecombat.com/play/level/clash-of-clones"
+  },
+  "closing-the-distance" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_13.png",
+    "id" : "closing-the-distance",
+    "name" : "Closing the Distance",
+    "url" : "http://codecombat.com/play/level/closing-the-distance"
+  },
+  "cloudrip-brawl" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "cloudrip-brawl",
+    "name" : "cloudrip-brawl",
+    "url" : "http://codecombat.com/play/level/cloudrip-brawl"
+  },
+  "cloudrip-commander" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "cloudrip-commander",
+    "name" : "cloudrip-commander",
+    "url" : "http://codecombat.com/play/level/cloudrip-commander"
+  },
+  "cloudrip-siege" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "cloudrip-siege",
+    "name" : "cloudrip-siege",
+    "url" : "http://codecombat.com/play/level/cloudrip-siege"
+  },
+  "cloudrip-treasure" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "cloudrip-treasure",
+    "name" : "cloudrip-treasure",
+    "url" : "http://codecombat.com/play/level/cloudrip-treasure"
+  },
+  "coinucopia" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_18.png",
+    "id" : "coinucopia",
+    "name" : "Coinucopia",
+    "url" : "http://codecombat.com/play/level/coinucopia"
+  },
+  "commanding-followers" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/525ef8ef06e1ab0962000003/commanding_followers_icon.png",
+    "id" : "commanding-followers",
+    "name" : "Commanding Followers",
+    "url" : "http://codecombat.com/play/level/commanding-followers"
+  },
+  "continuous-alchemy" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "continuous-alchemy",
+    "name" : "continuous-alchemy",
+    "url" : "http://codecombat.com/play/level/continuous-alchemy"
+  },
+  "copper-meadows" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_19.png",
+    "id" : "copper-meadows",
+    "name" : "Copper Meadows",
+    "url" : "http://codecombat.com/play/level/copper-meadows"
+  },
+  "cowardly-taunt" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/525abfd9b12777d78e000009/cowardly_taunt_icon.png",
+    "id" : "cowardly-taunt",
+    "name" : "Cowardly Taunt",
+    "url" : "http://codecombat.com/play/level/cowardly-taunt"
+  },
+  "crag-tag" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "crag-tag",
+    "name" : "crag-tag",
+    "url" : "http://codecombat.com/play/level/crag-tag"
+  },
+  "crossroads" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "crossroads",
+    "name" : "crossroads",
+    "url" : "http://codecombat.com/play/level/crossroads"
+  },
+  "danger-minefield" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/526bda3fe79aefde2a003e36/mobile_artillery_icon.png",
+    "id" : "danger-minefield",
+    "name" : "Danger! Minefield",
+    "url" : "http://codecombat.com/play/level/danger-minefield"
+  },
+  "deadly-pursuit" : {
+    "iconUrl" : "/assets/icons/taunt_21.png",
+    "id" : "deadly-pursuit",
+    "name" : "Deadly Pursuit",
+    "url" : "http://codecombat.com/play/level/deadly-pursuit"
+  },
+  "decoy-drill" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "decoy-drill",
+    "name" : "decoy-drill",
+    "url" : "http://codecombat.com/play/level/decoy-drill"
+  },
+  "defense-of-plainswood" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_1.png",
+    "id" : "defense-of-plainswood",
+    "name" : "Defense of Plainswood",
+    "url" : "http://codecombat.com/play/level/defense-of-plainswood"
+  },
+  "desert-combat" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "desert-combat",
+    "name" : "desert-combat",
+    "url" : "http://codecombat.com/play/level/desert-combat"
+  },
+  "dread-door" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_9.png",
+    "id" : "dread-door",
+    "name" : "Dread Door",
+    "url" : "http://codecombat.com/play/level/dread-door"
+  },
+  "drink-me" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/525dc5589a0765e496000006/drink_me_icon.png",
+    "id" : "drink-me",
+    "name" : "Drink Me",
+    "url" : "http://codecombat.com/play/level/drink-me"
+  },
+  "drop-the-flag" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_20.png",
+    "id" : "drop-the-flag",
+    "name" : "Drop the Flag",
+    "url" : "http://codecombat.com/play/level/drop-the-flag"
+  },
+  "dueling-grounds" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_25.png",
+    "id" : "dueling-grounds",
+    "name" : "Dueling Grounds",
+    "url" : "http://codecombat.com/play/level/dueling-grounds"
+  },
+  "dungeons-of-kithgard" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_1.png",
+    "id" : "dungeons-of-kithgard",
+    "name" : "Dungeons of Kithgard",
+    "url" : "http://codecombat.com/play/level/dungeons-of-kithgard"
+  },
+  "dust" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "dust",
+    "name" : "Dust",
+    "url" : "http://codecombat.com/play/level/dust"
+  },
+  "endangered-burl" : {
+    "iconUrl" : "/assets/icons/taunt_3.png",
+    "id" : "endangered-burl",
+    "name" : "Endangered Burl",
+    "url" : "http://codecombat.com/play/level/endangered-burl"
+  },
+  "fire-dancing" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "fire-dancing",
+    "name" : "Fire Dancing",
+    "url" : "http://codecombat.com/play/level/fire-dancing"
+  },
+  "forest-fire-dancing" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "forest-fire-dancing",
+    "name" : "forest-fire-dancing",
+    "url" : "http://codecombat.com/play/level/forest-fire-dancing"
+  },
+  "forest-flower-grove" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "forest-flower-grove",
+    "name" : "forest-flower-grove",
+    "url" : "http://codecombat.com/play/level/forest-flower-grove"
+  },
+  "forgetful-gemsmith" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_4.png",
+    "id" : "forgetful-gemsmith",
+    "name" : "Forgetful Gemsmith",
+    "url" : "http://codecombat.com/play/level/forgetful-gemsmith"
+  },
+  "gems-in-the-deep" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_2.png",
+    "id" : "gems-in-the-deep",
+    "name" : "Gems in the Deep",
+    "url" : "http://codecombat.com/play/level/gems-in-the-deep"
+  },
+  "gems-or-death" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "gems-or-death",
+    "name" : "gems-or-death",
+    "url" : "http://codecombat.com/play/level/gems-or-death"
+  },
+  "goalkeeper" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "goalkeeper",
+    "name" : "goalkeeper",
+    "url" : "http://codecombat.com/play/level/goalkeeper"
+  },
+  "grab-the-mushroom" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/529662dfe0df8f0000000007/grab_the_mushroom_icon.png",
+    "id" : "grab-the-mushroom",
+    "name" : "Grab the Mushroom",
+    "url" : "http://codecombat.com/play/level/grab-the-mushroom"
+  },
+  "gridmancer" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/52ae2460ef42c52f13000008/gridmancer_icon.png",
+    "id" : "gridmancer",
+    "name" : "Gridmancer",
+    "url" : "http://codecombat.com/play/level/gridmancer"
+  },
+  "grim-determination" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "grim-determination",
+    "name" : "grim-determination",
+    "url" : "http://codecombat.com/play/level/grim-determination"
+  },
+  "harrowland" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "harrowland",
+    "name" : "harrowland",
+    "url" : "http://codecombat.com/play/level/harrowland"
+  },
+  "haunted-kithmaze" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_7.png",
+    "id" : "haunted-kithmaze",
+    "name" : "Haunted Kithmaze",
+    "url" : "http://codecombat.com/play/level/haunted-kithmaze"
+  },
+  "hoarding-gold" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hoarding-gold",
+    "name" : "hoarding-gold",
+    "url" : "http://codecombat.com/play/level/hoarding-gold"
+  },
+  "hold-for-reinforcements" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hold-for-reinforcements",
+    "name" : "hold-for-reinforcements",
+    "url" : "http://codecombat.com/play/level/hold-for-reinforcements"
+  },
+  "hold-the-forest-pass" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hold-the-forest-pass",
+    "name" : "hold-the-forest-pass",
+    "url" : "http://codecombat.com/play/level/hold-the-forest-pass"
+  },
+  "hunter-triplets" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/526711d9add4f8965f000002/hunter_triplets_icon.png",
+    "id" : "hunter-triplets",
+    "name" : "Hunter Triplets",
+    "url" : "http://codecombat.com/play/level/hunter-triplets"
+  },
+  "hunters-and-prey" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hunters-and-prey",
+    "name" : "hunters-and-prey",
+    "url" : "http://codecombat.com/play/level/hunters-and-prey"
+  },
+  "hunting-party" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hunting-party",
+    "name" : "hunting-party",
+    "url" : "http://codecombat.com/play/level/hunting-party"
+  },
+  "its-a-trap" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/528aea2d7f37fc4e0700016b/its_a_trap_icon.png",
+    "id" : "its-a-trap",
+    "name" : "It's a Trap!",
+    "url" : "http://codecombat.com/play/level/its-a-trap"
+  },
+  "keeping-time" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "keeping-time",
+    "name" : "keeping-time",
+    "url" : "http://codecombat.com/play/level/keeping-time"
+  },
+  "keeping-time " : {
+    "iconUrl" : "assets/icons/commanding_followers_blank.png",
+    "id" : "keeping-time ",
+    "name" : "Keeping Time ",
+    "url" : "http://codecombat.com/play/level/keeping-time"
+  },
+  "kithgard-brawl" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "kithgard-brawl",
+    "name" : "Kithgard Brawl",
+    "url" : "http://codecombat.com/play/level/kithgard-brawl"
+  },
+  "kithgard-gates" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "kithgard-gates",
+    "name" : "Kithgard Gates",
+    "url" : "http://codecombat.com/play/level/kithgard-gates"
+  },
+  "kithgard-librarian" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "kithgard-librarian",
+    "name" : "Kithgard Librarian",
+    "url" : "http://codecombat.com/play/level/kithgard-librarian"
+  },
+  "kithgard-mastery" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "kithgard-mastery",
+    "name" : "Kithgard Mastery",
+    "url" : "http://codecombat.com/play/level/kithgard-mastery"
+  },
+  "kithgaurd-gates" : {
+    "iconUrl" : "/assets/icons/commanding_followers_15.png",
+    "id" : "kithgaurd-gates",
+    "name" : "Kithgaurd Gates",
+    "url" : "http://codecombat.com/play/level/kithgaurd-gates"
+  },
+  "known-enemy" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_10.png",
+    "id" : "known-enemy",
+    "name" : "Known Enemy",
+    "url" : "http://codecombat.com/play/level/known-enemy"
+  },
+  "library-tactician" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "library-tactician",
+    "name" : "library-tactician",
+    "url" : "http://codecombat.com/play/level/library-tactician"
+  },
+  "loop-da-loop" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "loop-da-loop",
+    "name" : "Loop Da Loop",
+    "url" : "http://codecombat.com/play/level/loop-da-loop"
+  },
+  "lost-viking" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "lost-viking",
+    "name" : "lost-viking",
+    "url" : "http://codecombat.com/play/level/lost-viking"
+  },
+  "lowly-kithmen" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_12.png",
+    "id" : "lowly-kithmen",
+    "name" : "Lowly Kithmen",
+    "url" : "http://codecombat.com/play/level/lowly-kithmen"
+  },
+  "lurkers" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "lurkers",
+    "name" : "Lurkers",
+    "url" : "http://codecombat.com/play/level/lurkers"
+  },
+  "mad-maxer" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "mad-maxer",
+    "name" : "Mad Maxer",
+    "url" : "http://codecombat.com/play/level/mad-maxer"
+  },
+  "master-of-names" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_11.png",
+    "id" : "master-of-names",
+    "name" : "Master of Names",
+    "url" : "http://codecombat.com/play/level/master-of-names"
+  },
+  "medical-attention" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "medical-attention",
+    "name" : "medical-attention",
+    "url" : "http://codecombat.com/play/level/medical-attention"
+  },
+  "mind-the-trap" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "mind-the-trap",
+    "name" : "mind-the-trap",
+    "url" : "http://codecombat.com/play/level/mind-the-trap"
+  },
+  "mixed-unit-tactics" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "mixed-unit-tactics",
+    "name" : "mixed-unit-tactics",
+    "url" : "http://codecombat.com/play/level/mixed-unit-tactics"
+  },
+  "mobile-artillery" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/525085419851b83f4b000001/mobile_artillery_icon.png",
+    "id" : "mobile-artillery",
+    "name" : "Mobile Artillery",
+    "url" : "http://codecombat.com/play/level/mobile-artillery"
+  },
+  "mountain-flower-grove" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "mountain-flower-grove",
+    "name" : "mountain-flower-grove",
+    "url" : "http://codecombat.com/play/level/mountain-flower-grove"
+  },
+  "mountain-mercenaries" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "mountain-mercenaries",
+    "name" : "mountain-mercenaries",
+    "url" : "http://codecombat.com/play/level/mountain-mercenaries"
+  },
+  "multiplayer-treasure-grove" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_24.png",
+    "id" : "multiplayer-treasure-grove",
+    "name" : "Multiplayer Treasure Grove",
+    "url" : "http://codecombat.com/play/level/multiplayer-treasure-grove"
+  },
+  "munchkin-harvest" : {
+    "iconUrl" : "/assets/icons/taunt_12.png",
+    "id" : "munchkin-harvest",
+    "name" : "Munchkin Harvest",
+    "url" : "http://codecombat.com/play/level/munchkin-harvest"
+  },
+  "munchkin-swarm" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_11.png",
+    "id" : "munchkin-swarm",
+    "name" : "Munchkin Swarm",
+    "url" : "http://codecombat.com/play/level/munchkin-swarm"
+  },
+  "noble-sacrifice" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "noble-sacrifice",
+    "name" : "noble-sacrifice",
+    "url" : "http://codecombat.com/play/level/noble-sacrifice"
+  },
+  "oasis" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "oasis",
+    "name" : "oasis",
+    "url" : "http://codecombat.com/play/level/oasis"
+  },
+  "ogre-encampment" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_7.png",
+    "id" : "ogre-encampment",
+    "name" : "Ogre Encampment",
+    "url" : "http://codecombat.com/play/level/ogre-encampment"
+  },
+  "ogre-gorge-gouger" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "ogre-gorge-gouger",
+    "name" : "ogre-gorge-gouger",
+    "url" : "http://codecombat.com/play/level/ogre-gorge-gouger"
+  },
+  "patrol-buster" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "patrol-buster",
+    "name" : "patrol-buster",
+    "url" : "http://codecombat.com/play/level/patrol-buster"
+  },
+  "peasant-protection" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_10.png",
+    "id" : "peasant-protection",
+    "name" : "Peasant Protection",
+    "url" : "http://codecombat.com/play/level/peasant-protection"
+  },
+  "reaping-fire" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "reaping-fire",
+    "name" : "reaping-fire",
+    "url" : "http://codecombat.com/play/level/reaping-fire"
+  },
+  "rescue-mission" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/52740644904ac0411700067c/rescue_mission_icon.png",
+    "id" : "rescue-mission",
+    "name" : "Rescue Mission",
+    "url" : "http://codecombat.com/play/level/rescue-mission"
+  },
+  "rich-forager" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_22.png",
+    "id" : "rich-forager",
+    "name" : "Rich Forager",
+    "url" : "http://codecombat.com/play/level/rich-forager"
+  },
+  "sand-snakes" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sand-snakes",
+    "name" : "Sand Snakes",
+    "url" : "http://codecombat.com/play/level/sand-snakes"
+  },
+  "sarven-brawl" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sarven-brawl",
+    "name" : "sarven-brawl",
+    "url" : "http://codecombat.com/play/level/sarven-brawl"
+  },
+  "sarven-road" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sarven-road",
+    "name" : "Sarven Road",
+    "url" : "http://codecombat.com/play/level/sarven-road"
+  },
+  "sarven-savior" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sarven-savior",
+    "name" : "Sarven Savior",
+    "url" : "http://codecombat.com/play/level/sarven-savior"
+  },
+  "sarven-sentry" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sarven-sentry",
+    "name" : "Sarven Sentry",
+    "url" : "http://codecombat.com/play/level/sarven-sentry"
+  },
+  "sarven-shepherd" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sarven-shepherd",
+    "name" : "Sarven Shepherd",
+    "url" : "http://codecombat.com/play/level/sarven-shepherd"
+  },
+  "sarven-siege" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sarven-siege",
+    "name" : "sarven-siege",
+    "url" : "http://codecombat.com/play/level/sarven-siege"
+  },
+  "sarven-treasure" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "sarven-treasure",
+    "name" : "sarven-treasure",
+    "url" : "http://codecombat.com/play/level/sarven-treasure"
+  },
+  "shadow-guard" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_3.png",
+    "id" : "shadow-guard",
+    "name" : "Shadow Guard",
+    "url" : "http://codecombat.com/play/level/shadow-guard"
+  },
+  "shield-rush" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_9.png",
+    "id" : "shield-rush",
+    "name" : "Shield Rush",
+    "url" : "http://codecombat.com/play/level/shield-rush"
+  },
+  "shine-getter" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "shine-getter",
+    "name" : "shine-getter",
+    "url" : "http://codecombat.com/play/level/shine-getter"
+  },
+  "shrapnel" : {
+    "iconUrl" : "/assets/icons/taunt_14.png",
+    "id" : "shrapnel",
+    "name" : "Shrapnel",
+    "url" : "http://codecombat.com/play/level/shrapnel"
+  },
+  "siege-of-stonehold" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_23.png",
+    "id" : "siege-of-stonehold",
+    "name" : "Siege of Stonehold",
+    "url" : "http://codecombat.com/play/level/siege-of-stonehold"
+  },
+  "signal-corpse" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "signal-corpse",
+    "name" : "signal-corpse",
+    "url" : "http://codecombat.com/play/level/signal-corpse"
+  },
+  "signs-and-portents" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/taunt_blank.png",
+    "id" : "signs-and-portents",
+    "name" : "Signs and Portents",
+    "url" : "http://codecombat.com/play/level/signs-and-portents"
+  },
+  "slalom" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "slalom",
+    "name" : "slalom",
+    "url" : "http://codecombat.com/play/level/slalom"
+  },
+  "steelclaw-gap" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "steelclaw-gap",
+    "name" : "steelclaw-gap",
+    "url" : "http://codecombat.com/play/level/steelclaw-gap"
+  },
+  "stillness-in-motion" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "stillness-in-motion",
+    "name" : "stillness-in-motion",
+    "url" : "http://codecombat.com/play/level/stillness-in-motion"
+  },
+  "summits-gate" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "summits-gate",
+    "name" : "summits-gate",
+    "url" : "http://codecombat.com/play/level/summits-gate"
+  },
+  "swift-dagger" : {
+    "iconUrl" : "/assets/icons/taunt_13.png",
+    "id" : "swift-dagger",
+    "name" : "Swift Dagger",
+    "url" : "http://codecombat.com/play/level/swift-dagger"
+  },
+  "sword-loop" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/525dc5589a0765e496000006/drink_me_icon.png",
+    "id" : "sword-loop",
+    "name" : "Sword Loop",
+    "url" : "http://codecombat.com/play/level/sword-loop"
+  },
+  "taunt" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/525f150306e1ab0962000018/taunt_icon.png",
+    "id" : "taunt",
+    "name" : "Taunt",
+    "url" : "http://codecombat.com/play/level/taunt"
+  },
+  "taunt-the-guards" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/5276c9bdcf83207a2801ff8f/taunt_icon.png",
+    "id" : "taunt-the-guards",
+    "name" : "Taunt the Guards",
+    "url" : "http://codecombat.com/play/level/taunt-the-guards"
+  },
+  "the-agrippa-defense" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-agrippa-defense",
+    "name" : "the-agrippa-defense",
+    "url" : "http://codecombat.com/play/level/the-agrippa-defense"
+  },
+  "the-final-kithmaze" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_14.png",
+    "id" : "the-final-kithmaze",
+    "name" : "The Final Kithmaze",
+    "url" : "http://codecombat.com/play/level/the-final-kithmaze"
+  },
+  "the-geometry-of-flowers" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-geometry-of-flowers",
+    "name" : "the-geometry-of-flowers",
+    "url" : "http://codecombat.com/play/level/the-geometry-of-flowers"
+  },
+  "the-mighty-sand-yak" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-mighty-sand-yak",
+    "name" : "the-mighty-sand-yak",
+    "url" : "http://codecombat.com/play/level/the-mighty-sand-yak"
+  },
+  "the-raised-sword" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_6.png",
+    "id" : "the-raised-sword",
+    "name" : "The Raised Sword",
+    "url" : "http://codecombat.com/play/level/the-raised-sword"
+  },
+  "the-right-route" : {
+    "iconUrl" : "http://codecombat.com/file/db/level/526fd3043c637ece50001bb2/the_herd_icon.png",
+    "id" : "the-right-route",
+    "name" : "The Right Route",
+    "url" : "http://codecombat.com/play/level/the-right-route"
+  },
+  "the-second-kithmaze" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_8.png",
+    "id" : "the-second-kithmaze",
+    "name" : "The Second Kithmaze",
+    "url" : "http://codecombat.com/play/level/the-second-kithmaze"
+  },
+  "the-trials" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-trials",
+    "name" : "the-trials",
+    "url" : "http://codecombat.com/play/level/the-trials"
+  },
+  "the-two-flowers" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-two-flowers",
+    "name" : "the-two-flowers",
+    "url" : "http://codecombat.com/play/level/the-two-flowers"
+  },
+  "thornbush-farm" : {
+    "iconUrl" : "/assets/icons/taunt_5.png",
+    "id" : "thornbush-farm",
+    "name" : "Thornbush Farm",
+    "url" : "http://codecombat.com/play/level/thornbush-farm"
+  },
+  "thumb-biter" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "thumb-biter",
+    "name" : "thumb-biter",
+    "url" : "http://codecombat.com/play/level/thumb-biter"
+  },
+  "thunderhooves" : {
+    "campaign" : "desert",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "thunderhooves",
+    "name" : "thunderhooves",
+    "url" : "http://codecombat.com/play/level/thunderhooves"
+  },
+  "timber-guard" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "timber-guard",
+    "name" : "timber-guard",
+    "url" : "http://codecombat.com/play/level/timber-guard"
+  },
+  "toil-and-trouble" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "toil-and-trouble",
+    "name" : "toil-and-trouble",
+    "url" : "http://codecombat.com/play/level/toil-and-trouble"
+  },
+  "touch-of-death" : {
+    "iconUrl" : "/assets/icons/taunt_16.png",
+    "id" : "touch-of-death",
+    "name" : "Touch of Death",
+    "url" : "http://codecombat.com/play/level/touch-of-death"
+  },
+  "true-names" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_5.png",
+    "id" : "true-names",
+    "name" : "True Names",
+    "url" : "http://codecombat.com/play/level/true-names"
+  },
+  "village-guard" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_4.png",
+    "id" : "village-guard",
+    "name" : "Village Guard",
+    "url" : "http://codecombat.com/play/level/village-guard"
+  },
+  "vital-powers" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "vital-powers",
+    "name" : "vital-powers",
+    "url" : "http://codecombat.com/play/level/vital-powers"
+  },
+  "wild-horses" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "wild-horses",
+    "name" : "wild-horses",
+    "url" : "http://codecombat.com/play/level/wild-horses"
+  },
+  "winding-trail" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_2.png",
+    "id" : "winding-trail",
+    "name" : "Winding Trail",
+    "url" : "http://codecombat.com/play/level/winding-trail"
+  },
+  "woodland-cleaver" : {
+    "campaign" : "forest",
+    "iconUrl" : "/assets/icons/taunt_8.png",
+    "id" : "woodland-cleaver",
+    "name" : "Woodland Cleaver",
+    "url" : "http://codecombat.com/play/level/woodland-cleaver"
+  },
+  "zero-sum" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "zero-sum",
+    "name" : "zero-sum",
+    "url" : "http://codecombat.com/play/level/zero-sum"
+  },
+  "zoo-keeper" : {
+    "campaign" : "mountain",
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "zoo-keeper",
+    "name" : "zoo-keeper",
+    "url" : "http://codecombat.com/play/level/zoo-keeper"
+  }
+}

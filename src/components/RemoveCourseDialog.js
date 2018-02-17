@@ -25,18 +25,18 @@ class RemoveCourseDialog extends React.PureComponent {
   render() {
     const { open, course, onClose, onCommit } = this.props;
     return (
-      <Dialog open={open}>
+      <Dialog open={open} onClose={onClose}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <Typography>{`This action will delete the course "${course &&
             course.name}". Are you sure?`}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={onClose}>
+          <Button color="primary" onClick={onClose}>
             Cancel
           </Button>
-          <Button raised color="primary" onClick={() => onCommit(course)}>
-            Commit
+          <Button raised color="secondary" onClick={() => onCommit(course)}>
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+
 import Dialog, {
   DialogActions,
   DialogContent,
@@ -10,15 +11,11 @@ import TextField from "material-ui/TextField/TextField";
 
 export class AddCourseDialog extends React.Component {
   static propTypes = {
-    requestClose: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
     requestCreation: PropTypes.func.isRequired,
     onFieldChange: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     values: PropTypes.object.isRequired
-  };
-
-  handleCancel = () => {
-    this.props.requestClose();
   };
 
   handleCommit = () => {
@@ -30,11 +27,12 @@ export class AddCourseDialog extends React.Component {
 
   render() {
     return (
-      <Dialog open={this.props.open}>
+      <Dialog open={this.props.open} onClose={this.props.onClose}>
         <DialogTitle id="simple-dialog-title">Add New Course</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
+            required
             error={!this.props.values.name}
             onChange={event =>
               this.props.onFieldChange("name", event.currentTarget.value)
@@ -48,6 +46,7 @@ export class AddCourseDialog extends React.Component {
             onChange={event =>
               this.props.onFieldChange("password", event.currentTarget.value)
             }
+            required
             error={!this.props.values.password}
             value={this.props.values.password}
             margin="dense"
@@ -57,7 +56,7 @@ export class AddCourseDialog extends React.Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.handleCancel} color="secondary">
+          <Button onClick={this.props.onClose} color="secondary">
             Cancel
           </Button>
           <Button onClick={this.handleCommit} color="primary" raised>

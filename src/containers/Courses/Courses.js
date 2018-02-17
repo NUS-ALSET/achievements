@@ -11,13 +11,21 @@ import {
   courseNewRequest,
   courseRemoveDialogShow,
   courseRemoveRequest,
-  courseShowNewDialog
+  courseShowNewDialog,
+  courseSwitchTab
 } from "./actions";
 import AddCourseDialog from "../../components/AddCourseDialog";
 import CoursesTable from "../../components/CoursesTable";
+import Tabs, { Tab } from "material-ui/Tabs";
+
 import sagas from "./sagas";
 import { sagaInjector } from "../../services/saga";
+
 import RemoveCourseDialog from "../../components/RemoveCourseDialog";
+
+const COURSE_TAB_JOINED = 0;
+const COURSE_TAB_OWNED = 1;
+const COURSE_TAB_PUBLIC = 2;
 
 class Courses extends React.Component {
   static propTypes = {
@@ -26,10 +34,14 @@ class Courses extends React.Component {
     dialog: PropTypes.any,
     removingCourse: PropTypes.any,
     newCourseValues: PropTypes.object,
-    courses: PropTypes.any,
+    courses: PropTypes.object,
+    myCourses: PropTypes.any,
+    joinedCourses: PropTypes.any,
+    publicCourses: PropTypes.any,
     firebase: PropTypes.object,
     instructorName: PropTypes.string,
-    ownerId: PropTypes.string
+    ownerId: PropTypes.string,
+    currentTab: PropTypes.number
   };
 
   onDeleteCourseClick = courseId => {
@@ -41,6 +53,10 @@ class Courses extends React.Component {
     }
 
     dispatch(courseRemoveDialogShow(courseId, course.name));
+  };
+
+  switchTab = (event, tabIndex) => {
+    this.props.dispatch(courseSwitchTab(tabIndex));
   };
 
   showNewCourseDialog = () => {
@@ -63,15 +79,33 @@ class Courses extends React.Component {
   render() {
     const {
       auth,
-      courses,
       ownerId,
       newCourseValues,
       removingCourse,
-      dialog
+      dialog,
+      currentTab,
+      publicCourses,
+      myCourses,
+      joinedCourses
     } = this.props;
+    let courses;
 
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
+    }
+
+    switch (currentTab) {
+      case COURSE_TAB_JOINED:
+        courses = joinedCourses;
+        break;
+      case COURSE_TAB_OWNED:
+        courses = myCourses;
+        break;
+      case COURSE_TAB_PUBLIC:
+        courses = publicCourses;
+        break;
+      default:
+        return <div>Something goes wrong</div>;
     }
 
     return (
@@ -81,6 +115,17 @@ class Courses extends React.Component {
             Add new course
           </Button>
         </Toolbar>
+        <Tabs
+          fullWidth
+          indicatorColor="primary"
+          textColor="primary"
+          value={currentTab}
+          onChange={this.switchTab}
+        >
+          <Tab label="Joined courses" />
+          <Tab label="My courses" />
+          <Tab label="Public courses" />
+        </Tabs>
         <CoursesTable
           onDeleteCourseClick={this.onDeleteCourseClick}
           ownerId={ownerId}
@@ -91,7 +136,7 @@ class Courses extends React.Component {
           onFieldChange={this.onDialogFieldChange}
           requestCreation={this.newDialogRequest}
           open={dialog === "NEW_COURSE"}
-          requestClose={this.closeDialog}
+          onClose={this.closeDialog}
         />
         <RemoveCourseDialog
           open={dialog === "REMOVE_COURSE"}
@@ -108,18 +153,43 @@ sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   auth: state.firebase.auth,
-  courses: state.firebase.data.courses,
+  courses: Object.assign(
+    {},
+    state.firebase.data.myCourses,
+    state.firebase.data.publicCourses,
+    state.courses.joinedCourses
+  ),
+  myCourses: state.firebase.data.myCourses,
+  publicCourses: state.firebase.data.publicCourses,
+  joinedCourses: state.courses.joinedCourses,
   instructorName: state.firebase.auth.displayName,
   ownerId: state.firebase.auth.uid,
   dialog: state.courses.dialog,
   removingCourse: state.courses.removingCourse,
-  newCourseValues: state.courses.newCourseValues
+  newCourseValues: state.courses.newCourseValues,
+  currentTab: state.courses.currentTab
 });
 
 export default compose(
   firebaseConnect(
     // Pretty dirty hack to get courses fetching after login on `/course` route
-    (ownProps, store) => !store.getState().firebase.auth.isEmpty && ["/courses"]
+    (ownProps, store) => {
+      const firebaseAuth = store.getState().firebase.auth;
+      return (
+        !firebaseAuth.isEmpty && [
+          {
+            path: "/courses",
+            storeAs: "myCourses",
+            queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
+          },
+          {
+            path: "/courses",
+            storeAs: "publicCourses",
+            queryParams: ["orderByChild=isPublic", "equalTo=true"]
+          }
+        ]
+      );
+    }
   ),
   connect(mapStateToProps)
 )(Courses);

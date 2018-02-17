@@ -1,7 +1,9 @@
 import firebase from "firebase";
+import levels from "./levels";
 
 export const APP_SETTING = {
-  DrawerWidth: 250
+  DrawerWidth: 250,
+  levels: levels
 };
 
 export const AUTO_HIDE_DURATION = 6000;

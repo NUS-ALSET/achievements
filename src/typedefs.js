@@ -3,8 +3,11 @@
  * @property {String} id
  * @property {String} questionType
  * @property {String} name
+ * @property {String} open
  * @property {String} deadline
  * @property {Array<String>} levels
+ * @property {string} level
+ * @property {Number} count
  * @property {String} details
  */
 
@@ -36,7 +39,7 @@
  * @property {Object} user
  * @property {String} user.id
  * @property {String} user.displayName
- * @property {HTMLElement | Boolean} dropdownAnchorEl
+ * @property {HTMLElement | Boolean} dropdownAnchorElId
  * @property {Boolean} mainDrawerOpen
  */
 
@@ -70,6 +73,7 @@
  * @typedef {Object} AccountState
  *
  * @property {Boolean} showExternalProfileDialog
+ * @property {Boolean} showRemoveExternalProfileDialog
  */
 
 /**
