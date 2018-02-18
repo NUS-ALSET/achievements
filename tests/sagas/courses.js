@@ -12,7 +12,8 @@ import {
   courseHideDialog,
   courseNewRequest,
   courseNewSuccess,
-  courseRemoveRequest
+  courseRemoveRequest,
+  courseRemoveSuccess
 } from "../../src/containers/Courses/actions";
 import assert from "assert";
 import { put, call } from "redux-saga/effects";
@@ -21,7 +22,7 @@ import { NOTIFICATION_SHOW } from "../../src/containers/Root/actions";
 
 describe("courses sagas tests", () => {
   beforeEach(() =>
-    sinon.stub(coursesService, "createNewCourse").callsFake(() => {})
+    sinon.stub(coursesService, "createNewCourse").callsFake(() => "someKey")
   );
   afterEach(() => coursesService.createNewCourse.restore());
 
@@ -70,6 +71,9 @@ describe("courses sagas tests", () => {
     );
 
     next = generator.next();
+    assert.deepEqual(next.value, put(courseRemoveSuccess("testCourseId")));
+
+    next = generator.next();
     assert.equal(next.value, undefined);
   });
 
@@ -93,7 +97,8 @@ describe("courses sagas tests", () => {
       },
       {
         type: COURSE_NEW_SUCCESS,
-        name: "testName"
+        name: "testName",
+        key: "someKey"
       }
     ]);
   });

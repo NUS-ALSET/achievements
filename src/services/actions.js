@@ -1,7 +1,20 @@
 import firebase from "firebase";
+import {
+  COURSE_NEW_DIALOG_CHANGE,
+  COURSE_NEW_REQUEST
+} from "../containers/Courses/actions";
+import {
+  ASSIGNMENTS_SORT_CHANGE,
+  UPDATE_NEW_ASSIGNMENT_FIELD
+} from "../containers/Assignments/actions";
 
 export class ActionsService {
-  bannedActions = [];
+  bannedActions = [
+    COURSE_NEW_DIALOG_CHANGE,
+    COURSE_NEW_REQUEST,
+    ASSIGNMENTS_SORT_CHANGE,
+    UPDATE_NEW_ASSIGNMENT_FIELD
+  ];
 
   static pickActionData(action) {
     action = Object.assign({}, action);
@@ -58,7 +71,9 @@ export class ActionsService {
       .ref("/blacklistActions")
       .once("value")
       .then(actions => {
-        this.bannedActions = Object.keys(actions.val() || {});
+        this.bannedActions = this.bannedActions.concat(
+          Object.keys(actions.val() || {})
+        );
       });
   }
 }
