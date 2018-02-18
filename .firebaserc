@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "achievements-prod"
+    "default": "achievements-prod",
+    "production": "achievements-prod"
   }
 }
