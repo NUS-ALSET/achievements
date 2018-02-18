@@ -38,6 +38,7 @@ import AddTextSolutionDialog from "../../components/AddTextSolutionDialog";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import InstructorTabs from "../../components/InstructorTabs";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -264,7 +265,10 @@ class Assignments extends React.Component {
     return (
       <Fragment>
         <Toolbar>
-          <Link to="/Courses" className={classes.breadcrumbLink}>
+          <Link
+            to={`${APP_SETTING.basename}/Courses`}
+            className={classes.breadcrumbLink}
+          >
             <Typography className={classes.breadcrumbText}>Courses</Typography>
           </Link>
           <ChevronRightIcon />
