@@ -112,15 +112,21 @@ class CoursesService {
         owner: this.getUser("uid")
       })
       .then(ref =>
-        firebase.set(`/coursePasswords/${ref.getKey()}`, password).then(() =>
-          // Start watch solutions for this course
-          firebase
-            .database()
-            .ref(`/solutions/${ref.getKey()}`)
-            .on("value", data =>
-              solutionsService.processUpdatedSolutions(ref.getKey(), data.val())
-            )
-        )
+        firebase
+          .set(`/coursePasswords/${ref.getKey()}`, password)
+          .then(() =>
+            // Start watch solutions for this course
+            firebase
+              .database()
+              .ref(`/solutions/${ref.getKey()}`)
+              .on("value", data =>
+                solutionsService.processUpdatedSolutions(
+                  ref.getKey(),
+                  data.val()
+                )
+              )
+          )
+          .then(() => ref.getKey())
       );
   }
 
@@ -179,7 +185,7 @@ class CoursesService {
             .once("value")
             .then(data =>
               Promise.all(
-                Object.keys(data.val() || {}).map(studentId => {
+                Object.keys(data.val()).map(studentId => {
                   const solutions = data.val()[studentId];
 
                   if (solutions[assignmentId]) {

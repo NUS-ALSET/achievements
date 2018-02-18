@@ -6,8 +6,9 @@ export const coursePasswordEnterRequest = (courseId, password) => ({
 });
 
 export const COURSE_PASSWORD_ENTER_SUCCESS = "COURSE_PASSWORD_ENTER_SUCCESS";
-export const coursePasswordEnterSuccess = () => ({
-  type: COURSE_PASSWORD_ENTER_SUCCESS
+export const coursePasswordEnterSuccess = courseId => ({
+  type: COURSE_PASSWORD_ENTER_SUCCESS,
+  courseId
 });
 
 export const COURSE_PASSWORD_ENTER_FAIL = "COURSE_PASSWORD_ENTER_FAIL";

@@ -23,9 +23,10 @@ export const courseNewRequest = (name, password) => ({
 });
 
 export const COURSE_NEW_SUCCESS = "COURSE_NEW_SUCCESS";
-export const courseNewSuccess = name => ({
+export const courseNewSuccess = (name, key) => ({
   type: COURSE_NEW_SUCCESS,
-  name
+  name,
+  key
 });
 
 export const COURSE_NEW_FAIL = "COURSE_NEW_FAIL";
@@ -48,8 +49,14 @@ export const courseRemoveRequest = courseId => ({
   courseId
 });
 
+export const COURSE_REMOVE_SUCCESS = "COURSE_REMOVE_SUCCESS";
+export const courseRemoveSuccess = courseId => ({
+  type: COURSE_REMOVE_SUCCESS,
+  courseId
+});
+
 export const COURSE_REMOVE_FAIL = "COURSE_REMOVE_FAIL";
-export const courseRemoveFail = error => ({
+export const courseRemoveFail = (courseId, error) => ({
   type: COURSE_REMOVE_FAIL,
   error
 });
