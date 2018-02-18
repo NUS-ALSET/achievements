@@ -5,7 +5,8 @@ import {
   courseHideDialog,
   courseNewFail,
   courseNewSuccess,
-  courseRemoveFail
+  courseRemoveFail,
+  courseRemoveSuccess
 } from "./actions";
 import { coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
@@ -15,12 +16,12 @@ export function* courseNewRequestHandle(action) {
   try {
     yield call(coursesService.validateNewCourse, action.name, action.password);
     yield put(courseHideDialog());
-    yield call(
+    const key = yield call(
       [coursesService, coursesService.createNewCourse],
       action.name,
       action.password
     );
-    yield put(courseNewSuccess(action.name));
+    yield put(courseNewSuccess(action.name, key));
   } catch (err) {
     yield put(courseNewFail(action.name, err.message));
     yield put(notificationShow(err.message));
@@ -31,6 +32,7 @@ export function* courseRemoveRequestHandle(action) {
   try {
     yield put(courseHideDialog());
     yield call([coursesService, coursesService.deleteCourse], action.courseId);
+    yield put(courseRemoveSuccess(action.courseId));
   } catch (err) {
     yield put(courseRemoveFail());
     yield put(notificationShow(err.message));

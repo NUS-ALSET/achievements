@@ -129,7 +129,7 @@ class Assignments extends React.Component {
           ].map(path => Promise.resolve(firebase.watchEvent("value", path)))
         )
       )
-      .then(() => dispatch(coursePasswordEnterSuccess()));
+      .then(() => dispatch(coursePasswordEnterSuccess(course.id)));
   };
 
   onSortClick = assignment => {

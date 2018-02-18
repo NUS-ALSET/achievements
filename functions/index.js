@@ -5,8 +5,112 @@ const Queue = require("firebase-queue");
 const axios = require("axios");
 
 const ERROR_401 = 401;
+const profilesRefreshApproach =
+  (functions.config().profiles &&
+    functions.config().profiles["refresh-approach"]) ||
+  "none";
 
 admin.initializeApp(functions.config().firebase);
+
+function processProfileRefreshRequest(data, resolve) {
+  switch (data.service) {
+    case "CodeCombat":
+      return admin
+        .database()
+        .ref(`/userAchievements/${data.uid}/${data.service}/achievements`)
+        .once("value")
+        .then(existing => existing.val() || {})
+        .then(existing =>
+          axios
+            .get(
+              `https://codecombat.com/db/user/${
+                data.serviceId
+              }/level.sessions?project=state.complete,levelID,` +
+                "levelName,playtime,codeLanguage,created"
+            )
+            .then(response =>
+              response.data.filter(levelInfo => levelInfo.levelID)
+            )
+            .then(levels => {
+              let achievements = false;
+              let events = false;
+
+              levels.forEach(levelInfo => {
+                if (!existing[levelInfo.levelID]) {
+                  achievements = achievements || {};
+                  events = events || {};
+                  achievements[levelInfo.levelID] = {
+                    name: levelInfo.levelName,
+                    complete:
+                      (levelInfo &&
+                        levelInfo.state &&
+                        levelInfo.state.complete) ||
+                      false
+                  };
+                  const newEventKey = admin
+                    .database()
+                    .ref("/logged_events")
+                    .push().key;
+                  events[newEventKey] = {
+                    createdAt: {
+                      ".sv": "timestamp"
+                    },
+                    isAnonymous: true,
+                    type: "UPDATE_ACHIEVEMENTS_DATA",
+                    otherActionData: {
+                      uid: data.uid,
+                      levelId: levelInfo.levelID,
+                      complete:
+                        (levelInfo &&
+                          levelInfo.state &&
+                          levelInfo.state.complete) ||
+                        false,
+                      playtime: (levelInfo && levelInfo.playtime) || 0
+                    }
+                  };
+                }
+                return true;
+              });
+
+              return admin
+                .database()
+                .ref(`/userAchievements/${data.uid}/${data.service}`)
+                .update({
+                  lastUpdate: new Date().getTime(),
+                  totalAchievements: levels.filter(
+                    levelInfo =>
+                      levelInfo && levelInfo.state && levelInfo.state.complete
+                  ).length
+                })
+                .then(
+                  achievements
+                    ? admin
+                        .database()
+                        .ref(
+                          `/userAchievements/${data.uid}/${
+                            data.service
+                          }/achievements`
+                        )
+                        .update(achievements)
+                    : Promise.resolve()
+                )
+                .then(
+                  events
+                    ? admin
+                        .database()
+                        .ref("/logged_events")
+                        .update(events)
+                    : Promise.resolve()
+                );
+            })
+
+            .then(() => resolve())
+        )
+        .catch(err => console.error(err.message) || resolve());
+    default:
+      return Promise.resolve();
+  }
+}
 
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
@@ -35,6 +139,20 @@ exports.handleNewSolution = functions.database
       });
   });
 
+exports.handleProfileRefreshRequest =
+  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  functions.database
+    .ref("/updateProfileQueue/tasks/{requestId}")
+    .onCreate(event =>
+      new Promise(resolve =>
+        processProfileRefreshRequest(event.data.val(), resolve)
+      ).then(() =>
+        admin.database
+          .ref(`/updateProfileQueue/tasks/${event.params.requestId}`)
+          .remove()
+      )
+    );
+
 exports.handleProfileQueue = functions.https.onRequest((req, res) => {
   const { token } = req.query;
 
@@ -54,105 +172,7 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
       const queue = new Queue(
         admin.database().ref("/updateProfileQueue"),
         (data, progress, resolve) => {
-          switch (data.service) {
-            case "CodeCombat":
-              return admin
-                .database()
-                .ref(
-                  `/userAchievements/${data.uid}/${data.service}/achievements`
-                )
-                .once("value")
-                .then(existing => existing.val() || {})
-                .then(existing =>
-                  axios
-                    .get(
-                      `https://codecombat.com/db/user/${
-                        data.serviceId
-                      }/level.sessions?project=state.complete,levelID,` +
-                        "levelName,playtime,codeLanguage,created"
-                    )
-                    .then(response =>
-                      response.data.filter(levelInfo => levelInfo.levelID)
-                    )
-                    .then(levels => {
-                      let achievements = false;
-                      let events = false;
-
-                      levels.forEach(levelInfo => {
-                        if (!existing[levelInfo.levelID]) {
-                          achievements = achievements || {};
-                          events = events || {};
-                          achievements[levelInfo.levelID] = {
-                            name: levelInfo.levelName,
-                            complete:
-                              (levelInfo &&
-                                levelInfo.state &&
-                                levelInfo.state.complete) ||
-                              false
-                          };
-                          const newEventKey = admin
-                            .database()
-                            .ref("/logged_events")
-                            .push().key;
-                          events[newEventKey] = {
-                            createdAt: {
-                              ".sv": "timestamp"
-                            },
-                            isAnonymous: true,
-                            type: "UPDATE_ACHIEVEMENTS_DATA",
-                            otherActionData: {
-                              complete:
-                                (levelInfo &&
-                                  levelInfo.state &&
-                                  levelInfo.state.complete) ||
-                                false,
-                              playtime: levelInfo && levelInfo.playtime
-                            }
-                          };
-                        }
-                        return true;
-                      });
-
-                      return admin
-                        .database()
-                        .ref(`/userAchievements/${data.uid}/${data.service}`)
-                        .update({
-                          lastUpdate: new Date().getTime(),
-                          totalAchievements: levels.filter(
-                            levelInfo =>
-                              levelInfo &&
-                              levelInfo.state &&
-                              levelInfo.state.complete
-                          ).length
-                        })
-                        .then(
-                          achievements
-                            ? admin
-                                .database()
-                                .ref(
-                                  `/userAchievements/${data.uid}/${
-                                    data.service
-                                  }/achievements`
-                                )
-                                .update(achievements)
-                            : Promise.resolve()
-                        )
-                        .then(
-                          events
-                            ? admin
-                                .database()
-                                .ref("/logged_events")
-                                .update(events)
-                            : Promise.resolve()
-                        );
-                    })
-
-                    .then(() => resolve())
-                )
-                .catch(err => console.error(err.message) || resolve());
-            default:
-              return resolve();
-          }
+          return processProfileRefreshRequest(data, resolve);
         }
       );
 
