@@ -81,7 +81,7 @@ class InstructorTabs extends React.PureComponent {
             />
             <DeleteAssignmentDialog
               courseId={course.id}
-              assignment={ui.dialog && ui.dialog.value}
+              assignment={(ui.dialog && ui.dialog.value) || false}
               open={ui.dialog && ui.dialog.type === "DeleteAssignment"}
               onClose={closeDialog}
             />
