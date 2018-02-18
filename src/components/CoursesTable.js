@@ -11,6 +11,7 @@ import Table, {
 } from "material-ui/Table";
 
 import withStyles from "material-ui/styles/withStyles";
+import { APP_SETTING } from "../achievementsApp/config";
 
 const styles = theme => ({
   link: {
@@ -55,7 +56,7 @@ class CoursesTable extends React.PureComponent {
                     <TableCell>{courses[courseId].instructorName}</TableCell>
                     <TableCell>
                       <Link
-                        to={`/courses/${courseId}`}
+                        to={`${APP_SETTING.basename}courses/${courseId}`}
                         className={classes.link}
                       >
                         <Button className={classes.button} raised>
