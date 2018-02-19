@@ -185,7 +185,7 @@ class CoursesService {
             .once("value")
             .then(data =>
               Promise.all(
-                Object.keys(data.val()).map(studentId => {
+                Object.keys(data.val() || {}).map(studentId => {
                   const solutions = data.val()[studentId];
 
                   if (solutions[assignmentId]) {

@@ -1,10 +1,13 @@
 import { select, call, put, takeLatest } from "redux-saga/effects";
 import {
   ASSIGNMENT_ADD_REQUEST,
+  ASSIGNMENT_QUICK_UPDATE_REQUEST,
   ASSIGNMENT_SOLUTION_REQUEST,
   assignmentAddFail,
   assignmentAddSuccess,
   assignmentCloseDialog,
+  assignmentQuickUpdateFail,
+  assignmentQuickUpdateSuccess,
   assignmentSolutionFail,
   assignmentSolutionSuccess,
   UPDATE_NEW_ASSIGNMENT_FIELD,
@@ -74,6 +77,22 @@ export function* assignmentSolutionRequestHandler(action) {
   }
 }
 
+export function* assignmentQuickUpdateRequestHandler(action) {
+  try {
+    yield call(
+      [coursesService, coursesService.updateAssignment],
+      action.courseId,
+      action.assignmentId,
+      action.field,
+      action.value
+    );
+    yield put(assignmentQuickUpdateSuccess(action));
+  } catch (err) {
+    yield put(assignmentQuickUpdateFail({ ...action, reason: err.message }));
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
@@ -88,6 +107,12 @@ export default [
     yield takeLatest(
       ASSIGNMENT_SOLUTION_REQUEST,
       assignmentSolutionRequestHandler
+    );
+  },
+  function* watchUpdateAssignmentRequest() {
+    yield takeLatest(
+      ASSIGNMENT_QUICK_UPDATE_REQUEST,
+      assignmentQuickUpdateRequestHandler
     );
   }
 ];

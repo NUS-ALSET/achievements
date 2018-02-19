@@ -53,6 +53,52 @@ export const assignmentAddFail = error => ({
   error
 });
 
+export const ASSIGNMENT_QUICK_UPDATE_REQUEST =
+  "ASSIGNMENT_QUICK_UPDATE_REQUEST";
+export const assignmentQuickUpdateRequest = (
+  courseId,
+  assignmentId,
+  field,
+  value
+) => ({
+  type: ASSIGNMENT_QUICK_UPDATE_REQUEST,
+  courseId,
+  assignmentId,
+  field,
+  value
+});
+
+export const ASSIGNMENT_QUICK_UPDATE_SUCCESS =
+  "ASSIGNMENT_QUICK_UPDATE_SUCCESS";
+export const assignmentQuickUpdateSuccess = (
+  courseId,
+  assignmentId,
+  field,
+  value
+) => ({
+  type: ASSIGNMENT_QUICK_UPDATE_SUCCESS,
+  courseId,
+  assignmentId,
+  field,
+  value
+});
+
+export const ASSIGNMENT_QUICK_UPDATE_FAIL = "ASSIGNMENT_QUICK_UPDATE_FAIL";
+export const assignmentQuickUpdateFail = (
+  courseId,
+  assignmentId,
+  field,
+  value,
+  reason
+) => ({
+  type: ASSIGNMENT_QUICK_UPDATE_FAIL,
+  courseId,
+  assignmentId,
+  field,
+  value,
+  reason
+});
+
 export const ASSIGNMENTS_SORT_CHANGE = "ASSIGNMENTS_SORT_CHANGE";
 export const assignmentsSortChange = sortField => ({
   type: ASSIGNMENTS_SORT_CHANGE,
