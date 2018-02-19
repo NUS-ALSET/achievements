@@ -140,6 +140,10 @@ class AssignmentsTable extends React.PureComponent {
 
                         {studentInfo.id === currentUser.id && (
                           <Button
+                            style={{
+                              marginLeft: 4
+                            }}
+                            raised
                             onClick={() =>
                               this.onSubmitClick(
                                 assignment,

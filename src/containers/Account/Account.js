@@ -12,8 +12,16 @@ import withStyles from "material-ui/styles/withStyles";
 import Grid from "material-ui/Grid";
 import Card, { CardMedia, CardContent } from "material-ui/Card";
 import Typography from "material-ui/Typography";
+import IconButton from "material-ui/IconButton";
+import TextField from "material-ui/TextField";
+
+import EditIcon from "material-ui-icons/Edit";
+import CheckIcon from "material-ui-icons/Check";
+
 import ExternalProfileCard from "../../components/ExternalProfileCard";
 import {
+  displayNameEditToggle,
+  displayNameUpdateRequest,
   externalProfileDialogHide,
   externalProfileDialogShow,
   externalProfileRefreshRequest,
@@ -45,17 +53,12 @@ class Account extends React.PureComponent {
     userName: PropTypes.string,
     externalProfiles: PropTypes.object,
     userAchievements: PropTypes.object,
+    displayNameEdit: PropTypes.bool,
     removeRequest: PropTypes.any
   };
 
   state = {
-    codeCombatLogin: null,
-    userChecked: false,
-    confirmation: {
-      resolve: () => {},
-      open: false,
-      message: ""
-    }
+    newDisplayName: ""
   };
 
   addExternalProfileRequest = externalProfile => {
@@ -90,9 +93,27 @@ class Account extends React.PureComponent {
     // });
   };
 
+  toggleDisplayNameEdit = status => {
+    if (status) {
+      this.setState({
+        newDisplayName: this.props.userName
+      });
+    }
+    this.props.dispatch(displayNameEditToggle(status));
+  };
+
   closeExternalProfileDialog = () => {
     this.props.dispatch(externalProfileDialogHide());
   };
+
+  updateDisplayName = () =>
+    this.props.dispatch(displayNameUpdateRequest(this.state.newDisplayName));
+
+  catchReturn = event => event.key === "Enter" && this.updateDisplayName();
+
+  changeDisplayName = event =>
+    this.setState({ newDisplayName: event.target.value });
+
   showError = error => this.props.dispatch(notificationShow(error));
 
   render() {
@@ -101,6 +122,8 @@ class Account extends React.PureComponent {
       userAchievements,
       externalProfiles,
       removeRequest,
+      userName,
+      displayNameEdit,
       dispatch
     } = this.props;
 
@@ -111,11 +134,49 @@ class Account extends React.PureComponent {
             <Card className={classes.card}>
               <CardMedia
                 style={{ height: 240 }}
-                image={this.props.auth.photoURL}
+                image={
+                  this.props.auth.photoURL ||
+                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ" +
+                    "AAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+                }
                 title={this.props.userName}
               />
               <CardContent>
-                <Typography>{this.props.userName}</Typography>
+                {displayNameEdit ? (
+                  <Fragment>
+                    <TextField
+                      style={{
+                        width: "calc(100% - 48px)"
+                      }}
+                      autoFocus
+                      label="Display Name"
+                      defaultValue={userName}
+                      onChange={this.changeDisplayName}
+                      onKeyPress={this.catchReturn}
+                    />
+                    <IconButton>
+                      <CheckIcon onClick={() => this.updateDisplayName()} />
+                    </IconButton>
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    <Typography
+                      style={{
+                        marginTop: 20,
+                        display: "inline-block",
+                        fontSize: 16,
+                        width: "calc(100% - 48px)"
+                      }}
+                    >
+                      {userName}
+                    </Typography>
+                    <IconButton>
+                      <EditIcon
+                        onClick={() => this.toggleDisplayNameEdit(true)}
+                      />
+                    </IconButton>
+                  </Fragment>
+                )}
               </CardContent>
             </Card>
           </Grid>
@@ -160,7 +221,11 @@ class Account extends React.PureComponent {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
-  userName: state.firebase.auth.displayName,
+  userName:
+    state.firebase.auth.uid &&
+    state.firebase.data &&
+    state.firebase.data.users &&
+    state.firebase.data.users[state.firebase.auth.uid].displayName,
   uid: state.firebase.auth.uid,
   auth: state.firebase.auth,
 
@@ -176,12 +241,13 @@ const mapStateToProps = state => ({
     id: state.account.removingProfileId,
     type: state.account.removingProfileType
   },
+  displayNameEdit: state.account.displayNameEdit,
   user: (state.firebase.data.users || {})[state.firebase.auth.uid]
 });
 
 export default compose(
   firebaseConnect((props, store) => [
-    //    "/users",
+    `/users/${store.getState().firebase.auth.uid}`,
     `/userAchievements/${store.getState().firebase.auth.uid}`
   ]),
   withStyles(styles),

@@ -120,3 +120,26 @@ export const externalProfileRemoveFail = externalProfileType => ({
   type: EXTERNAL_PROFILE_REMOVE_FAIL,
   externalProfileType
 });
+
+export const DISPLAY_NAME_EDIT_TOGGLE = "DISPLAY_NAME_EDIT_TOGGLE";
+export const displayNameEditToggle = status => ({
+  type: DISPLAY_NAME_EDIT_TOGGLE,
+  status
+});
+
+export const DISPLAY_NAME_UPDATE_REQUEST = "DISPLAY_NAME_UPDATE_REQUEST";
+export const displayNameUpdateRequest = name => ({
+  type: DISPLAY_NAME_UPDATE_REQUEST,
+  name
+});
+
+export const DISPLAY_NAME_UPDATE_SUCCESS = "DISPLAY_NAME_UPDATE_SUCCESS";
+export const displayNameUpdateSuccess = () => ({
+  type: DISPLAY_NAME_UPDATE_SUCCESS
+});
+
+export const DISPLAY_NAME_UPDATE_FAIL = "DISPLAY_NAME_UPDATE_FAIL";
+export const displayNameUpdateFail = reason => ({
+  type: DISPLAY_NAME_UPDATE_FAIL,
+  reason
+});

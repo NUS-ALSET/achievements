@@ -1,4 +1,5 @@
 import {
+  DISPLAY_NAME_EDIT_TOGGLE,
   EXTERNAL_PROFILE_DIALOG_HIDE,
   EXTERNAL_PROFILE_DIALOG_SHOW,
   EXTERNAL_PROFILE_REMOVE_DIALOG_HIDE,
@@ -9,6 +10,7 @@ export const account = (
   state = {
     showExternalProfileDialog: false,
     showRemoveExternalProfileDialog: false,
+    displayNameEdit: false,
     removingProfileId: "",
     removingProfileType: ""
   },
@@ -36,6 +38,11 @@ export const account = (
       return {
         ...state,
         showRemoveExternalProfileDialog: false
+      };
+    case DISPLAY_NAME_EDIT_TOGGLE:
+      return {
+        ...state,
+        displayNameEdit: action.status
       };
     default:
       return state;

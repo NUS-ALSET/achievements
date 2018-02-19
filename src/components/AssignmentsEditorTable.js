@@ -80,7 +80,7 @@ class AssignmentsEditorTable extends React.PureComponent {
           <TableBody>
             {isEmpty(this.props.assignments) ? (
               <TableRow>
-                <TableCell>Empty list</TableCell>
+                <TableCell colSpan={7}>Empty list</TableCell>
               </TableRow>
             ) : (
               this.props.assignments.map(assignment => (
