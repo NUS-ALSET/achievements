@@ -23,6 +23,8 @@ import ExpandMoreIcon from "material-ui-icons/ExpandMore";
 import {
   assignmentDeleteRequest,
   assignmentQuickUpdateRequest,
+  assignmentReorderRequest,
+  assignmentsEditorTableShown,
   assignmentShowAddDialog
 } from "../containers/Assignments/actions";
 
@@ -37,6 +39,12 @@ class AssignmentsEditorTable extends React.PureComponent {
     dispatch: PropTypes.func.isRequired
   };
 
+  componentDidMount() {
+    this.props.dispatch(
+      assignmentsEditorTableShown(this.props.match.params.courseId)
+    );
+  }
+
   onAddAssignmentClick = () => this.props.dispatch(assignmentShowAddDialog());
   onDeleteAssignmentClick = assignment =>
     this.props.dispatch(assignmentDeleteRequest(assignment));
@@ -50,6 +58,14 @@ class AssignmentsEditorTable extends React.PureComponent {
       )
     );
   };
+  onReorderClick = (assignment, order) =>
+    this.props.dispatch(
+      assignmentReorderRequest(
+        this.props.match.params.courseId,
+        assignment.id,
+        order
+      )
+    );
 
   render() {
     return (
@@ -157,10 +173,14 @@ class AssignmentsEditorTable extends React.PureComponent {
                       />
                     </IconButton>
                     <IconButton>
-                      <ExpandLessIcon />
+                      <ExpandLessIcon
+                        onClick={() => this.onReorderClick(assignment, false)}
+                      />
                     </IconButton>
                     <IconButton>
-                      <ExpandMoreIcon />
+                      <ExpandMoreIcon
+                        onClick={() => this.onReorderClick(assignment, true)}
+                      />
                     </IconButton>
                   </TableCell>
                 </TableRow>

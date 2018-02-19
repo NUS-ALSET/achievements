@@ -27,13 +27,7 @@ class InstructorTabs extends React.PureComponent {
     currentUser: PropTypes.object,
 
     dispatch: PropTypes.func.isRequired,
-    onAddAssignmentClick: PropTypes.func.isRequired,
-    onDeleteAssignment: PropTypes.func.isRequired,
-    onUpdateAssignment: PropTypes.func.isRequired,
-    onUpdateNewAssignmentField: PropTypes.func.isRequired,
-    onCreateAssignmentClick: PropTypes.func.isRequired,
     closeDialog: PropTypes.func.isRequired,
-    onAcceptClick: PropTypes.func.isRequired,
     handleTabChange: PropTypes.func.isRequired
   };
 

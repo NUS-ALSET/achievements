@@ -156,3 +156,33 @@ export const ASSIGNMENT_DELETE_SUCCESS = "ASSIGNMENT_DELETE_SUCCESS";
 export const assignmentDeleteSuccess = () => ({
   type: ASSIGNMENT_DELETE_SUCCESS
 });
+
+export const ASSIGNMENT_REORDER_REQUEST = "ASSIGNMENT_REORDER_REQUEST";
+export const assignmentReorderRequest = (courseId, assignmentId, increase) => ({
+  type: ASSIGNMENT_REORDER_REQUEST,
+  courseId,
+  assignmentId,
+  increase
+});
+
+export const ASSIGNMENT_REORDER_SUCCESS = "ASSIGNMENT_REORDER_SUCCESS";
+export const assignmentReorderSuccess = (courseId, assignmentId, increase) => ({
+  type: ASSIGNMENT_REORDER_SUCCESS,
+  courseId,
+  assignmentId,
+  increase
+});
+
+export const ASSIGNMENT_REORDER_FAIL = "ASSIGNMENT_REORDER_FAIL";
+export const assignmentReorderFail = (courseId, assignmentId, increase) => ({
+  type: ASSIGNMENT_REORDER_FAIL,
+  courseId,
+  assignmentId,
+  increase
+});
+
+export const ASSIGNMENTS_EDITOR_TABLE_SHOWN = "ASSIGNMENTS_EDITOR_TABLE_SHOWN";
+export const assignmentsEditorTableShown = courseId => ({
+  type: ASSIGNMENTS_EDITOR_TABLE_SHOWN,
+  courseId
+});

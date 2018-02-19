@@ -175,5 +175,13 @@ export const getCourseProps = (state, ownProps) => {
             new Date(assignment.open).getTime() < now &&
             new Date(assignment.deadline).getTime() > now)
       )
+      .sort((a, b) => {
+        if (a.orderIndex > b.orderIndex) {
+          return 1;
+        } else if (a.orderIndex === b.orderIndex) {
+          return 0;
+        }
+        return -1;
+      })
   };
 };
