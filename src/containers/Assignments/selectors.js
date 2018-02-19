@@ -61,6 +61,7 @@ const getStudentSolutions = (state, courseId, studentId, options = {}) => {
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
+            orderValue: userAchievements.totalAchievements,
             value: `${userAchievements.id} (${
               userAchievements.totalAchievements
             })`
@@ -139,9 +140,9 @@ export const getCourseProps = (state, ownProps) => {
 
       if (state.assignments.sort.field !== "studentName") {
         aValue = a.solutions[state.assignments.sort.field];
-        aValue = aValue && aValue.value;
+        aValue = aValue && (aValue.orderValue || aValue.value);
         bValue = b.solutions[state.assignments.sort.field];
-        bValue = bValue && bValue.value;
+        bValue = bValue && (bValue.orderValue || bValue.value);
       }
       aValue = aValue || "";
       bValue = bValue || "";
