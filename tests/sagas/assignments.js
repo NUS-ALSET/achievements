@@ -25,7 +25,7 @@ describe("assignemnts sagas tests", () => {
     await runSaga(
       {
         dispatch: action => dispatched.push(action),
-        getState: () => ({})
+        getState: () => ({ firebase: { data: { assignments: {} } } })
       },
       assignmentsSagas.addAssignmentRequestHandle,
       assignmentAddRequest("testCourseId", {
@@ -56,7 +56,7 @@ describe("assignemnts sagas tests", () => {
     await runSaga(
       {
         dispatch: action => dispatched.push(action),
-        getState: () => ({})
+        getState: () => ({ firebase: { data: { assignments: {} } } })
       },
       assignmentsSagas.addAssignmentRequestHandle,
       assignmentAddRequest("testCourseId", {})
