@@ -29,7 +29,13 @@ function processProfileRefreshRequest(data, resolve) {
                 "levelName,playtime,codeLanguage,created"
             )
             .then(response =>
-              response.data.filter(levelInfo => levelInfo.levelID)
+              response.data.filter(
+                levelInfo =>
+                  levelInfo &&
+                  levelInfo.levelID &&
+                  levelInfo.state &&
+                  levelInfo.state.complete
+              )
             )
             .then(levels => {
               let achievements = false;
@@ -41,11 +47,7 @@ function processProfileRefreshRequest(data, resolve) {
                   events = events || {};
                   achievements[levelInfo.levelID] = {
                     name: levelInfo.levelName,
-                    complete:
-                      (levelInfo &&
-                        levelInfo.state &&
-                        levelInfo.state.complete) ||
-                      false
+                    complete: true
                   };
                   const newEventKey = admin
                     .database()
@@ -60,11 +62,7 @@ function processProfileRefreshRequest(data, resolve) {
                     otherActionData: {
                       uid: data.uid,
                       levelId: levelInfo.levelID,
-                      complete:
-                        (levelInfo &&
-                          levelInfo.state &&
-                          levelInfo.state.complete) ||
-                        false,
+                      complete: true,
                       playtime: (levelInfo && levelInfo.playtime) || 0
                     }
                   };
