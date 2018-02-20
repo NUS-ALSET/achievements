@@ -2,6 +2,7 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import { isEmpty } from "react-redux-firebase";
+import { withRouter } from "react-router-dom";
 
 import Toolbar from "material-ui/Toolbar";
 import Button from "material-ui/Button";
@@ -19,6 +20,13 @@ import EditIcon from "material-ui-icons/Edit";
 import DeleteIcon from "material-ui-icons/Delete";
 import ExpandLessIcon from "material-ui-icons/ExpandLess";
 import ExpandMoreIcon from "material-ui-icons/ExpandMore";
+import {
+  assignmentDeleteRequest,
+  assignmentQuickUpdateRequest,
+  assignmentReorderRequest,
+  assignmentsEditorTableShown,
+  assignmentShowAddDialog
+} from "../containers/Assignments/actions";
 
 const dateEditStyle = {
   width: "220px"
@@ -26,19 +34,44 @@ const dateEditStyle = {
 
 class AssignmentsEditorTable extends React.PureComponent {
   static propTypes = {
+    match: PropTypes.object,
     assignments: PropTypes.any.isRequired,
-    onUpdateAssignment: PropTypes.func.isRequired,
-    onAddAssignmentClick: PropTypes.func.isRequired,
-    onDeleteAssignmentClick: PropTypes.func.isRequired
+    dispatch: PropTypes.func.isRequired
   };
 
-  render() {
-    const { onAddAssignmentClick, onDeleteAssignmentClick } = this.props;
+  componentDidMount() {
+    this.props.dispatch(
+      assignmentsEditorTableShown(this.props.match.params.courseId)
+    );
+  }
 
+  onAddAssignmentClick = () => this.props.dispatch(assignmentShowAddDialog());
+  onDeleteAssignmentClick = assignment =>
+    this.props.dispatch(assignmentDeleteRequest(assignment));
+  onUpdateAssignment = (assignmentId, field, value) => {
+    this.props.dispatch(
+      assignmentQuickUpdateRequest(
+        this.props.match.params.courseId,
+        assignmentId,
+        field,
+        value
+      )
+    );
+  };
+  onReorderClick = (assignment, order) =>
+    this.props.dispatch(
+      assignmentReorderRequest(
+        this.props.match.params.courseId,
+        assignment.id,
+        order
+      )
+    );
+
+  render() {
     return (
       <Fragment>
         <Toolbar>
-          <Button raised onClick={() => onAddAssignmentClick()}>
+          <Button raised onClick={() => this.onAddAssignmentClick()}>
             Add assignment
           </Button>
         </Toolbar>
@@ -63,7 +96,7 @@ class AssignmentsEditorTable extends React.PureComponent {
           <TableBody>
             {isEmpty(this.props.assignments) ? (
               <TableRow>
-                <TableCell>Empty list</TableCell>
+                <TableCell colSpan={7}>Empty list</TableCell>
               </TableRow>
             ) : (
               this.props.assignments.map(assignment => (
@@ -72,7 +105,7 @@ class AssignmentsEditorTable extends React.PureComponent {
                   <TableCell>
                     <Switch
                       onChange={(event, checked) =>
-                        this.props.onUpdateAssignment(
+                        this.onUpdateAssignment(
                           assignment.id,
                           "visible",
                           checked
@@ -84,7 +117,7 @@ class AssignmentsEditorTable extends React.PureComponent {
                   <TableCell>
                     <Switch
                       onChange={(event, checked) =>
-                        this.props.onUpdateAssignment(
+                        this.onUpdateAssignment(
                           assignment.id,
                           "solutionVisible",
                           checked
@@ -98,7 +131,7 @@ class AssignmentsEditorTable extends React.PureComponent {
                       style={dateEditStyle}
                       type="datetime-local"
                       onChange={event =>
-                        this.props.onUpdateAssignment(
+                        this.onUpdateAssignment(
                           assignment.id,
                           "open",
                           event.target.value
@@ -115,7 +148,7 @@ class AssignmentsEditorTable extends React.PureComponent {
                       style={dateEditStyle}
                       type="datetime-local"
                       onChange={event =>
-                        this.props.onUpdateAssignment(
+                        this.onUpdateAssignment(
                           assignment.id,
                           "deadline",
                           event.target.value
@@ -131,19 +164,23 @@ class AssignmentsEditorTable extends React.PureComponent {
                   <TableCell>
                     <IconButton>
                       <EditIcon
-                        onClick={() => onAddAssignmentClick(assignment)}
+                        onClick={() => this.onAddAssignmentClick(assignment)}
                       />
                     </IconButton>
                     <IconButton>
                       <DeleteIcon
-                        onClick={() => onDeleteAssignmentClick(assignment)}
+                        onClick={() => this.onDeleteAssignmentClick(assignment)}
                       />
                     </IconButton>
                     <IconButton>
-                      <ExpandLessIcon />
+                      <ExpandLessIcon
+                        onClick={() => this.onReorderClick(assignment, false)}
+                      />
                     </IconButton>
                     <IconButton>
-                      <ExpandMoreIcon />
+                      <ExpandMoreIcon
+                        onClick={() => this.onReorderClick(assignment, true)}
+                      />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -156,4 +193,4 @@ class AssignmentsEditorTable extends React.PureComponent {
   }
 }
 
-export default AssignmentsEditorTable;
+export default withRouter(AssignmentsEditorTable);

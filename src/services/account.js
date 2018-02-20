@@ -75,6 +75,10 @@ export class AccountService {
       .remove();
   }
 
+  updateDisplayName(uid, displayName) {
+    return firebase.ref(`/users/${uid}/displayName`).set(displayName);
+  }
+
   fetchExternalProfiles() {
     // This should be in firebase, I guess
     return {

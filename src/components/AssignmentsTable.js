@@ -9,22 +9,18 @@ import Table, {
   TableRow,
   TableSortLabel
 } from "material-ui/Table";
+import {
+  assignmentSolutionRequest,
+  assignmentsSortChange,
+  assignmentSubmitRequest
+} from "../containers/Assignments/actions";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
-    onSortClick: PropTypes.func.isRequired,
-    onSubmitClick: PropTypes.func.isRequired,
-    onAcceptClick: PropTypes.func,
-    instructorView: PropTypes.bool.isRequired,
+    course: PropTypes.object,
+    dispatch: PropTypes.func.isRequired,
     sortState: PropTypes.object,
-    currentUser: PropTypes.object,
-    course: PropTypes.object
-  };
-
-  state = {
-    editingIds: [],
-    changes: {},
-    added: []
+    currentUser: PropTypes.object
   };
 
   getSolution(assignment, solutions) {
@@ -52,14 +48,32 @@ class AssignmentsTable extends React.PureComponent {
     }
   }
 
+  onSortClick = assignment =>
+    this.props.dispatch(
+      assignmentsSortChange((assignment && assignment.id) || "studentName")
+    );
+
+  onSubmitClick = (assignment, solution) => {
+    const { course, dispatch } = this.props;
+
+    switch (assignment.questionType) {
+      case "CodeCombat":
+      case "CodeCombat_Number":
+        dispatch(
+          assignmentSolutionRequest(course.id, assignment.id, "Complete")
+        );
+        break;
+      default:
+        dispatch(assignmentSubmitRequest(assignment, solution));
+    }
+  };
+
   render() {
     const {
       /** @type AssignmentCourse */
       course,
       currentUser,
-      sortState,
-      onSortClick,
-      onSubmitClick
+      sortState
     } = this.props;
 
     return (
@@ -73,7 +87,7 @@ class AssignmentsTable extends React.PureComponent {
                 }}
                 active={sortState.field === "studentName"}
                 direction={sortState.direction}
-                onClick={() => onSortClick()}
+                onClick={() => this.onSortClick()}
               >
                 Student name
               </TableSortLabel>
@@ -92,7 +106,7 @@ class AssignmentsTable extends React.PureComponent {
                   <TableSortLabel
                     active={sortState.field === assignment.id}
                     direction={sortState.direction}
-                    onClick={() => onSortClick(assignment)}
+                    onClick={() => this.onSortClick(assignment)}
                   >
                     {assignment.name}
                   </TableSortLabel>
@@ -126,8 +140,12 @@ class AssignmentsTable extends React.PureComponent {
 
                         {studentInfo.id === currentUser.id && (
                           <Button
+                            style={{
+                              marginLeft: 4
+                            }}
+                            raised
                             onClick={() =>
-                              onSubmitClick(
+                              this.onSubmitClick(
                                 assignment,
                                 studentInfo.solutions[assignment.id]
                               )

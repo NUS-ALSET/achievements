@@ -17,16 +17,12 @@ import { coursesService } from "../../services/courses";
 
 import AssignmentsTable from "../../components/AssignmentsTable";
 import {
-  assignmentAddRequest,
   assignmentCloseDialog,
-  assignmentDeleteRequest,
-  assignmentShowAddDialog,
   assignmentSolutionRequest,
   assignmentsSortChange,
   assignmentSubmitRequest,
   assignmentSwitchTab,
-  coursePasswordEnterSuccess,
-  updateNewAssignmentField
+  coursePasswordEnterSuccess
 } from "./actions";
 import AddProfileDialog from "../../components/AddProfileDialog";
 import {
@@ -66,10 +62,6 @@ class Assignments extends React.Component {
     password: ""
   };
 
-  onAddAssignmentClick = () => {
-    this.props.dispatch(assignmentShowAddDialog());
-  };
-
   handleTabChange = (event, tabIndex) => {
     this.props.dispatch(assignmentSwitchTab(tabIndex));
   };
@@ -78,27 +70,6 @@ class Assignments extends React.Component {
     this.setState({
       password: event.currentTarget.value
     });
-
-  onCreateAssignmentClick = () => {
-    /** @type AssignmentProps */
-    const { dispatch, course, ui } = this.props;
-
-    dispatch(assignmentAddRequest(course.id, ui.dialog.value));
-  };
-
-  onDeleteAssignment = assignment => {
-    this.props.dispatch(assignmentDeleteRequest(assignment));
-  };
-
-  onUpdateNewAssignmentField = field => e => {
-    this.props.dispatch(updateNewAssignmentField(field, e.target.value));
-  };
-
-  onUpdateAssignment = (assignmentId, field, value) => {
-    const { course } = this.props;
-
-    coursesService.updateAssignment(course.id, assignmentId, field, value);
-  };
 
   submitPassword = () => {
     const { course, firebase, currentUser, dispatch } = this.props;
@@ -170,13 +141,6 @@ class Assignments extends React.Component {
     this.props.dispatch(assignmentCloseDialog());
   };
 
-  // componentDidMount() {
-  //   this.props.firebase.watchEvent(
-  //     "value",
-  //     `courses/${this.props.match.params.courseId}`
-  //   );
-  // }
-  //
   getPasswordView() {
     return (
       <Fragment>
@@ -234,6 +198,7 @@ class Assignments extends React.Component {
     if (course.owner === currentUser.id) {
       AssignmentView = (
         <InstructorTabs
+          dispatch={dispatch}
           onSortClick={this.onSortClick}
           onSubmitClick={this.onSubmitClick}
           onAddAssignmentClick={this.onAddAssignmentClick}
@@ -253,12 +218,10 @@ class Assignments extends React.Component {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
         <AssignmentsTable
-          instructorView={false}
           sortState={ui.sortState}
           currentUser={currentUser}
           course={course}
-          onSortClick={this.onSortClick}
-          onSubmitClick={this.onSubmitClick}
+          dispatch={dispatch}
         />
       );
     }
@@ -266,7 +229,7 @@ class Assignments extends React.Component {
       <Fragment>
         <Toolbar>
           <Link
-            to={`${APP_SETTING.basename}/Courses`}
+            to={`${APP_SETTING.basename}courses`}
             className={classes.breadcrumbLink}
           >
             <Typography className={classes.breadcrumbText}>Courses</Typography>

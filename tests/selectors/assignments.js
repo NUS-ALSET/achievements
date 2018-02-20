@@ -16,6 +16,7 @@ const COMMON_PROPS = {
       },
       solutions: {
         abcTestAssignmentId: {
+          orderValue: 100,
           value: "test-user-1 (100)",
           validated: true,
           published: true
@@ -35,6 +36,7 @@ const COMMON_PROPS = {
       },
       solutions: {
         abcTestAssignmentId: {
+          orderValue: 10,
           value: "test-user-2 (10)",
           validated: true,
           published: true

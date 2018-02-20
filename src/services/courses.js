@@ -18,6 +18,19 @@ const ERROR_TIMEOUT = 6000;
 class CoursesService {
   errorTimeout = false;
 
+  static sortAssignments(assignments) {
+    return Object.keys(assignments || {})
+      .map(id => ({ ...assignments[id], id }))
+      .sort((a, b) => {
+        if (a.orderIndex > b.orderIndex) {
+          return 1;
+        } else if (a.orderIndex === b.orderIndex) {
+          return 0;
+        }
+        return -1;
+      });
+  }
+
   setStore(store) {
     this.store = store;
   }
@@ -166,7 +179,19 @@ class CoursesService {
     }
   }
 
-  addAssignment(courseId, assignment) {
+  addAssignment(courseId, assignment, assignments) {
+    assignment.orderIndex = 1;
+
+    Object.keys(assignments || {})
+      .map(id => assignments[id])
+      .forEach(existing => {
+        if (existing.orderIndex > assignment.orderIndex) {
+          assignment.orderIndex = existing.orderIndex + 1;
+        }
+
+        return true;
+      });
+
     return firebase.ref(`/assignments/${courseId}`).push(assignment);
   }
 
@@ -185,7 +210,7 @@ class CoursesService {
             .once("value")
             .then(data =>
               Promise.all(
-                Object.keys(data.val()).map(studentId => {
+                Object.keys(data.val() || {}).map(studentId => {
                   const solutions = data.val()[studentId];
 
                   if (solutions[assignmentId]) {
@@ -513,6 +538,65 @@ class CoursesService {
     }
 
     return currentUserData.concat(result);
+  }
+
+  processAssignmentsOrderIndexes(courseId, assignments) {
+    let needUpdate = false;
+
+    assignments = Object.keys(assignments || {}).map(id => ({
+      ...assignments[id],
+      id
+    }));
+
+    assignments.forEach(assignment => {
+      if (!assignment.orderIndex) {
+        needUpdate = true;
+        return false;
+      }
+      return true;
+    });
+
+    if (!needUpdate) {
+      return Promise.resolve();
+    }
+    return Promise.all(
+      assignments.map((assignment, index) =>
+        firebase
+          .database()
+          .ref(`/assignments/${courseId}/${assignment.id}/orderIndex`)
+          .set(index + 1)
+      )
+    );
+  }
+
+  reorderAssignment(assignments, courseId, assignmentId, order) {
+    const offset = order ? 1 : -1;
+    let assignment;
+
+    assignments = assignments[courseId] || {};
+    assignments = CoursesService.sortAssignments(assignments);
+    assignment = (assignments.filter(
+      assignment => assignment.id === assignmentId
+    ) || [])[0];
+
+    if (!assignment) throw new Error("Unable find assignment");
+
+    const sibling = assignments[assignments.indexOf(assignment) + offset];
+
+    if (!sibling) {
+      return Promise.resolve();
+    }
+
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/assignments/${courseId}/${assignmentId}/orderIndex`)
+        .set(sibling.orderIndex),
+      firebase
+        .database()
+        .ref(`/assignments/${courseId}/${sibling.id}/orderIndex`)
+        .set(assignment.orderIndex)
+    ]);
   }
 }
 

@@ -53,6 +53,52 @@ export const assignmentAddFail = error => ({
   error
 });
 
+export const ASSIGNMENT_QUICK_UPDATE_REQUEST =
+  "ASSIGNMENT_QUICK_UPDATE_REQUEST";
+export const assignmentQuickUpdateRequest = (
+  courseId,
+  assignmentId,
+  field,
+  value
+) => ({
+  type: ASSIGNMENT_QUICK_UPDATE_REQUEST,
+  courseId,
+  assignmentId,
+  field,
+  value
+});
+
+export const ASSIGNMENT_QUICK_UPDATE_SUCCESS =
+  "ASSIGNMENT_QUICK_UPDATE_SUCCESS";
+export const assignmentQuickUpdateSuccess = (
+  courseId,
+  assignmentId,
+  field,
+  value
+) => ({
+  type: ASSIGNMENT_QUICK_UPDATE_SUCCESS,
+  courseId,
+  assignmentId,
+  field,
+  value
+});
+
+export const ASSIGNMENT_QUICK_UPDATE_FAIL = "ASSIGNMENT_QUICK_UPDATE_FAIL";
+export const assignmentQuickUpdateFail = (
+  courseId,
+  assignmentId,
+  field,
+  value,
+  reason
+) => ({
+  type: ASSIGNMENT_QUICK_UPDATE_FAIL,
+  courseId,
+  assignmentId,
+  field,
+  value,
+  reason
+});
+
 export const ASSIGNMENTS_SORT_CHANGE = "ASSIGNMENTS_SORT_CHANGE";
 export const assignmentsSortChange = sortField => ({
   type: ASSIGNMENTS_SORT_CHANGE,
@@ -109,4 +155,34 @@ export const ASSIGNMENT_DELETE_SUCCESS = "ASSIGNMENT_DELETE_SUCCESS";
 // noinspection JSUnusedGlobalSymbols
 export const assignmentDeleteSuccess = () => ({
   type: ASSIGNMENT_DELETE_SUCCESS
+});
+
+export const ASSIGNMENT_REORDER_REQUEST = "ASSIGNMENT_REORDER_REQUEST";
+export const assignmentReorderRequest = (courseId, assignmentId, increase) => ({
+  type: ASSIGNMENT_REORDER_REQUEST,
+  courseId,
+  assignmentId,
+  increase
+});
+
+export const ASSIGNMENT_REORDER_SUCCESS = "ASSIGNMENT_REORDER_SUCCESS";
+export const assignmentReorderSuccess = (courseId, assignmentId, increase) => ({
+  type: ASSIGNMENT_REORDER_SUCCESS,
+  courseId,
+  assignmentId,
+  increase
+});
+
+export const ASSIGNMENT_REORDER_FAIL = "ASSIGNMENT_REORDER_FAIL";
+export const assignmentReorderFail = (courseId, assignmentId, increase) => ({
+  type: ASSIGNMENT_REORDER_FAIL,
+  courseId,
+  assignmentId,
+  increase
+});
+
+export const ASSIGNMENTS_EDITOR_TABLE_SHOWN = "ASSIGNMENTS_EDITOR_TABLE_SHOWN";
+export const assignmentsEditorTableShown = courseId => ({
+  type: ASSIGNMENTS_EDITOR_TABLE_SHOWN,
+  courseId
 });

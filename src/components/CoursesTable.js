@@ -46,7 +46,7 @@ class CoursesTable extends React.PureComponent {
           <TableBody>
             {isEmpty(courses) ? (
               <TableRow>
-                <TableCell>Empty list</TableCell>
+                <TableCell colSpan={3}>Empty list</TableCell>
               </TableRow>
             ) : (
               Object.keys(courses).map(courseId => {

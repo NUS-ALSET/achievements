@@ -1,4 +1,8 @@
 import {
+  DISPLAY_NAME_UPDATE_REQUEST,
+  displayNameEditToggle,
+  displayNameUpdateFail,
+  displayNameUpdateSuccess,
   EXTERNAL_PROFILE_REFRESH_REQUEST,
   EXTERNAL_PROFILE_REMOVE_REQUEST,
   EXTERNAL_PROFILE_UPDATE_REQUEST,
@@ -91,6 +95,19 @@ function* externalProfileRemoveRequestHandler(action) {
   }
 }
 
+export function* displayNameUpdateRequestHandler(action) {
+  const uid = yield select(state => state.firebase.auth.uid);
+
+  try {
+    yield call(accountService.updateDisplayName, uid, action.name);
+    yield put(displayNameUpdateSuccess());
+    yield put(displayNameEditToggle(false));
+  } catch (err) {
+    yield put(displayNameUpdateFail(err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchExternalProfileUpdateRequest() {
     yield takeLatest(
@@ -108,6 +125,12 @@ export default [
     yield takeLatest(
       EXTERNAL_PROFILE_REMOVE_REQUEST,
       externalProfileRemoveRequestHandler
+    );
+  },
+  function* watchDisplayNameUpdateRequest() {
+    yield takeLatest(
+      DISPLAY_NAME_UPDATE_REQUEST,
+      displayNameUpdateRequestHandler
     );
   }
 ];

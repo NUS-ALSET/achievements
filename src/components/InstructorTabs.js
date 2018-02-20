@@ -11,6 +11,10 @@ import AssignmentsTable from "./AssignmentsTable";
 import AddAssignmentDialog from "./AddAssignmentDialog";
 import DeleteAssignmentDialog from "./DeleteAssignmentDialog";
 import AssignmentsEditorTable from "./AssignmentsEditorTable";
+import {
+  assignmentAddRequest,
+  updateNewAssignmentField
+} from "../containers/Assignments/actions";
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
@@ -22,60 +26,44 @@ class InstructorTabs extends React.PureComponent {
     course: PropTypes.object,
     currentUser: PropTypes.object,
 
-    onSortClick: PropTypes.func.isRequired,
-    onSubmitClick: PropTypes.func.isRequired,
-    onAddAssignmentClick: PropTypes.func.isRequired,
-    onDeleteAssignment: PropTypes.func.isRequired,
-    onUpdateAssignment: PropTypes.func.isRequired,
-    onUpdateNewAssignmentField: PropTypes.func.isRequired,
-    onCreateAssignmentClick: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     closeDialog: PropTypes.func.isRequired,
-    onAcceptClick: PropTypes.func.isRequired,
     handleTabChange: PropTypes.func.isRequired
+  };
+
+  onUpdateNewAssignmentField = field => e =>
+    this.props.dispatch(updateNewAssignmentField(field, e.target.value));
+  onCreateAssignmentClick = () => {
+    const { dispatch, course, ui } = this.props;
+
+    dispatch(assignmentAddRequest(course.id, ui.dialog.value));
   };
 
   getInstructorTab() {
     /** @type AssignmentProps */
-    const {
-      course,
-      ui,
-      currentUser,
-      onSortClick,
-      onSubmitClick,
-      onAddAssignmentClick,
-      onDeleteAssignment,
-      onUpdateAssignment,
-      onCreateAssignmentClick,
-      onUpdateNewAssignmentField,
-      closeDialog,
-      onAcceptClick
-    } = this.props;
+    const { course, ui, currentUser, dispatch, closeDialog } = this.props;
 
     switch (ui.currentTab) {
       case INSTRUCTOR_TAB_ASSIGNMENTS:
         return (
           <AssignmentsTable
-            instructorView={false}
+            dispatch={dispatch}
             sortState={ui.sortState}
             currentUser={currentUser}
             course={course}
-            onSortClick={onSortClick}
-            onSubmitClick={onSubmitClick}
           />
         );
       case INSTRUCTOR_TAB_EDIT:
         return (
           <Fragment>
             <AssignmentsEditorTable
-              onAddAssignmentClick={onAddAssignmentClick}
-              onDeleteAssignmentClick={onDeleteAssignment}
-              onUpdateAssignment={onUpdateAssignment}
               assignments={course.assignments || {}}
+              dispatch={dispatch}
             />
             <AddAssignmentDialog
               assignment={ui.dialog && ui.dialog.value}
-              onFieldChange={onUpdateNewAssignmentField}
-              onCommit={onCreateAssignmentClick}
+              onFieldChange={this.onUpdateNewAssignmentField}
+              onCommit={this.onCreateAssignmentClick}
               onClose={closeDialog}
               open={ui.dialog && ui.dialog.type === "AddAssignment"}
             />
@@ -90,13 +78,10 @@ class InstructorTabs extends React.PureComponent {
       case INSTRUCTOR_TAB_VIEW:
         return (
           <AssignmentsTable
-            instructorView={true}
+            dispatch={dispatch}
             sortState={ui.sortState}
             currentUser={currentUser}
             course={course}
-            onAcceptClick={onAcceptClick}
-            onSortClick={onSortClick}
-            onSubmitClick={onSubmitClick}
           />
         );
       default:
