@@ -43,6 +43,14 @@ class AssignmentsTable extends React.PureComponent {
         ) : (
           undefined
         );
+      case "Text":
+        return /http[s]?:\/\//.test(result) ? (
+          <a rel="noopener noreferrer" target="_blank" href={result}>
+            {result}
+          </a>
+        ) : (
+          result
+        );
       default:
         return result;
     }
