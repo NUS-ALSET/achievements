@@ -6,6 +6,7 @@ import {
   EXTERNAL_PROFILE_REFRESH_REQUEST,
   EXTERNAL_PROFILE_REMOVE_REQUEST,
   EXTERNAL_PROFILE_UPDATE_REQUEST,
+  externalProfileDialogHide,
   externalProfileRefreshFail,
   externalProfileRefreshRequest,
   externalProfileRefreshSuccess,
@@ -20,6 +21,10 @@ import { notificationShow } from "../Root/actions";
 
 export function* externalProfileUpdateRequestHandler(action) {
   try {
+    let awaitResolve = () => {};
+    const awaitPromise = new Promise(resolve => {
+      awaitResolve = resolve;
+    });
     const uid = yield select(state => state.firebase.auth.uid);
     yield call(
       accountService.addExternalProfile,
@@ -27,11 +32,11 @@ export function* externalProfileUpdateRequestHandler(action) {
       uid,
       action.externalProfileId
     );
-    yield put(
-      externalProfileUpdateSuccess(
-        action.externalProfileId,
-        action.externalProfileType
-      )
+    yield call(
+      [accountService, accountService.watchProfileRefresh],
+      uid,
+      action.externalProfileType,
+      awaitResolve
     );
     yield put(
       externalProfileRefreshRequest(
@@ -39,6 +44,27 @@ export function* externalProfileUpdateRequestHandler(action) {
         action.externalProfileType
       )
     );
+    const response = yield call(() => awaitPromise);
+
+    if (!response) {
+      const error = "Wrong profile was provided";
+      yield put(
+        externalProfileUpdateFail(
+          action.externalProfileId,
+          action.externalProfileType,
+          error
+        )
+      );
+      return yield put(notificationShow(error));
+    }
+
+    yield put(
+      externalProfileUpdateSuccess(
+        action.externalProfileId,
+        action.externalProfileType
+      )
+    );
+    yield put(externalProfileDialogHide());
   } catch (err) {
     yield put(
       externalProfileUpdateFail(

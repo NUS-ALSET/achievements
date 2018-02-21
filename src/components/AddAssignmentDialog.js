@@ -64,7 +64,9 @@ class AddAssignmentDialog extends React.PureComponent {
 
     return (
       <Dialog open={open} onClose={onClose}>
-        <DialogTitle>New Assignment</DialogTitle>
+        <DialogTitle>
+          {assignment.id ? "Edit Assignment" : "New Assignment"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

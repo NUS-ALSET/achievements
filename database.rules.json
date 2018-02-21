@@ -168,6 +168,13 @@
         ".write": "auth != null && auth.uid == $userKey",
       }
     },
+    "usersPrivate": {
+      ".read": false,
+      "$userKey": {
+        ".read": "auth != null && auth.uid == $userKey",
+        ".write": "auth != null && auth.uid == $userKey"
+      }
+    },
     "userAchievements": {
       ".read": "auth != null",
       "$userKey": {
