@@ -1,10 +1,17 @@
 import { select, call, put, takeLatest } from "redux-saga/effects";
 import {
   ASSIGNMENT_ADD_REQUEST,
+  ASSIGNMENT_QUICK_UPDATE_REQUEST,
+  ASSIGNMENT_REORDER_REQUEST,
   ASSIGNMENT_SOLUTION_REQUEST,
   assignmentAddFail,
   assignmentAddSuccess,
   assignmentCloseDialog,
+  assignmentQuickUpdateFail,
+  assignmentQuickUpdateSuccess,
+  assignmentReorderFail,
+  assignmentReorderSuccess,
+  ASSIGNMENTS_EDITOR_TABLE_SHOWN,
   assignmentSolutionFail,
   assignmentSolutionSuccess,
   UPDATE_NEW_ASSIGNMENT_FIELD,
@@ -16,12 +23,16 @@ import { APP_SETTING } from "../../achievementsApp/config";
 
 export function* addAssignmentRequestHandle(action) {
   try {
+    const assignments = yield select(
+      state => state.firebase.data.assignments[action.courseId]
+    );
     yield call(coursesService.validateAssignment, action.assignment);
     yield put(assignmentCloseDialog());
     yield call(
       coursesService.addAssignment,
       action.courseId,
-      action.assignment
+      action.assignment,
+      assignments
     );
     yield put(assignmentAddSuccess());
   } catch (err) {
@@ -74,6 +85,68 @@ export function* assignmentSolutionRequestHandler(action) {
   }
 }
 
+export function* assignmentQuickUpdateRequestHandler(action) {
+  try {
+    yield call(
+      [coursesService, coursesService.updateAssignment],
+      action.courseId,
+      action.assignmentId,
+      action.field,
+      action.value
+    );
+    yield put(assignmentQuickUpdateSuccess(action));
+  } catch (err) {
+    yield put(assignmentQuickUpdateFail({ ...action, reason: err.message }));
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* assignmentReorderRequestHandler(action) {
+  try {
+    const assignments = yield select(state => state.firebase.data.assignments);
+    yield call(
+      [coursesService, coursesService.reorderAssignment],
+      assignments,
+      action.courseId,
+      action.assignmentId,
+      action.increase
+    );
+    yield put(
+      assignmentReorderSuccess(
+        action.courseId,
+        action.assignmentId,
+        action.increase
+      )
+    );
+  } catch (err) {
+    yield put(
+      assignmentReorderFail(action.courseId, action.assignmentId, err.message)
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* assignmentsEditorTableShownHandler(action) {
+  const assignments = yield select(
+    state => state.firebase.data.assignments[action.courseId]
+  );
+  try {
+    yield call(
+      coursesService.processAssignmentsOrderIndexes,
+      action.courseId,
+      assignments
+    );
+  } catch (err) {
+    yield put(
+      notificationShow(
+        `Error occurs during assignments default order indexes set: ${
+          err.message
+        }`
+      )
+    );
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
@@ -88,6 +161,24 @@ export default [
     yield takeLatest(
       ASSIGNMENT_SOLUTION_REQUEST,
       assignmentSolutionRequestHandler
+    );
+  },
+  function* watchUpdateAssignmentRequest() {
+    yield takeLatest(
+      ASSIGNMENT_QUICK_UPDATE_REQUEST,
+      assignmentQuickUpdateRequestHandler
+    );
+  },
+  function* watchAssignmentReorderRequest() {
+    yield takeLatest(
+      ASSIGNMENT_REORDER_REQUEST,
+      assignmentReorderRequestHandler
+    );
+  },
+  function* watchAssignmentsEditorTableShown() {
+    yield takeLatest(
+      ASSIGNMENTS_EDITOR_TABLE_SHOWN,
+      assignmentsEditorTableShownHandler
     );
   }
 ];
