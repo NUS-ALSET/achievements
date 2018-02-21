@@ -2,12 +2,11 @@ import firebase from "firebase";
 import levels from "./levels";
 
 export const APP_SETTING = {
-  DrawerWidth: 250,
+  drawerWidth: 250,
   levels: levels,
-  basename: process.env.REACT_APP_BASENAME || "/"
+  basename: process.env.REACT_APP_BASENAME || "/",
+  defaultTimeout: 6000
 };
-
-export const AUTO_HIDE_DURATION = 6000;
 
 // Initialize Firebase
 const config = {

@@ -14,6 +14,8 @@ import Dialog, {
 } from "material-ui/Dialog/index";
 import Button from "material-ui/Button";
 import TextField from "material-ui/TextField";
+import { CircularProgress } from "material-ui/Progress";
+
 import {
   externalProfileDialogHide,
   externalProfileUpdateRequest
@@ -23,6 +25,7 @@ const STRING_MAX = 32;
 
 class AddProfileDialog extends React.PureComponent {
   static propTypes = {
+    inProgress: PropTypes.any,
     open: PropTypes.bool.isRequired,
     externalProfile: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
@@ -60,7 +63,7 @@ class AddProfileDialog extends React.PureComponent {
   onClose = () => this.props.dispatch(externalProfileDialogHide());
 
   render() {
-    const { externalProfile } = this.props;
+    const { externalProfile, inProgress } = this.props;
     const url = `${externalProfile.url}/user/${this.state.login}`;
 
     return (
@@ -86,8 +89,23 @@ class AddProfileDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" raised onClick={this.onCommitClick}>
+          <Button
+            color="primary"
+            raised
+            onClick={this.onCommitClick}
+            disabled={inProgress}
+          >
             Commit
+            {inProgress && (
+              <CircularProgress
+                style={{
+                  position: "absolute",
+                  left: 36,
+                  width: 20,
+                  height: 20
+                }}
+              />
+            )}
           </Button>
         </DialogActions>
       </Dialog>

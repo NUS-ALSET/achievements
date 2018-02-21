@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import Card, { CardContent, CardActions } from "material-ui/Card";
 import Typography from "material-ui/Typography";
 import Button from "material-ui/Button";
+import { CircularProgress } from "material-ui/Progress";
 
 class ExternalProfileCard extends React.PureComponent {
   static propTypes = {
@@ -17,12 +18,14 @@ class ExternalProfileCard extends React.PureComponent {
     classes: PropTypes.object.isRequired,
     addExternalProfileRequest: PropTypes.func.isRequired,
     refreshAchievementsRequest: PropTypes.func.isRequired,
-    removeExternalProfileRequest: PropTypes.func.isRequired
+    removeExternalProfileRequest: PropTypes.func.isRequired,
+    inProgress: PropTypes.bool
   };
 
   render() {
     const {
       classes,
+      inProgress,
       userAchievements,
       externalProfile,
       addExternalProfileRequest,
@@ -40,7 +43,11 @@ class ExternalProfileCard extends React.PureComponent {
             <Fragment>
               <Typography className={classes.card}>
                 Registered as{" "}
-                <a href={`${externalProfile.url}/user/${userAchievements.id}`}>
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href={`${externalProfile.url}/user/${userAchievements.id}`}
+                >
                   {userAchievements.id}
                 </a>
               </Typography>
@@ -61,8 +68,19 @@ class ExternalProfileCard extends React.PureComponent {
               <Button
                 onClick={() => refreshAchievementsRequest(externalProfile)}
                 color="primary"
+                disabled={inProgress}
               >
                 Refresh achievements
+                {inProgress && (
+                  <CircularProgress
+                    style={{
+                      position: "absolute",
+                      left: "50%",
+                      width: 20,
+                      height: 20
+                    }}
+                  />
+                )}
               </Button>
               <Button
                 onClick={() => removeExternalProfileRequest(externalProfile)}

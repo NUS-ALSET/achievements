@@ -15,28 +15,22 @@ import {
   externalProfileUpdateFail,
   externalProfileUpdateSuccess
 } from "./actions";
-import { select, put, call, takeLatest } from "redux-saga/effects";
+import { delay } from "redux-saga";
+import { select, put, call, takeLatest, race } from "redux-saga/effects";
 import { accountService } from "../../services/account";
 import { notificationShow } from "../Root/actions";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 export function* externalProfileUpdateRequestHandler(action) {
   try {
-    let awaitResolve = () => {};
-    const awaitPromise = new Promise(resolve => {
-      awaitResolve = resolve;
-    });
+    let error = "";
     const uid = yield select(state => state.firebase.auth.uid);
+
     yield call(
       accountService.addExternalProfile,
       action.externalProfileType,
       uid,
       action.externalProfileId
-    );
-    yield call(
-      [accountService, accountService.watchProfileRefresh],
-      uid,
-      action.externalProfileType,
-      awaitResolve
     );
     yield put(
       externalProfileRefreshRequest(
@@ -44,10 +38,22 @@ export function* externalProfileUpdateRequestHandler(action) {
         action.externalProfileType
       )
     );
-    const response = yield call(() => awaitPromise);
+    const { response, timedOut } = yield race({
+      response: call(
+        [accountService, accountService.watchProfileRefresh],
+        uid,
+        action.externalProfileType
+      ),
+      timedOut: call(delay, APP_SETTING.defaultTimeout)
+    });
 
-    if (!response) {
-      const error = "Wrong profile was provided";
+    if (timedOut) {
+      error = "Profile refreshing timed out";
+    } else if (!response) {
+      error = "Wrong profile was provided";
+    }
+
+    if (error) {
       yield put(
         externalProfileUpdateFail(
           action.externalProfileId,
@@ -87,6 +93,27 @@ export function* externalProfileRefreshRequestHandler(action) {
       uid,
       action.externalProfileId
     );
+    const { timedOut } = yield race({
+      response: call(
+        [accountService, accountService.watchProfileRefresh],
+        uid,
+        action.externalProfileType
+      ),
+      timedOut: call(delay, APP_SETTING.defaultTimeout)
+    });
+
+    if (timedOut) {
+      const error = "Profile refresh timed out";
+      yield put(
+        externalProfileRefreshFail(
+          action.externalProfileId,
+          action.externalProfileType,
+          error
+        )
+      );
+      return yield put(notificationShow(error));
+    }
+
     yield put(
       externalProfileRefreshSuccess(
         action.externalProfileId,

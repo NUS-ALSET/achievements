@@ -64,12 +64,12 @@ const styles = theme => ({
   },
   appBar: {
     [theme.breakpoints.up("lg")]: {
-      width: "calc(100% - " + APP_SETTING.DrawerWidth + "px)"
+      width: "calc(100% - " + APP_SETTING.drawerWidth + "px)"
     }
   },
   drawer: {
     [theme.breakpoints.up("lg")]: {
-      width: APP_SETTING.DrawerWidth
+      width: APP_SETTING.drawerWidth
     }
   },
   content: {
@@ -78,7 +78,7 @@ const styles = theme => ({
     height: "calc(100% - 56px)",
     marginTop: 56,
     [theme.breakpoints.up("lg")]: {
-      width: "calc(100% - " + APP_SETTING.DrawerWidth + "px)"
+      width: "calc(100% - " + APP_SETTING.drawerWidth + "px)"
     },
     [theme.breakpoints.up("sm")]: {
       height: "calc(100% - 64px)",
