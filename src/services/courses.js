@@ -180,12 +180,19 @@ class CoursesService {
   }
 
   addAssignment(courseId, assignment, assignments) {
-    assignment.orderIndex = 1;
+    // Edit assignment
+    if (assignment.id) {
+      return firebase
+        .ref(`/assignments/${courseId}/${assignment.id}`)
+        .set(assignment);
+    }
 
+    // Check that orderIndex correct
+    assignment.orderIndex = 1;
     Object.keys(assignments || {})
       .map(id => assignments[id])
       .forEach(existing => {
-        if (existing.orderIndex > assignment.orderIndex) {
+        if (!(existing.orderIndex < assignment.orderIndex)) {
           assignment.orderIndex = existing.orderIndex + 1;
         }
 
@@ -541,6 +548,7 @@ class CoursesService {
   }
 
   processAssignmentsOrderIndexes(courseId, assignments) {
+    const ordersMap = {};
     let needUpdate = false;
 
     assignments = Object.keys(assignments || {}).map(id => ({
@@ -549,10 +557,11 @@ class CoursesService {
     }));
 
     assignments.forEach(assignment => {
-      if (!assignment.orderIndex) {
+      if (!assignment.orderIndex || ordersMap[assignment.orderIndex]) {
         needUpdate = true;
         return false;
       }
+      ordersMap[assignment.orderIndex] = true;
       return true;
     });
 

@@ -25,7 +25,8 @@ import {
   assignmentQuickUpdateRequest,
   assignmentReorderRequest,
   assignmentsEditorTableShown,
-  assignmentShowAddDialog
+  assignmentShowAddDialog,
+  assignmentShowEditDialog
 } from "../containers/Assignments/actions";
 
 const dateEditStyle = {
@@ -46,6 +47,8 @@ class AssignmentsEditorTable extends React.PureComponent {
   }
 
   onAddAssignmentClick = () => this.props.dispatch(assignmentShowAddDialog());
+  onEditAssignmentClick = assignment =>
+    this.props.dispatch(assignmentShowEditDialog(assignment));
   onDeleteAssignmentClick = assignment =>
     this.props.dispatch(assignmentDeleteRequest(assignment));
   onUpdateAssignment = (assignmentId, field, value) => {
@@ -164,7 +167,7 @@ class AssignmentsEditorTable extends React.PureComponent {
                   <TableCell>
                     <IconButton>
                       <EditIcon
-                        onClick={() => this.onAddAssignmentClick(assignment)}
+                        onClick={() => this.onEditAssignmentClick(assignment)}
                       />
                     </IconButton>
                     <IconButton>
