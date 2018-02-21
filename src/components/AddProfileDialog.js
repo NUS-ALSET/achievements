@@ -55,7 +55,6 @@ class AddProfileDialog extends React.PureComponent {
     if (onCommit) {
       onCommit(login);
     }
-    this.onClose();
   };
 
   onClose = () => this.props.dispatch(externalProfileDialogHide());

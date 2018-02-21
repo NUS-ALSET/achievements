@@ -9,7 +9,7 @@ import Hidden from "material-ui/Hidden";
 import Menu from "material-ui/Menu";
 import Button from "material-ui/Button";
 
-import { HashRouter, Router, Route } from "react-router-dom";
+import { HashRouter, Route } from "react-router-dom";
 
 import IconButton from "material-ui/IconButton";
 import MenuIcon from "material-ui-icons/Menu";

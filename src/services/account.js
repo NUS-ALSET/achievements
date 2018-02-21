@@ -11,10 +11,33 @@ export class AccountService {
       .auth()
       .signInWithPopup(authProvider)
       .then(ref =>
-        firebase.update(`/users/${ref.user.uid}`, {
-          displayName: ref.user.displayName,
-          email: ref.user.email
-        })
+        // Get existing user name and update display name if it doesn't exists
+        firebase
+          .database()
+          .ref(`/users/${ref.user.uid}`)
+          .once("value")
+          .then(existing => existing.val() || {})
+          .then(existing => {
+            return firebase
+              .database()
+              .ref(`/users/${ref.user.uid}`)
+              .update({
+                displayName: existing.displayName || ref.user.displayName,
+                photoURL: ref.user.photoURL
+              });
+          })
+          // Return user ref to continue processing
+          .then(() => ref)
+      )
+      .then(ref =>
+        // Update some private fields (could be increased in future)
+        firebase
+          .database()
+          .ref(`/usersPrivate/${ref.user.uid}`)
+          .update({
+            displayName: ref.user.displayName,
+            email: ref.user.email
+          })
       );
   }
 
@@ -48,6 +71,21 @@ export class AccountService {
       totalAchievements: 0,
       achievements: {}
     });
+  }
+
+  watchProfileRefresh(uid, externalProfileId, awaitResolve) {
+    let skip = true;
+    return firebase
+      .ref(`/userAchievements/${uid}/${externalProfileId}`)
+      .on("value", data => {
+        if (skip) {
+          skip = false;
+          return;
+        }
+        data = data.val();
+        firebase.ref(`/userAchievements/${uid}/${externalProfileId}`).off();
+        awaitResolve(data);
+      });
   }
 
   /**

@@ -122,6 +122,7 @@ class Account extends React.PureComponent {
       userAchievements,
       externalProfiles,
       removeRequest,
+      user,
       userName,
       displayNameEdit,
       dispatch
@@ -135,7 +136,7 @@ class Account extends React.PureComponent {
               <CardMedia
                 style={{ height: 240 }}
                 image={
-                  this.props.auth.photoURL ||
+                  (user && user.photoURL) ||
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ" +
                     "AAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
                 }

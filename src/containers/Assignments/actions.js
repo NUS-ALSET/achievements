@@ -28,6 +28,12 @@ export const assignmentShowAddDialog = () => ({
   type: ASSIGNMENT_SHOW_ADD_DIALOG
 });
 
+export const ASSIGNMENT_SHOW_EDIT_DIALOG = "ASSIGNMENT_SHOW_EDIT_DIALOG";
+export const assignmentShowEditDialog = assignment => ({
+  type: ASSIGNMENT_SHOW_EDIT_DIALOG,
+  assignment
+});
+
 export const UPDATE_NEW_ASSIGNMENT_FIELD = "UPDATE_NEW_ASSIGNMENT_FIELD";
 export const updateNewAssignmentField = (field, value) => ({
   type: UPDATE_NEW_ASSIGNMENT_FIELD,
