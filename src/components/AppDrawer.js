@@ -16,7 +16,7 @@ import { APP_SETTING } from "../achievementsApp/config";
 
 const styles = theme => ({
   paper: {
-    width: APP_SETTING.DrawerWidth,
+    width: APP_SETTING.drawerWidth,
     backgroundColor: theme.palette.background.paper
   },
   anchor: {

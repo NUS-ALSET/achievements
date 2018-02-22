@@ -2,6 +2,7 @@ import {
   ASSIGNMENT_CLOSE_DIALOG,
   ASSIGNMENT_DELETE_REQUEST,
   ASSIGNMENT_SHOW_ADD_DIALOG,
+  ASSIGNMENT_SHOW_EDIT_DIALOG,
   ASSIGNMENT_SUBMIT_REQUEST,
   ASSIGNMENT_SWITCH_TAB,
   ASSIGNMENTS_SORT_CHANGE,
@@ -67,6 +68,14 @@ export const assignments = (
             count: 1,
             levels: []
           }
+        }
+      };
+    case ASSIGNMENT_SHOW_EDIT_DIALOG:
+      return {
+        ...state,
+        dialog: {
+          type: "AddAssignment",
+          value: action.assignment
         }
       };
     case UPDATE_NEW_ASSIGNMENT_FIELD:

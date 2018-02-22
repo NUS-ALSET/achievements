@@ -14,7 +14,7 @@ import {
   signOutSuccess
 } from "./actions";
 import { accountService } from "../../services/account";
-import { AUTO_HIDE_DURATION } from "../../achievementsApp/config";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 function* handleSignInRequest() {
   try {
@@ -38,7 +38,7 @@ function* handleSignOut() {
 }
 
 function* autoHideNotification() {
-  yield delay(AUTO_HIDE_DURATION);
+  yield delay(APP_SETTING.defaultTimeout);
   yield put(notificationHide());
 }
 

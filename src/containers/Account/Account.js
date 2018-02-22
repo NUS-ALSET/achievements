@@ -43,6 +43,8 @@ const styles = theme => ({
 
 class Account extends React.PureComponent {
   static propTypes = {
+    externalProfileInUpdate: PropTypes.bool,
+    achievementsRefreshingInProgress: PropTypes.bool,
     classes: PropTypes.object.isRequired,
     showDialog: PropTypes.bool.isRequired,
     firebase: PropTypes.object.isRequired,
@@ -122,9 +124,11 @@ class Account extends React.PureComponent {
       userAchievements,
       externalProfiles,
       removeRequest,
+      user,
       userName,
       displayNameEdit,
-      dispatch
+      dispatch,
+      achievementsRefreshingInProgress
     } = this.props;
 
     return (
@@ -135,7 +139,7 @@ class Account extends React.PureComponent {
               <CardMedia
                 style={{ height: 240 }}
                 image={
-                  this.props.auth.photoURL ||
+                  (user && user.photoURL) ||
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ" +
                     "AAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
                 }
@@ -189,6 +193,7 @@ class Account extends React.PureComponent {
                   removeExternalProfileRequest={
                     this.removeExternalProfileRequest
                   }
+                  inProgress={achievementsRefreshingInProgress}
                   classes={classes}
                   userAchievements={
                     (userAchievements || {})[externalProfileKey]
@@ -197,6 +202,7 @@ class Account extends React.PureComponent {
                 />
                 <AddProfileDialog
                   open={this.props.showDialog}
+                  inProgress={this.props.externalProfileInUpdate}
                   externalProfile={externalProfiles[externalProfileKey]}
                   onError={this.showError}
                   uid={this.props.uid}
@@ -241,6 +247,9 @@ const mapStateToProps = state => ({
     id: state.account.removingProfileId,
     type: state.account.removingProfileType
   },
+  externalProfileInUpdate: state.account.externalProfileInUpdate,
+  achievementsRefreshingInProgress:
+    state.account.achievementsRefreshingInProgress,
   displayNameEdit: state.account.displayNameEdit,
   user: (state.firebase.data.users || {})[state.firebase.auth.uid]
 });
