@@ -1,10 +1,5 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { firebaseConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import Toolbar from "material-ui/Toolbar";
-import Button from "material-ui/Button";
+import { connect } from "react-redux";
 import {
   courseHideDialog,
   courseNewDialogChange,
@@ -14,14 +9,19 @@ import {
   courseShowNewDialog,
   courseSwitchTab
 } from "./actions";
-import AddCourseDialog from "../../components/AddCourseDialog";
-import CoursesTable from "../../components/CoursesTable";
+import { firebaseConnect } from "react-redux-firebase";
+import { sagaInjector } from "../../services/saga";
+import AddCourseDialog from "../../components/dialogs/AddCourseDialog";
+import Button from "material-ui/Button";
+import CoursesTable from "../../components/tables/CoursesTable";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+import RemoveCourseDialog from "../../components/dialogs/RemoveCourseDialog";
+
 import Tabs, { Tab } from "material-ui/Tabs";
+import Toolbar from "material-ui/Toolbar";
 
 import sagas from "./sagas";
-import { sagaInjector } from "../../services/saga";
-
-import RemoveCourseDialog from "../../components/RemoveCourseDialog";
 
 const COURSE_TAB_JOINED = 0;
 const COURSE_TAB_OWNED = 1;
@@ -172,7 +172,6 @@ const mapStateToProps = state => ({
 
 export default compose(
   firebaseConnect(
-    // Pretty dirty hack to get courses fetching after login on `/course` route
     (ownProps, store) => {
       const firebaseAuth = store.getState().firebase.auth;
       return (

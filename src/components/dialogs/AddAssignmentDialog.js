@@ -4,21 +4,21 @@
  * @created 28.01.18
  */
 
-import React from "react";
-import PropTypes from "prop-types";
+import { APP_SETTING } from "../../achievementsApp/config";
+import { FormControl } from "material-ui/Form";
 
+import Button from "material-ui/Button";
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog/index";
-import Button from "material-ui/Button";
-import TextField from "material-ui/TextField";
-import MenuItem from "material-ui/Menu/MenuItem";
-import Select from "material-ui/Select";
 import Input, { InputLabel } from "material-ui/Input";
-import { FormControl } from "material-ui/Form";
-import { APP_SETTING } from "../achievementsApp/config";
+import MenuItem from "material-ui/Menu/MenuItem";
+import PropTypes from "prop-types";
+import React from "react";
+import Select from "material-ui/Select";
+import TextField from "material-ui/TextField";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {

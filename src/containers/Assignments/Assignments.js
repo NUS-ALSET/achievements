@@ -1,40 +1,40 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import withStyles from "material-ui/styles/withStyles";
+import { APP_SETTING } from "../../achievementsApp/config";
 import { LinearProgress } from "material-ui/Progress";
-import { firebaseConnect, isLoaded } from "react-redux-firebase";
-import Toolbar from "material-ui/Toolbar";
-import Button from "material-ui/Button";
-import Grid from "material-ui/Grid";
-
 import { Link, withRouter } from "react-router-dom";
-import TextField from "material-ui/TextField";
-import ChevronRightIcon from "material-ui-icons/ChevronRight";
-import Typography from "material-ui/Typography";
-import { coursesService } from "../../services/courses";
-
-import AssignmentsTable from "../../components/AssignmentsTable";
 import {
   assignmentCloseDialog,
   assignmentSolutionRequest,
-  assignmentsSortChange,
   assignmentSubmitRequest,
   assignmentSwitchTab,
+  assignmentsSortChange,
   coursePasswordEnterSuccess
 } from "./actions";
-import AddProfileDialog from "../../components/AddProfileDialog";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { coursesService } from "../../services/courses";
+import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import {
   getAssignmentsUIProps,
   getCourseProps,
   getCurrentUserProps
 } from "./selectors";
-import AddTextSolutionDialog from "../../components/AddTextSolutionDialog";
 import { sagaInjector } from "../../services/saga";
-import sagas from "./sagas";
+
+import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
+import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
+import AssignmentsTable from "../../components/tables/AssignmentsTable";
+import Button from "material-ui/Button";
+import ChevronRightIcon from "material-ui-icons/ChevronRight";
+
+import Grid from "material-ui/Grid";
 import InstructorTabs from "../../components/InstructorTabs";
-import { APP_SETTING } from "../../achievementsApp/config";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+import TextField from "material-ui/TextField";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
+import sagas from "./sagas";
+import withStyles from "material-ui/styles/withStyles";
 
 const styles = theme => ({
   breadcrumbLink: {

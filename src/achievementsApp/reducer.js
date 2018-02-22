@@ -1,10 +1,11 @@
-import { combineReducers } from "redux";
-import { appFrame } from "../containers/AppFrame/reducer";
-import { firebaseReducer as firebase } from "react-redux-firebase";
-import { courses } from "../containers/Courses/reducer";
-import { root } from "../containers/Root/reducer";
-import { assignments } from "../containers/Assignments/reducer";
 import { account } from "../containers/Account/reducer";
+import { appFrame } from "../containers/AppFrame/reducer";
+import { assignments } from "../containers/Assignments/reducer";
+import { combineReducers } from "redux";
+import { courses } from "../containers/Courses/reducer";
+import { firebaseReducer as firebase } from "react-redux-firebase";
+import { root } from "../containers/Root/reducer";
+import { cohorts } from "../containers/Cohorts/reducer";
 
 export default combineReducers({
   firebase,
@@ -12,5 +13,6 @@ export default combineReducers({
   courses,
   root,
   assignments,
-  account
+  account,
+  cohorts
 });

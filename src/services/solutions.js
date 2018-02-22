@@ -1,6 +1,6 @@
 import cloneDeep from "lodash/cloneDeep";
-import firebase from "firebase";
 import each from "lodash/each";
+import firebase from "firebase";
 
 export class SolutionsService {
   fetchOwnCourses(uid) {
@@ -90,6 +90,7 @@ export class SolutionsService {
       );
   }
 
+  // noinspection JSUnusedGlobalSymbols
   /**
    * This method should be invoked at firebase login
    *
