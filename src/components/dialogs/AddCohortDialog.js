@@ -20,20 +20,31 @@ import {
 
 class AddCohortDialog extends React.PureComponent {
   static propTypes = {
+    cohort: PropTypes.object,
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired
   };
   state = {
-    cohortName: ""
+    cohortName: "",
+    cohortDescription: ""
   };
 
   onNameChange = e => this.setState({ cohortName: e.currentTarget.value });
+  onDescriptionChange = e =>
+    this.setState({ cohortDescription: e.currentTarget.value });
   onClose = () => this.props.dispatch(addCohortDialogHide());
-  onCommit = () => this.props.dispatch(addCohortRequest(this.state.cohortName));
+  onCommit = () =>
+    this.props.dispatch(
+      addCohortRequest({
+        ...this.props.cohort,
+        name: this.state.cohortName,
+        description: this.state.cohortDescription
+      })
+    );
   catchReturn = event => event.key === "Enter" && this.onCommit();
 
   render() {
-    const { open } = this.props;
+    const { open, cohort } = this.props;
 
     return (
       <Dialog open={open} onClose={this.onClose}>
@@ -44,12 +55,18 @@ class AddCohortDialog extends React.PureComponent {
             autoFocus
             label="Name"
             margin="dense"
+            defaultValue={cohort && cohort.name}
             onChange={this.onNameChange}
             onKeyPress={this.catchReturn}
             required
-            style={{
-              width: 320
-            }}
+          />
+          <TextField
+            fullWidth
+            label="Description"
+            margin="dense"
+            defaultValue={cohort && cohort.description}
+            onChange={this.onDescriptionChange}
+            onKeyPress={this.catchReturn}
           />
         </DialogContent>
         <DialogActions>

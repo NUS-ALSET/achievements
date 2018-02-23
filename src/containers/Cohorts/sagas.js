@@ -8,13 +8,13 @@ function* addCohortRequestHandler(action) {
     const auth = yield select(state => state.firebase.auth);
     const cohortKey = yield call(
       cohortsService.addCohort,
-      action.name,
+      action.cohortData,
       auth.uid,
       auth.displayName
     );
-    yield put(addCohortSuccess(action.name, cohortKey));
+    yield put(addCohortSuccess({ cohortKey, ...action.cohort }));
   } catch (err) {
-    yield put(addCohortFail(action.name, err.message));
+    yield put(addCohortFail(action.cohort, err.message));
     yield put(notificationShow(err.message));
   }
 }

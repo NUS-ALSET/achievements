@@ -5,8 +5,9 @@ export const cohortsChangeTab = tabIndex => ({
 });
 
 export const ADD_COHORT_DIALOG_SHOW = "ADD_COHORT_DIALOG_SHOW";
-export const addCohortDialogShow = () => ({
-  type: ADD_COHORT_DIALOG_SHOW
+export const addCohortDialogShow = cohort => ({
+  type: ADD_COHORT_DIALOG_SHOW,
+  cohort
 });
 
 export const ADD_COHORT_DIALOG_HIDE = "ADD_COHORT_DIALOG_HIDE";
@@ -15,9 +16,9 @@ export const addCohortDialogHide = () => ({
 });
 
 export const ADD_COHORT_REQUEST = "ADD_COHORT_REQUEST";
-export const addCohortRequest = name => ({
+export const addCohortRequest = cohortData => ({
   type: ADD_COHORT_REQUEST,
-  name
+  cohortData
 });
 
 export const ADD_COHORT_SUCCESS = "ADD_COHORT_SUCCESS";
