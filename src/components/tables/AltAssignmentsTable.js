@@ -1,13 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
-
-import { GroupingState, IntegratedGrouping } from "@devexpress/dx-react-grid";
 import {
   Grid,
   Table,
-  TableHeaderRow,
-  TableGroupRow
+  TableGroupRow,
+  TableHeaderRow
 } from "@devexpress/dx-react-grid-material-ui";
+import { GroupingState, IntegratedGrouping } from "@devexpress/dx-react-grid";
+
+import PropTypes from "prop-types";
+import React from "react";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {

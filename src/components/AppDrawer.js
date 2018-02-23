@@ -1,18 +1,18 @@
-import React from "react";
-import PropTypes from "prop-types";
+import { APP_SETTING } from "../achievementsApp/config";
+import { DrawerMenuItems } from "./AppDrawerElements";
 
 import { compose } from "redux";
 
-import withStyles from "material-ui/styles/withStyles";
+import ChevronLeftIcon from "material-ui-icons/ChevronLeft";
 import Drawer from "material-ui/Drawer";
 import Hidden from "material-ui/Hidden";
 
 import IconButton from "material-ui/IconButton";
-import ChevronLeftIcon from "material-ui-icons/ChevronLeft";
+import PropTypes from "prop-types";
 
-import { DrawerMenuItems } from "./AppDrawerElements";
+import React from "react";
 
-import { APP_SETTING } from "../achievementsApp/config";
+import withStyles from "material-ui/styles/withStyles";
 
 const styles = theme => ({
   paper: {

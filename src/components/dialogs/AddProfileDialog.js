@@ -4,22 +4,22 @@
  * @created 29.01.18
  */
 
-import React from "react";
-import PropTypes from "prop-types";
+import { CircularProgress } from "material-ui/Progress";
+import {
+  externalProfileDialogHide,
+  externalProfileUpdateRequest
+} from "../../containers/Account/actions";
 
+import Button from "material-ui/Button";
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog/index";
-import Button from "material-ui/Button";
-import TextField from "material-ui/TextField";
-import { CircularProgress } from "material-ui/Progress";
+import PropTypes from "prop-types";
+import React from "react";
 
-import {
-  externalProfileDialogHide,
-  externalProfileUpdateRequest
-} from "../containers/Account/actions";
+import TextField from "material-ui/TextField";
 
 const STRING_MAX = 32;
 

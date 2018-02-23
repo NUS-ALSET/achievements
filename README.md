@@ -7,9 +7,6 @@ Use one of options to select approach for fetching users' achievements:
  * `firebase functions:config:set profiles.refresh-approach=queue` - for processing requests by firebase queue
  * `firebase functions:config:set profiles.refresh-approach=none` - for disabling any processing requests
 
-Use environment variable to set basename for urls at project:
- * `REACT_APP_BASENAME=/alset/apps/achievements/ npm build`
-
 ## Available Scripts
 
 In the project directory, you can run:

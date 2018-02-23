@@ -4,19 +4,19 @@
  * @created 11.02.18
  */
 
-import React from "react";
-import PropTypes from "prop-types";
+import {
+  externalProfileRemoveDialogHide,
+  externalProfileRemoveRequest
+} from "../../containers/Account/actions";
+import Button from "material-ui/Button";
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog/index";
+import PropTypes from "prop-types";
+import React from "react";
 import Typography from "material-ui/Typography";
-import Button from "material-ui/Button";
-import {
-  externalProfileRemoveDialogHide,
-  externalProfileRemoveRequest
-} from "../containers/Account/actions";
 
 class RemoveExternalProfileDialog extends React.PureComponent {
   static propTypes = {

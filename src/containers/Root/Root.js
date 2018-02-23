@@ -2,15 +2,15 @@
  * @file Root container Root module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  */
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { firebaseConnect } from "react-redux-firebase";
-import NotificationArea from "../../components/NotificationArea";
 import { acceptEulaRequest, notificationHide, signOutRequest } from "./actions";
-import ConfirmEULADialog from "../../components/ConfirmEULADialog";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { firebaseConnect } from "react-redux-firebase";
 import { sagaInjector } from "../../services/saga";
+import ConfirmEULADialog from "../../components/dialogs/ConfirmEULADialog";
+import NotificationArea from "../../components/NotificationArea";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
 import sagas from "./sagas";
 
 class Root extends React.PureComponent {

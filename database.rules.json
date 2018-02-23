@@ -17,6 +17,37 @@
       ".read": true,
       ".write": false
     },
+    "cohortCourses": {
+      ".read": true,
+      ".write": false,
+      "$cohortKey": {
+        "$courseKey": {
+          ".write": "
+            auth != null &&
+            auth.uid == root.child('/cohorts/' + $cohortKey + '/owner').val()
+          "
+        }
+      }
+    },
+    "cohorts": {
+      ".read": true,
+      ".write": false,
+      "$cohortKey": {
+        ".write": "auth != null &&
+          newData.exists() &&
+          !newData.child('isPublic').exists() &&
+          (
+            (
+              !data.exists() &&
+                newData.child('owner').exists() &&
+                newData.child('owner').val() == auth.uid
+            ) || (
+              data.exists() && data.child('owner').val() == auth.uid
+            )
+          )
+        "
+      }
+    },
     "courseMembers": {
       ".read": "auth != null",
       "$courseKey": {

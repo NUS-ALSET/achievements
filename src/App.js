@@ -1,7 +1,7 @@
 import React from "react";
-import { Provider } from "react-redux";
 import AppFrame from "./containers/AppFrame/AppFrame";
 import Root from "./containers/Root/Root";
+import { Provider } from "react-redux";
 
 import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";

@@ -5,14 +5,14 @@
  * @created 11.02.18
  */
 
-import React from "react";
-import PropTypes from "prop-types";
+import Button from "material-ui/Button";
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog/index";
-import Button from "material-ui/Button";
+import PropTypes from "prop-types";
+import React from "react";
 import Typography from "material-ui/Typography";
 
 class ConfirmEULADialog extends React.PureComponent {

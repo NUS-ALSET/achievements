@@ -1,16 +1,16 @@
 import {
+  ASSIGNMENTS_SORT_CHANGE,
   ASSIGNMENT_CLOSE_DIALOG,
   ASSIGNMENT_DELETE_REQUEST,
   ASSIGNMENT_SHOW_ADD_DIALOG,
   ASSIGNMENT_SHOW_EDIT_DIALOG,
   ASSIGNMENT_SUBMIT_REQUEST,
   ASSIGNMENT_SWITCH_TAB,
-  ASSIGNMENTS_SORT_CHANGE,
   UPDATE_NEW_ASSIGNMENT_FIELD
 } from "./actions";
-import format from "date-fns/format";
-import addDays from "date-fns/add_days";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
+import addDays from "date-fns/add_days";
+import format from "date-fns/format";
 
 const DAYS_IN_WEEK = 7;
 
