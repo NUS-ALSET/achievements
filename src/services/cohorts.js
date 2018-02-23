@@ -43,6 +43,43 @@ class CohortsService {
     });
   }
 
+  recalculateCourse(cohortId, courseId) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/courseMembers/${courseId}`)
+        .once("value")
+        .then(members => Object.keys(members.val() || {}).length),
+      firebase
+        .database()
+        .ref(`/solutions/${courseId}`)
+        .once("value")
+        .then(userSolutions => Object.keys(userSolutions.val() || {}).length)
+    ]).then(responses =>
+      firebase
+        .database()
+        .ref(`/cohortCourses/${cohortId}/${courseId}`)
+        .update({
+          participants: responses[0],
+          progress: responses[1]
+        })
+    );
+  }
+
+  recalculateCourses(cohortId) {
+    return firebase
+      .database()
+      .ref(`/cohortCourses/${cohortId}`)
+      .once("value")
+      .then(courses =>
+        Promise.all(
+          Object.keys(courses.val() || {}).map(courseId =>
+            this.recalculateCourse(cohortId, courseId)
+          )
+        )
+      );
+  }
+
   removeCourse(cohortId, courseId) {
     return firebase
       .database()

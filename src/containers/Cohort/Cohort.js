@@ -34,6 +34,14 @@ class Cohort extends React.PureComponent {
     selectedCourse: ""
   };
 
+  componentDidMount() {
+    const { cohort } = this.props;
+
+    if (cohort && cohort.id) {
+      cohortsService.recalculateCourses(cohort.id);
+    }
+  }
+
   selectCourse = e => this.setState({ selectedCourse: e.target.value });
 
   addCourse = () => {

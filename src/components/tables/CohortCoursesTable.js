@@ -44,8 +44,8 @@ class CohortCoursesTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>Course Rank</TableCell>
-            <TableCell>Participants</TableCell>
             <TableCell>Path Progress</TableCell>
+            <TableCell>Participants</TableCell>
             <TableCell>Course</TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
@@ -56,8 +56,8 @@ class CohortCoursesTable extends React.PureComponent {
               <TableCell>
                 <strong>{course.rank}</strong>
               </TableCell>
-              <TableCell>{course.participants}</TableCell>
               <TableCell>{course.progress}</TableCell>
+              <TableCell>{course.participants}</TableCell>
               <TableCell>
                 <Link to={`/courses/${course.id}`}>{course.name}</Link>
               </TableCell>
