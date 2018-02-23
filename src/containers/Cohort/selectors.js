@@ -9,8 +9,7 @@ export const selectCohort = (state, ownProps) => {
 
   return {
     id: cohortId,
-    name: cohort.name,
-    owner: cohort.owner,
+    ...cohort,
     courses: Object.keys(cohortCourses || {})
       .map(id => ({
         id,

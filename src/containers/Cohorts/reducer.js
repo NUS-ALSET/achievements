@@ -23,7 +23,8 @@ export const cohorts = (
       return {
         ...state,
         dialog: {
-          type: "addCohort"
+          type: "addCohort",
+          cohort: action.cohort
         }
       };
     case ADD_COHORT_SUCCESS:
