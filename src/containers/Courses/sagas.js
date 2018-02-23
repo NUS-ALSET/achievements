@@ -1,4 +1,3 @@
-import { select, call, put, takeLatest } from "redux-saga/effects";
 import {
   COURSE_NEW_REQUEST,
   COURSE_REMOVE_REQUEST,
@@ -8,6 +7,7 @@ import {
   courseRemoveFail,
   courseRemoveSuccess
 } from "./actions";
+import { call, put, select, takeLatest } from "redux-saga/effects";
 import { coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 // import { solutionsService } from "../../services/solutions";

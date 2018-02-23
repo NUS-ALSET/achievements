@@ -1,10 +1,10 @@
+import { actionsService } from "../services/actions";
 import { applyMiddleware, compose, createStore } from "redux";
+import { reactReduxFirebase } from "react-redux-firebase";
+import { sagaInjector, sagaMiddleware } from "../services/saga";
+import firebase from "firebase";
 import logger from "redux-logger";
 import rootReducer from "./reducer";
-import firebase from "firebase";
-import { reactReduxFirebase } from "react-redux-firebase";
-import { sagaMiddleware, sagaInjector } from "../services/saga";
-import { actionsService } from "../services/actions";
 
 const rrfConfig = {
   userProfile: "courseMembers",

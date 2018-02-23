@@ -1,12 +1,12 @@
-import firebase from "firebase";
-import {
-  COURSE_NEW_DIALOG_CHANGE,
-  COURSE_NEW_REQUEST
-} from "../containers/Courses/actions";
 import {
   ASSIGNMENTS_SORT_CHANGE,
   UPDATE_NEW_ASSIGNMENT_FIELD
 } from "../containers/Assignments/actions";
+import {
+  COURSE_NEW_DIALOG_CHANGE,
+  COURSE_NEW_REQUEST
+} from "../containers/Courses/actions";
+import firebase from "firebase";
 
 export class ActionsService {
   bannedActions = [

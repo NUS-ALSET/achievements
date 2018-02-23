@@ -4,17 +4,17 @@
  * @created 13.02.18
  */
 
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import Tabs, { Tab } from "material-ui/Tabs";
-import AssignmentsTable from "./AssignmentsTable";
-import AddAssignmentDialog from "./AddAssignmentDialog";
-import DeleteAssignmentDialog from "./DeleteAssignmentDialog";
-import AssignmentsEditorTable from "./AssignmentsEditorTable";
 import {
   assignmentAddRequest,
   updateNewAssignmentField
 } from "../containers/Assignments/actions";
+import AddAssignmentDialog from "./dialogs/AddAssignmentDialog";
+import AssignmentsEditorTable from "./tables/AssignmentsEditorTable";
+import AssignmentsTable from "./tables/AssignmentsTable";
+import DeleteAssignmentDialog from "./dialogs/DeleteAssignmentDialog";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+import Tabs, { Tab } from "material-ui/Tabs";
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;

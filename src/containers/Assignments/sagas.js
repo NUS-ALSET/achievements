@@ -1,9 +1,11 @@
-import { select, call, put, takeLatest } from "redux-saga/effects";
+import { APP_SETTING } from "../../achievementsApp/config";
 import {
+  ASSIGNMENTS_EDITOR_TABLE_SHOWN,
   ASSIGNMENT_ADD_REQUEST,
   ASSIGNMENT_QUICK_UPDATE_REQUEST,
   ASSIGNMENT_REORDER_REQUEST,
   ASSIGNMENT_SOLUTION_REQUEST,
+  UPDATE_NEW_ASSIGNMENT_FIELD,
   assignmentAddFail,
   assignmentAddSuccess,
   assignmentCloseDialog,
@@ -11,15 +13,13 @@ import {
   assignmentQuickUpdateSuccess,
   assignmentReorderFail,
   assignmentReorderSuccess,
-  ASSIGNMENTS_EDITOR_TABLE_SHOWN,
   assignmentSolutionFail,
   assignmentSolutionSuccess,
-  UPDATE_NEW_ASSIGNMENT_FIELD,
   updateNewAssignmentField
 } from "./actions";
-import { notificationShow } from "../Root/actions";
+import { call, put, select, takeLatest } from "redux-saga/effects";
 import { coursesService } from "../../services/courses";
-import { APP_SETTING } from "../../achievementsApp/config";
+import { notificationShow } from "../Root/actions";
 
 export function* addAssignmentRequestHandle(action) {
   try {

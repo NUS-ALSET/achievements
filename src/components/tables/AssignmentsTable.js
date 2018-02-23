@@ -1,7 +1,12 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-
+import {
+  assignmentSolutionRequest,
+  assignmentSubmitRequest,
+  assignmentsSortChange
+} from "../../containers/Assignments/actions";
 import Button from "material-ui/Button";
+
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
 import Table, {
   TableBody,
   TableCell,
@@ -9,11 +14,6 @@ import Table, {
   TableRow,
   TableSortLabel
 } from "material-ui/Table";
-import {
-  assignmentSolutionRequest,
-  assignmentsSortChange,
-  assignmentSubmitRequest
-} from "../containers/Assignments/actions";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {

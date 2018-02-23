@@ -3,15 +3,15 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  */
 
-import each from "lodash/each";
-import firebase from "firebase";
-import { notificationHide, notificationShow } from "../containers/Root/actions";
+import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
 import {
   coursePasswordEnterFail,
   coursePasswordEnterRequest
 } from "../containers/Assignments/actions";
+import { notificationHide, notificationShow } from "../containers/Root/actions";
 import { solutionsService } from "./solutions";
-import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
+import each from "lodash/each";
+import firebase from "firebase";
 
 const ERROR_TIMEOUT = 6000;
 

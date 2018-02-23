@@ -1,11 +1,12 @@
+import { APP_SETTING } from "../../achievementsApp/config";
 import {
   DISPLAY_NAME_UPDATE_REQUEST,
-  displayNameEditToggle,
-  displayNameUpdateFail,
-  displayNameUpdateSuccess,
   EXTERNAL_PROFILE_REFRESH_REQUEST,
   EXTERNAL_PROFILE_REMOVE_REQUEST,
   EXTERNAL_PROFILE_UPDATE_REQUEST,
+  displayNameEditToggle,
+  displayNameUpdateFail,
+  displayNameUpdateSuccess,
   externalProfileDialogHide,
   externalProfileRefreshFail,
   externalProfileRefreshRequest,
@@ -15,11 +16,10 @@ import {
   externalProfileUpdateFail,
   externalProfileUpdateSuccess
 } from "./actions";
-import { delay } from "redux-saga";
-import { select, put, call, takeLatest, race } from "redux-saga/effects";
 import { accountService } from "../../services/account";
+import { call, put, race, select, takeLatest } from "redux-saga/effects";
+import { delay } from "redux-saga";
 import { notificationShow } from "../Root/actions";
-import { APP_SETTING } from "../../achievementsApp/config";
 
 export function* externalProfileUpdateRequestHandler(action) {
   try {
