@@ -4,7 +4,7 @@
  * @created 22.02.18
  */
 
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
@@ -29,13 +29,14 @@ const styles = theme => ({
 
 class CohortsTable extends React.PureComponent {
   static propTypes = {
+    onEditCohortClick: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,
     cohorts: PropTypes.object.isRequired,
     currentUserId: PropTypes.string.isRequired
   };
 
   render() {
-    const { cohorts, currentUserId, classes } = this.props;
+    const { cohorts, currentUserId, classes, onEditCohortClick } = this.props;
 
     return (
       <Table>
@@ -60,9 +61,18 @@ class CohortsTable extends React.PureComponent {
                     </Button>
                   </Link>
                   {cohort.owner === currentUserId && (
-                    <Button raised className={classes.button}>
-                      Delete
-                    </Button>
+                    <Fragment>
+                      <Button
+                        raised
+                        className={classes.button}
+                        onClick={() => onEditCohortClick(cohort)}
+                      >
+                        Edit
+                      </Button>
+                      <Button raised className={classes.button}>
+                        Delete
+                      </Button>
+                    </Fragment>
                   )}
                 </TableCell>
               </TableRow>

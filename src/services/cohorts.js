@@ -1,7 +1,21 @@
 import firebase from "firebase";
 
 class CohortsService {
-  addCohort(cohortName, uid, instructorName) {
+  addCohort(cohortData, uid, instructorName) {
+    if (cohortData.id) {
+      const config = {};
+      if (cohortData.name) {
+        config.name = cohortData.name;
+      }
+      if (cohortData.description) {
+        config.description = cohortData.description;
+      }
+      return firebase
+        .database()
+        .ref(`/cohorts/${cohortData.id}`)
+        .update(config);
+    }
+
     const key = firebase
       .database()
       .ref("/cohorts")
@@ -11,7 +25,8 @@ class CohortsService {
       .database()
       .ref(`/cohorts/${key}`)
       .set({
-        name: cohortName,
+        name: cohortData.name,
+        description: cohortData.description || "",
         owner: uid,
         instructorName
       })
