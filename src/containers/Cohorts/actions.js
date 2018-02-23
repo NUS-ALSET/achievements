@@ -33,3 +33,15 @@ export const addCohortFail = (name, reason) => ({
   name,
   reason
 });
+
+export const REMOVE_COHORT_DIALOG_SHOW = "REMOVE_COHORT_DIALOG_SHOW";
+export const removeCohortDialogShow = (cohortId, cohortName) => ({
+  type: REMOVE_COHORT_DIALOG_SHOW,
+  cohortId,
+  cohortName
+});
+
+export const REMOVE_COHORT_DIALOG_HIDE = "REMOVE_COHORT_DIALOG_HIDE";
+export const removeCohortDialogHide = () => ({
+  type: REMOVE_COHORT_DIALOG_HIDE
+});

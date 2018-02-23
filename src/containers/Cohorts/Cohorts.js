@@ -23,18 +23,18 @@ import sagas from "./sagas";
 
 const COHORT_TAB_MY_COHORTS = 0;
 const COHORT_TAB_PUBLIC_COHORTS = 1;
+
 class Cohorts extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     ui: PropTypes.object,
     currentUser: PropTypes.object,
     myCohorts: PropTypes.object,
-    publicCohorts: PropTypes.object
-  };
+    publicCohorts: PropTypes.object,
 
-  onAddCohortClick = () => this.props.dispatch(addCohortDialogShow());
-  onChangeTab = (e, tabIndex) =>
-    this.props.dispatch(cohortsChangeTab(tabIndex));
+    onAddCohortClick: PropTypes.func.isRequired,
+    onChangeTab: PropTypes.func.isRequired
+  };
 
   render() {
     const { dispatch, ui, myCohorts, publicCohorts, currentUser } = this.props;
@@ -56,11 +56,11 @@ class Cohorts extends React.PureComponent {
     return (
       <Fragment>
         <Toolbar>
-          <Button color="primary" raised onClick={this.onAddCohortClick}>
+          <Button color="primary" raised onClick={this.props.onAddCohortClick}>
             Add New Cohort
           </Button>
         </Toolbar>
-        <Tabs value={ui.currentTab} onChange={this.onChangeTab}>
+        <Tabs value={ui.currentTab} onChange={this.props.onChangeTab}>
           <Tab label="My Cohorts" />
           <Tab label="Public Cohorts" />
         </Tabs>
@@ -88,6 +88,12 @@ const mapStateToProps = state => ({
   }
 });
 
+const mapDispatchToProps = dispatch => ({
+  onAddCohortClick: () => dispatch(addCohortDialogShow()),
+  onChangeTab: (e, tabIndex) => dispatch(cohortsChangeTab(tabIndex)),
+  dispatch
+});
+
 export default compose(
   firebaseConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;
@@ -106,5 +112,5 @@ export default compose(
       ]
     );
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Cohorts);

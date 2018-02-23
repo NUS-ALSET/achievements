@@ -28,6 +28,7 @@ import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import withStyles from "material-ui/styles/withStyles";
 import Cohorts from "../Cohorts/Cohorts";
+import Cohort from "../Cohort/Cohort";
 
 const styles = theme => ({
   "@global": {
@@ -204,6 +205,7 @@ class AppFrame extends React.Component {
               <Route exact path="/courses/:courseId" component={Assignments} />
               <Route exact path="/paths" component={Paths} />
               <Route exact path="/cohorts" component={Cohorts} />
+              <Route exact path={"/cohorts/:cohortId"} component={Cohort} />
               <Route
                 exact
                 path="/(account|profile)/:accountId"

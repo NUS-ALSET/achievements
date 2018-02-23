@@ -17,6 +17,18 @@
       ".read": true,
       ".write": false
     },
+    "cohortCourses": {
+      ".read": true,
+      ".write": false,
+      "$cohortKey": {
+        "$courseKey": {
+          ".write": "
+            auth != null &&
+            auth.uid == root.child('/cohorts/' + $cohortKey + '/owner').val()
+          "
+        }
+      }
+    },
     "cohorts": {
       ".read": true,
       ".write": false,

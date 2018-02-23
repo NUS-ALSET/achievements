@@ -16,6 +16,7 @@ import Table, {
 } from "material-ui/Table";
 
 import withStyles from "material-ui/styles/withStyles";
+import { Link } from "react-router-dom";
 
 const styles = theme => ({
   link: {
@@ -53,9 +54,11 @@ class CohortsTable extends React.PureComponent {
                 <TableCell>{cohort.name}</TableCell>
                 <TableCell>{cohort.instructorName}</TableCell>
                 <TableCell>
-                  <Button raised className={classes.button}>
-                    View
-                  </Button>
+                  <Link to={`/cohorts/${cohort.id}`} className={classes.link}>
+                    <Button raised className={classes.button}>
+                      View
+                    </Button>
+                  </Link>
                   {cohort.owner === currentUserId && (
                     <Button raised className={classes.button}>
                       Delete

@@ -6,6 +6,7 @@ import { courses } from "../containers/Courses/reducer";
 import { firebaseReducer as firebase } from "react-redux-firebase";
 import { root } from "../containers/Root/reducer";
 import { cohorts } from "../containers/Cohorts/reducer";
+import { cohort } from "../containers/Cohort/reducer";
 
 export default combineReducers({
   firebase,
@@ -14,5 +15,6 @@ export default combineReducers({
   root,
   assignments,
   account,
-  cohorts
+  cohorts,
+  cohort
 });
