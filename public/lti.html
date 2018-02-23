@@ -1,0 +1,83 @@
+<html>
+  <head>
+  </head>
+<body>
+  Logging in user and then redirecting. See console for details. <br/>
+
+  <script src="https://www.gstatic.com/firebasejs/4.10.0/firebase.js"></script>
+  <script>
+    
+    // Initialize Firebase
+    var config = {
+        apiKey: "AIzaSyA232bBlzWT0fl3ST_KVC3Aay41yTMz5vM",
+        authDomain: "achievements-dev.firebaseapp.com",
+        databaseURL: "https://achievements-dev.firebaseio.com",
+        projectId: "achievements-dev",
+        storageBucket: "achievements-dev.appspot.com",
+        messagingSenderId: "479020625755"
+      };
+    firebase.initializeApp(config);
+    
+    firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      // User is signed in.
+
+      var uid = user.uid;
+      console.log("Auth State changed");
+      console.log(user.uid, "is logged in.");
+      console.log(user.displayName, "is displayName.");
+    } else {
+      // User is signed out.
+      console.log("no user");
+      // ...
+    }
+});
+
+// Looks for GET parameters in the url. 
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    var items = location.search.substr(1).split("&");
+    for (var index = 0; index < items.length; index++) {
+        tmp = items[index].split("=");
+        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    }
+    return result;
+}
+    
+var login = function(token, pause){
+    firebase.auth().signInWithCustomToken(token).then(
+      function(user){
+          console.log("Logging in user with custom token");
+          console.log("the user",user);
+          if(pause=='true'){
+            console.log("Not redirecting since pause token was ", pause);
+          } else {
+              window.location.replace("./");
+              //window.location.href = "./";
+          }
+      }
+
+    ).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // ...
+        console.log(error.message);
+    });
+
+  }
+
+var pause = findGetParameter("pause");
+var token = findGetParameter("token");
+
+if(token){
+  login(token,pause);
+}
+
+//console.log("current user", firebase.auth().currentUser);
+
+  </script>
+</body>
+
+</html>
