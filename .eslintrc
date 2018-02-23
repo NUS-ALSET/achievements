@@ -89,7 +89,10 @@
       2,
       80,
       2,
-      {"ignoreComments": true}
+      {
+        "ignorePattern": "^import .* from \"[^\"]*\";$",
+        "ignoreComments": true
+      }
     ],
     "react/prefer-es6-class": 1
   },

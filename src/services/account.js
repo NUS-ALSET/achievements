@@ -2,8 +2,8 @@
  * Service for actions with account
  */
 
-import firebase from "firebase";
 import { authProvider } from "../achievementsApp/config";
+import firebase from "firebase";
 
 export class AccountService {
   signIn() {

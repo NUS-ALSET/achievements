@@ -3,22 +3,9 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 26.01.18
  */
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import { accountService } from "../../services/account";
 import { compose } from "redux";
-import { firebaseConnect } from "react-redux-firebase";
-import withStyles from "material-ui/styles/withStyles";
-import Grid from "material-ui/Grid";
-import Card, { CardMedia, CardContent } from "material-ui/Card";
-import Typography from "material-ui/Typography";
-import IconButton from "material-ui/IconButton";
-import TextField from "material-ui/TextField";
-
-import EditIcon from "material-ui-icons/Edit";
-import CheckIcon from "material-ui-icons/Check";
-
-import ExternalProfileCard from "../../components/ExternalProfileCard";
+import { connect } from "react-redux";
 import {
   displayNameEditToggle,
   displayNameUpdateRequest,
@@ -27,13 +14,26 @@ import {
   externalProfileRefreshRequest,
   externalProfileRemoveDialogShow
 } from "./actions";
-import AddProfileDialog from "../../components/AddProfileDialog";
+import { firebaseConnect } from "react-redux-firebase";
 import { notificationShow } from "../Root/actions";
-
-import { accountService } from "../../services/account";
 import { sagaInjector } from "../../services/saga";
+import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
+import Card, { CardContent, CardMedia } from "material-ui/Card";
+import CheckIcon from "material-ui-icons/Check";
+import EditIcon from "material-ui-icons/Edit";
+
+import ExternalProfileCard from "../../components/ExternalProfileCard";
+import Grid from "material-ui/Grid";
+
+import IconButton from "material-ui/IconButton";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+import RemoveExternalProfileDialog from "../../components/dialogs/RemoveProfileDialog";
+
+import TextField from "material-ui/TextField";
+import Typography from "material-ui/Typography";
 import sagas from "./sagas";
-import RemoveExternalProfileDialog from "../../components/RemoveProfileDialog";
+import withStyles from "material-ui/styles/withStyles";
 
 const styles = theme => ({
   card: {

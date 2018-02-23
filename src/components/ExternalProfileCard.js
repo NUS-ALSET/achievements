@@ -4,12 +4,12 @@
  * @created 30.01.18
  */
 
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import Card, { CardContent, CardActions } from "material-ui/Card";
-import Typography from "material-ui/Typography";
-import Button from "material-ui/Button";
 import { CircularProgress } from "material-ui/Progress";
+import Button from "material-ui/Button";
+import Card, { CardActions, CardContent } from "material-ui/Card";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+import Typography from "material-ui/Typography";
 
 class ExternalProfileCard extends React.PureComponent {
   static propTypes = {

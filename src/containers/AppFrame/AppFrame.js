@@ -1,32 +1,34 @@
-import React, { Fragment } from "react";
+import { APP_SETTING } from "../../achievementsApp/config";
+import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
+import { Home } from "../../components/Home";
+import { Route, HashRouter as Router } from "react-router-dom";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import withStyles from "material-ui/styles/withStyles";
-import Typography from "material-ui/Typography";
+import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
+import { signInRequest, signOutRequest } from "../Root/actions";
+import Account from "../../containers/Account/Account";
 import AppBar from "material-ui/AppBar";
-import Toolbar from "material-ui/Toolbar";
-import Hidden from "material-ui/Hidden";
-import Menu from "material-ui/Menu";
-import Button from "material-ui/Button";
-
-import { HashRouter, Route } from "react-router-dom";
-
-import IconButton from "material-ui/IconButton";
-import MenuIcon from "material-ui-icons/Menu";
-import MoreVertIcon from "material-ui-icons/MoreVert";
 
 import AppDrawer from "../../components/AppDrawer";
-import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
 
-import { APP_SETTING } from "../../achievementsApp/config";
-import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
-
-import Account from "../../containers/Account/Account";
 import Assignments from "../Assignments/Assignments";
+import Button from "material-ui/Button";
 import Courses from "../Courses/Courses";
-import { Home } from "../../components/Home";
-import { signInRequest, signOutRequest } from "../Root/actions";
-import { history } from "../../services/history";
+
+import Hidden from "material-ui/Hidden";
+import IconButton from "material-ui/IconButton";
+
+import Menu from "material-ui/Menu";
+import MenuIcon from "material-ui-icons/Menu";
+
+import MoreVertIcon from "material-ui-icons/MoreVert";
+import Paths from "../Paths/Paths";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
+import withStyles from "material-ui/styles/withStyles";
+import Cohorts from "../Cohorts/Cohorts";
+import Cohort from "../Cohort/Cohort";
 
 const styles = theme => ({
   "@global": {
@@ -128,7 +130,7 @@ class AppFrame extends React.Component {
     const { classes, userId } = this.props;
 
     return (
-      <HashRouter basename={APP_SETTING.basename} history={history}>
+      <Router>
         <div className={classes.root}>
           <div className={classes.appFrame}>
             <AppBar className={classes.appBar} onClose={this.handleDrawerClose}>
@@ -198,18 +200,21 @@ class AppFrame extends React.Component {
               userId={userId}
             />
             <main className={classes.content}>
-              <Route exact path="*(/|/home)" component={Home} />
-              <Route exact path="*/courses" component={Courses} />
-              <Route exact path="*/courses/:courseId" component={Assignments} />
+              <Route exact path="(/|/home)" component={Home} />
+              <Route exact path="/courses" component={Courses} />
+              <Route exact path="/courses/:courseId" component={Assignments} />
+              <Route exact path="/paths" component={Paths} />
+              <Route exact path="/cohorts" component={Cohorts} />
+              <Route exact path={"/cohorts/:cohortId"} component={Cohort} />
               <Route
                 exact
-                path="*(account|profile)/:accountId"
+                path="/(account|profile)/:accountId"
                 render={() => <Account userName={this.props.userName} />}
               />
             </main>
           </div>
         </div>
-      </HashRouter>
+      </Router>
     );
   }
 }

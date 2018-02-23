@@ -1,13 +1,12 @@
-import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
-import Divider from "material-ui/Divider";
 import { MenuItem } from "material-ui/Menu";
-import PropTypes from "prop-types";
 import Button from "material-ui/Button";
+import Divider from "material-ui/Divider";
+import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
 
 import StarIcon from "material-ui-icons/Star";
-import { APP_SETTING } from "../achievementsApp/config";
 
 const linkStyle = {
   textDecoration: "none"
@@ -17,7 +16,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
   <div>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to={`${APP_SETTING.basename}home`} style={linkStyle}>
+      <Link to={"/home"} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -25,7 +24,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Home" />
         </ListItem>
       </Link>
-      <Link to={`${APP_SETTING.basename}courses`} style={linkStyle}>
+      <Link to={"/courses"} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -33,10 +32,18 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Courses" />
         </ListItem>
       </Link>
+      <Link to={"/paths"} style={linkStyle}>
+        <ListItem button>
+          <ListItemIcon>
+            <StarIcon />
+          </ListItemIcon>
+          <ListItemText primary="Paths" />
+        </ListItem>
+      </Link>
     </List>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to={`${APP_SETTING.basename}cohorts`} style={linkStyle}>
+      <Link to={"/cohorts"} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -44,7 +51,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Cohorts" />
         </ListItem>
       </Link>
-      <Link to={`${APP_SETTING.basename}profile/${userId}`} style={linkStyle}>
+      <Link to={`/profile/${userId}`} style={linkStyle}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -60,10 +67,7 @@ const AppBarMenuItems = ({ onClick, logout, login, isAuth }) => (
   <div>
     {isAuth ? (
       <Fragment>
-        <Link
-          to={`${APP_SETTING.basename}account/${isAuth}`}
-          style={linkStyle}
-        >
+        <Link to={`/account/${isAuth}`} style={linkStyle}>
           <MenuItem
             onClick={() => {
               onClick();

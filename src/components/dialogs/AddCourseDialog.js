@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-
+import Button from "material-ui/Button";
 import Dialog, {
   DialogActions,
   DialogContent,
   DialogTitle
 } from "material-ui/Dialog/index";
-import Button from "material-ui/Button";
+
+import PropTypes from "prop-types";
+import React from "react";
 import TextField from "material-ui/TextField/TextField";
 
 export class AddCourseDialog extends React.Component {
@@ -28,7 +28,7 @@ export class AddCourseDialog extends React.Component {
   render() {
     return (
       <Dialog open={this.props.open} onClose={this.props.onClose}>
-        <DialogTitle id="simple-dialog-title">Add New Course</DialogTitle>
+        <DialogTitle>Add New Course</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

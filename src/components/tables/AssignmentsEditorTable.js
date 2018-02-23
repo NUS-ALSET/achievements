@@ -1,33 +1,33 @@
-import React, { Fragment } from "react";
+import {
+  assignmentDeleteRequest,
+  assignmentQuickUpdateRequest,
+  assignmentReorderRequest,
+  assignmentShowAddDialog,
+  assignmentShowEditDialog,
+  assignmentsEditorTableShown
+} from "../../containers/Assignments/actions";
+import { isEmpty } from "react-redux-firebase";
+
+import { withRouter } from "react-router-dom";
+import Button from "material-ui/Button";
+
+import DeleteIcon from "material-ui-icons/Delete";
+import EditIcon from "material-ui-icons/Edit";
+import ExpandLessIcon from "material-ui-icons/ExpandLess";
+import ExpandMoreIcon from "material-ui-icons/ExpandMore";
+import IconButton from "material-ui/IconButton";
 import PropTypes from "prop-types";
 
-import { isEmpty } from "react-redux-firebase";
-import { withRouter } from "react-router-dom";
-
-import Toolbar from "material-ui/Toolbar";
-import Button from "material-ui/Button";
-import IconButton from "material-ui/IconButton";
+import React, { Fragment } from "react";
 import Switch from "material-ui/Switch";
-import TextField from "material-ui/TextField";
 import Table, {
   TableBody,
   TableCell,
   TableHead,
   TableRow
 } from "material-ui/Table";
-
-import EditIcon from "material-ui-icons/Edit";
-import DeleteIcon from "material-ui-icons/Delete";
-import ExpandLessIcon from "material-ui-icons/ExpandLess";
-import ExpandMoreIcon from "material-ui-icons/ExpandMore";
-import {
-  assignmentDeleteRequest,
-  assignmentQuickUpdateRequest,
-  assignmentReorderRequest,
-  assignmentsEditorTableShown,
-  assignmentShowAddDialog,
-  assignmentShowEditDialog
-} from "../containers/Assignments/actions";
+import TextField from "material-ui/TextField";
+import Toolbar from "material-ui/Toolbar";
 
 const dateEditStyle = {
   width: "220px"

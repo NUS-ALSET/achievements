@@ -1,20 +1,20 @@
-import { call, put, takeLatest } from "redux-saga/effects";
-import { delay } from "redux-saga";
 import {
   ACCEPT_EULA_REQUEST,
-  acceptEulaFail,
-  acceptEulaSuccess,
   NOTIFICATION_SHOW,
-  notificationHide,
-  showAcceptEulaDialog,
   SIGN_IN_REQUEST,
   SIGN_OUT_REQUEST,
+  acceptEulaFail,
+  acceptEulaSuccess,
+  notificationHide,
+  showAcceptEulaDialog,
   signInFail,
   signInSuccess,
   signOutSuccess
 } from "./actions";
-import { accountService } from "../../services/account";
 import { APP_SETTING } from "../../achievementsApp/config";
+import { accountService } from "../../services/account";
+import { call, put, takeLatest } from "redux-saga/effects";
+import { delay } from "redux-saga";
 
 function* handleSignInRequest() {
   try {
