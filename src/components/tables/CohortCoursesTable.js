@@ -7,7 +7,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
 import Table, {
   TableBody,
@@ -46,7 +46,7 @@ class CohortCoursesTable extends React.PureComponent {
             <TableCell>Course Rank</TableCell>
             <TableCell>Participants</TableCell>
             <TableCell>Path Progress</TableCell>
-            <TableCell>Event</TableCell>
+            <TableCell>Course</TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
@@ -59,13 +59,7 @@ class CohortCoursesTable extends React.PureComponent {
               <TableCell>{course.participants}</TableCell>
               <TableCell>{course.progress}</TableCell>
               <TableCell>
-                <a
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href={`/#/courses/${course.id}`}
-                >
-                  {course.name}
-                </a>
+                <Link to={`/courses/${course.id}`}>{course.name}</Link>
               </TableCell>
               {isOwner && (
                 <TableCell>
