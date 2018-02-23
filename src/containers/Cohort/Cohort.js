@@ -43,7 +43,7 @@ class Cohort extends React.PureComponent {
 
   render() {
     const { currentUser, cohort, courses } = this.props;
-    const isOwner = currentUser.id && currentUser.id === cohort.owner;
+    const isOwner = currentUser.uid && currentUser.uid === cohort.owner;
 
     return (
       <Fragment>
