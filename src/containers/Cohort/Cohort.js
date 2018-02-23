@@ -8,21 +8,46 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
+import { Link } from "react-router-dom";
+
 import Button from "material-ui/Button";
 import TextField from "material-ui/TextField";
+import Toolbar from "material-ui/Toolbar";
+import Typography from "material-ui/Typography";
 import MenuItem from "material-ui/Menu/MenuItem";
+
+import ChevronRightIcon from "material-ui-icons/ChevronRight";
 
 import { firebaseConnect } from "react-redux-firebase";
 
 import CohortCoursesTable from "../../components/tables/CohortCoursesTable";
 import { cohortsService } from "../../services/cohorts";
 import { selectCohort } from "./selectors";
+import { cohortCoursesRecalculateRequest } from "./actions";
+import { sagaInjector } from "../../services/saga";
 
-const TEXTFIELD_STYLE_TOP = 14;
+import withStyles from "material-ui/styles/withStyles";
+
+import sagas from "./sagas";
+
+const styles = theme => ({
+  breadcrumbLink: {
+    textDecoration: "none"
+  },
+  breadcrumbText: {
+    margin: theme.spacing.unit,
+    textTransform: "uppercase",
+    fontSize: "0.875rem"
+  },
+  toolbarItem: {
+    margin: theme.spacing.unit
+  }
+});
 
 class Cohort extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
+    classes: PropTypes.object,
     cohort: PropTypes.object,
     cohortCourses: PropTypes.object,
     courses: PropTypes.object,
@@ -35,57 +60,88 @@ class Cohort extends React.PureComponent {
   };
 
   componentDidMount() {
-    const { cohort } = this.props;
+    const { dispatch, cohort } = this.props;
 
-    if (cohort && cohort.id) {
-      cohortsService.recalculateCourses(cohort.id);
-    }
+    dispatch(cohortCoursesRecalculateRequest(cohort.id));
   }
 
   selectCourse = e => this.setState({ selectedCourse: e.target.value });
 
   addCourse = () => {
     const { cohort } = this.props;
+
     cohortsService.addCourse(cohort.id, this.state.selectedCourse);
   };
 
+  recalculate = () => {
+    const { cohort } = this.props;
+    cohortsService.recalculateCourses(cohort.id);
+  };
+
   render() {
-    const { currentUser, cohort, courses } = this.props;
+    const { dispatch, currentUser, cohort, courses, classes } = this.props;
     const isOwner = currentUser.uid && currentUser.uid === cohort.owner;
 
     return (
       <Fragment>
+        <Toolbar>
+          <Link to={"/cohorts"} className={classes.breadcrumbLink}>
+            <Typography className={classes.breadcrumbText}>Cohorts</Typography>
+          </Link>
+          <ChevronRightIcon />
+          <Typography className={classes.breadcrumbText}>
+            {cohort.name}
+          </Typography>
+        </Toolbar>
+        <Typography gutterBottom>{cohort.description}</Typography>
         {isOwner && (
-          <TextField
-            select
-            value={this.state.selectedCourse}
-            onChange={this.selectCourse}
-            label="Course"
-            style={{
-              width: 320,
-              top: this.state.selectedCourse ? 0 : TEXTFIELD_STYLE_TOP,
-              margin: 4
-            }}
-          >
-            {Object.keys(courses || {})
-              .map(id => ({ ...courses[id], id }))
-              .map(course => (
-                <MenuItem key={course.id} value={course.id}>
-                  {course.name}
-                </MenuItem>
-              ))}
-          </TextField>
+          <Toolbar>
+            <TextField
+              select
+              value={this.state.selectedCourse}
+              onChange={this.selectCourse}
+              label="Course"
+              className={classes.toolbarItem}
+              style={{
+                width: 320,
+                marginTop: 0
+              }}
+            >
+              {Object.keys(courses || {})
+                .map(id => ({ ...courses[id], id }))
+                .map(course => (
+                  <MenuItem key={course.id} value={course.id}>
+                    {course.name}
+                  </MenuItem>
+                ))}
+            </TextField>
+            <Button
+              raised
+              onClick={this.addCourse}
+              className={classes.toolbarItem}
+            >
+              Add
+            </Button>
+            <Button
+              raised
+              onClick={this.recalculate}
+              className={classes.toolbarItem}
+            >
+              Recalculate
+            </Button>
+          </Toolbar>
         )}
-        {isOwner && (
-          <Button raised onClick={this.addCourse}>
-            Add
-          </Button>
-        )}
-        <CohortCoursesTable isOwner={isOwner} courses={cohort.courses} />
+        <CohortCoursesTable
+          dispatch={dispatch}
+          isOwner={isOwner}
+          courses={cohort.courses}
+        />
       </Fragment>
     );
   }
 }
+
+sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
   currentUser: {
@@ -102,6 +158,7 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default compose(
+  withStyles(styles),
   firebaseConnect((ownProps, store) => {
     const cohortId = ownProps.match.params.cohortId;
     const firebaseAuth = store.getState().firebase.auth;

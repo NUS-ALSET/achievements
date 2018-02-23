@@ -33,11 +33,19 @@ class Cohorts extends React.PureComponent {
     publicCohorts: PropTypes.object,
 
     onAddCohortClick: PropTypes.func.isRequired,
+    onEditCohortClick: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
   };
 
   render() {
-    const { dispatch, ui, myCohorts, publicCohorts, currentUser } = this.props;
+    const {
+      dispatch,
+      ui,
+      myCohorts,
+      publicCohorts,
+      currentUser,
+      onEditCohortClick
+    } = this.props;
     let cohorts;
 
     switch (ui.currentTab) {
@@ -64,10 +72,15 @@ class Cohorts extends React.PureComponent {
           <Tab label="My Cohorts" />
           <Tab label="Public Cohorts" />
         </Tabs>
-        <CohortsTable cohorts={cohorts} currentUserId={currentUser.id || ""} />
+        <CohortsTable
+          onEditCohortClick={onEditCohortClick}
+          cohorts={cohorts}
+          currentUserId={currentUser.id || ""}
+        />
         <AddCohortDialog
           open={ui.dialog && ui.dialog.type === "addCohort"}
           dispatch={dispatch}
+          cohort={ui.dialog.cohort}
         />
       </Fragment>
     );
@@ -91,6 +104,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   onAddCohortClick: () => dispatch(addCohortDialogShow()),
   onChangeTab: (e, tabIndex) => dispatch(cohortsChangeTab(tabIndex)),
+  onEditCohortClick: cohort => dispatch(addCohortDialogShow(cohort)),
   dispatch
 });
 

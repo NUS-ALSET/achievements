@@ -1,4 +1,3 @@
-import { APP_SETTING } from "../../achievementsApp/config";
 import { LinearProgress } from "material-ui/Progress";
 import { Link, withRouter } from "react-router-dom";
 import {
@@ -228,10 +227,7 @@ class Assignments extends React.Component {
     return (
       <Fragment>
         <Toolbar>
-          <Link
-            to={`${APP_SETTING.basename}courses`}
-            className={classes.breadcrumbLink}
-          >
+          <Link to="/courses" className={classes.breadcrumbLink}>
             <Typography className={classes.breadcrumbText}>Courses</Typography>
           </Link>
           <ChevronRightIcon />
