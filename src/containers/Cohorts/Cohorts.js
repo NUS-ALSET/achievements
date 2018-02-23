@@ -21,8 +21,8 @@ import AddCohortDialog from "../../components/dialogs/AddCohortDialog";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 
-const COHORT_TAB_MY_COHORTS = 0;
-const COHORT_TAB_PUBLIC_COHORTS = 1;
+const COHORT_TAB_PUBLIC_COHORTS = 0;
+const COHORT_TAB_MY_COHORTS = 1;
 
 class Cohorts extends React.PureComponent {
   static propTypes = {
@@ -69,8 +69,8 @@ class Cohorts extends React.PureComponent {
           </Button>
         </Toolbar>
         <Tabs value={ui.currentTab} onChange={this.props.onChangeTab}>
-          <Tab label="My Cohorts" />
           <Tab label="Public Cohorts" />
+          <Tab label="My Cohorts" />
         </Tabs>
         <CohortsTable
           onEditCohortClick={onEditCohortClick}
