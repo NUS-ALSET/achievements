@@ -8,7 +8,7 @@ admin.initializeApp({
   databaseURL: "https://fir-project-3d2a4.firebaseio.com"
 });
 
-// admin
-//   .database()
-//   .ref("/test/")
-//   .update();
+admin
+  .database()
+  .ref("/logged_events")
+  .remove();

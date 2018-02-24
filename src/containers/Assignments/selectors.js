@@ -106,14 +106,39 @@ export const getAssignmentsUIProps = state => ({
   currentAssignment: state.assignments.currentAssignment
 });
 
-export const getCurrentUserProps = state => ({
+const isOwner = (state, ownProps) =>
+  state.firebase.auth.uid &&
+  getFrom(
+    getFrom(state.firebase.data.courses, ownProps.match.params.courseId),
+    "owner"
+  ) === state.firebase.auth.uid;
+const isAssistant = (state, ownProps) =>
+  getFrom(state.firebase.data.courseAssistants, ownProps.match.params.courseId)[
+    state.firebase.auth.uid
+  ];
+
+export const getCurrentUserProps = (state, ownProps) => ({
   id: state.firebase.auth.uid,
-  name: state.firebase.auth.displayName,
+  name: getFrom(state.firebase.data.users, state.firebase.auth.uid),
+  isOwner: isOwner(state, ownProps),
+  isAssistant: isOwner(state, ownProps) || isAssistant(state, ownProps),
   achievements: getFrom(
     state.firebase.data.userAchievements,
     state.firebase.auth.uid
   )
 });
+
+function getValueToSort(solutions, sortField) {
+  let aValue = solutions[sortField];
+
+  if (!aValue) {
+    return aValue;
+  }
+  if (aValue.orderValue !== undefined) {
+    return aValue.orderValue;
+  }
+  return aValue.value;
+}
 
 export const getCourseProps = (state, ownProps) => {
   const courseId = ownProps.match.params.courseId;
@@ -139,10 +164,8 @@ export const getCourseProps = (state, ownProps) => {
       let result = 0;
 
       if (state.assignments.sort.field !== "studentName") {
-        aValue = a.solutions[state.assignments.sort.field];
-        aValue = aValue && (aValue.orderValue || aValue.value);
-        bValue = b.solutions[state.assignments.sort.field];
-        bValue = bValue && (bValue.orderValue || bValue.value);
+        aValue = getValueToSort(a.solutions, state.assignments.sort.field);
+        bValue = getValueToSort(b.solutions, state.assignments.sort.field);
       }
       aValue = aValue || "";
       bValue = bValue || "";
