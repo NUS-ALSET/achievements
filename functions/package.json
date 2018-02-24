@@ -5,7 +5,8 @@
     "axios": "^0.17.1",
     "firebase-admin": "~5.4.0",
     "firebase-functions": "^0.8.1",
-    "firebase-queue": "^1.6.1"
+    "firebase-queue": "^1.6.1",
+    "ims-lti": "^3.0.2"
   },
   "private": true
 }

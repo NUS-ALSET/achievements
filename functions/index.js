@@ -1,10 +1,9 @@
 /* eslint-disable no-magic-numbers */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const admin2 = require("firebase-admin");
-
 const Queue = require("firebase-queue");
 const axios = require("axios");
+const lti = require('ims-lti');
 
 const ERROR_401 = 401;
 const profilesRefreshApproach =
@@ -272,7 +271,6 @@ function get_token(data,res){
         let message = "user_id -> "+data['user_id']+"\n";
         message += "oauth_consumer_key -> "+data['oauth_consumer_key']+"\n";
         message += "create user -> "+uid+"\n";
-        message += "custom token is -> "+customToken;
         message += "redirect to\n\n "
         message += data["APP_REDIRECT_URL"]+customToken;
         
@@ -300,21 +298,44 @@ exports.ltiLogin = functions.https.onRequest((req, res) => {
   let oauth_consumer_key = data['oauth_consumer_key'];
   let user_id = data['user_id'];
 
-  admin
-  .database()
-  .ref("lti")
-  .once("value")
-  .then(snapshot => {
-    ltiData = snapshot.val();
-    data["APP_REDIRECT_URL"] = ltiData['redirectUrl']+"?pause="+ltiData['pauseRedirect']+"&token=";
-    if(canCreateTokens ){
-      get_token(data,res);
-    }
-    else{
-      res.send("Cannot create tokens. Service account file may not have been deployed.");
-    }
-
+  // Hardcoding secret until starts being pulled form database. 
+  //
+  let consumerSecret = "secret";
+  /*
+  admin.database().ref("lti/secrets/"+oauth_consumer_key)
+  .once("value").then(snapshot => {
+    consumerSecret = snapshot.val();
   });
+  */
+
+  let provider = new lti.Provider(oauth_consumer_key , consumerSecret);  
+  
+  provider.valid_request(req, data, function(err, isValid){  
+    //if isValid , send us a congrats message
+    if(isValid){
+      res.send("The LTI login request was valid. This had been a blocking issue. Login logic should be updated.");
+    // else continue to log LTI users in anyway. 
+    } else {
+      //res.send("LTI login request was invalid. protocol -> "+req.protocol+" error-> "+err);
+    
+    // Get the redirectURL and other lti details from the database.
+    admin
+    .database()
+    .ref("lti")
+    .once("value")
+    .then(snapshot => {
+      ltiData = snapshot.val();
+      data["APP_REDIRECT_URL"] = ltiData['redirectUrl']+"?pause="+ltiData['pauseRedirect']+"&token=";
+      if(canCreateTokens ){
+        get_token(data,res);
+      }
+      else{
+        res.send("Cannot create tokens. Service account file may not have been deployed.");
+      }
+    });
+    
+  }
+});
   
 
 });
