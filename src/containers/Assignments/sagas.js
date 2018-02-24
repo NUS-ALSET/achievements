@@ -15,7 +15,10 @@ import {
   assignmentReorderSuccess,
   assignmentSolutionFail,
   assignmentSolutionSuccess,
-  updateNewAssignmentField
+  updateNewAssignmentField,
+  ASSIGNMENT_REFRESH_PROFILES_REQUEST,
+  assignmentRefreshProfilesSuccess,
+  assignmentRefreshProfilesFail
 } from "./actions";
 import { call, put, select, takeLatest } from "redux-saga/effects";
 import { coursesService } from "../../services/courses";
@@ -147,6 +150,16 @@ export function* assignmentsEditorTableShownHandler(action) {
   }
 }
 
+export function* assignmentRefreshProfilesRequestHandler(action) {
+  try {
+    yield call(coursesService.refreshProfileSolutions, action.courseId);
+    yield put(assignmentRefreshProfilesSuccess(action.courseId));
+  } catch (err) {
+    yield put(assignmentRefreshProfilesFail(action.courseId, err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
@@ -179,6 +192,12 @@ export default [
     yield takeLatest(
       ASSIGNMENTS_EDITOR_TABLE_SHOWN,
       assignmentsEditorTableShownHandler
+    );
+  },
+  function* watchRefreshProfilesRequest() {
+    yield takeLatest(
+      ASSIGNMENT_REFRESH_PROFILES_REQUEST,
+      assignmentRefreshProfilesRequestHandler
     );
   }
 ];

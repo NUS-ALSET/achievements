@@ -59,6 +59,28 @@ export const assignmentAddFail = error => ({
   error
 });
 
+export const ASSIGNMENT_REFRESH_PROFILES_REQUEST =
+  "ASSIGNMENT_REFRESH_PROFILES_REQUEST";
+export const assignmentRefreshProfilesRequest = courseId => ({
+  type: ASSIGNMENT_REFRESH_PROFILES_REQUEST,
+  courseId
+});
+
+export const ASSIGNMENT_REFRESH_PROFILES_SUCCESS =
+  "ASSIGNMENT_REFRESH_PROFILES_SUCCESS";
+export const assignmentRefreshProfilesSuccess = courseId => ({
+  type: ASSIGNMENT_REFRESH_PROFILES_SUCCESS,
+  courseId
+});
+
+export const ASSIGNMENT_REFRESH_PROFILES_FAIL =
+  "ASSIGNMENT_REFRESH_PROFILES_FAIL";
+export const assignmentRefreshProfilesFail = (courseId, reason) => ({
+  type: ASSIGNMENT_REFRESH_PROFILES_FAIL,
+  courseId,
+  reason
+});
+
 export const ASSIGNMENT_QUICK_UPDATE_REQUEST =
   "ASSIGNMENT_QUICK_UPDATE_REQUEST";
 export const assignmentQuickUpdateRequest = (

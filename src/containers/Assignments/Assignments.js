@@ -6,7 +6,8 @@ import {
   assignmentSubmitRequest,
   assignmentSwitchTab,
   assignmentsSortChange,
-  coursePasswordEnterSuccess
+  coursePasswordEnterSuccess,
+  assignmentRefreshProfilesRequest
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -140,6 +141,9 @@ class Assignments extends React.Component {
     this.props.dispatch(assignmentCloseDialog());
   };
 
+  refreshProfileSolutions = () =>
+    this.props.dispatch(assignmentRefreshProfilesRequest(this.props.course.id));
+
   getPasswordView() {
     return (
       <Fragment>
@@ -235,6 +239,11 @@ class Assignments extends React.Component {
             {course.name}
           </Typography>
         </Toolbar>
+        {course.owner === currentUser.id && (
+          <Button raised onClick={this.refreshProfileSolutions}>
+            Refresh achievements
+          </Button>
+        )}
         {AssignmentView}
         <AddProfileDialog
           uid={currentUser.id}

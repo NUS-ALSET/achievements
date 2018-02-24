@@ -547,6 +547,56 @@ class CoursesService {
     return currentUserData.concat(result);
   }
 
+  refreshProfileSolutions(courseId) {
+    return firebase
+      .database()
+      .ref(`/courseMembers/${courseId}`)
+      .once("value")
+      .then(membersSnapshot => Object.keys(membersSnapshot.val() || {}))
+      .then(memberIds =>
+        Promise.all(
+          memberIds.map(id =>
+            firebase
+              .database()
+              .ref(`/userAchievements/${id}/CodeCombat/id`)
+              .once("value")
+              .then(profileSnapshot => ({
+                id,
+                login: profileSnapshot.val()
+              }))
+          )
+        )
+      )
+      .then(logins => logins.filter(loginInfo => loginInfo.login))
+      .then(logins => {
+        const updates = {};
+        let needUpdate = false;
+
+        logins.forEach(loginInfo => {
+          const key = firebase
+            .database()
+            .ref("updateProfileQueue/tasks")
+            .push().key;
+
+          needUpdate = true;
+
+          // FIXIT: make it assignment-depended to select correct external service
+          updates[key] = {
+            service: "CodeCombat",
+            serviceId: loginInfo.login,
+            uid: loginInfo.id
+          };
+        });
+
+        if (needUpdate) {
+          return firebase
+            .database()
+            .ref("updateProfileQueue/tasks")
+            .update(updates);
+        }
+      });
+  }
+
   processAssignmentsOrderIndexes(courseId, assignments) {
     const ordersMap = {};
     let needUpdate = false;

@@ -187,8 +187,7 @@
           ".write": "
             auth != null &&
             newData.exists() &&
-            newData.hasChild('uid') &&
-            newData.child('uid').val() == auth.uid
+            newData.hasChild('uid')
           "
         }
       }
