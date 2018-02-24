@@ -6,7 +6,11 @@ import {
   ASSIGNMENT_SHOW_EDIT_DIALOG,
   ASSIGNMENT_SUBMIT_REQUEST,
   ASSIGNMENT_SWITCH_TAB,
-  UPDATE_NEW_ASSIGNMENT_FIELD
+  UPDATE_NEW_ASSIGNMENT_FIELD,
+  ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW,
+  ASSIGNMENT_ASSISTANT_FOUND,
+  ASSIGNMENT_ADD_ASSISTANT_SUCCESS,
+  ASSIGNMENT_REMOVE_ASSISTANT_SUCCESS
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -104,6 +108,40 @@ export const assignments = (
         dialog: {
           ...state.dialog,
           type: ""
+        }
+      };
+    case ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW:
+      return {
+        ...state,
+        dialog: {
+          type: "CourseAssistants",
+          assistants: action.assistants
+        }
+      };
+    case ASSIGNMENT_ASSISTANT_FOUND:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          newAssistant: action.assistant
+        }
+      };
+    case ASSIGNMENT_ADD_ASSISTANT_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          assistants: [...state.dialog.assistants, state.dialog.newAssistant]
+        }
+      };
+    case ASSIGNMENT_REMOVE_ASSISTANT_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          assistants: state.dialog.assistants.filter(
+            assistant => assistant.id !== action.assistantId
+          )
         }
       };
     default:
