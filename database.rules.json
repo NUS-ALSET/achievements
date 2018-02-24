@@ -74,10 +74,7 @@
     "courseAssistants": {
       "$courseKey": {
         ".read": "auth != null",
-        ".write": "
-        	auth != null &&
-            auth.uid == root.child('courses/' + $courseKey + '/owner').val()
-        "
+        ".write": "auth != null && auth.uid == root.child('courses/' + $courseKey + '/owner').val()"
       }
     },
     "courses": {
