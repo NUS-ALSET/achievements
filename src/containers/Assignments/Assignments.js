@@ -7,7 +7,8 @@ import {
   assignmentSwitchTab,
   assignmentsSortChange,
   coursePasswordEnterSuccess,
-  assignmentRefreshProfilesRequest
+  assignmentRefreshProfilesRequest,
+  assignmentsAssistantsShowRequest
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -35,6 +36,7 @@ import Toolbar from "material-ui/Toolbar";
 import Typography from "material-ui/Typography";
 import sagas from "./sagas";
 import withStyles from "material-ui/styles/withStyles";
+import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -44,6 +46,13 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     textTransform: "uppercase",
     fontSize: "0.875rem"
+  },
+  actions: {
+    position: "absolute",
+    right: theme.spacing.unit
+  },
+  action: {
+    marginLeft: theme.spacing.unit
   }
 });
 
@@ -144,6 +153,9 @@ class Assignments extends React.Component {
   refreshProfileSolutions = () =>
     this.props.dispatch(assignmentRefreshProfilesRequest(this.props.course.id));
 
+  assignmentsAssistantsShowRequest = () =>
+    this.props.dispatch(assignmentsAssistantsShowRequest(this.props.course.id));
+
   getPasswordView() {
     return (
       <Fragment>
@@ -198,7 +210,7 @@ class Assignments extends React.Component {
     let AssignmentView = this.getPasswordView();
 
     // If owner match user id then we suppose use as instructor and give him special view
-    if (course.owner === currentUser.id) {
+    if (currentUser.isAssistant) {
       AssignmentView = (
         <InstructorTabs
           dispatch={dispatch}
@@ -238,12 +250,25 @@ class Assignments extends React.Component {
           <Typography className={classes.breadcrumbText}>
             {course.name}
           </Typography>
+          {course.owner === currentUser.id && (
+            <div className={classes.actions}>
+              <Button
+                className={classes.action}
+                raised
+                onClick={this.refreshProfileSolutions}
+              >
+                Refresh achievements
+              </Button>
+              <Button
+                className={classes.action}
+                raised
+                onClick={this.assignmentsAssistantsShowRequest}
+              >
+                Assistants
+              </Button>
+            </div>
+          )}
         </Toolbar>
-        {course.owner === currentUser.id && (
-          <Button raised onClick={this.refreshProfileSolutions}>
-            Refresh achievements
-          </Button>
-        )}
         {AssignmentView}
         <AddProfileDialog
           uid={currentUser.id}
@@ -256,6 +281,15 @@ class Assignments extends React.Component {
           dispatch={dispatch}
           onCommit={this.onProfileCommit}
         />
+        {currentUser.isOwner && (
+          <ControlAssistantsDialog
+            dispatch={dispatch}
+            course={course}
+            assistants={(ui.dialog && ui.dialog.assistants) || []}
+            newAssistant={ui.dialog && ui.dialog.newAssistant}
+            open={ui.dialog && ui.dialog.type === "CourseAssistants"}
+          />
+        )}
         <AddTextSolutionDialog
           open={ui.dialog && ui.dialog.type === "Text"}
           courseId={course.id}
@@ -278,9 +312,10 @@ sagaInjector.inject(sagas);
  */
 const mapStateToProps = (state, ownProps) => ({
   ui: getAssignmentsUIProps(state),
-  currentUser: getCurrentUserProps(state),
+  currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
+  assistants: state.assignments.assistants,
   courseMembers: state.firebase.data.courseMembers
 });
 
@@ -295,6 +330,7 @@ export default compose(
     return [
       "/users",
       `/courses/${courseId}`,
+      `/courseAssistants/${courseId}`,
       `/courseMembers/${courseId}`,
       `/solutions/${courseId}`,
       `/solutions/${courseId}/${uid}`,

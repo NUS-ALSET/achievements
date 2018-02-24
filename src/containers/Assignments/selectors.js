@@ -106,9 +106,22 @@ export const getAssignmentsUIProps = state => ({
   currentAssignment: state.assignments.currentAssignment
 });
 
-export const getCurrentUserProps = state => ({
+const isOwner = (state, ownProps) =>
+  state.firebase.auth.uid &&
+  getFrom(
+    getFrom(state.firebase.data.courses, ownProps.match.params.courseId),
+    "owner"
+  ) === state.firebase.auth.uid;
+const isAssistant = (state, ownProps) =>
+  getFrom(state.firebase.data.courseAssistants, ownProps.match.params.courseId)[
+    state.firebase.auth.uid
+  ];
+
+export const getCurrentUserProps = (state, ownProps) => ({
   id: state.firebase.auth.uid,
-  name: state.firebase.auth.displayName,
+  name: getFrom(state.firebase.data.users, state.firebase.auth.uid),
+  isOwner: isOwner(state, ownProps),
+  isAssistant: isOwner(state, ownProps) || isAssistant(state, ownProps),
   achievements: getFrom(
     state.firebase.data.userAchievements,
     state.firebase.auth.uid

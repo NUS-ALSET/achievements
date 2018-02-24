@@ -214,3 +214,80 @@ export const assignmentsEditorTableShown = courseId => ({
   type: ASSIGNMENTS_EDITOR_TABLE_SHOWN,
   courseId
 });
+
+// Not usual request, it should collect assistants data to open
+export const ASSIGNMENTS_ASSISTANTS_SHOW_REQUEST =
+  "ASSIGNMENTS_ASSISTANTS_SHOW_REQUEST";
+export const assignmentsAssistantsShowRequest = courseId => ({
+  type: ASSIGNMENTS_ASSISTANTS_SHOW_REQUEST,
+  courseId
+});
+
+export const ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW =
+  "ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW";
+export const assignmentsAssistantsDialogShow = (courseId, assistants) => ({
+  type: ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW,
+  courseId,
+  assistants
+});
+
+export const ASSIGNMENT_ASSISTANT_KEY_CHANGE =
+  "ASSIGNMENT_ASSISTANT_KEY_CHANGE";
+export const assignmentAssistantKeyChange = assistantKey => ({
+  type: ASSIGNMENT_ASSISTANT_KEY_CHANGE,
+  assistantKey
+});
+
+export const ASSIGNMENT_ASSISTANT_FOUND = "ASSIGNMENT_ASSISTANT_FOUND";
+export const assignmentAssistantFound = assistant => ({
+  type: ASSIGNMENT_ASSISTANT_FOUND,
+  assistant
+});
+
+export const ASSIGNMENT_ADD_ASSISTANT_REQUEST =
+  "ASSIGNMENT_ADD_ASSISTANT_REQUEST";
+export const assignmentAddAssistantRequest = (courseId, assistantId) => ({
+  type: ASSIGNMENT_ADD_ASSISTANT_REQUEST,
+  courseId,
+  assistantId
+});
+
+export const ASSIGNMENT_ADD_ASSISTANT_SUCCESS =
+  "ASSIGNMENT_ADD_ASSISTANT_SUCCESS";
+export const assignmentAddAssistantSuccess = (courseId, assistantId) => ({
+  type: ASSIGNMENT_ADD_ASSISTANT_SUCCESS,
+  courseId,
+  assistantId
+});
+
+export const ASSIGNMENT_ADD_ASSISTANT_FAIL = "ASSIGNMENT_ADD_ASSISTANT_FAIL";
+export const assignmentAddAssistantFail = (courseId, assistantId, reason) => ({
+  type: ASSIGNMENT_ADD_ASSISTANT_FAIL,
+  courseId,
+  assistantId,
+  reason
+});
+
+export const ASSIGNMENT_REMOVE_ASSISTANT_REQUEST =
+  "ASSIGNMENT_REMOVE_ASSISTANT_REQUEST";
+export const assignmentRemoveAssistantRequest = (courseId, assistantId) => ({
+  type: ASSIGNMENT_REMOVE_ASSISTANT_REQUEST,
+  courseId,
+  assistantId
+});
+
+export const ASSIGNMENT_REMOVE_ASSISTANT_SUCCESS =
+  "ASSIGNMENT_REMOVE_ASSISTANT_SUCCESS";
+export const assignmentRemoveAssistantSuccess = (courseId, assistantId) => ({
+  type: ASSIGNMENT_REMOVE_ASSISTANT_SUCCESS,
+  courseId,
+  assistantId
+});
+
+export const ASSIGNMENT_REMOVE_ASSISTANT_FAIL =
+  "ASSIGNMENT_REMOVE_ASSISTANT_FAIL";
+export const assignmentRemoveAssistantFail = (courseId, assistantId) => ({
+  type: ASSIGNMENT_REMOVE_ASSISTANT_FAIL,
+  courseId,
+  assistantId
+});

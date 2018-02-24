@@ -628,6 +628,39 @@ class CoursesService {
     );
   }
 
+  getAssistants(courseId) {
+    return firebase
+      .database()
+      .ref(`/courseAssistants/${courseId}`)
+      .once("value")
+      .then(assistants => Object.keys(assistants.val() || {}))
+      .then(userIds =>
+        Promise.all(
+          userIds.map(id =>
+            firebase
+              .database()
+              .ref(`/users/${id}`)
+              .once("value")
+              .then(user => Object.assign({ id }, user.val()))
+          )
+        )
+      );
+  }
+
+  addAssistant(courseId, assistantId) {
+    return firebase
+      .database()
+      .ref(`/courseAssistants/${courseId}/${assistantId}`)
+      .set(true);
+  }
+
+  removeAssistant(courseId, assistantId) {
+    return firebase
+      .database()
+      .ref(`/courseAssistants/${courseId}/${assistantId}`)
+      .remove();
+  }
+
   reorderAssignment(assignments, courseId, assignmentId, order) {
     const offset = order ? 1 : -1;
     let assignment;
@@ -656,6 +689,17 @@ class CoursesService {
         .ref(`/assignments/${courseId}/${sibling.id}/orderIndex`)
         .set(assignment.orderIndex)
     ]);
+  }
+
+  fetchUser(userKey) {
+    if (userKey.length <= 1) {
+      return Promise.resolve();
+    }
+    return firebase
+      .database()
+      .ref(`/users/${userKey}`)
+      .once("value")
+      .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
   }
 }
 
