@@ -1,6 +1,8 @@
 /* eslint-disable no-magic-numbers */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+const admin2 = require("firebase-admin");
+
 const Queue = require("firebase-queue");
 const axios = require("axios");
 
@@ -10,7 +12,25 @@ const profilesRefreshApproach =
     functions.config().profiles["refresh-approach"]) ||
   "none";
 
-admin.initializeApp(functions.config().firebase);
+let canCreateTokens = false; 
+let serviceAccount = null;   
+try {
+  serviceAccount = require("./adminsdk.json");
+  canCreateTokens = true; 
+} catch(e){
+
+}
+
+// If service account deployed, then use it. 
+if(serviceAccount){
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://achievements-dev.firebaseio.com'
+  });
+//Otherwise, initialize with the default config. 
+} else {
+  admin.initializeApp(functions.config().firebase);
+}
 
 function processProfileRefreshRequest(data, resolve) {
   switch (data.service) {
@@ -238,3 +258,64 @@ exports.downloadEvents = functions.https.onRequest((req, res) => {
     res.send("Token is missing ");
   }
 });
+
+function redirectToLogin(message,res){
+  // Todo: Could automatically redirect here rather than sending text details.   
+  res.send(message);
+}
+
+function get_token(data,res){
+      //Create a new user.
+      let uid = data['user_id']+"@"+data['oauth_consumer_key']
+      admin.auth().createCustomToken(uid)
+      .then(function(customToken) {
+        let message = "user_id -> "+data['user_id']+"\n";
+        message += "oauth_consumer_key -> "+data['oauth_consumer_key']+"\n";
+        message += "create user -> "+uid+"\n";
+        message += "custom token is -> "+customToken;
+        message += "redirect to\n\n "
+        message += data["APP_REDIRECT_URL"]+customToken;
+        
+        // Add the user to the users table before redirecting so that they will have a name. 
+        // Todo: Keep from overwriting updated usernames. 
+        admin
+        .database().ref('users/'+uid).update({
+          isLTI: true,
+          displayName: data['user_id'],
+          consumerKey: data['oauth_consumer_key']
+        }).then(function(snap){
+          redirectToLogin(message,res);
+        })
+        .catch(function(error) {
+          console.log("Error creating user:", error);
+        });      
+    }).catch(function(error) {
+      console.log("Error creating custom token:", error);
+    });
+}
+
+exports.ltiLogin = functions.https.onRequest((req, res) => {
+  
+  let data = req.body;
+  let oauth_consumer_key = data['oauth_consumer_key'];
+  let user_id = data['user_id'];
+
+  admin
+  .database()
+  .ref("lti")
+  .once("value")
+  .then(snapshot => {
+    ltiData = snapshot.val();
+    data["APP_REDIRECT_URL"] = ltiData['redirectUrl']+"?pause="+ltiData['pauseRedirect']+"&token=";
+    if(canCreateTokens ){
+      get_token(data,res);
+    }
+    else{
+      res.send("Cannot create tokens. Service account file may not have been deployed.");
+    }
+
+  });
+  
+
+});
+

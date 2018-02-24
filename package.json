@@ -2,7 +2,7 @@
   "name": "achievements",
   "description": "Short answer and levels",
   "version": "0.0.36",
-  "homepage":"./",
+  "homepage": "./",
   "dependencies": {
     "@devexpress/dx-react-core": "^1.0.0-rc.2",
     "@devexpress/dx-react-grid": "^1.0.0-rc.2",
