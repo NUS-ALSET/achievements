@@ -61,26 +61,26 @@ class AddTextSolutionDialog extends React.PureComponent {
     const { open, solution } = this.props;
 
     return (
-      <Dialog open={open} onClose={this.onClose}>
+      <Dialog onClose={this.onClose} open={open}>
         <DialogTitle>Set Assignment Solution</DialogTitle>
         <DialogContent>
           <TextField
-            fullWidth
             autoFocus
+            defaultValue={(solution && solution.value) || ""}
+            fullWidth
+            label="Solution"
+            onChange={this.onChangeSolution}
+            onKeyPress={this.catchReturn}
             style={{
               width: 320
             }}
-            label="Solution"
-            defaultValue={(solution && solution.value) || ""}
-            onChange={this.onChangeSolution}
-            onKeyPress={this.catchReturn}
           />
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button raised color="primary" onClick={this.onCommitClick}>
+          <Button color="primary" onClick={this.onCommitClick} variant="raised">
             Commit
           </Button>
         </DialogActions>

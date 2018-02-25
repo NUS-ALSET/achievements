@@ -83,7 +83,6 @@
         ".read": "auth != null",
         ".write": "
           auth != null &&
-          newData.exists() &&
           !newData.child('isPublic').exists() &&
           (
             (

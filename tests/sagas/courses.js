@@ -27,15 +27,15 @@ describe("courses sagas tests", () => {
   afterEach(() => coursesService.createNewCourse.restore());
 
   it("should test new course requests sagas", () => {
-    const generator = courseNewRequestHandle(
-      courseNewRequest("testName", "testPassword")
-    );
+    const newCourseData = { name: "testName", password: "testPassword" };
+
+    const generator = courseNewRequestHandle(courseNewRequest(newCourseData));
     let next;
 
     next = generator.next();
     assert.deepEqual(
       next.value,
-      call(coursesService.validateNewCourse, "testName", "testPassword")
+      call(coursesService.validateNewCourse, newCourseData)
     );
 
     next = generator.next();
@@ -44,11 +44,7 @@ describe("courses sagas tests", () => {
     next = generator.next();
     assert.deepEqual(
       next.value,
-      call(
-        [coursesService, coursesService.createNewCourse],
-        "testName",
-        "testPassword"
-      )
+      call([coursesService, coursesService.createNewCourse], newCourseData)
     );
 
     next = generator.next();
@@ -79,6 +75,11 @@ describe("courses sagas tests", () => {
 
   it("should process course creation saga", async () => {
     const dispatched = [];
+    const courseData = {
+      name: "testName",
+      password: "testPassword",
+      description: ""
+    };
 
     await runSaga(
       {
@@ -86,7 +87,7 @@ describe("courses sagas tests", () => {
         getState: () => ({})
       },
       courseNewRequestHandle,
-      courseNewRequest("testName", "testPassword")
+      courseNewRequest(courseData)
     ).done;
 
     assert(coursesService.createNewCourse.called);
@@ -97,7 +98,7 @@ describe("courses sagas tests", () => {
       },
       {
         type: COURSE_NEW_SUCCESS,
-        name: "testName",
+        name: courseData.name,
         key: "someKey"
       }
     ]);
@@ -105,6 +106,10 @@ describe("courses sagas tests", () => {
 
   it("should fail course creation", async () => {
     const dispatched = [];
+    const courseData = {
+      name: "",
+      password: "testPassword"
+    };
 
     await runSaga(
       {
@@ -112,7 +117,7 @@ describe("courses sagas tests", () => {
         getState: () => ({})
       },
       courseNewRequestHandle,
-      courseNewRequest("", "testPassword")
+      courseNewRequest(courseData)
     ).done;
 
     assert(!coursesService.createNewCourse.called);

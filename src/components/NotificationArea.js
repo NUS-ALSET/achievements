@@ -20,25 +20,25 @@ class NotificationArea extends React.PureComponent {
   render() {
     return (
       <Snackbar
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left"
-        }}
-        open={this.props.open}
         SnackbarContentProps={{
           "aria-describedby": "message-id"
         }}
-        message={<span>{this.props.message}</span>}
         action={[
           <IconButton
-            key="close"
             aria-label="Close"
             color="inherit"
+            key="close"
             onClick={this.props.handleClose}
           >
             <CloseIcon />
           </IconButton>
         ]}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left"
+        }}
+        message={<span>{this.props.message}</span>}
+        open={this.props.open}
       />
     );
   }

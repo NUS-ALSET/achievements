@@ -1,5 +1,6 @@
 import {
-  COURSE_HIDE_DIALOG, COURSE_JOINED_FETCH_SUCCESS,
+  COURSE_HIDE_DIALOG,
+  COURSE_JOINED_FETCH_SUCCESS,
   COURSE_NEW_DIALOG_CHANGE,
   COURSE_REMOVE_DIALOG_SHOW,
   COURSE_SHOW_NEW_DIALOG,
@@ -24,8 +25,10 @@ export const courses = (
         ...state,
         dialog: "NEW_COURSE",
         newCourseValues: {
-          name: "",
-          password: ""
+          id: action.courseData && action.courseData.id,
+          name: action.courseData && action.courseData.name,
+          password: action.courseData && action.courseData.password,
+          description: action.courseData && action.courseData.description
         }
       };
     case COURSE_SWITCH_TAB:

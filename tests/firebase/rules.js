@@ -119,6 +119,14 @@ describe("security rules tests", () => {
 
       assert.equal(permitted, true);
     });
+
+    it("should allow assistant write to assignments", () => {
+      const { permitted } = database
+        .as({ uid: "abcTestAssistant1" })
+        .write("/assignments/abcTestCourseId/newAssignmentId", { foo: "bar" });
+
+      assert.equal(permitted, true);
+    });
   });
 
   describe("solutions tests", () => {

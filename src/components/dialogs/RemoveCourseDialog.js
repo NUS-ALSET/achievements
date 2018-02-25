@@ -25,7 +25,7 @@ class RemoveCourseDialog extends React.PureComponent {
   render() {
     const { open, course, onClose, onCommit } = this.props;
     return (
-      <Dialog open={open} onClose={onClose}>
+      <Dialog onClose={onClose} open={open}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <Typography>{`This action will delete the course "${course &&
@@ -35,7 +35,11 @@ class RemoveCourseDialog extends React.PureComponent {
           <Button color="primary" onClick={onClose}>
             Cancel
           </Button>
-          <Button raised color="secondary" onClick={() => onCommit(course)}>
+          <Button
+            color="secondary"
+            onClick={() => onCommit(course)}
+            variant="raised"
+          >
             Delete
           </Button>
         </DialogActions>

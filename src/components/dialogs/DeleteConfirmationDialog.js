@@ -27,14 +27,14 @@ class DeleteConfirmationDialog extends React.PureComponent {
     const { onClose, onCommit, open, message } = this.props;
 
     return (
-      <Dialog open={open} onClose={onClose}>
+      <Dialog onClose={onClose} open={open}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <Typography>{message}</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button color="secondary" raised onClick={onCommit}>
+          <Button color="secondary" onClick={onCommit} variant="raised">
             Delete
           </Button>
         </DialogActions>
