@@ -93,7 +93,14 @@ class Cohort extends React.PureComponent {
             {cohort.name}
           </Typography>
         </Toolbar>
-        <Typography gutterBottom>{cohort.description}</Typography>
+        <Typography
+          gutterBottom
+          style={{
+            marginLeft: 30
+          }}
+        >
+          {cohort.description}
+        </Typography>
         {isOwner && (
           <Toolbar>
             <TextField

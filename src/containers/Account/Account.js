@@ -34,6 +34,7 @@ import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
 import sagas from "./sagas";
 import withStyles from "material-ui/styles/withStyles";
+import { withRouter } from "react-router-dom";
 
 const styles = theme => ({
   card: {
@@ -226,12 +227,14 @@ class Account extends React.PureComponent {
 
 sagaInjector.inject(sagas);
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   userName:
     state.firebase.auth.uid &&
     state.firebase.data &&
     state.firebase.data.users &&
-    state.firebase.data.users[state.firebase.auth.uid].displayName,
+    state.firebase.data.users[
+      ownProps.match.params.accountId || state.firebase.auth.uid
+    ].displayName,
   uid: state.firebase.auth.uid,
   auth: state.firebase.auth,
 
@@ -239,7 +242,7 @@ const mapStateToProps = state => ({
   externalProfiles: accountService.fetchExternalProfiles(),
 
   userAchievements: (state.firebase.data.userAchievements || {})[
-    state.firebase.auth.uid
+    ownProps.match.params.accountId || state.firebase.auth.uid
   ],
   showDialog: state.account.showExternalProfileDialog,
   removeRequest: {
@@ -251,11 +254,16 @@ const mapStateToProps = state => ({
   achievementsRefreshingInProgress:
     state.account.achievementsRefreshingInProgress,
   displayNameEdit: state.account.displayNameEdit,
-  user: (state.firebase.data.users || {})[state.firebase.auth.uid]
+  user: (state.firebase.data.users || {})[
+    ownProps.match.params.accountId || state.firebase.auth.uid
+  ]
 });
 
 export default compose(
-  firebaseConnect((props, store) => [
+  withRouter,
+  firebaseConnect((ownProps, store) => [
+    `/users/${ownProps.match.params.accountId}`,
+    `/userAchievements/${ownProps.match.params.accountId}`,
     `/users/${store.getState().firebase.auth.uid}`,
     `/userAchievements/${store.getState().firebase.auth.uid}`
   ]),

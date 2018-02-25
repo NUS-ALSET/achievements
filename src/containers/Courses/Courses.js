@@ -106,7 +106,12 @@ class Courses extends React.Component {
       <Fragment>
         {!APP_SETTING.isSuggesting ? (
           <Toolbar>
-            <Button onClick={() => this.showNewCourseDialog()} variant="raised">
+            <Button
+              aria-label="Add"
+              color="primary"
+              onClick={() => this.showNewCourseDialog()}
+              variant="raised"
+            >
               Add new course
             </Button>
           </Toolbar>

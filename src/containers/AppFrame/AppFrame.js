@@ -53,7 +53,6 @@ const styles = theme => ({
   root: {
     display: "flex",
     alignItems: "stretch",
-    minHeight: "100%",
     width: "100%"
   },
   appBarTitle: {
@@ -62,8 +61,7 @@ const styles = theme => ({
   appFrame: {
     position: "relative",
     display: "flex",
-    width: "100%",
-    minHeight: "100%"
+    width: "100%"
   },
   appBar: {
     [theme.breakpoints.up("lg")]: {

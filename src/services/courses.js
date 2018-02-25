@@ -110,7 +110,7 @@ export class CoursesService {
   }
 
   validateNewCourse(courseData) {
-    if (!courseData.name || (!courseData.id && !courseData.password)) {
+    if (!(courseData.id || (courseData.name && courseData.password))) {
       throw new Error("Missing name or password");
     }
     return true;
@@ -128,7 +128,7 @@ export class CoursesService {
       .push("/courses", {
         name,
         instructorName: this.getUser("displayName"),
-        description,
+        description: description || "",
         owner: this.getUser("uid")
       })
       .then(ref =>

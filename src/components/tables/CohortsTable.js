@@ -69,9 +69,11 @@ class CohortsTable extends React.PureComponent {
                       >
                         Edit
                       </Button>
-                      <Button className={classes.button} variant="raised">
-                        Delete
-                      </Button>
+                      {/* Not implemented yet */ false && (
+                        <Button className={classes.button} variant="raised">
+                          Delete
+                        </Button>
+                      )}
                     </Fragment>
                   )}
                 </TableCell>

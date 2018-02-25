@@ -48,7 +48,9 @@ class AddCohortDialog extends React.PureComponent {
 
     return (
       <Dialog onClose={this.onClose} open={open}>
-        <DialogTitle>Add Cohort</DialogTitle>
+        <DialogTitle>
+          {cohort && cohort.id ? "Edit Cohort" : "Add Cohort"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus

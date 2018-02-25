@@ -27,8 +27,13 @@ export class AddCourseDialog extends React.Component {
     description: ""
   };
 
-  onClose = () => this.props.dispatch(courseHideDialog());
-
+  onClose = () =>
+    this.setState({
+      name: "",
+      password: "",
+      description: ""
+    }) || this.props.dispatch(courseHideDialog());
+  catchReturn = event => event.key === "Enter" && this.onCommit();
   onFieldChange = (field, value) => this.setState({ [field]: value });
   onCommit = () => {
     // Prevent changing real course data
@@ -42,13 +47,6 @@ export class AddCourseDialog extends React.Component {
     });
 
     this.props.dispatch(courseNewRequest(course));
-
-    // Empty state
-    this.setState({
-      name: "",
-      password: "",
-      description: ""
-    });
     this.onClose();
   };
 
@@ -68,14 +66,21 @@ export class AddCourseDialog extends React.Component {
             label="Course name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
+            onKeyPress={this.catchReturn}
             required
           />
           <TextField
             defaultValue={course && course.password}
             fullWidth
+            helperText={
+              course && course.id
+                ? "Leave it blank to keep existing password"
+                : ""
+            }
             label="Password"
             margin="dense"
             onChange={e => this.onFieldChange("password", e.target.value)}
+            onKeyPress={this.catchReturn}
             required
             type="password"
           />
@@ -86,6 +91,7 @@ export class AddCourseDialog extends React.Component {
               label="Description"
               margin="dense"
               onChange={e => this.onFieldChange("description", e.target.value)}
+              onKeyPress={this.catchReturn}
             />
           )}
         </DialogContent>

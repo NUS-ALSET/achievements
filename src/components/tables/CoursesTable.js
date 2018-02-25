@@ -127,14 +127,14 @@ class CoursesTable extends React.PureComponent {
                           <Fragment>
                             <Button
                               className={classes.button}
-                              onClick={() => this.onDeleteCourseClick(course)}
+                              onClick={() => this.onEditCourseClick(course)}
                               variant="raised"
                             >
                               Edit
                             </Button>
                             <Button
                               className={classes.button}
-                              onClick={() => this.onEditCourseClick(course)}
+                              onClick={() => this.onDeleteCourseClick(course)}
                               variant="raised"
                             >
                               Delete

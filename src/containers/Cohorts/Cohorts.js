@@ -72,7 +72,12 @@ class Cohorts extends React.PureComponent {
             Add New Cohort
           </Button>
         </Toolbar>
-        <Tabs onChange={this.props.onChangeTab} value={ui.currentTab}>
+        <Tabs
+          indicatorColor="primary"
+          onChange={this.props.onChangeTab}
+          textColor="primary"
+          value={ui.currentTab}
+        >
           <Tab label="Public Cohorts" />
           <Tab label="My Cohorts" />
         </Tabs>
@@ -115,19 +120,22 @@ const mapDispatchToProps = dispatch => ({
 export default compose(
   firebaseConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;
-    return (
-      !firebaseAuth.isEmpty && [
-        {
-          path: "/cohorts",
-          storeAs: "myCohorts",
-          queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
-        },
-        {
-          path: "/cohorts",
-          storeAs: "publicCohorts",
-          queryParams: ["orderByChild=isPublic", "equalTo=true"]
-        }
-      ]
+    return [
+      {
+        path: "/cohorts",
+        storeAs: "publicCohorts",
+        queryParams: ["orderByChild=isPublic", "equalTo=true"]
+      }
+    ].concat(
+      firebaseAuth.isEmpty
+        ? []
+        : [
+            {
+              path: "/cohorts",
+              storeAs: "myCohorts",
+              queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
+            }
+          ]
     );
   }),
   connect(mapStateToProps, mapDispatchToProps)

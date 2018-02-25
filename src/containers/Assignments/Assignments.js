@@ -53,7 +53,7 @@ const styles = theme => ({
     fontSize: "0.875rem"
   },
   actions: {
-    position: "absolute",
+    position: "fixed",
     right: theme.spacing.unit
   },
   action: {
@@ -288,6 +288,9 @@ class Assignments extends React.Component {
               </div>
             ))}
         </Toolbar>
+        {APP_SETTING.isSuggesting && (
+          <Typography gutterBottom>{course.description}</Typography>
+        )}
         {AssignmentView}
         <AddProfileDialog
           dispatch={dispatch}

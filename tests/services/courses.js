@@ -27,11 +27,8 @@ describe("courses service tests", () => {
         assert.equal(err.message, "Missing name or password");
       }));
 
-  it("should validate existing course", () => {
+  it("should validate existing course", () =>
     service.validateNewCourse({
-      id: "test",
-      name: "test"
-    });
-    assert("We should get here");
-  });
+      id: "test"
+    }));
 });

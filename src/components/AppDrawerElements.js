@@ -32,14 +32,16 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Courses" />
         </ListItem>
       </Link>
-      <Link style={linkStyle} to={"/paths"}>
-        <ListItem button>
-          <ListItemIcon>
-            <StarIcon />
-          </ListItemIcon>
-          <ListItemText primary="Paths" />
-        </ListItem>
-      </Link>
+      {/* Not implemented */ false && (
+        <Link style={linkStyle} to={"/paths"}>
+          <ListItem button>
+            <ListItemIcon>
+              <StarIcon />
+            </ListItemIcon>
+            <ListItemText primary="Paths" />
+          </ListItem>
+        </Link>
+      )}
     </List>
     <Divider />
     <List onClick={onRequestClose}>
@@ -51,7 +53,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Cohorts" />
         </ListItem>
       </Link>
-      <Link style={linkStyle} to={`/profile/${userId}`}>
+      <Link style={linkStyle} to={`/profile/${userId || "non-logged"}`}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
