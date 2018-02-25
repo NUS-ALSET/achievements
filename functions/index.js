@@ -299,7 +299,6 @@ exports.ltiLogin = functions.https.onRequest((req, res) => {
   let user_id = data['user_id'];
 
   // Hardcoding secret until starts being pulled form database. 
-  //
   let consumerSecret = "secret";
   /*
   admin.database().ref("lti/secrets/"+oauth_consumer_key)
@@ -311,28 +310,40 @@ exports.ltiLogin = functions.https.onRequest((req, res) => {
   let provider = new lti.Provider(oauth_consumer_key , consumerSecret);  
   
   provider.valid_request(req, data, function(err, isValid){  
-    //if isValid , send us a congrats message
-    if(isValid){
-      res.send("The LTI login request was valid. This had been a blocking issue. Login logic should be updated.");
-    // else continue to log LTI users in anyway. 
-    } else {
-      //res.send("LTI login request was invalid. protocol -> "+req.protocol+" error-> "+err);
+    /*
+    To work around the lti library issue, but continue on with development, we will automatically login
+    specific test users attempting to use a specifc consumer key. 
+    */
+    let testUser = false;
+    if(oauth_consumer_key=="AWESOME_CONSUMER_KEY" && user_id == "AWESOME_USER_1"){
+      testUser = true;
+    }
+
+    //if isValid or testUser, continue to login.
+    if(isValid || testUser){
+      // Get the redirectURL and other lti details from the database.
+      admin
+      .database()
+      .ref("lti")
+      .once("value")
+      .then(snapshot => {
+        ltiData = snapshot.val();
+        data["APP_REDIRECT_URL"] = ltiData['redirectUrl']+"?pause="+ltiData['pauseRedirect']+"&token=";
+        if(canCreateTokens ){
+          get_token(data,res);
+        }
+        else{
+          res.send("Cannot create tokens. Service account file may not have been deployed.");
+        }
+      });
+      
     
-    // Get the redirectURL and other lti details from the database.
-    admin
-    .database()
-    .ref("lti")
-    .once("value")
-    .then(snapshot => {
-      ltiData = snapshot.val();
-      data["APP_REDIRECT_URL"] = ltiData['redirectUrl']+"?pause="+ltiData['pauseRedirect']+"&token=";
-      if(canCreateTokens ){
-        get_token(data,res);
-      }
-      else{
-        res.send("Cannot create tokens. Service account file may not have been deployed.");
-      }
-    });
+    } else {
+      let message = "LTI login request was invalid. protocol -> "+req.protocol+" error-> "+err;
+      message += "oauth_consumer_key -> "+oauth_consumer_key+" user_id -> " + user_id;
+      message += "\n\n"+JSON.stringify(data);
+      res.send(message);
+    
     
   }
 });
