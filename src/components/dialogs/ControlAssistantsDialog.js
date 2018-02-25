@@ -84,21 +84,25 @@ class ControlAssistantsDialog extends React.PureComponent {
     }
 
     return (
-      <Dialog open={open} onClose={this.onClose}>
+      <Dialog onClose={this.onClose} open={open}>
         <DialogTitle>Control Assistants</DialogTitle>
         <DialogContent>
           <TextField
+            helperText={keyInputMessage}
+            label="New Assistant Key"
+            onChange={this.onKeyChange}
             style={{
               width: 240,
               marginRight: 8,
               marginBottom: 8,
               top: 4
             }}
-            onChange={this.onKeyChange}
-            label="New Assistant Key"
-            helperText={keyInputMessage}
           />
-          <Button raised onClick={this.addAssistant} disabled={!newAssistant}>
+          <Button
+            disabled={!newAssistant}
+            onClick={this.addAssistant}
+            variant="raised"
+          >
             Add
           </Button>
           <List
@@ -125,7 +129,7 @@ class ControlAssistantsDialog extends React.PureComponent {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button raised color="primary">
+          <Button color="primary" variant="raised">
             Commit
           </Button>
         </DialogActions>

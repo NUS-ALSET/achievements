@@ -55,21 +55,21 @@ class CohortsTable extends React.PureComponent {
                 <TableCell>{cohort.name}</TableCell>
                 <TableCell>{cohort.instructorName}</TableCell>
                 <TableCell>
-                  <Link to={`/cohorts/${cohort.id}`} className={classes.link}>
-                    <Button raised className={classes.button}>
+                  <Link className={classes.link} to={`/cohorts/${cohort.id}`}>
+                    <Button className={classes.button} variant="raised">
                       View
                     </Button>
                   </Link>
                   {cohort.owner === currentUserId && (
                     <Fragment>
                       <Button
-                        raised
                         className={classes.button}
                         onClick={() => onEditCohortClick(cohort)}
+                        variant="raised"
                       >
                         Edit
                       </Button>
-                      <Button raised className={classes.button}>
+                      <Button className={classes.button} variant="raised">
                         Delete
                       </Button>
                     </Fragment>

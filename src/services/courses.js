@@ -9,13 +9,13 @@ import {
   coursePasswordEnterRequest
 } from "../containers/Assignments/actions";
 import { notificationHide, notificationShow } from "../containers/Root/actions";
-import { solutionsService } from "./solutions";
+// import { solutionsService } from "./solutions";
 import each from "lodash/each";
 import firebase from "firebase";
 
 const ERROR_TIMEOUT = 6000;
 
-class CoursesService {
+export class CoursesService {
   errorTimeout = false;
 
   static sortAssignments(assignments) {
@@ -109,36 +109,31 @@ class CoursesService {
     );
   }
 
-  validateNewCourse(name, password) {
-    if (!(name && password)) {
+  validateNewCourse(courseData) {
+    if (!courseData.name || (!courseData.id && !courseData.password)) {
       throw new Error("Missing name or password");
     }
     return true;
   }
 
-  createNewCourse(name, password) {
-    this.validateNewCourse(name, password);
+  createNewCourse(courseData) {
+    const { name, password, description } = courseData;
+
+    if (courseData.id) {
+      return firebase.ref(`/courses/${courseData.id}`).update(courseData);
+    }
+
+    this.validateNewCourse(courseData);
     return firebase
       .push("/courses", {
         name,
         instructorName: this.getUser("displayName"),
+        description,
         owner: this.getUser("uid")
       })
       .then(ref =>
         firebase
           .set(`/coursePasswords/${ref.getKey()}`, password)
-          .then(() =>
-            // Start watch solutions for this course
-            firebase
-              .database()
-              .ref(`/solutions/${ref.getKey()}`)
-              .on("value", data =>
-                solutionsService.processUpdatedSolutions(
-                  ref.getKey(),
-                  data.val()
-                )
-              )
-          )
           .then(() => ref.getKey())
       );
   }

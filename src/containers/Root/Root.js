@@ -45,14 +45,14 @@ class Root extends React.PureComponent {
     return (
       <Fragment>
         <ConfirmEULADialog
-          onSignOut={this.onSignOut}
           onAcceptEULA={this.onAcceptEULA}
+          onSignOut={this.onSignOut}
           open={requireAcceptEULA}
         />
         <NotificationArea
           handleClose={this.handleNotificationClose}
-          open={notification.show}
           message={notification.message}
+          open={notification.show}
         />
         {children}
       </Fragment>

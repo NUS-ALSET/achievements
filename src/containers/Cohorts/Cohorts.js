@@ -64,23 +64,27 @@ class Cohorts extends React.PureComponent {
     return (
       <Fragment>
         <Toolbar>
-          <Button color="primary" raised onClick={this.props.onAddCohortClick}>
+          <Button
+            color="primary"
+            onClick={this.props.onAddCohortClick}
+            variant="raised"
+          >
             Add New Cohort
           </Button>
         </Toolbar>
-        <Tabs value={ui.currentTab} onChange={this.props.onChangeTab}>
+        <Tabs onChange={this.props.onChangeTab} value={ui.currentTab}>
           <Tab label="Public Cohorts" />
           <Tab label="My Cohorts" />
         </Tabs>
         <CohortsTable
-          onEditCohortClick={onEditCohortClick}
           cohorts={cohorts}
           currentUserId={currentUser.id || ""}
+          onEditCohortClick={onEditCohortClick}
         />
         <AddCohortDialog
-          open={ui.dialog && ui.dialog.type === "addCohort"}
-          dispatch={dispatch}
           cohort={ui.dialog.cohort}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "addCohort"}
         />
       </Fragment>
     );

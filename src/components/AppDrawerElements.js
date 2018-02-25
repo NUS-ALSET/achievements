@@ -16,7 +16,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
   <div>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to={"/home"} style={linkStyle}>
+      <Link style={linkStyle} to={"/home"}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -24,7 +24,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Home" />
         </ListItem>
       </Link>
-      <Link to={"/courses"} style={linkStyle}>
+      <Link style={linkStyle} to={"/courses"}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -32,7 +32,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Courses" />
         </ListItem>
       </Link>
-      <Link to={"/paths"} style={linkStyle}>
+      <Link style={linkStyle} to={"/paths"}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -43,7 +43,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
     </List>
     <Divider />
     <List onClick={onRequestClose}>
-      <Link to={"/cohorts"} style={linkStyle}>
+      <Link style={linkStyle} to={"/cohorts"}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -51,7 +51,7 @@ export const DrawerMenuItems = (onRequestClose, userId) => (
           <ListItemText primary="Cohorts" />
         </ListItem>
       </Link>
-      <Link to={`/profile/${userId}`} style={linkStyle}>
+      <Link style={linkStyle} to={`/profile/${userId}`}>
         <ListItem button>
           <ListItemIcon>
             <StarIcon />
@@ -67,7 +67,7 @@ const AppBarMenuItems = ({ onClick, logout, login, isAuth }) => (
   <div>
     {isAuth ? (
       <Fragment>
-        <Link to={`/account/${isAuth}`} style={linkStyle}>
+        <Link style={linkStyle} to={`/account/${isAuth}`}>
           <MenuItem
             onClick={() => {
               onClick();

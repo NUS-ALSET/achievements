@@ -137,26 +137,26 @@ class Account extends React.PureComponent {
           <Grid item xs={3}>
             <Card className={classes.card}>
               <CardMedia
-                style={{ height: 240 }}
                 image={
                   (user && user.photoURL) ||
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ" +
                     "AAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
                 }
+                style={{ height: 240 }}
                 title={this.props.userName}
               />
               <CardContent>
                 {displayNameEdit ? (
                   <Fragment>
                     <TextField
+                      autoFocus
+                      defaultValue={userName}
+                      label="Display Name"
+                      onChange={this.changeDisplayName}
+                      onKeyPress={this.catchReturn}
                       style={{
                         width: "calc(100% - 48px)"
                       }}
-                      autoFocus
-                      label="Display Name"
-                      defaultValue={userName}
-                      onChange={this.changeDisplayName}
-                      onKeyPress={this.catchReturn}
                     />
                     <IconButton>
                       <CheckIcon onClick={() => this.updateDisplayName()} />
@@ -189,35 +189,35 @@ class Account extends React.PureComponent {
               <Fragment key={externalProfileKey}>
                 <ExternalProfileCard
                   addExternalProfileRequest={this.addExternalProfileRequest}
+                  classes={classes}
+                  externalProfile={externalProfiles[externalProfileKey]}
+                  inProgress={achievementsRefreshingInProgress}
                   refreshAchievementsRequest={this.refreshAchievementsRequest}
                   removeExternalProfileRequest={
                     this.removeExternalProfileRequest
                   }
-                  inProgress={achievementsRefreshingInProgress}
-                  classes={classes}
                   userAchievements={
                     (userAchievements || {})[externalProfileKey]
                   }
-                  externalProfile={externalProfiles[externalProfileKey]}
                 />
                 <AddProfileDialog
-                  open={this.props.showDialog}
-                  inProgress={this.props.externalProfileInUpdate}
-                  externalProfile={externalProfiles[externalProfileKey]}
-                  onError={this.showError}
-                  uid={this.props.uid}
-                  onClose={this.closeExternalProfileDialog}
                   dispatch={dispatch}
+                  externalProfile={externalProfiles[externalProfileKey]}
+                  inProgress={this.props.externalProfileInUpdate}
+                  onClose={this.closeExternalProfileDialog}
+                  onError={this.showError}
+                  open={this.props.showDialog}
+                  uid={this.props.uid}
                 />
               </Fragment>
             ))}
           </Grid>
         </Grid>
         <RemoveExternalProfileDialog
-          open={removeRequest.actual}
-          externalProfileType={removeRequest.type}
-          externalProfileId={removeRequest.id}
           dispatch={dispatch}
+          externalProfileId={removeRequest.id}
+          externalProfileType={removeRequest.type}
+          open={removeRequest.actual}
         />
       </Fragment>
     );

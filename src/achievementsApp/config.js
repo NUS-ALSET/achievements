@@ -5,7 +5,8 @@ export const APP_SETTING = {
   drawerWidth: 250,
   levels: levels,
   basename: process.env.REACT_APP_BASENAME || "/",
-  defaultTimeout: 6000
+  defaultTimeout: 6000,
+  isSuggesting: window.location.href.includes("isSuggesting=true")
 };
 
 // Initialize Firebase

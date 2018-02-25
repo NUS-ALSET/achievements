@@ -47,24 +47,24 @@ class AddCohortDialog extends React.PureComponent {
     const { open, cohort } = this.props;
 
     return (
-      <Dialog open={open} onClose={this.onClose}>
+      <Dialog onClose={this.onClose} open={open}>
         <DialogTitle>Add Cohort</DialogTitle>
         <DialogContent>
           <TextField
-            fullWidth
             autoFocus
+            defaultValue={cohort && cohort.name}
+            fullWidth
             label="Name"
             margin="dense"
-            defaultValue={cohort && cohort.name}
             onChange={this.onNameChange}
             onKeyPress={this.catchReturn}
             required
           />
           <TextField
+            defaultValue={cohort && cohort.description}
             fullWidth
             label="Description"
             margin="dense"
-            defaultValue={cohort && cohort.description}
             onChange={this.onDescriptionChange}
             onKeyPress={this.catchReturn}
           />
@@ -73,7 +73,7 @@ class AddCohortDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" raised onClick={this.onCommit}>
+          <Button color="primary" onClick={this.onCommit} variant="raised">
             Commit
           </Button>
         </DialogActions>

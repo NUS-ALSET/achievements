@@ -2,13 +2,13 @@ import { LinearProgress } from "material-ui/Progress";
 import { Link, withRouter } from "react-router-dom";
 import {
   assignmentCloseDialog,
+  assignmentRefreshProfilesRequest,
   assignmentSolutionRequest,
   assignmentSubmitRequest,
   assignmentSwitchTab,
+  assignmentsAssistantsShowRequest,
   assignmentsSortChange,
-  coursePasswordEnterSuccess,
-  assignmentRefreshProfilesRequest,
-  assignmentsAssistantsShowRequest
+  coursePasswordEnterSuccess
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -25,7 +25,11 @@ import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AssignmentsTable from "../../components/tables/AssignmentsTable";
 import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
+
 import ChevronRightIcon from "material-ui-icons/ChevronRight";
+import GroupIcon from "material-ui-icons/Group";
+import RefreshIcon from "material-ui-icons/Refresh";
 
 import Grid from "material-ui/Grid";
 import InstructorTabs from "../../components/InstructorTabs";
@@ -37,6 +41,7 @@ import Typography from "material-ui/Typography";
 import sagas from "./sagas";
 import withStyles from "material-ui/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -160,23 +165,27 @@ class Assignments extends React.Component {
     return (
       <Fragment>
         <TextField
-          onChange={this.handlePasswordChange}
-          type="password"
           autoFocus
           fullWidth
           label="Enter password"
+          onChange={this.handlePasswordChange}
+          type="password"
         />
         <Grid container>
           <Grid item xs={12}>
             <Grid
-              container
               alignContent="center"
               alignItems="center"
+              container
               direction="column"
             >
               <Grid item />
               <Grid>
-                <Button raised color="primary" onClick={this.submitPassword}>
+                <Button
+                  color="primary"
+                  onClick={this.submitPassword}
+                  variant="raised"
+                >
                   Submit
                 </Button>
               </Grid>
@@ -213,89 +222,99 @@ class Assignments extends React.Component {
     if (currentUser.isAssistant) {
       AssignmentView = (
         <InstructorTabs
-          dispatch={dispatch}
-          onSortClick={this.onSortClick}
-          onSubmitClick={this.onSubmitClick}
-          onAddAssignmentClick={this.onAddAssignmentClick}
-          onDeleteAssignment={this.onDeleteAssignment}
-          onUpdateAssignment={this.onUpdateAssignment}
-          onUpdateNewAssignmentField={this.onUpdateNewAssignmentField}
-          onCreateAssignmentClick={this.onCreateAssignmentClick}
           closeDialog={this.closeDialog}
-          onAcceptClick={this.onAcceptClick}
-          handleTabChange={this.handleTabChange}
-          ui={ui}
           course={course}
           currentUser={currentUser}
+          dispatch={dispatch}
+          handleTabChange={this.handleTabChange}
+          onAcceptClick={this.onAcceptClick}
+          onAddAssignmentClick={this.onAddAssignmentClick}
+          onCreateAssignmentClick={this.onCreateAssignmentClick}
+          onDeleteAssignment={this.onDeleteAssignment}
+          onSortClick={this.onSortClick}
+          onSubmitClick={this.onSubmitClick}
+          onUpdateAssignment={this.onUpdateAssignment}
+          onUpdateNewAssignmentField={this.onUpdateNewAssignmentField}
+          ui={ui}
         />
       );
     } else if (course.members && course.members[currentUser.id]) {
       // Otherwise - just provide list of assignments for student-member
       AssignmentView = (
         <AssignmentsTable
-          sortState={ui.sortState}
-          currentUser={currentUser}
           course={course}
+          currentUser={currentUser}
           dispatch={dispatch}
+          sortState={ui.sortState}
         />
       );
     }
     return (
       <Fragment>
         <Toolbar>
-          <Link to="/courses" className={classes.breadcrumbLink}>
+          <Link className={classes.breadcrumbLink} to="/courses">
             <Typography className={classes.breadcrumbText}>Courses</Typography>
           </Link>
           <ChevronRightIcon />
           <Typography className={classes.breadcrumbText}>
             {course.name}
           </Typography>
-          {course.owner === currentUser.id && (
-            <div className={classes.actions}>
-              <Button
-                className={classes.action}
-                raised
-                onClick={this.refreshProfileSolutions}
-              >
-                Refresh achievements
-              </Button>
-              <Button
-                className={classes.action}
-                raised
-                onClick={this.assignmentsAssistantsShowRequest}
-              >
-                Assistants
-              </Button>
-            </div>
-          )}
+          {course.owner === currentUser.id &&
+            (APP_SETTING.isSuggesting ? (
+              <div className={classes.actions}>
+                <IconButton onClick={this.refreshProfileSolutions}>
+                  <RefreshIcon />
+                </IconButton>
+                <IconButton onClick={this.assignmentsAssistantsShowRequest}>
+                  <GroupIcon />
+                </IconButton>
+              </div>
+            ) : (
+              <div className={classes.actions}>
+                <Button
+                  className={classes.action}
+                  onClick={this.refreshProfileSolutions}
+                  variant="raised"
+                >
+                  Refresh achievements
+                </Button>
+                <Button
+                  className={classes.action}
+                  onClick={this.assignmentsAssistantsShowRequest}
+                  variant="raised"
+                >
+                  Assistants
+                </Button>
+              </div>
+            ))}
         </Toolbar>
         {AssignmentView}
         <AddProfileDialog
-          uid={currentUser.id}
-          open={ui.dialog && ui.dialog.type === "Profile"}
+          dispatch={dispatch}
           externalProfile={{
             url: "https://codecombat.com",
             name: "Code Combat",
             id: "CodeCombat"
           }}
-          dispatch={dispatch}
           onCommit={this.onProfileCommit}
+          open={ui.dialog && ui.dialog.type === "Profile"}
+          uid={currentUser.id}
         />
         {currentUser.isOwner && (
           <ControlAssistantsDialog
-            dispatch={dispatch}
-            course={course}
             assistants={(ui.dialog && ui.dialog.assistants) || []}
+            course={course}
+            dispatch={dispatch}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
             open={ui.dialog && ui.dialog.type === "CourseAssistants"}
           />
         )}
         <AddTextSolutionDialog
-          open={ui.dialog && ui.dialog.type === "Text"}
-          courseId={course.id}
-          solution={ui.dialog && ui.dialog.value}
           assignment={ui.currentAssignment}
+          courseId={course.id}
           dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "Text"}
+          solution={ui.dialog && ui.dialog.value}
         />
       </Fragment>
     );

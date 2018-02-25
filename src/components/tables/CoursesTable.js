@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { isEmpty } from "react-redux-firebase";
 import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { Fragment } from "react";
 import Table, {
   TableBody,
   TableCell,
@@ -10,7 +11,16 @@ import Table, {
   TableRow
 } from "material-ui/Table";
 
+import SearchIcon from "material-ui-icons/Search";
+import EditIcon from "material-ui-icons/Edit";
+import DeleteIcon from "material-ui-icons/Delete";
+
 import withStyles from "material-ui/styles/withStyles";
+import { APP_SETTING } from "../../achievementsApp/config";
+import {
+  courseRemoveDialogShow,
+  courseShowNewDialog
+} from "../../containers/Courses/actions";
 
 const styles = theme => ({
   link: {
@@ -25,12 +35,18 @@ class CoursesTable extends React.PureComponent {
   static propTypes = {
     ownerId: PropTypes.string.isRequired,
     courses: PropTypes.any.isRequired,
+    dispatch: PropTypes.func.isRequired,
     onDeleteCourseClick: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired
   };
 
+  onDeleteCourseClick = course =>
+    this.props.dispatch(courseRemoveDialogShow(course.id, course.name));
+  onEditCourseClick = course =>
+    this.props.dispatch(courseShowNewDialog(course));
+
   render() {
-    const { onDeleteCourseClick, classes, courses, ownerId } = this.props;
+    const { classes, courses, ownerId } = this.props;
 
     return (
       <Table>
@@ -38,39 +54,98 @@ class CoursesTable extends React.PureComponent {
           <TableRow>
             <TableCell>Course name</TableCell>
             <TableCell>Instructor</TableCell>
-            <TableCell>Actions</TableCell>
+            {APP_SETTING.isSuggesting && (
+              <TableCell
+                style={{
+                  width: "40%"
+                }}
+              >
+                Description
+              </TableCell>
+            )}
+            <TableCell
+              style={(APP_SETTING.isSuggesting && { width: 200 }) || {}}
+            >
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {isEmpty(courses) ? (
             <TableRow>
-              <TableCell colSpan={3}>Empty list</TableCell>
+              <TableCell colSpan={5}>Empty list</TableCell>
             </TableRow>
           ) : (
-            Object.keys(courses).map(courseId => {
-              return (
-                <TableRow key={courseId}>
-                  <TableCell>{courses[courseId].name}</TableCell>
-                  <TableCell>{courses[courseId].instructorName}</TableCell>
+            Object.keys(courses)
+              .map(id => ({ ...courses[id], id }))
+              .map(course => (
+                <TableRow key={course.id}>
+                  <TableCell>{course.name}</TableCell>
+                  <TableCell>{course.instructorName}</TableCell>
+                  {APP_SETTING.isSuggesting && (
+                    <TableCell>{course.description}</TableCell>
+                  )}
                   <TableCell>
-                    <Link to={`/courses/${courseId}`} className={classes.link}>
-                      <Button className={classes.button} raised>
-                        View
-                      </Button>
-                    </Link>
-                    {courses[courseId].owner === ownerId && (
-                      <Button
-                        className={classes.button}
-                        onClick={() => onDeleteCourseClick(courseId)}
-                        raised
-                      >
-                        Delete
-                      </Button>
+                    {APP_SETTING.isSuggesting ? (
+                      <Fragment>
+                        <Link
+                          className={classes.link}
+                          to={`/courses/${course.id}`}
+                        >
+                          <IconButton aria-label="Open course">
+                            <SearchIcon />
+                          </IconButton>
+                        </Link>
+                        {course.owner === ownerId && (
+                          <Fragment>
+                            <IconButton
+                              aria-label="Edit course"
+                              onClick={() => this.onEditCourseClick(course)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              aria-label="Delete course"
+                              onClick={() => this.onDeleteCourseClick(course)}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </Fragment>
+                        )}
+                      </Fragment>
+                    ) : (
+                      <Fragment>
+                        <Link
+                          className={classes.link}
+                          to={`/courses/${course.id}`}
+                        >
+                          <Button className={classes.button} variant="raised">
+                            View
+                          </Button>
+                        </Link>
+                        {course.owner === ownerId && (
+                          <Fragment>
+                            <Button
+                              className={classes.button}
+                              onClick={() => this.onDeleteCourseClick(course)}
+                              variant="raised"
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              className={classes.button}
+                              onClick={() => this.onEditCourseClick(course)}
+                              variant="raised"
+                            >
+                              Delete
+                            </Button>
+                          </Fragment>
+                        )}
+                      </Fragment>
                     )}
                   </TableCell>
                 </TableRow>
-              );
-            })
+              ))
           )}
         </TableBody>
       </Table>

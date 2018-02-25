@@ -1,4 +1,12 @@
 /**
+ * @typedef {Object} CourseData
+ * @property {String} id
+ * @property {String} name
+ * @property {String} password
+ * @property {String} description
+ */
+
+/**
  * @typedef {Object} Assignment
  * @property {String} id
  * @property {String} questionType

@@ -14,16 +14,15 @@ import { notificationShow } from "../Root/actions";
 
 export function* courseNewRequestHandle(action) {
   try {
-    yield call(coursesService.validateNewCourse, action.name, action.password);
+    yield call(coursesService.validateNewCourse, action.courseData);
     yield put(courseHideDialog());
     const key = yield call(
       [coursesService, coursesService.createNewCourse],
-      action.name,
-      action.password
+      action.courseData
     );
-    yield put(courseNewSuccess(action.name, key));
+    yield put(courseNewSuccess(action.courseData.name, key));
   } catch (err) {
-    yield put(courseNewFail(action.name, err.message));
+    yield put(courseNewFail(action.courseData.name, err.message));
     yield put(notificationShow(err.message));
   }
 }
@@ -39,14 +38,6 @@ export function* courseRemoveRequestHandle(action) {
   }
 }
 
-export function* watchNewCourseRequest() {
-  yield takeLatest(COURSE_NEW_REQUEST, courseNewRequestHandle);
-}
-
-export function* watchRemoveCourseRequest() {
-  yield takeLatest(COURSE_REMOVE_REQUEST, courseRemoveRequestHandle);
-}
-
 export function* signInSuccessHandle() {
   const uid = yield select(state => state.firebase.auth.uid);
 
@@ -55,13 +46,15 @@ export function* signInSuccessHandle() {
   yield call([coursesService, coursesService.watchJoinedCourses], uid);
 }
 
-export function* watchSignInSuccess() {
-  yield takeLatest("@@reactReduxFirebase/LOGIN", signInSuccessHandle);
-  yield call([coursesService, coursesService.watchJoinedCourses]);
-}
-
 export default [
-  watchNewCourseRequest,
-  watchRemoveCourseRequest,
-  watchSignInSuccess
+  function* watchNewCourseRequest() {
+    yield takeLatest(COURSE_NEW_REQUEST, courseNewRequestHandle);
+  },
+  function* watchRemoveCourseRequest() {
+    yield takeLatest(COURSE_REMOVE_REQUEST, courseRemoveRequestHandle);
+  },
+  function* watchSignInSuccess() {
+    yield takeLatest("@@reactReduxFirebase/LOGIN", signInSuccessHandle);
+    yield call([coursesService, coursesService.watchJoinedCourses]);
+  }
 ];

@@ -1,8 +1,4 @@
 {
-  "ecmaFeatures": {
-    "jsx": true,
-    "modules": true
-  },
   "env": {
     "es6": true,
     "browser": true,
@@ -94,7 +90,8 @@
         "ignoreComments": true
       }
     ],
-    "react/prefer-es6-class": 1
+    "react/prefer-es6-class": 2,
+    "react/jsx-sort-props": 2
   },
   "plugins": [
     "react"

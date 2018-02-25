@@ -47,10 +47,10 @@ class InstructorTabs extends React.PureComponent {
       case INSTRUCTOR_TAB_ASSIGNMENTS:
         return (
           <AssignmentsTable
+            course={course}
+            currentUser={currentUser}
             dispatch={dispatch}
             sortState={ui.sortState}
-            currentUser={currentUser}
-            course={course}
           />
         );
       case INSTRUCTOR_TAB_EDIT:
@@ -62,26 +62,26 @@ class InstructorTabs extends React.PureComponent {
             />
             <AddAssignmentDialog
               assignment={ui.dialog && ui.dialog.value}
-              onFieldChange={this.onUpdateNewAssignmentField}
-              onCommit={this.onCreateAssignmentClick}
               onClose={closeDialog}
+              onCommit={this.onCreateAssignmentClick}
+              onFieldChange={this.onUpdateNewAssignmentField}
               open={ui.dialog && ui.dialog.type === "AddAssignment"}
             />
             <DeleteAssignmentDialog
-              courseId={course.id}
               assignment={(ui.dialog && ui.dialog.value) || false}
-              open={ui.dialog && ui.dialog.type === "DeleteAssignment"}
+              courseId={course.id}
               onClose={closeDialog}
+              open={ui.dialog && ui.dialog.type === "DeleteAssignment"}
             />
           </Fragment>
         );
       case INSTRUCTOR_TAB_VIEW:
         return (
           <AssignmentsTable
+            course={course}
+            currentUser={currentUser}
             dispatch={dispatch}
             sortState={ui.sortState}
-            currentUser={currentUser}
-            course={course}
           />
         );
       default:
@@ -97,9 +97,9 @@ class InstructorTabs extends React.PureComponent {
         <Tabs
           fullWidth
           indicatorColor="primary"
+          onChange={handleTabChange}
           textColor="primary"
           value={ui.currentTab}
-          onChange={handleTabChange}
         >
           <Tab label="Assignments" />
           <Tab label="Edit" />

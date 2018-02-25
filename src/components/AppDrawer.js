@@ -44,7 +44,7 @@ class AppDrawer extends React.PureComponent {
     const drawer = (
       <div>
         <div className={classes.drawerHeader}>
-          <Hidden lgUp implementation="css">
+          <Hidden implementation="css" lgUp>
             <IconButton onClick={onRequestClose}>
               <ChevronLeftIcon />
             </IconButton>
@@ -56,29 +56,29 @@ class AppDrawer extends React.PureComponent {
 
     return (
       <div className={className}>
-        <Hidden lgUp>
+        <Hidden implementation="css" lgUp>
           <Drawer
-            classes={{
-              paper: classes.paper
-            }}
-            type="temporary"
-            open={mobileDrawerOpen}
-            onClose={onRequestClose}
             ModalProps={{
               keepMounted: true
             }}
+            classes={{
+              paper: classes.paper
+            }}
+            onClose={onRequestClose}
+            open={mobileDrawerOpen}
+            variant="temporary"
           >
             {drawer}
           </Drawer>
         </Hidden>
 
-        <Hidden mdDown implementation="css">
+        <Hidden implementation="css" mdDown>
           <Drawer
             classes={{
               paper: classes.paper
             }}
-            type="permanent"
             open
+            variant="permanent"
           >
             {drawer}
           </Drawer>

@@ -67,22 +67,22 @@ class AddProfileDialog extends React.PureComponent {
     const url = `${externalProfile.url}/user/${this.state.login}`;
 
     return (
-      <Dialog open={this.props.open} onClose={this.onClose}>
+      <Dialog onClose={this.onClose} open={this.props.open}>
         <DialogTitle>Set {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
           <div>
             <a href={url}>{url}</a>
           </div>
           <TextField
+            autoFocus
+            label="Profile"
             margin="dense"
+            onChange={this.onProfileChange}
+            onKeyPress={this.catchReturn}
             style={{
               width: 560
             }}
-            onKeyPress={this.catchReturn}
             value={this.state.login}
-            autoFocus
-            label="Profile"
-            onChange={this.onProfileChange}
           />
         </DialogContent>
         <DialogActions>
@@ -91,9 +91,9 @@ class AddProfileDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            raised
-            onClick={this.onCommitClick}
             disabled={inProgress}
+            onClick={this.onCommitClick}
+            variant="raised"
           >
             Commit
             {inProgress && (
