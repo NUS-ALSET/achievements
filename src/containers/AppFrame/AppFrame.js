@@ -126,7 +126,7 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const { classes, userId } = this.props;
+    const { classes, userId, userName, anchorElId } = this.props;
 
     return (
       <Router>
@@ -152,7 +152,7 @@ class AppFrame extends React.Component {
                   Achievements
                 </Typography>
 
-                {this.props.userName ? (
+                {userId ? (
                   <Fragment>
                     <IconButton
                       aria-haspopup="true"
@@ -167,16 +167,15 @@ class AppFrame extends React.Component {
                     </IconButton>
                     <Menu
                       anchorEl={
-                        (this.props.anchorElId &&
-                          document.getElementById(this.props.anchorElId)) ||
+                        (anchorElId && document.getElementById(anchorElId)) ||
                         document.body
                       }
                       id="menuRight"
                       onClose={this.handleMenuClose}
-                      open={!!this.props.anchorElId}
+                      open={!!anchorElId}
                     >
                       <AppBarMenuItemsExport
-                        isAuth={this.props.userId}
+                        isAuth={userId}
                         login={this.handleLogin}
                         logout={this.handleLogout}
                         onClick={this.handleMenuClose}
@@ -208,7 +207,7 @@ class AppFrame extends React.Component {
               <Route
                 exact
                 path="/(account|profile)/:accountId"
-                render={() => <Account userName={this.props.userName} />}
+                render={() => <Account userName={userName} />}
               />
             </main>
           </div>
