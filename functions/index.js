@@ -3,7 +3,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
 const axios = require("axios");
-const lti = require('ims-lti');
+const lti = require('@dinoboff/ims-lti');
 
 const ERROR_401 = 401;
 const profilesRefreshApproach =
@@ -310,9 +310,20 @@ exports.ltiLogin = functions.https.onRequest((req, res) => {
   });
   */
 
-  let provider = new lti.Provider(oauth_consumer_key , consumerSecret);  
+  //let provider = new lti.Provider(oauth_consumer_key , consumerSecret);  
   
-  provider.valid_request(req, data, function(err, isValid){  
+  var provider = new lti.Provider(oauth_consumer_key , consumerSecret, {
+    trustProxy: true
+  });
+  if (!req.path) {
+    req.url = "/ltiLogin";
+  }
+  
+  if (req.headers["x-appengine-https"] == 'on'){
+    req.headers["x-forwarded-proto"] = "https";
+  }
+  req.protocol = 'https';
+  provider.valid_request(req, req.body, function(err, isValid){  
     /*
     To work around the lti library issue, but continue on with development, we will automatically login
     specific test users attempting to use a specifc consumer key. 
@@ -344,6 +355,7 @@ exports.ltiLogin = functions.https.onRequest((req, res) => {
     } else {
       let message = "LTI login request was invalid. protocol -> "+req.protocol+" error-> "+err;
       message += "oauth_consumer_key -> "+oauth_consumer_key+" user_id -> " + user_id;
+      message += "\nisValid ->"+isValid
       message += "\n\n"+JSON.stringify(data);
       res.send(message);
     
