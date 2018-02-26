@@ -34,6 +34,7 @@ import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
 import sagas from "./sagas";
 import withStyles from "material-ui/styles/withStyles";
+import { withRouter } from "react-router-dom";
 
 const styles = theme => ({
   card: {
@@ -137,26 +138,26 @@ class Account extends React.PureComponent {
           <Grid item xs={3}>
             <Card className={classes.card}>
               <CardMedia
-                style={{ height: 240 }}
                 image={
                   (user && user.photoURL) ||
                   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ" +
                     "AAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
                 }
+                style={{ height: 240 }}
                 title={this.props.userName}
               />
               <CardContent>
                 {displayNameEdit ? (
                   <Fragment>
                     <TextField
+                      autoFocus
+                      defaultValue={userName}
+                      label="Display Name"
+                      onChange={this.changeDisplayName}
+                      onKeyPress={this.catchReturn}
                       style={{
                         width: "calc(100% - 48px)"
                       }}
-                      autoFocus
-                      label="Display Name"
-                      defaultValue={userName}
-                      onChange={this.changeDisplayName}
-                      onKeyPress={this.catchReturn}
                     />
                     <IconButton>
                       <CheckIcon onClick={() => this.updateDisplayName()} />
@@ -189,35 +190,35 @@ class Account extends React.PureComponent {
               <Fragment key={externalProfileKey}>
                 <ExternalProfileCard
                   addExternalProfileRequest={this.addExternalProfileRequest}
+                  classes={classes}
+                  externalProfile={externalProfiles[externalProfileKey]}
+                  inProgress={achievementsRefreshingInProgress}
                   refreshAchievementsRequest={this.refreshAchievementsRequest}
                   removeExternalProfileRequest={
                     this.removeExternalProfileRequest
                   }
-                  inProgress={achievementsRefreshingInProgress}
-                  classes={classes}
                   userAchievements={
                     (userAchievements || {})[externalProfileKey]
                   }
-                  externalProfile={externalProfiles[externalProfileKey]}
                 />
                 <AddProfileDialog
-                  open={this.props.showDialog}
-                  inProgress={this.props.externalProfileInUpdate}
-                  externalProfile={externalProfiles[externalProfileKey]}
-                  onError={this.showError}
-                  uid={this.props.uid}
-                  onClose={this.closeExternalProfileDialog}
                   dispatch={dispatch}
+                  externalProfile={externalProfiles[externalProfileKey]}
+                  inProgress={this.props.externalProfileInUpdate}
+                  onClose={this.closeExternalProfileDialog}
+                  onError={this.showError}
+                  open={this.props.showDialog}
+                  uid={this.props.uid}
                 />
               </Fragment>
             ))}
           </Grid>
         </Grid>
         <RemoveExternalProfileDialog
-          open={removeRequest.actual}
-          externalProfileType={removeRequest.type}
-          externalProfileId={removeRequest.id}
           dispatch={dispatch}
+          externalProfileId={removeRequest.id}
+          externalProfileType={removeRequest.type}
+          open={removeRequest.actual}
         />
       </Fragment>
     );
@@ -226,12 +227,14 @@ class Account extends React.PureComponent {
 
 sagaInjector.inject(sagas);
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   userName:
     state.firebase.auth.uid &&
     state.firebase.data &&
     state.firebase.data.users &&
-    state.firebase.data.users[state.firebase.auth.uid].displayName,
+    state.firebase.data.users[
+      ownProps.match.params.accountId || state.firebase.auth.uid
+    ].displayName,
   uid: state.firebase.auth.uid,
   auth: state.firebase.auth,
 
@@ -239,7 +242,7 @@ const mapStateToProps = state => ({
   externalProfiles: accountService.fetchExternalProfiles(),
 
   userAchievements: (state.firebase.data.userAchievements || {})[
-    state.firebase.auth.uid
+    ownProps.match.params.accountId || state.firebase.auth.uid
   ],
   showDialog: state.account.showExternalProfileDialog,
   removeRequest: {
@@ -251,11 +254,16 @@ const mapStateToProps = state => ({
   achievementsRefreshingInProgress:
     state.account.achievementsRefreshingInProgress,
   displayNameEdit: state.account.displayNameEdit,
-  user: (state.firebase.data.users || {})[state.firebase.auth.uid]
+  user: (state.firebase.data.users || {})[
+    ownProps.match.params.accountId || state.firebase.auth.uid
+  ]
 });
 
 export default compose(
-  firebaseConnect((props, store) => [
+  withRouter,
+  firebaseConnect((ownProps, store) => [
+    `/users/${ownProps.match.params.accountId}`,
+    `/userAchievements/${ownProps.match.params.accountId}`,
     `/users/${store.getState().firebase.auth.uid}`,
     `/userAchievements/${store.getState().firebase.auth.uid}`
   ]),

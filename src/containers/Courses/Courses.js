@@ -2,8 +2,6 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import {
   courseHideDialog,
-  courseNewDialogChange,
-  courseNewRequest,
   courseRemoveDialogShow,
   courseRemoveRequest,
   courseShowNewDialog,
@@ -21,7 +19,10 @@ import RemoveCourseDialog from "../../components/dialogs/RemoveCourseDialog";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Toolbar from "material-ui/Toolbar";
 
+import AddIcon from "material-ui-icons/Add";
+
 import sagas from "./sagas";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 const COURSE_TAB_JOINED = 0;
 const COURSE_TAB_OWNED = 1;
@@ -68,18 +69,11 @@ class Courses extends React.Component {
   removeDialogRequest = course => {
     this.props.dispatch(courseRemoveRequest(course.id));
   };
-  newDialogRequest = () => {
-    const { dispatch, newCourseValues } = this.props;
-
-    dispatch(courseNewRequest(newCourseValues.name, newCourseValues.password));
-  };
-  onDialogFieldChange = (field, value) => {
-    this.props.dispatch(courseNewDialogChange(field, value));
-  };
   render() {
     const {
       auth,
       ownerId,
+      dispatch,
       newCourseValues,
       removingCourse,
       dialog,
@@ -110,39 +104,59 @@ class Courses extends React.Component {
 
     return (
       <Fragment>
-        <Toolbar>
-          <Button raised onClick={() => this.showNewCourseDialog()}>
-            Add new course
+        {!APP_SETTING.isSuggesting ? (
+          <Toolbar>
+            <Button
+              aria-label="Add"
+              color="primary"
+              onClick={() => this.showNewCourseDialog()}
+              variant="raised"
+            >
+              Add new course
+            </Button>
+          </Toolbar>
+        ) : (
+          <Button
+            aria-label="Add"
+            color="primary"
+            onClick={() => this.showNewCourseDialog()}
+            style={{
+              position: "fixed",
+              bottom: 20,
+              right: 20
+            }}
+            variant="fab"
+          >
+            <AddIcon />
           </Button>
-        </Toolbar>
+        )}
         <Tabs
           fullWidth
           indicatorColor="primary"
+          onChange={this.switchTab}
           textColor="primary"
           value={currentTab}
-          onChange={this.switchTab}
         >
           <Tab label="Joined courses" />
           <Tab label="My courses" />
           <Tab label="Public courses" />
         </Tabs>
         <CoursesTable
+          courses={courses || {}}
+          dispatch={dispatch}
           onDeleteCourseClick={this.onDeleteCourseClick}
           ownerId={ownerId}
-          courses={courses || {}}
         />
         <AddCourseDialog
-          values={newCourseValues}
-          onFieldChange={this.onDialogFieldChange}
-          requestCreation={this.newDialogRequest}
+          course={newCourseValues}
+          dispatch={dispatch}
           open={dialog === "NEW_COURSE"}
-          onClose={this.closeDialog}
         />
         <RemoveCourseDialog
-          open={dialog === "REMOVE_COURSE"}
           course={removingCourse}
           onClose={this.closeDialog}
           onCommit={this.removeDialogRequest}
+          open={dialog === "REMOVE_COURSE"}
         />
       </Fragment>
     );
@@ -171,24 +185,22 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-  firebaseConnect(
-    (ownProps, store) => {
-      const firebaseAuth = store.getState().firebase.auth;
-      return (
-        !firebaseAuth.isEmpty && [
-          {
-            path: "/courses",
-            storeAs: "myCourses",
-            queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
-          },
-          {
-            path: "/courses",
-            storeAs: "publicCourses",
-            queryParams: ["orderByChild=isPublic", "equalTo=true"]
-          }
-        ]
-      );
-    }
-  ),
+  firebaseConnect((ownProps, store) => {
+    const firebaseAuth = store.getState().firebase.auth;
+    return (
+      !firebaseAuth.isEmpty && [
+        {
+          path: "/courses",
+          storeAs: "myCourses",
+          queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
+        },
+        {
+          path: "/courses",
+          storeAs: "publicCourses",
+          queryParams: ["orderByChild=isPublic", "equalTo=true"]
+        }
+      ]
+    );
+  }),
   connect(mapStateToProps)
 )(Courses);

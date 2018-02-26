@@ -23,13 +23,13 @@ class Paths extends React.PureComponent {
   render() {
     return (
       <Grid container>
-        <Grid item xs={12} sm={3}>
+        <Grid item sm={3} xs={12}>
           <Button
             color="primary"
-            raised
             style={{
               margin: 4
             }}
+            variant="raised"
           >
             Add Path
           </Button>
@@ -59,31 +59,31 @@ class Paths extends React.PureComponent {
             </ListItem>
           </List>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid item sm={9} xs={12}>
           <Button
             color="primary"
-            raised
             style={{
               margin: 4
             }}
+            variant="raised"
           >
             Add Notebook
           </Button>
           <Button
             color="primary"
-            raised
             style={{
               margin: 4
             }}
+            variant="raised"
           >
             Add Question
           </Button>
           <Tabs
             fullWidth
             indicatorColor="primary"
+            onChange={(e, index) => this.setState({ tabIndex: index })}
             textColor="primary"
             value={this.state.tabIndex}
-            onChange={(e, index) => this.setState({ tabIndex: index })}
           >
             <Tab label="First Notebook" />
             <Tab label="First Question" />

@@ -1,6 +1,7 @@
 export const COURSE_SHOW_NEW_DIALOG = "COURSE_SHOW_NEW_DIALOG";
-export const courseShowNewDialog = () => ({
-  type: COURSE_SHOW_NEW_DIALOG
+export const courseShowNewDialog = courseData => ({
+  type: COURSE_SHOW_NEW_DIALOG,
+  courseData
 });
 
 export const COURSE_HIDE_DIALOG = "COURSE_HIDE_DIALOG";
@@ -16,10 +17,9 @@ export const courseNewDialogChange = (field, value) => ({
 });
 
 export const COURSE_NEW_REQUEST = "COURSE_NEW_REQUEST";
-export const courseNewRequest = (name, password) => ({
+export const courseNewRequest = courseData => ({
   type: COURSE_NEW_REQUEST,
-  name,
-  password
+  courseData
 });
 
 export const COURSE_NEW_SUCCESS = "COURSE_NEW_SUCCESS";

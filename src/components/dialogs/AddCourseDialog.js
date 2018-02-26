@@ -8,58 +8,98 @@ import Dialog, {
 import PropTypes from "prop-types";
 import React from "react";
 import TextField from "material-ui/TextField/TextField";
+import { APP_SETTING } from "../../achievementsApp/config";
+import {
+  courseHideDialog,
+  courseNewRequest
+} from "../../containers/Courses/actions";
 
 export class AddCourseDialog extends React.Component {
   static propTypes = {
-    onClose: PropTypes.func.isRequired,
-    requestCreation: PropTypes.func.isRequired,
-    onFieldChange: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    values: PropTypes.object.isRequired
+    course: PropTypes.object,
+    dispatch: PropTypes.func.isRequired
   };
 
-  handleCommit = () => {
-    this.props.requestCreation(
-      this.props.values.name,
-      this.props.values.password
-    );
+  state = {
+    name: "",
+    password: "",
+    description: ""
+  };
+
+  onClose = () =>
+    this.setState({
+      name: "",
+      password: "",
+      description: ""
+    }) || this.props.dispatch(courseHideDialog());
+  catchReturn = event => event.key === "Enter" && this.onCommit();
+  onFieldChange = (field, value) => this.setState({ [field]: value });
+  onCommit = () => {
+    // Prevent changing real course data
+    let course = Object.assign({}, this.props.course, this.state);
+
+    // Update only changed fields (state populates in `onChange` handler
+    Object.keys(course).forEach(field => {
+      if (!course[field]) {
+        delete course[field];
+      }
+    });
+
+    this.props.dispatch(courseNewRequest(course));
+    this.onClose();
   };
 
   render() {
+    const { course, open } = this.props;
+
     return (
-      <Dialog open={this.props.open} onClose={this.props.onClose}>
-        <DialogTitle>Add New Course</DialogTitle>
+      <Dialog onClose={this.onClose} open={open}>
+        <DialogTitle>
+          {course && course.id ? "Edit Course" : "Add New Course"}
+        </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
-            required
-            error={!this.props.values.name}
-            onChange={event =>
-              this.props.onFieldChange("name", event.currentTarget.value)
-            }
-            value={this.props.values.name}
-            margin="dense"
-            label="Course name"
+            defaultValue={course && course.name}
             fullWidth
+            label="Course name"
+            margin="dense"
+            onChange={e => this.onFieldChange("name", e.target.value)}
+            onKeyPress={this.catchReturn}
+            required
           />
           <TextField
-            onChange={event =>
-              this.props.onFieldChange("password", event.currentTarget.value)
-            }
-            required
-            error={!this.props.values.password}
-            value={this.props.values.password}
-            margin="dense"
-            label="Password"
+            defaultValue={course && course.password}
             fullWidth
+            helperText={
+              course && course.id
+                ? "Leave it blank to keep existing password"
+                : ""
+            }
+            label="Password"
+            margin="dense"
+            onChange={e => this.onFieldChange("password", e.target.value)}
+            onKeyPress={this.catchReturn}
+            required
             type="password"
           />
+          {APP_SETTING.isSuggesting && (
+            <TextField
+              defaultValue={course && course.description}
+              fullWidth
+              label="Description"
+              margin="dense"
+              onChange={e => this.onFieldChange("description", e.target.value)}
+              onKeyPress={this.catchReturn}
+            />
+          )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={this.props.onClose} color="secondary">
+          <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button onClick={this.handleCommit} color="primary" raised>
+          <Button color="primary" onClick={this.onCommit} variant="raised">
             Commit
           </Button>
         </DialogActions>

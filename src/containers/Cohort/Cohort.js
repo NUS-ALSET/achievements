@@ -85,7 +85,7 @@ class Cohort extends React.PureComponent {
     return (
       <Fragment>
         <Toolbar>
-          <Link to={"/cohorts"} className={classes.breadcrumbLink}>
+          <Link className={classes.breadcrumbLink} to={"/cohorts"}>
             <Typography className={classes.breadcrumbText}>Cohorts</Typography>
           </Link>
           <ChevronRightIcon />
@@ -93,19 +93,26 @@ class Cohort extends React.PureComponent {
             {cohort.name}
           </Typography>
         </Toolbar>
-        <Typography gutterBottom>{cohort.description}</Typography>
+        <Typography
+          gutterBottom
+          style={{
+            marginLeft: 30
+          }}
+        >
+          {cohort.description}
+        </Typography>
         {isOwner && (
           <Toolbar>
             <TextField
-              select
-              value={this.state.selectedCourse}
-              onChange={this.selectCourse}
-              label="Course"
               className={classes.toolbarItem}
+              label="Course"
+              onChange={this.selectCourse}
+              select
               style={{
                 width: 320,
                 marginTop: 0
               }}
+              value={this.state.selectedCourse}
             >
               {Object.keys(courses || {})
                 .map(id => ({ ...courses[id], id }))
@@ -116,25 +123,25 @@ class Cohort extends React.PureComponent {
                 ))}
             </TextField>
             <Button
-              raised
-              onClick={this.addCourse}
               className={classes.toolbarItem}
+              onClick={this.addCourse}
+              variant="raised"
             >
               Add
             </Button>
             <Button
-              raised
-              onClick={this.recalculate}
               className={classes.toolbarItem}
+              onClick={this.recalculate}
+              variant="raised"
             >
               Recalculate
             </Button>
           </Toolbar>
         )}
         <CohortCoursesTable
+          courses={cohort.courses}
           dispatch={dispatch}
           isOwner={isOwner}
-          courses={cohort.courses}
         />
       </Fragment>
     );

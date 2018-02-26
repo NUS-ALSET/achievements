@@ -38,7 +38,7 @@ class RemoveExternalProfileDialog extends React.PureComponent {
   render() {
     const { open, externalProfileId, externalProfileType } = this.props;
     return (
-      <Dialog open={open} onClose={this.onClose}>
+      <Dialog onClose={this.onClose} open={open}>
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <Typography>
@@ -51,7 +51,7 @@ class RemoveExternalProfileDialog extends React.PureComponent {
           <Button color="primary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button raised color="secondary" onClick={this.onCommit}>
+          <Button color="secondary" onClick={this.onCommit} variant="raised">
             Delete
           </Button>
         </DialogActions>
