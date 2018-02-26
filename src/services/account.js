@@ -6,6 +6,21 @@ import { authProvider } from "../achievementsApp/config";
 import firebase from "firebase";
 
 export class AccountService {
+  /**
+   * This method converts external profile id (login) to required format
+   * @param {String} profileType variant of external profile (e.g. CodeCombat)
+   * @param {String} id external profile id (login)
+   * @returns {String} converted profile
+   */
+  static processProfile(profileType, id) {
+    switch (profileType) {
+      case "CodeCombat":
+        return id.toLowerCase().replace(" ", "-");
+      default:
+        return id;
+    }
+  }
+
   signIn() {
     return firebase
       .auth()

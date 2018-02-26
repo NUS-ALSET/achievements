@@ -42,9 +42,12 @@ function processProfileRefreshRequest(data, resolve) {
         .then(existing =>
           axios
             .get(
-              `https://codecombat.com/db/user/${
-                data.serviceId
-              }/level.sessions?project=state.complete,levelID,` +
+              `https://codecombat.com/db/user/${data.serviceId
+                .toLowerCase()
+                .replace(
+                  " ",
+                  "-"
+                )}/level.sessions?project=state.complete,levelID,` +
                 "levelName,playtime,codeLanguage,created"
             )
             .then(response =>

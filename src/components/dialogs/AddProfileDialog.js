@@ -20,8 +20,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import TextField from "material-ui/TextField";
-
-const STRING_MAX = 32;
+import { AccountService } from "../../services/account";
 
 class AddProfileDialog extends React.PureComponent {
   static propTypes = {
@@ -38,8 +37,10 @@ class AddProfileDialog extends React.PureComponent {
   };
 
   onProfileChange = e => {
+    const { externalProfile } = this.props;
+
     this.setState({
-      login: e.target.value.toLowerCase().slice(0, STRING_MAX)
+      login: AccountService.processProfile(externalProfile.id, e.target.value)
     });
   };
 
