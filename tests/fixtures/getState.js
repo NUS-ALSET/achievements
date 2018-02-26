@@ -52,6 +52,11 @@ export const getTestState = config => ({
       coursePasswords: {
         abcTestCourseId: "abcTestCoursePassword"
       },
+      courseAssistants: {
+        abcTestCourseId: {
+          abcTestAssistant1: true
+        }
+      },
       userAchievements: config.userAchievements || {
         abcTestUser1: {
           CodeCombat: {
@@ -115,6 +120,9 @@ export const getTestState = config => ({
       users: config.users || {
         abcTestUserOwner: {
           displayName: "Test User Owner"
+        },
+        abcTestAssistant1: {
+          displayName: "Test User Assistant 1"
         },
         abcTestUser1: {
           displayName: "Test User 1"

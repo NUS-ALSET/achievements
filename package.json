@@ -2,7 +2,7 @@
   "name": "achievements",
   "description": "Short answer and levels",
   "version": "0.0.36",
-  "homepage":"./",
+  "homepage": "./",
   "dependencies": {
     "@devexpress/dx-react-core": "^1.0.0-rc.2",
     "@devexpress/dx-react-grid": "^1.0.0-rc.2",
@@ -16,7 +16,7 @@
     "firebase-queue": "^1.6.1",
     "history": "^4.7.2",
     "lodash": "^4.17.4",
-    "material-ui": "^1.0.0-beta.30",
+    "material-ui": "^1.0.0-beta.34",
     "material-ui-icons": "latest",
     "mdi-react": "^2.1.19",
     "prop-types": "^15.6.0",
@@ -41,6 +41,8 @@
     "babel-preset-es2015": "^6.24.1",
     "firebase-admin": "^5.8.1",
     "firebase-json": "^0.4.0",
+    "jsdom": "11.6.2",
+    "jsdom-global": "3.0.2",
     "mocha": "^5.0.0",
     "react-scripts": "1.0.0",
     "sinon": "^4.3.0",
@@ -49,7 +51,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build ",
-    "test": "mocha --require babel-core/register --require babel-polyfill --recursive ./tests",
+    "test": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
     "eject": "react-scripts eject"
   }
 }

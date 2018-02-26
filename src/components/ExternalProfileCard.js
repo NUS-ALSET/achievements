@@ -36,7 +36,7 @@ class ExternalProfileCard extends React.PureComponent {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography className={classes.card} type="title">
+          <Typography className={classes.card} variant="title">
             {externalProfile.name}
           </Typography>
           {userAchievements ? (
@@ -44,9 +44,9 @@ class ExternalProfileCard extends React.PureComponent {
               <Typography className={classes.card}>
                 Registered as{" "}
                 <a
+                  href={`${externalProfile.url}/user/${userAchievements.id}`}
                   rel="noopener noreferrer"
                   target="_blank"
-                  href={`${externalProfile.url}/user/${userAchievements.id}`}
                 >
                   {userAchievements.id}
                 </a>
@@ -66,9 +66,9 @@ class ExternalProfileCard extends React.PureComponent {
           {userAchievements ? (
             <Fragment>
               <Button
-                onClick={() => refreshAchievementsRequest(externalProfile)}
                 color="primary"
                 disabled={inProgress}
+                onClick={() => refreshAchievementsRequest(externalProfile)}
               >
                 Refresh achievements
                 {inProgress && (
@@ -83,8 +83,8 @@ class ExternalProfileCard extends React.PureComponent {
                 )}
               </Button>
               <Button
-                onClick={() => removeExternalProfileRequest(externalProfile)}
                 color="secondary"
+                onClick={() => removeExternalProfileRequest(externalProfile)}
               >
                 Remove
               </Button>
@@ -93,7 +93,7 @@ class ExternalProfileCard extends React.PureComponent {
             <Button
               color="primary"
               onClick={() => addExternalProfileRequest(externalProfile)}
-              raised
+              variant="raised"
             >
               Add Profile
             </Button>

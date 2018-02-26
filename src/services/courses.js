@@ -9,13 +9,13 @@ import {
   coursePasswordEnterRequest
 } from "../containers/Assignments/actions";
 import { notificationHide, notificationShow } from "../containers/Root/actions";
-import { solutionsService } from "./solutions";
+// import { solutionsService } from "./solutions";
 import each from "lodash/each";
 import firebase from "firebase";
 
 const ERROR_TIMEOUT = 6000;
 
-class CoursesService {
+export class CoursesService {
   errorTimeout = false;
 
   static sortAssignments(assignments) {
@@ -109,36 +109,31 @@ class CoursesService {
     );
   }
 
-  validateNewCourse(name, password) {
-    if (!(name && password)) {
+  validateNewCourse(courseData) {
+    if (!(courseData.id || (courseData.name && courseData.password))) {
       throw new Error("Missing name or password");
     }
     return true;
   }
 
-  createNewCourse(name, password) {
-    this.validateNewCourse(name, password);
+  createNewCourse(courseData) {
+    const { name, password, description } = courseData;
+
+    if (courseData.id) {
+      return firebase.ref(`/courses/${courseData.id}`).update(courseData);
+    }
+
+    this.validateNewCourse(courseData);
     return firebase
       .push("/courses", {
         name,
         instructorName: this.getUser("displayName"),
+        description: description || "",
         owner: this.getUser("uid")
       })
       .then(ref =>
         firebase
           .set(`/coursePasswords/${ref.getKey()}`, password)
-          .then(() =>
-            // Start watch solutions for this course
-            firebase
-              .database()
-              .ref(`/solutions/${ref.getKey()}`)
-              .on("value", data =>
-                solutionsService.processUpdatedSolutions(
-                  ref.getKey(),
-                  data.val()
-                )
-              )
-          )
           .then(() => ref.getKey())
       );
   }
@@ -547,6 +542,56 @@ class CoursesService {
     return currentUserData.concat(result);
   }
 
+  refreshProfileSolutions(courseId) {
+    return firebase
+      .database()
+      .ref(`/courseMembers/${courseId}`)
+      .once("value")
+      .then(membersSnapshot => Object.keys(membersSnapshot.val() || {}))
+      .then(memberIds =>
+        Promise.all(
+          memberIds.map(id =>
+            firebase
+              .database()
+              .ref(`/userAchievements/${id}/CodeCombat/id`)
+              .once("value")
+              .then(profileSnapshot => ({
+                id,
+                login: profileSnapshot.val()
+              }))
+          )
+        )
+      )
+      .then(logins => logins.filter(loginInfo => loginInfo.login))
+      .then(logins => {
+        const updates = {};
+        let needUpdate = false;
+
+        logins.forEach(loginInfo => {
+          const key = firebase
+            .database()
+            .ref("updateProfileQueue/tasks")
+            .push().key;
+
+          needUpdate = true;
+
+          // FIXIT: make it assignment-depended to select correct external service
+          updates[key] = {
+            service: "CodeCombat",
+            serviceId: loginInfo.login,
+            uid: loginInfo.id
+          };
+        });
+
+        if (needUpdate) {
+          return firebase
+            .database()
+            .ref("updateProfileQueue/tasks")
+            .update(updates);
+        }
+      });
+  }
+
   processAssignmentsOrderIndexes(courseId, assignments) {
     const ordersMap = {};
     let needUpdate = false;
@@ -578,6 +623,39 @@ class CoursesService {
     );
   }
 
+  getAssistants(courseId) {
+    return firebase
+      .database()
+      .ref(`/courseAssistants/${courseId}`)
+      .once("value")
+      .then(assistants => Object.keys(assistants.val() || {}))
+      .then(userIds =>
+        Promise.all(
+          userIds.map(id =>
+            firebase
+              .database()
+              .ref(`/users/${id}`)
+              .once("value")
+              .then(user => Object.assign({ id }, user.val()))
+          )
+        )
+      );
+  }
+
+  addAssistant(courseId, assistantId) {
+    return firebase
+      .database()
+      .ref(`/courseAssistants/${courseId}/${assistantId}`)
+      .set(true);
+  }
+
+  removeAssistant(courseId, assistantId) {
+    return firebase
+      .database()
+      .ref(`/courseAssistants/${courseId}/${assistantId}`)
+      .remove();
+  }
+
   reorderAssignment(assignments, courseId, assignmentId, order) {
     const offset = order ? 1 : -1;
     let assignment;
@@ -606,6 +684,17 @@ class CoursesService {
         .ref(`/assignments/${courseId}/${sibling.id}/orderIndex`)
         .set(assignment.orderIndex)
     ]);
+  }
+
+  fetchUser(userKey) {
+    if (userKey.length <= 1) {
+      return Promise.resolve();
+    }
+    return firebase
+      .database()
+      .ref(`/users/${userKey}`)
+      .once("value")
+      .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
   }
 }
 

@@ -25,7 +25,6 @@ class AssignmentsTable extends React.PureComponent {
   render() {
     return (
       <Grid
-        rows={this.props.assignments}
         columns={[
           { name: "studentName", title: "Student" },
           { name: "assignment", title: "Assignment" },
@@ -35,10 +34,11 @@ class AssignmentsTable extends React.PureComponent {
             ? [{ name: "actions", title: "Actions" }]
             : []
         )}
+        rows={this.props.assignments}
       >
         <GroupingState
-          defaultGrouping={[{ columnName: "studentName" }]}
           defaultExpandedGroups={[this.props.studentName]}
+          defaultGrouping={[{ columnName: "studentName" }]}
         />
         <IntegratedGrouping />
         <Table />

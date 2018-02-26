@@ -63,19 +63,19 @@ class AddAssignmentDialog extends React.PureComponent {
     assignment = assignment || {};
 
     return (
-      <Dialog open={open} onClose={onClose}>
+      <Dialog onClose={onClose} open={open}>
         <DialogTitle>
           {assignment.id ? "Edit Assignment" : "New Assignment"}
         </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
+            fullWidth
+            label="Type of question"
             margin="normal"
+            onChange={onFieldChange("questionType")}
             select
             value={assignment.questionType || ""}
-            onChange={onFieldChange("questionType")}
-            label="Type of question"
-            fullWidth
           >
             <MenuItem value="Text">Text</MenuItem>
             <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
@@ -85,27 +85,23 @@ class AddAssignmentDialog extends React.PureComponent {
             </MenuItem>
           </TextField>
           <TextField
-            onChange={onFieldChange("name")}
-            margin="normal"
-            label="Name"
-            value={assignment.name || ""}
             fullWidth
+            label="Name"
+            margin="normal"
+            onChange={onFieldChange("name")}
+            value={assignment.name || ""}
           />
           <TextField
-            onChange={onFieldChange("details")}
-            margin="normal"
-            label="Details/Links"
-            value={assignment.details || ""}
             fullWidth
+            label="Details/Links"
+            margin="normal"
+            onChange={onFieldChange("details")}
+            value={assignment.details || ""}
           />
           {assignment.questionType === "CodeCombat" && (
             <FormControl fullWidth margin="normal">
               <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
               <Select
-                margin="none"
-                value={assignment.level || ""}
-                onChange={onFieldChange("level")}
-                input={<Input id="select-multiple-levels" />}
                 MenuProps={{
                   PaperProps: {
                     style: {
@@ -114,6 +110,10 @@ class AddAssignmentDialog extends React.PureComponent {
                     }
                   }
                 }}
+                input={<Input id="select-multiple-levels" />}
+                margin="none"
+                onChange={onFieldChange("level")}
+                value={assignment.level || ""}
               >
                 {Object.keys(APP_SETTING.levels).map(id => (
                   <MenuItem key={APP_SETTING.levels[id].name} value={id}>
@@ -128,39 +128,39 @@ class AddAssignmentDialog extends React.PureComponent {
               fullWidth
               label="Levels amount"
               margin="normal"
-              type="number"
               onChange={onFieldChange("count")}
+              type="number"
               value={assignment.count}
             />
           )}
           <TextField
+            InputLabelProps={{
+              shrink: true
+            }}
             fullWidth
             label="Open"
             margin="normal"
-            type="datetime-local"
             onChange={onFieldChange("open")}
+            type="datetime-local"
             value={assignment.open || ""}
+          />
+          <TextField
             InputLabelProps={{
               shrink: true
             }}
-          />
-          <TextField
             fullWidth
             label="Deadline"
             margin="normal"
-            type="datetime-local"
             onChange={onFieldChange("deadline")}
+            type="datetime-local"
             value={assignment.deadline || ""}
-            InputLabelProps={{
-              shrink: true
-            }}
           />
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button raised color="primary" onClick={onCommit}>
+          <Button color="primary" onClick={onCommit} variant="raised">
             Commit
           </Button>
         </DialogActions>

@@ -33,6 +33,7 @@ import Cohort from "../Cohort/Cohort";
 const styles = theme => ({
   "@global": {
     html: {
+      height: "100%",
       background: theme.palette.background.default,
       WebkitFontSmoothing: "antialiased",
       MozOsxFontSmoothing: "grayscale",
@@ -52,7 +53,6 @@ const styles = theme => ({
   root: {
     display: "flex",
     alignItems: "stretch",
-    minHeight: "100%",
     width: "100%"
   },
   appBarTitle: {
@@ -61,8 +61,7 @@ const styles = theme => ({
   appFrame: {
     position: "relative",
     display: "flex",
-    width: "100%",
-    height: "100%"
+    width: "100%"
   },
   appBar: {
     [theme.breakpoints.up("lg")]: {
@@ -127,7 +126,7 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const { classes, userId } = this.props;
+    const { classes, userId, userName, anchorElId } = this.props;
 
     return (
       <Router>
@@ -135,10 +134,10 @@ class AppFrame extends React.Component {
           <div className={classes.appFrame}>
             <AppBar className={classes.appBar} onClose={this.handleDrawerClose}>
               <Toolbar>
-                <Hidden lgUp implementation="css">
+                <Hidden implementation="css" lgUp>
                   <IconButton
-                    color="inherit"
                     aria-label="Open Drawer"
+                    color="inherit"
                     onClick={this.handleDrawerToggle}
                   >
                     <MenuIcon />
@@ -146,41 +145,40 @@ class AppFrame extends React.Component {
                 </Hidden>
                 <Typography
                   className={classes.appBarTitle}
-                  type="title"
                   color="inherit"
                   noWrap
+                  variant="title"
                 >
                   Achievements
                 </Typography>
 
-                {this.props.userName ? (
+                {userId ? (
                   <Fragment>
                     <IconButton
-                      id="loginMenuButton"
+                      aria-haspopup="true"
                       aria-label="More"
                       aria-owns="Open right Menu"
-                      aria-haspopup="true"
-                      onClick={this.handleMenuOpen}
-                      color="inherit"
                       className={classes.menuButtonRight}
+                      color="inherit"
+                      id="loginMenuButton"
+                      onClick={this.handleMenuOpen}
                     >
                       <MoreVertIcon />
                     </IconButton>
                     <Menu
-                      id="menuRight"
                       anchorEl={
-                        (this.props.anchorElId &&
-                          document.getElementById(this.props.anchorElId)) ||
+                        (anchorElId && document.getElementById(anchorElId)) ||
                         document.body
                       }
-                      open={!!this.props.anchorElId}
+                      id="menuRight"
                       onClose={this.handleMenuClose}
+                      open={!!anchorElId}
                     >
                       <AppBarMenuItemsExport
-                        isAuth={this.props.userId}
-                        onClick={this.handleMenuClose}
+                        isAuth={userId}
                         login={this.handleLogin}
                         logout={this.handleLogout}
+                        onClick={this.handleMenuClose}
                       />
                     </Menu>
                   </Fragment>
@@ -195,21 +193,21 @@ class AppFrame extends React.Component {
             </AppBar>
             <AppDrawer
               className={classes.drawer}
-              onRequestClose={this.handleDrawerClose}
               mobileDrawerOpen={this.props.mainDrawerOpen}
+              onRequestClose={this.handleDrawerClose}
               userId={userId}
             />
             <main className={classes.content}>
-              <Route exact path="(/|/home)" component={Home} />
-              <Route exact path="/courses" component={Courses} />
-              <Route exact path="/courses/:courseId" component={Assignments} />
-              <Route exact path="/paths" component={Paths} />
-              <Route exact path="/cohorts" component={Cohorts} />
-              <Route exact path={"/cohorts/:cohortId"} component={Cohort} />
+              <Route component={Home} exact path="(/|/home)" />
+              <Route component={Courses} exact path="/courses" />
+              <Route component={Assignments} exact path="/courses/:courseId" />
+              <Route component={Paths} exact path="/paths" />
+              <Route component={Cohorts} exact path="/cohorts" />
+              <Route component={Cohort} exact path={"/cohorts/:cohortId"} />
               <Route
                 exact
                 path="/(account|profile)/:accountId"
-                render={() => <Account userName={this.props.userName} />}
+                render={() => <Account userName={userName} />}
               />
             </main>
           </div>

@@ -20,8 +20,7 @@ import PropTypes from "prop-types";
 import React from "react";
 
 import TextField from "material-ui/TextField";
-
-const STRING_MAX = 32;
+import { AccountService } from "../../services/account";
 
 class AddProfileDialog extends React.PureComponent {
   static propTypes = {
@@ -38,8 +37,10 @@ class AddProfileDialog extends React.PureComponent {
   };
 
   onProfileChange = e => {
+    const { externalProfile } = this.props;
+
     this.setState({
-      login: e.target.value.toLowerCase().slice(0, STRING_MAX)
+      login: AccountService.processProfile(externalProfile.id, e.target.value)
     });
   };
 
@@ -67,22 +68,22 @@ class AddProfileDialog extends React.PureComponent {
     const url = `${externalProfile.url}/user/${this.state.login}`;
 
     return (
-      <Dialog open={this.props.open} onClose={this.onClose}>
+      <Dialog onClose={this.onClose} open={this.props.open}>
         <DialogTitle>Set {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
           <div>
             <a href={url}>{url}</a>
           </div>
           <TextField
+            autoFocus
+            label="Profile"
             margin="dense"
+            onChange={this.onProfileChange}
+            onKeyPress={this.catchReturn}
             style={{
               width: 560
             }}
-            onKeyPress={this.catchReturn}
             value={this.state.login}
-            autoFocus
-            label="Profile"
-            onChange={this.onProfileChange}
           />
         </DialogContent>
         <DialogActions>
@@ -91,9 +92,9 @@ class AddProfileDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            raised
-            onClick={this.onCommitClick}
             disabled={inProgress}
+            onClick={this.onCommitClick}
+            variant="raised"
           >
             Commit
             {inProgress && (

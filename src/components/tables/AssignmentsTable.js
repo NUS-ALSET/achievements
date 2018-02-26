@@ -31,12 +31,12 @@ class AssignmentsTable extends React.PureComponent {
       case "Profile":
         return solution ? (
           <a
-            rel="noopener noreferrer"
-            target="_blank"
             href={`https://codecombat.com/user/${result.replace(
               / \(\d+\)$/,
               ""
             )}`}
+            rel="noopener noreferrer"
+            target="_blank"
           >
             {result}
           </a>
@@ -45,7 +45,7 @@ class AssignmentsTable extends React.PureComponent {
         );
       case "Text":
         return /http[s]?:\/\//.test(result) ? (
-          <a rel="noopener noreferrer" target="_blank" href={result}>
+          <a href={result} rel="noopener noreferrer" target="_blank">
             {result}
           </a>
         ) : (
@@ -90,12 +90,12 @@ class AssignmentsTable extends React.PureComponent {
           <TableRow>
             <TableCell>
               <TableSortLabel
-                style={{
-                  minWidth: 250
-                }}
                 active={sortState.field === "studentName"}
                 direction={sortState.direction}
                 onClick={() => this.onSortClick()}
+                style={{
+                  minWidth: 250
+                }}
               >
                 Student name
               </TableSortLabel>
@@ -121,9 +121,9 @@ class AssignmentsTable extends React.PureComponent {
                   <div>
                     {assignment.details && (
                       <a
+                        href={assignment.details}
                         rel="noopener noreferrer"
                         target="_blank"
-                        href={assignment.details}
                       >
                         details
                       </a>
@@ -148,16 +148,16 @@ class AssignmentsTable extends React.PureComponent {
 
                         {studentInfo.id === currentUser.id && (
                           <Button
-                            style={{
-                              marginLeft: 4
-                            }}
-                            raised
                             onClick={() =>
                               this.onSubmitClick(
                                 assignment,
                                 studentInfo.solutions[assignment.id]
                               )
                             }
+                            style={{
+                              marginLeft: 4
+                            }}
+                            variant="raised"
                           >
                             {studentInfo.solutions[assignment.id]
                               ? "Update"

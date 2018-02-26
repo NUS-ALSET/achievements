@@ -10,7 +10,8 @@
           (root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
            root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists())",
         ".write": "auth != null && root.child('courses/' + $courseKey).exists() &&
-          root.child('courses/' + $courseKey + '/owner').val() == auth.uid"
+          (root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
+          root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists())"
       }
     },
     "blacklistActions": {
@@ -70,13 +71,18 @@
         root.child('courses/' + $courseKey + '/owner').val() == auth.uid)"
       }
     },
+    "courseAssistants": {
+      "$courseKey": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == root.child('courses/' + $courseKey + '/owner').val()"
+      }
+    },
     "courses": {
       ".read": "auth != null",
       "$courseKey": {
         ".read": "auth != null",
         ".write": "
           auth != null &&
-          newData.exists() &&
           !newData.child('isPublic').exists() &&
           (
             (
@@ -139,7 +145,12 @@
     "solutions": {
       ".read": "false",
       "$courseKey": {
-        ".read": "auth != null && root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
+        ".read": "
+          auth != null && (
+            root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
+            root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists()
+          )
+        ",
         "$userKey": {
           ".read": "
             auth != null &&
@@ -187,8 +198,7 @@
           ".write": "
             auth != null &&
             newData.exists() &&
-            newData.hasChild('uid') &&
-            newData.child('uid').val() == auth.uid
+            newData.hasChild('uid')
           "
         }
       }
