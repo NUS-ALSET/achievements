@@ -1,9 +1,13 @@
 import {
   assignmentSolutionRequest,
   assignmentSubmitRequest,
-  assignmentsSortChange
+  assignmentsSortChange,
+  courseRemoveStudentDialogShow
 } from "../../containers/Assignments/actions";
 import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
+
+import DeleteIcon from "material-ui-icons/Delete";
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -14,6 +18,7 @@ import Table, {
   TableRow,
   TableSortLabel
 } from "material-ui/Table";
+import { AccountService } from "../../services/account";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
@@ -31,9 +36,9 @@ class AssignmentsTable extends React.PureComponent {
       case "Profile":
         return solution ? (
           <a
-            href={`https://codecombat.com/user/${result.replace(
-              / \(\d+\)$/,
-              ""
+            href={`https://codecombat.com/user/${AccountService.processProfile(
+              "CodeCombat",
+              result.replace(/ \(\d+\)$/, "")
             )}`}
             rel="noopener noreferrer"
             target="_blank"
@@ -55,6 +60,15 @@ class AssignmentsTable extends React.PureComponent {
         return result;
     }
   }
+
+  onStudentRemoveClick = studentInfo =>
+    this.props.dispatch(
+      courseRemoveStudentDialogShow(
+        this.props.course.id,
+        studentInfo.id,
+        studentInfo.name
+      )
+    );
 
   onSortClick = assignment =>
     this.props.dispatch(
@@ -138,7 +152,16 @@ class AssignmentsTable extends React.PureComponent {
             const studentInfo = course.members[id];
             return (
               <TableRow key={studentInfo.id}>
-                <TableCell>{studentInfo.name}</TableCell>
+                <TableCell>
+                  {course.owner === currentUser.id && (
+                    <IconButton
+                      onClick={() => this.onStudentRemoveClick(studentInfo)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                  {studentInfo.name}
+                </TableCell>
                 {course.assignments
                   .filter(assignment => assignment.visible)
                   .map(assignment => (

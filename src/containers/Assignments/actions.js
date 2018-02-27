@@ -1,3 +1,43 @@
+// This action initiates fetching course members data
+export const COURSE_ASSIGNMENTS_OPEN = "COURSE_ASSIGNMENTS_OPEN";
+export const courseAssignmentsOpen = courseId => ({
+  type: COURSE_ASSIGNMENTS_OPEN,
+  courseId
+});
+
+export const COURSE_ASSIGNMENTS_CLOSE = "COURSE_ASSIGNMENTS_CLOSE";
+export const courseAssignmentsClose = courseId => ({
+  type: COURSE_ASSIGNMENTS_CLOSE,
+  courseId
+});
+
+export const COURSE_MEMBERS_FETCH_FAIL = "COURSE_MEMBERS_FETCH_FAIL";
+export const courseMembersFetchFail = (courseId, reason) => ({
+  type: COURSE_MEMBERS_FETCH_FAIL,
+  courseId,
+  reason
+});
+
+export const COURSE_MEMBERS_FETCH_SUCCESS = "COURSE_MEMBERS_FETCH_SUCCESS";
+export const courseMembersFetchSuccess = (courseId, courseMembers) => ({
+  type: COURSE_MEMBERS_FETCH_SUCCESS,
+  courseId,
+  courseMembers
+});
+
+export const COURSE_MEMBER_ACHIEVEMENTS_REFETCH =
+  "COURSE_MEMBER_ACHIEVEMENTS_REFETCH";
+export const courseMemberAchievementsRefetch = (
+  courseId,
+  studentId,
+  achievements
+) => ({
+  type: COURSE_MEMBER_ACHIEVEMENTS_REFETCH,
+  courseId,
+  studentId,
+  achievements
+});
+
 export const COURSE_PASSWORD_ENTER_REQUEST = "COURSE_PASSWORD_ENTER_REQUEST";
 export const coursePasswordEnterRequest = (courseId, password) => ({
   type: COURSE_PASSWORD_ENTER_REQUEST,
@@ -290,4 +330,37 @@ export const assignmentRemoveAssistantFail = (courseId, assistantId) => ({
   type: ASSIGNMENT_REMOVE_ASSISTANT_FAIL,
   courseId,
   assistantId
+});
+
+export const COURSE_REMOVE_STUDENT_REQUEST = "COURSE_REMOVE_STUDENT_REQUEST";
+export const courseRemoveStudentRequest = (courseId, studentId) => ({
+  type: COURSE_REMOVE_STUDENT_REQUEST,
+  courseId,
+  studentId
+});
+
+export const COURSE_REMOVE_STUDENT_SUCCESS = "COURSE_REMOVE_STUDENT_SUCCESS";
+export const courseRemoveStudentSuccess = () => ({
+  type: COURSE_REMOVE_STUDENT_SUCCESS
+});
+
+export const COURSE_REMOVE_STUDENT_FAIL = "COURSE_REMOVE_STUDENT_FAIL";
+export const courseRemoveStudentFail = (courseId, studentId, reason) => ({
+  type: COURSE_REMOVE_STUDENT_FAIL,
+  courseId,
+  studentId,
+  reason
+});
+
+export const COURSE_REMOVE_STUDENT_DIALOG_SHOW =
+  "COURSE_REMOVE_STUDENT_DIALOG_SHOW";
+export const courseRemoveStudentDialogShow = (
+  courseId,
+  studentId,
+  studentName
+) => ({
+  type: COURSE_REMOVE_STUDENT_DIALOG_SHOW,
+  courseId,
+  studentId,
+  studentName
 });
