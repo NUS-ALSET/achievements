@@ -44,9 +44,10 @@ function processProfileRefreshRequest(data, resolve) {
             .get(
               `https://codecombat.com/db/user/${data.serviceId
                 .toLowerCase()
+                .replace(/[ _]/g, "-")
                 .replace(
-                  " ",
-                  "-"
+                  /[!@#$%^&*()]/g,
+                  ""
                 )}/level.sessions?project=state.complete,levelID,` +
                 "levelName,playtime,codeLanguage,created"
             )
