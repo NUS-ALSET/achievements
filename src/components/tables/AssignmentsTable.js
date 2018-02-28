@@ -23,6 +23,7 @@ import { AccountService } from "../../services/account";
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
     course: PropTypes.object,
+    isInstructor: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     sortState: PropTypes.object,
     currentUser: PropTypes.object
@@ -94,6 +95,7 @@ class AssignmentsTable extends React.PureComponent {
     const {
       /** @type AssignmentCourse */
       course,
+      isInstructor,
       currentUser,
       sortState
     } = this.props;
@@ -153,13 +155,14 @@ class AssignmentsTable extends React.PureComponent {
             return (
               <TableRow key={studentInfo.id}>
                 <TableCell>
-                  {course.owner === currentUser.id && (
-                    <IconButton
-                      onClick={() => this.onStudentRemoveClick(studentInfo)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  )}
+                  {isInstructor &&
+                    course.owner === currentUser.id && (
+                      <IconButton
+                        onClick={() => this.onStudentRemoveClick(studentInfo)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    )}
                   {studentInfo.name}
                 </TableCell>
                 {course.assignments
