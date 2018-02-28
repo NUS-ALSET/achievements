@@ -18,29 +18,7 @@ export const getTestState = config => ({
     sort: {
       field: "studentName",
       direction: "asc"
-    },
-    courseMembers: [
-      {
-        id: "abcTestUser1",
-        name: "Test User 1",
-        achievements: {
-          CodeCombat: {
-            id: "test-user-1",
-            totalAchievements: 100
-          }
-        }
-      },
-      {
-        id: "abcTestUser2",
-        name: "Test User 1",
-        achievements: {
-          CodeCombat: {
-            id: "test-user-2",
-            totalAchievements: 10
-          }
-        }
-      }
-    ]
+    }
   },
   firebase: {
     auth: {
@@ -77,6 +55,20 @@ export const getTestState = config => ({
       courseAssistants: {
         abcTestCourseId: {
           abcTestAssistant1: true
+        }
+      },
+      userAchievements: config.userAchievements || {
+        abcTestUser1: {
+          CodeCombat: {
+            id: "test-user-1",
+            totalAchievements: 100
+          }
+        },
+        abcTestUser2: {
+          CodeCombat: {
+            id: "test-user-2",
+            totalAchievements: 10
+          }
         }
       },
       courseMembers: config.courseMembers || {
@@ -123,6 +115,20 @@ export const getTestState = config => ({
               value: "test-user-2"
             }
           }
+        }
+      },
+      users: config.users || {
+        abcTestUserOwner: {
+          displayName: "Test User Owner"
+        },
+        abcTestAssistant1: {
+          displayName: "Test User Assistant 1"
+        },
+        abcTestUser1: {
+          displayName: "Test User 1"
+        },
+        abcTestUser2: {
+          displayName: "Test User 1"
         }
       }
     }
