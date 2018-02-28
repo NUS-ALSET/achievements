@@ -262,6 +262,7 @@ class Assignments extends React.Component {
           course={course}
           currentUser={currentUser}
           dispatch={dispatch}
+          isInstructor={false}
           sortState={ui.sortState}
         />
       );
