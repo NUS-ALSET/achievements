@@ -28,12 +28,43 @@ import {
   assignmentAddAssistantSuccess,
   ASSIGNMENT_REMOVE_ASSISTANT_REQUEST,
   assignmentRemoveAssistantSuccess,
-  assignmentRemoveAssistantFail
+  assignmentRemoveAssistantFail,
+  COURSE_ASSIGNMENTS_OPEN,
+  COURSE_ASSIGNMENTS_CLOSE,
+  courseMembersFetchFail,
+  courseMembersFetchSuccess,
+  courseMemberAchievementsRefetch,
+  COURSE_REMOVE_STUDENT_REQUEST,
+  courseRemoveStudentSuccess,
+  courseRemoveStudentFail
 } from "./actions";
 
-import { call, put, select, takeLatest, throttle } from "redux-saga/effects";
+import { eventChannel } from "redux-saga";
+import {
+  call,
+  put,
+  select,
+  take,
+  takeLatest,
+  throttle
+} from "redux-saga/effects";
+
 import { coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
+
+// Since we're able to check 1 and only 1 course at once then we'll keep
+// course members channel at almost global variable...
+const courseMembersChannels = {};
+
+// FIXIT: implement buffering
+function createCourseMembersChannel(courseId) {
+  return eventChannel(emit => {
+    courseMembersChannels[courseId] = emit;
+    coursesService.watchCourseMembers(courseId, response => emit(response));
+
+    return coursesService.unWatchCourseMembers;
+  });
+}
 
 const ONE_SECOND = 1000;
 
@@ -254,6 +285,70 @@ function* assignmentRemoveAssistantRequestHandler(action) {
   }
 }
 
+export function* courseAssignmentsOpenHandler(action) {
+  let uid = yield select(state => state.firebase.auth.uid);
+
+  if (!uid) {
+    yield take("@@reactReduxFirebase/LOGIN");
+    yield select(state => state.firebase.auth.uid);
+  }
+
+  const channel = yield call(createCourseMembersChannel, action.courseId);
+
+  while (true) {
+    const { courseMembers, err, stop, achievements, studentId } = yield take(
+      channel
+    );
+
+    if (stop) {
+      channel.close();
+      break;
+    }
+    if (err)
+      if (err) {
+        yield put(courseMembersFetchFail(action.courseId, err.message));
+        break;
+      }
+    if (courseMembers) {
+      yield put(courseMembersFetchSuccess(action.courseId, courseMembers));
+    }
+    if (achievements && studentId) {
+      yield put(
+        courseMemberAchievementsRefetch(
+          action.courseId,
+          studentId,
+          achievements
+        )
+      );
+    }
+  }
+}
+
+export function* courseAssignmentsCloseHandler(action) {
+  const emitToChannel = courseMembersChannels[action.courseId];
+
+  if (emitToChannel) {
+    yield emitToChannel({ stop: true });
+  }
+}
+
+export function* courseRemoveStudentRequestHandler(action) {
+  try {
+    yield call(
+      coursesService.removeStudentFromCourse,
+      action.courseId,
+      action.studentId
+    );
+    yield put(assignmentCloseDialog());
+    yield put(courseRemoveStudentSuccess(action.courseId, action.studentId));
+  } catch (err) {
+    yield put(
+      courseRemoveStudentFail(action.courseId, action.studentId, err.message)
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
@@ -318,5 +413,17 @@ export default [
       ASSIGNMENT_REMOVE_ASSISTANT_REQUEST,
       assignmentRemoveAssistantRequestHandler
     );
+  },
+  function* watchCourseRemoveStudentRequest() {
+    yield takeLatest(
+      COURSE_REMOVE_STUDENT_REQUEST,
+      courseRemoveStudentRequestHandler
+    );
+  },
+  function* watchCourseAssignmentsOpen() {
+    yield takeLatest(COURSE_ASSIGNMENTS_OPEN, courseAssignmentsOpenHandler);
+  },
+  function* watchCourseAssignmentsClose() {
+    yield takeLatest(COURSE_ASSIGNMENTS_CLOSE, courseAssignmentsCloseHandler);
   }
 ];

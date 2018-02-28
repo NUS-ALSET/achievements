@@ -8,7 +8,9 @@ import {
   assignmentSwitchTab,
   assignmentsAssistantsShowRequest,
   assignmentsSortChange,
-  coursePasswordEnterSuccess
+  coursePasswordEnterSuccess,
+  courseAssignmentsOpen,
+  courseAssignmentsClose
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -42,6 +44,7 @@ import sagas from "./sagas";
 import withStyles from "material-ui/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { APP_SETTING } from "../../achievementsApp/config";
+import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -70,11 +73,25 @@ class Assignments extends React.Component {
     course: PropTypes.object.isRequired,
     firebase: PropTypes.object,
     auth: PropTypes.object,
-    courseMembers: PropTypes.object
+    match: PropTypes.object,
+    students: PropTypes.object,
+    courseMembers: PropTypes.array
   };
   state = {
     password: ""
   };
+
+  componentDidMount() {
+    this.props.dispatch(
+      courseAssignmentsOpen(this.props.match.params.courseId)
+    );
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(
+      courseAssignmentsClose(this.props.match.params.courseId)
+    );
+  }
 
   handleTabChange = (event, tabIndex) => {
     this.props.dispatch(assignmentSwitchTab(tabIndex));
@@ -200,7 +217,7 @@ class Assignments extends React.Component {
     const {
       ui,
       classes,
-      courseMembers,
+      students,
       auth,
       dispatch,
       course,
@@ -211,7 +228,7 @@ class Assignments extends React.Component {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!isLoaded(courseMembers)) {
+    } else if (!isLoaded(students)) {
       return <LinearProgress />;
     }
 
@@ -292,6 +309,13 @@ class Assignments extends React.Component {
           <Typography gutterBottom>{course.description}</Typography>
         )}
         {AssignmentView}
+        <RemoveStudentDialog
+          courseId={course.id}
+          courseMemberId={ui && ui.dialog && ui.dialog.studentId}
+          courseMemberName={ui && ui.dialog && ui.dialog.studentName}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "RemoveStudent"}
+        />
         <AddProfileDialog
           dispatch={dispatch}
           externalProfile={{
@@ -337,8 +361,9 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
-  assistants: state.assignments.assistants,
-  courseMembers: state.firebase.data.courseMembers
+  students: state.firebase.data.courseMembers,
+  courseMembers: state.assignments.courseMembers,
+  assistants: state.assignments.assistants
 });
 
 export default compose(
@@ -350,15 +375,13 @@ export default compose(
     const uid = state.firebase.auth.uid;
 
     return [
-      "/users",
       `/courses/${courseId}`,
-      `/courseAssistants/${courseId}`,
       `/courseMembers/${courseId}`,
+      `/courseAssistants/${courseId}`,
       `/solutions/${courseId}`,
       `/solutions/${courseId}/${uid}`,
       `/visibleSolutions/${courseId}`,
-      `/assignments/${courseId}`,
-      "/userAchievements"
+      `/assignments/${courseId}`
     ];
   }),
   connect(mapStateToProps)
