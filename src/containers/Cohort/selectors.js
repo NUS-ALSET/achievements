@@ -17,9 +17,8 @@ export const selectCohort = (state, ownProps) => {
       }))
       .sort(
         (a, b) =>
-          a.participants > b.participants
-            ? -1
-            : a.participants < b.participants ? 1 : 0
+          // FIXIT: it's awful
+          a.progress > b.progress ? -1 : a.progress < b.progress ? 1 : 0
       )
       .map((course, index) => {
         return { ...course, rank: index + 1 };
