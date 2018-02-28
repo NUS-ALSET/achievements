@@ -8,9 +8,7 @@ import {
   assignmentSwitchTab,
   assignmentsAssistantsShowRequest,
   assignmentsSortChange,
-  coursePasswordEnterSuccess,
-  courseAssignmentsOpen,
-  courseAssignmentsClose
+  coursePasswordEnterSuccess
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -73,25 +71,11 @@ class Assignments extends React.Component {
     course: PropTypes.object.isRequired,
     firebase: PropTypes.object,
     auth: PropTypes.object,
-    match: PropTypes.object,
-    students: PropTypes.object,
-    courseMembers: PropTypes.array
+    courseMembers: PropTypes.object
   };
   state = {
     password: ""
   };
-
-  componentDidMount() {
-    this.props.dispatch(
-      courseAssignmentsOpen(this.props.match.params.courseId)
-    );
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(
-      courseAssignmentsClose(this.props.match.params.courseId)
-    );
-  }
 
   handleTabChange = (event, tabIndex) => {
     this.props.dispatch(assignmentSwitchTab(tabIndex));
@@ -217,7 +201,7 @@ class Assignments extends React.Component {
     const {
       ui,
       classes,
-      students,
+      courseMembers,
       auth,
       dispatch,
       course,
@@ -228,7 +212,7 @@ class Assignments extends React.Component {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!isLoaded(students)) {
+    } else if (!isLoaded(courseMembers)) {
       return <LinearProgress />;
     }
 
@@ -362,8 +346,7 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
-  students: state.firebase.data.courseMembers,
-  courseMembers: state.assignments.courseMembers,
+  courseMembers: state.firebase.data.courseMembers,
   assistants: state.assignments.assistants
 });
 
@@ -376,6 +359,8 @@ export default compose(
     const uid = state.firebase.auth.uid;
 
     return [
+      "/users",
+      "/userAchievements",
       `/courses/${courseId}`,
       `/courseMembers/${courseId}`,
       `/courseAssistants/${courseId}`,
