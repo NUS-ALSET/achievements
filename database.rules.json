@@ -131,7 +131,6 @@
     "paths": {
       ".read": "auth != null",
       "$pathKey": {
-        ".read": "auth != null && data.exists() && (data.child('owner').val() == auth.uid || data.child('isFeatured').val() == true)",
         ".write": "auth != null && (
         !data.exists() && newData.child('owner').val() == auth.uid ||
         data.exists() && (

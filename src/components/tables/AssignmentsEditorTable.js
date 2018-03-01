@@ -19,6 +19,7 @@ import IconButton from "material-ui/IconButton";
 import PropTypes from "prop-types";
 
 import AddIcon from "material-ui-icons/Add";
+import GroupIcon from "material-ui-icons/Group";
 
 import React, { Fragment } from "react";
 import Switch from "material-ui/Switch";
@@ -77,18 +78,23 @@ class AssignmentsEditorTable extends React.PureComponent {
     return (
       <Fragment>
         {APP_SETTING.isSuggesting ? (
-          <Button
-            color="primary"
-            onClick={() => this.onAddAssignmentClick()}
-            style={{
-              position: "fixed",
-              bottom: 20,
-              right: 20
-            }}
-            variant="fab"
-          >
-            <AddIcon />
-          </Button>
+          <Fragment>
+            <Button
+              color="primary"
+              onClick={() => this.onAddAssignmentClick()}
+              style={{
+                position: "fixed",
+                bottom: 20,
+                right: 20
+              }}
+              variant="fab"
+            >
+              <AddIcon />
+            </Button>
+            <IconButton onClick={this.assignmentsAssistantsShowRequest}>
+              <GroupIcon />
+            </IconButton>
+          </Fragment>
         ) : (
           <Toolbar>
             <Button
@@ -96,6 +102,12 @@ class AssignmentsEditorTable extends React.PureComponent {
               variant="raised"
             >
               Add assignment
+            </Button>
+            <Button
+              onClick={this.assignmentsAssistantsShowRequest}
+              variant="raised"
+            >
+              Assistants
             </Button>
           </Toolbar>
         )}

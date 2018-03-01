@@ -86,6 +86,7 @@ function processProfileRefreshRequest(data, resolve) {
                       uid: data.uid,
                       levelId: levelInfo.levelID,
                       complete: true,
+                      created: levelInfo.created || "",
                       playtime: (levelInfo && levelInfo.playtime) || 0
                     }
                   };
