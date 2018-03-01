@@ -14,10 +14,12 @@ export function* pathChangeRequestHandler(action) {
 }
 
 export function* loginHandler() {
-  yield select(state => state.firebase.auth.stsTokenManager.accessToken);
+  const token = yield select(
+    state => state.firebase.auth.stsTokenManager.accessToken
+  );
 
-  // yield call(pathsService.auth, token);
-  // yield call(pathsService.fetchFile, "1kW5Zfe79S8mowBZOa2rDAxRxOsDP2wjF");
+  yield call(pathsService.auth, token);
+  yield call(pathsService.fetchFile, "1kW5Zfe79S8mowBZOa2rDAxRxOsDP2wjF");
 }
 
 export default [
