@@ -4,13 +4,9 @@ import {
   assignmentCloseDialog,
   assignmentRefreshProfilesRequest,
   assignmentSolutionRequest,
-  assignmentSubmitRequest,
   assignmentSwitchTab,
   assignmentsAssistantsShowRequest,
-  assignmentsSortChange,
-  coursePasswordEnterSuccess,
-  courseAssignmentsOpen,
-  courseAssignmentsClose
+  coursePasswordEnterSuccess
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -30,7 +26,6 @@ import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 
 import ChevronRightIcon from "material-ui-icons/ChevronRight";
-import GroupIcon from "material-ui-icons/Group";
 import RefreshIcon from "material-ui-icons/Refresh";
 
 import Grid from "material-ui/Grid";
@@ -56,7 +51,7 @@ const styles = theme => ({
     fontSize: "0.875rem"
   },
   actions: {
-    position: "fixed",
+    position: "absolute",
     right: theme.spacing.unit
   },
   action: {
@@ -73,25 +68,11 @@ class Assignments extends React.Component {
     course: PropTypes.object.isRequired,
     firebase: PropTypes.object,
     auth: PropTypes.object,
-    match: PropTypes.object,
-    students: PropTypes.object,
-    courseMembers: PropTypes.array
+    courseMembers: PropTypes.object
   };
   state = {
     password: ""
   };
-
-  componentDidMount() {
-    this.props.dispatch(
-      courseAssignmentsOpen(this.props.match.params.courseId)
-    );
-  }
-
-  componentWillUnmount() {
-    this.props.dispatch(
-      courseAssignmentsClose(this.props.match.params.courseId)
-    );
-  }
 
   handleTabChange = (event, tabIndex) => {
     this.props.dispatch(assignmentSwitchTab(tabIndex));
@@ -135,37 +116,12 @@ class Assignments extends React.Component {
       .then(() => dispatch(coursePasswordEnterSuccess(course.id)));
   };
 
-  onSortClick = assignment => {
-    this.props.dispatch(
-      assignmentsSortChange((assignment && assignment.id) || "studentName")
-    );
-  };
-
   onProfileCommit = value => {
     const { course, ui, dispatch } = this.props;
 
     dispatch(
       assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
     );
-  };
-
-  onSubmitClick = (assignment, solution) => {
-    const { course, dispatch } = this.props;
-
-    switch (assignment.questionType) {
-      case "CodeCombat":
-      case "CodeCombat_Number":
-        dispatch(
-          assignmentSolutionRequest(course.id, assignment.id, "Complete")
-        );
-        break;
-      default:
-        dispatch(assignmentSubmitRequest(assignment, solution));
-    }
-  };
-
-  onAcceptClick = (assignment, studentId) => {
-    coursesService.acceptSolution(this.props.course.id, assignment, studentId);
   };
 
   closeDialog = () => {
@@ -217,7 +173,7 @@ class Assignments extends React.Component {
     const {
       ui,
       classes,
-      students,
+      courseMembers,
       auth,
       dispatch,
       course,
@@ -228,7 +184,7 @@ class Assignments extends React.Component {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!isLoaded(students)) {
+    } else if (!isLoaded(courseMembers)) {
       return <LinearProgress />;
     }
 
@@ -244,14 +200,6 @@ class Assignments extends React.Component {
           currentUser={currentUser}
           dispatch={dispatch}
           handleTabChange={this.handleTabChange}
-          onAcceptClick={this.onAcceptClick}
-          onAddAssignmentClick={this.onAddAssignmentClick}
-          onCreateAssignmentClick={this.onCreateAssignmentClick}
-          onDeleteAssignment={this.onDeleteAssignment}
-          onSortClick={this.onSortClick}
-          onSubmitClick={this.onSubmitClick}
-          onUpdateAssignment={this.onUpdateAssignment}
-          onUpdateNewAssignmentField={this.onUpdateNewAssignmentField}
           ui={ui}
         />
       );
@@ -283,9 +231,6 @@ class Assignments extends React.Component {
                 <IconButton onClick={this.refreshProfileSolutions}>
                   <RefreshIcon />
                 </IconButton>
-                <IconButton onClick={this.assignmentsAssistantsShowRequest}>
-                  <GroupIcon />
-                </IconButton>
               </div>
             ) : (
               <div className={classes.actions}>
@@ -295,13 +240,6 @@ class Assignments extends React.Component {
                   variant="raised"
                 >
                   Refresh achievements
-                </Button>
-                <Button
-                  className={classes.action}
-                  onClick={this.assignmentsAssistantsShowRequest}
-                  variant="raised"
-                >
-                  Assistants
                 </Button>
               </div>
             ))}
@@ -362,8 +300,7 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
-  students: state.firebase.data.courseMembers,
-  courseMembers: state.assignments.courseMembers,
+  courseMembers: state.firebase.data.courseMembers,
   assistants: state.assignments.assistants
 });
 
@@ -376,6 +313,8 @@ export default compose(
     const uid = state.firebase.auth.uid;
 
     return [
+      "/users",
+      "/userAchievements",
       `/courses/${courseId}`,
       `/courseMembers/${courseId}`,
       `/courseAssistants/${courseId}`,
