@@ -154,7 +154,13 @@ class AssignmentsTable extends React.PureComponent {
             const studentInfo = course.members[id];
             return (
               <TableRow key={studentInfo.id}>
-                <TableCell>
+                <TableCell
+                  style={{
+                    maxWidth: 361,
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
+                  }}
+                >
                   {isInstructor &&
                     course.owner === currentUser.id && (
                       <IconButton
