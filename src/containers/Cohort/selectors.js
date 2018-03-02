@@ -17,13 +17,13 @@ export const selectCohort = (state, ownProps) => {
       }))
       .sort((a, b) => {
         if (a.progress > b.progress) {
-          return 1;
+          return -1;
         } else if (a.progress < b.progress) {
-          return -1;
-        } else if (a.participants > b.participants) {
           return 1;
-        } else if (a.participants < b.participants) {
+        } else if (a.participants > b.participants) {
           return -1;
+        } else if (a.participants < b.participants) {
+          return 1;
         }
         return 0;
       })
