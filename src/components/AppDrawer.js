@@ -36,6 +36,7 @@ class AppDrawer extends React.PureComponent {
     const {
       classes,
       className,
+      isAdmin,
       userId,
       mobileDrawerOpen,
       onRequestClose
@@ -50,7 +51,7 @@ class AppDrawer extends React.PureComponent {
             </IconButton>
           </Hidden>
         </div>
-        {DrawerMenuItems(onRequestClose, userId)}
+        {DrawerMenuItems(onRequestClose, userId, isAdmin)}
       </div>
     );
 
@@ -91,6 +92,7 @@ class AppDrawer extends React.PureComponent {
 AppDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   className: PropTypes.string,
+  isAdmin: PropTypes.bool.isRequired,
   userId: PropTypes.string,
   mobileDrawerOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired

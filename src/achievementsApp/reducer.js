@@ -8,9 +8,12 @@ import { root } from "../containers/Root/reducer";
 import { cohorts } from "../containers/Cohorts/reducer";
 import { cohort } from "../containers/Cohort/reducer";
 import { paths } from "../containers/Paths/reducer";
+import { admin } from "../containers/Admin/reducer";
+import { problem } from "../containers/Problem/reducer";
 
 export default combineReducers({
   firebase,
+  admin,
   appFrame,
   courses,
   root,
@@ -18,5 +21,6 @@ export default combineReducers({
   account,
   cohorts,
   cohort,
-  paths
+  paths,
+  problem
 });

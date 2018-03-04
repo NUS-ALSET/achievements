@@ -23,6 +23,7 @@ import ProblemsTable from "../../components/tables/ProblemsTable";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import ProblemDialog from "../../components/dialogs/ProblemDialog";
+import {getProblems} from "./selectors";
 
 class Paths extends React.PureComponent {
   static propTypes = {
@@ -30,6 +31,7 @@ class Paths extends React.PureComponent {
     myPaths: PropTypes.object,
     publicPaths: PropTypes.object,
     selectedPathId: PropTypes.string,
+    problems: PropTypes.array,
     ui: PropTypes.object
   };
 
@@ -40,7 +42,14 @@ class Paths extends React.PureComponent {
   onAddProblemClick = () => this.props.dispatch(pathProblemDialogShow());
 
   render() {
-    const { myPaths, publicPaths, dispatch, ui, selectedPathId } = this.props;
+    const {
+      myPaths,
+      publicPaths,
+      dispatch,
+      ui,
+      selectedPathId,
+      problems
+    } = this.props;
 
     return (
       <Fragment>
@@ -116,7 +125,7 @@ class Paths extends React.PureComponent {
             >
               Add Problem
             </Button>
-            <ProblemsTable dispatch={dispatch} problems={{}} />
+            <ProblemsTable dispatch={dispatch} problems={problems} />
           </Grid>
         </Grid>
         <PathDialog
@@ -127,6 +136,7 @@ class Paths extends React.PureComponent {
         <ProblemDialog
           dispatch={dispatch}
           open={ui.dialog.type === "ProblemChange"}
+          pathId={selectedPathId}
           problem={ui.dialog.value}
         />
       </Fragment>
@@ -141,7 +151,8 @@ const mapStateToProps = state => ({
   ui: state.paths.ui,
   selectedPathId: state.paths.selectedPathId,
   myPaths: state.firebase.data.myPaths,
-  publicPaths: state.firebase.data.publicPaths
+  publicPaths: state.firebase.data.publicPaths,
+  problems: getProblems(state)
 });
 
 export default compose(
@@ -158,6 +169,9 @@ export default compose(
           path: "/paths",
           storeAs: "publicPaths",
           queryParams: ["orderByChild=isPublic", "equalTo=true"]
+        },
+        {
+          path: `/problems/${firebaseAuth.uid}`
         }
       ]
     );

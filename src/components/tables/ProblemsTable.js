@@ -13,6 +13,7 @@ import Table, {
   TableHead,
   TableRow
 } from "material-ui/Table";
+import Button from "material-ui/Button";
 
 import withStyles from "material-ui/styles/withStyles";
 
@@ -28,7 +29,7 @@ const styles = theme => ({
 class ProblemsTable extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    problems: PropTypes.object
+    problems: PropTypes.array
   };
 
   render() {
@@ -39,16 +40,24 @@ class ProblemsTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>Problem name</TableCell>
+            <TableCell
+              style={{
+                width: 240
+              }}
+            >
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.keys(problems || {})
-            .map(id => ({ ...problems[id], id }))
-            .map(problem => (
-              <TableRow key={problem.id}>
-                <TableCell>{problem.name}</TableCell>
-              </TableRow>
-            ))}
+          {problems.map(problem => (
+            <TableRow key={problem.id}>
+              <TableCell>{problem.name}</TableCell>
+              <TableCell>
+                <Button variant="raised">Test</Button>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     );

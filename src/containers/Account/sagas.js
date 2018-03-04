@@ -14,12 +14,28 @@ import {
   externalProfileRemoveFail,
   externalProfileRemoveSuccess,
   externalProfileUpdateFail,
-  externalProfileUpdateSuccess
+  externalProfileUpdateSuccess,
+  accountChangeAdminStatus
 } from "./actions";
 import { accountService } from "../../services/account";
 import { call, put, race, select, takeLatest } from "redux-saga/effects";
 import { delay } from "redux-saga";
 import { notificationShow } from "../Root/actions";
+
+export function* signInHandler() {
+  const uid = yield select(state => state.firebase.auth.uid);
+
+  try {
+    if (uid) {
+      const adminStatus = yield call(accountService.checkAdminStatus, uid);
+      yield put(accountChangeAdminStatus(adminStatus));
+    } else {
+      yield put(accountChangeAdminStatus(false));
+    }
+  } catch (err) {
+    accountChangeAdminStatus(false, err.message);
+  }
+}
 
 export function* externalProfileUpdateRequestHandler(action) {
   try {
@@ -162,6 +178,9 @@ export function* displayNameUpdateRequestHandler(action) {
 }
 
 export default [
+  function* watchSignIn() {
+    yield takeLatest("@@reactReduxFirebase/LOGIN", signInHandler);
+  },
   function* watchExternalProfileUpdateRequest() {
     yield takeLatest(
       EXTERNAL_PROFILE_UPDATE_REQUEST,

@@ -16,22 +16,26 @@ import Dialog, {
 import MenuItem from "material-ui/Menu/MenuItem";
 import TextField from "material-ui/TextField/TextField";
 
-import { pathDialogHide } from "../../containers/Paths/actions";
+import {
+  pathDialogHide,
+  pathProblemChangeRequest
+} from "../../containers/Paths/actions";
 
 class ProblemDialog extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
+    pathId: PropTypes.string.isRequired,
     open: PropTypes.bool.isRequired,
     problem: PropTypes.object
   };
 
   state = {
-    type: "jupiter"
+    type: "jupyter"
   };
 
   getTypeSpecificElements() {
     switch (this.state.type) {
-      case "jupiter":
+      case "jupyter":
         return (
           <Fragment>
             <TextField
@@ -65,9 +69,14 @@ class ProblemDialog extends React.PureComponent {
   onFieldChange = (field, value) => this.setState({ [field]: value });
 
   onClose = () => this.props.dispatch(pathDialogHide());
+  onCommit = () =>
+    this.props.dispatch(
+      pathProblemChangeRequest(this.props.pathId, this.state)
+    );
 
   render() {
     const { problem, open } = this.props;
+
     return (
       <Dialog onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -97,7 +106,7 @@ class ProblemDialog extends React.PureComponent {
             select
             value={this.state.type}
           >
-            <MenuItem value="jupiter">Jupyter Notebook</MenuItem>
+            <MenuItem value="jupyter">Jupyter Notebook</MenuItem>
             <MenuItem value="text">Text</MenuItem>
           </TextField>
           {this.getTypeSpecificElements()}

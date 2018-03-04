@@ -5,7 +5,7 @@ export const pathDialogShow = pathInfo => ({
 });
 
 export const PATH_PROBLEM_DIALOG_SHOW = "PATH_PROBLEM_DIALOG_SHOW";
-export const pathProblemDialogShow = (problemInfo) => ({
+export const pathProblemDialogShow = problemInfo => ({
   type: PATH_PROBLEM_DIALOG_SHOW,
   problemInfo
 });
@@ -39,4 +39,27 @@ export const PATH_SELECT = "PATH_SELECT";
 export const pathSelect = pathId => ({
   type: PATH_SELECT,
   pathId
+});
+
+export const PATH_PROBLEM_CHANGE_REQUEST = "PATH_PROBLEM_CHANGE_REQUEST";
+export const pathProblemChangeRequest = (pathId, problemInfo) => ({
+  type: PATH_PROBLEM_CHANGE_REQUEST,
+  pathId,
+  problemInfo
+});
+
+export const PATH_PROBLEM_CHANGE_SUCCESS = "PATH_PROBLEM_CHANGE_SUCCESS";
+export const pathProblemChangeSuccess = (pathId, problemInfo, problemKey) => ({
+  type: PATH_PROBLEM_CHANGE_SUCCESS,
+  pathId,
+  problemInfo,
+  problemKey
+});
+
+export const PATH_PROBLEM_CHANGE_FAIL = "PATH_PROBLEM_CHANGE_FAIL";
+export const pathProblemChangeFail = (pathId, problemInfo, reason) => ({
+  type: PATH_PROBLEM_CHANGE_FAIL,
+  pathId,
+  problemInfo,
+  reason
 });
