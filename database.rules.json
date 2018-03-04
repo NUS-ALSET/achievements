@@ -138,11 +138,9 @@
       ".read": "auth != null",
       "$userKey": {
         "$problemKey": {
-          ".write": "
-          	auth != null && (
+          ".write": "auth != null && (
               newData.child('owner').val() == auth.uid
-            )
-          "
+            )"
         }
       }
     },
