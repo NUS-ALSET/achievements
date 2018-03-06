@@ -92,7 +92,7 @@ class AppDrawer extends React.PureComponent {
 AppDrawer.propTypes = {
   classes: PropTypes.object.isRequired,
   className: PropTypes.string,
-  isAdmin: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool,
   userId: PropTypes.string,
   mobileDrawerOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired

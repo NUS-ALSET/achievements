@@ -11,19 +11,73 @@ export class PathsService {
         discoveryDocs: [
           "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
         ],
-        scope: "https://www.googleapis.com/auth/drive.readonly"
+        scope: "https://www.googleapis.com/auth/drive"
       });
     });
   }
 
-  fetchProblemFile(ownerId, problemId) {
+  getFileId(url) {
+    return Promise.resolve(/file\/d\/([^/]+)/.exec(url)[1]);
+  }
+
+  fetchProblemFile(pathId, problemId, solution) {
+    // Enter promiseficated area
+    return Promise.resolve()
+      .then(
+        () =>
+          pathId[0] === "-"
+            ? firebase
+                .database()
+                .ref(`/paths/${pathId}`)
+                .once("value")
+                .then(pathSnapshot => pathSnapshot.val() || {})
+            : { owner: pathId, name: "Default" }
+      )
+      .then(pathInfo =>
+        firebase
+          .database()
+          .ref(`/problems/${pathInfo.owner}/${problemId}`)
+          .once("value")
+          .then(data => data.val())
+          .then(problem =>
+            this.getFileId(
+              solution ? problem.solutionURL : problem.problemURL
+            ).then(fileId =>
+              this.fetchFile(fileId).then(problemJSON => ({
+                pathName: pathInfo.name,
+                owner: pathInfo.owner,
+                problemName: problem.name,
+                frozen: problem.frozen,
+                problemJSON,
+                problemColabURL:
+                  "https://colab.research.google.com/notebook#fileId=" + fileId,
+                problemURL: problem.problemURL
+              }))
+            )
+          )
+      );
+  }
+
+  fetchSolutionFile(problemId, uid) {
     return firebase
       .database()
-      .ref(`/problems/${ownerId}/${problemId}/problemURL`)
+      .ref(`/problemSolutions/${problemId}/${uid}`)
       .once("value")
-      .then(data => data.val())
-      .then(response => /file\/d\/([^/]+)/.exec(response)[1])
-      .then(fileId => this.fetchFile(fileId));
+      .then(snapshot => snapshot.val())
+      .then(fileId => (fileId ? this.fetchFile(fileId) : false));
+  }
+
+  solveProblem(uid, problemId, problemJSON) {
+    return this.uploadFile(
+      `Solution${problemId}.ipynb`,
+      JSON.stringify(problemJSON)
+    ).then(file =>
+      firebase
+        .database()
+        .ref(`/problemSolutions/${problemId}/${uid}`)
+        .set(file.id)
+        .then(() => file.id)
+    );
   }
 
   fetchFile(fileId) {
@@ -35,6 +89,48 @@ export class PathsService {
       .then(data => JSON.parse(data.body));
   }
 
+  /** Taken from https://goo.gl/jyfMGj
+   *
+   * @param name
+   * @param data
+   * @returns {Promise<any>}
+   */
+  uploadFile(name, data) {
+    return new Promise(resolve => {
+      const boundary = "-------314159265358979323846";
+      const delimiter = "\r\n--" + boundary + "\r\n";
+      const close_delim = "\r\n--" + boundary + "--";
+
+      const contentType = "application/vnd.google.colab";
+
+      const metadata = {
+        name: name,
+        mimeType: contentType
+      };
+
+      const multipartRequestBody =
+        delimiter +
+        "Content-Type: application/json\r\n\r\n" +
+        JSON.stringify(metadata) +
+        delimiter +
+        "Content-Type: " +
+        contentType +
+        "\r\n\r\n" +
+        data +
+        close_delim;
+
+      const request = window.gapi.client.request({
+        path: "/upload/drive/v3/files",
+        method: "POST",
+        params: { uploadType: "multipart" },
+        headers: {
+          "Content-Type": `multipart/related; boundary="${boundary}"`
+        },
+        body: multipartRequestBody
+      });
+      request.execute(resolve);
+    });
+  }
   pathChange(uid, pathInfo) {
     const key = firebase
       .database()
@@ -65,7 +161,6 @@ export class PathsService {
   }
 
   problemChange(uid, pathId, problemInfo) {
-    pathId = pathId || `default${uid}`;
     this.validateProblem(problemInfo);
 
     problemInfo.owner = uid;

@@ -134,6 +134,14 @@
         )"
       }
     },
+    "problemSolutions": {
+      "$problemKey": {
+        "$userKey": {
+          ".read": "auth != null",
+          ".write": "auth != null && auth.uid == $userKey"
+        }
+      }
+    },
     "problems": {
       ".read": "auth != null",
       "$userKey": {

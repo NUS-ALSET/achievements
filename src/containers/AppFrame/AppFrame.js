@@ -31,6 +31,7 @@ import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
 import Admin from "../Admin/Admin";
 import Problem from "../Problem/Problem";
+import NotImplemented from "../../components/NotImplemented";
 
 const styles = theme => ({
   "@global": {
@@ -209,10 +210,11 @@ class AppFrame extends React.Component {
               <Route component={Cohorts} exact path="/cohorts" />
               <Route component={Cohort} exact path="/cohorts/:cohortId" />
               <Route component={Paths} exact path="/paths" />
+              <Route component={NotImplemented} exact path="/paths/:pathId" />
               <Route
                 component={Problem}
                 exact
-                path="/problems/:userId/:problemId"
+                path="/paths/:pathId/problems/:problemId"
               />
               <Route
                 exact

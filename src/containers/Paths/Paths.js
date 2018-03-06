@@ -12,10 +12,9 @@ import { firebaseConnect } from "react-redux-firebase";
 
 import Button from "material-ui/Button";
 import Grid from "material-ui/Grid";
-import List, { ListItem, ListItemText, ListSubheader } from "material-ui/List";
 import PropTypes from "prop-types";
 
-import { pathDialogShow, pathProblemDialogShow, pathSelect } from "./actions";
+import { pathDialogShow, pathProblemDialogShow } from "./actions";
 
 import PathDialog from "../../components/dialogs/PathDialog";
 import ProblemsTable from "../../components/tables/ProblemsTable";
@@ -23,7 +22,8 @@ import ProblemsTable from "../../components/tables/ProblemsTable";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import ProblemDialog from "../../components/dialogs/ProblemDialog";
-import {getProblems} from "./selectors";
+import { getProblems } from "./selectors";
+import PathsList from "../../components/lists/PathsList";
 
 class Paths extends React.PureComponent {
   static propTypes = {
@@ -32,13 +32,14 @@ class Paths extends React.PureComponent {
     publicPaths: PropTypes.object,
     selectedPathId: PropTypes.string,
     problems: PropTypes.array,
-    ui: PropTypes.object
+    ui: PropTypes.object,
+    // FIXIT: figure out correct type
+    uid: PropTypes.any
   };
 
   state = { tabIndex: 0 };
 
   onAddPathClick = () => this.props.dispatch(pathDialogShow());
-  selectPath = pathId => this.props.dispatch(pathSelect(pathId));
   onAddProblemClick = () => this.props.dispatch(pathProblemDialogShow());
 
   render() {
@@ -47,6 +48,7 @@ class Paths extends React.PureComponent {
       publicPaths,
       dispatch,
       ui,
+      uid,
       selectedPathId,
       problems
     } = this.props;
@@ -65,53 +67,21 @@ class Paths extends React.PureComponent {
             >
               Add Path
             </Button>
-            <List
-              component="nav"
-              subheader={
-                <ListSubheader component="div">Private Paths</ListSubheader>
-              }
-            >
-              <ListItem
-                button
-                onClick={() => this.selectPath("")}
-                style={
-                  (!selectedPathId && {
-                    background: "rgba(0, 0, 0, 0.14)"
-                  }) ||
-                  {}
-                }
-              >
-                <ListItemText inset primary="Default path" />
-              </ListItem>
-              {Object.keys(myPaths || {})
-                .map(id => ({ ...myPaths[id], id }))
-                .map(path => (
-                  <ListItem
-                    button
-                    key={path.id}
-                    onClick={() => this.selectPath(path.id)}
-                    style={
-                      (selectedPathId === path.id && {
-                        background: "rgba(0, 0, 0, 0.14)"
-                      }) ||
-                      {}
-                    }
-                  >
-                    <ListItemText inset primary={path.name} />
-                  </ListItem>
-                ))}
-            </List>
+            {myPaths && (
+              <PathsList
+                dispatch={dispatch}
+                header="Private Paths"
+                paths={myPaths}
+                selectedPathId={selectedPathId}
+              />
+            )}
             {publicPaths && (
-              <List
-                component="nav"
-                subheader={
-                  <ListSubheader component="div">Public Paths</ListSubheader>
-                }
-              >
-                <ListItem button>
-                  <ListItemText inset primary="Default path" />
-                </ListItem>
-              </List>
+              <PathsList
+                dispatch={dispatch}
+                header="Public Paths"
+                paths={publicPaths}
+                selectedPathId={selectedPathId}
+              />
             )}
           </Grid>
           <Grid item sm={9} xs={12}>
@@ -125,7 +95,12 @@ class Paths extends React.PureComponent {
             >
               Add Problem
             </Button>
-            <ProblemsTable dispatch={dispatch} problems={problems} />
+            <ProblemsTable
+              currentUserId={uid}
+              dispatch={dispatch}
+              problems={problems}
+              selectedPathId={selectedPathId}
+            />
           </Grid>
         </Grid>
         <PathDialog

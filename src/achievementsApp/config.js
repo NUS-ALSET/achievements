@@ -21,6 +21,4 @@ const config = {
 firebase.initializeApp(config);
 
 export const authProvider = new firebase.auth.GoogleAuthProvider();
-authProvider.addScope(
-  "https://www.googleapis.com/auth/drive.metadata.readonly"
-);
+authProvider.addScope("https://www.googleapis.com/auth/drive");

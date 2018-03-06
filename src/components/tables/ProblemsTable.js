@@ -15,6 +15,8 @@ import Table, {
 } from "material-ui/Table";
 import Button from "material-ui/Button";
 
+import { Link } from "react-router-dom";
+
 import withStyles from "material-ui/styles/withStyles";
 
 const styles = theme => ({
@@ -29,11 +31,13 @@ const styles = theme => ({
 class ProblemsTable extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
+    selectedPathId: PropTypes.string,
+    currentUserId: PropTypes.string,
     problems: PropTypes.array
   };
 
   render() {
-    const { problems } = this.props;
+    const { problems, selectedPathId, currentUserId } = this.props;
 
     return (
       <Table>
@@ -54,7 +58,13 @@ class ProblemsTable extends React.PureComponent {
             <TableRow key={problem.id}>
               <TableCell>{problem.name}</TableCell>
               <TableCell>
-                <Button variant="raised">Test</Button>
+                <Link
+                  to={`/paths/${selectedPathId || currentUserId}/problems/${
+                    problem.id
+                  }`}
+                >
+                  <Button variant="raised">Open</Button>
+                </Link>
               </TableCell>
             </TableRow>
           ))}
