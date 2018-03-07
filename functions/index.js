@@ -25,8 +25,8 @@ try {
 // If service account deployed, then use it. 
 if(serviceAccount){
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
-    // ,databaseURL: 'https://lti-achievements.firebaseio.com'
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: functions.config().firebase.databaseURL
   });
 //Otherwise, initialize with the default config. 
 } else {
