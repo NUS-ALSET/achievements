@@ -263,6 +263,66 @@ exports.downloadEvents = functions.https.onRequest((req, res) => {
   }
 });
 
+exports.api = functions.https.onRequest((req, res) => {
+  const { token, data } = req.query;
+  let supportedDatatypes = ["users", "cohorts", "courses"];
+  if(!supportedDatatypes.includes(data)){
+    res.send("Unsupported data type "+data);
+  }
+
+  if (token) {
+    admin
+      .database()
+      .ref("api_tokens/" + token)
+      .once("value")
+      .then(snapshot => {
+        if (snapshot.val()) {
+          const ref = admin.database().ref(data);
+          let promise;
+          let startFrom;
+          let stopAt;
+          promise = ref.once("value");
+
+          promise.then(snapshot2 => {
+            const theData = snapshot2.val();
+            if (theData) {
+              // Track cost against API key
+              // Put a node in the apikeys cost tracking. 
+              const apiTrackingRef = admin.database().ref("apiTracking/"+token);
+              let size = JSON.stringify(theData).length;
+              apiTrackingRef.child("usage").push({
+                "data": data,
+                "size": size 
+              }).then(snapshot2 => {
+                console.log("Recording api resource usage.");
+                
+                // Update the total
+                apiTrackingRef.child("totalUsage").transaction(function(total) {
+                  if (total) {
+                      total += size;
+                  } else {
+                      total = size;
+                  }
+                  return total;
+                }).then(snap => {
+                  // And finally, send back data
+                  res.send(theData);
+                });
+              });
+              
+            } else {
+              res.send("No data");
+            }
+          });
+        } else {
+          res.send("Invalid token");
+        }
+      });
+  } else {
+    res.send("Token is missing ");
+  }
+});
+
 
 function redirectToLogin(message,res){
   res.redirect(`${message}`);
