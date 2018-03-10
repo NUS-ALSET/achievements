@@ -1,4 +1,3 @@
-import assert from "assert";
 import {
   PROBLEM_INIT_REQUEST,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
@@ -26,8 +25,10 @@ export function* problemInitRequestHandler(action) {
       uid = yield select(state => state.firebase.auth.uid);
     }
 
+    yield put(problemInitSuccess(action.problemOwner, action.problemId, null));
+
     const pathProblem = yield call(
-      [pathsService, pathsService.fetchProblemFile],
+      [pathsService, pathsService.fetchPathProblem],
       action.pathId,
       action.problemId
     );
@@ -60,7 +61,7 @@ export function* problemSolveRequestHandler(action) {
 
   try {
     const fileId = yield call(
-      [pathsService, pathsService.solveProblem],
+      [pathsService, pathsService.uploadSolutionFile],
       data.uid,
       action.problemId,
       data.pathProblem.problemJSON
@@ -91,16 +92,16 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
 export function* problemSolutionSubmitRequestHandler(action) {
   try {
-    const pathProblem = yield call(
-      [pathsService, pathsService.fetchProblemFile],
-      action.pathId,
-      action.problemId,
-      true
+    const data = yield select(state => ({
+      uid: state.firebase.auth.uid,
+      pathProblem: state.problem.pathProblem
+    }));
+    yield call(
+      [pathsService, pathsService.submitSolution],
+      data.uid,
+      data.pathProblem,
+      action.payload
     );
-    const expected = pathProblem.problemJSON.cells.slice(-pathProblem.frozen);
-    const actual = action.payload.cells.slice(-pathProblem.frozen);
-
-    assert.deepEqual(actual, expected, "Solution invalid");
     yield put(
       problemSolutionSubmitSuccess(
         action.pathId,

@@ -1,5 +1,13 @@
 import firebase from "firebase";
 
+export const YOUTUBE_QUESTIONS = {
+  questionAfter: "What question do you have after watching this video",
+  questionAnswer:
+    "What is a question someone who watched this video " +
+    "should be able to answer",
+  topics: "What topics were covered in this video? Put each topic on a new line"
+};
+
 export class PathsService {
   auth() {
     window.gapi.load("client:auth2", () => {
@@ -16,12 +24,18 @@ export class PathsService {
     });
   }
 
-  getFileId(url) {
-    return Promise.resolve(/file\/d\/([^/]+)/.exec(url)[1]);
+  static getColabURL(fileId) {
+    return "https://colab.research.google.com/notebook#fileId=" + fileId;
   }
 
-  fetchProblemFile(pathId, problemId, solution) {
-    // Enter promiseficated area
+  getFileId(url) {
+    let result = /file\/d\/([^/]+)/.exec(url);
+    if (result && result[1]) return result[1];
+
+    throw new Error("Unable fetch file id");
+  }
+
+  fetchPathProblem(pathId, problemId) {
     return Promise.resolve()
       .then(
         () =>
@@ -39,23 +53,44 @@ export class PathsService {
           .ref(`/problems/${pathInfo.owner}/${problemId}`)
           .once("value")
           .then(data => data.val())
-          .then(problem =>
-            this.getFileId(
-              solution ? problem.solutionURL : problem.problemURL
-            ).then(fileId =>
-              this.fetchFile(fileId).then(problemJSON => ({
-                pathName: pathInfo.name,
-                owner: pathInfo.owner,
-                problemName: problem.name,
-                frozen: problem.frozen,
-                problemJSON,
-                problemColabURL:
-                  "https://colab.research.google.com/notebook#fileId=" + fileId,
-                problemURL: problem.problemURL
-              }))
-            )
-          )
-      );
+          .then(problem => ({
+            problemName: problem.name,
+            pathName: pathInfo.name,
+            pathId: pathInfo.id,
+            problemId,
+            owner: pathInfo.owner,
+            ...problem
+          }))
+      )
+      .then(pathProblem => {
+        switch (pathProblem.type) {
+          case "jupyter":
+            return Promise.all([
+              Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
+                fileId =>
+                  this.fetchFile(fileId).then(data => ({
+                    id: fileId,
+                    data
+                  }))
+              ),
+              Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
+                fileId =>
+                  this.fetchFile(fileId).then(data => ({
+                    id: fileId,
+                    data
+                  }))
+              )
+            ]).then(files =>
+              Object.assign(pathProblem, {
+                problemColabURL: PathsService.getColabURL(files[0].id),
+                problemJSON: files[0].data,
+                solutionJSON: files[1].data
+              })
+            );
+          default:
+            return pathProblem;
+        }
+      });
   }
 
   fetchSolutionFile(problemId, uid) {
@@ -67,7 +102,7 @@ export class PathsService {
       .then(fileId => (fileId ? this.fetchFile(fileId) : false));
   }
 
-  solveProblem(uid, problemId, problemJSON) {
+  uploadSolutionFile(uid, problemId, problemJSON) {
     return this.uploadFile(
       `Solution${problemId}.ipynb`,
       JSON.stringify(problemJSON)
@@ -155,6 +190,20 @@ export class PathsService {
         if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
         if (!problemInfo.frozen) throw new Error("Missing frozen");
         break;
+      case "youtube":
+        if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
+        if (
+          !(
+            problemInfo.questionAfter ||
+            problemInfo.questionAnswer ||
+            problemInfo.topics
+          )
+        ) {
+          throw new Error("Missing any of following question");
+        }
+        break;
+      case "text":
+        break;
       default:
         throw new Error("Invalid  problem type");
     }
@@ -180,6 +229,20 @@ export class PathsService {
       ref.set(problemInfo);
     }
     return key;
+  }
+
+  submitSolution(uid, pathProblem, solution) {
+    switch (pathProblem.type) {
+      case "jupyter":
+        break;
+      case "youtube":
+        return firebase
+          .database()
+          .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+          .set(solution);
+      default:
+        break;
+    }
   }
 }
 

@@ -17,6 +17,7 @@ export function* loginHandler() {
 export function* pathChangeRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
   const key = yield call(pathsService.pathChange, uid, action.pathInfo);
+
   yield put(pathChangeSuccess(action.pathInfo, key));
   yield put(pathDialogHide());
 }

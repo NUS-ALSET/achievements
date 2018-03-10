@@ -16,7 +16,7 @@ import Dialog, {
 import Input, { InputLabel } from "material-ui/Input";
 import MenuItem from "material-ui/Menu/MenuItem";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { Fragment } from "react";
 import Select from "material-ui/Select";
 import TextField from "material-ui/TextField";
 
@@ -83,6 +83,7 @@ class AddAssignmentDialog extends React.PureComponent {
             <MenuItem value="CodeCombat_Number">
               Complete Number of Code Combat Levels
             </MenuItem>
+            <MenuItem value="PathProblem">Path Problem</MenuItem>
           </TextField>
           <TextField
             fullWidth
@@ -132,6 +133,42 @@ class AddAssignmentDialog extends React.PureComponent {
               type="number"
               value={assignment.count}
             />
+          )}
+          {assignment.questionType === "PathProblem" && (
+            <Fragment>
+              <TextField
+                fullWidth
+                label="Path"
+                select
+                value={assignment.pathId || ""}
+              >
+                <MenuItem value="Text">Text</MenuItem>
+                <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
+                <MenuItem value="CodeCombat">
+                  Complete Code Combat Level
+                </MenuItem>
+                <MenuItem value="CodeCombat_Number">
+                  Complete Number of Code Combat Levels
+                </MenuItem>
+                <MenuItem value="PathProblem">Path Problem</MenuItem>
+              </TextField>
+              <TextField
+                fullWidth
+                label="Problem"
+                select
+                value={assignment.problemId || ""}
+              >
+                <MenuItem value="Text">Text</MenuItem>
+                <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
+                <MenuItem value="CodeCombat">
+                  Complete Code Combat Level
+                </MenuItem>
+                <MenuItem value="CodeCombat_Number">
+                  Complete Number of Code Combat Levels
+                </MenuItem>
+                <MenuItem value="PathProblem">Path Problem</MenuItem>
+              </TextField>
+            </Fragment>
           )}
           <TextField
             InputLabelProps={{
