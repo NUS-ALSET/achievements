@@ -1,4 +1,7 @@
 /* eslint-disable no-magic-numbers */
+var React = require("react");
+
+
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
@@ -19,12 +22,11 @@ try {
 } catch(e){
 
 }
-
 // If service account deployed, then use it. 
 if(serviceAccount){
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://achievements-dev.firebaseio.com'
+    databaseURL: functions.config().firebase.databaseURL
   });
 //Otherwise, initialize with the default config. 
 } else {
@@ -44,10 +46,9 @@ function processProfileRefreshRequest(data, resolve) {
             .get(
               `https://codecombat.com/db/user/${data.serviceId
                 .toLowerCase()
-                .replace(/[ _]/g, "-")
                 .replace(
-                  /[!@#$%^&*()]/g,
-                  ""
+                  " ",
+                  "-"
                 )}/level.sessions?project=state.complete,levelID,` +
                 "levelName,playtime,codeLanguage,created"
             )
@@ -262,39 +263,131 @@ exports.downloadEvents = functions.https.onRequest((req, res) => {
   }
 });
 
+exports.api = functions.https.onRequest((req, res) => {
+  let { token, data } = req.query;
+  let supportedDatatypes = ["users", "cohorts", "courses", "usage"];
+  if(!supportedDatatypes.includes(data)){
+    res.send("Unsupported data type "+data);
+  }
+  if(data == "usage"){
+    data = "apiTracking/"+token
+  }
+  if (token) {
+    admin
+      .database()
+      .ref("api_tokens/" + token)
+      .once("value")
+      .then(snapshot => {
+        if (snapshot.val()) {
+          const ref = admin.database().ref(data);
+          let promise;
+          let startFrom;
+          let stopAt;
+          promise = ref.once("value");
+
+          promise.then(snapshot2 => {
+            const theData = snapshot2.val();
+            if (theData) {
+              // Track cost against API key
+              // Put a node in the apikeys cost tracking. 
+              const apiTrackingRef = admin.database().ref("apiTracking/"+token);
+              let size = JSON.stringify(theData).length;
+              apiTrackingRef.child("usage").push({
+                "data": data,
+                "size": size,
+                "createdAt": {
+                  ".sv": "timestamp"
+                }
+              }).then(snapshot2 => {
+                console.log("Recording api resource usage.");
+                
+                // Update the total
+                apiTrackingRef.child("totalUsage").transaction(function(total) {
+                  if (total) {
+                      total += size;
+                  } else {
+                      total = size;
+                  }
+                  return total;
+                }).then(snap => {
+                  // And finally, send back data
+                  res.send(theData);
+                });
+              });
+              
+            } else {
+              res.send("No data");
+            }
+          });
+        } else {
+          res.send("Invalid token");
+        }
+      });
+  } else {
+    res.send("Token is missing ");
+  }
+});
+
+
 function redirectToLogin(message,res){
-  // Todo: Could automatically redirect here rather than sending text details.   
-  res.send(message);
+  res.redirect(`${message}`);
 }
 
-function get_token(data,res){
+// Tests to see if /users/<userId> has any data. 
+function checkIfUserExists(data,res) {
+  let uid = data['user_id']+"@"+data['oauth_consumer_key']
+  var newString = uid.split('.').join('---');
+  admin.database().ref(`/users/`+newString).once('value', function(snapshot) {
+            var exists = (snapshot.val() !== null);
+            get_token(data,res,exists);
+            // res.send(exists);
+          });
+}
+
+function get_token(data,res,exists){
       //Create a new user.
       let uid = data['user_id']+"@"+data['oauth_consumer_key']
       admin.auth().createCustomToken(uid)
       .then(function(customToken) {
+        console.log("Custom token here: ", customToken);
         let message = "user_id -> "+data['user_id']+"\n";
         message += "oauth_consumer_key -> "+data['oauth_consumer_key']+"\n";
         message += "create user -> "+uid+"\n";
         message += "redirect to\n\n "
         message += data["APP_REDIRECT_URL"]+customToken;
-        
-        // Add the user to the users table before redirecting so that they will have a name. 
-        // Todo: Keep from overwriting updated usernames. 
-        admin
-        .database().ref('users/'+uid).update({
-          isLTI: true,
-          displayName: data['user_id'],
-          consumerKey: data['oauth_consumer_key']
-        }).then(function(snap){
-          redirectToLogin(message,res);
-        })
-        .catch(function(error) {
-          console.log("Error creating user:", error);
-        });      
+        var link = data["APP_REDIRECT_URL"]+customToken;;
+
+        var newString = uid.split('.').join('---');
+        // data['oauth_consumer_key'] = newString;
+
+         if(exists){
+            admin
+            .database().ref(`/users/`+newString).update({
+
+            }).then(function(snap){
+              redirectToLogin(link,res);
+            }).catch(function(error) {
+              console.log("Error creating user:", error);
+            }); 
+         }
+         else{
+            admin
+            .database().ref(`/users/`+newString).update({
+              isLTI: true,
+              displayName: data['user_id'],
+              consumerKey: data['oauth_consumer_key']
+            }).then(function(snap){
+              redirectToLogin(link,res);
+            }).catch(function(error) {
+              console.log("Error creating user:", error);
+            }); 
+         }     
     }).catch(function(error) {
       console.log("Error creating custom token:", error);
     });
 }
+
+
 
 exports.ltiLogin = functions.https.onRequest((req, res) => {
   
@@ -304,15 +397,8 @@ exports.ltiLogin = functions.https.onRequest((req, res) => {
 
   // Hardcoding secret until starts being pulled form database. 
   let consumerSecret = "secret";
-  /*
-  admin.database().ref("lti/secrets/"+oauth_consumer_key)
-  .once("value").then(snapshot => {
-    consumerSecret = snapshot.val();
-  });
-  */
 
-  //let provider = new lti.Provider(oauth_consumer_key , consumerSecret);  
-  
+  //let provider = new lti.Provider(oauth_consumer_key , consumerSecret);    
   var provider = new lti.Provider(oauth_consumer_key , consumerSecret, {
     trustProxy: true
   });
@@ -345,25 +431,18 @@ exports.ltiLogin = functions.https.onRequest((req, res) => {
         ltiData = snapshot.val();
         data["APP_REDIRECT_URL"] = ltiData['redirectUrl']+"?pause="+ltiData['pauseRedirect']+"&token=";
         if(canCreateTokens ){
-          get_token(data,res);
+          checkIfUserExists(data,res);
         }
         else{
           res.send("Cannot create tokens. Service account file may not have been deployed.");
         }
-      });
-      
-    
+      });    
     } else {
       let message = "LTI login request was invalid. protocol -> "+req.protocol+" error-> "+err;
       message += "oauth_consumer_key -> "+oauth_consumer_key+" user_id -> " + user_id;
       message += "\nisValid ->"+isValid
       message += "\n\n"+JSON.stringify(data);
-      res.send(message);
-    
-    
-  }
+      res.send(message);        
+    }
+  });
 });
-  
-
-});
-

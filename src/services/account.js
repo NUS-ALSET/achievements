@@ -15,10 +15,7 @@ export class AccountService {
   static processProfile(profileType, id) {
     switch (profileType) {
       case "CodeCombat":
-        return id
-          .toLowerCase()
-          .replace(/[ _]/g, "-")
-          .replace(/[!@#$%^&*()]/g, "");
+        return id.toLowerCase().replace(" ", "-");
       default:
         return id;
     }
