@@ -292,7 +292,10 @@ exports.api = functions.https.onRequest((req, res) => {
               let size = JSON.stringify(theData).length;
               apiTrackingRef.child("usage").push({
                 "data": data,
-                "size": size 
+                "size": size,
+                "createdAt": {
+                  ".sv": "timestamp"
+                }
               }).then(snapshot2 => {
                 console.log("Recording api resource usage.");
                 
