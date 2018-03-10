@@ -264,12 +264,14 @@ exports.downloadEvents = functions.https.onRequest((req, res) => {
 });
 
 exports.api = functions.https.onRequest((req, res) => {
-  const { token, data } = req.query;
-  let supportedDatatypes = ["users", "cohorts", "courses"];
+  let { token, data } = req.query;
+  let supportedDatatypes = ["users", "cohorts", "courses", "usage"];
   if(!supportedDatatypes.includes(data)){
     res.send("Unsupported data type "+data);
   }
-
+  if(data == "usage"){
+    data = "apiTracking/"+token
+  }
   if (token) {
     admin
       .database()
