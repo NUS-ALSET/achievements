@@ -265,7 +265,7 @@ exports.downloadEvents = functions.https.onRequest((req, res) => {
 
 exports.api = functions.https.onRequest((req, res) => {
   let { token, data } = req.query;
-  let supportedDatatypes = ["users", "cohorts", "courses", "usage"];
+  let supportedDatatypes = ["users", "cohorts", "courses","assignments","solutions","courseMembers","cohortCourses", "usage"]
   if(!supportedDatatypes.includes(data)){
     res.send("Unsupported data type "+data);
   }
