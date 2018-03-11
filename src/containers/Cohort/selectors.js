@@ -15,18 +15,12 @@ export const selectCohort = (state, ownProps) => {
         id,
         ...cohortCourses[id]
       }))
-      .sort((a, b) => {
-        if (a.progress > b.progress) {
-          return -1;
-        } else if (a.progress < b.progress) {
-          return 1;
-        } else if (a.participants > b.participants) {
-          return -1;
-        } else if (a.participants < b.participants) {
-          return 1;
-        }
-        return 0;
-      })
+      .sort(
+        (a, b) =>
+          a.participants > b.participants
+            ? -1
+            : a.participants < b.participants ? 1 : 0
+      )
       .map((course, index) => {
         return { ...course, rank: index + 1 };
       })

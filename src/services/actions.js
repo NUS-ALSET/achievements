@@ -54,6 +54,7 @@ export class ActionsService {
           },
           type: action.type,
           uid: currentUser,
+          isAnonymous: !currentUser,
           otherActionData: this.removeEmpty(
             ActionsService.pickActionData(action)
           )

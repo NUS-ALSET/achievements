@@ -100,8 +100,7 @@
     "describe": true,
     "it": true,
     "beforeEach": true,
-    "afterEach": true,
-    "gapi": true
+    "afterEach": true
   },
   "extends": [
     "eslint:recommended",

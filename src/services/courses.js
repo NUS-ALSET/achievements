@@ -16,7 +16,7 @@ import firebase from "firebase";
 const ERROR_TIMEOUT = 6000;
 
 export class CoursesService {
-  errorTimeout = 0;
+  errorTimeout = false;
 
   static sortAssignments(assignments) {
     return Object.keys(assignments || {})
@@ -47,7 +47,7 @@ export class CoursesService {
     }
     this.errorTimeout = setTimeout(() => {
       this.dispatch(notificationHide());
-      this.errorTimeout = 0;
+      this.errorTimeout = false;
     }, ERROR_TIMEOUT);
   }
 
@@ -686,66 +686,6 @@ export class CoursesService {
     ]);
   }
 
-  watchCourseMembers(courseId, callback) {
-    return firebase
-      .database()
-      .ref(`/courseMembers/${courseId}`)
-      .on("value", courseMembers =>
-        this.unWatchCourseMembers(courseId)
-          .then(() => courseMembers)
-          .then(courseMembers =>
-            // FIXIT: add checking - if watched already then skip
-            Promise.all(
-              Object.keys(courseMembers.val() || {}).map(id =>
-                firebase
-                  .ref(`/users/${id}`)
-                  .once("value")
-                  .then(data => data.val())
-                  .then(response => {
-                    const userInfo = response;
-
-                    firebase
-                      .ref(`/userAchievements/${id}`)
-                      .on("value", achievements =>
-                        callback({
-                          studentId: id,
-                          achievements: achievements.val()
-                        })
-                      );
-
-                    return Object.assign(
-                      {
-                        id,
-                        name: userInfo.displayName
-                      },
-                      userInfo
-                    );
-                  })
-              )
-            )
-              .then(courseMembers => callback({ courseMembers }))
-              .catch(err => callback({ err }))
-          )
-      );
-  }
-
-  unWatchCourseMembers(courseId) {
-    return firebase
-      .database()
-      .ref(`/courseMembers/${courseId}`)
-      .once("value")
-      .then(members =>
-        Promise.all(
-          Object.keys(members.val() || {}).map(id =>
-            firebase
-              .database()
-              .ref(`/userAchievements/${id}`)
-              .off()
-          )
-        )
-      );
-  }
-
   fetchUser(userKey) {
     if (userKey.length <= 1) {
       return Promise.resolve();
@@ -755,25 +695,6 @@ export class CoursesService {
       .ref(`/users/${userKey}`)
       .once("value")
       .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
-  }
-
-  removeStudentFromCourse(courseId, studentId) {
-    return firebase
-      .database()
-      .ref(`/courseMembers/${courseId}/${studentId}`)
-      .remove()
-      .then(() =>
-        firebase
-          .database()
-          .ref(`/solutions/${courseId}/${studentId}`)
-          .remove()
-      )
-      .then(() =>
-        firebase
-          .database()
-          .ref(`/visibleSolutions/${courseId}/${studentId}`)
-          .remove()
-      );
   }
 }
 

@@ -52,7 +52,6 @@ class InstructorTabs extends React.PureComponent {
             course={course}
             currentUser={currentUser}
             dispatch={dispatch}
-            isInstructor={false}
             sortState={ui.sortState}
           />
         );
@@ -86,7 +85,6 @@ class InstructorTabs extends React.PureComponent {
             course={course}
             currentUser={currentUser}
             dispatch={dispatch}
-            isInstructor={true}
             sortState={ui.sortState}
           />
         );
