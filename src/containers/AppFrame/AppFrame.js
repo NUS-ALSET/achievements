@@ -29,6 +29,9 @@ import Typography from "material-ui/Typography";
 import withStyles from "material-ui/styles/withStyles";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
+import Admin from "../Admin/Admin";
+import Problem from "../Problem/Problem";
+import NotImplemented from "../../components/NotImplemented";
 
 const styles = theme => ({
   "@global": {
@@ -97,6 +100,7 @@ class AppFrame extends React.Component {
     dispatch: PropTypes.func,
     anchorElId: PropTypes.any,
     mainDrawerOpen: PropTypes.bool,
+    isAdmin: PropTypes.bool,
     userName: PropTypes.string,
     userId: PropTypes.string
   };
@@ -126,7 +130,7 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const { classes, userId, userName, anchorElId } = this.props;
+    const { classes, isAdmin, userId, userName, anchorElId } = this.props;
 
     return (
       <Router>
@@ -193,17 +197,25 @@ class AppFrame extends React.Component {
             </AppBar>
             <AppDrawer
               className={classes.drawer}
+              isAdmin={isAdmin}
               mobileDrawerOpen={this.props.mainDrawerOpen}
               onRequestClose={this.handleDrawerClose}
               userId={userId}
             />
             <main className={classes.content}>
               <Route component={Home} exact path="(/|/home)" />
+              <Route component={Admin} exact path="/admin" />
               <Route component={Courses} exact path="/courses" />
               <Route component={Assignments} exact path="/courses/:courseId" />
-              <Route component={Paths} exact path="/paths" />
               <Route component={Cohorts} exact path="/cohorts" />
-              <Route component={Cohort} exact path={"/cohorts/:cohortId"} />
+              <Route component={Cohort} exact path="/cohorts/:cohortId" />
+              <Route component={Paths} exact path="/paths" />
+              <Route component={NotImplemented} exact path="/paths/:pathId" />
+              <Route
+                component={Problem}
+                exact
+                path="/paths/:pathId/problems/:problemId"
+              />
               <Route
                 exact
                 path="/(account|profile)/:accountId"
@@ -221,6 +233,7 @@ const mapStateToProps = state => ({
   anchorElId: state.appFrame.dropdownAnchorElId,
   mainDrawerOpen: state.appFrame.mainDrawerOpen,
   userName: state.firebase.auth.displayName,
-  userId: state.firebase.auth.uid
+  userId: state.firebase.auth.uid,
+  isAdmin: state.account.isAdmin
 });
 export default withStyles(styles)(connect(mapStateToProps)(AppFrame));

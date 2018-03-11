@@ -14,7 +14,10 @@ import {
   COURSE_MEMBERS_FETCH_SUCCESS,
   COURSE_ASSIGNMENTS_CLOSE,
   COURSE_MEMBER_ACHIEVEMENTS_REFETCH,
-  COURSE_REMOVE_STUDENT_DIALOG_SHOW
+  COURSE_REMOVE_STUDENT_DIALOG_SHOW,
+  ASSIGNMENT_PATHS_FETCH_SUCCESS,
+  ASSIGNMENT_PROBLEMS_FETCH_SUCCESS,
+  ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -147,6 +150,30 @@ export const assignments = (
           assistants: state.dialog.assistants.filter(
             assistant => assistant.id !== action.assistantId
           )
+        }
+      };
+    case ASSIGNMENT_PATHS_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          paths: action.paths
+        }
+      };
+    case ASSIGNMENT_PROBLEMS_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          problems: action.problems
+        }
+      };
+    case ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          pathProblem: action.pathProblem
         }
       };
     case COURSE_MEMBERS_FETCH_SUCCESS:

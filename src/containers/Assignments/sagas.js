@@ -36,7 +36,12 @@ import {
   courseMemberAchievementsRefetch,
   COURSE_REMOVE_STUDENT_REQUEST,
   courseRemoveStudentSuccess,
-  courseRemoveStudentFail
+  courseRemoveStudentFail,
+  assignmentPathsFetchSuccess,
+  assignmentProblemsFetchSuccess,
+  assignmentPathProblemFetchSuccess,
+  ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
+  assignmentSubmitRequest
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -51,6 +56,7 @@ import {
 
 import { coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
+import { pathsService } from "../../services/paths";
 
 // Since we're able to check 1 and only 1 course at once then we'll keep
 // course members channel at almost global variable...
@@ -93,17 +99,43 @@ export function* updateNewAssignmentFieldHandler(action) {
     return yield Promise.resolve();
   }
 
-  let assignment = yield select(state => state.assignments.dialog.value);
+  const data = yield select(state => ({
+    assignment: state.assignments.dialog.value,
+    uid: state.firebase.auth.uid
+  }));
+  let problems;
+  let assignment = data.assignment;
 
   assignment = assignment || {};
   if (["CodeCombat_Number", "Profile"].includes(assignment.questionType)) {
     yield put(updateNewAssignmentField("details", "https://codecombat.com"));
   }
 
-  if (action.field === "level") {
-    yield put(
-      updateNewAssignmentField("details", APP_SETTING.levels[action.value].url)
-    );
+  switch (action.field) {
+    case "questionType":
+      if (action.value === "PathProblem") {
+        const paths = yield call(
+          [pathsService, pathsService.fetchPaths],
+          data.uid
+        );
+
+        yield put(assignmentPathsFetchSuccess(paths));
+      }
+      break;
+    case "level":
+      yield put(
+        updateNewAssignmentField(
+          "details",
+          APP_SETTING.levels[action.value].url
+        )
+      );
+      break;
+    case "path":
+      problems = yield call(pathsService.fetchProblems, data.uid, action.value);
+
+      yield put(assignmentProblemsFetchSuccess(problems));
+      break;
+    default:
   }
 }
 
@@ -349,6 +381,20 @@ export function* courseRemoveStudentRequestHandler(action) {
   }
 }
 
+export function* assignmentPathProblemSolutionRequestHandler(action) {
+  try {
+    yield put(assignmentSubmitRequest(action.assignment, null));
+    const pathProblem = yield call(
+      [pathsService, pathsService.fetchPathProblem],
+      action.problemOwner,
+      action.problemId
+    );
+    yield put(assignmentPathProblemFetchSuccess(pathProblem));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
@@ -425,5 +471,11 @@ export default [
   },
   function* watchCourseAssignmentsClose() {
     yield takeLatest(COURSE_ASSIGNMENTS_CLOSE, courseAssignmentsCloseHandler);
+  },
+  function* watchAssignmentSubmitRequest() {
+    yield takeLatest(
+      ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
+      assignmentPathProblemSolutionRequestHandler
+    );
   }
 ];

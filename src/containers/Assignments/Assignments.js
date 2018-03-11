@@ -40,6 +40,7 @@ import withStyles from "material-ui/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { APP_SETTING } from "../../achievementsApp/config";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
+import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -122,6 +123,7 @@ class Assignments extends React.Component {
     dispatch(
       assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
     );
+    this.closeDialog();
   };
 
   closeDialog = () => {
@@ -200,6 +202,8 @@ class Assignments extends React.Component {
           currentUser={currentUser}
           dispatch={dispatch}
           handleTabChange={this.handleTabChange}
+          paths={[]}
+          problems={[]}
           ui={ui}
         />
       );
@@ -281,6 +285,13 @@ class Assignments extends React.Component {
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "Text"}
           solution={ui.dialog && ui.dialog.value}
+        />
+        <AddPathProblemSolutionDialog
+          assignment={ui.currentAssignment}
+          dispatch={dispatch}
+          onCommit={this.onProfileCommit}
+          open={ui.dialog && ui.dialog.type === "PathProblem"}
+          pathProblem={ui.dialog.pathProblem}
         />
       </Fragment>
     );

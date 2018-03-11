@@ -13,6 +13,9 @@ import Table, {
   TableHead,
   TableRow
 } from "material-ui/Table";
+import Button from "material-ui/Button";
+
+import { Link } from "react-router-dom";
 
 import withStyles from "material-ui/styles/withStyles";
 
@@ -28,27 +31,43 @@ const styles = theme => ({
 class ProblemsTable extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    problems: PropTypes.object
+    selectedPathId: PropTypes.string,
+    currentUserId: PropTypes.string,
+    problems: PropTypes.array
   };
 
   render() {
-    const { problems } = this.props;
+    const { problems, selectedPathId, currentUserId } = this.props;
 
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Problem name</TableCell>
+            <TableCell
+              style={{
+                width: 240
+              }}
+            >
+              Actions
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.keys(problems || {})
-            .map(id => ({ ...problems[id], id }))
-            .map(problem => (
-              <TableRow key={problem.id}>
-                <TableCell>{problem.name}</TableCell>
-              </TableRow>
-            ))}
+          {problems.map(problem => (
+            <TableRow key={problem.id}>
+              <TableCell>{problem.name}</TableCell>
+              <TableCell>
+                <Link
+                  to={`/paths/${selectedPathId || currentUserId}/problems/${
+                    problem.id
+                  }`}
+                >
+                  <Button variant="raised">Open</Button>
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     );

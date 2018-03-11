@@ -1,5 +1,11 @@
 {
   "rules": {
+    "admins": {
+      ".write": false,
+      "$userKey": {
+        ".read": "auth != null"
+      }
+    },
     "api_tokens": {
       ".read": false,
       ".write": false
@@ -111,25 +117,13 @@
     },
     "pathProblems": {
       ".read": "auth != null",
-      "$pathKey": {
-        ".write": "auth != null && (
-        data.exists() && root.child('problems/' + data.child('problemKey').val()).exists() && (
-        root.child('problems/' + data.child('problemKey').val() + '/owner').val() == auth.uid ||
-        data.child('assistants/').exists() &&
-        root.child('problems/' + data.child('problemKey').val() + '/assistants/' + auth.uid).val() == auth.uid
-        ) ||
-        !data.exists() && newData.child('problemKey').exists() && (
-        root.child('problems/' + newData.child('problemKey').val()).exists() && (
-        root.child('problems/' + newData.child('problemKey').val() + '/owner').val() == auth.uid ||
-        data.child('assistants/').exists() &&
-        root.child('problems/' + newData.child('problemKey').val() + '/assistants/' + auth.uid).val() == auth.uid
-        )
-        )
-        )"
+      "$userKey": {
+        ".write": "auth != null && auth.uid == $userKey && !newData.child('path').exists()"
       }
     },
     "paths": {
       ".read": "auth != null",
+      ".indexOn": ["owner", "isPublic"],
       "$pathKey": {
         ".write": "auth != null && (
         !data.exists() && newData.child('owner').val() == auth.uid ||
@@ -140,14 +134,26 @@
         )"
       }
     },
+    "problemSolutions": {
+      "$problemKey": {
+        "$userKey": {
+          ".read": "auth != null",
+          ".write": "auth != null && auth.uid == $userKey"
+        }
+      }
+    },
     "problems": {
       ".read": "auth != null",
-      "$problemKey": {
-        ".write": "auth != null && (
-        newData.child('owner').val() == auth.uid ||
-        data.exists() && data.child('owner').val() == auth.uid
-        )"
+      "$userKey": {
+        "$problemKey": {
+          ".write": "auth != null && (
+              newData.child('owner').val() == auth.uid
+            )"
+        }
       }
+    },
+    "secrets": {
+      ".read": "auth != null && root.child('admins/' + auth.uid).exists()"
     },
     "solutions": {
       ".read": "false",

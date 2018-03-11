@@ -1,4 +1,11 @@
 export const EXTERNAL_PROFILE_DIALOG_SHOW = "EXTERNAL_PROFILE_DIALOG_SHOW";
+
+export const ACCOUNT_CHANGE_ADMIN_STATUS = "ACCOUNT_CHANGE_ADMIN_STATUS";
+export const accountChangeAdminStatus = adminStatus => ({
+  type: ACCOUNT_CHANGE_ADMIN_STATUS,
+  adminStatus
+});
+
 /**
  * Creates action for external profile dialog show
  *

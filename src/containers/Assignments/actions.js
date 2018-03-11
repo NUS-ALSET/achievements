@@ -181,6 +181,21 @@ export const assignmentSubmitRequest = (assignment, solution) => ({
   value: solution
 });
 
+export const ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST =
+  "ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST";
+export const assignmentPathProblemSolutionRequest = (
+  assignment,
+  problemOwner,
+  problemId,
+  solution
+) => ({
+  type: ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
+  assignment,
+  problemOwner,
+  problemId,
+  solution
+});
+
 export const ASSIGNMENT_SOLUTION_REQUEST = "ASSIGNMENT_SOLUTION_REQUEST";
 export const assignmentSolutionRequest = (
   courseId,
@@ -350,6 +365,26 @@ export const courseRemoveStudentFail = (courseId, studentId, reason) => ({
   courseId,
   studentId,
   reason
+});
+
+export const ASSIGNMENT_PATHS_FETCH_SUCCESS = "ASSIGNMENT_PATHS_FETCH_SUCCESS";
+export const assignmentPathsFetchSuccess = paths => ({
+  type: ASSIGNMENT_PATHS_FETCH_SUCCESS,
+  paths
+});
+
+export const ASSIGNMENT_PROBLEMS_FETCH_SUCCESS =
+  "ASSIGNMENT_PROBLEMS_FETCH_SUCCESS";
+export const assignmentProblemsFetchSuccess = problems => ({
+  type: ASSIGNMENT_PROBLEMS_FETCH_SUCCESS,
+  problems
+});
+
+export const ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS =
+  "ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS";
+export const assignmentPathProblemFetchSuccess = pathProblem => ({
+  type: ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS,
+  pathProblem
 });
 
 export const COURSE_REMOVE_STUDENT_DIALOG_SHOW =
