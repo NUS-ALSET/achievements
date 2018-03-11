@@ -6,6 +6,8 @@ import { authProvider } from "../achievementsApp/config";
 import firebase from "firebase";
 
 export class AccountService {
+  static isAdmin = false;
+
   /**
    * This method converts external profile id (login) to required format
    * @param {String} profileType variant of external profile (e.g. CodeCombat)
@@ -71,6 +73,14 @@ export class AccountService {
 
   signOut() {
     return firebase.auth().signOut();
+  }
+
+  checkAdminStatus(uid) {
+    return firebase
+      .database()
+      .ref(`/admins/${uid}`)
+      .once("value")
+      .then(response => response.val());
   }
 
   /**

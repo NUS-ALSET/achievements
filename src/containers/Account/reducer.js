@@ -1,4 +1,5 @@
 import {
+  ACCOUNT_CHANGE_ADMIN_STATUS,
   DISPLAY_NAME_EDIT_TOGGLE,
   EXTERNAL_PROFILE_DIALOG_HIDE,
   EXTERNAL_PROFILE_DIALOG_SHOW,
@@ -14,6 +15,7 @@ import {
 
 export const account = (
   state = {
+    isAdmin: false,
     showExternalProfileDialog: false,
     showRemoveExternalProfileDialog: false,
     externalProfileInUpdate: false,
@@ -25,6 +27,11 @@ export const account = (
   action
 ) => {
   switch (action.type) {
+    case ACCOUNT_CHANGE_ADMIN_STATUS:
+      return {
+        ...state,
+        isAdmin: action.adminStatus
+      };
     case EXTERNAL_PROFILE_DIALOG_SHOW:
       return {
         ...state,
