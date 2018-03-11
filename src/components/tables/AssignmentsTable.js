@@ -165,23 +165,7 @@ class AssignmentsTable extends React.PureComponent {
             const studentInfo = course.members[id];
             return (
               <TableRow key={studentInfo.id}>
-                <TableCell
-                  style={{
-                    maxWidth: 361,
-                    overflow: "hidden",
-                    textOverflow: "ellipsis"
-                  }}
-                >
-                  {isInstructor &&
-                    course.owner === currentUser.id && (
-                      <IconButton
-                        onClick={() => this.onStudentRemoveClick(studentInfo)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
-                  {studentInfo.name}
-                </TableCell>
+                <TableCell>{studentInfo.name}</TableCell>
                 {course.assignments
                   .filter(assignment => assignment.visible)
                   .map(assignment => (
