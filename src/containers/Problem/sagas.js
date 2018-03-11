@@ -22,7 +22,7 @@ export function* problemInitRequestHandler(action) {
     let uid = yield select(state => state.firebase.auth.uid);
     if (!uid) {
       yield take("@@reactReduxFirebase/LOGIN");
-      uid = yield select(state => state.firebase.auth.uid);
+      yield select(state => state.firebase.auth.uid);
     }
 
     yield put(problemInitSuccess(action.problemOwner, action.problemId, null));
@@ -32,15 +32,11 @@ export function* problemInitRequestHandler(action) {
       action.pathId,
       action.problemId
     );
-    const pathSolution = yield call(
-      [pathsService, pathsService.fetchSolutionFile],
-      action.problemId,
-      uid
-    );
 
-    if (pathSolution) {
-      yield put(problemSolutionRefreshSuccess(action.problemId, pathSolution));
-    }
+    // if (pathProblem) {
+    //   yield put(problemSolutionRefreshSuccess(action.problemId,
+    //     pathSolution));
+    // }
 
     yield put(
       problemInitSuccess(action.problemOwner, action.problemId, pathProblem)
@@ -94,7 +90,8 @@ export function* problemSolutionSubmitRequestHandler(action) {
   try {
     const data = yield select(state => ({
       uid: state.firebase.auth.uid,
-      pathProblem: state.problem.pathProblem
+      pathProblem:
+        state.problem.pathProblem || state.assignments.dialog.pathProblem
     }));
     yield call(
       [pathsService, pathsService.submitSolution],

@@ -2,7 +2,8 @@ import {
   assignmentSolutionRequest,
   assignmentSubmitRequest,
   assignmentsSortChange,
-  courseRemoveStudentDialogShow
+  courseRemoveStudentDialogShow,
+  assignmentPathProblemSolutionRequest
 } from "../../containers/Assignments/actions";
 import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
@@ -84,6 +85,16 @@ class AssignmentsTable extends React.PureComponent {
       case "CodeCombat_Number":
         dispatch(
           assignmentSolutionRequest(course.id, assignment.id, "Complete")
+        );
+        break;
+      case "PathProblem":
+        dispatch(
+          assignmentPathProblemSolutionRequest(
+            assignment,
+            course.owner,
+            assignment.problem,
+            solution
+          )
         );
         break;
       default:

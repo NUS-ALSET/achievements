@@ -11,7 +11,6 @@ import Button from "material-ui/Button";
 import Paper from "material-ui/Paper";
 
 import YouTube from "react-youtube";
-import { withRouter } from "react-router-dom";
 
 import ProblemQuestion from "../ProblemQuestion";
 import { problemSolutionSubmitRequest } from "../../containers/Problem/actions";
@@ -19,7 +18,7 @@ import { problemSolutionSubmitRequest } from "../../containers/Problem/actions";
 class YouTubeProblem extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    match: PropTypes.object.isRequired,
+    onCommit: PropTypes.func,
     problem: PropTypes.object
   };
 
@@ -48,14 +47,16 @@ class YouTubeProblem extends React.PureComponent {
       }
     });
 
-  onCommit = () =>
-    this.props.dispatch(
-      problemSolutionSubmitRequest(
-        this.props.match.params.pathId,
-        this.props.match.params.problemId,
-        this.state
-      )
+  onCommit = () => {
+    const { dispatch, onCommit, problem } = this.props;
+
+    dispatch(
+      problemSolutionSubmitRequest(problem.owner, problem.problemId, this.state)
     );
+    if (onCommit) {
+      onCommit(this.state);
+    }
+  };
 
   render() {
     const { problem } = this.props;
@@ -117,4 +118,4 @@ class YouTubeProblem extends React.PureComponent {
   }
 }
 
-export default withRouter(YouTubeProblem);
+export default YouTubeProblem;

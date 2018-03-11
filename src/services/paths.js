@@ -244,6 +244,38 @@ export class PathsService {
         break;
     }
   }
+
+  fetchPaths(uid) {
+    return firebase
+      .database()
+      .ref("/paths")
+      .orderByChild("owner")
+      .equalTo(uid)
+      .once("value")
+      .then(data => data.val())
+      .then(paths =>
+        Object.keys(paths || {}).map(id => ({
+          ...paths[id],
+          id
+        }))
+      );
+  }
+  fetchProblems(uid, pathId) {
+    let ref = firebase.database().ref(`/problems/${uid}`);
+
+    if (pathId) {
+      ref = ref.orderByChild("path").equalTo(pathId);
+    }
+    return ref
+      .once("value")
+      .then(data => data.val())
+      .then(problems =>
+        Object.keys(problems || {}).map(id => ({
+          ...problems[id],
+          id
+        }))
+      );
+  }
 }
 
 /** @type PathsService */

@@ -25,6 +25,8 @@ class InstructorTabs extends React.PureComponent {
     ui: PropTypes.object,
     course: PropTypes.object,
     currentUser: PropTypes.object,
+    paths: PropTypes.array,
+    problems: PropTypes.array,
 
     dispatch: PropTypes.func.isRequired,
     closeDialog: PropTypes.func.isRequired,
@@ -67,6 +69,8 @@ class InstructorTabs extends React.PureComponent {
               onCommit={this.onCreateAssignmentClick}
               onFieldChange={this.onUpdateNewAssignmentField}
               open={ui.dialog && ui.dialog.type === "AddAssignment"}
+              paths={(ui.dialog && ui.dialog.paths) || []}
+              problems={(ui.dialog && ui.dialog.problems) || []}
             />
             <DeleteAssignmentDialog
               assignment={(ui.dialog && ui.dialog.value) || false}

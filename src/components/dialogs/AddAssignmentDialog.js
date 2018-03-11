@@ -26,7 +26,9 @@ class AddAssignmentDialog extends React.PureComponent {
     onFieldChange: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired
+    open: PropTypes.bool.isRequired,
+    paths: PropTypes.array.isRequired,
+    problems: PropTypes.array.isRequired
   };
   /*
   handleChange = name => event => {
@@ -59,7 +61,15 @@ class AddAssignmentDialog extends React.PureComponent {
   };*/
 
   render() {
-    let { onFieldChange, open, onClose, onCommit, assignment } = this.props;
+    let {
+      assignment,
+      onFieldChange,
+      open,
+      onClose,
+      onCommit,
+      paths,
+      problems
+    } = this.props;
     assignment = assignment || {};
 
     return (
@@ -139,34 +149,29 @@ class AddAssignmentDialog extends React.PureComponent {
               <TextField
                 fullWidth
                 label="Path"
+                onChange={onFieldChange("path")}
                 select
-                value={assignment.pathId || ""}
+                value={assignment.path || ""}
               >
-                <MenuItem value="Text">Text</MenuItem>
-                <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
-                <MenuItem value="CodeCombat">
-                  Complete Code Combat Level
-                </MenuItem>
-                <MenuItem value="CodeCombat_Number">
-                  Complete Number of Code Combat Levels
-                </MenuItem>
-                <MenuItem value="PathProblem">Path Problem</MenuItem>
+                <MenuItem value="">Default</MenuItem>
+                {paths.map(path => (
+                  <MenuItem key={path.id} value={path.id}>
+                    {path.name}
+                  </MenuItem>
+                ))}
               </TextField>
               <TextField
                 fullWidth
                 label="Problem"
+                onChange={onFieldChange("problem")}
                 select
-                value={assignment.problemId || ""}
+                value={assignment.problem || ""}
               >
-                <MenuItem value="Text">Text</MenuItem>
-                <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
-                <MenuItem value="CodeCombat">
-                  Complete Code Combat Level
-                </MenuItem>
-                <MenuItem value="CodeCombat_Number">
-                  Complete Number of Code Combat Levels
-                </MenuItem>
-                <MenuItem value="PathProblem">Path Problem</MenuItem>
+                {problems.map(problem => (
+                  <MenuItem key={problem.id} value={problem.id}>
+                    {problem.name}
+                  </MenuItem>
+                ))}
               </TextField>
             </Fragment>
           )}

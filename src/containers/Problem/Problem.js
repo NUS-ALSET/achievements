@@ -23,8 +23,7 @@ import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
 import withStyles from "material-ui/styles/withStyles";
-import JupyterProblem from "../../components/problemViews/JupyterProblem";
-import YouTubeProblem from "../../components/problemViews/YouTubeProblem";
+import ProblemView from "../../components/problemViews/ProblemView";
 
 const styles = theme => ({
   solutionButtons: {
@@ -82,9 +81,12 @@ class Problem extends React.PureComponent {
       solutionJSON,
       solutionKey
     } = this.props;
+
     if (!pathProblem) {
       return <div>Loading</div>;
     }
+
+
 
     return (
       <Fragment>
@@ -103,23 +105,14 @@ class Problem extends React.PureComponent {
             }
           ]}
         />
-        {pathProblem.type === "jupyter" && (
-          <JupyterProblem
-            classes={classes}
-            dispatch={dispatch}
-            problem={pathProblem}
-            solution={solution}
-            solutionJSON={solutionJSON}
-            solutionKey={solutionKey}
-          />
-        )}
-        {pathProblem.type === "youtube" && (
-          <YouTubeProblem
-            classes={classes}
-            dispatch={dispatch}
-            problem={pathProblem}
-          />
-        )}
+        <ProblemView
+          classes={classes}
+          dispatch={dispatch}
+          pathProblem={pathProblem}
+          solution={solution}
+          solutionJSON={solutionJSON}
+          solutionKey={solutionKey}
+        />
       </Fragment>
     );
   }
