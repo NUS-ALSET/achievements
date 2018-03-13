@@ -39,13 +39,7 @@ class AddTextSolutionDialog extends React.PureComponent {
     });
   };
 
-  catchReturn = event => {
-    if (event.key !== "Enter") {
-      return;
-    }
-    this.onCommitClick();
-  };
-
+  catchReturn = event => event.key === "Enter" && this.onCommitClick();
   onClose = () => this.props.dispatch(assignmentCloseDialog());
 
   onCommitClick = () => {

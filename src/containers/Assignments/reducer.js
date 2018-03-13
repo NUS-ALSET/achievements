@@ -10,7 +10,14 @@ import {
   ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW,
   ASSIGNMENT_ASSISTANT_FOUND,
   ASSIGNMENT_ADD_ASSISTANT_SUCCESS,
-  ASSIGNMENT_REMOVE_ASSISTANT_SUCCESS
+  ASSIGNMENT_REMOVE_ASSISTANT_SUCCESS,
+  COURSE_MEMBERS_FETCH_SUCCESS,
+  COURSE_ASSIGNMENTS_CLOSE,
+  COURSE_MEMBER_ACHIEVEMENTS_REFETCH,
+  COURSE_REMOVE_STUDENT_DIALOG_SHOW,
+  ASSIGNMENT_PATHS_FETCH_SUCCESS,
+  ASSIGNMENT_PROBLEMS_FETCH_SUCCESS,
+  ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -22,6 +29,7 @@ export const assignments = (
   state = {
     currentTab: 0,
     dialog: false,
+    courseMembers: [],
     sort: {
       field: "studentName",
       direction: "asc"
@@ -142,6 +150,64 @@ export const assignments = (
           assistants: state.dialog.assistants.filter(
             assistant => assistant.id !== action.assistantId
           )
+        }
+      };
+    case ASSIGNMENT_PATHS_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          paths: action.paths
+        }
+      };
+    case ASSIGNMENT_PROBLEMS_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          problems: action.problems
+        }
+      };
+    case ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          pathProblem: action.pathProblem
+        }
+      };
+    case COURSE_MEMBERS_FETCH_SUCCESS:
+      return {
+        ...state,
+        courseMembers: action.courseMembers
+      };
+    case COURSE_MEMBER_ACHIEVEMENTS_REFETCH: {
+      return {
+        ...state,
+        courseMembers: state.courseMembers.map(
+          courseMember =>
+            courseMember.id === action.studentId
+              ? {
+                  ...courseMember,
+                  achievements: action.achievements
+                }
+              : courseMember
+        )
+      };
+    }
+    case COURSE_ASSIGNMENTS_CLOSE:
+      return {
+        ...state,
+        courseMembers: []
+      };
+
+    case COURSE_REMOVE_STUDENT_DIALOG_SHOW:
+      return {
+        ...state,
+        dialog: {
+          type: "RemoveStudent",
+          studentId: action.studentId,
+          studentName: action.studentName
         }
       };
     default:
