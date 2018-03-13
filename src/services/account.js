@@ -6,6 +6,8 @@ import { authProvider } from "../achievementsApp/config";
 import firebase from "firebase";
 
 export class AccountService {
+  static isAdmin = false;
+
   /**
    * This method converts external profile id (login) to required format
    * @param {String} profileType variant of external profile (e.g. CodeCombat)
@@ -15,7 +17,10 @@ export class AccountService {
   static processProfile(profileType, id) {
     switch (profileType) {
       case "CodeCombat":
-        return id.toLowerCase().replace(" ", "-");
+        return id
+          .toLowerCase()
+          .replace(/[ _]/g, "-")
+          .replace(/[!@#$%^&*()]/g, "");
       default:
         return id;
     }
@@ -33,13 +38,16 @@ export class AccountService {
           .once("value")
           .then(existing => existing.val() || {})
           .then(existing => {
-            return firebase
-              .database()
-              .ref(`/users/${ref.user.uid}`)
-              .update({
-                displayName: existing.displayName || ref.user.displayName,
-                photoURL: ref.user.photoURL
-              });
+            return (
+              firebase
+                .database()
+                .ref(`/users/${ref.user.uid}`)
+                // Get existing user name and update display name if it doesn't exists
+                .update({
+                  displayName: existing.displayName || ref.user.displayName,
+                  photoURL: ref.user.photoURL
+                })
+            );
           })
           // Return user ref to continue processing
           .then(() => ref)
@@ -71,6 +79,14 @@ export class AccountService {
 
   signOut() {
     return firebase.auth().signOut();
+  }
+
+  checkAdminStatus(uid) {
+    return firebase
+      .database()
+      .ref(`/admins/${uid}`)
+      .once("value")
+      .then(response => response.val());
   }
 
   /**

@@ -19,6 +19,7 @@ import IconButton from "material-ui/IconButton";
 import PropTypes from "prop-types";
 
 import AddIcon from "material-ui-icons/Add";
+import GroupIcon from "material-ui-icons/Group";
 
 import React, { Fragment } from "react";
 import Switch from "material-ui/Switch";
@@ -31,13 +32,28 @@ import Table, {
 import TextField from "material-ui/TextField";
 import Toolbar from "material-ui/Toolbar";
 import { APP_SETTING } from "../../achievementsApp/config";
+import withStyles from "material-ui/styles/withStyles";
 
-const dateEditStyle = {
-  width: "220px"
-};
+const styles = theme => ({
+  actionButton: {
+    margin: theme.spacing.unit
+  },
+  actionCol: {
+    minWidth: 240
+  },
+  dateEdit: {
+    width: 220
+  },
+  faButton: {
+    position: "fixed",
+    bottom: 20,
+    right: 20
+  }
+});
 
 class AssignmentsEditorTable extends React.PureComponent {
   static propTypes = {
+    classes: PropTypes.object.isRequired,
     match: PropTypes.object,
     assignments: PropTypes.any.isRequired,
     dispatch: PropTypes.func.isRequired
@@ -74,28 +90,38 @@ class AssignmentsEditorTable extends React.PureComponent {
     );
 
   render() {
+    const { assignments, classes } = this.props;
     return (
       <Fragment>
         {APP_SETTING.isSuggesting ? (
-          <Button
-            color="primary"
-            onClick={() => this.onAddAssignmentClick()}
-            style={{
-              position: "fixed",
-              bottom: 20,
-              right: 20
-            }}
-            variant="fab"
-          >
-            <AddIcon />
-          </Button>
+          <Fragment>
+            <Button
+              className={classes.faButton}
+              color="primary"
+              onClick={() => this.onAddAssignmentClick()}
+              variant="fab"
+            >
+              <AddIcon />
+            </Button>
+            <IconButton onClick={this.assignmentsAssistantsShowRequest}>
+              <GroupIcon />
+            </IconButton>
+          </Fragment>
         ) : (
           <Toolbar>
             <Button
+              className={classes.actionButton}
               onClick={() => this.onAddAssignmentClick()}
               variant="raised"
             >
               Add assignment
+            </Button>
+            <Button
+              className={classes.actionButton}
+              onClick={this.assignmentsAssistantsShowRequest}
+              variant="raised"
+            >
+              Assistants
             </Button>
           </Toolbar>
         )}
@@ -108,22 +134,16 @@ class AssignmentsEditorTable extends React.PureComponent {
               <TableCell>Open</TableCell>
               <TableCell>Deadline</TableCell>
               <TableCell>Details</TableCell>
-              <TableCell
-                style={{
-                  minWidth: 240
-                }}
-              >
-                Actions
-              </TableCell>
+              <TableCell className={classes.actionCol}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {isEmpty(this.props.assignments) ? (
+            {isEmpty(assignments) ? (
               <TableRow>
                 <TableCell colSpan={7}>Empty list</TableCell>
               </TableRow>
             ) : (
-              this.props.assignments.map(assignment => (
+              assignments.map(assignment => (
                 <TableRow key={assignment.id}>
                   <TableCell>{assignment.name}</TableCell>
                   <TableCell>
@@ -157,6 +177,7 @@ class AssignmentsEditorTable extends React.PureComponent {
                       InputLabelProps={{
                         shrink: true
                       }}
+                      className={classes.dateEdit}
                       defaultValue={assignment.open || "2018-01-01T09:00"}
                       onChange={event =>
                         this.onUpdateAssignment(
@@ -165,7 +186,6 @@ class AssignmentsEditorTable extends React.PureComponent {
                           event.target.value
                         )
                       }
-                      style={dateEditStyle}
                       type="datetime-local"
                     />
                   </TableCell>
@@ -174,6 +194,7 @@ class AssignmentsEditorTable extends React.PureComponent {
                       InputLabelProps={{
                         shrink: true
                       }}
+                      className={classes.dateEdit}
                       defaultValue={assignment.deadline}
                       onChange={event =>
                         this.onUpdateAssignment(
@@ -182,7 +203,6 @@ class AssignmentsEditorTable extends React.PureComponent {
                           event.target.value
                         )
                       }
-                      style={dateEditStyle}
                       type="datetime-local"
                     />
                   </TableCell>
@@ -219,4 +239,4 @@ class AssignmentsEditorTable extends React.PureComponent {
   }
 }
 
-export default withRouter(AssignmentsEditorTable);
+export default withStyles(styles)(withRouter(AssignmentsEditorTable));
