@@ -67,6 +67,19 @@
  */
 
 /**
+ * @typedef {Object} CourseMember
+ *
+ * @property {String} id
+ * @property {String} displayName
+ * @property {String} photoURL
+ * @property {Object} CodeCombat
+ * @property {Object} achievements
+ * @property {String} CodeCombat.id
+ * @property {Number} CodeCombat.lastUpdate
+ * @property {Number} CodeCombat.totalAchievements
+ */
+
+/**
  * @typedef {Object} AssignmentsState
  *
  * @property {Number} currentTab
@@ -75,6 +88,7 @@
  * @property {String} sort.field
  * @property {String} sort.direction
  * @property {Object} currentAssignment
+ * @property {Array<CourseMember>} courseMembers
  */
 
 /**

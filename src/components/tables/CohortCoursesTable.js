@@ -38,14 +38,23 @@ class CohortCoursesTable extends React.PureComponent {
 
   render() {
     const { courses, isOwner } = this.props;
+    let totals = {
+      progress: 0,
+      participants: 0
+    };
+    courses.forEach(course => {
+      totals.progress += course.progress;
+      totals.participants += course.participants;
+      return true;
+    });
 
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Course Rank</TableCell>
-            <TableCell>Path Progress</TableCell>
-            <TableCell>Participants</TableCell>
+            <TableCell>Path Progress ({totals.progress})</TableCell>
+            <TableCell> Participants ({totals.participants})</TableCell>
             <TableCell>Course</TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
