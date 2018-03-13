@@ -51,6 +51,8 @@ function processProfileRefreshRequest(data, resolve) {
                   events = events || {};
                   achievements[levelInfo.levelID] = {
                     name: levelInfo.levelName,
+                    created: levelInfo.created || "",
+                    playtime: (levelInfo && levelInfo.playtime) || 0,
                     complete: true
                   };
                   const newEventKey = admin

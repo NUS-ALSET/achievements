@@ -52,7 +52,12 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
         open={open}
       >
         <DialogTitle>Set Assignment Solution</DialogTitle>
-        <DialogContent>
+        <DialogContent
+          style={{
+            textAlign: "center",
+            overflowX: "hidden"
+          }}
+        >
           <ProblemView
             classes={{}}
             dispatch={dispatch}
