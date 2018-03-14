@@ -17,7 +17,9 @@ import {
   COURSE_REMOVE_STUDENT_DIALOG_SHOW,
   ASSIGNMENT_PATHS_FETCH_SUCCESS,
   ASSIGNMENT_PROBLEMS_FETCH_SUCCESS,
-  ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS
+  ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS,
+  COURSE_MOVE_STUDENT_DIALOG_SHOW,
+  COURSE_MY_COURSES_FETCH_SUCCESS
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -208,6 +210,24 @@ export const assignments = (
           type: "RemoveStudent",
           studentId: action.studentId,
           studentName: action.studentName
+        }
+      };
+    case COURSE_MOVE_STUDENT_DIALOG_SHOW:
+      return {
+        ...state,
+        dialog: {
+          type: "MoveStudent",
+          course: action.courseId,
+          studentId: action.studentId,
+          studentName: action.studentName
+        }
+      };
+    case COURSE_MY_COURSES_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          courses: action.courses
         }
       };
     default:

@@ -757,6 +757,22 @@ export class CoursesService {
       .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
   }
 
+  fetchCourses(userKey) {
+    if (userKey.length <= 1) {
+      return Promise.resolve();
+    }
+    return firebase
+      .database()
+      .ref("/courses/")
+      .orderByChild("owner")
+      .equalTo(userKey)
+      .once("value")
+      .then(courses => courses.val() || {})
+      .then(courses =>
+        Object.keys(courses).map(id => ({ ...courses[id], id }))
+      );
+  }
+
   removeStudentFromCourse(courseId, studentId) {
     return firebase
       .database()
@@ -774,6 +790,27 @@ export class CoursesService {
           .ref(`/visibleSolutions/${courseId}/${studentId}`)
           .remove()
       );
+  }
+
+  moveStudentFromCourse(sourceCourseId, targetCourseId, studentId) {
+    return this.removeStudentFromCourse(sourceCourseId, studentId).then(() =>
+      firebase
+        .database()
+        .ref(`/coursePasswords/${targetCourseId}`)
+        .then(data => data.val())
+        .then(password =>
+          firebase
+            .database()
+            .ref(`/studentCoursePasswords/${targetCourseId}/${studentId}`)
+            .set(password)
+        )
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/courseMembers/${targetCourseId}/${studentId}`)
+            .set(true)
+        )
+    );
   }
 }
 

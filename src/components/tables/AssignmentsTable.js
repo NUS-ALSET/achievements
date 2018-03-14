@@ -3,12 +3,14 @@ import {
   assignmentSubmitRequest,
   assignmentsSortChange,
   courseRemoveStudentDialogShow,
-  assignmentPathProblemSolutionRequest
+  assignmentPathProblemSolutionRequest,
+  courseMoveStudentDialogShow
 } from "../../containers/Assignments/actions";
 import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 
 import DeleteIcon from "material-ui-icons/Delete";
+import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -66,6 +68,15 @@ class AssignmentsTable extends React.PureComponent {
   onStudentRemoveClick = studentInfo =>
     this.props.dispatch(
       courseRemoveStudentDialogShow(
+        this.props.course.id,
+        studentInfo.id,
+        studentInfo.name
+      )
+    );
+
+  onStudentMoveClick = studentInfo =>
+    this.props.dispatch(
+      courseMoveStudentDialogShow(
         this.props.course.id,
         studentInfo.id,
         studentInfo.name
@@ -168,11 +179,18 @@ class AssignmentsTable extends React.PureComponent {
                 <TableCell>
                   {isInstructor &&
                     course.owner === currentUser.id && (
-                      <IconButton
-                        onClick={() => this.onStudentRemoveClick(studentInfo)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+                      <Fragment>
+                        <IconButton
+                          onClick={() => this.onStudentMoveClick(studentInfo)}
+                        >
+                          <UserSwitch style={{ fill: "rgba(0, 0, 0, 0.54)" }} />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => this.onStudentRemoveClick(studentInfo)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Fragment>
                     )}
                   {studentInfo.name}
                 </TableCell>

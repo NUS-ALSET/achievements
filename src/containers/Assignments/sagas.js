@@ -41,7 +41,13 @@ import {
   assignmentProblemsFetchSuccess,
   assignmentPathProblemFetchSuccess,
   ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
-  assignmentSubmitRequest
+  assignmentSubmitRequest,
+  COURSE_MOVE_STUDENT_DIALOG_SHOW,
+  courseMoveStudentDialogShow,
+  courseMyCoursesFetchSuccess,
+  COURSE_MOVE_STUDENT_REQUEST,
+  courseMoveStudentRequest,
+  courseMoveStudentFail
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -395,6 +401,36 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
   }
 }
 
+export function* courseMoveStudentDialogShowHandler() {
+  try {
+    const uid = yield select(state => state.firebase.auth.uid);
+    const courses = yield call(coursesService.fetchCourses, uid);
+    yield put(courseMyCoursesFetchSuccess(courses));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* courseMoveStudentRequestHandler(action) {
+  try {
+    yield call(
+      [coursesService, coursesService.moveStudent],
+      action.sourceCourseId,
+      action.targetCourseId,
+      action.studentId
+    );
+  } catch (err) {
+    yield put(
+      courseMoveStudentFail(
+        action.sourceCourseId,
+        action.targetCourseId,
+        action.studentId,
+        err.message
+      )
+    );
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
@@ -476,6 +512,18 @@ export default [
     yield takeLatest(
       ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
       assignmentPathProblemSolutionRequestHandler
+    );
+  },
+  function* watchCourseMoveStudentDialogShow() {
+    yield takeLatest(
+      COURSE_MOVE_STUDENT_DIALOG_SHOW,
+      courseMoveStudentDialogShowHandler
+    );
+  },
+  function* watchCourseMoveStudentRequest() {
+    yield takeLatest(
+      COURSE_MOVE_STUDENT_REQUEST,
+      courseMoveStudentRequestHandler
     );
   }
 ];

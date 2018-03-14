@@ -41,6 +41,7 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { APP_SETTING } from "../../achievementsApp/config";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
+import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -258,6 +259,14 @@ class Assignments extends React.Component {
           courseMemberName={ui && ui.dialog && ui.dialog.studentName}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "RemoveStudent"}
+        />
+        <MoveStudentDialog
+          courseId={course.id}
+          courses={(ui.dialog && ui.dialog.courses) || []}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "MoveStudent"}
+          studentId={ui && ui.dialog && ui.dialog.studentName}
+          studentName={ui && ui.dialog && ui.dialog.studentId}
         />
         <AddProfileDialog
           dispatch={dispatch}
