@@ -49,12 +49,14 @@ class ProblemView extends React.PureComponent {
           />
         )}
         {pathProblem.type === "youtube" && (
-          <YouTubeProblem
-            classes={classes}
-            dispatch={dispatch}
-            onCommit={onCommit}
-            problem={pathProblem}
-          />
+          <div style={{ textAlign: "center" }}>
+            <YouTubeProblem
+              classes={classes}
+              dispatch={dispatch}
+              onCommit={onCommit}
+              problem={pathProblem}
+            />
+          </div>
         )}
       </Fragment>
     );

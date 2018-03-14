@@ -127,7 +127,7 @@ class ProblemDialog extends React.PureComponent {
     const { problem, open } = this.props;
 
     return (
-      <Dialog onClose={this.onClose} open={open}>
+      <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
           {problem && problem.id ? "Edit Problem" : "Add New Problem"}
         </DialogTitle>

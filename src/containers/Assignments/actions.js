@@ -399,3 +399,61 @@ export const courseRemoveStudentDialogShow = (
   studentId,
   studentName
 });
+
+export const COURSE_MOVE_STUDENT_DIALOG_SHOW =
+  "COURSE_MOVE_STUDENT_DIALOG_SHOW";
+export const courseMoveStudentDialogShow = (
+  courseId,
+  studentId,
+  studentName
+) => ({
+  type: COURSE_MOVE_STUDENT_DIALOG_SHOW,
+  courseId,
+  studentId,
+  studentName
+});
+
+export const COURSE_MOVE_STUDENT_REQUEST = "COURSE_MOVE_STUDENT_REQUEST";
+export const courseMoveStudentRequest = (
+  sourceCourseId,
+  targetCourseId,
+  studentId
+) => ({
+  type: COURSE_MOVE_STUDENT_REQUEST,
+  sourceCourseId,
+  targetCourseId,
+  studentId
+});
+
+export const COURSE_MOVE_STUDENT_SUCCESS = "COURSE_MOVE_STUDENT_SUCCESS";
+export const courseMoveStudentSuccess = (
+  sourceCourseId,
+  targetCourseId,
+  studentId
+) => ({
+  type: COURSE_MOVE_STUDENT_SUCCESS,
+  sourceCourseId,
+  targetCourseId,
+  studentId
+});
+
+export const COURSE_MOVE_STUDENT_FAIL = "COURSE_MOVE_STUDENT_FAIL";
+export const courseMoveStudentFail = (
+  sourceCourseId,
+  targetCourseId,
+  studentId,
+  reason
+) => ({
+  type: COURSE_MOVE_STUDENT_FAIL,
+  sourceCourseId,
+  targetCourseId,
+  studentId,
+  reason
+});
+
+export const COURSE_MY_COURSES_FETCH_SUCCESS =
+  "COURSE_MY_COURSES_FETCH_SUCCESS";
+export const courseMyCoursesFetchSuccess = courses => ({
+  type: COURSE_MY_COURSES_FETCH_SUCCESS,
+  courses
+});
