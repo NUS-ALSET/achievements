@@ -86,8 +86,6 @@ class Problem extends React.PureComponent {
       return <div>Loading</div>;
     }
 
-
-
     return (
       <Fragment>
         <Breadcrumbs
@@ -112,6 +110,9 @@ class Problem extends React.PureComponent {
           solution={solution}
           solutionJSON={solutionJSON}
           solutionKey={solutionKey}
+          style={{
+            textAlign: "center"
+          }}
         />
       </Fragment>
     );

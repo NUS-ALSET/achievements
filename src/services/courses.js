@@ -242,23 +242,23 @@ export class CoursesService {
       .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
-  /**
-   * This method accepts student's solution and put's it at public section
-   * @param courseId
-   * @param assignment
-   * @param studentId
-   */
-  acceptSolution(courseId, assignment, studentId) {
-    return firebase
-      .ref(`/solutions/${courseId}/${studentId}/${assignment.id}`)
-      .once("value")
-      .then(solution => {
-        return firebase
-          .ref(`/visibleSolutions/${courseId}/${studentId}/${assignment.id}`)
-          .set(solution.val());
-      })
-      .catch(err => this.store.dispatch(notificationShow(err.message)));
-  }
+  // /**
+  //  * This method accepts student's solution and put's it at public section
+  //  * @param courseId
+  //  * @param assignment
+  //  * @param studentId
+  //  */
+  // acceptSolution(courseId, assignment, studentId) {
+  //   return firebase
+  //     .ref(`/solutions/${courseId}/${studentId}/${assignment.id}`)
+  //     .once("value")
+  //     .then(solution => {
+  //       return firebase
+  //         .ref(`/visibleSolutions/${courseId}/${studentId}/${assignment.id}`)
+  //         .set(solution.val());
+  //     })
+  //     .catch(err => this.store.dispatch(notificationShow(err.message)));
+  // }
 
   getProfileStatus(userId) {
     return firebase
@@ -757,6 +757,22 @@ export class CoursesService {
       .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
   }
 
+  fetchCourses(userKey) {
+    if (userKey.length <= 1) {
+      return Promise.resolve();
+    }
+    return firebase
+      .database()
+      .ref("/courses/")
+      .orderByChild("owner")
+      .equalTo(userKey)
+      .once("value")
+      .then(courses => courses.val() || {})
+      .then(courses =>
+        Object.keys(courses).map(id => ({ ...courses[id], id }))
+      );
+  }
+
   removeStudentFromCourse(courseId, studentId) {
     return firebase
       .database()
@@ -774,6 +790,28 @@ export class CoursesService {
           .ref(`/visibleSolutions/${courseId}/${studentId}`)
           .remove()
       );
+  }
+
+  moveStudent(sourceCourseId, targetCourseId, studentId) {
+    return this.removeStudentFromCourse(sourceCourseId, studentId).then(() =>
+      firebase
+        .database()
+        .ref(`/coursePasswords/${targetCourseId}`)
+        .once("value")
+        .then(data => data.val())
+        .then(password =>
+          firebase
+            .database()
+            .ref(`/studentCoursePasswords/${targetCourseId}/${studentId}`)
+            .set(password)
+        )
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/courseMembers/${targetCourseId}/${studentId}`)
+            .set(true)
+        )
+    );
   }
 }
 

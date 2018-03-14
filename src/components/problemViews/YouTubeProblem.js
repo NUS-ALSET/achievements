@@ -4,11 +4,10 @@
  * @created 08.03.18
  */
 
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
-import Paper from "material-ui/Paper";
 
 import YouTube from "react-youtube";
 
@@ -62,12 +61,7 @@ class YouTubeProblem extends React.PureComponent {
     const { problem } = this.props;
 
     return (
-      <Paper
-        style={{
-          padding: 4,
-          textAlign: "center"
-        }}
-      >
+      <Fragment>
         <YouTube
           onEnd={e => this.setYoutubeEvent("end", e.target.getCurrentTime())}
           onError={e =>
@@ -113,7 +107,7 @@ class YouTubeProblem extends React.PureComponent {
         <Button color="primary" onClick={this.onCommit} variant="raised">
           Submit
         </Button>
-      </Paper>
+      </Fragment>
     );
   }
 }
