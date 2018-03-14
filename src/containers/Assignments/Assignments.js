@@ -265,8 +265,8 @@ class Assignments extends React.Component {
           courses={(ui.dialog && ui.dialog.courses) || []}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "MoveStudent"}
-          studentId={ui && ui.dialog && ui.dialog.studentName}
-          studentName={ui && ui.dialog && ui.dialog.studentId}
+          studentId={ui && ui.dialog && ui.dialog.studentId}
+          studentName={ui && ui.dialog && ui.dialog.studentName}
         />
         <AddProfileDialog
           dispatch={dispatch}

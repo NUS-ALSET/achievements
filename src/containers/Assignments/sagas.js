@@ -43,11 +43,10 @@ import {
   ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
   assignmentSubmitRequest,
   COURSE_MOVE_STUDENT_DIALOG_SHOW,
-  courseMoveStudentDialogShow,
   courseMyCoursesFetchSuccess,
   COURSE_MOVE_STUDENT_REQUEST,
-  courseMoveStudentRequest,
-  courseMoveStudentFail
+  courseMoveStudentFail,
+  courseMoveStudentSuccess
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -412,12 +411,23 @@ export function* courseMoveStudentDialogShowHandler() {
 }
 
 export function* courseMoveStudentRequestHandler(action) {
+  if (!(action.sourceCourseId || action.targetCourseId || action.studentId)) {
+    yield put(notificationShow("Unable move student"));
+  }
   try {
+    yield put(assignmentCloseDialog());
     yield call(
       [coursesService, coursesService.moveStudent],
       action.sourceCourseId,
       action.targetCourseId,
       action.studentId
+    );
+    yield put(
+      courseMoveStudentSuccess(
+        action.sourceCourseId,
+        action.targetCourseId,
+        action.studentId
+      )
     );
   } catch (err) {
     yield put(

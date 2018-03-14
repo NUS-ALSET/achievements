@@ -26,8 +26,8 @@ class MoveStudentDialog extends React.PureComponent {
     open: PropTypes.bool.isRequired,
     courseId: PropTypes.string.isRequired,
     courses: PropTypes.array.isRequired,
-    studentName: PropTypes.string,
-    studentId: PropTypes.string
+    studentName: PropTypes.any,
+    studentId: PropTypes.any
   };
 
   state = {
