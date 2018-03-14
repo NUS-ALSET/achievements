@@ -62,13 +62,20 @@ const getStudentSolutions = (state, courseId, studentId, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             orderValue: userAchievements.totalAchievements,
-            value: `${userAchievements.id} (${
-              userAchievements.totalAchievements
-            })`
+            value: userAchievements.id
+              ? `${userAchievements.id} (${userAchievements.totalAchievements})`
+              : ""
           };
           return true;
         case "CodeCombat":
         case "CodeCombat_Number":
+          result[assignmentId] = {
+            published,
+            validated: userAchievements.id === solution,
+            value: "Completed"
+          };
+          return true;
+        case "PathProblem":
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
@@ -140,6 +147,12 @@ function getValueToSort(solutions, sortField) {
   return aValue.value;
 }
 
+/**
+ *
+ * @param {AchievementsAppState} state
+ * @param {Object} ownProps
+ * @returns {AssignmentCourse} course props
+ */
 export const getCourseProps = (state, ownProps) => {
   const courseId = ownProps.match.params.courseId;
   const assignments = getFrom(state.firebase.data.assignments, courseId);

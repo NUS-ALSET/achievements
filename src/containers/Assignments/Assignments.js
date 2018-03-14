@@ -4,10 +4,8 @@ import {
   assignmentCloseDialog,
   assignmentRefreshProfilesRequest,
   assignmentSolutionRequest,
-  assignmentSubmitRequest,
   assignmentSwitchTab,
   assignmentsAssistantsShowRequest,
-  assignmentsSortChange,
   coursePasswordEnterSuccess
 } from "./actions";
 import { compose } from "redux";
@@ -28,7 +26,6 @@ import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
 
 import ChevronRightIcon from "material-ui-icons/ChevronRight";
-import GroupIcon from "material-ui-icons/Group";
 import RefreshIcon from "material-ui-icons/Refresh";
 
 import Grid from "material-ui/Grid";
@@ -42,6 +39,8 @@ import sagas from "./sagas";
 import withStyles from "material-ui/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { APP_SETTING } from "../../achievementsApp/config";
+import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
+import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -53,7 +52,7 @@ const styles = theme => ({
     fontSize: "0.875rem"
   },
   actions: {
-    position: "fixed",
+    position: "absolute",
     right: theme.spacing.unit
   },
   action: {
@@ -118,37 +117,13 @@ class Assignments extends React.Component {
       .then(() => dispatch(coursePasswordEnterSuccess(course.id)));
   };
 
-  onSortClick = assignment => {
-    this.props.dispatch(
-      assignmentsSortChange((assignment && assignment.id) || "studentName")
-    );
-  };
-
   onProfileCommit = value => {
     const { course, ui, dispatch } = this.props;
 
     dispatch(
       assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
     );
-  };
-
-  onSubmitClick = (assignment, solution) => {
-    const { course, dispatch } = this.props;
-
-    switch (assignment.questionType) {
-      case "CodeCombat":
-      case "CodeCombat_Number":
-        dispatch(
-          assignmentSolutionRequest(course.id, assignment.id, "Complete")
-        );
-        break;
-      default:
-        dispatch(assignmentSubmitRequest(assignment, solution));
-    }
-  };
-
-  onAcceptClick = (assignment, studentId) => {
-    coursesService.acceptSolution(this.props.course.id, assignment, studentId);
+    this.closeDialog();
   };
 
   closeDialog = () => {
@@ -227,14 +202,8 @@ class Assignments extends React.Component {
           currentUser={currentUser}
           dispatch={dispatch}
           handleTabChange={this.handleTabChange}
-          onAcceptClick={this.onAcceptClick}
-          onAddAssignmentClick={this.onAddAssignmentClick}
-          onCreateAssignmentClick={this.onCreateAssignmentClick}
-          onDeleteAssignment={this.onDeleteAssignment}
-          onSortClick={this.onSortClick}
-          onSubmitClick={this.onSubmitClick}
-          onUpdateAssignment={this.onUpdateAssignment}
-          onUpdateNewAssignmentField={this.onUpdateNewAssignmentField}
+          paths={[]}
+          problems={[]}
           ui={ui}
         />
       );
@@ -245,6 +214,7 @@ class Assignments extends React.Component {
           course={course}
           currentUser={currentUser}
           dispatch={dispatch}
+          isInstructor={false}
           sortState={ui.sortState}
         />
       );
@@ -265,9 +235,6 @@ class Assignments extends React.Component {
                 <IconButton onClick={this.refreshProfileSolutions}>
                   <RefreshIcon />
                 </IconButton>
-                <IconButton onClick={this.assignmentsAssistantsShowRequest}>
-                  <GroupIcon />
-                </IconButton>
               </div>
             ) : (
               <div className={classes.actions}>
@@ -278,13 +245,6 @@ class Assignments extends React.Component {
                 >
                   Refresh achievements
                 </Button>
-                <Button
-                  className={classes.action}
-                  onClick={this.assignmentsAssistantsShowRequest}
-                  variant="raised"
-                >
-                  Assistants
-                </Button>
               </div>
             ))}
         </Toolbar>
@@ -292,6 +252,13 @@ class Assignments extends React.Component {
           <Typography gutterBottom>{course.description}</Typography>
         )}
         {AssignmentView}
+        <RemoveStudentDialog
+          courseId={course.id}
+          courseMemberId={ui && ui.dialog && ui.dialog.studentId}
+          courseMemberName={ui && ui.dialog && ui.dialog.studentName}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "RemoveStudent"}
+        />
         <AddProfileDialog
           dispatch={dispatch}
           externalProfile={{
@@ -319,6 +286,13 @@ class Assignments extends React.Component {
           open={ui.dialog && ui.dialog.type === "Text"}
           solution={ui.dialog && ui.dialog.value}
         />
+        <AddPathProblemSolutionDialog
+          assignment={ui.currentAssignment}
+          dispatch={dispatch}
+          onCommit={this.onProfileCommit}
+          open={ui.dialog && ui.dialog.type === "PathProblem"}
+          pathProblem={ui.dialog.pathProblem}
+        />
       </Fragment>
     );
   }
@@ -337,8 +311,8 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
-  assistants: state.assignments.assistants,
-  courseMembers: state.firebase.data.courseMembers
+  courseMembers: state.firebase.data.courseMembers,
+  assistants: state.assignments.assistants
 });
 
 export default compose(
@@ -351,14 +325,14 @@ export default compose(
 
     return [
       "/users",
+      "/userAchievements",
       `/courses/${courseId}`,
-      `/courseAssistants/${courseId}`,
       `/courseMembers/${courseId}`,
+      `/courseAssistants/${courseId}`,
       `/solutions/${courseId}`,
       `/solutions/${courseId}/${uid}`,
       `/visibleSolutions/${courseId}`,
-      `/assignments/${courseId}`,
-      "/userAchievements"
+      `/assignments/${courseId}`
     ];
   }),
   connect(mapStateToProps)
