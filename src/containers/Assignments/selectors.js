@@ -79,6 +79,7 @@ const getStudentSolutions = (state, courseId, studentId, options = {}) => {
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
+            originalSolution: solutions[assignmentId],
             value: "Completed"
           };
           return true;

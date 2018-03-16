@@ -22,20 +22,10 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
-import withStyles from "material-ui/styles/withStyles";
 import ProblemView from "../../components/problemViews/ProblemView";
-
-const styles = theme => ({
-  solutionButtons: {
-    textDecoration: "none",
-    float: "right",
-    margin: `0 0 0 ${theme.spacing.unit}px`
-  }
-});
 
 class Problem extends React.PureComponent {
   static propTypes = {
-    classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func,
     match: PropTypes.object,
     pathProblem: PropTypes.any,
@@ -75,7 +65,6 @@ class Problem extends React.PureComponent {
   render() {
     const {
       pathProblem,
-      classes,
       dispatch,
       solution,
       solutionJSON,
@@ -104,7 +93,6 @@ class Problem extends React.PureComponent {
           ]}
         />
         <ProblemView
-          classes={classes}
           dispatch={dispatch}
           pathProblem={pathProblem}
           solution={solution}
@@ -134,7 +122,6 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 export default compose(
-  withStyles(styles),
   withRouter,
   firebaseConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;

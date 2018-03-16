@@ -213,6 +213,9 @@ export class PathsService {
     this.validateProblem(problemInfo);
 
     problemInfo.owner = uid;
+    if (pathId) {
+      problemInfo.path = pathId;
+    }
 
     const key =
       problemInfo.id ||
