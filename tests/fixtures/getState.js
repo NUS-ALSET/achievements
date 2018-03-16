@@ -18,7 +18,29 @@ export const getTestState = config => ({
     sort: {
       field: "studentName",
       direction: "asc"
-    }
+    },
+    courseMembers: [
+      {
+        id: "abcTestUser1",
+        name: "Test User 1",
+        achievements: {
+          CodeCombat: {
+            id: "test-user-1",
+            totalAchievements: 100
+          }
+        }
+      },
+      {
+        id: "abcTestUser2",
+        name: "Test User 1",
+        achievements: {
+          CodeCombat: {
+            id: "test-user-2",
+            totalAchievements: 10
+          }
+        }
+      }
+    ]
   },
   firebase: {
     auth: {
