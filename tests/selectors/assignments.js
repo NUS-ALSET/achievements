@@ -50,6 +50,7 @@ const COMMON_PROPS = {
       deadline: "2100-01-01T00:00",
       questionType: "Profile",
       solutionVisible: true,
+      progress: "2/2",
       visible: true,
       id: "abcTestAssignmentId"
     },
@@ -58,6 +59,7 @@ const COMMON_PROPS = {
       deadline: "2100-01-01T00:00",
       questionType: "Text",
       solutionVisible: false,
+      progress: "1/2",
       visible: true,
       id: "defTestAssignmentId"
     }
@@ -221,6 +223,8 @@ describe("assignments selectors tests", () => {
       validated: true,
       value: "Test User 2"
     };
+
+    result.assignments[1].progress = "2/2";
 
     assert.deepEqual(courseProps, result);
   });

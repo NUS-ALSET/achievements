@@ -6,7 +6,9 @@ import {
   assignmentSolutionRequest,
   assignmentSwitchTab,
   assignmentsAssistantsShowRequest,
-  coursePasswordEnterSuccess
+  coursePasswordEnterSuccess,
+  courseAssignmentsClose,
+  courseAssignmentsOpen
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -70,11 +72,25 @@ class Assignments extends React.Component {
     course: PropTypes.object.isRequired,
     firebase: PropTypes.object,
     auth: PropTypes.object,
-    courseMembers: PropTypes.object
+    match: PropTypes.object,
+    students: PropTypes.object,
+    courseMembers: PropTypes.array
   };
   state = {
     password: ""
   };
+
+  componentDidMount() {
+    this.props.dispatch(
+      courseAssignmentsOpen(this.props.match.params.courseId)
+    );
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(
+      courseAssignmentsClose(this.props.match.params.courseId)
+    );
+  }
 
   handleTabChange = (event, tabIndex) => {
     this.props.dispatch(assignmentSwitchTab(tabIndex));
@@ -185,7 +201,7 @@ class Assignments extends React.Component {
     const {
       ui,
       classes,
-      courseMembers,
+      students,
       auth,
       dispatch,
       course,
@@ -196,7 +212,7 @@ class Assignments extends React.Component {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!isLoaded(courseMembers)) {
+    } else if (!isLoaded(students)) {
       return <LinearProgress />;
     }
 
@@ -258,9 +274,7 @@ class Assignments extends React.Component {
               </div>
             ))}
         </Toolbar>
-        {APP_SETTING.isSuggesting && (
-          <Typography gutterBottom>{course.description}</Typography>
-        )}
+        <Typography gutterBottom>{course.description}</Typography>
         {AssignmentView}
         <RemoveStudentDialog
           courseId={course.id}
@@ -329,7 +343,8 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
-  courseMembers: state.firebase.data.courseMembers,
+  students: state.firebase.data.courseMembers,
+  courseMembers: state.assignments.courseMembers,
   assistants: state.assignments.assistants
 });
 

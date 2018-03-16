@@ -29,7 +29,7 @@ class Problem extends React.PureComponent {
     dispatch: PropTypes.func,
     match: PropTypes.object,
     pathProblem: PropTypes.any,
-    solution: PropTypes.string,
+    solution: PropTypes.any,
     solutionKey: PropTypes.any,
     solutionJSON: PropTypes.any
   };
