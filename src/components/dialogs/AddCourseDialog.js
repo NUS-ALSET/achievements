@@ -8,7 +8,6 @@ import Dialog, {
 import PropTypes from "prop-types";
 import React from "react";
 import TextField from "material-ui/TextField/TextField";
-import { APP_SETTING } from "../../achievementsApp/config";
 import {
   courseHideDialog,
   courseNewRequest
@@ -84,16 +83,14 @@ export class AddCourseDialog extends React.Component {
             required
             type="password"
           />
-          {APP_SETTING.isSuggesting && (
-            <TextField
-              defaultValue={course && course.description}
-              fullWidth
-              label="Description"
-              margin="dense"
-              onChange={e => this.onFieldChange("description", e.target.value)}
-              onKeyPress={this.catchReturn}
-            />
-          )}
+          <TextField
+            defaultValue={course && course.description}
+            fullWidth
+            label="Description"
+            margin="dense"
+            onChange={e => this.onFieldChange("description", e.target.value)}
+            onKeyPress={this.catchReturn}
+          />
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={this.onClose}>

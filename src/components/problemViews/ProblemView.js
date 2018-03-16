@@ -15,7 +15,7 @@ class ProblemView extends React.PureComponent {
     match: PropTypes.object,
     pathProblem: PropTypes.any,
     onProblemChange: PropTypes.func,
-    solution: PropTypes.string,
+    solution: PropTypes.any,
     solutionKey: PropTypes.any,
     solutionJSON: PropTypes.any
   };

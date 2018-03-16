@@ -101,7 +101,7 @@ class AssignmentsTable extends React.PureComponent {
       case "Text":
         return /http[s]?:\/\//.test(result) ? (
           <a href={result} rel="noopener noreferrer" target="_blank">
-            {result}
+            Complete
           </a>
         ) : (
           result
@@ -212,6 +212,8 @@ class AssignmentsTable extends React.PureComponent {
                         details
                       </a>
                     )}
+                    {(assignment.details ? " " : "") + assignment.progress ||
+                      ""}
                   </div>
                 </TableCell>
               ))}
