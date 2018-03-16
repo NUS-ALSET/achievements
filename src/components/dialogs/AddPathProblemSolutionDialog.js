@@ -36,11 +36,17 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
     open: PropTypes.bool.isRequired
   };
 
+  state = {
+    problemSolution: {}
+  };
+
+  onProblemChange = problemSolution => this.setState({ problemSolution });
   catchReturn = event => event.key === "Enter" && this.onCommitClick();
   onClose = () => this.props.dispatch(assignmentCloseDialog());
+  onCommitClick = () => this.props.onCommit(this.state.problemSolution);
 
   render() {
-    const { classes, onCommit, open, pathProblem, dispatch } = this.props;
+    const { classes, open, pathProblem, dispatch } = this.props;
 
     return (
       <Dialog
@@ -59,9 +65,9 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
           }}
         >
           <ProblemView
-            classes={{}}
             dispatch={dispatch}
-            onCommit={onCommit}
+            inDialog={true}
+            onProblemChange={this.onProblemChange}
             pathProblem={pathProblem}
           />
         </DialogContent>
