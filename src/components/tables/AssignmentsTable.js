@@ -8,6 +8,7 @@ import {
 } from "../../containers/Assignments/actions";
 import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
+import Tooltip from "material-ui/Tooltip";
 
 import DeleteIcon from "material-ui-icons/Delete";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
@@ -52,6 +53,19 @@ class AssignmentsTable extends React.PureComponent {
         ) : (
           undefined
         );
+      case "PathProblem":
+        return solution && this.props.isInstructor ? (
+          <Tooltip
+            title={
+              <div>${JSON.stringify(solution.originalSolution, null, 2)}</div>
+            }
+          >
+            <div>{result}</div>
+          </Tooltip>
+        ) : (
+          result
+        );
+
       case "Text":
         return /http[s]?:\/\//.test(result) ? (
           <a href={result} rel="noopener noreferrer" target="_blank">

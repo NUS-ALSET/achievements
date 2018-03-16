@@ -16,7 +16,17 @@ import Dialog, {
 import Paper from "material-ui/Paper";
 import Typography from "material-ui/Typography";
 
+import withStyles from "material-ui/styles/withStyles";
+
 import Jupyter from "react-jupyter";
+
+const styles = theme => ({
+  solutionButtons: {
+    textDecoration: "none",
+    float: "right",
+    margin: `0 0 0 ${theme.spacing.unit}px`
+  }
+});
 
 class JupyterProblem extends React.PureComponent {
   static propTypes = {
@@ -166,4 +176,4 @@ class JupyterProblem extends React.PureComponent {
   }
 }
 
-export default JupyterProblem;
+export default withStyles(styles)(JupyterProblem);

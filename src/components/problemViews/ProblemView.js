@@ -11,11 +11,10 @@ import YouTubeProblem from "../../components/problemViews/YouTubeProblem";
 
 class ProblemView extends React.PureComponent {
   static propTypes = {
-    classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func,
     match: PropTypes.object,
-    onCommit: PropTypes.func,
     pathProblem: PropTypes.any,
+    onProblemChange: PropTypes.func,
     solution: PropTypes.string,
     solutionKey: PropTypes.any,
     solutionJSON: PropTypes.any
@@ -23,10 +22,9 @@ class ProblemView extends React.PureComponent {
 
   render() {
     const {
-      pathProblem,
-      classes,
       dispatch,
-      onCommit,
+      onProblemChange,
+      pathProblem,
       solution,
       solutionJSON,
       solutionKey
@@ -40,7 +38,6 @@ class ProblemView extends React.PureComponent {
       <Fragment>
         {pathProblem.type === "jupyter" && (
           <JupyterProblem
-            classes={classes}
             dispatch={dispatch}
             problem={pathProblem}
             solution={solution}
@@ -51,9 +48,8 @@ class ProblemView extends React.PureComponent {
         {pathProblem.type === "youtube" && (
           <div style={{ textAlign: "center" }}>
             <YouTubeProblem
-              classes={classes}
               dispatch={dispatch}
-              onCommit={onCommit}
+              onChange={onProblemChange}
               problem={pathProblem}
             />
           </div>

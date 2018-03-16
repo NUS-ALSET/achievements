@@ -127,6 +127,15 @@ class Assignments extends React.Component {
     this.closeDialog();
   };
 
+  onPathProblemSolutionCommit = value => {
+    const { course, ui, dispatch } = this.props;
+
+    dispatch(
+      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
+    );
+    this.closeDialog();
+  };
+
   closeDialog = () => {
     this.props.dispatch(assignmentCloseDialog());
   };
@@ -298,7 +307,7 @@ class Assignments extends React.Component {
         <AddPathProblemSolutionDialog
           assignment={ui.currentAssignment}
           dispatch={dispatch}
-          onCommit={this.onProfileCommit}
+          onCommit={this.onPathProblemSolutionCommit}
           open={ui.dialog && ui.dialog.type === "PathProblem"}
           pathProblem={ui.dialog.pathProblem}
         />
