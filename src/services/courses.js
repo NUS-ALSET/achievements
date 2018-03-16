@@ -781,6 +781,12 @@ export class CoursesService {
       .then(() =>
         firebase
           .database()
+          .ref(`/studentJoinedCourses/${studentId}/${courseId}`)
+          .remove()
+      )
+      .then(() =>
+        firebase
+          .database()
           .ref(`/solutions/${courseId}/${studentId}`)
           .remove()
       )
@@ -804,6 +810,12 @@ export class CoursesService {
             .database()
             .ref(`/studentCoursePasswords/${targetCourseId}/${studentId}`)
             .set(password)
+        )
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/studentJoinedCourses/${studentId}/${targetCourseId}`)
+            .set(true)
         )
         .then(() =>
           firebase

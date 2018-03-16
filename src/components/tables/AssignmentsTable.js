@@ -1,3 +1,5 @@
+import isEmpty from "lodash/isEmpty";
+
 import {
   assignmentSolutionRequest,
   assignmentSubmitRequest,
@@ -23,6 +25,7 @@ import Table, {
   TableSortLabel
 } from "material-ui/Table";
 import { AccountService } from "../../services/account";
+import { YOUTUBE_QUESTIONS } from "../../services/paths";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
@@ -32,6 +35,39 @@ class AssignmentsTable extends React.PureComponent {
     sortState: PropTypes.object,
     currentUser: PropTypes.object
   };
+
+  getTooltip(assignment, solution) {
+    let result = `Created: ${new Date(
+      solution.originalSolution.createdAt
+    ).toLocaleString()}`;
+    switch (assignment.questionType) {
+      case "PathProblem":
+        if (
+          solution.originalSolution &&
+          solution.originalSolution.value &&
+          solution.originalSolution.value.answers &&
+          !isEmpty(solution.originalSolution.value.answers)
+        ) {
+          result +=
+            "\nAnswers:\n" +
+            Object.keys(solution.originalSolution.value.answers)
+              .map(id => ({
+                value: solution.originalSolution.value.answers[id],
+                id
+              }))
+              .map(
+                answer =>
+                  `- ${
+                    YOUTUBE_QUESTIONS[answer.id]
+                  }:\n   * ${answer.value.split("\n").join("\n   * ")}`
+              )
+              .join("\n");
+        }
+        return result;
+      default:
+        return result;
+    }
+  }
 
   getSolution(assignment, solutions) {
     let solution = solutions[assignment.id];
@@ -55,11 +91,7 @@ class AssignmentsTable extends React.PureComponent {
         );
       case "PathProblem":
         return solution && this.props.isInstructor ? (
-          <Tooltip
-            title={
-              <div>${JSON.stringify(solution.originalSolution, null, 2)}</div>
-            }
-          >
+          <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
             <div>{result}</div>
           </Tooltip>
         ) : (

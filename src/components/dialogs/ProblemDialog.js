@@ -120,7 +120,10 @@ class ProblemDialog extends React.PureComponent {
   onClose = () => this.props.dispatch(pathDialogHide());
   onCommit = () =>
     this.props.dispatch(
-      pathProblemChangeRequest(this.props.pathId, this.state)
+      pathProblemChangeRequest(this.props.pathId, {
+        ...this.state,
+        type: this.state.type || "text"
+      })
     );
 
   render() {
