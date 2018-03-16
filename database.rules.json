@@ -205,11 +205,13 @@
       "$studentKey": {
         ".read": "auth != null && auth.uid == $studentKey",
         "$courseKey": {
-          ".write": "auth != null &&
-            $studentKey == auth.uid &&
-            root.child('studentCoursePasswords/' + $courseKey).exists() &&
-            root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
-          "
+          ".write": "auth != null && ((
+              $studentKey == auth.uid &&
+              root.child('studentCoursePasswords/' + $courseKey).exists() &&
+              root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
+            ) || (
+              root.child('courses/' + $courseKey + '/owner').val() == auth.uid
+            ))"
         }
       }
     },
