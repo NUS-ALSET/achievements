@@ -8,13 +8,13 @@ const INSTRUCTOR_TAB_VIEW = 2;
  *
  * @param {AchievementsAppState} state
  * @param {String} courseId
- * @param {String} studentId
+ * @param {String} student
  * @param {Object} [options]
  * @param {Boolean} [options.onlyVisible]
  * @returns {*}
  */
-const getStudentSolutions = (state, courseId, studentId, options = {}) => {
-  const achievements = getFrom(state.firebase.data.userAchievements, studentId);
+const getStudentSolutions = (state, courseId, student, options = {}) => {
+  const achievements = student.achievements || {};
   const assignments = getFrom(state.firebase.data.assignments, courseId);
 
   // If we need only visible(published) results then we ignore real ones
@@ -22,12 +22,12 @@ const getStudentSolutions = (state, courseId, studentId, options = {}) => {
   // since real solutions will be shown only at `instructor view` tab
   const solutions = options.onlyVisible
     ? {}
-    : getFrom(getFrom(state.firebase.data.solutions, courseId), studentId);
+    : getFrom(getFrom(state.firebase.data.solutions, courseId), student.id);
 
   // Published (visible) results should be fetched in any case, to get info - was that solution published
   const publishedSolutions = getFrom(
     getFrom(state.firebase.data.visibleSolutions, courseId),
-    studentId
+    student.id
   );
   const result = Object.assign({}, solutions, publishedSolutions);
 
@@ -161,15 +161,13 @@ export const getCourseProps = (state, ownProps) => {
   const instructorView = state.assignments.currentTab === INSTRUCTOR_TAB_VIEW;
   const assignmentsEdit = state.assignments.currentTab === INSTRUCTOR_TAB_EDIT;
   const now = new Date().getTime();
-  const members = Object.keys(
-    getFrom(state.firebase.data.courseMembers, courseId)
-  )
-    .map(id => ({
-      id: id,
-      name: getFrom(state.firebase.data.users, id).displayName,
-      achievements: getFrom(state.firebase.data.userAchievements, id),
-      solutions: getStudentSolutions(state, courseId, id, {
-        onlyVisible: !(instructorView || id === state.firebase.auth.uid)
+  const members = state.assignments.courseMembers
+    .map(courseMember => ({
+      ...courseMember,
+      solutions: getStudentSolutions(state, courseId, courseMember, {
+        onlyVisible: !(
+          instructorView || courseMember.id === state.firebase.auth.uid
+        )
       })
     }))
     .sort((a, b) => {
@@ -204,7 +202,10 @@ export const getCourseProps = (state, ownProps) => {
     assignments: Object.keys(assignments)
       .map(id => ({
         ...assignments[id],
-        id
+        id,
+        progress: `${members.filter(member => !!member.solutions[id]).length}/${
+          members.length
+        }`
       }))
       .filter(
         assignment =>
