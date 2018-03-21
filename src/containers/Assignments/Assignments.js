@@ -44,6 +44,7 @@ import { APP_SETTING } from "../../achievementsApp/config";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
 import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
+import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -324,6 +325,13 @@ class Assignments extends React.Component {
           onCommit={this.onPathProblemSolutionCommit}
           open={ui.dialog && ui.dialog.type === "PathProblem"}
           pathProblem={ui.dialog.pathProblem}
+        />
+        <AddPathProgressSolutionDialog
+          assignmentId={ui.currentAssignment && ui.currentAssignment.id}
+          courseId={course.id}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "PathProgress"}
+          pathProgress={ui.dialog && ui.dialog.pathProgress}
         />
       </Fragment>
     );

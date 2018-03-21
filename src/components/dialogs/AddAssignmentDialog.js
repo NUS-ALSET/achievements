@@ -19,6 +19,7 @@ import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import Select from "material-ui/Select";
 import TextField from "material-ui/TextField";
+import { ASSIGNMENTS_TYPES } from "../../services/courses";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
@@ -30,46 +31,103 @@ class AddAssignmentDialog extends React.PureComponent {
     paths: PropTypes.array.isRequired,
     problems: PropTypes.array.isRequired
   };
-  /*
-  handleChange = name => event => {
-    // Reset default `name` and `details` for `Profile` question type
-    if (
-      name === "questionType" &&
-      this.state.questionType === "Profile" &&
-      event.target.value !== "Profile" &&
-      this.state.name === "Enter CodeCombat profile" &&
-      this.state.details === "https://codecombat.com/"
-    ) {
-      this.setState({
-        name: "",
-        details: ""
-      });
-    }
 
-    // Set default `name` and `details` for `Profile` question type
-    if (
-      name === "questionType" &&
-      event.target.value === "Profile" &&
-      !(this.state.name || this.state.details)
-    ) {
-      return this.setState({
-        questionType: "Profile",
-        name: "Enter CodeCombat profile",
-        details: "https://codecombat.com/"
-      });
+  getAssignmentSpecificFields(assignment) {
+    let { onFieldChange, paths, problems } = this.props;
+
+    switch (assignment.questionType) {
+      case ASSIGNMENTS_TYPES.CodeCombat.id:
+        return (
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
+            <Select
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              input={<Input id="select-multiple-levels" />}
+              margin="none"
+              onChange={onFieldChange("level")}
+              value={assignment.level || ""}
+            >
+              {Object.keys(APP_SETTING.levels).map(id => (
+                <MenuItem key={APP_SETTING.levels[id].name} value={id}>
+                  {APP_SETTING.levels[id].name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        );
+      case ASSIGNMENTS_TYPES.CodeCombat_Number.id:
+        return (
+          <TextField
+            fullWidth
+            label="Levels amount"
+            margin="normal"
+            onChange={onFieldChange("count")}
+            type="number"
+            value={assignment.count}
+          />
+        );
+      case ASSIGNMENTS_TYPES.PathProblem.id:
+        return (
+          <Fragment>
+            <TextField
+              fullWidth
+              label="Path"
+              onChange={onFieldChange("path")}
+              select
+              value={assignment.path || "default"}
+            >
+              <MenuItem value="default">Default</MenuItem>
+              {paths.map(path => (
+                <MenuItem key={path.id} value={path.id}>
+                  {path.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              fullWidth
+              label="Problem"
+              onChange={onFieldChange("problem")}
+              select
+              value={assignment.problem || ""}
+            >
+              {problems.map(problem => (
+                <MenuItem key={problem.id} value={problem.id}>
+                  {problem.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Fragment>
+        );
+      case ASSIGNMENTS_TYPES.PathProgress.id:
+        return (
+          <TextField
+            fullWidth
+            label="Path"
+            onChange={onFieldChange("path")}
+            select
+            value={assignment.path || "default"}
+          >
+            <MenuItem value="default">Default</MenuItem>
+            {paths.map(path => (
+              <MenuItem key={path.id} value={path.id}>
+                {path.name}
+              </MenuItem>
+            ))}
+          </TextField>
+        );
+      default:
     }
-  };*/
+  }
 
   render() {
-    let {
-      assignment,
-      onFieldChange,
-      open,
-      onClose,
-      onCommit,
-      paths,
-      problems
-    } = this.props;
+    let { assignment, onFieldChange, open, onClose, onCommit } = this.props;
     assignment = assignment || {};
 
     return (
@@ -87,13 +145,11 @@ class AddAssignmentDialog extends React.PureComponent {
             select
             value={assignment.questionType || ""}
           >
-            <MenuItem value="Text">Text</MenuItem>
-            <MenuItem value="Profile">Enter Code Combat Profile</MenuItem>
-            <MenuItem value="CodeCombat">Complete Code Combat Level</MenuItem>
-            <MenuItem value="CodeCombat_Number">
-              Complete Number of Code Combat Levels
-            </MenuItem>
-            <MenuItem value="PathProblem">Path Problem</MenuItem>
+            {Object.keys(ASSIGNMENTS_TYPES).map(key => (
+              <MenuItem key={key} value={key}>
+                {ASSIGNMENTS_TYPES[key].caption}
+              </MenuItem>
+            ))}
           </TextField>
           <TextField
             fullWidth
@@ -109,72 +165,7 @@ class AddAssignmentDialog extends React.PureComponent {
             onChange={onFieldChange("details")}
             value={assignment.details || ""}
           />
-          {assignment.questionType === "CodeCombat" && (
-            <FormControl fullWidth margin="normal">
-              <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
-              <Select
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 224,
-                      width: 250
-                    }
-                  }
-                }}
-                input={<Input id="select-multiple-levels" />}
-                margin="none"
-                onChange={onFieldChange("level")}
-                value={assignment.level || ""}
-              >
-                {Object.keys(APP_SETTING.levels).map(id => (
-                  <MenuItem key={APP_SETTING.levels[id].name} value={id}>
-                    {APP_SETTING.levels[id].name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          )}
-          {assignment.questionType === "CodeCombat_Number" && (
-            <TextField
-              fullWidth
-              label="Levels amount"
-              margin="normal"
-              onChange={onFieldChange("count")}
-              type="number"
-              value={assignment.count}
-            />
-          )}
-          {assignment.questionType === "PathProblem" && (
-            <Fragment>
-              <TextField
-                fullWidth
-                label="Path"
-                onChange={onFieldChange("path")}
-                select
-                value={assignment.path || ""}
-              >
-                <MenuItem value="">Default</MenuItem>
-                {paths.map(path => (
-                  <MenuItem key={path.id} value={path.id}>
-                    {path.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <TextField
-                fullWidth
-                label="Problem"
-                onChange={onFieldChange("problem")}
-                select
-                value={assignment.problem || ""}
-              >
-                {problems.map(problem => (
-                  <MenuItem key={problem.id} value={problem.id}>
-                    {problem.name}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Fragment>
-          )}
+          {this.getAssignmentSpecificFields(assignment)}
           <TextField
             InputLabelProps={{
               shrink: true

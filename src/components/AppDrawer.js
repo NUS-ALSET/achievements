@@ -15,18 +15,19 @@ import React from "react";
 import withStyles from "material-ui/styles/withStyles";
 
 const styles = theme => ({
-  paper: {
+  someClass: {
     width: APP_SETTING.drawerWidth,
     backgroundColor: theme.palette.background.paper
   },
   anchor: {
-    color: theme.palette.text.secondary
+    color: theme.palette.text.primary
   },
   drawerHeader: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
     padding: "0 8px",
+    backgroundColor: theme.palette.background.paper,
     ...theme.mixins.toolbar
   }
 });
@@ -63,7 +64,7 @@ class AppDrawer extends React.PureComponent {
               keepMounted: true
             }}
             classes={{
-              paper: classes.paper
+              paper: classes.someClass
             }}
             onClose={onRequestClose}
             open={mobileDrawerOpen}
@@ -76,7 +77,7 @@ class AppDrawer extends React.PureComponent {
         <Hidden implementation="css" mdDown>
           <Drawer
             classes={{
-              paper: classes.paper
+              paper: classes.someClass
             }}
             open
             variant="permanent"

@@ -73,6 +73,7 @@ class Paths extends React.PureComponent {
                 header="Private Paths"
                 paths={myPaths}
                 selectedPathId={selectedPathId}
+                userId={uid}
               />
             )}
             {publicPaths && (
@@ -96,8 +97,8 @@ class Paths extends React.PureComponent {
               Add Problem
             </Button>
             <ProblemsTable
-              currentUserId={uid}
               dispatch={dispatch}
+              pathOwnerId={uid}
               problems={problems}
               selectedPathId={selectedPathId}
             />

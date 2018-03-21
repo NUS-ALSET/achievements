@@ -1,4 +1,5 @@
 import isEmpty from "lodash/isEmpty";
+import moment from "moment";
 
 import {
   assignmentSolutionRequest,
@@ -6,7 +7,8 @@ import {
   assignmentsSortChange,
   courseRemoveStudentDialogShow,
   assignmentPathProblemSolutionRequest,
-  courseMoveStudentDialogShow
+  courseMoveStudentDialogShow,
+  assignmentPathProgressSolutionRequest
 } from "../../containers/Assignments/actions";
 import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
@@ -26,6 +28,7 @@ import Table, {
 } from "material-ui/Table";
 import { AccountService } from "../../services/account";
 import { YOUTUBE_QUESTIONS } from "../../services/paths";
+import { ASSIGNMENTS_TYPES } from "../../services/courses";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
@@ -101,7 +104,7 @@ class AssignmentsTable extends React.PureComponent {
       case "Text":
         return /http[s]?:\/\//.test(result) ? (
           <a href={result} rel="noopener noreferrer" target="_blank">
-            Complete
+            Completed
           </a>
         ) : (
           result
@@ -151,6 +154,15 @@ class AssignmentsTable extends React.PureComponent {
             course.owner,
             assignment.problem,
             solution
+          )
+        );
+        break;
+      case ASSIGNMENTS_TYPES.PathProgress.id:
+        dispatch(
+          assignmentPathProgressSolutionRequest(
+            assignment,
+            course.owner,
+            assignment.path
           )
         );
         break;
@@ -214,6 +226,10 @@ class AssignmentsTable extends React.PureComponent {
                     )}
                     {(assignment.details ? " " : "") + assignment.progress ||
                       ""}
+                  </div>
+                  <div>
+                    {assignment.deadline &&
+                      `Deadline ${moment(assignment.deadline).fromNow()}`}
                   </div>
                 </TableCell>
               ))}

@@ -73,7 +73,10 @@ export default compose(
   firebaseConnect(
     // Pretty dirty hack to get data fetching only after login
     (ownProps, store) =>
-      !store.getState().firebase.auth.isEmpty && ["blacklistActions"]
+      !store.getState().firebase.auth.isEmpty && [
+        "blacklistActions",
+        `/users/${store.getState().firebase.auth.uid}`
+      ]
   ),
   connect(mapStateToProps)
 )(Root);

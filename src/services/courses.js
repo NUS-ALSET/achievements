@@ -15,6 +15,33 @@ import firebase from "firebase";
 
 const ERROR_TIMEOUT = 6000;
 
+export const ASSIGNMENTS_TYPES = {
+  Text: {
+    id: "Text",
+    caption: "Text"
+  },
+  Profile: {
+    id: "Profile",
+    caption: "Enter Code Combat Profile"
+  },
+  CodeCombat: {
+    id: "CodeCombat",
+    caption: "Complete Code Combat Level"
+  },
+  CodeCombat_Number: {
+    id: "CodeCombat_Number",
+    caption: "Complete Number of Code Combat Levels"
+  },
+  PathProblem: {
+    id: "PathProblem",
+    caption: "Path Problem"
+  },
+  PathProgress: {
+    id: "PathProgress",
+    caption: "Path Progress"
+  }
+};
+
 export class CoursesService {
   errorTimeout = 0;
 

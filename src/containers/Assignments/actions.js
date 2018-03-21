@@ -196,6 +196,21 @@ export const assignmentPathProblemSolutionRequest = (
   solution
 });
 
+export const ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST =
+  "ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST";
+export const assignmentPathProgressSolutionRequest = (
+  assignment,
+  pathOwner,
+  pathId,
+  solution
+) => ({
+  type: ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
+  assignment,
+  pathOwner,
+  pathId,
+  solution
+});
+
 export const ASSIGNMENT_SOLUTION_REQUEST = "ASSIGNMENT_SOLUTION_REQUEST";
 export const assignmentSolutionRequest = (
   courseId,
@@ -385,6 +400,13 @@ export const ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS =
 export const assignmentPathProblemFetchSuccess = pathProblem => ({
   type: ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS,
   pathProblem
+});
+
+export const ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS =
+  "ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS";
+export const assignmentPathProgressFetchSuccess = pathProgress => ({
+  type: ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS,
+  pathProgress
 });
 
 export const COURSE_REMOVE_STUDENT_DIALOG_SHOW =

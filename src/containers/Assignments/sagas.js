@@ -46,7 +46,9 @@ import {
   courseMyCoursesFetchSuccess,
   COURSE_MOVE_STUDENT_REQUEST,
   courseMoveStudentFail,
-  courseMoveStudentSuccess
+  courseMoveStudentSuccess,
+  ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
+  assignmentPathProgressFetchSuccess
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -59,7 +61,7 @@ import {
   throttle
 } from "redux-saga/effects";
 
-import { coursesService } from "../../services/courses";
+import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 import { pathsService } from "../../services/paths";
 
@@ -104,6 +106,7 @@ export function* updateNewAssignmentFieldHandler(action) {
     return yield Promise.resolve();
   }
 
+  const location = window.location.href.replace(/#.*$/, "");
   const data = yield select(state => ({
     assignment: state.assignments.dialog.value,
     uid: state.firebase.auth.uid
@@ -118,13 +121,22 @@ export function* updateNewAssignmentFieldHandler(action) {
 
   switch (action.field) {
     case "questionType":
-      if (action.value === "PathProblem") {
+      if (
+        [
+          ASSIGNMENTS_TYPES.PathProblem.id,
+          ASSIGNMENTS_TYPES.PathProgress.id
+        ].includes(action.value)
+      ) {
         const paths = yield call(
           [pathsService, pathsService.fetchPaths],
           data.uid
         );
 
         yield put(assignmentPathsFetchSuccess(paths));
+        yield put(
+          updateNewAssignmentField("details", `${location}#/paths/${data.uid}`)
+        );
+        yield put(updateNewAssignmentField("path", ""));
       }
       break;
     case "level":
@@ -139,6 +151,13 @@ export function* updateNewAssignmentFieldHandler(action) {
       problems = yield call(pathsService.fetchProblems, data.uid, action.value);
 
       yield put(assignmentProblemsFetchSuccess(problems));
+      yield put(
+        updateNewAssignmentField(
+          "details",
+          `${location}#/paths/${action.value || data.uid}`
+        )
+      );
+      yield put(updateNewAssignmentField("problem", ""));
       break;
     default:
   }
@@ -400,6 +419,24 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
   }
 }
 
+export function* assignmentPathProgressSolutionRequestHandler(action) {
+  try {
+    yield put(assignmentSubmitRequest(action.assignment, null));
+    const uid = yield select(state => state.firebase.auth.uid);
+    const pathProgress = yield call(
+      [pathsService, pathsService.fetchPathProgress],
+      uid,
+      action.pathOwner,
+      action.pathId
+    );
+
+    yield put(assignmentPathProgressFetchSuccess(pathProgress));
+  } catch (err) {
+    console.error(err.stack);
+    yield put(notificationShow(err.message));
+  }
+}
+
 export function* courseMoveStudentDialogShowHandler() {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
@@ -522,6 +559,12 @@ export default [
     yield takeLatest(
       ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
       assignmentPathProblemSolutionRequestHandler
+    );
+  },
+  function* watchAssignmentPathProgressSolutionRequest() {
+    yield takeLatest(
+      ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
+      assignmentPathProgressSolutionRequestHandler
     );
   },
   function* watchCourseMoveStudentDialogShow() {
