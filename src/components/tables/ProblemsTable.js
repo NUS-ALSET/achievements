@@ -30,14 +30,15 @@ const styles = theme => ({
 
 class ProblemsTable extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    selectedPathId: PropTypes.string,
     currentUserId: PropTypes.string,
-    problems: PropTypes.array
+    dispatch: PropTypes.func.isRequired,
+    pathOwnerId: PropTypes.string,
+    problems: PropTypes.array.isRequired,
+    selectedPathId: PropTypes.string
   };
 
   render() {
-    const { problems, selectedPathId, currentUserId } = this.props;
+    const { pathOwnerId, problems, selectedPathId } = this.props;
 
     return (
       <Table>
@@ -59,7 +60,7 @@ class ProblemsTable extends React.PureComponent {
               <TableCell>{problem.name}</TableCell>
               <TableCell>
                 <Link
-                  to={`/paths/${selectedPathId || currentUserId}/problems/${
+                  to={`/paths/${pathOwnerId || selectedPathId}/problems/${
                     problem.id
                   }`}
                 >

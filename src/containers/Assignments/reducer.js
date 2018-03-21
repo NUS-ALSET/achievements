@@ -19,7 +19,8 @@ import {
   ASSIGNMENT_PROBLEMS_FETCH_SUCCESS,
   ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS,
   COURSE_MOVE_STUDENT_DIALOG_SHOW,
-  COURSE_MY_COURSES_FETCH_SUCCESS
+  COURSE_MY_COURSES_FETCH_SUCCESS,
+  ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -99,7 +100,10 @@ export const assignments = (
           ...state.dialog,
           value: {
             ...state.dialog.value,
-            [action.field]: action.value
+            [action.field]:
+              action.field === "path" && action.value === "default"
+                ? ""
+                : action.value
           }
         }
       };
@@ -176,6 +180,14 @@ export const assignments = (
         dialog: {
           ...state.dialog,
           pathProblem: action.pathProblem
+        }
+      };
+    case ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          pathProgress: action.pathProgress
         }
       };
     case COURSE_MEMBERS_FETCH_SUCCESS:

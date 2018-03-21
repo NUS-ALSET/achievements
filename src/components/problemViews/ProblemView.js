@@ -46,7 +46,7 @@ class ProblemView extends React.PureComponent {
           />
         )}
         {pathProblem.type === "youtube" && (
-          <div style={{ textAlign: "center" }}>
+          <div style={{ textAlign: "center", overflowX: "hidden" }}>
             <YouTubeProblem
               dispatch={dispatch}
               onChange={onProblemChange}

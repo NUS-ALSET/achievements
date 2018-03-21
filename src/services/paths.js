@@ -1,11 +1,13 @@
+import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 
 export const YOUTUBE_QUESTIONS = {
+  topics:
+    "What topics were covered in this video? Put each topic on a new line",
   questionAfter: "What question do you have after watching this video",
   questionAnswer:
     "What is a question someone who watched this video " +
-    "should be able to answer",
-  topics: "What topics were covered in this video? Put each topic on a new line"
+    "should be able to answer"
 };
 
 export class PathsService {
@@ -91,6 +93,39 @@ export class PathsService {
             return pathProblem;
         }
       });
+  }
+
+  fetchPathProgress(solverId, pathOwner, pathId) {
+    let ref = firebase
+      .database()
+      .ref(`/problems/${pathOwner}`)
+      .orderByChild("path");
+
+    if (pathId) {
+      ref = ref.equalTo(pathId);
+    } else {
+      ref = ref.endAt(null);
+    }
+
+    return ref
+      .once("value")
+      .then(data => Object.keys(data.val() || {}))
+      .then(problemKeys =>
+        Promise.all(
+          problemKeys.map(problemKey =>
+            firebase
+              .database()
+              .ref(`/problemSolutions/${problemKey}/${solverId}`)
+              .once("value")
+              .then(data => data.val() || false)
+          )
+        )
+          .then(solutions => solutions.filter(solution => !!solution))
+          .then(existingSolutions => ({
+            solutions: existingSolutions.length,
+            total: problemKeys.length
+          }))
+      );
   }
 
   fetchSolutionFile(problemId, uid) {
@@ -234,7 +269,27 @@ export class PathsService {
     return key;
   }
 
+  validateSolution(pathProblem, solution) {
+    switch (pathProblem.type) {
+      case "youtube":
+        if (isEmpty(solution.youtubeEvents)) {
+          throw new Error("Did you ever start watching this video?");
+        }
+        Object.keys(YOUTUBE_QUESTIONS).forEach(question => {
+          if (pathProblem[question] && !solution.answers[question]) {
+            throw new Error(
+              `Missing answer for '${YOUTUBE_QUESTIONS[question]}`
+            );
+          }
+        });
+        break;
+      default:
+        return true;
+    }
+  }
+
   submitSolution(uid, pathProblem, solution) {
+    this.validateSolution(pathProblem, solution);
     switch (pathProblem.type) {
       case "jupyter":
         break;
@@ -266,7 +321,7 @@ export class PathsService {
   fetchProblems(uid, pathId) {
     let ref = firebase.database().ref(`/problems/${uid}`);
 
-    if (pathId) {
+    if (pathId && pathId !== "default") {
       ref = ref.orderByChild("path").equalTo(pathId);
     }
     return ref
@@ -277,6 +332,12 @@ export class PathsService {
           ...problems[id],
           id
         }))
+      )
+      .then(
+        problems =>
+          pathId && pathId !== "default"
+            ? problems
+            : problems.filter(problem => !problem.path)
       );
   }
 }

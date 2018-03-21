@@ -18,13 +18,14 @@ class PathsList extends React.PureComponent {
     dispatch: PropTypes.func.isRequired,
     header: PropTypes.string.isRequired,
     paths: PropTypes.object,
-    selectedPathId: PropTypes.string
+    selectedPathId: PropTypes.string,
+    userId: PropTypes.string
   };
 
   selectPath = pathId => this.props.dispatch(pathSelect(pathId));
 
   render() {
-    const { header, paths, selectedPathId } = this.props;
+    const { header, paths, selectedPathId, userId } = this.props;
 
     return (
       <List
@@ -41,7 +42,7 @@ class PathsList extends React.PureComponent {
           }
         >
           <ListItemText inset primary="Default path" />
-          <Link to="/paths">
+          <Link to={`/paths/${userId}`}>
             <OpenInNewIcon />
           </Link>
         </ListItem>
@@ -59,7 +60,7 @@ class PathsList extends React.PureComponent {
               }
             >
               <ListItemText inset primary={path.name} />
-              <Link to="/paths">
+              <Link to={`/paths/${path.id}`}>
                 <OpenInNewIcon />
               </Link>
             </ListItem>

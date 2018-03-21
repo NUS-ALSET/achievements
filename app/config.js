@@ -8,7 +8,24 @@ admin.initializeApp({
   databaseURL: "https://fir-project-3d2a4.firebaseio.com"
 });
 
+// admin
+//   .auth()
+//   .createCustomToken("vdI7p5pfGOX6hjLZ3FCLwxw2bLo2", {
+//     premiumAccount: true
+//   })
+//   .then(function(customToken) {
+//     console.log("customToken", customToken);
+//   })
+//   .catch(function(error) {
+//     console.log("Error creating custom token:", error);
+//   });
+//
 admin
   .database()
   .ref("/logged_events")
   .remove();
+
+// admin
+//   .database()
+//   .ref("/problems")
+//   .orderByChild("owner");
