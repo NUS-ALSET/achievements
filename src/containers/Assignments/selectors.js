@@ -83,6 +83,14 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             value: "Completed"
           };
           return true;
+        case "PathProgress":
+          result[assignmentId] = {
+            published,
+            validated: userAchievements.id === solution,
+            originalSolution: solutions[assignmentId],
+            value: solution
+          };
+          return true;
         default:
           return true;
       }

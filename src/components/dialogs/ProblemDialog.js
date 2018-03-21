@@ -89,7 +89,7 @@ class ProblemDialog extends React.PureComponent {
             >
               <FormLabel component="legend">Follow Up Questions</FormLabel>
               <FormHelperText>
-                Assign Randomly from any one of the following questions
+                Select one or more of the questions below
               </FormHelperText>
 
               <FormGroup>
