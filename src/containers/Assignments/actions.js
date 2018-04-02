@@ -74,6 +74,14 @@ export const assignmentShowEditDialog = assignment => ({
   assignment
 });
 
+// This action required for supress update name field after manual change
+export const ASSIGNMENT_MANUAL_UPDATE_FIELD = "ASSIGNMENT_MANUAL_UPDATE_FIELD";
+export const assignmentManualUpdateField = (field, value) => ({
+  type: ASSIGNMENT_MANUAL_UPDATE_FIELD,
+  field,
+  value
+});
+
 export const UPDATE_NEW_ASSIGNMENT_FIELD = "UPDATE_NEW_ASSIGNMENT_FIELD";
 export const updateNewAssignmentField = (field, value) => ({
   type: UPDATE_NEW_ASSIGNMENT_FIELD,

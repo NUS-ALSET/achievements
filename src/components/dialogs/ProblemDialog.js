@@ -43,11 +43,14 @@ class ProblemDialog extends React.PureComponent {
   };
 
   getTypeSpecificElements() {
-    switch (this.state.type) {
+    let { problem } = this.props;
+    problem = problem || {};
+    switch (this.state.type || (problem && problem.type)) {
       case "jupyter":
         return (
           <Fragment>
             <TextField
+              defaultValue={problem && problem.problemURL}
               fullWidth
               label="Problem Notebook URL"
               margin="dense"
@@ -55,6 +58,7 @@ class ProblemDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
+              defaultValue={problem && problem.solutionURL}
               fullWidth
               label="Solution Notebook URL"
               margin="dense"
@@ -62,6 +66,7 @@ class ProblemDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
+              defaultValue={problem && problem.frozen}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -75,6 +80,7 @@ class ProblemDialog extends React.PureComponent {
         return (
           <Fragment>
             <TextField
+              defaultValue={problem && problem.youtubeURL}
               fullWidth
               label="YouTube URL"
               margin="dense"
@@ -97,6 +103,11 @@ class ProblemDialog extends React.PureComponent {
                   <FormControlLabel
                     control={
                       <Checkbox
+                        checked={
+                          this.state[questionType] ||
+                          (this.state[questionType] === undefined &&
+                            problem[questionType])
+                        }
                         color="primary"
                         onChange={e =>
                           this.onFieldChange(questionType, e.target.checked)
@@ -116,15 +127,26 @@ class ProblemDialog extends React.PureComponent {
   }
 
   onFieldChange = (field, value) => this.setState({ [field]: value });
-
   onClose = () => this.props.dispatch(pathDialogHide());
-  onCommit = () =>
+  onCommit = () => {
     this.props.dispatch(
-      pathProblemChangeRequest(this.props.pathId, {
-        ...this.state,
-        type: this.state.type || "text"
-      })
+      pathProblemChangeRequest(
+        this.props.pathId,
+        Object.assign(this.props.problem, this.state, {
+          type:
+            this.state.type ||
+            (this.props.problem && this.props.problem.type) ||
+            "text"
+        })
+      )
     );
+
+    // Clear state. Render will be invoked 1 time only
+    Object.keys(this.state).forEach(
+      key => this.setState({ [key]: undefined }) || true
+    );
+    this.setState({ type: "" });
+  };
 
   render() {
     const { problem, open } = this.props;
@@ -150,13 +172,12 @@ class ProblemDialog extends React.PureComponent {
             required
           />
           <TextField
-            defaultValue={problem && problem.type}
             fullWidth
             label="Type"
             margin="dense"
             onChange={e => this.onFieldChange("type", e.target.value)}
             select
-            value={this.state.type || "text"}
+            value={this.state.type || (problem && problem.type) || "text"}
           >
             <MenuItem value="text">Text</MenuItem>
             <MenuItem value="jupyter">Jupyter Notebook</MenuItem>

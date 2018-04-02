@@ -36,10 +36,14 @@ class AssignmentsTable extends React.PureComponent {
     isInstructor: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     sortState: PropTypes.object,
-    currentUser: PropTypes.object
+    currentUser: PropTypes.object,
+    ui: PropTypes.object
   };
 
   getTooltip(assignment, solution) {
+    if (!solution.originalSolution) {
+      return "";
+    }
     let result = `Created: ${new Date(
       solution.originalSolution.createdAt
     ).toLocaleString()}`;

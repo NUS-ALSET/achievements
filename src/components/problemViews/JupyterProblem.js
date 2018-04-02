@@ -8,17 +8,17 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
-import Dialog, {
-  DialogTitle,
-  DialogContent,
-  DialogActions
-} from "material-ui/Dialog";
 import Paper from "material-ui/Paper";
 import Typography from "material-ui/Typography";
 
 import withStyles from "material-ui/styles/withStyles";
-
 import Jupyter from "react-jupyter";
+import {
+  problemSolutionRefreshRequest,
+  problemSolutionSubmitRequest,
+  problemSolveRequest,
+  problemSolveSuccess
+} from "../../containers/Problem/actions";
 
 const styles = theme => ({
   solutionButtons: {
@@ -33,18 +33,31 @@ class JupyterProblem extends React.PureComponent {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
     problem: PropTypes.object,
-    solution: PropTypes.any,
-    solutionJSON: PropTypes.any,
-    solutionKey: PropTypes.any
+    solution: PropTypes.object
   };
+
+  closeDialog = () =>
+    this.props.dispatch(problemSolveSuccess(this.props.problem.problemId, ""));
+  refresh = () =>
+    this.props.dispatch(
+      problemSolutionRefreshRequest(this.props.problem.problemId)
+    );
+  solve = () =>
+    this.props.dispatch(problemSolveRequest(this.props.problem.problemId));
+  submitSolution = () =>
+    this.props.dispatch(
+      problemSolutionSubmitRequest(
+        this.props.problem.pathId,
+        this.props.problem.problemId
+      )
+    );
 
   render() {
     const {
       classes,
+      /** @type {JupyterPathProblem} */
       problem,
-      solution,
-      solutionJSON,
-      solutionKey
+      solution
     } = this.props;
 
     return (
@@ -84,8 +97,8 @@ class JupyterProblem extends React.PureComponent {
           }}
         >
           <Typography variant="headline">
-            Solution{solution &&
-              solutionJSON && (
+            Solution{problem.solutionFileId &&
+              problem.solutionJSON && (
                 <Fragment>
                   <Button
                     className={classes.solutionButtons}
@@ -96,10 +109,7 @@ class JupyterProblem extends React.PureComponent {
                   </Button>
                   <a
                     className={classes.solutionButtons}
-                    href={
-                      "https://colab.research.google.com/notebook#fileId=" +
-                      solution
-                    }
+                    href={solution.colabURL}
                     rel="noopener noreferrer"
                     target="_blank"
                   >
@@ -108,7 +118,7 @@ class JupyterProblem extends React.PureComponent {
                 </Fragment>
               )}
           </Typography>
-          {solution && solutionJSON ? (
+          {solution ? (
             <Fragment>
               <div
                 style={{
@@ -118,7 +128,7 @@ class JupyterProblem extends React.PureComponent {
                 <Jupyter
                   defaultStyle={true}
                   loadMathjax={true}
-                  notebook={solutionJSON}
+                  notebook={solution.json}
                   showCode={true}
                 />
               </div>
@@ -141,36 +151,6 @@ class JupyterProblem extends React.PureComponent {
             </Button>
           )}
         </Paper>
-        <Dialog onClose={this.closeDialog} open={!!solutionKey}>
-          <DialogTitle>Solution</DialogTitle>
-          <DialogContent
-            style={{
-              width: 320
-            }}
-          >
-            <Typography>Solution created successful</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button color="secondary" onClick={this.closeDialog}>
-              Close
-            </Button>
-            <a
-              href={
-                "https://colab.research.google.com/notebook#fileId=" +
-                solutionKey
-              }
-              rel="noopener noreferrer"
-              style={{
-                textDecoration: "none"
-              }}
-              target="_blank"
-            >
-              <Button color="primary" variant="raised">
-                Open in Colab
-              </Button>
-            </a>
-          </DialogActions>
-        </Dialog>
       </Fragment>
     );
   }

@@ -29,6 +29,60 @@
  */
 
 /**
+ * @typedef {Object} YouTubePathProblem
+ *
+ * @property {String} pathId
+ * @property {String} pathName
+ * @property {String} problemId
+ * @property {String} problemName
+ * @property {String} owner
+ * @property {String} youtubeURL
+ * @property {Boolean} questionAfter
+ * @property {Boolean} questionAnswer
+ * @property {Boolean} topics
+ */
+
+/**
+ * @typedef {Object} JupyterPathProblem
+ *
+ * @property {String} pathId
+ * @property {String} pathName
+ * @property {String} problemId
+ * @property {String} problemName
+ * @property {String} owner
+ * @property {Number} frozen
+ * @property {String} problemFileId
+ * @property {String} problemColabURL
+ * @property {Object} problemJSON
+ * @property {String} solutionFileId
+ * @property {String} solutionColabURL
+ * @property {String} solutionJSON
+ */
+
+/**
+ * @typedef {Object} PathProblem
+ * @property {String} pathId
+ * @property {String} pathName
+ * @property {String} problemId
+ * @property {String} problemName
+ * @property {String} owner
+ */
+
+/**
+ * @typedef {Object} Problem
+ * @property {String} id
+ * @property {String} name
+ * @property {String} type
+ */
+
+/**
+ * @typedef {Object} Path
+ *
+ * @property {String} id
+ * @property {String} name
+ */
+
+/**
  * @typedef {Object} FirebaseState
  *
  * @property {Object} auth

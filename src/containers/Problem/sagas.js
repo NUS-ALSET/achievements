@@ -25,7 +25,7 @@ export function* problemInitRequestHandler(action) {
       yield select(state => state.firebase.auth.uid);
     }
 
-    yield put(problemInitSuccess(action.problemOwner, action.problemId, null));
+    yield put(problemInitSuccess(action.pathId, action.problemId, null));
 
     const pathProblem = yield call(
       [pathsService, pathsService.fetchPathProblem],
@@ -38,13 +38,13 @@ export function* problemInitRequestHandler(action) {
     //     pathSolution));
     // }
 
-    yield put(
-      problemInitSuccess(action.problemOwner, action.problemId, pathProblem)
-    );
+    if (!pathProblem) {
+      throw new Error("Missing path problem");
+    }
+
+    yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem));
   } catch (err) {
-    yield put(
-      problemInitFail(action.problemOwner, action.problemId, err.message)
-    );
+    yield put(problemInitFail(action.pathId, action.problemId, err.message));
     yield put(notificationShow(err.message));
   }
 }
@@ -52,7 +52,11 @@ export function* problemInitRequestHandler(action) {
 export function* problemSolveRequestHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
-    pathProblem: state.problem.pathProblem
+    pathProblem:
+      (state.assignments &&
+        state.assignments.dialog &&
+        state.assignments.dialog.pathProblem) ||
+      (state.problem && state.problem.pathProblem)
   }));
 
   try {
