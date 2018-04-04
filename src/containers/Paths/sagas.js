@@ -3,7 +3,7 @@ import {
   PATH_CHANGE_REQUEST,
   PATH_PROBLEM_CHANGE_REQUEST,
   pathChangeSuccess,
-  pathDialogHide,
+  pathDialogHide, pathGAPIAuthorized,
   pathProblemChangeFail,
   pathProblemChangeSuccess
 } from "./actions";
@@ -12,6 +12,7 @@ import { notificationShow } from "../Root/actions";
 
 export function* loginHandler() {
   yield call(pathsService.auth);
+  yield put(pathGAPIAuthorized(true));
 }
 
 export function* pathChangeRequestHandler(action) {
