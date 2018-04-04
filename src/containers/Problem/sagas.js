@@ -2,7 +2,6 @@ import {
   PROBLEM_INIT_REQUEST,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_SUBMIT_REQUEST,
-  PROBLEM_SOLVE_REQUEST,
   PROBLEM_SOLVE_UPDATE,
   problemInitFail,
   problemInitSuccess,
@@ -11,9 +10,7 @@ import {
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
   problemSolutionSubmitRequest,
-  problemSolutionSubmitSuccess,
-  problemSolveFail,
-  problemSolveSuccess
+  problemSolutionSubmitSuccess
 } from "./actions";
 import {
   call,
@@ -87,31 +84,6 @@ export function* problemSolveUpdateHandler(action) {
   }
 }
 
-export function* problemSolveRequestHandler(action) {
-  const data = yield select(state => ({
-    uid: state.firebase.auth.uid,
-    pathProblem:
-      (state.assignments &&
-        state.assignments.dialog &&
-        state.assignments.dialog.pathProblem) ||
-      (state.problem && state.problem.pathProblem)
-  }));
-
-  try {
-    const fileId = yield call(
-      [pathsService, pathsService.uploadSolutionFile],
-      data.uid,
-      action.problemId,
-      data.pathProblem.problemJSON
-    );
-    yield put(problemSolveSuccess(action.problemId, fileId));
-    yield put(problemSolutionRefreshRequest(action.problemId));
-  } catch (err) {
-    yield put(problemSolveFail(action.problemId, err.message));
-    yield put(notificationShow(err.message));
-  }
-}
-
 export function* problemSolutionRefreshRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
 
@@ -173,9 +145,6 @@ export default [
       PROBLEM_SOLVE_UPDATE,
       problemSolveUpdateHandler
     );
-  },
-  function* watchProblemSolveRequest() {
-    yield takeLatest(PROBLEM_SOLVE_REQUEST, problemSolveRequestHandler);
   },
   function* watchProblemSolutionRefreshRequest() {
     yield takeLatest(
