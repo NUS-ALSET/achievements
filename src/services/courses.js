@@ -154,6 +154,7 @@ export class CoursesService {
     return firebase
       .push("/courses", {
         name,
+        createdAt: new Date().getTime(),
         instructorName: this.getUser("displayName"),
         description: description || "",
         owner: this.getUser("uid")
@@ -211,6 +212,7 @@ export class CoursesService {
 
     // Check that orderIndex correct
     assignment.orderIndex = 1;
+    assignment.createdAt = new Date().getTime();
     Object.keys(assignments || {})
       .map(id => assignments[id])
       .forEach(existing => {

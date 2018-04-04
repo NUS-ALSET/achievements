@@ -15,20 +15,11 @@ class ProblemView extends React.PureComponent {
     match: PropTypes.object,
     pathProblem: PropTypes.any,
     onProblemChange: PropTypes.func,
-    solution: PropTypes.any,
-    solutionKey: PropTypes.any,
-    solutionJSON: PropTypes.any
+    solution: PropTypes.any
   };
 
   render() {
-    const {
-      dispatch,
-      onProblemChange,
-      pathProblem,
-      solution,
-      solutionJSON,
-      solutionKey
-    } = this.props;
+    const { dispatch, onProblemChange, pathProblem, solution } = this.props;
 
     if (!pathProblem) {
       return <div>Loading</div>;
@@ -39,10 +30,9 @@ class ProblemView extends React.PureComponent {
         {pathProblem.type === "jupyter" && (
           <JupyterProblem
             dispatch={dispatch}
+            onChange={onProblemChange}
             problem={pathProblem}
             solution={solution}
-            solutionJSON={solutionJSON}
-            solutionKey={solutionKey}
           />
         )}
         {pathProblem.type === "youtube" && (
@@ -51,6 +41,7 @@ class ProblemView extends React.PureComponent {
               dispatch={dispatch}
               onChange={onProblemChange}
               problem={pathProblem}
+              solution={solution}
             />
           </div>
         )}

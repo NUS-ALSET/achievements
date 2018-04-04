@@ -20,11 +20,15 @@ class Path extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     match: PropTypes.object,
-    pathProblem: PropTypes.object
+    pathProblems: PropTypes.object
   };
 
+  componentDidMount() {}
+
+  componentWillUnmount() {}
+
   render() {
-    const { dispatch, match, pathProblem } = this.props;
+    const { dispatch, match, pathProblems } = this.props;
 
     let pathName;
 
@@ -32,7 +36,7 @@ class Path extends React.PureComponent {
       pathName = "Default";
     }
 
-    pathName = pathName || (pathProblem.path && pathProblem.path.name) || "";
+    pathName = pathName || (pathProblems.path && pathProblems.path.name) || "";
 
     return (
       <Fragment>
@@ -49,9 +53,9 @@ class Path extends React.PureComponent {
         />
         <ProblemsTable
           dispatch={dispatch}
-          pathOwnerId={pathProblem.owner}
-          problems={pathProblem.problems || []}
-          selectedPathId={(pathProblem.path && pathProblem.path.id) || ""}
+          pathOwnerId={pathProblems.owner}
+          problems={pathProblems.problems || []}
+          selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
         />
       </Fragment>
     );
@@ -59,7 +63,7 @@ class Path extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  pathProblem: pathProblemsSelector(state, ownProps)
+  pathProblems: pathProblemsSelector(state, ownProps)
 });
 
 export default compose(

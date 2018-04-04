@@ -4,11 +4,7 @@
  * @created 13.02.18
  */
 
-import {
-  assignmentAddRequest,
-  updateNewAssignmentField
-} from "../containers/Assignments/actions";
-import AddAssignmentDialog from "./dialogs/AddAssignmentDialog";
+// import AddAssignmentDialog from "./dialogs/AddAssignmentDialog";
 import AssignmentsEditorTable from "./tables/AssignmentsEditorTable";
 import AssignmentsTable from "./tables/AssignmentsTable";
 import DeleteAssignmentDialog from "./dialogs/DeleteAssignmentDialog";
@@ -33,14 +29,6 @@ class InstructorTabs extends React.PureComponent {
     handleTabChange: PropTypes.func.isRequired
   };
 
-  onUpdateNewAssignmentField = field => e =>
-    this.props.dispatch(updateNewAssignmentField(field, e.target.value));
-  onCreateAssignmentClick = () => {
-    const { dispatch, course, ui } = this.props;
-
-    dispatch(assignmentAddRequest(course.id, ui.dialog.value));
-  };
-
   getInstructorTab() {
     /** @type AssignmentProps */
     const { course, ui, currentUser, dispatch, closeDialog } = this.props;
@@ -62,15 +50,6 @@ class InstructorTabs extends React.PureComponent {
             <AssignmentsEditorTable
               assignments={course.assignments || {}}
               dispatch={dispatch}
-            />
-            <AddAssignmentDialog
-              assignment={ui.dialog && ui.dialog.value}
-              onClose={closeDialog}
-              onCommit={this.onCreateAssignmentClick}
-              onFieldChange={this.onUpdateNewAssignmentField}
-              open={ui.dialog && ui.dialog.type === "AddAssignment"}
-              paths={(ui.dialog && ui.dialog.paths) || []}
-              problems={(ui.dialog && ui.dialog.problems) || []}
             />
             <DeleteAssignmentDialog
               assignment={(ui.dialog && ui.dialog.value) || false}

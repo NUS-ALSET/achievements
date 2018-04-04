@@ -20,11 +20,13 @@ import {
   ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS,
   COURSE_MOVE_STUDENT_DIALOG_SHOW,
   COURSE_MY_COURSES_FETCH_SUCCESS,
-  ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS
+  ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS,
+  ASSIGNMENT_MANUAL_UPDATE_FIELD
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
 import format from "date-fns/format";
+import { PROBLEM_SOLUTION_REFRESH_SUCCESS } from "../Problem/actions";
 
 const DAYS_IN_WEEK = 7;
 
@@ -91,6 +93,17 @@ export const assignments = (
         dialog: {
           type: "AddAssignment",
           value: action.assignment
+        }
+      };
+    case ASSIGNMENT_MANUAL_UPDATE_FIELD:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          manualUpdates: {
+            ...(state.dialog.manualUpdates || {}),
+            [action.field]: !!action.value
+          }
         }
       };
     case UPDATE_NEW_ASSIGNMENT_FIELD:
@@ -188,6 +201,14 @@ export const assignments = (
         dialog: {
           ...state.dialog,
           pathProgress: action.pathProgress
+        }
+      };
+    case PROBLEM_SOLUTION_REFRESH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: action.payload
         }
       };
     case COURSE_MEMBERS_FETCH_SUCCESS:

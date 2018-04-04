@@ -21,10 +21,12 @@ export const problemInitFail = (pathId, problemId, reason) => ({
   reason
 });
 
-export const PROBLEM_SOLVE_REQUEST = "PROBLEM_SOLVE_REQUEST";
-export const problemSolveRequest = problemId => ({
-  type: PROBLEM_SOLVE_REQUEST,
-  problemId
+export const PROBLEM_SOLVE_UPDATE = "PROBLEM_SOLVE_UPDATE";
+export const problemSolveUpdate = (pathId, problemId, fileId) => ({
+  type: PROBLEM_SOLVE_UPDATE,
+  pathId,
+  problemId,
+  fileId
 });
 
 export const PROBLEM_SOLVE_SUCCESS = "PROBLEM_SOLVE_SUCCESS";

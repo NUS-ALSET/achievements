@@ -45,6 +45,7 @@ import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
 import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
 import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
+import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -325,6 +326,7 @@ class Assignments extends React.Component {
           onCommit={this.onPathProblemSolutionCommit}
           open={ui.dialog && ui.dialog.type === "PathProblem"}
           pathProblem={ui.dialog.pathProblem}
+          solution={ui.dialog.solution}
         />
         <AddPathProgressSolutionDialog
           assignmentId={ui.currentAssignment && ui.currentAssignment.id}
@@ -332,6 +334,15 @@ class Assignments extends React.Component {
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "PathProgress"}
           pathProgress={ui.dialog && ui.dialog.pathProgress}
+        />
+        <AddAssignmentDialog
+          assignment={ui.dialog && ui.dialog.value}
+          courseId={course && course.id}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "AddAssignment"}
+          paths={(ui.dialog && ui.dialog.paths) || []}
+          problems={(ui.dialog && ui.dialog.problems) || []}
+          uid={currentUser && currentUser.id}
         />
       </Fragment>
     );
