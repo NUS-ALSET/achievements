@@ -23,7 +23,8 @@ admin.initializeApp({
 admin
   .database()
   .ref("/logged_events")
-  .remove();
+  .remove()
+  .then(() => process.exit(0));
 
 // admin
 //   .database()

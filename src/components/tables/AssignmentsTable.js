@@ -36,10 +36,14 @@ class AssignmentsTable extends React.PureComponent {
     isInstructor: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     sortState: PropTypes.object,
-    currentUser: PropTypes.object
+    currentUser: PropTypes.object,
+    ui: PropTypes.object
   };
 
   getTooltip(assignment, solution) {
+    if (!solution.originalSolution) {
+      return "";
+    }
     let result = `Created: ${new Date(
       solution.originalSolution.createdAt
     ).toLocaleString()}`;
@@ -95,7 +99,21 @@ class AssignmentsTable extends React.PureComponent {
       case "PathProblem":
         return solution && this.props.isInstructor ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
-            <div>{result}</div>
+            <div>
+              {/http[s]?:\/\//.test(
+                solution.originalSolution && solution.originalSolution.value
+              ) ? (
+                <a
+                  href={solution.originalSolution.value}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Completed
+                </a>
+              ) : (
+                result
+              )}
+            </div>
           </Tooltip>
         ) : (
           result

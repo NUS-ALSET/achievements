@@ -45,10 +45,9 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     if (!(pathProgress && pathProgress.total && pathProgress.solutions)) {
       return "Your have no progress at this path";
     }
-    return `There are ${pathProgress.total} problem at required path. You
-    solved ${
-      pathProgress.solutions
-    } of them. Your progress is ${this.getProgress()}`;
+    return `You have solved ${pathProgress.solutions} of the ${
+      pathProgress.total
+    } requested problems on the path. Your progress is ${this.getProgress()}`;
   };
 
   onProblemChange = problemSolution => this.setState({ problemSolution });

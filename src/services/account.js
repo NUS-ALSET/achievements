@@ -44,6 +44,7 @@ export class AccountService {
                 .ref(`/users/${ref.user.uid}`)
                 // Get existing user name and update display name if it doesn't exists
                 .update({
+                  createdAt: existing.createdAt || new Date().getTime(),
                   displayName: existing.displayName || ref.user.displayName,
                   photoURL: ref.user.photoURL
                 })
