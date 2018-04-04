@@ -140,10 +140,10 @@ export function* updateNewAssignmentFieldHandler(action) {
         );
 
         yield put(assignmentPathsFetchSuccess(paths));
+        yield put(updateNewAssignmentField("path", data.uid));
         yield put(
           updateNewAssignmentField("details", `${location}#/paths/${data.uid}`)
         );
-        yield put(updateNewAssignmentField("path", ""));
       }
       break;
     case "level":
@@ -155,7 +155,11 @@ export function* updateNewAssignmentFieldHandler(action) {
       );
       break;
     case "path":
-      problems = yield call(pathsService.fetchProblems, data.uid, action.value);
+      problems = yield call(
+        [pathsService, pathsService.fetchProblems],
+        data.uid,
+        action.value
+      );
 
       yield put(assignmentProblemsFetchSuccess(problems));
       yield put(
