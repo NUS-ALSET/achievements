@@ -277,6 +277,9 @@ exports.api = functions.https.onRequest((req, res) => {
     "solutions",
     "courseMembers",
     "cohortCourses",
+    "problems",
+    "paths",
+    "problemSolutions",
     "usage"
   ];
   if (!supportedDatatypes.includes(data)) {
