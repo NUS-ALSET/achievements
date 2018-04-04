@@ -1,6 +1,7 @@
 import {
   PATH_DIALOG_HIDE,
   PATH_DIALOG_SHOW,
+  PATH_GAPI_AUTHORIZED,
   PATH_PROBLEM_DIALOG_SHOW,
   PATH_SELECT
 } from "./actions";
@@ -17,6 +18,11 @@ export const paths = (
   action
 ) => {
   switch (action.type) {
+    case PATH_GAPI_AUTHORIZED:
+      return {
+        ...state,
+        gapiAuthorized: action.status
+      };
     case PATH_DIALOG_SHOW:
       return {
         ...state,

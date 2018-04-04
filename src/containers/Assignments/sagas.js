@@ -50,7 +50,7 @@ import {
   ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
   assignmentPathProgressFetchSuccess,
   ASSIGNMENT_SHOW_EDIT_DIALOG,
-  UPDATE_NEW_ASSIGNMENT_FIELD_REQUEST,
+  ASSIGNMENT_MANUAL_UPDATE_FIELD,
   assignmentManualUpdateField
 } from "./actions";
 
@@ -517,7 +517,7 @@ export default [
   function* watchAssignmentManualUpdateField() {
     yield throttle(
       APP_SETTING.defaultThrottle,
-      UPDATE_NEW_ASSIGNMENT_FIELD_REQUEST,
+      ASSIGNMENT_MANUAL_UPDATE_FIELD,
       assignmentManualUpdateFieldHandler
     );
   },

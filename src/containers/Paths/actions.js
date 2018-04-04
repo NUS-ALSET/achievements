@@ -1,3 +1,9 @@
+export const PATH_GAPI_AUTHORIZED = "PATH_GAPI_AUTHORIZED";
+export const pathGAPIAuthorized = status => ({
+  type: PATH_GAPI_AUTHORIZED,
+  status
+});
+
 export const PATH_DIALOG_SHOW = "PATH_DIALOG_SHOW";
 export const pathDialogShow = pathInfo => ({
   type: PATH_DIALOG_SHOW,
@@ -26,13 +32,6 @@ export const pathChangeSuccess = (pathInfo, pathKey) => ({
   type: PATH_CHANGE_SUCCESS,
   pathInfo,
   pathKey
-});
-
-export const PATH_CHANGE_FAIL = "PATH_CHANGE_FAIL";
-export const pathChangeFail = (pathInfo, reason) => ({
-  type: PATH_CHANGE_FAIL,
-  pathInfo,
-  reason
 });
 
 export const PATH_SELECT = "PATH_SELECT";

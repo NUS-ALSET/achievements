@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
 import Paper from "material-ui/Paper";
+
 import Typography from "material-ui/Typography";
 
 import withStyles from "material-ui/styles/withStyles";
@@ -97,8 +98,9 @@ class JupyterProblem extends React.PureComponent {
           }}
         >
           <Typography variant="headline">
-            Solution{problem.solutionFileId &&
-              problem.solutionJSON && (
+            Solution{solution &&
+              solution.id &&
+              solution.json && (
                 <Fragment>
                   <Button
                     className={classes.solutionButtons}

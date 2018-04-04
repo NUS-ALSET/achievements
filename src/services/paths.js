@@ -1,6 +1,8 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 
+const NOT_FOUND_ERROR = 404;
+
 export const YOUTUBE_QUESTIONS = {
   topics:
     "What topics were covered in this video? Put each topic on a new line",
@@ -12,18 +14,22 @@ export const YOUTUBE_QUESTIONS = {
 
 export class PathsService {
   auth() {
-    window.gapi.load("client:auth2", () => {
-      window.gapi.client.init({
-        apiKey: "AIzaSyC27mcZBSKrWavXNhsDA1HJCeUurPluc1E",
-        clientId:
-          "765594031611-aitdj645mls974mu5oo7h7m27bh50prc.apps." +
-          "googleusercontent.com",
-        discoveryDocs: [
-          "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
-        ],
-        scope: "https://www.googleapis.com/auth/drive"
-      });
-    });
+    return new Promise(resolve =>
+      window.gapi.load("client:auth2", () => {
+        window.gapi.client
+          .init({
+            apiKey: "AIzaSyC27mcZBSKrWavXNhsDA1HJCeUurPluc1E",
+            clientId:
+              "765594031611-aitdj645mls974mu5oo7h7m27bh50prc.apps." +
+              "googleusercontent.com",
+            discoveryDocs: [
+              "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
+            ],
+            scope: "https://www.googleapis.com/auth/drive.file"
+          })
+          .then(resolve);
+      })
+    );
   }
 
   static getColabURL(fileId) {
@@ -141,6 +147,24 @@ export class PathsService {
       );
   }
 
+  fetchFile(fileId) {
+    const request = window.gapi.client.drive.files.get({
+      fileId,
+      alt: "media"
+    });
+
+    return new Promise((resolve, reject) =>
+      request.execute(data => {
+        if (data.code && data.code === NOT_FOUND_ERROR) {
+          return reject(
+            new Error("Unable fetch file. Make sure that it's published")
+          );
+        }
+        resolve(data);
+      })
+    );
+  }
+
   fetchSolutionFile(problemId, uid) {
     return this.firebase
       .database()
@@ -150,11 +174,11 @@ export class PathsService {
       .then(
         fileId =>
           fileId
-            ? {
+            ? this.fetchFile(fileId).then(json => ({
                 id: fileId,
-                json: this.fetchFile(fileId),
+                json,
                 colabURL: PathsService.getColabURL(fileId)
-              }
+              }))
             : false
       );
   }
@@ -170,15 +194,6 @@ export class PathsService {
         .set(file.id)
         .then(() => file.id)
     );
-  }
-
-  fetchFile(fileId) {
-    return window.gapi.client.drive.files
-      .get({
-        fileId,
-        alt: "media"
-      })
-      .then(data => JSON.parse(data.body));
   }
 
   /** Taken from https://goo.gl/jyfMGj
