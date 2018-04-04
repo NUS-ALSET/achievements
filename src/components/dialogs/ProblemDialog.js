@@ -132,7 +132,7 @@ class ProblemDialog extends React.PureComponent {
     this.props.dispatch(
       pathProblemChangeRequest(
         this.props.pathId,
-        Object.assign(this.props.problem, this.state, {
+        Object.assign(this.props.problem || {}, this.state, {
           type:
             this.state.type ||
             (this.props.problem && this.props.problem.type) ||

@@ -55,13 +55,6 @@ class CoursesTable extends React.PureComponent {
             <TableCell>Course name</TableCell>
             <TableCell>Instructor</TableCell>
             <TableCell
-              style={{
-                width: "40%"
-              }}
-            >
-              Description
-            </TableCell>
-            <TableCell
               style={(APP_SETTING.isSuggesting && { width: 200 }) || {}}
             >
               Actions
@@ -80,7 +73,6 @@ class CoursesTable extends React.PureComponent {
                 <TableRow key={course.id}>
                   <TableCell>{course.name}</TableCell>
                   <TableCell>{course.instructorName}</TableCell>
-                  <TableCell>{course.description}</TableCell>
                   <TableCell>
                     {APP_SETTING.isSuggesting ? (
                       <Fragment>
