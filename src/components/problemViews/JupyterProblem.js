@@ -9,16 +9,15 @@ import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
 import Paper from "material-ui/Paper";
-
+import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
 
 import withStyles from "material-ui/styles/withStyles";
 import Jupyter from "react-jupyter";
 import {
-  problemSolutionRefreshRequest,
   problemSolutionSubmitRequest,
-  problemSolveRequest,
-  problemSolveSuccess
+  problemSolveSuccess,
+  problemSolveUpdate
 } from "../../containers/Problem/actions";
 
 const styles = theme => ({
@@ -33,30 +32,49 @@ class JupyterProblem extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     problem: PropTypes.object,
     solution: PropTypes.object
   };
 
+  state = {
+    solutionURL: ""
+  };
+
   closeDialog = () =>
     this.props.dispatch(problemSolveSuccess(this.props.problem.problemId, ""));
-  refresh = () =>
-    this.props.dispatch(
-      problemSolutionRefreshRequest(this.props.problem.problemId)
+  onSolutionFileChange = e => {
+    const { dispatch, onChange, problem } = this.props;
+
+    if (onChange) {
+      onChange(e.target.value);
+    }
+    this.setState({
+      solutionURL: e.target.value
+    });
+    dispatch(
+      problemSolveUpdate(problem.pathId, problem.problemId, e.target.value)
     );
-  solve = () =>
-    this.props.dispatch(problemSolveRequest(this.props.problem.problemId));
-  submitSolution = () =>
-    this.props.dispatch(
+  };
+  onCommit = () => {
+    const { dispatch, problem } = this.props;
+
+    dispatch(
       problemSolutionSubmitRequest(
-        this.props.problem.pathId,
-        this.props.problem.problemId
+        problem.owner,
+        problem.problemId,
+        this.state.solutionURL
       )
     );
+    this.setState({
+      solutionURL: undefined
+    });
+  };
 
   render() {
     const {
-      classes,
       /** @type {JupyterPathProblem} */
+      onChange,
       problem,
       solution
     } = this.props;
@@ -71,7 +89,8 @@ class JupyterProblem extends React.PureComponent {
           <Typography variant="headline">Problem</Typography>
           <div
             style={{
-              paddingLeft: 50
+              paddingLeft: 50,
+              textAlign: "left"
             }}
           >
             <Jupyter
@@ -97,59 +116,31 @@ class JupyterProblem extends React.PureComponent {
             marginTop: 24
           }}
         >
-          <Typography variant="headline">
-            Solution{solution &&
-              solution.id &&
-              solution.json && (
-                <Fragment>
-                  <Button
-                    className={classes.solutionButtons}
-                    onClick={this.refresh}
-                    variant="raised"
-                  >
-                    Refresh
-                  </Button>
-                  <a
-                    className={classes.solutionButtons}
-                    href={solution.colabURL}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <Button variant="raised">Open In Colab</Button>
-                  </a>
-                </Fragment>
-              )}
-          </Typography>
-          {solution ? (
-            <Fragment>
-              <div
-                style={{
-                  paddingLeft: 50
-                }}
-              >
-                <Jupyter
-                  defaultStyle={true}
-                  loadMathjax={true}
-                  notebook={solution.json}
-                  showCode={true}
-                />
-              </div>
-              <Button
-                color="primary"
-                onClick={this.submitSolution}
-                variant="raised"
-              >
-                Submit
-              </Button>
-            </Fragment>
-          ) : (
-            <Button
-              color="primary"
-              fullWidth
-              onClick={this.solve}
-              variant="raised"
+          <Typography variant="headline">Solution</Typography>
+          <TextField
+            defaultValue={solution && solution.id}
+            fullWidth
+            label="File URL"
+            onChange={this.onSolutionFileChange}
+          />
+          {solution && (
+            <div
+              style={{
+                paddingLeft: 50,
+                textAlign: "left"
+              }}
             >
-              Solve at Google Colaboratory
+              <Jupyter
+                defaultStyle={true}
+                loadMathjax={true}
+                notebook={solution.json}
+                showCode={true}
+              />
+            </div>
+          )}
+          {!onChange && (
+            <Button color="primary" onClick={this.onCommit} variant="raised">
+              Submit
             </Button>
           )}
         </Paper>

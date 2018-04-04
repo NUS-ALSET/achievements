@@ -26,6 +26,7 @@ import {
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
 import format from "date-fns/format";
+import { PROBLEM_SOLUTION_REFRESH_SUCCESS } from "../Problem/actions";
 
 const DAYS_IN_WEEK = 7;
 
@@ -200,6 +201,14 @@ export const assignments = (
         dialog: {
           ...state.dialog,
           pathProgress: action.pathProgress
+        }
+      };
+    case PROBLEM_SOLUTION_REFRESH_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: action.payload
         }
       };
     case COURSE_MEMBERS_FETCH_SUCCESS:

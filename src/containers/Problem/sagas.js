@@ -3,20 +3,30 @@ import {
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_SUBMIT_REQUEST,
   PROBLEM_SOLVE_REQUEST,
+  PROBLEM_SOLVE_UPDATE,
   problemInitFail,
   problemInitSuccess,
   problemSolutionRefreshFail,
   problemSolutionRefreshRequest,
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
+  problemSolutionSubmitRequest,
   problemSolutionSubmitSuccess,
   problemSolveFail,
   problemSolveSuccess
 } from "./actions";
-import { call, put, select, take, takeLatest } from "redux-saga/effects";
+import {
+  call,
+  put,
+  select,
+  take,
+  takeLatest,
+  throttle
+} from "redux-saga/effects";
 import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 export function* problemInitRequestHandler(action) {
   try {
@@ -62,6 +72,18 @@ export function* problemInitRequestHandler(action) {
   } catch (err) {
     yield put(problemInitFail(action.pathId, action.problemId, err.message));
     yield put(notificationShow(err.message));
+  }
+}
+
+export function* problemSolveUpdateHandler(action) {
+  if (/^http[s]?:\/\/.+/.test(action.fileId)) {
+    const fileId = yield call(pathsService.getFileId, action.fileId);
+    yield put(
+      problemSolutionSubmitRequest(action.pathId, action.problemId, fileId)
+    );
+    yield put(problemSolutionRefreshRequest(action.problemId));
+  } else {
+    yield put(notificationShow("Malformed solution URL"));
   }
 }
 
@@ -144,6 +166,13 @@ export function* problemSolutionSubmitRequestHandler(action) {
 export default [
   function* watchProblemInitRequest() {
     yield takeLatest(PROBLEM_INIT_REQUEST, problemInitRequestHandler);
+  },
+  function* watchProblemSolveUpdate() {
+    yield throttle(
+      APP_SETTING.defaultThrottle,
+      PROBLEM_SOLVE_UPDATE,
+      problemSolveUpdateHandler
+    );
   },
   function* watchProblemSolveRequest() {
     yield takeLatest(PROBLEM_SOLVE_REQUEST, problemSolveRequestHandler);

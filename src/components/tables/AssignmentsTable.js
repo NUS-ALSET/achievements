@@ -99,7 +99,21 @@ class AssignmentsTable extends React.PureComponent {
       case "PathProblem":
         return solution && this.props.isInstructor ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
-            <div>{result}</div>
+            <div>
+              {/http[s]?:\/\//.test(
+                solution.originalSolution && solution.originalSolution.value
+              ) ? (
+                <a
+                  href={solution.originalSolution.value}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Completed
+                </a>
+              ) : (
+                result
+              )}
+            </div>
           </Tooltip>
         ) : (
           result

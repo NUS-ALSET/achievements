@@ -24,8 +24,7 @@ export class PathsService {
               "googleusercontent.com",
             discoveryDocs: [
               "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
-            ],
-            scope: "https://www.googleapis.com/auth/drive.file"
+            ]
           })
           .then(resolve);
       })
@@ -343,7 +342,10 @@ export class PathsService {
     this.validateSolution(pathProblem, solution);
     switch (pathProblem.type) {
       case "jupyter":
-        break;
+        return this.firebase
+          .database()
+          .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+          .set(solution);
       case "youtube":
         return this.firebase
           .database()

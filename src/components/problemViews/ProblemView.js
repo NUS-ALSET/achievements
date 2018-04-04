@@ -30,6 +30,7 @@ class ProblemView extends React.PureComponent {
         {pathProblem.type === "jupyter" && (
           <JupyterProblem
             dispatch={dispatch}
+            onChange={onProblemChange}
             problem={pathProblem}
             solution={solution}
           />

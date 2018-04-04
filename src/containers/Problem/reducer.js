@@ -18,9 +18,6 @@ export const problem = (
     case PROBLEM_SOLUTION_REFRESH_SUCCESS:
       return {
         ...state,
-        pathProblem: {
-          ...state.pathProblem
-        },
         solution: action.payload
       };
     default:
