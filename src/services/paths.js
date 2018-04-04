@@ -182,61 +182,6 @@ export class PathsService {
       );
   }
 
-  uploadSolutionFile(uid, problemId, problemJSON) {
-    return this.uploadFile(
-      `Solution${problemId}.ipynb`,
-      JSON.stringify(problemJSON)
-    ).then(file =>
-      this.firebase
-        .database()
-        .ref(`/problemSolutions/${problemId}/${uid}`)
-        .set(file.id)
-        .then(() => file.id)
-    );
-  }
-
-  /** Taken from https://goo.gl/jyfMGj
-   *
-   * @param name
-   * @param data
-   * @returns {Promise<any>}
-   */
-  uploadFile(name, data) {
-    return new Promise(resolve => {
-      const boundary = "-------314159265358979323846";
-      const delimiter = "\r\n--" + boundary + "\r\n";
-      const close_delim = "\r\n--" + boundary + "--";
-
-      const contentType = "application/vnd.google.colab";
-
-      const metadata = {
-        name: name,
-        mimeType: contentType
-      };
-
-      const multipartRequestBody =
-        delimiter +
-        "Content-Type: application/json\r\n\r\n" +
-        JSON.stringify(metadata) +
-        delimiter +
-        "Content-Type: " +
-        contentType +
-        "\r\n\r\n" +
-        data +
-        close_delim;
-
-      const request = window.gapi.client.request({
-        path: "/upload/drive/v3/files",
-        method: "POST",
-        params: { uploadType: "multipart" },
-        headers: {
-          "Content-Type": `multipart/related; boundary="${boundary}"`
-        },
-        body: multipartRequestBody
-      });
-      request.execute(resolve);
-    });
-  }
   pathChange(uid, pathInfo) {
     const key = this.firebase
       .database()
@@ -386,7 +331,7 @@ export class PathsService {
   fetchProblems(uid, pathId) {
     let ref = this.firebase.database().ref(`/problems/${uid}`);
 
-    if (pathId && pathId !== "default") {
+    if (pathId && pathId !== uid) {
       ref = ref.orderByChild("path").equalTo(pathId);
     }
     return ref
