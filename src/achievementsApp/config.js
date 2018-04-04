@@ -5,6 +5,7 @@ export const APP_SETTING = {
   drawerWidth: 250,
   levels: levels,
   basename: process.env.REACT_APP_BASENAME || "/",
+  defaultThrottle: 500,
   defaultTimeout: 6000,
   isSuggesting: window.location.href.includes("isSuggesting=true")
 };
@@ -21,3 +22,4 @@ const config = {
 firebase.initializeApp(config);
 
 export const authProvider = new firebase.auth.GoogleAuthProvider();
+// authProvider.addScope("https://www.googleapis.com/auth/drive.file");

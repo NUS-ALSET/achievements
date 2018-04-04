@@ -1,14 +1,21 @@
+import isEmpty from "lodash/isEmpty";
+import moment from "moment";
+
 import {
   assignmentSolutionRequest,
   assignmentSubmitRequest,
   assignmentsSortChange,
   courseRemoveStudentDialogShow,
-  assignmentPathProblemSolutionRequest
+  assignmentPathProblemSolutionRequest,
+  courseMoveStudentDialogShow,
+  assignmentPathProgressSolutionRequest
 } from "../../containers/Assignments/actions";
 import Button from "material-ui/Button";
 import IconButton from "material-ui/IconButton";
+import Tooltip from "material-ui/Tooltip";
 
 import DeleteIcon from "material-ui-icons/Delete";
+import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -20,6 +27,8 @@ import Table, {
   TableSortLabel
 } from "material-ui/Table";
 import { AccountService } from "../../services/account";
+import { YOUTUBE_QUESTIONS } from "../../services/paths";
+import { ASSIGNMENTS_TYPES } from "../../services/courses";
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
@@ -27,8 +36,45 @@ class AssignmentsTable extends React.PureComponent {
     isInstructor: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     sortState: PropTypes.object,
-    currentUser: PropTypes.object
+    currentUser: PropTypes.object,
+    ui: PropTypes.object
   };
+
+  getTooltip(assignment, solution) {
+    if (!solution.originalSolution) {
+      return "";
+    }
+    let result = `Created: ${new Date(
+      solution.originalSolution.createdAt
+    ).toLocaleString()}`;
+    switch (assignment.questionType) {
+      case "PathProblem":
+        if (
+          solution.originalSolution &&
+          solution.originalSolution.value &&
+          solution.originalSolution.value.answers &&
+          !isEmpty(solution.originalSolution.value.answers)
+        ) {
+          result +=
+            "\nAnswers:\n" +
+            Object.keys(solution.originalSolution.value.answers)
+              .map(id => ({
+                value: solution.originalSolution.value.answers[id],
+                id
+              }))
+              .map(
+                answer =>
+                  `- ${
+                    YOUTUBE_QUESTIONS[answer.id]
+                  }:\n   * ${answer.value.split("\n").join("\n   * ")}`
+              )
+              .join("\n");
+        }
+        return result;
+      default:
+        return result;
+    }
+  }
 
   getSolution(assignment, solutions) {
     let solution = solutions[assignment.id];
@@ -50,10 +96,33 @@ class AssignmentsTable extends React.PureComponent {
         ) : (
           undefined
         );
+      case "PathProblem":
+        return solution && this.props.isInstructor ? (
+          <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
+            <div>
+              {/http[s]?:\/\//.test(
+                solution.originalSolution && solution.originalSolution.value
+              ) ? (
+                <a
+                  href={solution.originalSolution.value}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  Completed
+                </a>
+              ) : (
+                result
+              )}
+            </div>
+          </Tooltip>
+        ) : (
+          result
+        );
+
       case "Text":
         return /http[s]?:\/\//.test(result) ? (
           <a href={result} rel="noopener noreferrer" target="_blank">
-            {result}
+            Completed
           </a>
         ) : (
           result
@@ -66,6 +135,15 @@ class AssignmentsTable extends React.PureComponent {
   onStudentRemoveClick = studentInfo =>
     this.props.dispatch(
       courseRemoveStudentDialogShow(
+        this.props.course.id,
+        studentInfo.id,
+        studentInfo.name
+      )
+    );
+
+  onStudentMoveClick = studentInfo =>
+    this.props.dispatch(
+      courseMoveStudentDialogShow(
         this.props.course.id,
         studentInfo.id,
         studentInfo.name
@@ -94,6 +172,15 @@ class AssignmentsTable extends React.PureComponent {
             course.owner,
             assignment.problem,
             solution
+          )
+        );
+        break;
+      case ASSIGNMENTS_TYPES.PathProgress.id:
+        dispatch(
+          assignmentPathProgressSolutionRequest(
+            assignment,
+            course.owner,
+            assignment.path
           )
         );
         break;
@@ -155,6 +242,12 @@ class AssignmentsTable extends React.PureComponent {
                         details
                       </a>
                     )}
+                    {(assignment.details ? " " : "") + assignment.progress ||
+                      ""}
+                  </div>
+                  <div>
+                    {assignment.deadline &&
+                      `Deadline ${moment(assignment.deadline).fromNow()}`}
                   </div>
                 </TableCell>
               ))}
@@ -168,11 +261,18 @@ class AssignmentsTable extends React.PureComponent {
                 <TableCell>
                   {isInstructor &&
                     course.owner === currentUser.id && (
-                      <IconButton
-                        onClick={() => this.onStudentRemoveClick(studentInfo)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+                      <Fragment>
+                        <IconButton
+                          onClick={() => this.onStudentMoveClick(studentInfo)}
+                        >
+                          <UserSwitch style={{ fill: "rgba(0, 0, 0, 0.54)" }} />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => this.onStudentRemoveClick(studentInfo)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Fragment>
                     )}
                   {studentInfo.name}
                 </TableCell>

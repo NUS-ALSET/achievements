@@ -15,7 +15,7 @@ const linkStyle = {
 export const DrawerMenuItems = (onRequestClose, userId, isAdmin) => (
   <div>
     <Divider />
-    <List onClick={onRequestClose}>
+    <List component="nav" onClick={onRequestClose}>
       <Link style={linkStyle} to={"/home"}>
         <ListItem button>
           <ListItemIcon>

@@ -11,37 +11,19 @@ import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { firebaseConnect } from "react-redux-firebase";
 
-import {
-  problemInitRequest,
-  problemSolutionRefreshRequest,
-  problemSolutionSubmitRequest,
-  problemSolveRequest,
-  problemSolveSuccess
-} from "./actions";
+import { problemInitRequest } from "./actions";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
-import withStyles from "material-ui/styles/withStyles";
 import ProblemView from "../../components/problemViews/ProblemView";
-
-const styles = theme => ({
-  solutionButtons: {
-    textDecoration: "none",
-    float: "right",
-    margin: `0 0 0 ${theme.spacing.unit}px`
-  }
-});
 
 class Problem extends React.PureComponent {
   static propTypes = {
-    classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func,
     match: PropTypes.object,
     pathProblem: PropTypes.any,
-    solution: PropTypes.string,
-    solutionKey: PropTypes.any,
-    solutionJSON: PropTypes.any
+    solution: PropTypes.any
   };
 
   componentDidMount() {
@@ -53,40 +35,17 @@ class Problem extends React.PureComponent {
     );
   }
 
-  refresh = () =>
-    this.props.dispatch(
-      problemSolutionRefreshRequest(this.props.match.params.problemId)
-    );
-  solve = () =>
-    this.props.dispatch(problemSolveRequest(this.props.match.params.problemId));
-  submitSolution = () =>
-    this.props.dispatch(
-      problemSolutionSubmitRequest(
-        this.props.match.params.pathId,
-        this.props.match.params.problemId,
-        this.props.solutionJSON
-      )
-    );
-  closeDialog = () =>
-    this.props.dispatch(
-      problemSolveSuccess(this.props.match.params.problemId, "")
-    );
-
   render() {
     const {
+      /** @type PathProblem */
       pathProblem,
-      classes,
       dispatch,
-      solution,
-      solutionJSON,
-      solutionKey
+      solution
     } = this.props;
 
     if (!pathProblem) {
       return <div>Loading</div>;
     }
-
-
 
     return (
       <Fragment>
@@ -106,12 +65,12 @@ class Problem extends React.PureComponent {
           ]}
         />
         <ProblemView
-          classes={classes}
           dispatch={dispatch}
           pathProblem={pathProblem}
           solution={solution}
-          solutionJSON={solutionJSON}
-          solutionKey={solutionKey}
+          style={{
+            textAlign: "center"
+          }}
         />
       </Fragment>
     );
@@ -120,20 +79,12 @@ class Problem extends React.PureComponent {
 
 sagaInjector.inject(sagas);
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   pathProblem: state.problem.pathProblem,
-  solutionKey: state.problem.solutionKey,
-  solutionJSON: state.problem.solutionJSON,
-  solution:
-    state.firebase.data.problemSolutions &&
-    state.firebase.data.problemSolutions[ownProps.match.params.problemId] &&
-    state.firebase.data.problemSolutions[ownProps.match.params.problemId][
-      state.firebase.auth.uid
-    ]
+  solution: state.problem.solution
 });
 
 export default compose(
-  withStyles(styles),
   withRouter,
   firebaseConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;

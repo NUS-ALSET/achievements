@@ -9,6 +9,8 @@ import {
 import firebase from "firebase";
 
 export class ActionsService {
+  consumerKey = undefined;
+
   bannedActions = [
     COURSE_NEW_DIALOG_CHANGE,
     COURSE_NEW_REQUEST,
@@ -35,25 +37,37 @@ export class ActionsService {
 
   // eslint-disable-next-line no-unused-vars
   catchAction = store => next => action => {
-    const currentUser =
+    const currentUserId =
       firebase.auth().currentUser && firebase.auth().currentUser.uid;
-
+    if (this.consumerKey === undefined && currentUserId) {
+      this.consumerKey = "";
+      firebase
+        .database()
+        .ref(`/users/${currentUserId}/consumerKey`)
+        .once("value")
+        .then(data => (this.consumerKey = data.val() || ""));
+    }
+    const data = {};
+    if (this.consumerKey) {
+      data.consumerKey = this.consumerKey;
+    }
     if (
       action.type &&
       // Ignore react-redux-firebase builtin actions
       action.type.indexOf("@@reactReduxFirebase") === -1 &&
       !this.bannedActions.includes(action.type) &&
-      currentUser
+      currentUserId
     ) {
       firebase
         .database()
         .ref("/logged_events")
         .push({
+          ...data,
           createdAt: {
             ".sv": "timestamp"
           },
           type: action.type,
-          uid: currentUser,
+          uid: currentUserId,
           otherActionData: this.removeEmpty(
             ActionsService.pickActionData(action)
           )

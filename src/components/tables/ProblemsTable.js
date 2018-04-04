@@ -18,6 +18,7 @@ import Button from "material-ui/Button";
 import { Link } from "react-router-dom";
 
 import withStyles from "material-ui/styles/withStyles";
+import { pathProblemDialogShow } from "../../containers/Paths/actions";
 
 const styles = theme => ({
   link: {
@@ -30,14 +31,18 @@ const styles = theme => ({
 
 class ProblemsTable extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    selectedPathId: PropTypes.string,
+    classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
-    problems: PropTypes.array
+    dispatch: PropTypes.func.isRequired,
+    pathOwnerId: PropTypes.string,
+    problems: PropTypes.array.isRequired,
+    selectedPathId: PropTypes.string
   };
 
+  onEditClick = problem => this.props.dispatch(pathProblemDialogShow(problem));
+
   render() {
-    const { problems, selectedPathId, currentUserId } = this.props;
+    const { classes, pathOwnerId, problems, selectedPathId } = this.props;
 
     return (
       <Table>
@@ -59,12 +64,20 @@ class ProblemsTable extends React.PureComponent {
               <TableCell>{problem.name}</TableCell>
               <TableCell>
                 <Link
-                  to={`/paths/${selectedPathId || currentUserId}/problems/${
+                  className={classes.link}
+                  to={`/paths/${pathOwnerId || selectedPathId}/problems/${
                     problem.id
                   }`}
                 >
                   <Button variant="raised">Open</Button>
                 </Link>
+                <Button
+                  className={classes.button}
+                  onClick={() => this.onEditClick(problem)}
+                  variant="raised"
+                >
+                  Edit
+                </Button>
               </TableCell>
             </TableRow>
           ))}

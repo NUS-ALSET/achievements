@@ -41,7 +41,17 @@ import {
   assignmentProblemsFetchSuccess,
   assignmentPathProblemFetchSuccess,
   ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
-  assignmentSubmitRequest
+  assignmentSubmitRequest,
+  COURSE_MOVE_STUDENT_DIALOG_SHOW,
+  courseMyCoursesFetchSuccess,
+  COURSE_MOVE_STUDENT_REQUEST,
+  courseMoveStudentFail,
+  courseMoveStudentSuccess,
+  ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
+  assignmentPathProgressFetchSuccess,
+  ASSIGNMENT_SHOW_EDIT_DIALOG,
+  ASSIGNMENT_MANUAL_UPDATE_FIELD,
+  assignmentManualUpdateField
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -54,7 +64,7 @@ import {
   throttle
 } from "redux-saga/effects";
 
-import { coursesService } from "../../services/courses";
+import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 import { pathsService } from "../../services/paths";
 
@@ -94,11 +104,16 @@ export function* addAssignmentRequestHandle(action) {
   }
 }
 
+export function* assignmentManualUpdateFieldHandler(action) {
+  yield put(assignmentManualUpdateField(action.field, action.value));
+}
+
 export function* updateNewAssignmentFieldHandler(action) {
   if (action.field === "details") {
     return yield Promise.resolve();
   }
 
+  const location = window.location.href.replace(/#.*$/, "");
   const data = yield select(state => ({
     assignment: state.assignments.dialog.value,
     uid: state.firebase.auth.uid
@@ -113,13 +128,22 @@ export function* updateNewAssignmentFieldHandler(action) {
 
   switch (action.field) {
     case "questionType":
-      if (action.value === "PathProblem") {
+      if (
+        [
+          ASSIGNMENTS_TYPES.PathProblem.id,
+          ASSIGNMENTS_TYPES.PathProgress.id
+        ].includes(action.value)
+      ) {
         const paths = yield call(
           [pathsService, pathsService.fetchPaths],
           data.uid
         );
 
         yield put(assignmentPathsFetchSuccess(paths));
+        yield put(
+          updateNewAssignmentField("details", `${location}#/paths/${data.uid}`)
+        );
+        yield put(updateNewAssignmentField("path", ""));
       }
       break;
     case "level":
@@ -134,6 +158,13 @@ export function* updateNewAssignmentFieldHandler(action) {
       problems = yield call(pathsService.fetchProblems, data.uid, action.value);
 
       yield put(assignmentProblemsFetchSuccess(problems));
+      yield put(
+        updateNewAssignmentField(
+          "details",
+          `${location}#/paths/${action.value || data.uid}`
+        )
+      );
+      yield put(updateNewAssignmentField("problem", ""));
       break;
     default:
   }
@@ -243,6 +274,25 @@ export function* watchAssistantsControlRequestHandler(action) {
       action.courseId
     );
     yield put(assignmentsAssistantsDialogShow(action.courseId, assistants));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* assignmentShowEditDialogHandler(action) {
+  try {
+    switch (action.assignment.questionType) {
+      case ASSIGNMENTS_TYPES.PathProblem.id:
+        yield put(
+          updateNewAssignmentField(
+            "questionType",
+            ASSIGNMENTS_TYPES.PathProblem.id
+          )
+        );
+        yield put(updateNewAssignmentField("path", action.assignment.path));
+        break;
+      default:
+    }
   } catch (err) {
     yield put(notificationShow(err.message));
   }
@@ -395,9 +445,81 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
   }
 }
 
+export function* assignmentPathProgressSolutionRequestHandler(action) {
+  try {
+    yield put(assignmentSubmitRequest(action.assignment, null));
+    const uid = yield select(state => state.firebase.auth.uid);
+    const pathProgress = yield call(
+      [pathsService, pathsService.fetchPathProgress],
+      uid,
+      action.pathOwner,
+      action.pathId
+    );
+
+    yield put(assignmentPathProgressFetchSuccess(pathProgress));
+  } catch (err) {
+    console.error(err.stack);
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* courseMoveStudentDialogShowHandler() {
+  try {
+    const uid = yield select(state => state.firebase.auth.uid);
+    const courses = yield call(coursesService.fetchCourses, uid);
+    yield put(courseMyCoursesFetchSuccess(courses));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* courseMoveStudentRequestHandler(action) {
+  if (!(action.sourceCourseId || action.targetCourseId || action.studentId)) {
+    yield put(notificationShow("Unable move student"));
+  }
+  try {
+    yield put(assignmentCloseDialog());
+    yield call(
+      [coursesService, coursesService.moveStudent],
+      action.sourceCourseId,
+      action.targetCourseId,
+      action.studentId
+    );
+    yield put(
+      courseMoveStudentSuccess(
+        action.sourceCourseId,
+        action.targetCourseId,
+        action.studentId
+      )
+    );
+  } catch (err) {
+    yield put(
+      courseMoveStudentFail(
+        action.sourceCourseId,
+        action.targetCourseId,
+        action.studentId,
+        err.message
+      )
+    );
+  }
+}
+
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
+  },
+  function* watchAssignmentShowEditDialog() {
+    yield takeLatest(
+      ASSIGNMENT_SHOW_EDIT_DIALOG,
+      assignmentShowEditDialogHandler
+    );
+  },
+  function* watchAssignmentManualUpdateField() {
+    yield throttle(
+      APP_SETTING.defaultThrottle,
+      ASSIGNMENT_MANUAL_UPDATE_FIELD,
+      assignmentManualUpdateFieldHandler
+    );
   },
   function* watchUpdateNewAssignmentField() {
     yield takeLatest(
@@ -476,6 +598,24 @@ export default [
     yield takeLatest(
       ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
       assignmentPathProblemSolutionRequestHandler
+    );
+  },
+  function* watchAssignmentPathProgressSolutionRequest() {
+    yield takeLatest(
+      ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
+      assignmentPathProgressSolutionRequestHandler
+    );
+  },
+  function* watchCourseMoveStudentDialogShow() {
+    yield takeLatest(
+      COURSE_MOVE_STUDENT_DIALOG_SHOW,
+      courseMoveStudentDialogShowHandler
+    );
+  },
+  function* watchCourseMoveStudentRequest() {
+    yield takeLatest(
+      COURSE_MOVE_STUDENT_REQUEST,
+      courseMoveStudentRequestHandler
     );
   }
 ];

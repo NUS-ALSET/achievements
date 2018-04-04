@@ -71,6 +71,8 @@ function processProfileRefreshRequest(data, resolve) {
                   events = events || {};
                   achievements[levelInfo.levelID] = {
                     name: levelInfo.levelName,
+                    created: levelInfo.created || "",
+                    playtime: (levelInfo && levelInfo.playtime) || 0,
                     complete: true
                   };
                   const newEventKey = admin
@@ -275,6 +277,9 @@ exports.api = functions.https.onRequest((req, res) => {
     "solutions",
     "courseMembers",
     "cohortCourses",
+    "problems",
+    "paths",
+    "problemSolutions",
     "usage"
   ];
   if (!supportedDatatypes.includes(data)) {

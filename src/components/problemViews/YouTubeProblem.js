@@ -4,11 +4,10 @@
  * @created 08.03.18
  */
 
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
-import Paper from "material-ui/Paper";
 
 import YouTube from "react-youtube";
 
@@ -18,7 +17,7 @@ import { problemSolutionSubmitRequest } from "../../containers/Problem/actions";
 class YouTubeProblem extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    onCommit: PropTypes.func,
+    onChange: PropTypes.func,
     problem: PropTypes.object
   };
 
@@ -27,15 +26,21 @@ class YouTubeProblem extends React.PureComponent {
     youtubeEvents: {}
   };
 
-  setAnswer = (question, answer) =>
+  setAnswer = (question, answer) => {
     this.setState({
       answers: {
         ...this.state.answers,
         [question]: answer
       }
     });
-  setYoutubeEvent = (event, videoTime, info = {}) =>
-    videoTime &&
+    if (this.props.onChange) {
+      this.props.onChange(this.state);
+    }
+  };
+  setYoutubeEvent = (event, videoTime, info = {}) => {
+    if (!videoTime) {
+      return;
+    }
     this.setState({
       youtubeEvents: {
         ...this.state.youtubeEvents,
@@ -46,28 +51,24 @@ class YouTubeProblem extends React.PureComponent {
         }
       }
     });
+    if (this.props.onChange) {
+      this.props.onChange(this.state);
+    }
+  };
 
   onCommit = () => {
-    const { dispatch, onCommit, problem } = this.props;
+    const { dispatch, problem } = this.props;
 
     dispatch(
       problemSolutionSubmitRequest(problem.owner, problem.problemId, this.state)
     );
-    if (onCommit) {
-      onCommit(this.state);
-    }
   };
 
   render() {
-    const { problem } = this.props;
+    const { onChange, problem } = this.props;
 
     return (
-      <Paper
-        style={{
-          padding: 4,
-          textAlign: "center"
-        }}
-      >
+      <Fragment>
         <YouTube
           onEnd={e => this.setYoutubeEvent("end", e.target.getCurrentTime())}
           onError={e =>
@@ -110,10 +111,13 @@ class YouTubeProblem extends React.PureComponent {
         {problem.topics && (
           <ProblemQuestion question="topics" setAnswer={this.setAnswer} />
         )}
-        <Button color="primary" onClick={this.onCommit} variant="raised">
-          Submit
-        </Button>
-      </Paper>
+
+        {!onChange && (
+          <Button color="primary" onClick={this.onCommit} variant="raised">
+            Submit
+          </Button>
+        )}
+      </Fragment>
     );
   }
 }

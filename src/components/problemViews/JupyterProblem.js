@@ -8,33 +8,75 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
-import Dialog, {
-  DialogTitle,
-  DialogContent,
-  DialogActions
-} from "material-ui/Dialog";
 import Paper from "material-ui/Paper";
+import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
 
+import withStyles from "material-ui/styles/withStyles";
 import Jupyter from "react-jupyter";
+import {
+  problemSolutionSubmitRequest,
+  problemSolveSuccess,
+  problemSolveUpdate
+} from "../../containers/Problem/actions";
+
+const styles = theme => ({
+  solutionButtons: {
+    textDecoration: "none",
+    float: "right",
+    margin: `0 0 0 ${theme.spacing.unit}px`
+  }
+});
 
 class JupyterProblem extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     problem: PropTypes.object,
-    solution: PropTypes.any,
-    solutionJSON: PropTypes.any,
-    solutionKey: PropTypes.any
+    solution: PropTypes.object
+  };
+
+  state = {
+    solutionURL: ""
+  };
+
+  closeDialog = () =>
+    this.props.dispatch(problemSolveSuccess(this.props.problem.problemId, ""));
+  onSolutionFileChange = e => {
+    const { dispatch, onChange, problem } = this.props;
+
+    if (onChange) {
+      onChange(e.target.value);
+    }
+    this.setState({
+      solutionURL: e.target.value
+    });
+    dispatch(
+      problemSolveUpdate(problem.pathId, problem.problemId, e.target.value)
+    );
+  };
+  onCommit = () => {
+    const { dispatch, problem } = this.props;
+
+    dispatch(
+      problemSolutionSubmitRequest(
+        problem.owner,
+        problem.problemId,
+        this.state.solutionURL
+      )
+    );
+    this.setState({
+      solutionURL: undefined
+    });
   };
 
   render() {
     const {
-      classes,
+      /** @type {JupyterPathProblem} */
+      onChange,
       problem,
-      solution,
-      solutionJSON,
-      solutionKey
+      solution
     } = this.props;
 
     return (
@@ -47,7 +89,8 @@ class JupyterProblem extends React.PureComponent {
           <Typography variant="headline">Problem</Typography>
           <div
             style={{
-              paddingLeft: 50
+              paddingLeft: 50,
+              textAlign: "left"
             }}
           >
             <Jupyter
@@ -73,97 +116,37 @@ class JupyterProblem extends React.PureComponent {
             marginTop: 24
           }}
         >
-          <Typography variant="headline">
-            Solution{solution &&
-              solutionJSON && (
-                <Fragment>
-                  <Button
-                    className={classes.solutionButtons}
-                    onClick={this.refresh}
-                    variant="raised"
-                  >
-                    Refresh
-                  </Button>
-                  <a
-                    className={classes.solutionButtons}
-                    href={
-                      "https://colab.research.google.com/notebook#fileId=" +
-                      solution
-                    }
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    <Button variant="raised">Open In Colab</Button>
-                  </a>
-                </Fragment>
-              )}
-          </Typography>
-          {solution && solutionJSON ? (
-            <Fragment>
-              <div
-                style={{
-                  paddingLeft: 50
-                }}
-              >
-                <Jupyter
-                  defaultStyle={true}
-                  loadMathjax={true}
-                  notebook={solutionJSON}
-                  showCode={true}
-                />
-              </div>
-              <Button
-                color="primary"
-                onClick={this.submitSolution}
-                variant="raised"
-              >
-                Submit
-              </Button>
-            </Fragment>
-          ) : (
-            <Button
-              color="primary"
-              fullWidth
-              onClick={this.solve}
-              variant="raised"
+          <Typography variant="headline">Solution</Typography>
+          <TextField
+            defaultValue={solution && solution.id}
+            fullWidth
+            label="File URL"
+            onChange={this.onSolutionFileChange}
+          />
+          {solution && (
+            <div
+              style={{
+                paddingLeft: 50,
+                textAlign: "left"
+              }}
             >
-              Solve at Google Colaboratory
+              <Jupyter
+                defaultStyle={true}
+                loadMathjax={true}
+                notebook={solution.json}
+                showCode={true}
+              />
+            </div>
+          )}
+          {!onChange && (
+            <Button color="primary" onClick={this.onCommit} variant="raised">
+              Submit
             </Button>
           )}
         </Paper>
-        <Dialog onClose={this.closeDialog} open={!!solutionKey}>
-          <DialogTitle>Solution</DialogTitle>
-          <DialogContent
-            style={{
-              width: 320
-            }}
-          >
-            <Typography>Solution created successful</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button color="secondary" onClick={this.closeDialog}>
-              Close
-            </Button>
-            <a
-              href={
-                "https://colab.research.google.com/notebook#fileId=" +
-                solutionKey
-              }
-              rel="noopener noreferrer"
-              style={{
-                textDecoration: "none"
-              }}
-              target="_blank"
-            >
-              <Button color="primary" variant="raised">
-                Open in Colab
-              </Button>
-            </a>
-          </DialogActions>
-        </Dialog>
       </Fragment>
     );
   }
 }
 
-export default JupyterProblem;
+export default withStyles(styles)(JupyterProblem);

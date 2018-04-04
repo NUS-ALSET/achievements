@@ -6,7 +6,9 @@ import {
   assignmentSolutionRequest,
   assignmentSwitchTab,
   assignmentsAssistantsShowRequest,
-  coursePasswordEnterSuccess
+  coursePasswordEnterSuccess,
+  courseAssignmentsClose,
+  courseAssignmentsOpen
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -41,6 +43,9 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { APP_SETTING } from "../../achievementsApp/config";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
+import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
+import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
+import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -69,11 +74,25 @@ class Assignments extends React.Component {
     course: PropTypes.object.isRequired,
     firebase: PropTypes.object,
     auth: PropTypes.object,
-    courseMembers: PropTypes.object
+    match: PropTypes.object,
+    students: PropTypes.object,
+    courseMembers: PropTypes.array
   };
   state = {
     password: ""
   };
+
+  componentDidMount() {
+    this.props.dispatch(
+      courseAssignmentsOpen(this.props.match.params.courseId)
+    );
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(
+      courseAssignmentsClose(this.props.match.params.courseId)
+    );
+  }
 
   handleTabChange = (event, tabIndex) => {
     this.props.dispatch(assignmentSwitchTab(tabIndex));
@@ -118,6 +137,15 @@ class Assignments extends React.Component {
   };
 
   onProfileCommit = value => {
+    const { course, ui, dispatch } = this.props;
+
+    dispatch(
+      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
+    );
+    this.closeDialog();
+  };
+
+  onPathProblemSolutionCommit = value => {
     const { course, ui, dispatch } = this.props;
 
     dispatch(
@@ -175,7 +203,7 @@ class Assignments extends React.Component {
     const {
       ui,
       classes,
-      courseMembers,
+      students,
       auth,
       dispatch,
       course,
@@ -186,7 +214,7 @@ class Assignments extends React.Component {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!isLoaded(courseMembers)) {
+    } else if (!isLoaded(students)) {
       return <LinearProgress />;
     }
 
@@ -248,9 +276,7 @@ class Assignments extends React.Component {
               </div>
             ))}
         </Toolbar>
-        {APP_SETTING.isSuggesting && (
-          <Typography gutterBottom>{course.description}</Typography>
-        )}
+        <Typography gutterBottom>{course.description}</Typography>
         {AssignmentView}
         <RemoveStudentDialog
           courseId={course.id}
@@ -258,6 +284,14 @@ class Assignments extends React.Component {
           courseMemberName={ui && ui.dialog && ui.dialog.studentName}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "RemoveStudent"}
+        />
+        <MoveStudentDialog
+          courseId={course.id}
+          courses={(ui.dialog && ui.dialog.courses) || []}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "MoveStudent"}
+          studentId={ui && ui.dialog && ui.dialog.studentId}
+          studentName={ui && ui.dialog && ui.dialog.studentName}
         />
         <AddProfileDialog
           dispatch={dispatch}
@@ -289,9 +323,26 @@ class Assignments extends React.Component {
         <AddPathProblemSolutionDialog
           assignment={ui.currentAssignment}
           dispatch={dispatch}
-          onCommit={this.onProfileCommit}
+          onCommit={this.onPathProblemSolutionCommit}
           open={ui.dialog && ui.dialog.type === "PathProblem"}
           pathProblem={ui.dialog.pathProblem}
+          solution={ui.dialog.solution}
+        />
+        <AddPathProgressSolutionDialog
+          assignmentId={ui.currentAssignment && ui.currentAssignment.id}
+          courseId={course.id}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "PathProgress"}
+          pathProgress={ui.dialog && ui.dialog.pathProgress}
+        />
+        <AddAssignmentDialog
+          assignment={ui.dialog && ui.dialog.value}
+          courseId={course && course.id}
+          dispatch={dispatch}
+          open={ui.dialog && ui.dialog.type === "AddAssignment"}
+          paths={(ui.dialog && ui.dialog.paths) || []}
+          problems={(ui.dialog && ui.dialog.problems) || []}
+          uid={currentUser && currentUser.id}
         />
       </Fragment>
     );
@@ -311,7 +362,8 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
-  courseMembers: state.firebase.data.courseMembers,
+  students: state.firebase.data.courseMembers,
+  courseMembers: state.assignments.courseMembers,
   assistants: state.assignments.assistants
 });
 

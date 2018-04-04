@@ -74,6 +74,14 @@ export const assignmentShowEditDialog = assignment => ({
   assignment
 });
 
+// This action required for supress update name field after manual change
+export const ASSIGNMENT_MANUAL_UPDATE_FIELD = "ASSIGNMENT_MANUAL_UPDATE_FIELD";
+export const assignmentManualUpdateField = (field, value) => ({
+  type: ASSIGNMENT_MANUAL_UPDATE_FIELD,
+  field,
+  value
+});
+
 export const UPDATE_NEW_ASSIGNMENT_FIELD = "UPDATE_NEW_ASSIGNMENT_FIELD";
 export const updateNewAssignmentField = (field, value) => ({
   type: UPDATE_NEW_ASSIGNMENT_FIELD,
@@ -193,6 +201,21 @@ export const assignmentPathProblemSolutionRequest = (
   assignment,
   problemOwner,
   problemId,
+  solution
+});
+
+export const ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST =
+  "ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST";
+export const assignmentPathProgressSolutionRequest = (
+  assignment,
+  pathOwner,
+  pathId,
+  solution
+) => ({
+  type: ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
+  assignment,
+  pathOwner,
+  pathId,
   solution
 });
 
@@ -387,6 +410,13 @@ export const assignmentPathProblemFetchSuccess = pathProblem => ({
   pathProblem
 });
 
+export const ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS =
+  "ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS";
+export const assignmentPathProgressFetchSuccess = pathProgress => ({
+  type: ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS,
+  pathProgress
+});
+
 export const COURSE_REMOVE_STUDENT_DIALOG_SHOW =
   "COURSE_REMOVE_STUDENT_DIALOG_SHOW";
 export const courseRemoveStudentDialogShow = (
@@ -398,4 +428,62 @@ export const courseRemoveStudentDialogShow = (
   courseId,
   studentId,
   studentName
+});
+
+export const COURSE_MOVE_STUDENT_DIALOG_SHOW =
+  "COURSE_MOVE_STUDENT_DIALOG_SHOW";
+export const courseMoveStudentDialogShow = (
+  courseId,
+  studentId,
+  studentName
+) => ({
+  type: COURSE_MOVE_STUDENT_DIALOG_SHOW,
+  courseId,
+  studentId,
+  studentName
+});
+
+export const COURSE_MOVE_STUDENT_REQUEST = "COURSE_MOVE_STUDENT_REQUEST";
+export const courseMoveStudentRequest = (
+  sourceCourseId,
+  targetCourseId,
+  studentId
+) => ({
+  type: COURSE_MOVE_STUDENT_REQUEST,
+  sourceCourseId,
+  targetCourseId,
+  studentId
+});
+
+export const COURSE_MOVE_STUDENT_SUCCESS = "COURSE_MOVE_STUDENT_SUCCESS";
+export const courseMoveStudentSuccess = (
+  sourceCourseId,
+  targetCourseId,
+  studentId
+) => ({
+  type: COURSE_MOVE_STUDENT_SUCCESS,
+  sourceCourseId,
+  targetCourseId,
+  studentId
+});
+
+export const COURSE_MOVE_STUDENT_FAIL = "COURSE_MOVE_STUDENT_FAIL";
+export const courseMoveStudentFail = (
+  sourceCourseId,
+  targetCourseId,
+  studentId,
+  reason
+) => ({
+  type: COURSE_MOVE_STUDENT_FAIL,
+  sourceCourseId,
+  targetCourseId,
+  studentId,
+  reason
+});
+
+export const COURSE_MY_COURSES_FETCH_SUCCESS =
+  "COURSE_MY_COURSES_FETCH_SUCCESS";
+export const courseMyCoursesFetchSuccess = courses => ({
+  type: COURSE_MY_COURSES_FETCH_SUCCESS,
+  courses
 });

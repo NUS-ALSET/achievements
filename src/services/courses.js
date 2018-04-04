@@ -15,6 +15,33 @@ import firebase from "firebase";
 
 const ERROR_TIMEOUT = 6000;
 
+export const ASSIGNMENTS_TYPES = {
+  Text: {
+    id: "Text",
+    caption: "Text"
+  },
+  Profile: {
+    id: "Profile",
+    caption: "Enter Code Combat Profile"
+  },
+  CodeCombat: {
+    id: "CodeCombat",
+    caption: "Complete Code Combat Level"
+  },
+  CodeCombat_Number: {
+    id: "CodeCombat_Number",
+    caption: "Complete Number of Code Combat Levels"
+  },
+  PathProblem: {
+    id: "PathProblem",
+    caption: "Path Problem"
+  },
+  PathProgress: {
+    id: "PathProgress",
+    caption: "Path Progress"
+  }
+};
+
 export class CoursesService {
   errorTimeout = 0;
 
@@ -127,6 +154,7 @@ export class CoursesService {
     return firebase
       .push("/courses", {
         name,
+        createdAt: new Date().getTime(),
         instructorName: this.getUser("displayName"),
         description: description || "",
         owner: this.getUser("uid")
@@ -184,6 +212,7 @@ export class CoursesService {
 
     // Check that orderIndex correct
     assignment.orderIndex = 1;
+    assignment.createdAt = new Date().getTime();
     Object.keys(assignments || {})
       .map(id => assignments[id])
       .forEach(existing => {
@@ -242,23 +271,23 @@ export class CoursesService {
       .catch(err => this.store.dispatch(notificationShow(err.message)));
   }
 
-  /**
-   * This method accepts student's solution and put's it at public section
-   * @param courseId
-   * @param assignment
-   * @param studentId
-   */
-  acceptSolution(courseId, assignment, studentId) {
-    return firebase
-      .ref(`/solutions/${courseId}/${studentId}/${assignment.id}`)
-      .once("value")
-      .then(solution => {
-        return firebase
-          .ref(`/visibleSolutions/${courseId}/${studentId}/${assignment.id}`)
-          .set(solution.val());
-      })
-      .catch(err => this.store.dispatch(notificationShow(err.message)));
-  }
+  // /**
+  //  * This method accepts student's solution and put's it at public section
+  //  * @param courseId
+  //  * @param assignment
+  //  * @param studentId
+  //  */
+  // acceptSolution(courseId, assignment, studentId) {
+  //   return firebase
+  //     .ref(`/solutions/${courseId}/${studentId}/${assignment.id}`)
+  //     .once("value")
+  //     .then(solution => {
+  //       return firebase
+  //         .ref(`/visibleSolutions/${courseId}/${studentId}/${assignment.id}`)
+  //         .set(solution.val());
+  //     })
+  //     .catch(err => this.store.dispatch(notificationShow(err.message)));
+  // }
 
   getProfileStatus(userId) {
     return firebase
@@ -757,11 +786,33 @@ export class CoursesService {
       .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
   }
 
+  fetchCourses(userKey) {
+    if (userKey.length <= 1) {
+      return Promise.resolve();
+    }
+    return firebase
+      .database()
+      .ref("/courses/")
+      .orderByChild("owner")
+      .equalTo(userKey)
+      .once("value")
+      .then(courses => courses.val() || {})
+      .then(courses =>
+        Object.keys(courses).map(id => ({ ...courses[id], id }))
+      );
+  }
+
   removeStudentFromCourse(courseId, studentId) {
     return firebase
       .database()
       .ref(`/courseMembers/${courseId}/${studentId}`)
       .remove()
+      .then(() =>
+        firebase
+          .database()
+          .ref(`/studentJoinedCourses/${studentId}/${courseId}`)
+          .remove()
+      )
       .then(() =>
         firebase
           .database()
@@ -774,6 +825,34 @@ export class CoursesService {
           .ref(`/visibleSolutions/${courseId}/${studentId}`)
           .remove()
       );
+  }
+
+  moveStudent(sourceCourseId, targetCourseId, studentId) {
+    return this.removeStudentFromCourse(sourceCourseId, studentId).then(() =>
+      firebase
+        .database()
+        .ref(`/coursePasswords/${targetCourseId}`)
+        .once("value")
+        .then(data => data.val())
+        .then(password =>
+          firebase
+            .database()
+            .ref(`/studentCoursePasswords/${targetCourseId}/${studentId}`)
+            .set(password)
+        )
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/studentJoinedCourses/${studentId}/${targetCourseId}`)
+            .set(true)
+        )
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/courseMembers/${targetCourseId}/${studentId}`)
+            .set(true)
+        )
+    );
   }
 }
 
