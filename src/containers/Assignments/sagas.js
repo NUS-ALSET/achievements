@@ -49,9 +49,7 @@ import {
   courseMoveStudentSuccess,
   ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
   assignmentPathProgressFetchSuccess,
-  ASSIGNMENT_SHOW_EDIT_DIALOG,
-  ASSIGNMENT_MANUAL_UPDATE_FIELD,
-  assignmentManualUpdateField
+  ASSIGNMENT_SHOW_EDIT_DIALOG
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -102,10 +100,6 @@ export function* addAssignmentRequestHandle(action) {
     yield put(assignmentAddFail(err.message));
     yield put(notificationShow(err.message));
   }
-}
-
-export function* assignmentManualUpdateFieldHandler(action) {
-  yield put(assignmentManualUpdateField(action.field, action.value));
 }
 
 export function* updateNewAssignmentFieldHandler(action) {
@@ -516,13 +510,6 @@ export default [
     yield takeLatest(
       ASSIGNMENT_SHOW_EDIT_DIALOG,
       assignmentShowEditDialogHandler
-    );
-  },
-  function* watchAssignmentManualUpdateField() {
-    yield throttle(
-      APP_SETTING.defaultThrottle,
-      ASSIGNMENT_MANUAL_UPDATE_FIELD,
-      assignmentManualUpdateFieldHandler
     );
   },
   function* watchUpdateNewAssignmentField() {
