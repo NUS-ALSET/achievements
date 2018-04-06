@@ -36,18 +36,12 @@ export const problemSolveSuccess = (problemId, solutionKey) => ({
   solutionKey
 });
 
-export const PROBLEM_SOLVE_FAIL = "PROBLEM_SOLVE_FAIL";
-export const problemSolveFail = (problemId, reason) => ({
-  type: PROBLEM_SOLVE_FAIL,
-  problemId,
-  reason
-});
-
 export const PROBLEM_SOLUTION_REFRESH_REQUEST =
   "PROBLEM_SOLUTION_REFRESH_REQUEST";
-export const problemSolutionRefreshRequest = problemId => ({
+export const problemSolutionRefreshRequest = (problemId, fileId) => ({
   type: PROBLEM_SOLUTION_REFRESH_REQUEST,
-  problemId
+  problemId,
+  fileId
 });
 
 export const PROBLEM_SOLUTION_REFRESH_SUCCESS =

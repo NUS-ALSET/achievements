@@ -110,6 +110,7 @@ export function* updateNewAssignmentFieldHandler(action) {
   const location = window.location.href.replace(/#.*$/, "");
   const data = yield select(state => ({
     assignment: state.assignments.dialog.value,
+    manualUpdates: state.assignments.dialog.manualUpdates || {},
     uid: state.firebase.auth.uid
   }));
   let problems;
@@ -135,9 +136,14 @@ export function* updateNewAssignmentFieldHandler(action) {
 
         yield put(assignmentPathsFetchSuccess(paths));
         yield put(updateNewAssignmentField("path", data.uid));
-        yield put(
-          updateNewAssignmentField("details", `${location}#/paths/${data.uid}`)
-        );
+        if (!data.manualUpdates.details) {
+          yield put(
+            updateNewAssignmentField(
+              "details",
+              `${location}#/paths/${data.uid}`
+            )
+          );
+        }
       }
       break;
     case "level":
@@ -156,13 +162,20 @@ export function* updateNewAssignmentFieldHandler(action) {
       );
 
       yield put(assignmentProblemsFetchSuccess(problems));
-      yield put(
-        updateNewAssignmentField(
-          "details",
-          `${location}#/paths/${action.value || data.uid}`
-        )
-      );
+      if (!data.manualUpdates.name) {
+        yield put(updateNewAssignmentField("name", "Default Path"));
+      }
       yield put(updateNewAssignmentField("problem", ""));
+      break;
+    case "problem":
+      if (!data.manualUpdates.details) {
+        yield put(
+          updateNewAssignmentField(
+            "details",
+            `${location}#/paths/${assignment.path}/${assignment.problem}`
+          )
+        );
+      }
       break;
     default:
   }
@@ -437,7 +450,14 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
       action.problemOwner,
       action.problemId
     );
-    yield put(assignmentPathProblemFetchSuccess(pathProblem));
+    yield put(
+      assignmentPathProblemFetchSuccess(pathProblem, {
+        id:
+          action.solution &&
+          action.solution.originalSolution &&
+          action.solution.originalSolution.value
+      })
+    );
   } catch (err) {
     yield put(notificationShow(err.message));
   }

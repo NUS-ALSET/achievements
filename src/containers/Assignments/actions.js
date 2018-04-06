@@ -405,9 +405,10 @@ export const assignmentProblemsFetchSuccess = problems => ({
 
 export const ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS =
   "ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS";
-export const assignmentPathProblemFetchSuccess = pathProblem => ({
+export const assignmentPathProblemFetchSuccess = (pathProblem, solution) => ({
   type: ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS,
-  pathProblem
+  pathProblem,
+  solution
 });
 
 export const ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS =
