@@ -260,9 +260,10 @@ export class PathsService {
    *
    * @param {PathProblem} pathProblem
    * @param {*} solution
+   * @param {Object} [json]
    * @returns {Boolean}
    */
-  validateSolution(pathProblem, solution) {
+  validateSolution(pathProblem, solution, json) {
     switch (pathProblem.type) {
       case "youtube":
         if (isEmpty(solution.youtubeEvents)) {
@@ -277,6 +278,23 @@ export class PathsService {
         });
         break;
       case "jupyter":
+        if (json) {
+          const frozenSolution = json.cells
+            .filter(cell => cell.source.join().trim())
+            .slice(-pathProblem.frozen);
+          const frozenProblem = pathProblem.problemJSON.cells
+            .filter(cell => cell.source.join().trim())
+            .slice(-pathProblem.frozen);
+
+          frozenProblem.forEach((cell, index) => {
+            const solution = frozenSolution[index];
+
+            if (!solution || cell.source.join() !== solution.source.join()) {
+              throw new Error(`Last ${pathProblem.frozen} blocks are changed!`);
+            }
+            return true;
+          });
+        }
         break;
       default:
         return true;
@@ -296,12 +314,14 @@ export class PathsService {
 
     switch (pathProblem.type) {
       case "jupyter":
-        return this.fetchFile(this.getFileId(solution)).then(() =>
-          this.firebase
-            .database()
-            .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-            .set(solution)
-        );
+        return this.fetchFile(this.getFileId(solution))
+          .then(json => this.validateSolution(pathProblem, solution, json))
+          .then(() =>
+            this.firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution)
+          );
       case "youtube":
         return this.firebase
           .database()
