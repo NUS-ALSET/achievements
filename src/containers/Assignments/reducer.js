@@ -192,7 +192,8 @@ export const assignments = (
         ...state,
         dialog: {
           ...state.dialog,
-          pathProblem: action.pathProblem
+          pathProblem: action.pathProblem,
+          solution: action.solution
         }
       };
     case ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS:

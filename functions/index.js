@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
@@ -116,6 +117,24 @@ function processProfileRefreshRequest(data, resolve) {
       return Promise.resolve();
   }
 }
+
+/*
+exports.handleNewProblemSolution = functions.database
+  .ref("/problemSolutions/{problemId}/{studentId}")
+  .onWrite(event => {
+    const { problemId, studentId } = event.params;
+
+         return fetch(APP_SETTING.jupyterLambda, {
+      body: JSON.stringify(solution),
+      cache: "no-cache",
+      headers: {
+        "content-type": "application/json"
+      },
+      method: "POST"
+    }).then(response => response.json());
+
+  });
+  */
 
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
