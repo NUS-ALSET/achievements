@@ -38,8 +38,12 @@ export class PathsService {
   getFileId(url) {
     let result = /file\/d\/([^/]+)/.exec(url);
     if (result && result[1]) return result[1];
+    result = /id=([^&/]*)/.exec(url);
+    if (result && result[1]) return result[1];
+    result = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(url);
+    if (result && result[1]) return result[1];
 
-    throw new Error("Unable fetch file id");
+    return url;
   }
 
   /**
@@ -156,7 +160,9 @@ export class PathsService {
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
           return reject(
-            new Error("Unable fetch file. Make sure that it's published")
+            new Error(
+              "Unable fetch file. Make sure that it's published." + fileId
+            )
           );
         }
         resolve(data);
@@ -254,9 +260,10 @@ export class PathsService {
    *
    * @param {PathProblem} pathProblem
    * @param {*} solution
+   * @param {Object} [json]
    * @returns {Boolean}
    */
-  validateSolution(pathProblem, solution) {
+  validateSolution(pathProblem, solution, json) {
     switch (pathProblem.type) {
       case "youtube":
         if (isEmpty(solution.youtubeEvents)) {
@@ -269,6 +276,25 @@ export class PathsService {
             );
           }
         });
+        break;
+      case "jupyter":
+        if (json) {
+          const frozenSolution = json.cells
+            .filter(cell => cell.source.join().trim())
+            .slice(-pathProblem.frozen);
+          const frozenProblem = pathProblem.problemJSON.cells
+            .filter(cell => cell.source.join().trim())
+            .slice(-pathProblem.frozen);
+
+          frozenProblem.forEach((cell, index) => {
+            const solution = frozenSolution[index];
+
+            if (!solution || cell.source.join() !== solution.source.join()) {
+              throw new Error(`Last ${pathProblem.frozen} blocks are changed!`);
+            }
+            return true;
+          });
+        }
         break;
       default:
         return true;
@@ -285,12 +311,17 @@ export class PathsService {
    */
   submitSolution(uid, pathProblem, solution) {
     this.validateSolution(pathProblem, solution);
+
     switch (pathProblem.type) {
       case "jupyter":
-        return this.firebase
-          .database()
-          .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-          .set(solution);
+        return this.fetchFile(this.getFileId(solution))
+          .then(json => this.validateSolution(pathProblem, solution, json))
+          .then(() =>
+            this.firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution)
+          );
       case "youtube":
         return this.firebase
           .database()

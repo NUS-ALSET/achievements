@@ -1,4 +1,5 @@
 import {
+  ASSIGNMENT_MANUAL_UPDATE_FIELD,
   ASSIGNMENTS_SORT_CHANGE,
   UPDATE_NEW_ASSIGNMENT_FIELD
 } from "../containers/Assignments/actions";
@@ -14,6 +15,7 @@ export class ActionsService {
   bannedActions = [
     COURSE_NEW_DIALOG_CHANGE,
     COURSE_NEW_REQUEST,
+    ASSIGNMENT_MANUAL_UPDATE_FIELD,
     ASSIGNMENTS_SORT_CHANGE,
     UPDATE_NEW_ASSIGNMENT_FIELD
   ];

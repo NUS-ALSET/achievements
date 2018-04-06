@@ -123,7 +123,7 @@ class JupyterProblem extends React.PureComponent {
             label="File URL"
             onChange={this.onSolutionFileChange}
           />
-          {solution && (
+          {solution && solution.json && (
             <div
               style={{
                 paddingLeft: 50,

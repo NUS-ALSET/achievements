@@ -75,10 +75,11 @@ export function* problemInitRequestHandler(action) {
 export function* problemSolveUpdateHandler(action) {
   if (/^http[s]?:\/\/.+/.test(action.fileId)) {
     const fileId = yield call(pathsService.getFileId, action.fileId);
+
     yield put(
       problemSolutionSubmitRequest(action.pathId, action.problemId, fileId)
     );
-    yield put(problemSolutionRefreshRequest(action.problemId));
+    yield put(problemSolutionRefreshRequest(action.problemId, fileId));
   } else {
     yield put(notificationShow("Malformed solution URL"));
   }
@@ -88,11 +89,19 @@ export function* problemSolutionRefreshRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
 
   try {
-    const pathSolution = yield call(
-      [pathsService, pathsService.fetchSolutionFile],
-      action.problemId,
-      uid
-    );
+    let pathSolution;
+    if (action.fileId) {
+      pathSolution = {
+        json: yield call([pathsService, pathsService.fetchFile], action.fileId),
+        id: action.fileId
+      };
+    } else {
+      pathSolution = yield call(
+        [pathsService, pathsService.fetchSolutionFile],
+        action.problemId,
+        uid
+      );
+    }
 
     yield put(problemSolutionRefreshSuccess(action.problemId, pathSolution));
   } catch (err) {
