@@ -1,8 +1,11 @@
 import {
+  PROBLEM_CHECK_SOLUTION_REQUEST,
   PROBLEM_INIT_REQUEST,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_SUBMIT_REQUEST,
   PROBLEM_SOLVE_UPDATE,
+  problemCheckSolutionFail,
+  problemCheckSolutionRequest,
   problemInitFail,
   problemInitSuccess,
   problemSolutionRefreshFail,
@@ -76,9 +79,6 @@ export function* problemSolveUpdateHandler(action) {
   if (/^http[s]?:\/\/.+/.test(action.fileId)) {
     const fileId = yield call(pathsService.getFileId, action.fileId);
 
-    yield put(
-      problemSolutionSubmitRequest(action.pathId, action.problemId, fileId)
-    );
     yield put(problemSolutionRefreshRequest(action.problemId, fileId));
   } else {
     yield put(notificationShow("Malformed solution URL"));
@@ -102,10 +102,43 @@ export function* problemSolutionRefreshRequestHandler(action) {
         uid
       );
     }
-
+    yield put(
+      problemCheckSolutionRequest(
+        action.problemId,
+        pathSolution.id,
+        pathSolution.json
+      )
+    );
     yield put(problemSolutionRefreshSuccess(action.problemId, pathSolution));
   } catch (err) {
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* problemCheckSolutionRequestHandler(action) {
+  const data = yield select(state => ({
+    uid: state.firebase.auth.uid,
+    pathProblem:
+      state.problem.pathProblem || state.assignments.dialog.pathProblem
+  }));
+  try {
+    yield call(
+      [pathsService, pathsService.validateSolution],
+      data.uid,
+      data.pathProblem,
+      action.fileId,
+      action.solution
+    );
+  } catch (err) {
+    yield put(
+      problemCheckSolutionFail(
+        action.problemId,
+        action.fileId,
+        action.solution,
+        err.message
+      )
+    );
     yield put(notificationShow(err.message));
   }
 }
@@ -159,6 +192,12 @@ export default [
     yield takeLatest(
       PROBLEM_SOLUTION_REFRESH_REQUEST,
       problemSolutionRefreshRequestHandler
+    );
+  },
+  function* watchProblemCheckSolutionRequest() {
+    yield takeLatest(
+      PROBLEM_CHECK_SOLUTION_REQUEST,
+      problemCheckSolutionRequestHandler
     );
   },
   function* watchProblemSolutionSubmitRequest() {

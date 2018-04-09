@@ -10,6 +10,8 @@ const profilesRefreshApproach =
   (functions.config().profiles &&
     functions.config().profiles["refresh-approach"]) ||
   "none";
+const jupyterLambdaProcessor =
+  "https://9ceqb24lg2.execute-api.ap-southeast-1.amazonaws.com/Prod";
 
 admin.initializeApp(functions.config().firebase);
 
@@ -118,23 +120,37 @@ function processProfileRefreshRequest(data, resolve) {
   }
 }
 
-/*
 exports.handleNewProblemSolution = functions.database
-  .ref("/problemSolutions/{problemId}/{studentId}")
+  .ref("/jupyterSolutionsQueue/solutions/{studentId}/{problemId}/{requestId}")
   .onWrite(event => {
-    const { problemId, studentId } = event.params;
+    console.log(event);
+    const { problemId, requestId, studentId } = event.params;
+    const answerRef = admin
+      .database()
+      .ref(
+        `/jupyterSolutionsQueue/answers/${studentId}/${problemId}/${requestId}`
+      );
 
-         return fetch(APP_SETTING.jupyterLambda, {
-      body: JSON.stringify(solution),
+    return fetch(jupyterLambdaProcessor, {
+      body: JSON.stringify(event.data.val()),
       cache: "no-cache",
       headers: {
         "content-type": "application/json"
       },
       method: "POST"
-    }).then(response => response.json());
-
+    })
+      .then(() => answerRef.set(true))
+      .catch(() => answerRef.set(false))
+      .then(() =>
+        admin
+          .database()
+          .ref(
+            "/jupyterSolutionsQueue/solutions/" +
+              `${studentId}/${problemId}/${requestId}`
+          )
+          .remove()
+      );
   });
-  */
 
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
