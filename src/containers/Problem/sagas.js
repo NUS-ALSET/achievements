@@ -12,7 +12,6 @@ import {
   problemSolutionRefreshRequest,
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
-  problemSolutionSubmitRequest,
   problemSolutionSubmitSuccess
 } from "./actions";
 import {

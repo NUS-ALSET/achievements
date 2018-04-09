@@ -307,12 +307,13 @@ export class PathsService {
               firebase
                 .database()
                 .ref(`${answerPath}/${solutionKey}`)
-                .on("value", response => {
-                  debugger;
-                  return response.val()
-                    ? resolve()
-                    : reject(new Error("Unable process provided solution"));
-                });
+                .on(
+                  "child_added",
+                  response =>
+                    response.val()
+                      ? resolve()
+                      : reject(new Error("Unable process provided solution"))
+                );
               return firebase
                 .database()
                 .ref(
