@@ -7,6 +7,9 @@ Use one of options to select approach for fetching users' achievements:
  * `firebase functions:config:set profiles.refresh-approach=queue` - for processing requests by firebase queue
  * `firebase functions:config:set profiles.refresh-approach=none` - for disabling any processing requests
 
+Google API Key owner should enable Google Drive API at console:
+ * https://console.developers.google.com/apis/library/drive.googleapis.com/?q=google.drive&id=e44a1596-da14-427c-9b36-5eb6acce3775 - make sure that correct project selected
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -28,7 +31,6 @@ It correctly bundles React in production mode and optimizes the build for the be
 ### `firebase deploy`
 
 Deploys the app and security rules to firebase. <br>
-
 
 <br>
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
