@@ -151,7 +151,7 @@ class Assignments extends React.Component {
     dispatch(
       assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
     );
-    this.closeDialog();
+    // this.closeDialog();
   };
 
   closeDialog = () => {

@@ -65,6 +65,7 @@ import {
 import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 import { pathsService } from "../../services/paths";
+import { problemSolveUpdate } from "../Problem/actions";
 
 // Since we're able to check 1 and only 1 course at once then we'll keep
 // course members channel at almost global variable...
@@ -192,12 +193,14 @@ export function* assignmentSolutionRequestHandler(action) {
       [coursesService, coursesService.submitSolution],
       action.courseId,
       { ...assignment, id: action.assignmentId },
+
       action.solution
     );
     yield put(assignmentSolutionSuccess(action.courseId, action.assignmentId));
     yield put(
       notificationShow(`Solution submitted for assignment "${assignment.name}"`)
     );
+    yield put(assignmentCloseDialog());
   } catch (err) {
     yield put(
       assignmentSolutionFail(action.courseId, action.assignmentId, err.message)
@@ -458,6 +461,19 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
           action.solution.originalSolution.value
       })
     );
+    if (
+      action.solution &&
+      action.solution.originalSolution &&
+      action.solution.originalSolution.value
+    ) {
+      yield put(
+        problemSolveUpdate(
+          pathProblem.pathId,
+          pathProblem.problemId,
+          action.solution.originalSolution.value
+        )
+      );
+    }
   } catch (err) {
     yield put(notificationShow(err.message));
   }
@@ -473,7 +489,6 @@ export function* assignmentPathProgressSolutionRequestHandler(action) {
       action.pathOwner,
       action.pathId
     );
-
     yield put(assignmentPathProgressFetchSuccess(pathProgress));
   } catch (err) {
     console.error(err.stack);

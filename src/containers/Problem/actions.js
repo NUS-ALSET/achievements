@@ -52,6 +52,36 @@ export const problemSolutionRefreshSuccess = (problemId, payload) => ({
   payload
 });
 
+export const PROBLEM_CHECK_SOLUTION_REQUEST = "PROBLEM_CHECK_SOLUTION_REQUEST";
+export const problemCheckSolutionRequest = (problemId, fileId, solution) => ({
+  type: PROBLEM_CHECK_SOLUTION_REQUEST,
+  problemId,
+  fileId,
+  solution
+});
+
+export const PROBLEM_CHECK_SOLUTION_SUCCESS = "PROBLEM_CHECK_SOLUTION_SUCCESS";
+export const problemCheckSolutionSuccess = (problemId, fileId, solution) => ({
+  type: PROBLEM_CHECK_SOLUTION_SUCCESS,
+  problemId,
+  fileId,
+  solution
+});
+
+export const PROBLEM_CHECK_SOLUTION_FAIL = "PROBLEM_CHECK_SOLUTION_FAIL";
+export const problemCheckSolutionFail = (
+  problemId,
+  fileId,
+  solution,
+  reason
+) => ({
+  type: PROBLEM_CHECK_SOLUTION_FAIL,
+  problemId,
+  fileId,
+  solution,
+  reason
+});
+
 export const PROBLEM_SOLUTION_REFRESH_FAIL = "PROBLEM_SOLUTION_REFRESH_FAIL";
 export const problemSolutionRefreshFail = (problemId, reason) => ({
   type: PROBLEM_SOLUTION_REFRESH_FAIL,

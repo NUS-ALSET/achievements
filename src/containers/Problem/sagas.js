@@ -1,15 +1,16 @@
 import {
+  PROBLEM_CHECK_SOLUTION_REQUEST,
   PROBLEM_INIT_REQUEST,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_SUBMIT_REQUEST,
   PROBLEM_SOLVE_UPDATE,
+  problemCheckSolutionFail,
   problemInitFail,
   problemInitSuccess,
   problemSolutionRefreshFail,
   problemSolutionRefreshRequest,
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
-  problemSolutionSubmitRequest,
   problemSolutionSubmitSuccess
 } from "./actions";
 import {
@@ -73,20 +74,17 @@ export function* problemInitRequestHandler(action) {
 }
 
 export function* problemSolveUpdateHandler(action) {
-  if (/^http[s]?:\/\/.+/.test(action.fileId)) {
-    const fileId = yield call(pathsService.getFileId, action.fileId);
+  const fileId = yield call(pathsService.getFileId, action.fileId);
 
-    yield put(
-      problemSolutionSubmitRequest(action.pathId, action.problemId, fileId)
-    );
-    yield put(problemSolutionRefreshRequest(action.problemId, fileId));
-  } else {
-    yield put(notificationShow("Malformed solution URL"));
-  }
+  yield put(problemSolutionRefreshRequest(action.problemId, fileId));
 }
 
 export function* problemSolutionRefreshRequestHandler(action) {
-  const uid = yield select(state => state.firebase.auth.uid);
+  const data = yield select(state => ({
+    uid: state.firebase.auth.uid,
+    pathProblem:
+      state.problem.pathProblem || state.assignments.dialog.pathProblem
+  }));
 
   try {
     let pathSolution;
@@ -99,13 +97,49 @@ export function* problemSolutionRefreshRequestHandler(action) {
       pathSolution = yield call(
         [pathsService, pathsService.fetchSolutionFile],
         action.problemId,
-        uid
+        data.uid
       );
     }
-
+    yield call(
+      [pathsService, pathsService.validateSolution],
+      data.uid,
+      data.pathProblem,
+      pathSolution.id,
+      pathSolution.json
+    );
     yield put(problemSolutionRefreshSuccess(action.problemId, pathSolution));
+    yield put(notificationShow("Solution is valid"));
   } catch (err) {
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* problemCheckSolutionRequestHandler(action) {
+  const data = yield select(state => ({
+    uid: state.firebase.auth.uid,
+    pathProblem:
+      state.problem.pathProblem || state.assignments.dialog.pathProblem
+  }));
+  try {
+    yield put(notificationShow("Checking solution"));
+    yield call(
+      [pathsService, pathsService.validateSolution],
+      data.uid,
+      data.pathProblem,
+      action.fileId,
+      action.solution
+    );
+    yield put(notificationShow("Solution is valid"));
+  } catch (err) {
+    yield put(
+      problemCheckSolutionFail(
+        action.problemId,
+        action.fileId,
+        action.solution,
+        err.message
+      )
+    );
     yield put(notificationShow(err.message));
   }
 }
@@ -159,6 +193,12 @@ export default [
     yield takeLatest(
       PROBLEM_SOLUTION_REFRESH_REQUEST,
       problemSolutionRefreshRequestHandler
+    );
+  },
+  function* watchProblemCheckSolutionRequest() {
+    yield takeLatest(
+      PROBLEM_CHECK_SOLUTION_REQUEST,
+      problemCheckSolutionRequestHandler
     );
   },
   function* watchProblemSolutionSubmitRequest() {
