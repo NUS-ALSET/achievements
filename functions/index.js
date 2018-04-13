@@ -142,11 +142,11 @@ exports.handleNewProblemSolution =
   functions.database
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
-      const data = change.after.val().solution;
+      const data = change.after.val();
       axios({
         url: jupyterLambdaProcessor,
         method: "post",
-        data: change.after.val().solution
+        data: data.solution
       })
         .then(response =>
           admin
