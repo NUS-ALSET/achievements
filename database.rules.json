@@ -114,7 +114,7 @@
     "jupyterSolutionsQueue": {
       "answers": {
         "$taskKey": {
-          ".read": "auth != null && data.child('owner').val() == auth.uid",
+          ".read": "auth != null",
           ".write": false
         }
       },
