@@ -309,7 +309,7 @@ export class PathsService {
                 .on("value", response => {
                   if (response.val() === null) return;
                   return response.val()
-                    ? resolve()
+                    ? resolve(response.val().solution.ipynb)
                     : reject(
                         new Error("Error occurs during solutions execution")
                       );
