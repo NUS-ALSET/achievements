@@ -100,15 +100,19 @@ export function* problemSolutionRefreshRequestHandler(action) {
         data.uid
       );
     }
-    yield call(
+    const solution = yield call(
       [pathsService, pathsService.validateSolution],
       data.uid,
       data.pathProblem,
       pathSolution.id,
       pathSolution.json
     );
-    yield put(problemSolutionRefreshSuccess(action.problemId, pathSolution));
-    yield put(notificationShow("Solution is valid"));
+    yield put(
+      problemSolutionRefreshSuccess(action.problemId, {
+        id: pathSolution.id,
+        json: solution
+      })
+    );
   } catch (err) {
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
     yield put(notificationShow(err.message));
