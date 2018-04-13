@@ -7,6 +7,7 @@ import {
   problemCheckSolutionFail,
   problemInitFail,
   problemInitSuccess,
+  problemSolutionProvidedSuccess,
   problemSolutionRefreshFail,
   problemSolutionRefreshRequest,
   problemSolutionRefreshSuccess,
@@ -100,6 +101,9 @@ export function* problemSolutionRefreshRequestHandler(action) {
         data.uid
       );
     }
+    yield put(
+      problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
+    );
     const solution = yield call(
       [pathsService, pathsService.validateSolution],
       data.uid,
