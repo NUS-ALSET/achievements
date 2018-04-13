@@ -11,7 +11,7 @@ const profilesRefreshApproach =
     functions.config().profiles["refresh-approach"]) ||
   "none";
 const jupyterLambdaProcessor =
-  "https://9ceqb24lg2.execute-api.ap-southeast-1.amazonaws.com/Prod";
+  "https://o6rpv1ofri.execute-api.ap-southeast-1.amazonaws.com/Prod";
 
 admin.initializeApp();
 
@@ -123,24 +123,27 @@ function processProfileRefreshRequest(data, resolve) {
 exports.handleNewProblemSolution =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
   functions.database
-    .ref("/jupyterSolutionsQueue/solutions/{studentId}/{problemId}/{requestId}")
-    .onWrite((change, context) => {
-      const { requestId } = context.params;
+    .ref("/jupyterSolutionsQueue/tasks/{requetsId}")
+    .onWrite(change => {
+      const data = change.after.val().solution;
       axios({
         url: jupyterLambdaProcessor,
         method: "post",
-        data: change.after.val()
+        data: change.after.val().solution
       })
-        .then(() =>
+        .then(response =>
           admin
             .database()
-            .ref(`/jupyterSolutionsQueue/answers/${requestId}`)
-            .set(true)
+            .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+            .set({
+              owner: data.owner,
+              solution: response.data
+            })
         )
         .catch(() =>
           admin
             .database()
-            .ref(`/jupyterSolutionsQueue/answers/${requestId}`)
+            .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
             .set(false)
         );
     });
@@ -169,11 +172,14 @@ exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
             method: "post",
             data: data.solution
           })
-            .then(() =>
+            .then(response =>
               admin
                 .database()
                 .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
-                .set(true)
+                .set({
+                  owner: data.owner,
+                  solution: response.data
+                })
             )
             .catch(() =>
               admin
