@@ -4,7 +4,7 @@
  * @created 11.03.18
  */
 
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Dialog, {
@@ -13,6 +13,8 @@ import Dialog, {
   DialogTitle
 } from "material-ui/Dialog/index";
 import Button from "material-ui/Button";
+import LinearProgress from "material-ui/Progress/LinearProgress";
+
 import { assignmentCloseDialog } from "../../containers/Assignments/actions";
 import ProblemView from "../problemViews/ProblemView";
 
@@ -24,6 +26,12 @@ const styles = () => ({
     height: "80%",
     transition: "all 0.5s ease !important"
   },
+  progress: {
+    position: "fixed",
+    top: 64,
+    left: 0,
+    width: "100%"
+  },
   loading: { transition: "all 0.5s ease !important" }
 });
 
@@ -31,6 +39,7 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
+    loadingSolution: PropTypes.bool,
     pathProblem: PropTypes.any,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
@@ -47,41 +56,58 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
   onCommitClick = () => this.props.onCommit(this.state.problemSolution);
 
   render() {
-    const { classes, dispatch, open, pathProblem, solution } = this.props;
+    const {
+      classes,
+      dispatch,
+      loadingSolution,
+      open,
+      pathProblem,
+      solution
+    } = this.props;
 
     return (
-      <Dialog
-        classes={{
-          paper: pathProblem ? classes.dialog : classes.loading
-        }}
-        fullWidth
-        onClose={this.onClose}
-        open={open}
-      >
-        <DialogTitle>Set Assignment Solution</DialogTitle>
-        <DialogContent
-          style={{
-            textAlign: "center",
-            overflowX: "hidden"
+      <Fragment>
+        {loadingSolution && (
+          <LinearProgress classes={{ root: classes.progress }} />
+        )}
+        <Dialog
+          classes={{
+            paper: pathProblem ? classes.dialog : classes.loading
           }}
+          fullWidth
+          onClose={this.onClose}
+          open={open}
         >
-          <ProblemView
-            dispatch={dispatch}
-            inDialog={true}
-            onProblemChange={this.onProblemChange}
-            pathProblem={pathProblem}
-            solution={solution}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button color="secondary" onClick={this.onClose}>
-            Cancel
-          </Button>
-          <Button color="primary" onClick={this.onCommitClick} variant="raised">
-            Commit
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <DialogTitle>Set Assignment Solution</DialogTitle>
+          <DialogContent
+            style={{
+              textAlign: "center",
+              overflowX: "hidden"
+            }}
+          >
+            <ProblemView
+              dispatch={dispatch}
+              inDialog={true}
+              onProblemChange={this.onProblemChange}
+              pathProblem={pathProblem}
+              solution={solution}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button color="secondary" onClick={this.onClose}>
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              disabled={loadingSolution}
+              onClick={this.onCommitClick}
+              variant="raised"
+            >
+              Commit
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Fragment>
     );
   }
 }

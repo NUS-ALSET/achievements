@@ -26,7 +26,11 @@ import {
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
 import format from "date-fns/format";
-import { PROBLEM_SOLUTION_REFRESH_SUCCESS } from "../Problem/actions";
+import {
+  PROBLEM_SOLUTION_REFRESH_FAIL,
+  PROBLEM_SOLUTION_REFRESH_REQUEST,
+  PROBLEM_SOLUTION_REFRESH_SUCCESS
+} from "../Problem/actions";
 
 const DAYS_IN_WEEK = 7;
 
@@ -204,11 +208,28 @@ export const assignments = (
           pathProgress: action.pathProgress
         }
       };
+    case PROBLEM_SOLUTION_REFRESH_REQUEST:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          loadingSolution: true
+        }
+      };
+    case PROBLEM_SOLUTION_REFRESH_FAIL:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          loadingSolution: false
+        }
+      };
     case PROBLEM_SOLUTION_REFRESH_SUCCESS:
       return {
         ...state,
         dialog: {
           ...state.dialog,
+          loadingSolution: false,
           solution: action.payload
         }
       };
