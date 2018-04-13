@@ -122,6 +122,20 @@ class ProblemDialog extends React.PureComponent {
             </FormControl>
           </Fragment>
         );
+      case "Game":
+        return (
+          <TextField
+            defaultValue={problem && problem.game}
+            fullWidth
+            label="Game Variant"
+            margin="dense"
+            onChange={e => this.onFieldChange("game", e.target.value)}
+            onKeyPress={this.catchReturn}
+          >
+            <MenuItem value="GemCollector">Gem Collector</MenuItem>
+            <MenuItem value="Squad">Squad</MenuItem>
+          </TextField>
+        );
       default:
     }
   }
@@ -182,6 +196,7 @@ class ProblemDialog extends React.PureComponent {
             <MenuItem value="text">Text</MenuItem>
             <MenuItem value="jupyter">Jupyter Notebook</MenuItem>
             <MenuItem value="youtube">YouTube</MenuItem>
+            <MenuItem value="game">Game</MenuItem>
           </TextField>
           {this.getTypeSpecificElements()}
         </DialogContent>

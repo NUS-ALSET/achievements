@@ -13,7 +13,7 @@ const profilesRefreshApproach =
 const jupyterLambdaProcessor =
   "https://9ceqb24lg2.execute-api.ap-southeast-1.amazonaws.com/Prod";
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 
 function processProfileRefreshRequest(data, resolve) {
   switch (data.service) {
@@ -120,42 +120,78 @@ function processProfileRefreshRequest(data, resolve) {
   }
 }
 
-exports.handleNewProblemSolution = functions.database
-  .ref("/jupyterSolutionsQueue/solutions/{studentId}/{problemId}/{requestId}")
-  .onWrite(event => {
-    console.log(event);
-    const { problemId, requestId, studentId } = event.params;
-    const answerRef = admin
-      .database()
-      .ref(
-        `/jupyterSolutionsQueue/answers/${studentId}/${problemId}/${requestId}`
-      );
+exports.handleNewProblemSolution =
+  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  functions.database
+    .ref("/jupyterSolutionsQueue/solutions/{studentId}/{problemId}/{requestId}")
+    .onWrite((change, context) => {
+      const { requestId } = context.params;
+      axios({
+        url: jupyterLambdaProcessor,
+        method: "post",
+        data: change.after.val()
+      })
+        .then(() =>
+          admin
+            .database()
+            .ref(`/jupyterSolutionsQueue/answers/${requestId}`)
+            .set(true)
+        )
+        .catch(() =>
+          admin
+            .database()
+            .ref(`/jupyterSolutionsQueue/answers/${requestId}`)
+            .set(false)
+        );
+    });
 
-    return fetch(jupyterLambdaProcessor, {
-      body: JSON.stringify(event.data.val()),
-      cache: "no-cache",
-      headers: {
-        "content-type": "application/json"
-      },
-      method: "POST"
-    })
-      .then(() => answerRef.set(true))
-      .catch(() => answerRef.set(false))
-      .then(() =>
-        admin
-          .database()
-          .ref(
-            "/jupyterSolutionsQueue/solutions/" +
-              `${studentId}/${problemId}/${requestId}`
-          )
-          .remove()
+exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
+  const { token } = req.query;
+
+  if (!token) {
+    return res.status(ERROR_401).send("Token is missing");
+  }
+
+  admin
+    .database()
+    .ref("api_tokens/" + token)
+    .once("value")
+    .then(snapshot => {
+      if (!snapshot.val()) {
+        return res.status(ERROR_401).send("Invalid token");
+      }
+
+      const queue = new Queue(
+        admin.database().ref("/jupyterSolutionsQueue"),
+        (data, progress, resolve) =>
+          axios({
+            url: jupyterLambdaProcessor,
+            method: "post",
+            data: data.solution
+          })
+            .then(() =>
+              admin
+                .database()
+                .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+                .set(true)
+            )
+            .catch(() =>
+              admin
+                .database()
+                .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+                .set(false)
+            )
+            .then(() => resolve())
       );
-  });
+      queue.addWorker();
+      res.send("Done");
+    });
+});
 
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
-  .onWrite(event => {
-    const { courseId, studentId, assignmentId } = event.params;
+  .onWrite((change, context) => {
+    const { courseId, studentId, assignmentId } = context.params;
 
     return admin
       .database()
@@ -171,8 +207,8 @@ exports.handleNewSolution = functions.database
             .ref(`/visibleSolutions/${courseId}/${studentId}/${assignmentId}`)
             .set(
               assignment.solutionVisible
-                ? event.data.val()
-                : Object.assign(event.data.val(), { value: "Complete" })
+                ? change.after.val()
+                : Object.assign(change.after.val(), { value: "Complete" })
             );
         }
         return true;
@@ -183,12 +219,12 @@ exports.handleProfileRefreshRequest =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
   functions.database
     .ref("/updateProfileQueue/tasks/{requestId}")
-    .onCreate(event =>
+    .onCreate((snap, context) =>
       new Promise(resolve =>
-        processProfileRefreshRequest(event.data.val(), resolve)
+        processProfileRefreshRequest(snap.val(), resolve)
       ).then(() =>
         admin.database
-          .ref(`/updateProfileQueue/tasks/${event.params.requestId}`)
+          .ref(`/updateProfileQueue/tasks/${context.params.requestId}`)
           .remove()
       )
     );

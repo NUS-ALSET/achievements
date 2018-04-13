@@ -8,9 +8,13 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
+import InputAdornment from "material-ui/Input/InputAdornment";
 import Paper from "material-ui/Paper";
 import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
+
+import RefreshIcon from "material-ui-icons/Refresh";
 
 import withStyles from "material-ui/styles/withStyles";
 import Jupyter from "react-jupyter";
@@ -44,16 +48,22 @@ class JupyterProblem extends React.PureComponent {
   closeDialog = () =>
     this.props.dispatch(problemSolveSuccess(this.props.problem.problemId, ""));
   onSolutionFileChange = e => {
-    const { dispatch, onChange, problem } = this.props;
-
-    if (onChange) {
-      onChange(e.target.value);
+    if (this.props.onChange) {
+      this.props.onChange(e.target.value);
     }
     this.setState({
       solutionURL: e.target.value
     });
+  };
+  onSolutionRefreshClick = () => {
+    const { dispatch, problem, solution } = this.props;
+
     dispatch(
-      problemSolveUpdate(problem.pathId, problem.problemId, e.target.value)
+      problemSolveUpdate(
+        problem.pathId,
+        problem.problemId,
+        this.state.solutionURL || (solution && solution.id)
+      )
     );
   };
   onCommit = () => {
@@ -83,6 +93,50 @@ class JupyterProblem extends React.PureComponent {
       <Fragment>
         <Paper
           style={{
+            padding: 24,
+            marginTop: 24
+          }}
+        >
+          <Typography variant="headline">Solution</Typography>
+          <TextField
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={this.onSolutionRefreshClick}>
+                    <RefreshIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            defaultValue={solution && solution.id}
+            fullWidth
+            label="File URL"
+            onChange={this.onSolutionFileChange}
+          />
+          {solution &&
+            solution.json && (
+              <div
+                style={{
+                  paddingLeft: 50,
+                  textAlign: "left"
+                }}
+              >
+                <Jupyter
+                  defaultStyle={true}
+                  loadMathjax={true}
+                  notebook={solution.json}
+                  showCode={true}
+                />
+              </div>
+            )}
+          {!onChange && (
+            <Button color="primary" onClick={this.onCommit} variant="raised">
+              Submit
+            </Button>
+          )}
+        </Paper>
+        <Paper
+          style={{
             padding: 24
           }}
         >
@@ -109,40 +163,6 @@ class JupyterProblem extends React.PureComponent {
               Link
             </a>
           </Typography>
-        </Paper>
-        <Paper
-          style={{
-            padding: 24,
-            marginTop: 24
-          }}
-        >
-          <Typography variant="headline">Solution</Typography>
-          <TextField
-            defaultValue={solution && solution.id}
-            fullWidth
-            label="File URL"
-            onChange={this.onSolutionFileChange}
-          />
-          {solution && solution.json && (
-            <div
-              style={{
-                paddingLeft: 50,
-                textAlign: "left"
-              }}
-            >
-              <Jupyter
-                defaultStyle={true}
-                loadMathjax={true}
-                notebook={solution.json}
-                showCode={true}
-              />
-            </div>
-          )}
-          {!onChange && (
-            <Button color="primary" onClick={this.onCommit} variant="raised">
-              Submit
-            </Button>
-          )}
         </Paper>
       </Fragment>
     );

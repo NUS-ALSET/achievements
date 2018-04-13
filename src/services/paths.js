@@ -160,9 +160,7 @@ export class PathsService {
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
           return reject(
-            new Error(
-              "Unable fetch file. Make sure that it's published." + fileId
-            )
+            new Error("Unable fetch file. Make sure that it's published.")
           );
         }
         resolve(data);
@@ -262,7 +260,7 @@ export class PathsService {
    * @param {PathProblem} pathProblem
    * @param {*} solution
    * @param {Object} [json]
-   * @returns {Boolean}
+   * @returns {Promise<Boolean>}
    */
   validateSolution(uid, pathProblem, solution, json) {
     return Promise.resolve().then(() => {
@@ -299,29 +297,32 @@ export class PathsService {
               return true;
             });
             return new Promise((resolve, reject) => {
-              const answerPath = `/jupyterSolutionsQueue/answers/${uid}/${
-                pathProblem.problemId
-              }`;
-              const answerRef = firebase.database().ref(answerPath);
-              const solutionKey = answerRef.push().key;
+              const answerPath = "/jupyterSolutionsQueue/answers/";
+              const answerKey = firebase
+                .database()
+                .ref(answerPath)
+                .push().key;
+
               firebase
                 .database()
-                .ref(`${answerPath}/${solutionKey}`)
-                .on(
-                  "child_added",
-                  response =>
-                    response.val()
-                      ? resolve()
-                      : reject(new Error("Unable process provided solution"))
-                );
+                .ref(`${answerPath}${answerKey}`)
+                .on("value", response => {
+                  if (response.val() === null) return;
+                  return response.val()
+                    ? resolve()
+                    : reject(
+                        new Error("Error occurs during solutions execution")
+                      );
+                });
               return firebase
                 .database()
-                .ref(
-                  `/jupyterSolutionsQueue/solutions/${uid}/${
-                    pathProblem.problemId
-                  }/${solutionKey}`
-                )
-                .set(json);
+                .ref(`/jupyterSolutionsQueue/tasks/${answerKey}`)
+                .set({
+                  owner: uid,
+                  taskKey: answerKey,
+                  problem: pathProblem.problemId,
+                  solution: json
+                });
             });
           }
           break;
