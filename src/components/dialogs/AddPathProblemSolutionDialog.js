@@ -30,7 +30,8 @@ const styles = () => ({
     position: "fixed",
     top: 64,
     left: 0,
-    width: "100%"
+    width: "100%",
+    zIndex: 10000
   },
   loading: { transition: "all 0.5s ease !important" }
 });
