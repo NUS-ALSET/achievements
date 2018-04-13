@@ -27,6 +27,7 @@ import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
 import format from "date-fns/format";
 import {
+  PROBLEM_SOLUTION_CALCULATED_WRONG,
   PROBLEM_SOLUTION_PROVIDED_SUCCESS,
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
@@ -232,7 +233,19 @@ export const assignments = (
           ...state.dialog,
           solution: {
             ...(state.dialog.solution || {}),
+            failed: false,
             provided: action.payload
+          }
+        }
+      };
+    case PROBLEM_SOLUTION_CALCULATED_WRONG:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: {
+            ...(state.dialog.solution || {}),
+            failed: true
           }
         }
       };

@@ -99,7 +99,7 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
             </Button>
             <Button
               color="primary"
-              disabled={loadingSolution}
+              disabled={loadingSolution || (solution && solution.failed)}
               onClick={this.onCommitClick}
               variant="raised"
             >

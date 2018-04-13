@@ -97,7 +97,10 @@ class JupyterProblem extends React.PureComponent {
             marginTop: 24
           }}
         >
-          <Typography variant="headline">Calculated Solution</Typography>
+          <Typography variant="headline">
+            Calculated Solution{solution.failed &&
+              " - Failing - Final output should be empty"}
+          </Typography>
           <TextField
             InputProps={{
               endAdornment: (
