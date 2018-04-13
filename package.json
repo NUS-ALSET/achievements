@@ -7,6 +7,7 @@
     "@devexpress/dx-react-core": "^1.0.0-rc.2",
     "@devexpress/dx-react-grid": "^1.0.0-rc.2",
     "@devexpress/dx-react-grid-material-ui": "^1.0.0-rc.2",
+    "@dinoboff/ims-lti": "^3.1.0-rc7",
     "autosuggest-highlight": "3.1.1",
     "axios": "^0.17.1",
     "bluebird": "^3.5.1",
