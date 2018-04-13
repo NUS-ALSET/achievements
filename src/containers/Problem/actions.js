@@ -52,6 +52,14 @@ export const problemSolutionRefreshSuccess = (problemId, payload) => ({
   payload
 });
 
+export const PROBLEM_SOLUTION_PROVIDED_SUCCESS =
+  "PROBLEM_SOLUTION_PROVIDED_SUCCESS";
+export const problemSolutionProvidedSuccess = (problemId, payload) => ({
+  type: PROBLEM_SOLUTION_PROVIDED_SUCCESS,
+  problemId,
+  payload
+});
+
 export const PROBLEM_CHECK_SOLUTION_REQUEST = "PROBLEM_CHECK_SOLUTION_REQUEST";
 export const problemCheckSolutionRequest = (problemId, fileId, solution) => ({
   type: PROBLEM_CHECK_SOLUTION_REQUEST,
