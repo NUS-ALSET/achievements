@@ -160,9 +160,7 @@ export class PathsService {
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
           return reject(
-            new Error(
-              "Unable fetch file. Make sure that it's published." + fileId
-            )
+            new Error("Unable fetch file. Make sure that it's published.")
           );
         }
         resolve(data);
@@ -258,47 +256,80 @@ export class PathsService {
 
   /**
    *
+   * @param {String} uid
    * @param {PathProblem} pathProblem
    * @param {*} solution
    * @param {Object} [json]
-   * @returns {Boolean}
+   * @returns {Promise<Boolean>}
    */
-  validateSolution(pathProblem, solution, json) {
-    switch (pathProblem.type) {
-      case "youtube":
-        if (isEmpty(solution.youtubeEvents)) {
-          throw new Error("Did you ever start watching this video?");
-        }
-        Object.keys(YOUTUBE_QUESTIONS).forEach(question => {
-          if (pathProblem[question] && !solution.answers[question]) {
-            throw new Error(
-              `Missing answer for '${YOUTUBE_QUESTIONS[question]}`
-            );
+  validateSolution(uid, pathProblem, solution, json) {
+    return Promise.resolve().then(() => {
+      switch (pathProblem.type) {
+        case "youtube":
+          if (isEmpty(solution.youtubeEvents)) {
+            throw new Error("Did you ever start watching this video?");
           }
-        });
-        break;
-      case "jupyter":
-        if (json) {
-          const frozenSolution = json.cells
-            .filter(cell => cell.source.join().trim())
-            .slice(-pathProblem.frozen);
-          const frozenProblem = pathProblem.problemJSON.cells
-            .filter(cell => cell.source.join().trim())
-            .slice(-pathProblem.frozen);
-
-          frozenProblem.forEach((cell, index) => {
-            const solution = frozenSolution[index];
-
-            if (!solution || cell.source.join() !== solution.source.join()) {
-              throw new Error(`Last ${pathProblem.frozen} blocks are changed!`);
+          Object.keys(YOUTUBE_QUESTIONS).forEach(question => {
+            if (pathProblem[question] && !solution.answers[question]) {
+              throw new Error(
+                `Missing answer for '${YOUTUBE_QUESTIONS[question]}`
+              );
             }
-            return true;
           });
-        }
-        break;
-      default:
-        return true;
-    }
+          break;
+        case "jupyter":
+          if (json) {
+            const frozenSolution = json.cells
+              .filter(cell => cell.source.join().trim())
+              .slice(-pathProblem.frozen);
+            const frozenProblem = pathProblem.problemJSON.cells
+              .filter(cell => cell.source.join().trim())
+              .slice(-pathProblem.frozen);
+
+            frozenProblem.forEach((cell, index) => {
+              const solution = frozenSolution[index];
+
+              if (!solution || cell.source.join() !== solution.source.join()) {
+                throw new Error(
+                  `Last ${pathProblem.frozen} blocks are changed!`
+                );
+              }
+              return true;
+            });
+            return new Promise((resolve, reject) => {
+              const answerPath = "/jupyterSolutionsQueue/answers/";
+              const answerKey = firebase
+                .database()
+                .ref(answerPath)
+                .push().key;
+
+              firebase
+                .database()
+                .ref(`${answerPath}${answerKey}`)
+                .on("value", response => {
+                  if (response.val() === null) return;
+                  return response.val()
+                    ? resolve()
+                    : reject(
+                        new Error("Error occurs during solutions execution")
+                      );
+                });
+              return firebase
+                .database()
+                .ref(`/jupyterSolutionsQueue/tasks/${answerKey}`)
+                .set({
+                  owner: uid,
+                  taskKey: answerKey,
+                  problem: pathProblem.problemId,
+                  solution: json
+                });
+            });
+          }
+          break;
+        default:
+          return true;
+      }
+    });
   }
 
   /**
@@ -310,26 +341,28 @@ export class PathsService {
    * @returns {Promise<any>}
    */
   submitSolution(uid, pathProblem, solution) {
-    this.validateSolution(pathProblem, solution);
-
-    switch (pathProblem.type) {
-      case "jupyter":
-        return this.fetchFile(this.getFileId(solution))
-          .then(json => this.validateSolution(pathProblem, solution, json))
-          .then(() =>
-            this.firebase
+    return Promise.resolve()
+      .then(() => this.validateSolution(pathProblem, solution))
+      .then(() => {
+        switch (pathProblem.type) {
+          case "jupyter":
+            return this.fetchFile(this.getFileId(solution))
+              .then(json => this.validateSolution(pathProblem, solution, json))
+              .then(() =>
+                this.firebase
+                  .database()
+                  .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+                  .set(solution)
+              );
+          case "youtube":
+            return this.firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(solution)
-          );
-      case "youtube":
-        return this.firebase
-          .database()
-          .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-          .set(solution);
-      default:
-        break;
-    }
+              .set(solution);
+          default:
+            break;
+        }
+      });
   }
 
   /**

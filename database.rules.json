@@ -111,6 +111,20 @@
         "
       }
     },
+    "jupyterSolutionsQueue": {
+      "answers": {
+        "$taskKey": {
+          ".read": "auth != null && data.child('owner').val() == auth.uid",
+          ".write": false
+        }
+      },
+      "tasks": {
+        "$taskKey": {
+          ".read": false,
+          ".write": "auth != null && newData.child('owner').val() == auth.uid"
+        }
+      }
+    },
     "logged_events": {
       ".read": "auth != null",
       ".write": "auth != null",

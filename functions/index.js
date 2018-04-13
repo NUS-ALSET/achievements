@@ -137,6 +137,74 @@ function processProfileRefreshRequest(data, resolve) {
   }
 }
 
+exports.handleNewProblemSolution =
+  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  functions.database
+    .ref("/jupyterSolutionsQueue/solutions/{studentId}/{problemId}/{requestId}")
+    .onWrite((change, context) => {
+      const { requestId } = context.params;
+      axios({
+        url: jupyterLambdaProcessor,
+        method: "post",
+        data: change.after.val()
+      })
+        .then(() =>
+          admin
+            .database()
+            .ref(`/jupyterSolutionsQueue/answers/${requestId}`)
+            .set(true)
+        )
+        .catch(() =>
+          admin
+            .database()
+            .ref(`/jupyterSolutionsQueue/answers/${requestId}`)
+            .set(false)
+        );
+    });
+
+exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
+  const { token } = req.query;
+
+  if (!token) {
+    return res.status(ERROR_401).send("Token is missing");
+  }
+
+  admin
+    .database()
+    .ref("api_tokens/" + token)
+    .once("value")
+    .then(snapshot => {
+      if (!snapshot.val()) {
+        return res.status(ERROR_401).send("Invalid token");
+      }
+
+      const queue = new Queue(
+        admin.database().ref("/jupyterSolutionsQueue"),
+        (data, progress, resolve) =>
+          axios({
+            url: jupyterLambdaProcessor,
+            method: "post",
+            data: data.solution
+          })
+            .then(() =>
+              admin
+                .database()
+                .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+                .set(true)
+            )
+            .catch(() =>
+              admin
+                .database()
+                .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+                .set(false)
+            )
+            .then(() => resolve())
+      );
+      queue.addWorker();
+      res.send("Done");
+    });
+});
+
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
   .onWrite(event => {
