@@ -89,6 +89,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
   }));
 
   try {
+    yield put(notificationShow("Fetching your solution"));
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
@@ -105,6 +106,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
+    yield put(notificationShow("Checking your solution"));
     const solution = yield call(
       [pathsService, pathsService.validateSolution],
       data.uid,
@@ -122,8 +124,12 @@ export function* problemSolutionRefreshRequestHandler(action) {
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
         yield put(
-          notificationShow("Solution failed: final output should be empty")
+          notificationShow(
+            "Failing - Your solution did not provide the provided tests."
+          )
         );
+      } else {
+        yield put(notificationShow("Solution is valid"));
       }
     }
     yield put(

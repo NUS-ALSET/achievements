@@ -113,7 +113,7 @@ class JupyterProblem extends React.PureComponent {
             }}
             defaultValue={solution && solution.id}
             fullWidth
-            label="File URL"
+            label="Enter the url to your public solution on Colab"
             onChange={this.onSolutionFileChange}
           />
           {solution &&

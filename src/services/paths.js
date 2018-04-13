@@ -159,9 +159,7 @@ export class PathsService {
     return new Promise((resolve, reject) =>
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
-          return reject(
-            new Error("Unable fetch file. Make sure that it's published.")
-          );
+          return reject(new Error("Failing - Your solution is not public."));
         }
         resolve(data);
       })
@@ -291,7 +289,7 @@ export class PathsService {
 
               if (!solution || cell.source.join() !== solution.source.join()) {
                 throw new Error(
-                  `Last ${pathProblem.frozen} blocks are changed!`
+                  "Failing - You have changed the last code block."
                 );
               }
               return true;
@@ -311,7 +309,7 @@ export class PathsService {
                   return response.val()
                     ? resolve(response.val().solution.ipynb)
                     : reject(
-                        new Error("Error occurs during solutions execution")
+                        new Error("Failing - Unable execute your solution")
                       );
                 });
               return firebase
