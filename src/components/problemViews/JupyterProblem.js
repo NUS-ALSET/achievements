@@ -97,7 +97,7 @@ class JupyterProblem extends React.PureComponent {
             marginTop: 24
           }}
         >
-          <Typography variant="headline">Solution</Typography>
+          <Typography variant="headline">Calculated Solution</Typography>
           <TextField
             InputProps={{
               endAdornment: (
@@ -135,6 +135,29 @@ class JupyterProblem extends React.PureComponent {
             </Button>
           )}
         </Paper>
+        {solution &&
+          solution.provided && (
+            <Paper
+              style={{
+                padding: 24
+              }}
+            >
+              <Typography variant="headline">Provided Solution</Typography>
+              <div
+                style={{
+                  paddingLeft: 50,
+                  textAlign: "left"
+                }}
+              >
+                <Jupyter
+                  defaultStyle={true}
+                  loadMathjax={true}
+                  notebook={solution.provided}
+                  showCode={true}
+                />
+              </div>
+            </Paper>
+          )}
         <Paper
           style={{
             padding: 24
