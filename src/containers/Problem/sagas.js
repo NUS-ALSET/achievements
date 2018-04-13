@@ -7,6 +7,7 @@ import {
   problemCheckSolutionFail,
   problemInitFail,
   problemInitSuccess,
+  problemSolutionCalculatedWrong,
   problemSolutionProvidedSuccess,
   problemSolutionRefreshFail,
   problemSolutionRefreshRequest,
@@ -111,6 +112,20 @@ export function* problemSolutionRefreshRequestHandler(action) {
       pathSolution.id,
       pathSolution.json
     );
+    if (solution && solution.cells && solution.cells.slice) {
+      let solutionFailed = false;
+      solution.cells.slice(-data.pathProblem.frozen).forEach(cell => {
+        solutionFailed = solutionFailed || !!cell.outputs;
+        return true;
+      });
+
+      if (solutionFailed) {
+        yield put(problemSolutionCalculatedWrong());
+        yield put(
+          notificationShow("Solution failed: final output should be empty")
+        );
+      }
+    }
     yield put(
       problemSolutionRefreshSuccess(action.problemId, {
         id: pathSolution.id,

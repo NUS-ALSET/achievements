@@ -52,6 +52,12 @@ export const problemSolutionRefreshSuccess = (problemId, payload) => ({
   payload
 });
 
+export const PROBLEM_SOLUTION_CALCULATED_WRONG =
+  "PROBLEM_SOLUTION_CALCULATED_WRONG";
+export const problemSolutionCalculatedWrong = () => ({
+  type: PROBLEM_SOLUTION_CALCULATED_WRONG
+});
+
 export const PROBLEM_SOLUTION_PROVIDED_SUCCESS =
   "PROBLEM_SOLUTION_PROVIDED_SUCCESS";
 export const problemSolutionProvidedSuccess = (problemId, payload) => ({
