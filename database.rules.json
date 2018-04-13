@@ -113,15 +113,15 @@
     },
     "jupyterSolutionsQueue": {
       "answers": {
-        "$studentKey": {
-          ".read": "auth != null && auth.uid == $studentKey",
-          ".write": "auth != null && auth.uid == $studentKey"
+        "$taskKey": {
+          ".read": "auth != null && data.child('owner').val() == auth.uid",
+          ".write": false
         }
       },
-      "solutions": {
-        "$studentKey": {
-          ".read": "auth != null && auth.uid == $studentKey",
-          ".write": "auth != null && auth.uid == $studentKey"
+      "tasks": {
+        "$taskKey": {
+          ".read": false,
+          ".write": "auth != null && newData.child('owner').val() == auth.uid"
         }
       }
     },
