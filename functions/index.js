@@ -137,7 +137,7 @@ exports.handleNewProblemSolution =
             .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
             .set({
               owner: data.owner,
-              solution: response.data
+              solution: JSON.stringify(response.data.ipynb)
             })
         )
         .catch(() =>
@@ -178,7 +178,7 @@ exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
                 .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
                 .set({
                   owner: data.owner,
-                  solution: response.data
+                  solution: JSON.stringify(response.data.ipynb)
                 })
             )
             .catch(() =>

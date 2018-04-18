@@ -1,5 +1,5 @@
 import isEmpty from "lodash/isEmpty";
-import moment from "moment";
+import { distanceInWords } from "date-fns";
 
 import {
   assignmentSolutionRequest,
@@ -247,7 +247,10 @@ class AssignmentsTable extends React.PureComponent {
                   </div>
                   <div>
                     {assignment.deadline &&
-                      `Deadline ${moment(assignment.deadline).fromNow()}`}
+                      `Deadline in ${distanceInWords(
+                        assignment.deadline,
+                        new Date()
+                      )}`}
                   </div>
                 </TableCell>
               ))}

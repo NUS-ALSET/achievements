@@ -307,7 +307,7 @@ export class PathsService {
                 .on("value", response => {
                   if (response.val() === null) return;
                   return response.val()
-                    ? resolve(response.val().solution.ipynb)
+                    ? resolve(JSON.parse(response.val().solution))
                     : reject(
                         new Error("Failing - Unable execute your solution")
                       );
