@@ -119,6 +119,7 @@
         }
       },
       "tasks": {
+        ".indexOn": ["_state"],
         "$taskKey": {
           ".read": false,
           ".write": "auth != null && newData.child('owner').val() == auth.uid"

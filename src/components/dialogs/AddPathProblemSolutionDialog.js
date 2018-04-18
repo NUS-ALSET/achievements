@@ -13,7 +13,6 @@ import Dialog, {
   DialogTitle
 } from "material-ui/Dialog/index";
 import Button from "material-ui/Button";
-import LinearProgress from "material-ui/Progress/LinearProgress";
 
 import { assignmentCloseDialog } from "../../containers/Assignments/actions";
 import ProblemView from "../problemViews/ProblemView";
@@ -40,7 +39,6 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
-    loadingSolution: PropTypes.bool,
     pathProblem: PropTypes.any,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
@@ -57,20 +55,10 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
   onCommitClick = () => this.props.onCommit(this.state.problemSolution);
 
   render() {
-    const {
-      classes,
-      dispatch,
-      loadingSolution,
-      open,
-      pathProblem,
-      solution
-    } = this.props;
+    const { classes, dispatch, open, pathProblem, solution } = this.props;
 
     return (
       <Fragment>
-        {loadingSolution && (
-          <LinearProgress classes={{ root: classes.progress }} />
-        )}
         <Dialog
           classes={{
             paper: pathProblem ? classes.dialog : classes.loading
@@ -100,7 +88,7 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
             </Button>
             <Button
               color="primary"
-              disabled={loadingSolution || (solution && solution.failed)}
+              disabled={!(solution && solution.checked && !solution.failed)}
               onClick={this.onCommitClick}
               variant="raised"
             >

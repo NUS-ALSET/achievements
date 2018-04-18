@@ -215,7 +215,12 @@ export const assignments = (
         ...state,
         dialog: {
           ...state.dialog,
-          loadingSolution: true
+          solution: {
+            ...(state.solution || {}),
+            loading: true,
+            failed: false,
+            checked: false
+          }
         }
       };
     case PROBLEM_SOLUTION_REFRESH_FAIL:
@@ -223,7 +228,10 @@ export const assignments = (
         ...state,
         dialog: {
           ...state.dialog,
-          loadingSolution: false
+          solution: {
+            ...(state.solution || {}),
+            loading: false
+          }
         }
       };
     case PROBLEM_SOLUTION_PROVIDED_SUCCESS:
@@ -233,7 +241,6 @@ export const assignments = (
           ...state.dialog,
           solution: {
             ...(state.dialog.solution || {}),
-            failed: false,
             provided: action.payload
           }
         }
@@ -254,10 +261,11 @@ export const assignments = (
         ...state,
         dialog: {
           ...state.dialog,
-          loadingSolution: false,
           solution: {
             ...(state.dialog.solution || {}),
-            ...action.payload
+            ...action.payload,
+            checked: true,
+            loading: false
           }
         }
       };

@@ -8,16 +8,20 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "material-ui/Button";
+import Collapse from "material-ui/transitions/Collapse";
 import IconButton from "material-ui/IconButton";
 import InputAdornment from "material-ui/Input/InputAdornment";
 import Paper from "material-ui/Paper";
 import TextField from "material-ui/TextField";
 import Typography from "material-ui/Typography";
+import CircularProgress from "material-ui/Progress/CircularProgress";
 
 import RefreshIcon from "material-ui-icons/Refresh";
+import ExpandLessIcon from "material-ui-icons/ExpandLess";
+import ExpandMoreIcon from "material-ui-icons/ExpandMore";
 
 import withStyles from "material-ui/styles/withStyles";
-import Jupyter from "react-jupyter";
+import NotebookPreview from "@nteract/notebook-preview";
 import {
   problemSolutionSubmitRequest,
   problemSolveSuccess,
@@ -42,7 +46,11 @@ class JupyterProblem extends React.PureComponent {
   };
 
   state = {
-    solutionURL: ""
+    solutionURL: "",
+    collapses: {
+      provided: false,
+      problem: true
+    }
   };
 
   closeDialog = () =>
@@ -80,6 +88,13 @@ class JupyterProblem extends React.PureComponent {
       solutionURL: undefined
     });
   };
+  onSwitchCollapse = (item, status) => {
+    this.setState({
+      collapses: {
+        [item]: status === undefined ? !this.state.collapses[item] : status
+      }
+    });
+  };
 
   render() {
     const {
@@ -91,17 +106,19 @@ class JupyterProblem extends React.PureComponent {
 
     return (
       <Fragment>
-        <Paper
-          style={{
-            padding: 24,
-            marginTop: 24
-          }}
-        >
+        <Paper style={{ margin: "24px 2px" }}>
           <Typography variant="headline">
-            Calculated Solution{solution.failed &&
+            Calculated Solution{solution &&
+              solution.failed &&
               " - Failing - Final output should be empty"}
           </Typography>
           <TextField
+            InputLabelProps={{
+              style: {
+                top: 24,
+                left: 24
+              }
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -115,23 +132,19 @@ class JupyterProblem extends React.PureComponent {
             fullWidth
             label="Enter the url to your public solution on Colab"
             onChange={this.onSolutionFileChange}
+            style={{ padding: 24, position: "relative" }}
           />
           {solution &&
             solution.json && (
               <div
                 style={{
-                  paddingLeft: 50,
                   textAlign: "left"
                 }}
               >
-                <Jupyter
-                  defaultStyle={true}
-                  loadMathjax={true}
-                  notebook={solution.json}
-                  showCode={true}
-                />
+                <NotebookPreview notebook={solution.json} />
               </div>
             )}
+          {solution && solution.loading && <CircularProgress />}
           {!onChange && (
             <Button color="primary" onClick={this.onCommit} variant="raised">
               Submit
@@ -140,46 +153,64 @@ class JupyterProblem extends React.PureComponent {
         </Paper>
         {solution &&
           solution.provided && (
-            <Paper
-              style={{
-                padding: 24
-              }}
-            >
-              <Typography variant="headline">Provided Solution</Typography>
-              <div
-                style={{
-                  paddingLeft: 50,
-                  textAlign: "left"
-                }}
+            <Paper style={{ margin: "24px 2px" }}>
+              <Typography style={{ position: "relative" }} variant="headline">
+                <span>Provided Solution</span>
+                <IconButton
+                  onClick={() => this.onSwitchCollapse("provided")}
+                  style={{
+                    position: "absolute",
+                    right: 0
+                  }}
+                >
+                  {this.state.collapses.provided ? (
+                    <ExpandLessIcon />
+                  ) : (
+                    <ExpandMoreIcon />
+                  )}
+                </IconButton>
+              </Typography>
+
+              <Collapse
+                collapsedHeight="10px"
+                in={this.state.collapses.provided}
               >
-                <Jupyter
-                  defaultStyle={true}
-                  loadMathjax={true}
-                  notebook={solution.provided}
-                  showCode={true}
-                />
-              </div>
+                <div
+                  style={{
+                    textAlign: "left"
+                  }}
+                >
+                  <NotebookPreview notebook={solution.provided} />
+                </div>
+              </Collapse>
             </Paper>
           )}
-        <Paper
-          style={{
-            padding: 24
-          }}
-        >
-          <Typography variant="headline">Problem</Typography>
-          <div
-            style={{
-              paddingLeft: 50,
-              textAlign: "left"
-            }}
-          >
-            <Jupyter
-              defaultStyle={true}
-              loadMathjax={true}
-              notebook={problem.problemJSON}
-              showCode={true}
-            />
-          </div>
+        <Paper style={{ margin: "24px 2px" }}>
+          <Typography style={{ position: "relative" }} variant="headline">
+            <span>Problem</span>
+            <IconButton
+              onClick={() => this.onSwitchCollapse("problem")}
+              style={{
+                position: "absolute",
+                right: 0
+              }}
+            >
+              {this.state.collapses.problem ? (
+                <ExpandLessIcon />
+              ) : (
+                <ExpandMoreIcon />
+              )}
+            </IconButton>
+          </Typography>
+          <Collapse collapsedHeight="10px" in={this.state.collapses.problem}>
+            <div
+              style={{
+                textAlign: "left"
+              }}
+            >
+              <NotebookPreview notebook={problem.problemJSON} />
+            </div>
+          </Collapse>
           <Typography align="right" variant="caption">
             <a
               href={problem.problemColabURL}
