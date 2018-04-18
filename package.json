@@ -55,7 +55,9 @@
     "react-scripts": "^1.1.4",
     "sinon": "^4.3.0",
     "style-loader": "^0.20.3",
-    "targaryen": "^3.0.5"
+    "targaryen": "^3.0.5",
+    "webpack": "3.10.0",
+    "webpack-dev-server": "2.11.0"
   },
   "scripts": {
     "start": "react-scripts start",
