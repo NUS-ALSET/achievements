@@ -461,18 +461,24 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
           action.solution.originalSolution.value
       })
     );
+
     if (
       action.solution &&
       action.solution.originalSolution &&
       action.solution.originalSolution.value
     ) {
-      yield put(
-        problemSolveUpdate(
-          pathProblem.pathId,
-          pathProblem.problemId,
-          action.solution.originalSolution.value
-        )
-      );
+      switch (pathProblem.type) {
+        case "jupyter":
+          yield put(
+            problemSolveUpdate(
+              pathProblem.pathId,
+              pathProblem.problemId,
+              action.solution.originalSolution.value
+            )
+          );
+          break;
+        default:
+      }
     }
   } catch (err) {
     yield put(notificationShow(err.message));

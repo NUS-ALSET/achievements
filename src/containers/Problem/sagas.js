@@ -1,3 +1,9 @@
+/**
+ * This module contains sagas for operations on problems.
+ * Common workflow of actions:
+ * * problemSolutionRefreshRequest
+ */
+
 import {
   PROBLEM_CHECK_SOLUTION_REQUEST,
   PROBLEM_INIT_REQUEST,
@@ -15,9 +21,12 @@ import {
   problemSolutionSubmitFail,
   problemSolutionSubmitSuccess
 } from "./actions";
+import { delay } from "redux-saga";
+
 import {
   call,
   put,
+  race,
   select,
   take,
   takeLatest,
@@ -27,6 +36,8 @@ import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
+
+const ONE_MINUTE = 60000;
 
 export function* problemInitRequestHandler(action) {
   try {
@@ -107,17 +118,26 @@ export function* problemSolutionRefreshRequestHandler(action) {
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
     yield put(notificationShow("Checking your solution"));
-    const solution = yield call(
-      [pathsService, pathsService.validateSolution],
-      data.uid,
-      data.pathProblem,
-      pathSolution.id,
-      pathSolution.json
-    );
+
+    const { solution, timedOut } = yield race({
+      solution: call(
+        [pathsService, pathsService.validateSolution],
+        data.uid,
+        data.pathProblem,
+        pathSolution.id,
+        pathSolution.json
+      ),
+      timedOut: delay(ONE_MINUTE)
+    });
+    if (timedOut) {
+      throw new Error("Solution processing timed out");
+    }
     if (solution && solution.cells && solution.cells.slice) {
       let solutionFailed = false;
+
       solution.cells.slice(-data.pathProblem.frozen).forEach(cell => {
-        solutionFailed = solutionFailed || !!cell.outputs;
+        solutionFailed =
+          solutionFailed || (!!cell.outputs && cell.outputs.join().trim());
         return true;
       });
 
@@ -125,7 +145,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
         yield put(problemSolutionCalculatedWrong());
         yield put(
           notificationShow(
-            "Failing - Your solution did not provide the provided tests."
+            "Failing - Your solution did not pass the provided tests."
           )
         );
       } else {
