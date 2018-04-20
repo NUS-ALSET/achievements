@@ -118,6 +118,19 @@ class ProblemDialog extends React.PureComponent {
                     label={YOUTUBE_QUESTIONS[questionType]}
                   />
                 ))}
+                <TextField
+                  defaultValue={problem && problem.customText}
+                  disabled={
+                    this.state.questionCustom === undefined
+                      ? !(problem && problem.questionCustom)
+                      : !this.state.questionCustom
+                  }
+                  fullWidth
+                  label="Custom question"
+                  onChange={e =>
+                    this.onFieldChange("customText", e.target.value)
+                  }
+                />
               </FormGroup>
             </FormControl>
           </Fragment>

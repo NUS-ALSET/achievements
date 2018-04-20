@@ -64,9 +64,10 @@ class AssignmentsTable extends React.PureComponent {
               }))
               .map(
                 answer =>
-                  `- ${
-                    YOUTUBE_QUESTIONS[answer.id]
-                  }:\n   * ${answer.value.split("\n").join("\n   * ")}`
+                  `- ${YOUTUBE_QUESTIONS[answer.id] ||
+                    assignment.customText}:\n   * ${answer.value
+                    .split("\n")
+                    .join("\n   * ")}`
               )
               .join("\n");
         }
@@ -97,7 +98,7 @@ class AssignmentsTable extends React.PureComponent {
           undefined
         );
       case "PathProblem":
-        return solution && this.props.isInstructor ? (
+        return solution ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
             <div>
               {/http[s]?:\/\//.test(
