@@ -65,7 +65,7 @@ class ProblemsTable extends React.PureComponent {
               <TableCell>
                 <Link
                   className={classes.link}
-                  to={`/paths/${pathOwnerId || selectedPathId}/problems/${
+                  to={`/paths/${selectedPathId || pathOwnerId}/problems/${
                     problem.id
                   }`}
                 >

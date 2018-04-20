@@ -79,7 +79,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
-            originalSolution: solutions[assignmentId],
+            originalSolution: result[assignmentId],
             value: "Completed"
           };
           return true;
@@ -87,7 +87,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
-            originalSolution: solutions[assignmentId],
+            originalSolution: result[assignmentId],
             value: solution
           };
           return true;

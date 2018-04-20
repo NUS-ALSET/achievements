@@ -18,7 +18,8 @@ class YouTubeProblem extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
-    problem: PropTypes.object
+    problem: PropTypes.object,
+    solution: PropTypes.any
   };
 
   state = {
@@ -65,7 +66,7 @@ class YouTubeProblem extends React.PureComponent {
   };
 
   render() {
-    const { onChange, problem } = this.props;
+    const { onChange, problem, solution } = this.props;
 
     return (
       <Fragment>
@@ -100,17 +101,32 @@ class YouTubeProblem extends React.PureComponent {
           <ProblemQuestion
             question="questionAfter"
             setAnswer={this.setAnswer}
+            solution={solution}
           />
         )}
         {problem.questionAnswer && (
           <ProblemQuestion
             question="questionAnswer"
             setAnswer={this.setAnswer}
+            solution={solution}
           />
         )}
         {problem.topics && (
-          <ProblemQuestion question="topics" setAnswer={this.setAnswer} />
+          <ProblemQuestion
+            question="topics"
+            setAnswer={this.setAnswer}
+            solution={solution}
+          />
         )}
+        {problem.questionCustom &&
+          problem.customText && (
+            <ProblemQuestion
+              label={problem.customText}
+              question="customQuestion"
+              setAnswer={this.setAnswer}
+              solution={solution}
+            />
+          )}
 
         {!onChange && (
           <Button color="primary" onClick={this.onCommit} variant="raised">

@@ -11,7 +11,7 @@ import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { firebaseConnect } from "react-redux-firebase";
 
-import { problemInitRequest } from "./actions";
+import {problemFinalize, problemInitRequest} from "./actions";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -29,6 +29,15 @@ class Problem extends React.PureComponent {
   componentDidMount() {
     this.props.dispatch(
       problemInitRequest(
+        this.props.match.params.pathId,
+        this.props.match.params.problemId
+      )
+    );
+  }
+
+  componentWillUnmount() {
+    this.props.dispatch(
+      problemFinalize(
         this.props.match.params.pathId,
         this.props.match.params.problemId
       )

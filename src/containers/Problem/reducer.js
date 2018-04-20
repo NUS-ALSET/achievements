@@ -1,4 +1,5 @@
 import {
+  PROBLEM_FINALIZE,
   PROBLEM_INIT_SUCCESS,
   PROBLEM_SOLUTION_REFRESH_SUCCESS
 } from "./actions";
@@ -14,6 +15,11 @@ export const problem = (
       return {
         ...state,
         pathProblem: action.payload
+      };
+    case PROBLEM_FINALIZE:
+      return {
+        ...state,
+        pathProblem: null
       };
     case PROBLEM_SOLUTION_REFRESH_SUCCESS:
       return {

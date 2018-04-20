@@ -19,6 +19,8 @@ import ProblemView from "../problemViews/ProblemView";
 
 import withStyles from "material-ui/styles/withStyles";
 
+import isEmpty from "lodash/isEmpty";
+
 const styles = () => ({
   dialog: {
     minWidth: "80%",
@@ -52,7 +54,10 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
   onProblemChange = problemSolution => this.setState({ problemSolution });
   catchReturn = event => event.key === "Enter" && this.onCommitClick();
   onClose = () => this.props.dispatch(assignmentCloseDialog());
-  onCommitClick = () => this.props.onCommit(this.state.problemSolution);
+  onCommitClick = () =>
+    isEmpty(this.state.problemSolution)
+      ? this.onClose()
+      : this.props.onCommit(this.state.problemSolution);
 
   render() {
     const { classes, dispatch, open, pathProblem, solution } = this.props;
