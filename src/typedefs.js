@@ -40,6 +40,8 @@
  * @property {Boolean} questionAfter
  * @property {Boolean} questionAnswer
  * @property {Boolean} topics
+ * @property {Boolean} questionCustom
+ * @property {String} customText
  */
 
 /**

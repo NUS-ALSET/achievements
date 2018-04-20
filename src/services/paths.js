@@ -9,7 +9,8 @@ export const YOUTUBE_QUESTIONS = {
   questionAfter: "What question do you have after watching this video",
   questionAnswer:
     "What is a question someone who watched this video " +
-    "should be able to answer"
+    "should be able to answer",
+  questionCustom: "Custom question after watching this video"
 };
 
 export class PathsService {
@@ -214,7 +215,8 @@ export class PathsService {
           !(
             problemInfo.questionAfter ||
             problemInfo.questionAnswer ||
-            problemInfo.topics
+            problemInfo.topics ||
+            (problemInfo.questionCustom && problemInfo.customText)
           )
         ) {
           throw new Error("Missing any of following question");
@@ -287,7 +289,10 @@ export class PathsService {
             frozenProblem.forEach((cell, index) => {
               const solution = frozenSolution[index];
 
-              if (!solution || cell.source.join() !== solution.source.join()) {
+              if (
+                !solution ||
+                cell.source.join("").trim() !== solution.source.join("").trim()
+              ) {
                 throw new Error(
                   "Failing - You have changed the last code block."
                 );

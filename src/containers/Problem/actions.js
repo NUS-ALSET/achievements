@@ -21,6 +21,11 @@ export const problemInitFail = (pathId, problemId, reason) => ({
   reason
 });
 
+export const PROBLEM_FINALIZE = "PROBLEM_FINALIZE";
+export const problemFinalize = () => ({
+  type: PROBLEM_FINALIZE
+});
+
 export const PROBLEM_SOLVE_UPDATE = "PROBLEM_SOLVE_UPDATE";
 export const problemSolveUpdate = (pathId, problemId, fileId) => ({
   type: PROBLEM_SOLVE_UPDATE,

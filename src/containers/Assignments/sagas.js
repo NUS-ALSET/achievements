@@ -65,7 +65,10 @@ import {
 import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 import { pathsService } from "../../services/paths";
-import { problemSolveUpdate } from "../Problem/actions";
+import {
+  problemSolutionRefreshSuccess,
+  problemSolveUpdate
+} from "../Problem/actions";
 
 // Since we're able to check 1 and only 1 course at once then we'll keep
 // course members channel at almost global variable...
@@ -461,6 +464,14 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
           action.solution.originalSolution.value
       })
     );
+    if (pathProblem.type === "youtube") {
+      yield put(
+        problemSolutionRefreshSuccess(
+          pathProblem.problemId,
+          action.solution || {}
+        )
+      );
+    }
 
     if (
       action.solution &&
@@ -474,6 +485,14 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
               pathProblem.pathId,
               pathProblem.problemId,
               action.solution.originalSolution.value
+            )
+          );
+          break;
+        case "youtube":
+          yield put(
+            problemSolutionRefreshSuccess(
+              pathProblem.problemId,
+              action.solution || {}
             )
           );
           break;
