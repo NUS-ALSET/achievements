@@ -3,16 +3,16 @@ import { DrawerMenuItems } from "./AppDrawerElements";
 
 import { compose } from "redux";
 
-import ChevronLeftIcon from "material-ui-icons/ChevronLeft";
-import Drawer from "material-ui/Drawer";
-import Hidden from "material-ui/Hidden";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
 
-import IconButton from "material-ui/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 
 import React from "react";
 
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = theme => ({
   someClass: {
@@ -58,11 +58,12 @@ class AppDrawer extends React.PureComponent {
 
     return (
       <div className={className}>
-        <Hidden implementation="css" lgUp>
+        <Hidden lgUp>
           <Drawer
             ModalProps={{
               keepMounted: true
             }}
+            anchor="left"
             classes={{
               paper: classes.someClass
             }}

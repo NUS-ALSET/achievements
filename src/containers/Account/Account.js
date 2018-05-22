@@ -18,22 +18,24 @@ import { firebaseConnect } from "react-redux-firebase";
 import { notificationShow } from "../Root/actions";
 import { sagaInjector } from "../../services/saga";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
-import Card, { CardContent, CardMedia } from "material-ui/Card";
-import CheckIcon from "material-ui-icons/Check";
-import EditIcon from "material-ui-icons/Edit";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import CheckIcon from "@material-ui/icons/Check";
+import EditIcon from "@material-ui/icons/Edit";
 
 import ExternalProfileCard from "../../components/ExternalProfileCard";
-import Grid from "material-ui/Grid";
+import Grid from "@material-ui/core/Grid";
 
-import IconButton from "material-ui/IconButton";
+import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import RemoveExternalProfileDialog from "../../components/dialogs/RemoveProfileDialog";
 
-import TextField from "material-ui/TextField";
-import Typography from "material-ui/Typography";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
 
 const styles = theme => ({

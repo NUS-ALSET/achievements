@@ -7,6 +7,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import JupyterProblem from "../../components/problemViews/JupyterProblem";
+import JupyterInlineProblem from "../../components/problemViews/JupyterInlineProblem";
 import YouTubeProblem from "../../components/problemViews/YouTubeProblem";
 
 class ProblemView extends React.PureComponent {
@@ -29,6 +30,14 @@ class ProblemView extends React.PureComponent {
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         {pathProblem.type === "jupyter" && (
           <JupyterProblem
+            dispatch={dispatch}
+            onChange={onProblemChange}
+            problem={pathProblem}
+            solution={solution}
+          />
+        )}
+        {pathProblem.type === "jupyterInline" && (
+          <JupyterInlineProblem
             dispatch={dispatch}
             onChange={onProblemChange}
             problem={pathProblem}

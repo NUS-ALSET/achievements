@@ -216,7 +216,7 @@ export const assignments = (
         dialog: {
           ...state.dialog,
           solution: {
-            ...(state.solution || {}),
+            ...(state.dialog.solution || {}),
             loading: true,
             failed: false,
             checked: false

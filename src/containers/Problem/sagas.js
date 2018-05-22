@@ -104,7 +104,10 @@ export function* problemSolutionRefreshRequestHandler(action) {
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
-        json: yield call([pathsService, pathsService.fetchFile], action.fileId),
+        json:
+          typeof action.fileId === "string"
+            ? yield call([pathsService, pathsService.fetchFile], action.fileId)
+            : action.fileId,
         id: action.fileId
       };
     } else {
@@ -114,6 +117,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
         data.uid
       );
     }
+
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
