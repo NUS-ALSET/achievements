@@ -230,6 +230,17 @@
         }
       }
     },
+    "studentJoinedPaths": {
+      "$studentKey": {
+        ".read": "auth != null && auth.uid == $studentKey",
+        "$pathKey": {
+          ".write": "auth != null &&
+              $studentKey == auth.uid &&
+              root.child('paths/' + $pathKey).exists()
+            "
+        }
+      }
+    },
     "updateProfileQueue": {
       "tasks": {
         ".indexOn": ["_state"],

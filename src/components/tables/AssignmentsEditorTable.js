@@ -4,35 +4,35 @@ import {
   assignmentReorderRequest,
   assignmentShowAddDialog,
   assignmentShowEditDialog,
-  assignmentsEditorTableShown
+  assignmentsEditorTableShown,
+  assignmentsAssistantsShowRequest
 } from "../../containers/Assignments/actions";
 import { isEmpty } from "react-redux-firebase";
 
 import { withRouter } from "react-router-dom";
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 
-import DeleteIcon from "material-ui-icons/Delete";
-import EditIcon from "material-ui-icons/Edit";
-import ExpandLessIcon from "material-ui-icons/ExpandLess";
-import ExpandMoreIcon from "material-ui-icons/ExpandMore";
-import IconButton from "material-ui/IconButton";
+import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 
-import AddIcon from "material-ui-icons/Add";
-import GroupIcon from "material-ui-icons/Group";
+import AddIcon from "@material-ui/icons/Add";
+import GroupIcon from "@material-ui/icons/Group";
 
 import React, { Fragment } from "react";
-import Switch from "material-ui/Switch";
-import Table, {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
-} from "material-ui/Table";
-import TextField from "material-ui/TextField";
-import Toolbar from "material-ui/Toolbar";
+import Switch from "@material-ui/core/Switch";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TextField from "@material-ui/core/TextField";
+import Toolbar from "@material-ui/core/Toolbar";
 import { APP_SETTING } from "../../achievementsApp/config";
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = theme => ({
   actionButton: {
@@ -42,7 +42,7 @@ const styles = theme => ({
     minWidth: 240
   },
   dateEdit: {
-    width: 220
+    width: 246
   },
   faButton: {
     position: "fixed",
@@ -51,7 +51,7 @@ const styles = theme => ({
   }
 });
 
-class AssignmentsEditorTable extends React.PureComponent {
+class AssignmentsEditorTable extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     match: PropTypes.object,
@@ -87,6 +87,10 @@ class AssignmentsEditorTable extends React.PureComponent {
         assignment.id,
         order
       )
+    );
+  assignmentsAssistantsShowRequest = () =>
+    this.props.dispatch(
+      assignmentsAssistantsShowRequest(this.props.match.params.courseId)
     );
 
   render() {

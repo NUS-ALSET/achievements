@@ -1,5 +1,6 @@
 import { actionsService } from "../services/actions";
 import { applyMiddleware, compose, createStore } from "redux";
+import thunk from "redux-thunk";
 import { reactReduxFirebase } from "react-redux-firebase";
 import { sagaInjector, sagaMiddleware } from "../services/saga";
 import firebase from "firebase";
@@ -18,7 +19,12 @@ if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
 }
 
 export const configureStore = initialState => {
-  const middlewares = [sagaMiddleware, logger, actionsService.catchAction];
+  const middlewares = [
+    thunk,
+    sagaMiddleware,
+    logger,
+    actionsService.catchAction
+  ];
   const store = compose(reactReduxFirebase(firebase, rrfConfig))(createStore)(
     rootReducer,
     initialState,

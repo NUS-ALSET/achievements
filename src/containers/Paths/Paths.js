@@ -10,25 +10,25 @@ import { connect } from "react-redux";
 
 import { firebaseConnect } from "react-redux-firebase";
 
-import Button from "material-ui/Button";
-import Grid from "material-ui/Grid";
+// import Button from "@material-ui/core/Button";
+// import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 
-import { pathDialogShow, pathProblemDialogShow } from "./actions";
-
 import PathDialog from "../../components/dialogs/PathDialog";
-import ProblemsTable from "../../components/tables/ProblemsTable";
+// import ProblemsTable from "../../components/tables/ProblemsTable";
 
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
-import ProblemDialog from "../../components/dialogs/ProblemDialog";
 import { getProblems } from "./selectors";
-import PathsList from "../../components/lists/PathsList";
+import PathTabs from "../../components/tabs/PathTabs";
+import Breadcrumbs from "../../components/Breadcrumbs";
+// import PathsList from "../../components/lists/PathsList";
 
 class Paths extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     myPaths: PropTypes.object,
+    joinedPaths: PropTypes.object,
     publicPaths: PropTypes.object,
     selectedPathId: PropTypes.string,
     problems: PropTypes.array,
@@ -39,81 +39,35 @@ class Paths extends React.PureComponent {
 
   state = { tabIndex: 0 };
 
-  onAddPathClick = () => this.props.dispatch(pathDialogShow());
-  onAddProblemClick = () => this.props.dispatch(pathProblemDialogShow());
-
   render() {
     const {
-      myPaths,
-      publicPaths,
       dispatch,
+      myPaths,
+      joinedPaths,
+      publicPaths,
       ui,
-      uid,
-      selectedPathId,
-      problems
+      uid
     } = this.props;
 
     return (
       <Fragment>
-        <Grid container>
-          <Grid item sm={3} xs={12}>
-            <Button
-              color="primary"
-              onClick={this.onAddPathClick}
-              style={{
-                margin: 4
-              }}
-              variant="raised"
-            >
-              Add Path
-            </Button>
-            {myPaths && (
-              <PathsList
-                dispatch={dispatch}
-                header="Private Paths"
-                paths={myPaths}
-                selectedPathId={selectedPathId}
-                userId={uid}
-              />
-            )}
-            {publicPaths && (
-              <PathsList
-                dispatch={dispatch}
-                header="Public Paths"
-                paths={publicPaths}
-                selectedPathId={selectedPathId}
-              />
-            )}
-          </Grid>
-          <Grid item sm={9} xs={12}>
-            <Button
-              color="primary"
-              onClick={this.onAddProblemClick}
-              style={{
-                margin: 4
-              }}
-              variant="raised"
-            >
-              Add Problem
-            </Button>
-            <ProblemsTable
-              dispatch={dispatch}
-              pathOwnerId={uid}
-              problems={problems}
-              selectedPathId={selectedPathId}
-            />
-          </Grid>
-        </Grid>
+        <Breadcrumbs
+          paths={[
+            {
+              label: "Paths"
+            }
+          ]}
+        />
+        <PathTabs
+          dispatch={dispatch}
+          joinedPaths={joinedPaths}
+          myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+          publicPaths={publicPaths}
+        />
         <PathDialog
           dispatch={dispatch}
           open={ui.dialog.type === "PathChange"}
           path={ui.dialog.value}
-        />
-        <ProblemDialog
-          dispatch={dispatch}
-          open={ui.dialog.type === "ProblemChange"}
-          pathId={selectedPathId}
-          problem={ui.dialog.value}
         />
       </Fragment>
     );
@@ -128,6 +82,7 @@ const mapStateToProps = state => ({
   selectedPathId: state.paths.selectedPathId,
   myPaths: state.firebase.data.myPaths,
   publicPaths: state.firebase.data.publicPaths,
+  joinedPaths: state.paths.joinedPaths,
   problems: getProblems(state)
 });
 

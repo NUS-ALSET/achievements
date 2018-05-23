@@ -7,22 +7,20 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
-import Button from "material-ui/Button";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from "material-ui/Dialog/index";
-import {
-  FormLabel,
-  FormControl,
-  FormGroup,
-  FormControlLabel,
-  FormHelperText
-} from "material-ui/Form";
-import Checkbox from "material-ui/Checkbox";
-import MenuItem from "material-ui/Menu/MenuItem";
-import TextField from "material-ui/TextField/TextField";
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Checkbox from "@material-ui/core/Checkbox";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
 
 import {
   pathDialogHide,
@@ -64,6 +62,45 @@ class ProblemDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
               onKeyPress={this.catchReturn}
+            />
+            <TextField
+              defaultValue={problem && problem.frozen}
+              fullWidth
+              label="Number of frozen cells"
+              margin="dense"
+              onChange={e => this.onFieldChange("frozen", e.target.value)}
+              onKeyPress={this.catchReturn}
+              type="number"
+            />
+          </Fragment>
+        );
+      case "jupyterInline":
+        return (
+          <Fragment>
+            <TextField
+              defaultValue={problem && problem.problemURL}
+              fullWidth
+              label="Problem Notebook URL"
+              margin="dense"
+              onChange={e => this.onFieldChange("problemURL", e.target.value)}
+              onKeyPress={this.catchReturn}
+            />
+            <TextField
+              defaultValue={problem && problem.solutionURL}
+              fullWidth
+              label="Solution Notebook URL"
+              margin="dense"
+              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+              onKeyPress={this.catchReturn}
+            />
+            <TextField
+              defaultValue={problem && problem.frozen}
+              fullWidth
+              label="Default code block"
+              margin="dense"
+              onChange={e => this.onFieldChange("code", e.target.value)}
+              onKeyPress={this.catchReturn}
+              type="number"
             />
             <TextField
               defaultValue={problem && problem.frozen}
@@ -208,6 +245,7 @@ class ProblemDialog extends React.PureComponent {
           >
             <MenuItem value="text">Text</MenuItem>
             <MenuItem value="jupyter">Jupyter Notebook</MenuItem>
+            <MenuItem value="jupyterInline">Jupyter Inline</MenuItem>
             <MenuItem value="youtube">YouTube</MenuItem>
             <MenuItem value="game">Game</MenuItem>
           </TextField>

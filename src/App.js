@@ -3,9 +3,9 @@ import AppFrame from "./containers/AppFrame/AppFrame";
 import Root from "./containers/Root/Root";
 import { Provider } from "react-redux";
 
-import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
-import CssBaseline from "material-ui/CssBaseline";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";

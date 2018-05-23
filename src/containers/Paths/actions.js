@@ -16,6 +16,12 @@ export const pathProblemDialogShow = problemInfo => ({
   problemInfo
 });
 
+export const PATHS_JOINED_FETCH_SUCCESS = "PATHS_JOINED_FETCH_SUCCESS";
+export const pathsJoinedFetchSuccess = paths => ({
+  type: PATHS_JOINED_FETCH_SUCCESS,
+  paths
+});
+
 export const PATH_DIALOG_HIDE = "PATH_DIALOG_HIDE";
 export const pathDialogHide = () => ({
   type: PATH_DIALOG_HIDE

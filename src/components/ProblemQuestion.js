@@ -6,7 +6,7 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import TextField from "material-ui/TextField";
+import TextField from "@material-ui/core/TextField";
 import { YOUTUBE_QUESTIONS } from "../services/paths";
 
 class ProblemQuestion extends React.PureComponent {

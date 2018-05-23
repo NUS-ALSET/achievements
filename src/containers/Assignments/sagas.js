@@ -1,3 +1,5 @@
+import findAt from "lodash/find";
+
 import { APP_SETTING } from "../../achievementsApp/config";
 import {
   ASSIGNMENTS_EDITOR_TABLE_SHOWN,
@@ -55,6 +57,7 @@ import {
 import { eventChannel } from "redux-saga";
 import {
   call,
+  fork,
   put,
   select,
   take,
@@ -107,8 +110,8 @@ export function* addAssignmentRequestHandle(action) {
 }
 
 export function* updateNewAssignmentFieldHandler(action) {
-  if (action.field === "details") {
-    return yield Promise.resolve();
+  if (["details", "name"].includes(action.field)) {
+    return;
   }
 
   const location = window.location.href.replace(/#.*$/, "");
@@ -117,6 +120,7 @@ export function* updateNewAssignmentFieldHandler(action) {
     manualUpdates: state.assignments.dialog.manualUpdates || {},
     uid: state.firebase.auth.uid
   }));
+  let problem;
   let problems;
   let assignment = data.assignment;
 
@@ -140,6 +144,7 @@ export function* updateNewAssignmentFieldHandler(action) {
 
         yield put(assignmentPathsFetchSuccess(paths));
         yield put(updateNewAssignmentField("path", data.uid));
+
         if (!data.manualUpdates.details) {
           yield put(
             updateNewAssignmentField(
@@ -166,20 +171,30 @@ export function* updateNewAssignmentFieldHandler(action) {
       );
 
       yield put(assignmentProblemsFetchSuccess(problems));
-      if (!data.manualUpdates.name) {
-        yield put(updateNewAssignmentField("name", "Default Path"));
-      }
       yield put(updateNewAssignmentField("problem", ""));
       break;
     case "problem":
-      if (!data.manualUpdates.details) {
-        yield put(
-          updateNewAssignmentField(
-            "details",
-            `${location}#/paths/${assignment.path}/${assignment.problem}`
-          )
-        );
+      problems = yield select(state => state.assignments.dialog.problems);
+
+      problem = findAt(problems, {
+        id: assignment.problem
+      });
+
+      if (!data.manualUpdates.details && problem) {
+        // FIXIT: add `case` for problem type
+        yield fork(function* subFork() {
+          yield put(
+            updateNewAssignmentField(
+              "details",
+              problem.youtubeURL || problem.problemURL
+            )
+          );
+        });
       }
+      if (!data.manualUpdates.name && problem) {
+        yield put.resolve(updateNewAssignmentField("name", problem.name));
+      }
+
       break;
     default:
   }
@@ -480,6 +495,7 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
     ) {
       switch (pathProblem.type) {
         case "jupyter":
+        case "jupyterInline":
           yield put(
             problemSolveUpdate(
               pathProblem.pathId,

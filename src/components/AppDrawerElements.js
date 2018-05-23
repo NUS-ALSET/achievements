@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
-import { MenuItem } from "material-ui/Menu";
-import Button from "material-ui/Button";
-import Divider from "material-ui/Divider";
-import List, { ListItem, ListItemIcon, ListItemText } from "material-ui/List";
+import MenuItem from "@material-ui/core/MenuItem";
+import Button from "@material-ui/core/Button";
+import Divider from "@material-ui/core/Divider";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 
-import StarIcon from "material-ui-icons/Star";
+import StarIcon from "@material-ui/icons/Star";
 
 const linkStyle = {
   textDecoration: "none"
