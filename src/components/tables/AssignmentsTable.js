@@ -255,6 +255,7 @@ class AssignmentsTable extends React.PureComponent {
                   </div>
                 </TableCell>
               ))}
+            {isInstructor && <TableCell>Progress</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -308,6 +309,17 @@ class AssignmentsTable extends React.PureComponent {
                       </Fragment>
                     </TableCell>
                   ))}
+                {isInstructor && (
+                  <TableCell>{`${studentInfo.progress.totalSolutions} / ${
+                    course.totalAssignments
+                  } ${
+                    studentInfo.progress.lastSolutionTime
+                      ? new Date(
+                          studentInfo.progress.lastSolutionTime
+                        ).toLocaleTimeString()
+                      : ""
+                  }`}</TableCell>
+                )}
               </TableRow>
             );
           })}
