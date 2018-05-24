@@ -10,11 +10,15 @@ import {
   courseMoveStudentDialogShow,
   assignmentPathProgressSolutionRequest
 } from "../../containers/Assignments/actions";
+
+import withStyles from "@material-ui/core/styles/withStyles";
+
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import DeleteIcon from "@material-ui/icons/Delete";
+import DoneIcon from "@material-ui/icons/Done";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import PropTypes from "prop-types";
@@ -29,10 +33,19 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import { AccountService } from "../../services/account";
 import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
+import { APP_SETTING } from "../../achievementsApp/config";
+
+const styles = theme => ({
+  narrowCell: {
+    padding: theme.spacing.unit
+  }
+});
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
+    classes: PropTypes.object,
     course: PropTypes.object,
+
     isInstructor: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     sortState: PropTypes.object,
@@ -80,6 +93,14 @@ class AssignmentsTable extends React.PureComponent {
   getSolution(assignment, solutions) {
     let solution = solutions[assignment.id];
     const result = (solution && solution.value) || "";
+
+    if (result) {
+      return (
+        <IconButton>
+          <DoneIcon />
+        </IconButton>
+      );
+    }
 
     switch (assignment.questionType) {
       case "Profile":
@@ -153,7 +174,7 @@ class AssignmentsTable extends React.PureComponent {
 
   onSortClick = assignment =>
     this.props.dispatch(
-      assignmentsSortChange((assignment && assignment.id) || "studentName")
+      assignmentsSortChange((assignment && assignment.id) || assignment)
     );
 
   onSubmitClick = (assignment, solution) => {
@@ -192,6 +213,7 @@ class AssignmentsTable extends React.PureComponent {
 
   render() {
     const {
+      classes,
       /** @type AssignmentCourse */
       course,
       isInstructor,
@@ -207,10 +229,7 @@ class AssignmentsTable extends React.PureComponent {
               <TableSortLabel
                 active={sortState.field === "studentName"}
                 direction={sortState.direction}
-                onClick={() => this.onSortClick()}
-                style={{
-                  minWidth: 250
-                }}
+                onClick={() => this.onSortClick("studentName")}
               >
                 Student name
               </TableSortLabel>
@@ -219,9 +238,11 @@ class AssignmentsTable extends React.PureComponent {
               .filter(assignment => assignment.visible)
               .map(assignment => (
                 <TableCell
+                  classes={{
+                    root: classes.narrowCell
+                  }}
                   key={assignment.id}
                   style={{
-                    minWidth: 250,
                     whiteSpace: "normal",
                     wordWrap: "break-word"
                   }}
@@ -246,16 +267,28 @@ class AssignmentsTable extends React.PureComponent {
                     {(assignment.details ? " " : "") + assignment.progress ||
                       ""}
                   </div>
-                  <div>
-                    {assignment.deadline &&
-                      `Deadline in ${distanceInWords(
-                        assignment.deadline,
-                        new Date()
-                      )}`}
-                  </div>
+                  {!APP_SETTING.isSuggesting && (
+                    <div>
+                      {assignment.deadline &&
+                        `Deadline in ${distanceInWords(
+                          assignment.deadline,
+                          new Date()
+                        )}`}
+                    </div>
+                  )}
                 </TableCell>
               ))}
-            {isInstructor && <TableCell>Progress</TableCell>}
+            {isInstructor && (
+              <TableCell>
+                <TableSortLabel
+                  active={sortState.field === "progress"}
+                  direction={sortState.direction}
+                  onClick={() => this.onSortClick("progress")}
+                >
+                  Progress
+                </TableSortLabel>
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -310,15 +343,17 @@ class AssignmentsTable extends React.PureComponent {
                     </TableCell>
                   ))}
                 {isInstructor && (
-                  <TableCell>{`${studentInfo.progress.totalSolutions} / ${
-                    course.totalAssignments
-                  } ${
-                    studentInfo.progress.lastSolutionTime
-                      ? new Date(
-                          studentInfo.progress.lastSolutionTime
-                        ).toLocaleTimeString()
-                      : ""
-                  }`}</TableCell>
+                  <TableCell>
+                    {`${studentInfo.progress.totalSolutions} / ${
+                      course.totalAssignments
+                    } ${
+                      studentInfo.progress.lastSolutionTime
+                        ? new Date(
+                            studentInfo.progress.lastSolutionTime
+                          ).toLocaleTimeString()
+                        : ""
+                    }`}
+                  </TableCell>
                 )}
               </TableRow>
             );
@@ -329,4 +364,4 @@ class AssignmentsTable extends React.PureComponent {
   }
 }
 
-export default AssignmentsTable;
+export default withStyles(styles)(AssignmentsTable);

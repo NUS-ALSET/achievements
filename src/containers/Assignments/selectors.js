@@ -205,7 +205,16 @@ export const getCourseProps = (state, ownProps) => {
       let bValue = b.name;
       let result = 0;
 
-      if (state.assignments.sort.field !== "studentName") {
+      if (state.assignments.sort.field === "progress") {
+        aValue = a.progress.totalSolutions;
+        bValue = b.progress.totalSolutions;
+        if (a === b) {
+          aValue = a.progress.lastSolutionTime;
+          bValue = a.progress.lastSolutionTime;
+        }
+      }
+
+      if (!["studentName", "progress"].includes(state.assignments.sort.field)) {
         aValue = getValueToSort(a.solutions, state.assignments.sort.field);
         bValue = getValueToSort(b.solutions, state.assignments.sort.field);
       }
