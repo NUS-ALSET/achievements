@@ -5,22 +5,21 @@
  */
 
 import { APP_SETTING } from "../../achievementsApp/config";
-import { FormControl } from "material-ui/Form";
+import FormControl from "@material-ui/core/FormControl";
 
-import Button from "material-ui/Button";
-import Checkbox from "material-ui/Checkbox";
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from "material-ui/Dialog/index";
-import FormControlLabel from "material-ui/Form/FormControlLabel";
-import Input, { InputLabel } from "material-ui/Input";
-import MenuItem from "material-ui/Menu/MenuItem";
+import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Input, { InputLabel } from "@material-ui/core/Input";
+import MenuItem from "@material-ui/core/MenuItem";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
-import Select from "material-ui/Select";
-import TextField from "material-ui/TextField";
+import Select from "@material-ui/core/Select";
+import TextField from "@material-ui/core/TextField";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import {
   assignmentAddRequest,

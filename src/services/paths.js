@@ -86,6 +86,7 @@ export class PathsService {
         }
         switch (pathProblem.type) {
           case "jupyter":
+          case "jupyterInline":
             return Promise.all([
               Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
                 fileId =>
@@ -204,6 +205,7 @@ export class PathsService {
     if (!problemInfo.name) throw new Error("Missing problem name");
     if (!problemInfo.type) throw new Error("Missing problem type");
     switch (problemInfo.type) {
+      case "jupyterInline":
       case "jupyter":
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
         if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
@@ -278,6 +280,7 @@ export class PathsService {
           });
           break;
         case "jupyter":
+        case "jupyterInline":
           if (json) {
             const frozenSolution = json.cells
               .filter(cell => cell.source.join().trim())
@@ -348,6 +351,11 @@ export class PathsService {
       .then(() => this.validateSolution(pathProblem, solution))
       .then(() => {
         switch (pathProblem.type) {
+          case "jupyterInline":
+            return this.firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution);
           case "jupyter":
             return this.fetchFile(this.getFileId(solution))
               .then(json => this.validateSolution(pathProblem, solution, json))
@@ -386,6 +394,30 @@ export class PathsService {
           ...paths[id],
           id
         }))
+      );
+  }
+
+  fetchJoinedPaths(uid) {
+    return this.firebase
+      .database()
+      .ref(`/studentJoinedPaths/${uid}`)
+      .once("value")
+      .then(snapshot => snapshot.val())
+      .then(paths =>
+        Promise.all(
+          Object.keys(paths).map(
+            id =>
+              paths[id]
+                ? this.firebase
+                    .database()
+                    .ref(`/paths/${id}`)
+                    .once("value")
+                    .then(snapshot => ({ id, ...snapshot.val() }))
+                : Promise.resolve(false)
+          )
+        ).then(paths =>
+          Object.assign({}, ...paths.map(path => ({ [path.id]: path })))
+        )
       );
   }
 

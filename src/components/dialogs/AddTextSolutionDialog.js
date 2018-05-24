@@ -8,16 +8,15 @@ import {
   assignmentCloseDialog,
   assignmentSolutionRequest
 } from "../../containers/Assignments/actions";
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 
-import Dialog, {
-  DialogActions,
-  DialogContent,
-  DialogTitle
-} from "material-ui/Dialog/index";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import PropTypes from "prop-types";
 import React from "react";
-import TextField from "material-ui/TextField";
+import TextField from "@material-ui/core/TextField";
 
 class AddTextSolutionDialog extends React.PureComponent {
   static propTypes = {

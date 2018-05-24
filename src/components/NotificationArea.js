@@ -4,11 +4,11 @@
  * @created 25.01.18
  */
 
-import CloseIcon from "material-ui-icons/Close";
-import IconButton from "material-ui/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 import React from "react";
-import Snackbar from "material-ui/Snackbar";
+import Snackbar from "@material-ui/core/Snackbar";
 
 class NotificationArea extends React.PureComponent {
   static propTypes = {
@@ -20,7 +20,7 @@ class NotificationArea extends React.PureComponent {
   render() {
     return (
       <Snackbar
-        SnackbarContentProps={{
+        ContentProps={{
           "aria-describedby": "message-id"
         }}
         action={[

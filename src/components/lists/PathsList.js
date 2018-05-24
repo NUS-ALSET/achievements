@@ -8,11 +8,15 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import { Link } from "react-router-dom";
-import List, { ListItem, ListItemText, ListSubheader } from "material-ui/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListSubheader from "@material-ui/core/ListSubheader";
 
-import OpenInNewIcon from "material-ui-icons/OpenInNew";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import { pathSelect } from "../../containers/Paths/actions";
 
+// noinspection JSUnusedGlobalSymbols
 class PathsList extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
@@ -70,4 +74,5 @@ class PathsList extends React.PureComponent {
   }
 }
 
+// noinspection JSUnusedGlobalSymbols
 export default PathsList;

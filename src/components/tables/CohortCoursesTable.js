@@ -9,17 +9,16 @@ import PropTypes from "prop-types";
 
 import { Link, withRouter } from "react-router-dom";
 
-import Table, {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
-} from "material-ui/Table";
-import IconButton from "material-ui/IconButton";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import IconButton from "@material-ui/core/IconButton";
 
-import DeleteIcon from "material-ui-icons/Delete";
+import DeleteIcon from "@material-ui/icons/Delete";
 
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 import { cohortsService } from "../../services/cohorts";
 
 const styles = theme => ({

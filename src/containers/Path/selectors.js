@@ -1,5 +1,11 @@
 import { createSelector } from "reselect";
 
+export const PATH_STATUS_OWNER = "owner";
+export const PATH_STATUS_JOINED = "joined";
+export const PATH_STATUS_NOT_JOINED = "not_joined";
+
+const getUserId = state => state.firebase.auth.uid;
+
 const getPath = (state, ownProps) =>
   ownProps.match.params.pathId[0] === "-"
     ? state.firebase.data.paths &&
@@ -13,6 +19,8 @@ const getPath = (state, ownProps) =>
         name: "Default"
       };
 
+const getJoinedPaths = state => state.paths.joinedPaths || {};
+
 const getProblems = (state, ownProps) => {
   const path = getPath(state, ownProps);
 
@@ -23,6 +31,21 @@ const getProblems = (state, ownProps) => {
     state.firebase.data.problems[path.owner]
   );
 };
+
+export const pathStatusSelector = createSelector(
+  getUserId,
+  getJoinedPaths,
+  getPath,
+  (userId, joinedPaths, path) => {
+    if (!path || path.owner === userId) {
+      return PATH_STATUS_OWNER;
+    }
+    if (joinedPaths[path.id]) {
+      return PATH_STATUS_JOINED;
+    }
+    return PATH_STATUS_NOT_JOINED;
+  }
+);
 
 export const pathProblemsSelector = createSelector(
   getPath,

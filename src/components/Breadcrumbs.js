@@ -7,12 +7,14 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
 
-import ChevronRightIcon from "material-ui-icons/ChevronRight";
+import Button from "@material-ui/core/Button";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
 
-import withStyles from "material-ui/styles/withStyles";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+
+import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -22,17 +24,22 @@ const styles = theme => ({
     margin: theme.spacing.unit,
     textTransform: "uppercase",
     fontSize: "0.875rem"
+  },
+  breadcrumbAction: {
+    position: "absolute",
+    right: theme.spacing.unit
   }
 });
 
 class Breadcrumbs extends React.PureComponent {
   static propTypes = {
+    action: PropTypes.object,
     classes: PropTypes.object,
     paths: PropTypes.array.isRequired
   };
 
   render() {
-    const { classes, paths } = this.props;
+    const { action, classes, paths } = this.props;
 
     return (
       <Toolbar>
@@ -52,6 +59,15 @@ class Breadcrumbs extends React.PureComponent {
                 <ChevronRightIcon />
               </Fragment>
             )
+        )}
+        {action && (
+          <Button
+            className={classes.breadcrumbAction}
+            onClick={action.handler}
+            variant="raised"
+          >
+            {action.label}
+          </Button>
         )}
       </Toolbar>
     );

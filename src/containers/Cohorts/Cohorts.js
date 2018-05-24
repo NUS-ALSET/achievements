@@ -10,9 +10,10 @@ import { compose } from "redux";
 
 import { firebaseConnect } from "react-redux-firebase";
 
-import Tabs, { Tab } from "material-ui/Tabs";
-import Toolbar from "material-ui/Toolbar";
-import Button from "material-ui/Button";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Toolbar from "@material-ui/core/Toolbar";
+import Button from "@material-ui/core/Button";
 
 import CohortsTable from "../../components/tables/CohortsTable";
 import { addCohortDialogShow, cohortsChangeTab } from "./actions";

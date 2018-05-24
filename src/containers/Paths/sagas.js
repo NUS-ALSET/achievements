@@ -6,14 +6,22 @@ import {
   pathDialogHide,
   pathGAPIAuthorized,
   pathProblemChangeFail,
-  pathProblemChangeSuccess
+  pathProblemChangeSuccess,
+  pathsJoinedFetchSuccess
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 
-export function* loginHandler() {
+export function* loginHandler(action) {
+  // Auth GAPI to download files from google drive
   yield call([pathsService, pathsService.auth]);
   yield put(pathGAPIAuthorized(true));
+
+  const joinedPaths = yield call(
+    [pathsService, pathsService.fetchJoinedPaths],
+    action.auth.uid
+  );
+  yield put(pathsJoinedFetchSuccess(joinedPaths));
 }
 
 export function* pathChangeRequestHandler(action) {

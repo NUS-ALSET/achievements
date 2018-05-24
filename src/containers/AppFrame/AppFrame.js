@@ -6,27 +6,27 @@ import { connect } from "react-redux";
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
 import Account from "../../containers/Account/Account";
-import AppBar from "material-ui/AppBar";
+import AppBar from "@material-ui/core/AppBar";
 
 import AppDrawer from "../../components/AppDrawer";
 
 import Assignments from "../Assignments/Assignments";
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 import Courses from "../Courses/Courses";
 
-import Hidden from "material-ui/Hidden";
-import IconButton from "material-ui/IconButton";
+import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
 
-import Menu from "material-ui/Menu";
-import MenuIcon from "material-ui-icons/Menu";
+import Menu from "@material-ui/core/Menu";
+import MenuIcon from "@material-ui/icons/Menu";
 
-import MoreVertIcon from "material-ui-icons/MoreVert";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Paths from "../Paths/Paths";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
-import withStyles from "material-ui/styles/withStyles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import withStyles from "@material-ui/core/styles/withStyles";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
 import Admin from "../Admin/Admin";
@@ -209,11 +209,7 @@ class AppFrame extends React.Component {
               <Route component={Assignments} exact path="/courses/:courseId" />
               <Route component={Cohorts} exact path="/cohorts" />
               <Route component={Cohort} exact path="/cohorts/:cohortId" />
-              <Route
-                component={Paths}
-                exact
-                path="/paths"
-              />
+              <Route component={Paths} exact path="/paths" />
               <Route component={Path} exact path="/paths/:pathId" />
               <Route
                 component={Problem}

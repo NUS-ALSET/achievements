@@ -8,13 +8,13 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-import Button from "material-ui/Button";
-import Grid from "material-ui/Grid";
-import Paper from "material-ui/Paper";
-import TextField from "material-ui/TextField";
-import Typography from "material-ui/Typography";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = theme => ({
   section: { padding: theme.spacing.unit },
@@ -57,6 +57,7 @@ class Admin extends React.PureComponent {
   }
 }
 
+// noinspection JSUnusedLocalSymbols
 const mapStateToProps = state => ({});
 
 export default compose(withStyles(styles), connect(mapStateToProps))(Admin);
