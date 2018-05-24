@@ -3,9 +3,9 @@ import AppFrame from "./containers/AppFrame/AppFrame";
 import Root from "./containers/Root/Root";
 import { Provider } from "react-redux";
 
-import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
-import Reboot from "material-ui/Reboot";
+import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
@@ -25,9 +25,9 @@ class App extends React.Component {
   render() {
     return (
       <MuiThemeProvider theme={theme}>
+        <CssBaseline />
         <Provider store={store}>
           <Root>
-            <Reboot />
             <AppFrame />
           </Root>
         </Provider>

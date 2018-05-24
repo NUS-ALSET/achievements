@@ -1,3 +1,4 @@
+import { admin } from "../containers/Admin/reducer";
 import { account } from "../containers/Account/reducer";
 import { appFrame } from "../containers/AppFrame/reducer";
 import { assignments } from "../containers/Assignments/reducer";
@@ -7,8 +8,8 @@ import { firebaseReducer as firebase } from "react-redux-firebase";
 import { root } from "../containers/Root/reducer";
 import { cohorts } from "../containers/Cohorts/reducer";
 import { cohort } from "../containers/Cohort/reducer";
+import { path } from "../containers/Path/reducer";
 import { paths } from "../containers/Paths/reducer";
-import { admin } from "../containers/Admin/reducer";
 import { problem } from "../containers/Problem/reducer";
 
 export default combineReducers({
@@ -21,6 +22,7 @@ export default combineReducers({
   account,
   cohorts,
   cohort,
+  path,
   paths,
   problem
 });

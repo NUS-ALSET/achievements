@@ -10,16 +10,17 @@ import {
 import { firebaseConnect } from "react-redux-firebase";
 import { sagaInjector } from "../../services/saga";
 import AddCourseDialog from "../../components/dialogs/AddCourseDialog";
-import Button from "material-ui/Button";
+import Button from "@material-ui/core/Button";
 import CoursesTable from "../../components/tables/CoursesTable";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import RemoveCourseDialog from "../../components/dialogs/RemoveCourseDialog";
 
-import Tabs, { Tab } from "material-ui/Tabs";
-import Toolbar from "material-ui/Toolbar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Toolbar from "@material-ui/core/Toolbar";
 
-import AddIcon from "material-ui-icons/Add";
+import AddIcon from "@material-ui/icons/Add";
 
 import sagas from "./sagas";
 import { APP_SETTING } from "../../achievementsApp/config";

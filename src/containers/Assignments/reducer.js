@@ -26,7 +26,13 @@ import {
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
 import format from "date-fns/format";
-import { PROBLEM_SOLUTION_REFRESH_SUCCESS } from "../Problem/actions";
+import {
+  PROBLEM_SOLUTION_CALCULATED_WRONG,
+  PROBLEM_SOLUTION_PROVIDED_SUCCESS,
+  PROBLEM_SOLUTION_REFRESH_FAIL,
+  PROBLEM_SOLUTION_REFRESH_REQUEST,
+  PROBLEM_SOLUTION_REFRESH_SUCCESS
+} from "../Problem/actions";
 
 const DAYS_IN_WEEK = 7;
 
@@ -192,7 +198,8 @@ export const assignments = (
         ...state,
         dialog: {
           ...state.dialog,
-          pathProblem: action.pathProblem
+          pathProblem: action.pathProblem,
+          solution: action.solution
         }
       };
     case ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS:
@@ -203,12 +210,63 @@ export const assignments = (
           pathProgress: action.pathProgress
         }
       };
+    case PROBLEM_SOLUTION_REFRESH_REQUEST:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: {
+            ...(state.dialog.solution || {}),
+            loading: true,
+            failed: false,
+            checked: false
+          }
+        }
+      };
+    case PROBLEM_SOLUTION_REFRESH_FAIL:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: {
+            ...(state.solution || {}),
+            loading: false
+          }
+        }
+      };
+    case PROBLEM_SOLUTION_PROVIDED_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: {
+            ...(state.dialog.solution || {}),
+            provided: action.payload
+          }
+        }
+      };
+    case PROBLEM_SOLUTION_CALCULATED_WRONG:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: {
+            ...(state.dialog.solution || {}),
+            failed: true
+          }
+        }
+      };
     case PROBLEM_SOLUTION_REFRESH_SUCCESS:
       return {
         ...state,
         dialog: {
           ...state.dialog,
-          solution: action.payload
+          solution: {
+            ...(state.dialog.solution || {}),
+            ...action.payload,
+            checked: true,
+            loading: false
+          }
         }
       };
     case COURSE_MEMBERS_FETCH_SUCCESS:

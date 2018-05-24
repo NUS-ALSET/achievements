@@ -21,6 +21,11 @@ export const problemInitFail = (pathId, problemId, reason) => ({
   reason
 });
 
+export const PROBLEM_FINALIZE = "PROBLEM_FINALIZE";
+export const problemFinalize = () => ({
+  type: PROBLEM_FINALIZE
+});
+
 export const PROBLEM_SOLVE_UPDATE = "PROBLEM_SOLVE_UPDATE";
 export const problemSolveUpdate = (pathId, problemId, fileId) => ({
   type: PROBLEM_SOLVE_UPDATE,
@@ -36,18 +41,12 @@ export const problemSolveSuccess = (problemId, solutionKey) => ({
   solutionKey
 });
 
-export const PROBLEM_SOLVE_FAIL = "PROBLEM_SOLVE_FAIL";
-export const problemSolveFail = (problemId, reason) => ({
-  type: PROBLEM_SOLVE_FAIL,
-  problemId,
-  reason
-});
-
 export const PROBLEM_SOLUTION_REFRESH_REQUEST =
   "PROBLEM_SOLUTION_REFRESH_REQUEST";
-export const problemSolutionRefreshRequest = problemId => ({
+export const problemSolutionRefreshRequest = (problemId, fileId) => ({
   type: PROBLEM_SOLUTION_REFRESH_REQUEST,
-  problemId
+  problemId,
+  fileId
 });
 
 export const PROBLEM_SOLUTION_REFRESH_SUCCESS =
@@ -56,6 +55,50 @@ export const problemSolutionRefreshSuccess = (problemId, payload) => ({
   type: PROBLEM_SOLUTION_REFRESH_SUCCESS,
   problemId,
   payload
+});
+
+export const PROBLEM_SOLUTION_CALCULATED_WRONG =
+  "PROBLEM_SOLUTION_CALCULATED_WRONG";
+export const problemSolutionCalculatedWrong = () => ({
+  type: PROBLEM_SOLUTION_CALCULATED_WRONG
+});
+
+export const PROBLEM_SOLUTION_PROVIDED_SUCCESS =
+  "PROBLEM_SOLUTION_PROVIDED_SUCCESS";
+export const problemSolutionProvidedSuccess = (problemId, payload) => ({
+  type: PROBLEM_SOLUTION_PROVIDED_SUCCESS,
+  problemId,
+  payload
+});
+
+export const PROBLEM_CHECK_SOLUTION_REQUEST = "PROBLEM_CHECK_SOLUTION_REQUEST";
+export const problemCheckSolutionRequest = (problemId, fileId, solution) => ({
+  type: PROBLEM_CHECK_SOLUTION_REQUEST,
+  problemId,
+  fileId,
+  solution
+});
+
+export const PROBLEM_CHECK_SOLUTION_SUCCESS = "PROBLEM_CHECK_SOLUTION_SUCCESS";
+export const problemCheckSolutionSuccess = (problemId, fileId, solution) => ({
+  type: PROBLEM_CHECK_SOLUTION_SUCCESS,
+  problemId,
+  fileId,
+  solution
+});
+
+export const PROBLEM_CHECK_SOLUTION_FAIL = "PROBLEM_CHECK_SOLUTION_FAIL";
+export const problemCheckSolutionFail = (
+  problemId,
+  fileId,
+  solution,
+  reason
+) => ({
+  type: PROBLEM_CHECK_SOLUTION_FAIL,
+  problemId,
+  fileId,
+  solution,
+  reason
 });
 
 export const PROBLEM_SOLUTION_REFRESH_FAIL = "PROBLEM_SOLUTION_REFRESH_FAIL";

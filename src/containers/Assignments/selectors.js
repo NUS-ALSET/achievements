@@ -79,7 +79,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
-            originalSolution: solutions[assignmentId],
+            originalSolution: result[assignmentId],
             value: "Completed"
           };
           return true;
@@ -87,7 +87,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           result[assignmentId] = {
             published,
             validated: userAchievements.id === solution,
-            originalSolution: solutions[assignmentId],
+            originalSolution: result[assignmentId],
             value: solution
           };
           return true;
@@ -178,6 +178,22 @@ export const getCourseProps = (state, ownProps) => {
         )
       })
     }))
+    .map(member => ({
+      ...member,
+      progress: {
+        totalSolutions: Object.keys(member.solutions).length,
+        lastSolutionTime: Object.keys(member.solutions)
+          .map(
+            id =>
+              member.solutions[id].createdAt ||
+              (member.solutions[id].originalSolution &&
+                member.solutions[id].originalSolution.createdAt)
+          )
+          .sort()
+          .slice(-1)
+          .pop()
+      }
+    }))
     .sort((a, b) => {
       let aValue = a.name;
       let bValue = b.name;
@@ -207,6 +223,7 @@ export const getCourseProps = (state, ownProps) => {
     id: courseId,
     ...getFrom(state.firebase.data.courses, courseId),
     members: members.length ? sortedMembers : false,
+    totalAssignments: Object.keys(assignments).length,
     assignments: Object.keys(assignments)
       .map(id => ({
         ...assignments[id],

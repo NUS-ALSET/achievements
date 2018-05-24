@@ -111,6 +111,21 @@
         "
       }
     },
+    "jupyterSolutionsQueue": {
+      "answers": {
+        "$taskKey": {
+          ".read": "auth != null",
+          ".write": false
+        }
+      },
+      "tasks": {
+        ".indexOn": ["_state"],
+        "$taskKey": {
+          ".read": false,
+          ".write": "auth != null && newData.child('owner').val() == auth.uid"
+        }
+      }
+    },
     "logged_events": {
       ".read": "auth != null",
       ".write": "auth != null",
@@ -212,6 +227,17 @@
             ) || (
               root.child('courses/' + $courseKey + '/owner').val() == auth.uid
             ))"
+        }
+      }
+    },
+    "studentJoinedPaths": {
+      "$studentKey": {
+        ".read": "auth != null && auth.uid == $studentKey",
+        "$pathKey": {
+          ".write": "auth != null &&
+              $studentKey == auth.uid &&
+              root.child('paths/' + $pathKey).exists()
+            "
         }
       }
     },

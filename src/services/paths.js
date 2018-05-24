@@ -9,7 +9,8 @@ export const YOUTUBE_QUESTIONS = {
   questionAfter: "What question do you have after watching this video",
   questionAnswer:
     "What is a question someone who watched this video " +
-    "should be able to answer"
+    "should be able to answer",
+  questionCustom: "Custom question after watching this video"
 };
 
 export class PathsService {
@@ -38,8 +39,12 @@ export class PathsService {
   getFileId(url) {
     let result = /file\/d\/([^/]+)/.exec(url);
     if (result && result[1]) return result[1];
+    result = /id=([^&/]*)/.exec(url);
+    if (result && result[1]) return result[1];
+    result = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(url);
+    if (result && result[1]) return result[1];
 
-    throw new Error("Unable fetch file id");
+    return url;
   }
 
   /**
@@ -81,6 +86,7 @@ export class PathsService {
         }
         switch (pathProblem.type) {
           case "jupyter":
+          case "jupyterInline":
             return Promise.all([
               Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
                 fileId =>
@@ -155,9 +161,7 @@ export class PathsService {
     return new Promise((resolve, reject) =>
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
-          return reject(
-            new Error("Unable fetch file. Make sure that it's published")
-          );
+          return reject(new Error("Failing - Your solution is not public."));
         }
         resolve(data);
       })
@@ -182,61 +186,6 @@ export class PathsService {
       );
   }
 
-  uploadSolutionFile(uid, problemId, problemJSON) {
-    return this.uploadFile(
-      `Solution${problemId}.ipynb`,
-      JSON.stringify(problemJSON)
-    ).then(file =>
-      this.firebase
-        .database()
-        .ref(`/problemSolutions/${problemId}/${uid}`)
-        .set(file.id)
-        .then(() => file.id)
-    );
-  }
-
-  /** Taken from https://goo.gl/jyfMGj
-   *
-   * @param name
-   * @param data
-   * @returns {Promise<any>}
-   */
-  uploadFile(name, data) {
-    return new Promise(resolve => {
-      const boundary = "-------314159265358979323846";
-      const delimiter = "\r\n--" + boundary + "\r\n";
-      const close_delim = "\r\n--" + boundary + "--";
-
-      const contentType = "application/vnd.google.colab";
-
-      const metadata = {
-        name: name,
-        mimeType: contentType
-      };
-
-      const multipartRequestBody =
-        delimiter +
-        "Content-Type: application/json\r\n\r\n" +
-        JSON.stringify(metadata) +
-        delimiter +
-        "Content-Type: " +
-        contentType +
-        "\r\n\r\n" +
-        data +
-        close_delim;
-
-      const request = window.gapi.client.request({
-        path: "/upload/drive/v3/files",
-        method: "POST",
-        params: { uploadType: "multipart" },
-        headers: {
-          "Content-Type": `multipart/related; boundary="${boundary}"`
-        },
-        body: multipartRequestBody
-      });
-      request.execute(resolve);
-    });
-  }
   pathChange(uid, pathInfo) {
     const key = this.firebase
       .database()
@@ -256,6 +205,7 @@ export class PathsService {
     if (!problemInfo.name) throw new Error("Missing problem name");
     if (!problemInfo.type) throw new Error("Missing problem type");
     switch (problemInfo.type) {
+      case "jupyterInline":
       case "jupyter":
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
         if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
@@ -267,7 +217,8 @@ export class PathsService {
           !(
             problemInfo.questionAfter ||
             problemInfo.questionAnswer ||
-            problemInfo.topics
+            problemInfo.topics ||
+            (problemInfo.questionCustom && problemInfo.customText)
           )
         ) {
           throw new Error("Missing any of following question");
@@ -307,27 +258,84 @@ export class PathsService {
 
   /**
    *
+   * @param {String} uid
    * @param {PathProblem} pathProblem
    * @param {*} solution
-   * @returns {Boolean}
+   * @param {Object} [json]
+   * @returns {Promise<Boolean>}
    */
-  validateSolution(pathProblem, solution) {
-    switch (pathProblem.type) {
-      case "youtube":
-        if (isEmpty(solution.youtubeEvents)) {
-          throw new Error("Did you ever start watching this video?");
-        }
-        Object.keys(YOUTUBE_QUESTIONS).forEach(question => {
-          if (pathProblem[question] && !solution.answers[question]) {
-            throw new Error(
-              `Missing answer for '${YOUTUBE_QUESTIONS[question]}`
-            );
+  validateSolution(uid, pathProblem, solution, json) {
+    return Promise.resolve().then(() => {
+      switch (pathProblem.type) {
+        case "youtube":
+          if (isEmpty(solution.youtubeEvents)) {
+            throw new Error("Did you ever start watching this video?");
           }
-        });
-        break;
-      default:
-        return true;
-    }
+          Object.keys(YOUTUBE_QUESTIONS).forEach(question => {
+            if (pathProblem[question] && !solution.answers[question]) {
+              throw new Error(
+                `Missing answer for '${YOUTUBE_QUESTIONS[question]}`
+              );
+            }
+          });
+          break;
+        case "jupyter":
+        case "jupyterInline":
+          if (json) {
+            const frozenSolution = json.cells
+              .filter(cell => cell.source.join().trim())
+              .slice(-pathProblem.frozen);
+            const frozenProblem = pathProblem.problemJSON.cells
+              .filter(cell => cell.source.join().trim())
+              .slice(-pathProblem.frozen);
+
+            frozenProblem.forEach((cell, index) => {
+              const solution = frozenSolution[index];
+
+              if (
+                !solution ||
+                cell.source.join("").trim() !== solution.source.join("").trim()
+              ) {
+                throw new Error(
+                  "Failing - You have changed the last code block."
+                );
+              }
+              return true;
+            });
+            return new Promise((resolve, reject) => {
+              const answerPath = "/jupyterSolutionsQueue/answers/";
+              const answerKey = firebase
+                .database()
+                .ref(answerPath)
+                .push().key;
+
+              firebase
+                .database()
+                .ref(`${answerPath}${answerKey}`)
+                .on("value", response => {
+                  if (response.val() === null) return;
+                  return response.val()
+                    ? resolve(JSON.parse(response.val().solution))
+                    : reject(
+                        new Error("Failing - Unable execute your solution")
+                      );
+                });
+              return firebase
+                .database()
+                .ref(`/jupyterSolutionsQueue/tasks/${answerKey}`)
+                .set({
+                  owner: uid,
+                  taskKey: answerKey,
+                  problem: pathProblem.problemId,
+                  solution: json
+                });
+            });
+          }
+          break;
+        default:
+          return true;
+      }
+    });
   }
 
   /**
@@ -339,21 +347,33 @@ export class PathsService {
    * @returns {Promise<any>}
    */
   submitSolution(uid, pathProblem, solution) {
-    this.validateSolution(pathProblem, solution);
-    switch (pathProblem.type) {
-      case "jupyter":
-        return this.firebase
-          .database()
-          .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-          .set(solution);
-      case "youtube":
-        return this.firebase
-          .database()
-          .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-          .set(solution);
-      default:
-        break;
-    }
+    return Promise.resolve()
+      .then(() => this.validateSolution(pathProblem, solution))
+      .then(() => {
+        switch (pathProblem.type) {
+          case "jupyterInline":
+            return this.firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution);
+          case "jupyter":
+            return this.fetchFile(this.getFileId(solution))
+              .then(json => this.validateSolution(pathProblem, solution, json))
+              .then(() =>
+                this.firebase
+                  .database()
+                  .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+                  .set(solution)
+              );
+          case "youtube":
+            return this.firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution);
+          default:
+            break;
+        }
+      });
   }
 
   /**
@@ -377,6 +397,30 @@ export class PathsService {
       );
   }
 
+  fetchJoinedPaths(uid) {
+    return this.firebase
+      .database()
+      .ref(`/studentJoinedPaths/${uid}`)
+      .once("value")
+      .then(snapshot => snapshot.val())
+      .then(paths =>
+        Promise.all(
+          Object.keys(paths).map(
+            id =>
+              paths[id]
+                ? this.firebase
+                    .database()
+                    .ref(`/paths/${id}`)
+                    .once("value")
+                    .then(snapshot => ({ id, ...snapshot.val() }))
+                : Promise.resolve(false)
+          )
+        ).then(paths =>
+          Object.assign({}, ...paths.map(path => ({ [path.id]: path })))
+        )
+      );
+  }
+
   /**
    *
    * @param {String} uid
@@ -386,7 +430,7 @@ export class PathsService {
   fetchProblems(uid, pathId) {
     let ref = this.firebase.database().ref(`/problems/${uid}`);
 
-    if (pathId && pathId !== "default") {
+    if (pathId && pathId !== uid) {
       ref = ref.orderByChild("path").equalTo(pathId);
     }
     return ref

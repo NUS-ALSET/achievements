@@ -4,9 +4,10 @@
  * @created 11.03.18
  */
 
-import React, { Fragment } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import JupyterProblem from "../../components/problemViews/JupyterProblem";
+import JupyterInlineProblem from "../../components/problemViews/JupyterInlineProblem";
 import YouTubeProblem from "../../components/problemViews/YouTubeProblem";
 
 class ProblemView extends React.PureComponent {
@@ -26,7 +27,7 @@ class ProblemView extends React.PureComponent {
     }
 
     return (
-      <Fragment>
+      <div style={{ textAlign: "center", overflowX: "hidden" }}>
         {pathProblem.type === "jupyter" && (
           <JupyterProblem
             dispatch={dispatch}
@@ -35,17 +36,23 @@ class ProblemView extends React.PureComponent {
             solution={solution}
           />
         )}
-        {pathProblem.type === "youtube" && (
-          <div style={{ textAlign: "center", overflowX: "hidden" }}>
-            <YouTubeProblem
-              dispatch={dispatch}
-              onChange={onProblemChange}
-              problem={pathProblem}
-              solution={solution}
-            />
-          </div>
+        {pathProblem.type === "jupyterInline" && (
+          <JupyterInlineProblem
+            dispatch={dispatch}
+            onChange={onProblemChange}
+            problem={pathProblem}
+            solution={solution}
+          />
         )}
-      </Fragment>
+        {pathProblem.type === "youtube" && (
+          <YouTubeProblem
+            dispatch={dispatch}
+            onChange={onProblemChange}
+            problem={pathProblem}
+            solution={solution}
+          />
+        )}
+      </div>
     );
   }
 }

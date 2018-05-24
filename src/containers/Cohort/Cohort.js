@@ -10,13 +10,13 @@ import { compose } from "redux";
 
 import { Link } from "react-router-dom";
 
-import Button from "material-ui/Button";
-import TextField from "material-ui/TextField";
-import Toolbar from "material-ui/Toolbar";
-import Typography from "material-ui/Typography";
-import MenuItem from "material-ui/Menu/MenuItem";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import MenuItem from "@material-ui/core/MenuItem";
 
-import ChevronRightIcon from "material-ui-icons/ChevronRight";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import { firebaseConnect } from "react-redux-firebase";
 
@@ -26,7 +26,7 @@ import { selectCohort } from "./selectors";
 import { cohortCoursesRecalculateRequest } from "./actions";
 import { sagaInjector } from "../../services/saga";
 
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 
 import sagas from "./sagas";
 

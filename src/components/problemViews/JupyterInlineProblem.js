@@ -7,12 +7,14 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
+import cloneDeep from "lodash/cloneDeep";
+
+import AceEditor from "react-ace";
+
 import Button from "@material-ui/core/Button";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
-import InputAdornment from "@material-ui/core/InputAdornment";
 import Paper from "@material-ui/core/Paper";
-import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -22,11 +24,16 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import NotebookPreview from "@nteract/notebook-preview";
+
+import "brace/mode/python";
+import "brace/theme/github";
+
 import {
   problemSolutionSubmitRequest,
   problemSolveSuccess,
   problemSolveUpdate
 } from "../../containers/Problem/actions";
+import { notificationShow } from "../../containers/Root/actions";
 
 const styles = theme => ({
   solutionButtons: {
@@ -36,7 +43,7 @@ const styles = theme => ({
   }
 });
 
-class JupyterProblem extends React.PureComponent {
+class JupyterInlineProblem extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
@@ -47,6 +54,7 @@ class JupyterProblem extends React.PureComponent {
 
   state = {
     solutionURL: "",
+    solutionJSON: false,
     collapses: {
       provided: false,
       problem: true
@@ -55,22 +63,18 @@ class JupyterProblem extends React.PureComponent {
 
   closeDialog = () =>
     this.props.dispatch(problemSolveSuccess(this.props.problem.problemId, ""));
-  onSolutionFileChange = e => {
-    if (this.props.onChange) {
-      this.props.onChange(e.target.value);
-    }
-    this.setState({
-      solutionURL: e.target.value
-    });
-  };
   onSolutionRefreshClick = () => {
-    const { dispatch, problem, solution } = this.props;
+    const { dispatch, problem } = this.props;
 
-    dispatch(
+    if (!this.state.solutionJSON) {
+      return dispatch(notificationShow("Code wasn't changed"));
+    }
+
+    return dispatch(
       problemSolveUpdate(
         problem.pathId,
         problem.problemId,
-        this.state.solutionURL || (solution && solution.id)
+        this.state.solutionJSON
       )
     );
   };
@@ -84,9 +88,27 @@ class JupyterProblem extends React.PureComponent {
       })
     );
     this.setState({
-      solutionURL: undefined
+      solutionURL: undefined,
+      solutionJSON: false
     });
   };
+
+  onEditorChange = value => {
+    const { onChange, problem } = this.props;
+    const solutionJSON = cloneDeep(problem.problemJSON);
+
+    solutionJSON.cells[Number(problem.code)].source = value
+      .split("\n")
+      .map(line => line + "\n");
+
+    this.setState({
+      solutionJSON: solutionJSON
+    });
+    if (onChange) {
+      onChange(solutionJSON);
+    }
+  };
+
   onSwitchCollapse = (item, status) => {
     this.setState({
       collapses: {
@@ -97,8 +119,8 @@ class JupyterProblem extends React.PureComponent {
 
   render() {
     const {
-      /** @type {JupyterPathProblem} */
       onChange,
+      /** @type {JupyterPathProblem} */
       problem,
       solution
     } = this.props;
@@ -106,33 +128,44 @@ class JupyterProblem extends React.PureComponent {
     return (
       <Fragment>
         <Paper style={{ margin: "24px 2px" }}>
+          <Typography style={{ position: "relative" }} variant="headline">
+            <span>Edit code</span>{" "}
+            <IconButton
+              onClick={() => this.onSolutionRefreshClick()}
+              style={{
+                position: "absolute",
+                right: 0
+              }}
+            >
+              <RefreshIcon />
+            </IconButton>
+          </Typography>
+          <AceEditor
+            editorProps={{ $blockScrolling: true }}
+            maxLines={20}
+            minLines={10}
+            mode="python"
+            onChange={this.onEditorChange}
+            theme="github"
+            value={
+              (this.state.solutionJSON &&
+                this.state.solutionJSON.cells[Number(problem.code)].source
+                  .join("")
+                  .replace(/\n\n/g, "\n")) ||
+              (problem &&
+                problem.problemJSON &&
+                problem.problemJSON.cells[Number(problem.code)].source
+                  .join("")
+                  .replace(/\n\n/g, "\n"))
+            }
+          />
+        </Paper>
+        <Paper style={{ margin: "24px 2px" }}>
           <Typography variant="headline">
             Calculated Solution{solution &&
               solution.failed &&
               " - Failing - Final output should be empty"}
           </Typography>
-          <TextField
-            InputLabelProps={{
-              style: {
-                top: 24,
-                left: 24
-              }
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={this.onSolutionRefreshClick}>
-                    <RefreshIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-            defaultValue={solution && solution.id}
-            fullWidth
-            label="Enter the url to your public solution on Colab"
-            onChange={this.onSolutionFileChange}
-            style={{ padding: 24, position: "relative" }}
-          />
           {solution &&
             solution.json && (
               <div
@@ -225,4 +258,4 @@ class JupyterProblem extends React.PureComponent {
   }
 }
 
-export default withStyles(styles)(JupyterProblem);
+export default withStyles(styles)(JupyterInlineProblem);

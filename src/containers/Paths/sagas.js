@@ -3,21 +3,34 @@ import {
   PATH_CHANGE_REQUEST,
   PATH_PROBLEM_CHANGE_REQUEST,
   pathChangeSuccess,
-  pathDialogHide, pathGAPIAuthorized,
+  pathDialogHide,
+  pathGAPIAuthorized,
   pathProblemChangeFail,
-  pathProblemChangeSuccess
+  pathProblemChangeSuccess,
+  pathsJoinedFetchSuccess
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 
-export function* loginHandler() {
-  yield call(pathsService.auth);
+export function* loginHandler(action) {
+  // Auth GAPI to download files from google drive
+  yield call([pathsService, pathsService.auth]);
   yield put(pathGAPIAuthorized(true));
+
+  const joinedPaths = yield call(
+    [pathsService, pathsService.fetchJoinedPaths],
+    action.auth.uid
+  );
+  yield put(pathsJoinedFetchSuccess(joinedPaths));
 }
 
 export function* pathChangeRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
-  const key = yield call(pathsService.pathChange, uid, action.pathInfo);
+  const key = yield call(
+    [pathsService, pathsService.pathChange],
+    uid,
+    action.pathInfo
+  );
 
   yield put(pathChangeSuccess(action.pathInfo, key));
   yield put(pathDialogHide());
@@ -26,7 +39,10 @@ export function* pathChangeRequestHandler(action) {
 export function* pathProblemChangeRequestHandler(action) {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
-    yield call(pathsService.validateProblem, action.problemInfo);
+    yield call(
+      [pathsService, pathsService.validateProblem],
+      action.problemInfo
+    );
     yield put(pathDialogHide());
     const key = yield call(
       [pathsService, pathsService.problemChange],

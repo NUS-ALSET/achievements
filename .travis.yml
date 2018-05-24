@@ -6,6 +6,9 @@ branches:
  only:
   - master
 
+before_install:
+- npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
+
 install:
 - npm install
 

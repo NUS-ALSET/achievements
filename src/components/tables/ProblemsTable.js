@@ -1,5 +1,5 @@
 /**
- * @file CohortsTable container module
+ * @file ProblemsTable component module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 22.02.18
  */
@@ -7,17 +7,17 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Table, {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
-} from "material-ui/Table";
-import Button from "material-ui/Button";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+
+import Button from "@material-ui/core/Button";
 
 import { Link } from "react-router-dom";
 
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 import { pathProblemDialogShow } from "../../containers/Paths/actions";
 
 const styles = theme => ({
@@ -65,7 +65,7 @@ class ProblemsTable extends React.PureComponent {
               <TableCell>
                 <Link
                   className={classes.link}
-                  to={`/paths/${pathOwnerId || selectedPathId}/problems/${
+                  to={`/paths/${selectedPathId || pathOwnerId}/problems/${
                     problem.id
                   }`}
                 >

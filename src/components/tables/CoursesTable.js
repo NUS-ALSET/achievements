@@ -1,21 +1,20 @@
 import { Link } from "react-router-dom";
 import { isEmpty } from "react-redux-firebase";
-import Button from "material-ui/Button";
-import IconButton from "material-ui/IconButton";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
-import Table, {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
-} from "material-ui/Table";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 
-import SearchIcon from "material-ui-icons/Search";
-import EditIcon from "material-ui-icons/Edit";
-import DeleteIcon from "material-ui-icons/Delete";
+import SearchIcon from "@material-ui/icons/Search";
+import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/Delete";
 
-import withStyles from "material-ui/styles/withStyles";
+import withStyles from "@material-ui/core/styles/withStyles";
 import { APP_SETTING } from "../../achievementsApp/config";
 import {
   courseRemoveDialogShow,

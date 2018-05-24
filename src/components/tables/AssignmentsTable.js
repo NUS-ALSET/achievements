@@ -1,5 +1,5 @@
 import isEmpty from "lodash/isEmpty";
-import moment from "moment";
+import { distanceInWords } from "date-fns";
 
 import {
   assignmentSolutionRequest,
@@ -10,22 +10,22 @@ import {
   courseMoveStudentDialogShow,
   assignmentPathProgressSolutionRequest
 } from "../../containers/Assignments/actions";
-import Button from "material-ui/Button";
-import IconButton from "material-ui/IconButton";
-import Tooltip from "material-ui/Tooltip";
+import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import Tooltip from "@material-ui/core/Tooltip";
 
-import DeleteIcon from "material-ui-icons/Delete";
+import DeleteIcon from "@material-ui/icons/Delete";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
-import Table, {
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel
-} from "material-ui/Table";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+
 import { AccountService } from "../../services/account";
 import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
@@ -64,9 +64,10 @@ class AssignmentsTable extends React.PureComponent {
               }))
               .map(
                 answer =>
-                  `- ${
-                    YOUTUBE_QUESTIONS[answer.id]
-                  }:\n   * ${answer.value.split("\n").join("\n   * ")}`
+                  `- ${YOUTUBE_QUESTIONS[answer.id] ||
+                    assignment.customText}:\n   * ${answer.value
+                    .split("\n")
+                    .join("\n   * ")}`
               )
               .join("\n");
         }
@@ -97,7 +98,7 @@ class AssignmentsTable extends React.PureComponent {
           undefined
         );
       case "PathProblem":
-        return solution && this.props.isInstructor ? (
+        return solution ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
             <div>
               {/http[s]?:\/\//.test(
@@ -247,10 +248,14 @@ class AssignmentsTable extends React.PureComponent {
                   </div>
                   <div>
                     {assignment.deadline &&
-                      `Deadline ${moment(assignment.deadline).fromNow()}`}
+                      `Deadline in ${distanceInWords(
+                        assignment.deadline,
+                        new Date()
+                      )}`}
                   </div>
                 </TableCell>
               ))}
+            {isInstructor && <TableCell>Progress</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -304,6 +309,17 @@ class AssignmentsTable extends React.PureComponent {
                       </Fragment>
                     </TableCell>
                   ))}
+                {isInstructor && (
+                  <TableCell>{`${studentInfo.progress.totalSolutions} / ${
+                    course.totalAssignments
+                  } ${
+                    studentInfo.progress.lastSolutionTime
+                      ? new Date(
+                          studentInfo.progress.lastSolutionTime
+                        ).toLocaleTimeString()
+                      : ""
+                  }`}</TableCell>
+                )}
               </TableRow>
             );
           })}

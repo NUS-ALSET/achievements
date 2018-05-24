@@ -1,3 +1,5 @@
+import findAt from "lodash/find";
+
 import { APP_SETTING } from "../../achievementsApp/config";
 import {
   ASSIGNMENTS_EDITOR_TABLE_SHOWN,
@@ -49,14 +51,13 @@ import {
   courseMoveStudentSuccess,
   ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
   assignmentPathProgressFetchSuccess,
-  ASSIGNMENT_SHOW_EDIT_DIALOG,
-  ASSIGNMENT_MANUAL_UPDATE_FIELD,
-  assignmentManualUpdateField
+  ASSIGNMENT_SHOW_EDIT_DIALOG
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
 import {
   call,
+  fork,
   put,
   select,
   take,
@@ -67,6 +68,10 @@ import {
 import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 import { pathsService } from "../../services/paths";
+import {
+  problemSolutionRefreshSuccess,
+  problemSolveUpdate
+} from "../Problem/actions";
 
 // Since we're able to check 1 and only 1 course at once then we'll keep
 // course members channel at almost global variable...
@@ -104,20 +109,18 @@ export function* addAssignmentRequestHandle(action) {
   }
 }
 
-export function* assignmentManualUpdateFieldHandler(action) {
-  yield put(assignmentManualUpdateField(action.field, action.value));
-}
-
 export function* updateNewAssignmentFieldHandler(action) {
-  if (action.field === "details") {
-    return yield Promise.resolve();
+  if (["details", "name"].includes(action.field)) {
+    return;
   }
 
   const location = window.location.href.replace(/#.*$/, "");
   const data = yield select(state => ({
     assignment: state.assignments.dialog.value,
+    manualUpdates: state.assignments.dialog.manualUpdates || {},
     uid: state.firebase.auth.uid
   }));
+  let problem;
   let problems;
   let assignment = data.assignment;
 
@@ -140,10 +143,16 @@ export function* updateNewAssignmentFieldHandler(action) {
         );
 
         yield put(assignmentPathsFetchSuccess(paths));
-        yield put(
-          updateNewAssignmentField("details", `${location}#/paths/${data.uid}`)
-        );
-        yield put(updateNewAssignmentField("path", ""));
+        yield put(updateNewAssignmentField("path", data.uid));
+
+        if (!data.manualUpdates.details) {
+          yield put(
+            updateNewAssignmentField(
+              "details",
+              `${location}#/paths/${data.uid}`
+            )
+          );
+        }
       }
       break;
     case "level":
@@ -155,16 +164,37 @@ export function* updateNewAssignmentFieldHandler(action) {
       );
       break;
     case "path":
-      problems = yield call(pathsService.fetchProblems, data.uid, action.value);
+      problems = yield call(
+        [pathsService, pathsService.fetchProblems],
+        data.uid,
+        action.value
+      );
 
       yield put(assignmentProblemsFetchSuccess(problems));
-      yield put(
-        updateNewAssignmentField(
-          "details",
-          `${location}#/paths/${action.value || data.uid}`
-        )
-      );
       yield put(updateNewAssignmentField("problem", ""));
+      break;
+    case "problem":
+      problems = yield select(state => state.assignments.dialog.problems);
+
+      problem = findAt(problems, {
+        id: assignment.problem
+      });
+
+      if (!data.manualUpdates.details && problem) {
+        // FIXIT: add `case` for problem type
+        yield fork(function* subFork() {
+          yield put(
+            updateNewAssignmentField(
+              "details",
+              problem.youtubeURL || problem.problemURL
+            )
+          );
+        });
+      }
+      if (!data.manualUpdates.name && problem) {
+        yield put.resolve(updateNewAssignmentField("name", problem.name));
+      }
+
       break;
     default:
   }
@@ -181,12 +211,14 @@ export function* assignmentSolutionRequestHandler(action) {
       [coursesService, coursesService.submitSolution],
       action.courseId,
       { ...assignment, id: action.assignmentId },
+
       action.solution
     );
     yield put(assignmentSolutionSuccess(action.courseId, action.assignmentId));
     yield put(
       notificationShow(`Solution submitted for assignment "${assignment.name}"`)
     );
+    yield put(assignmentCloseDialog());
   } catch (err) {
     yield put(
       assignmentSolutionFail(action.courseId, action.assignmentId, err.message)
@@ -439,7 +471,50 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
       action.problemOwner,
       action.problemId
     );
-    yield put(assignmentPathProblemFetchSuccess(pathProblem));
+    yield put(
+      assignmentPathProblemFetchSuccess(pathProblem, {
+        id:
+          action.solution &&
+          action.solution.originalSolution &&
+          action.solution.originalSolution.value
+      })
+    );
+    if (pathProblem.type === "youtube") {
+      yield put(
+        problemSolutionRefreshSuccess(
+          pathProblem.problemId,
+          action.solution || {}
+        )
+      );
+    }
+
+    if (
+      action.solution &&
+      action.solution.originalSolution &&
+      action.solution.originalSolution.value
+    ) {
+      switch (pathProblem.type) {
+        case "jupyter":
+        case "jupyterInline":
+          yield put(
+            problemSolveUpdate(
+              pathProblem.pathId,
+              pathProblem.problemId,
+              action.solution.originalSolution.value
+            )
+          );
+          break;
+        case "youtube":
+          yield put(
+            problemSolutionRefreshSuccess(
+              pathProblem.problemId,
+              action.solution || {}
+            )
+          );
+          break;
+        default:
+      }
+    }
   } catch (err) {
     yield put(notificationShow(err.message));
   }
@@ -455,7 +530,6 @@ export function* assignmentPathProgressSolutionRequestHandler(action) {
       action.pathOwner,
       action.pathId
     );
-
     yield put(assignmentPathProgressFetchSuccess(pathProgress));
   } catch (err) {
     console.error(err.stack);
@@ -512,13 +586,6 @@ export default [
     yield takeLatest(
       ASSIGNMENT_SHOW_EDIT_DIALOG,
       assignmentShowEditDialogHandler
-    );
-  },
-  function* watchAssignmentManualUpdateField() {
-    yield throttle(
-      APP_SETTING.defaultThrottle,
-      ASSIGNMENT_MANUAL_UPDATE_FIELD,
-      assignmentManualUpdateFieldHandler
     );
   },
   function* watchUpdateNewAssignmentField() {

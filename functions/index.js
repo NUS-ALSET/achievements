@@ -1,5 +1,3 @@
-var React = require("react");
-
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
@@ -11,6 +9,8 @@ const profilesRefreshApproach =
   (functions.config().profiles &&
     functions.config().profiles["refresh-approach"]) ||
   "none";
+const jupyterLambdaProcessor =
+  "https://o6rpv1ofri.execute-api.ap-southeast-1.amazonaws.com/Prod";
 
 let canCreateTokens = false;
 let serviceAccount = null;
@@ -29,7 +29,7 @@ if (serviceAccount) {
   });
   // Otherwise, initialize with the default config.
 } else {
-  admin.initializeApp(functions.config().firebase);
+  admin.initializeApp();
 }
 
 function processProfileRefreshRequest(data, resolve) {
@@ -136,6 +136,80 @@ function processProfileRefreshRequest(data, resolve) {
       return Promise.resolve();
   }
 }
+
+exports.handleNewProblemSolution =
+  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  functions.database
+    .ref("/jupyterSolutionsQueue/tasks/{requestId}")
+    .onWrite(change => {
+      const data = change.after.val();
+      axios({
+        url: jupyterLambdaProcessor,
+        method: "post",
+        data: data.solution
+      })
+        .then(response =>
+          admin
+            .database()
+            .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+            .set({
+              owner: data.owner,
+              solution: JSON.stringify(response.data.ipynb)
+            })
+        )
+        .catch(() =>
+          admin
+            .database()
+            .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+            .set(false)
+        );
+    });
+
+exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
+  const { token } = req.query;
+
+  if (!token) {
+    return res.status(ERROR_401).send("Token is missing");
+  }
+
+  admin
+    .database()
+    .ref("api_tokens/" + token)
+    .once("value")
+    .then(snapshot => {
+      if (!snapshot.val()) {
+        return res.status(ERROR_401).send("Invalid token");
+      }
+
+      const queue = new Queue(
+        admin.database().ref("/jupyterSolutionsQueue"),
+        (data, progress, resolve) =>
+          axios({
+            url: jupyterLambdaProcessor,
+            method: "post",
+            data: data.solution
+          })
+            .then(response =>
+              admin
+                .database()
+                .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+                .set({
+                  owner: data.owner,
+                  solution: JSON.stringify(response.data.ipynb)
+                })
+            )
+            .catch(() =>
+              admin
+                .database()
+                .ref(`/jupyterSolutionsQueue/answers/${data.taskKey}`)
+                .set(false)
+            )
+            .then(() => resolve())
+      );
+      queue.addWorker();
+      res.send("Done");
+    });
+});
 
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")

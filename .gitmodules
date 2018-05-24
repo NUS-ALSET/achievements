@@ -1,0 +1,3 @@
+[submodule "src/includes"]
+	path = src/includes
+	url = git://github.com/NUS-ALSET/ALSET-Games
