@@ -29,6 +29,7 @@ import "brace/mode/python";
 import "brace/theme/github";
 
 import {
+  problemSolutionRefreshFail,
   problemSolutionSubmitRequest,
   problemSolveSuccess,
   problemSolveUpdate
@@ -94,7 +95,7 @@ class JupyterInlineProblem extends React.PureComponent {
   };
 
   onEditorChange = value => {
-    const { onChange, problem } = this.props;
+    const { dispatch, onChange, problem } = this.props;
     const solutionJSON = cloneDeep(problem.problemJSON);
 
     solutionJSON.cells[Number(problem.code)].source = value
@@ -104,6 +105,7 @@ class JupyterInlineProblem extends React.PureComponent {
     this.setState({
       solutionJSON: solutionJSON
     });
+    dispatch(problemSolutionRefreshFail());
     if (onChange) {
       onChange(solutionJSON);
     }
@@ -146,10 +148,17 @@ class JupyterInlineProblem extends React.PureComponent {
             minLines={10}
             mode="python"
             onChange={this.onEditorChange}
+            onLoad={editor => editor.focus()}
             theme="github"
             value={
+              // FIXIT: extract to method
               (this.state.solutionJSON &&
                 this.state.solutionJSON.cells[Number(problem.code)].source
+                  .join("")
+                  .replace(/\n\n/g, "\n")) ||
+              (problem &&
+                problem.solutionJSON &&
+                problem.solutionJSON.cells[Number(problem.code)].source
                   .join("")
                   .replace(/\n\n/g, "\n")) ||
               (problem &&
