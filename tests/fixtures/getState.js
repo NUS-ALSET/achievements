@@ -107,7 +107,7 @@ export const getTestState = config => ({
               value: "test-user-1"
             },
             defTestAssignmentId: {
-              createdAt: 1000,
+              createdAt: 1001,
               value: "Test User 1"
             }
           },
@@ -127,7 +127,7 @@ export const getTestState = config => ({
               value: "test-user-1"
             },
             defTestAssignmentId: {
-              createdAt: 1000,
+              createdAt: 1001,
               value: "Completed"
             }
           },
