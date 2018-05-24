@@ -38,6 +38,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
         solutions[assignmentId] || publishedSolutions[assignmentId];
       const userAchievements = achievements.CodeCombat || {};
       const published = !!publishedSolutions[assignmentId];
+      const createdAt = solution && solution.createdAt;
 
       solution = solution && solution.value;
 
@@ -52,6 +53,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       switch (assignment.questionType) {
         case "Text":
           result[assignmentId] = {
+            createdAt,
             value: solution,
             validated: true,
             published
@@ -59,6 +61,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           return true;
         case "Profile":
           result[assignmentId] = {
+            createdAt,
             published,
             validated: userAchievements.id === solution,
             orderValue: userAchievements.totalAchievements,
@@ -70,6 +73,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
         case "CodeCombat":
         case "CodeCombat_Number":
           result[assignmentId] = {
+            createdAt,
             published,
             validated: userAchievements.id === solution,
             value: "Completed"
@@ -77,6 +81,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           return true;
         case "PathProblem":
           result[assignmentId] = {
+            createdAt,
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
@@ -85,6 +90,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           return true;
         case "PathProgress":
           result[assignmentId] = {
+            createdAt,
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
