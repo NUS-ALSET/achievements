@@ -14,14 +14,20 @@ const COMMON_PROPS = {
       achievements: {
         CodeCombat: { id: "test-user-1", totalAchievements: 100 }
       },
+      progress: {
+        totalSolutions: 2,
+        lastSolutionTime: 1001
+      },
       solutions: {
         abcTestAssignmentId: {
           orderValue: 100,
+          createdAt: 1000,
           value: "test-user-1 (100)",
           validated: true,
           published: true
         },
         defTestAssignmentId: {
+          createdAt: 1001,
           value: "Completed",
           validated: true,
           published: true
@@ -34,9 +40,14 @@ const COMMON_PROPS = {
       achievements: {
         CodeCombat: { id: "test-user-2", totalAchievements: 10 }
       },
+      progress: {
+        totalSolutions: 1,
+        lastSolutionTime: 1000
+      },
       solutions: {
         abcTestAssignmentId: {
           orderValue: 10,
+          createdAt: 1000,
           value: "test-user-2 (10)",
           validated: true,
           published: true
@@ -44,6 +55,7 @@ const COMMON_PROPS = {
       }
     }
   },
+  totalAssignments: 2,
   assignments: [
     {
       open: "1959-06-03T00:00",
@@ -91,10 +103,12 @@ describe("assignments selectors tests", () => {
     const result = cloneDeep(COMMON_PROPS);
     // So, result for 2nd solution will be real
     result.members.abcTestUser1.solutions.defTestAssignmentId = {
+      createdAt: 1001,
       published: true,
       validated: true,
       value: "Test User 1"
     };
+    result.members.abcTestUser1.progress.totalSolutions = 2;
 
     assert.deepEqual(courseProps, result);
   });
@@ -117,10 +131,13 @@ describe("assignments selectors tests", () => {
 
     // So, result for 2nd solution will be real
     result.members.abcTestUser1.solutions.defTestAssignmentId = {
+      createdAt: 1001,
       published: true,
       validated: true,
       value: "Test User 1"
     };
+
+    result.members.abcTestUser1.progress.totalSolutions = 2;
 
     assert.deepEqual(courseProps, result);
   });
@@ -138,7 +155,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 1",
-                createdAt: 1000
+                createdAt: 1001
               }
             },
             abcTestUser2: {
@@ -148,7 +165,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 2",
-                createdAt: 1000
+                createdAt: 1001
               }
             }
           }
@@ -166,6 +183,7 @@ describe("assignments selectors tests", () => {
 
     // So, result for 2nd solution will be real
     result.members.abcTestUser1.solutions.defTestAssignmentId = {
+      createdAt: 1001,
       published: true,
       validated: true,
       value: "Test User 1"
@@ -186,7 +204,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 1",
-                createdAt: 1000
+                createdAt: 1001
               }
             },
             abcTestUser2: {
@@ -196,7 +214,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 2",
-                createdAt: 1000
+                createdAt: 1002
               }
             }
           }
@@ -214,14 +232,21 @@ describe("assignments selectors tests", () => {
 
     // So, result for 2nd solution will be real
     result.members.abcTestUser1.solutions.defTestAssignmentId = {
+      createdAt: 1001,
       published: true,
       validated: true,
       value: "Test User 1"
     };
     result.members.abcTestUser2.solutions.defTestAssignmentId = {
+      createdAt: 1002,
       published: false,
       validated: true,
       value: "Test User 2"
+    };
+
+    result.members.abcTestUser2.progress = {
+      totalSolutions: 2,
+      lastSolutionTime: 1002
     };
 
     result.assignments[1].progress = "2/2";
