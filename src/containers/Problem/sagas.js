@@ -99,6 +99,17 @@ export function* problemSolutionRefreshRequestHandler(action) {
       state.problem.pathProblem || state.assignments.dialog.pathProblem
   }));
 
+  if (
+    data.pathProblem.type === "jupyterInline" &&
+    typeof action.fileId !== "object"
+  ) {
+    return yield put(
+      problemSolutionRefreshSuccess(action.problemId, {
+        json: data.pathProblem.solutionJSON
+      })
+    );
+  }
+
   try {
     yield put(notificationShow("Fetching your solution"));
     let pathSolution;
