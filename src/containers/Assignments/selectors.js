@@ -208,7 +208,7 @@ export const getCourseProps = (state, ownProps) => {
       if (state.assignments.sort.field === "progress") {
         aValue = a.progress.totalSolutions;
         bValue = b.progress.totalSolutions;
-        if (a === b) {
+        if (aValue === bValue) {
           aValue = -a.progress.lastSolutionTime;
           bValue = -b.progress.lastSolutionTime;
         }
