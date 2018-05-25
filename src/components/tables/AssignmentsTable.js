@@ -35,6 +35,8 @@ import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import { APP_SETTING } from "../../achievementsApp/config";
 
+const MAX_NAME_LENGTH = 15;
+
 const styles = theme => ({
   narrowCell: {
     padding: theme.spacing.unit
@@ -312,7 +314,8 @@ class AssignmentsTable extends React.PureComponent {
                         </IconButton>
                       </Fragment>
                     )}
-                  {studentInfo.name}
+                  {studentInfo.name.slice(0, MAX_NAME_LENGTH) +
+                    (studentInfo.length > MAX_NAME_LENGTH ? "..." : "")}
                 </TableCell>
                 {course.assignments
                   .filter(assignment => assignment.visible)
