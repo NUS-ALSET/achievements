@@ -230,6 +230,7 @@ export const assignments = (
           ...state.dialog,
           solution: {
             ...(state.solution || {}),
+            checked: false,
             loading: false
           }
         }
