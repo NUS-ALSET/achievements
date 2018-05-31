@@ -745,7 +745,7 @@ export class CoursesService {
                     return Object.assign(
                       {
                         id,
-                        name: userInfo.displayName
+                        name: userInfo.displayName || ""
                       },
                       userInfo
                     );
