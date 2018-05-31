@@ -24,27 +24,22 @@ import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AssignmentsTable from "../../components/tables/AssignmentsTable";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import RefreshIcon from "@material-ui/icons/Refresh";
 
 import Grid from "@material-ui/core/Grid";
 import InstructorTabs from "../../components/tabs/InstructorTabs";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import TextField from "@material-ui/core/TextField";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
-import { APP_SETTING } from "../../achievementsApp/config";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
 import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
 import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -245,33 +240,17 @@ class Assignments extends React.Component {
     }
     return (
       <Fragment>
-        <Toolbar>
-          <Link className={classes.breadcrumbLink} to="/courses">
-            <Typography className={classes.breadcrumbText}>Courses</Typography>
-          </Link>
-          <ChevronRightIcon />
-          <Typography className={classes.breadcrumbText}>
-            {course.name}
-          </Typography>
-          {course.owner === currentUser.id &&
-            (APP_SETTING.isSuggesting ? (
-              <div className={classes.actions}>
-                <IconButton onClick={this.refreshProfileSolutions}>
-                  <RefreshIcon />
-                </IconButton>
-              </div>
-            ) : (
-              <div className={classes.actions}>
-                <Button
-                  className={classes.action}
-                  onClick={this.refreshProfileSolutions}
-                  variant="raised"
-                >
-                  Refresh achievements
-                </Button>
-              </div>
-            ))}
-        </Toolbar>
+        <Breadcrumbs
+          paths={[
+            {
+              label: "Courses",
+              link: "/courses"
+            },
+            {
+              label: course.name
+            }
+          ]}
+        />
         <Typography gutterBottom>{course.description}</Typography>
         {AssignmentView}
         <RemoveStudentDialog

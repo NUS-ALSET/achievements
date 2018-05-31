@@ -102,16 +102,30 @@ export class PathsService {
                     data
                   }))
               )
-            ]).then(files =>
-              Object.assign(pathProblem, {
-                problemColabURL: PathsService.getColabURL(files[0].id),
-                problemJSON: files[0].data,
-                problemFileId: files[0].id,
-                solutionFileId: files[1].id,
-                solutionColabURL: PathsService.getColabURL(files[1].id),
-                solutionJSON: files[1].data
-              })
-            );
+            ])
+              .then(files =>
+                Object.assign(pathProblem, {
+                  problemColabURL: PathsService.getColabURL(files[0].id),
+                  problemJSON: files[0].data,
+                  problemFileId: files[0].id,
+                  solutionFileId: files[1].id,
+                  solutionColabURL: PathsService.getColabURL(files[1].id),
+                  solutionJSON: files[1].data
+                })
+              )
+              .then(() => {
+                if (pathProblem.problemJSON) {
+                  pathProblem.problemJSON.metadata.language_info = {
+                    name: "python"
+                  };
+                }
+                if (pathProblem.solutionJSON) {
+                  pathProblem.problemJSON.metadata.language_info = {
+                    name: "python"
+                  };
+                }
+                return pathProblem;
+              });
           default:
             return pathProblem;
         }

@@ -17,22 +17,26 @@ import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
 import ProblemView from "../../components/problemViews/ProblemView";
+import Button from "@material-ui/core/es/Button/Button";
 
 class Problem extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     match: PropTypes.object,
     pathProblem: PropTypes.any,
-    solution: PropTypes.any
+    solution: PropTypes.any,
+    embedded: PropTypes.bool
   };
 
   componentDidMount() {
-    this.props.dispatch(
-      problemInitRequest(
-        this.props.match.params.pathId,
-        this.props.match.params.problemId
-      )
-    );
+    if (this.props.match.params.pathId && this.props.match.params.problemId) {
+      this.props.dispatch(
+        problemInitRequest(
+          this.props.match.params.pathId,
+          this.props.match.params.problemId
+        )
+      );
+    }
   }
 
   componentWillUnmount() {
@@ -49,7 +53,8 @@ class Problem extends React.PureComponent {
       /** @type PathProblem */
       pathProblem,
       dispatch,
-      solution
+      solution,
+      embedded
     } = this.props;
 
     if (!pathProblem) {
@@ -58,29 +63,46 @@ class Problem extends React.PureComponent {
 
     return (
       <Fragment>
-        <Breadcrumbs
-          paths={[
-            {
-              label: "Paths",
-              link: "/paths"
-            },
-            {
-              label: pathProblem.pathName,
-              link: `/paths/${this.props.match.params.pathId}`
-            },
-            {
-              label: pathProblem.problemName
-            }
-          ]}
-        />
+        {!embedded && (
+          <Breadcrumbs
+            paths={[
+              {
+                label: "Paths",
+                link: "/paths"
+              },
+              {
+                label: pathProblem.pathName,
+                link: `/paths/${this.props.match.params.pathId}`
+              },
+              {
+                label: pathProblem.problemName
+              }
+            ]}
+          />
+        )}
         <ProblemView
           dispatch={dispatch}
           pathProblem={pathProblem}
           solution={solution}
           style={{
+            paddingBottom: 20,
             textAlign: "center"
           }}
         />
+        {!embedded && (
+          <div
+            style={{
+              bottom: 0,
+              display: "flex",
+              justifyContent: "flex-end",
+              position: "relative"
+            }}
+          >
+            <Button color="primary" variant="raised">
+              Commit
+            </Button>
+          </div>
+        )}
       </Fragment>
     );
   }
@@ -88,9 +110,9 @@ class Problem extends React.PureComponent {
 
 sagaInjector.inject(sagas);
 
-const mapStateToProps = state => ({
-  pathProblem: state.problem.pathProblem,
-  solution: state.problem.solution
+const mapStateToProps = (state, ownProps) => ({
+  pathProblem: ownProps.pathProblem || state.problem.pathProblem,
+  solution: ownProps.solution || state.problem.solution
 });
 
 export default compose(

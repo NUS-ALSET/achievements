@@ -21,7 +21,7 @@ class ProblemView extends React.PureComponent {
 
   render() {
     const { dispatch, onProblemChange, pathProblem, solution } = this.props;
-
+    // debugger;
     if (!pathProblem) {
       return <div>Loading</div>;
     }

@@ -136,7 +136,11 @@ class AppFrame extends React.Component {
       <Router>
         <div className={classes.root}>
           <div className={classes.appFrame}>
-            <AppBar className={classes.appBar} onClose={this.handleDrawerClose}>
+            <AppBar
+              className={classes.appBar}
+              color="inherit"
+              onClose={this.handleDrawerClose}
+            >
               <Toolbar>
                 <Hidden implementation="css" lgUp>
                   <IconButton

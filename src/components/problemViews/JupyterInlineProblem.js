@@ -11,7 +11,6 @@ import cloneDeep from "lodash/cloneDeep";
 
 import AceEditor from "react-ace";
 
-import Button from "@material-ui/core/Button";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
@@ -121,7 +120,6 @@ class JupyterInlineProblem extends React.PureComponent {
 
   render() {
     const {
-      onChange,
       /** @type {JupyterPathProblem} */
       problem,
       solution
@@ -186,11 +184,6 @@ class JupyterInlineProblem extends React.PureComponent {
               </div>
             )}
           {solution && solution.loading && <CircularProgress />}
-          {!onChange && (
-            <Button color="primary" onClick={this.onCommit} variant="raised">
-              Submit
-            </Button>
-          )}
         </Paper>
         {solution &&
           solution.provided && (
@@ -221,7 +214,10 @@ class JupyterInlineProblem extends React.PureComponent {
                     textAlign: "left"
                   }}
                 >
-                  <NotebookPreview notebook={solution.provided} />
+                  <NotebookPreview
+                    language="python"
+                    notebook={solution.provided}
+                  />
                 </div>
               </Collapse>
             </Paper>
@@ -249,7 +245,11 @@ class JupyterInlineProblem extends React.PureComponent {
                 textAlign: "left"
               }}
             >
-              <NotebookPreview notebook={problem.problemJSON} />
+              <NotebookPreview
+                language="python"
+                notebook={problem.problemJSON}
+                theme="nteract"
+              />
             </div>
           </Collapse>
           <Typography align="right" variant="caption">
