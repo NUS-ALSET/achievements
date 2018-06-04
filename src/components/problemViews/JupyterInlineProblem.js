@@ -102,13 +102,31 @@ class JupyterInlineProblem extends React.PureComponent {
       .map(line => line + "\n");
 
     this.setState({
-      solutionJSON: solutionJSON
+      solutionJSON: solutionJSON || false
     });
     dispatch(problemSolutionRefreshFail());
     if (onChange) {
       onChange(solutionJSON);
     }
   };
+
+  getSolutionCode = (solution, problem) =>
+    (this.state.solutionJSON &&
+      this.state.solutionJSON.cells &&
+      this.state.solutionJSON.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n")) ||
+    (solution &&
+      solution.cells &&
+      solution.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n")) ||
+    (problem &&
+      problem.problemJSON &&
+      problem.problemJSON.cells &&
+      problem.problemJSON.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n"));
 
   onSwitchCollapse = (item, status) => {
     this.setState({
@@ -148,23 +166,7 @@ class JupyterInlineProblem extends React.PureComponent {
             onChange={this.onEditorChange}
             onLoad={editor => editor.focus()}
             theme="github"
-            value={
-              // FIXIT: extract to method
-              (this.state.solutionJSON &&
-                this.state.solutionJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n")) ||
-              (problem &&
-                problem.solutionJSON &&
-                problem.solutionJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n")) ||
-              (problem &&
-                problem.problemJSON &&
-                problem.problemJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n"))
-            }
+            value={this.getSolutionCode(solution, problem)}
           />
         </Paper>
         <Paper style={{ margin: "24px 2px" }}>

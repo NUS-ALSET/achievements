@@ -1,5 +1,5 @@
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import {
   assignmentCloseDialog,
   assignmentRefreshProfilesRequest,
@@ -191,15 +191,7 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const {
-      ui,
-      classes,
-      students,
-      auth,
-      dispatch,
-      course,
-      currentUser
-    } = this.props;
+    const { ui, students, auth, dispatch, course, currentUser } = this.props;
 
     if (!auth.isLoaded) {
       return <LinearProgress />;

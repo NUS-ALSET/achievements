@@ -5,7 +5,6 @@
  */
 
 import { APP_SETTING } from "../../achievementsApp/config";
-import FormControl from "@material-ui/core/FormControl";
 
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -13,8 +12,10 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Input, { InputLabel } from "@material-ui/core/Input";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -132,7 +133,7 @@ class AddAssignmentDialog extends React.PureComponent {
                       }
                     })
                   }
-                  value={assignment.allowSolutionImport || false}
+                  value="allowSolutionImport"
                 />
               }
               label="Allow import existing path solution"

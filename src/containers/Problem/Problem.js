@@ -11,7 +11,11 @@ import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { firebaseConnect } from "react-redux-firebase";
 
-import { problemFinalize, problemInitRequest } from "./actions";
+import {
+  problemFinalize,
+  problemInitRequest,
+  problemSolutionSubmitRequest
+} from "./actions";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -23,9 +27,14 @@ class Problem extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     match: PropTypes.object,
+    onProblemChange: PropTypes.func,
     pathProblem: PropTypes.any,
     solution: PropTypes.any,
     embedded: PropTypes.bool
+  };
+
+  state = {
+    problemSolution: {}
   };
 
   componentDidMount() {
@@ -47,6 +56,16 @@ class Problem extends React.PureComponent {
       )
     );
   }
+
+  onProblemChange = problemSolution => this.setState({ problemSolution });
+  onCommit = () =>
+    this.props.dispatch(
+      problemSolutionSubmitRequest(
+        this.props.match.params.pathId,
+        this.props.match.params.problemId,
+        this.state.problemSolution
+      )
+    );
 
   render() {
     const {
@@ -82,6 +101,7 @@ class Problem extends React.PureComponent {
         )}
         <ProblemView
           dispatch={dispatch}
+          onProblemChange={this.props.onProblemChange || this.onProblemChange}
           pathProblem={pathProblem}
           solution={solution}
           style={{
@@ -98,7 +118,16 @@ class Problem extends React.PureComponent {
               position: "relative"
             }}
           >
-            <Button color="primary" variant="raised">
+            <Button
+              color="primary"
+              disabled={
+                !(solution && solution.checked) ||
+                solution.loading ||
+                solution.failed
+              }
+              onClick={this.onCommit}
+              variant="raised"
+            >
               Commit
             </Button>
           </div>

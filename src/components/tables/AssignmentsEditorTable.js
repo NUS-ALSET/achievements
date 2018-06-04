@@ -2,10 +2,8 @@ import {
   assignmentDeleteRequest,
   assignmentQuickUpdateRequest,
   assignmentReorderRequest,
-  assignmentShowAddDialog,
   assignmentShowEditDialog,
-  assignmentsEditorTableShown,
-  assignmentsAssistantsShowRequest
+  assignmentsEditorTableShown
 } from "../../containers/Assignments/actions";
 import { isEmpty } from "react-redux-firebase";
 
@@ -29,7 +27,7 @@ import TextField from "@material-ui/core/TextField";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
-const styles = theme => ({
+const styles = () => ({
   actionCol: {
     minWidth: 240
   },
@@ -52,7 +50,6 @@ class AssignmentsEditorTable extends React.Component {
     );
   }
 
-  onAddAssignmentClick = () => this.props.dispatch(assignmentShowAddDialog());
   onEditAssignmentClick = assignment =>
     this.props.dispatch(assignmentShowEditDialog(assignment));
   onDeleteAssignmentClick = assignment =>
@@ -74,10 +71,6 @@ class AssignmentsEditorTable extends React.Component {
         assignment.id,
         order
       )
-    );
-  assignmentsAssistantsShowRequest = () =>
-    this.props.dispatch(
-      assignmentsAssistantsShowRequest(this.props.match.params.courseId)
     );
 
   render() {
