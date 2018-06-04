@@ -85,6 +85,7 @@
     "build": "react-scripts build",
     "test": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
     "test2": "cross-env NODE_ENV=test nyc mocha --recursive ./tests",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "coverage": "node node_modules/.bin/jest --coverage"
   }
 }
