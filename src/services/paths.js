@@ -114,13 +114,19 @@ export class PathsService {
                 })
               )
               .then(() => {
-                if (pathProblem.problemJSON) {
+                if (
+                  pathProblem.problemJSON &&
+                  pathProblem.problemJSON.metadata
+                ) {
                   pathProblem.problemJSON.metadata.language_info = {
                     name: "python"
                   };
                 }
-                if (pathProblem.solutionJSON) {
-                  pathProblem.problemJSON.metadata.language_info = {
+                if (
+                  pathProblem.solutionJSON &&
+                  pathProblem.solutionJSON.metadata
+                ) {
+                  pathProblem.solutionJSON.metadata.language_info = {
                     name: "python"
                   };
                 }
