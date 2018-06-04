@@ -3,8 +3,8 @@
   "description": "Short answer and levels",
   "version": "0.0.36",
   "dependencies": {
-    "@material-ui/core": "^1.0.0",
-    "@material-ui/icons": "^1.0.0",
+    "@material-ui/core": "^1.1.0",
+    "@material-ui/icons": "^1.1.0",
     "@nteract/notebook-preview": "^7.1.0",
     "autosuggest-highlight": "3.1.1",
     "axios": "^0.17.1",
@@ -15,6 +15,7 @@
     "downshift": "1.25.0",
     "firebase": "4.9.0",
     "firebase-queue": "^1.6.1",
+    "highlight": "^0.2.4",
     "history": "^4.7.2",
     "lodash": "^4.17.4",
     "matter-js": "^0.14.1",

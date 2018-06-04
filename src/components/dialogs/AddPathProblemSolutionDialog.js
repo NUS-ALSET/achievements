@@ -14,11 +14,12 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 
 import { assignmentCloseDialog } from "../../containers/Assignments/actions";
-import ProblemView from "../problemViews/ProblemView";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import isEmpty from "lodash/isEmpty";
+import Problem from "../../containers/Problem/Problem";
+import { problemFinalize } from "../../containers/Problem/actions";
 
 const styles = () => ({
   dialog: {
@@ -52,14 +53,17 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
 
   onProblemChange = problemSolution => this.setState({ problemSolution });
   catchReturn = event => event.key === "Enter" && this.onCommitClick();
-  onClose = () => this.props.dispatch(assignmentCloseDialog());
+  onClose = () => {
+    this.props.dispatch(problemFinalize());
+    this.props.dispatch(assignmentCloseDialog());
+  };
   onCommitClick = () =>
     isEmpty(this.state.problemSolution)
       ? this.onClose()
       : this.props.onCommit(this.state.problemSolution);
 
   render() {
-    const { classes, dispatch, open, pathProblem, solution } = this.props;
+    const { classes, open, pathProblem, solution } = this.props;
 
     return (
       <Fragment>
@@ -78,8 +82,8 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
               overflowX: "hidden"
             }}
           >
-            <ProblemView
-              dispatch={dispatch}
+            <Problem
+              embedded={true}
               inDialog={true}
               onProblemChange={this.onProblemChange}
               pathProblem={pathProblem}

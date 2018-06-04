@@ -72,14 +72,19 @@ export function* problemInitRequestHandler(action) {
 
     yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem));
 
-    const solution = yield call(
-      [pathsService, pathsService.fetchSolutionFile],
-      action.problemId,
-      uid
+    const solution = yield action.solution &&
+    action.solution.originalSolution &&
+    action.solution.originalSolution.value
+      ? Promise.resolve(
+          pathProblem.type === "jupyter"
+            ? { id: action.solution.originalSolution.value }
+            : action.solution.originalSolution.value
+        )
+      : call([pathsService, pathsService.fetchSolutionFile], pathProblem, uid);
+
+    yield put(
+      problemSolutionRefreshSuccess(action.problemId, solution || false)
     );
-    if (solution) {
-      yield put(problemSolutionRefreshSuccess(action.problemId, solution));
-    }
   } catch (err) {
     yield put(problemInitFail(action.pathId, action.problemId, err.message));
     yield put(notificationShow(err.message));
@@ -95,19 +100,22 @@ export function* problemSolveUpdateHandler(action) {
 export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
-    pathProblem:
-      state.problem.pathProblem || state.assignments.dialog.pathProblem
+    pathProblem: state.problem.pathProblem
   }));
 
-  if (
-    data.pathProblem.type === "jupyterInline" &&
-    typeof action.fileId !== "object"
-  ) {
-    return yield put(
-      problemSolutionRefreshSuccess(action.problemId, {
-        json: data.pathProblem.solutionJSON
-      })
-    );
+  switch (data.pathProblem.type) {
+    case "jupyterInline":
+      if (typeof action.fileId !== "object") {
+        return yield put(
+          problemSolutionRefreshSuccess(action.problemId, {
+            json: data.pathProblem.solutionJSON
+          })
+        );
+      }
+      break;
+    case "youtube":
+      return;
+    default:
   }
 
   try {
@@ -124,7 +132,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
     } else {
       pathSolution = yield call(
         [pathsService, pathsService.fetchSolutionFile],
-        action.problemId,
+        data.pathProblem,
         data.uid
       );
     }
@@ -228,7 +236,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
         action.payload
       )
     );
-    yield put(notificationShow("Solution is valid!"));
+    yield put(notificationShow("Solution submitted"));
   } catch (err) {
     yield put(
       problemSolutionSubmitFail(

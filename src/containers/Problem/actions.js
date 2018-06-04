@@ -1,8 +1,9 @@
 export const PROBLEM_INIT_REQUEST = "PROBLEM_INIT_REQUEST";
-export const problemInitRequest = (pathId, problemId) => ({
+export const problemInitRequest = (pathId, problemId, solution) => ({
   type: PROBLEM_INIT_REQUEST,
   problemId,
-  pathId
+  pathId,
+  solution
 });
 
 export const PROBLEM_INIT_SUCCESS = "PROBLEM_INIT_SUCCESS";
