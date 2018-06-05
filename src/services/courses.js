@@ -147,7 +147,12 @@ export class CoursesService {
     const { name, password, description } = courseData;
 
     if (courseData.id) {
-      return firebase.ref(`/courses/${courseData.id}`).update(courseData);
+      return firebase
+        .set(`/coursePasswords/${courseData.id}`, password)
+        .then(() => {
+          delete courseData.password;
+          firebase.ref(`/courses/${courseData.id}`).update(courseData);
+        });
     }
 
     this.validateNewCourse(courseData);
