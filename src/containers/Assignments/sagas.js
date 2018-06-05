@@ -182,7 +182,11 @@ export function* updateNewAssignmentFieldHandler(action) {
         id: assignment.problem
       });
 
-      if (!data.manualUpdates.details && problem) {
+      if (
+        !data.manualUpdates.details &&
+        problem &&
+        problem.type !== "jupyterInline"
+      ) {
         // FIXIT: add `case` for problem type
         yield fork(function* subFork() {
           yield put(
