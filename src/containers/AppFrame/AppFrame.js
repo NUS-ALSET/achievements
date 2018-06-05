@@ -138,7 +138,7 @@ class AppFrame extends React.Component {
           <div className={classes.appFrame}>
             <AppBar
               className={classes.appBar}
-              color="inherit"
+              color={APP_SETTING.isSuggesting ? "inherit" : "primary"}
               onClose={this.handleDrawerClose}
             >
               <Toolbar>
