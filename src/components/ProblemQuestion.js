@@ -25,12 +25,7 @@ class ProblemQuestion extends React.PureComponent {
     const { label, setAnswer, solution, question } = this.props;
 
     const defaultValue =
-      solution &&
-      ((solution.originalSolution &&
-        solution.originalSolution.value &&
-        solution.originalSolution.value.answers &&
-        solution.originalSolution.value.answers[question]) ||
-        (solution.id && solution.id.answers && solution.id.answers[question]));
+      solution && solution.answers && solution.answers[question];
 
     return (
       <TextField

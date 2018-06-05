@@ -7,7 +7,6 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
-import Button from "@material-ui/core/Button";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -98,7 +97,6 @@ class JupyterProblem extends React.PureComponent {
   render() {
     const {
       /** @type {JupyterPathProblem} */
-      onChange,
       problem,
       solution
     } = this.props;
@@ -111,28 +109,30 @@ class JupyterProblem extends React.PureComponent {
               solution.failed &&
               " - Failing - Final output should be empty"}
           </Typography>
-          <TextField
-            InputLabelProps={{
-              style: {
-                top: 24,
-                left: 24
-              }
-            }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={this.onSolutionRefreshClick}>
-                    <RefreshIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-            defaultValue={solution && solution.id}
-            fullWidth
-            label="Enter the url to your public solution on Colab"
-            onChange={this.onSolutionFileChange}
-            style={{ padding: 24, position: "relative" }}
-          />
+          {solution !== null && (
+            <TextField
+              InputLabelProps={{
+                style: {
+                  top: 24,
+                  left: 24
+                }
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={this.onSolutionRefreshClick}>
+                      <RefreshIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              defaultValue={solution && solution.id}
+              fullWidth
+              label="Enter the url to your public solution on Colab"
+              onChange={this.onSolutionFileChange}
+              style={{ padding: 24, position: "relative" }}
+            />
+          )}
           {solution &&
             solution.json && (
               <div
@@ -144,11 +144,6 @@ class JupyterProblem extends React.PureComponent {
               </div>
             )}
           {solution && solution.loading && <CircularProgress />}
-          {!onChange && (
-            <Button color="primary" onClick={this.onCommit} variant="raised">
-              Submit
-            </Button>
-          )}
         </Paper>
         {solution &&
           solution.provided && (

@@ -2,13 +2,15 @@ import {
   PROBLEM_FINALIZE,
   PROBLEM_INIT_SUCCESS,
   PROBLEM_SOLUTION_PROVIDED_SUCCESS,
+  PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_REFRESH_SUCCESS
 } from "./actions";
 
 export const problem = (
   state = {
-    problemJSON: false
+    problemJSON: false,
+    solution: null
   },
   action
 ) => {
@@ -21,7 +23,8 @@ export const problem = (
     case PROBLEM_FINALIZE:
       return {
         ...state,
-        pathProblem: null
+        pathProblem: null,
+        solution: null
       };
     case PROBLEM_SOLUTION_REFRESH_REQUEST:
       return {
@@ -48,7 +51,18 @@ export const problem = (
           ...(state.solution || {}),
           ...action.payload,
           checked: true,
+          failed: false,
           loading: false
+        }
+      };
+    case PROBLEM_SOLUTION_REFRESH_FAIL:
+      return {
+        ...state,
+        solution: {
+          ...(state.solution || {}),
+          checked: false,
+          loading: false,
+          failed: true
         }
       };
     default:

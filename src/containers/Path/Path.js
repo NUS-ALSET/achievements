@@ -8,6 +8,8 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
 
+import { APP_SETTING } from "../../achievementsApp/config";
+
 import Button from "@material-ui/core/Button";
 import Toolbar from "@material-ui/core/Toolbar";
 
@@ -27,6 +29,8 @@ import {
 import { pathToggleJoinStatusRequest } from "./actions";
 import { pathProblemDialogShow } from "../Paths/actions";
 import ProblemDialog from "../../components/dialogs/ProblemDialog";
+
+import AddIcon from "@material-ui/icons/Add";
 
 class Path extends React.PureComponent {
   static propTypes = {
@@ -81,17 +85,32 @@ class Path extends React.PureComponent {
             }
           ]}
         />
-        {pathStatus === PATH_STATUS_OWNER && (
-          <Toolbar>
+        {pathStatus === PATH_STATUS_OWNER &&
+          (!APP_SETTING.isSuggesting ? (
+            <Toolbar>
+              <Button
+                color="primary"
+                onClick={this.onAddProblemClick}
+                variant="raised"
+              >
+                Add Problem
+              </Button>
+            </Toolbar>
+          ) : (
             <Button
+              aria-label="Add"
               color="primary"
               onClick={this.onAddProblemClick}
-              variant="raised"
+              style={{
+                position: "fixed",
+                bottom: 20,
+                right: 20
+              }}
+              variant="fab"
             >
-              Add Problem
+              <AddIcon />
             </Button>
-          </Toolbar>
-        )}
+          ))}
         <ProblemsTable
           dispatch={dispatch}
           pathOwnerId={pathProblems.owner}

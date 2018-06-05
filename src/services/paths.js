@@ -102,16 +102,36 @@ export class PathsService {
                     data
                   }))
               )
-            ]).then(files =>
-              Object.assign(pathProblem, {
-                problemColabURL: PathsService.getColabURL(files[0].id),
-                problemJSON: files[0].data,
-                problemFileId: files[0].id,
-                solutionFileId: files[1].id,
-                solutionColabURL: PathsService.getColabURL(files[1].id),
-                solutionJSON: files[1].data
-              })
-            );
+            ])
+              .then(files =>
+                Object.assign(pathProblem, {
+                  problemColabURL: PathsService.getColabURL(files[0].id),
+                  problemJSON: files[0].data,
+                  problemFileId: files[0].id,
+                  solutionFileId: files[1].id,
+                  solutionColabURL: PathsService.getColabURL(files[1].id),
+                  solutionJSON: files[1].data
+                })
+              )
+              .then(() => {
+                if (
+                  pathProblem.problemJSON &&
+                  pathProblem.problemJSON.metadata
+                ) {
+                  pathProblem.problemJSON.metadata.language_info = {
+                    name: "python"
+                  };
+                }
+                if (
+                  pathProblem.solutionJSON &&
+                  pathProblem.solutionJSON.metadata
+                ) {
+                  pathProblem.solutionJSON.metadata.language_info = {
+                    name: "python"
+                  };
+                }
+                return pathProblem;
+              });
           default:
             return pathProblem;
         }
@@ -168,22 +188,32 @@ export class PathsService {
     );
   }
 
-  fetchSolutionFile(problemId, uid) {
+  /**
+   *
+   * @param {PathProblem} pathProblem
+   * @param uid
+   * @returns {Promise<boolean>}
+   */
+  fetchSolutionFile(pathProblem, uid) {
     return this.firebase
       .database()
-      .ref(`/problemSolutions/${problemId}/${uid}`)
+      .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
       .once("value")
       .then(snapshot => snapshot.val())
-      .then(
-        fileId =>
-          fileId
-            ? this.fetchFile(fileId).then(json => ({
-                id: fileId,
-                json,
-                colabURL: PathsService.getColabURL(fileId)
-              }))
-            : false
-      );
+      .then(solution => {
+        switch (pathProblem.type) {
+          case "jupyter":
+            return solution
+              ? this.fetchFile(this.getFileId(solution)).then(json => ({
+                  id: solution,
+                  json,
+                  colabURL: PathsService.getColabURL(solution)
+                }))
+              : false;
+          default:
+            return solution;
+        }
+      });
   }
 
   pathChange(uid, pathInfo) {

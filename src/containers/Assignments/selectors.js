@@ -29,7 +29,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
     getFrom(state.firebase.data.visibleSolutions, courseId),
     student.id
   );
-  const result = Object.assign({}, solutions, publishedSolutions);
+  const result = Object.assign({}, publishedSolutions, solutions);
 
   Object.keys(Object.assign({}, solutions, publishedSolutions)).forEach(
     assignmentId => {

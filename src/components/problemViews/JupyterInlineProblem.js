@@ -11,7 +11,6 @@ import cloneDeep from "lodash/cloneDeep";
 
 import AceEditor from "react-ace";
 
-import Button from "@material-ui/core/Button";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import Paper from "@material-ui/core/Paper";
@@ -103,13 +102,31 @@ class JupyterInlineProblem extends React.PureComponent {
       .map(line => line + "\n");
 
     this.setState({
-      solutionJSON: solutionJSON
+      solutionJSON: solutionJSON || false
     });
     dispatch(problemSolutionRefreshFail());
     if (onChange) {
       onChange(solutionJSON);
     }
   };
+
+  getSolutionCode = (solution, problem) =>
+    (this.state.solutionJSON &&
+      this.state.solutionJSON.cells &&
+      this.state.solutionJSON.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n")) ||
+    (solution &&
+      solution.cells &&
+      solution.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n")) ||
+    (problem &&
+      problem.problemJSON &&
+      problem.problemJSON.cells &&
+      problem.problemJSON.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n"));
 
   onSwitchCollapse = (item, status) => {
     this.setState({
@@ -121,7 +138,6 @@ class JupyterInlineProblem extends React.PureComponent {
 
   render() {
     const {
-      onChange,
       /** @type {JupyterPathProblem} */
       problem,
       solution
@@ -150,23 +166,7 @@ class JupyterInlineProblem extends React.PureComponent {
             onChange={this.onEditorChange}
             onLoad={editor => editor.focus()}
             theme="github"
-            value={
-              // FIXIT: extract to method
-              (this.state.solutionJSON &&
-                this.state.solutionJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n")) ||
-              (problem &&
-                problem.solutionJSON &&
-                problem.solutionJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n")) ||
-              (problem &&
-                problem.problemJSON &&
-                problem.problemJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n"))
-            }
+            value={this.getSolutionCode(solution, problem)}
           />
         </Paper>
         <Paper style={{ margin: "24px 2px" }}>
@@ -186,11 +186,6 @@ class JupyterInlineProblem extends React.PureComponent {
               </div>
             )}
           {solution && solution.loading && <CircularProgress />}
-          {!onChange && (
-            <Button color="primary" onClick={this.onCommit} variant="raised">
-              Submit
-            </Button>
-          )}
         </Paper>
         {solution &&
           solution.provided && (
@@ -221,7 +216,10 @@ class JupyterInlineProblem extends React.PureComponent {
                     textAlign: "left"
                   }}
                 >
-                  <NotebookPreview notebook={solution.provided} />
+                  <NotebookPreview
+                    language="python"
+                    notebook={solution.provided}
+                  />
                 </div>
               </Collapse>
             </Paper>
@@ -249,7 +247,11 @@ class JupyterInlineProblem extends React.PureComponent {
                 textAlign: "left"
               }}
             >
-              <NotebookPreview notebook={problem.problemJSON} />
+              <NotebookPreview
+                language="python"
+                notebook={problem.problemJSON}
+                theme="nteract"
+              />
             </div>
           </Collapse>
           <Typography align="right" variant="caption">

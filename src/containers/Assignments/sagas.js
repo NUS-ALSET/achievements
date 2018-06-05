@@ -41,7 +41,6 @@ import {
   courseRemoveStudentFail,
   assignmentPathsFetchSuccess,
   assignmentProblemsFetchSuccess,
-  assignmentPathProblemFetchSuccess,
   ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
   assignmentSubmitRequest,
   COURSE_MOVE_STUDENT_DIALOG_SHOW,
@@ -69,6 +68,7 @@ import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 import { pathsService } from "../../services/paths";
 import {
+  problemInitRequest,
   problemSolutionRefreshSuccess,
   problemSolveUpdate
 } from "../Problem/actions";
@@ -171,7 +171,9 @@ export function* updateNewAssignmentFieldHandler(action) {
       );
 
       yield put(assignmentProblemsFetchSuccess(problems));
-      yield put(updateNewAssignmentField("problem", ""));
+      if (data.assignment.path !== action.value) {
+        yield put(updateNewAssignmentField("problem", ""));
+      }
       break;
     case "problem":
       problems = yield select(state => state.assignments.dialog.problems);
@@ -468,17 +470,20 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
     yield put(assignmentSubmitRequest(action.assignment, null));
     const pathProblem = yield call(
       [pathsService, pathsService.fetchPathProblem],
-      action.problemOwner,
+      action.assignment.path || action.problemOwner,
       action.problemId
     );
     yield put(
-      assignmentPathProblemFetchSuccess(pathProblem, {
-        id:
-          action.solution &&
-          action.solution.originalSolution &&
-          action.solution.originalSolution.value
-      })
+      problemInitRequest(
+        pathProblem.pathId,
+        pathProblem.problemId,
+        action.solution
+      )
     );
+
+    if (Math.random()) {
+      return Promise.resolve();
+    }
     if (pathProblem.type === "youtube") {
       yield put(
         problemSolutionRefreshSuccess(

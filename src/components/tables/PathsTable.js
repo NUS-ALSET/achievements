@@ -13,11 +13,16 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+
+import SearchIcon from "@material-ui/icons/Search";
+import EditIcon from "@material-ui/icons/Edit";
 
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { pathProblemDialogShow } from "../../containers/Paths/actions";
+import { pathDialogShow } from "../../containers/Paths/actions";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 const styles = theme => ({
   link: {
@@ -36,7 +41,7 @@ class PathsTable extends React.PureComponent {
     paths: PropTypes.object.isRequired
   };
 
-  onEditClick = problem => this.props.dispatch(pathProblemDialogShow(problem));
+  onEditClick = path => this.props.dispatch(pathDialogShow(path));
 
   render() {
     const { classes, paths } = this.props;
@@ -46,10 +51,9 @@ class PathsTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>Path name</TableCell>
-            <TableCell>Progress</TableCell>
             <TableCell
               style={{
-                width: 360
+                width: APP_SETTING.isSuggesting ? 150 : 360
               }}
             >
               Actions
@@ -63,26 +67,31 @@ class PathsTable extends React.PureComponent {
             .map(path => (
               <TableRow key={path.id}>
                 <TableCell>{path.name}</TableCell>
-                <TableCell>{path.progress}</TableCell>
-                <TableCell>
-                  <Link className={classes.link} to={`/paths/${path.id}`}>
-                    <Button variant="raised">Open</Button>
-                  </Link>
-                  <Button
-                    className={classes.button}
-                    onClick={() => this.onEditClick(path)}
-                    variant="raised"
-                  >
-                    Refresh
-                  </Button>
-                  <Button
-                    className={classes.button}
-                    onClick={() => this.onEditClick(path)}
-                    variant="raised"
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
+                {APP_SETTING.isSuggesting ? (
+                  <TableCell>
+                    <Link className={classes.link} to={`/paths/${path.id}`}>
+                      <IconButton>
+                        <SearchIcon />
+                      </IconButton>
+                    </Link>
+                    <IconButton onClick={() => this.onEditClick(path)}>
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                ) : (
+                  <TableCell>
+                    <Link className={classes.link} to={`/paths/${path.id}`}>
+                      <Button variant="raised">Open</Button>
+                    </Link>
+                    <Button
+                      className={classes.button}
+                      onClick={() => this.onEditClick(path)}
+                      variant="raised"
+                    >
+                      Edit
+                    </Button>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
         </TableBody>

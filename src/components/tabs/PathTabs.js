@@ -11,9 +11,13 @@ import Button from "@material-ui/core/Button";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Toolbar from "@material-ui/core/Toolbar";
+import Zoom from "@material-ui/core/Zoom";
+
+import AddIcon from "@material-ui/icons/Add";
 
 import PathsTable from "../../components/tables/PathsTable";
 import { pathDialogShow } from "../../containers/Paths/actions";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 const PATHS_TAB_JOINED = 0;
 const PATHS_TAB_OWNED = 1;
@@ -63,18 +67,35 @@ class PathTabs extends React.PureComponent {
 
     return (
       <Fragment>
-        <Toolbar>
-          <Button
-            color="primary"
-            onClick={this.onAddPathClick}
-            style={{
-              margin: 4
-            }}
-            variant="raised"
-          >
-            Add Path
-          </Button>
-        </Toolbar>
+        {APP_SETTING.isSuggesting ? (
+          <Zoom in={this.state.currentTab === PATHS_TAB_OWNED} unmountOnExit>
+            <Button
+              color="primary"
+              onClick={this.onAddPathClick}
+              style={{
+                position: "fixed",
+                bottom: 20,
+                right: 20
+              }}
+              variant="fab"
+            >
+              <AddIcon />
+            </Button>
+          </Zoom>
+        ) : (
+          <Toolbar>
+            <Button
+              color="primary"
+              onClick={this.onAddPathClick}
+              style={{
+                margin: 4
+              }}
+              variant="raised"
+            >
+              Add Path
+            </Button>
+          </Toolbar>
+        )}
 
         <Tabs
           fullWidth

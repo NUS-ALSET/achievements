@@ -15,13 +15,13 @@ class ProblemView extends React.PureComponent {
     dispatch: PropTypes.func,
     match: PropTypes.object,
     pathProblem: PropTypes.any,
-    onProblemChange: PropTypes.func,
+    onProblemChange: PropTypes.func.isRequired,
     solution: PropTypes.any
   };
 
   render() {
     const { dispatch, onProblemChange, pathProblem, solution } = this.props;
-
+    // debugger;
     if (!pathProblem) {
       return <div>Loading</div>;
     }

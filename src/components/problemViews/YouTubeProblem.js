@@ -7,17 +7,14 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
-import Button from "@material-ui/core/Button";
-
 import YouTube from "react-youtube";
 
 import ProblemQuestion from "../ProblemQuestion";
-import { problemSolutionSubmitRequest } from "../../containers/Problem/actions";
 
 class YouTubeProblem extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    onChange: PropTypes.func,
+    onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
     solution: PropTypes.any
   };
@@ -35,7 +32,12 @@ class YouTubeProblem extends React.PureComponent {
       }
     });
     if (this.props.onChange) {
-      this.props.onChange(this.state);
+      this.props.onChange({
+        answers: {
+          ...this.state.answers,
+          [question]: answer
+        }
+      });
     }
   };
   setYoutubeEvent = (event, videoTime, info = {}) => {
@@ -57,17 +59,10 @@ class YouTubeProblem extends React.PureComponent {
     }
   };
 
-  onCommit = () => {
-    const { dispatch, problem } = this.props;
-
-    dispatch(
-      problemSolutionSubmitRequest(problem.owner, problem.problemId, this.state)
-    );
-  };
-
   render() {
-    const { onChange, problem, solution } = this.props;
+    const { problem, solution } = this.props;
 
+    // noinspection JSDeprecatedSymbols
     return (
       <Fragment>
         <YouTube
@@ -97,28 +92,32 @@ class YouTubeProblem extends React.PureComponent {
           }
           videoId={problem.youtubeURL.replace(/.*=/, "")}
         />
-        {problem.questionAfter && (
-          <ProblemQuestion
-            question="questionAfter"
-            setAnswer={this.setAnswer}
-            solution={solution}
-          />
-        )}
-        {problem.questionAnswer && (
-          <ProblemQuestion
-            question="questionAnswer"
-            setAnswer={this.setAnswer}
-            solution={solution}
-          />
-        )}
-        {problem.topics && (
-          <ProblemQuestion
-            question="topics"
-            setAnswer={this.setAnswer}
-            solution={solution}
-          />
-        )}
-        {problem.questionCustom &&
+        {solution !== null &&
+          problem.questionAfter && (
+            <ProblemQuestion
+              question="questionAfter"
+              setAnswer={this.setAnswer}
+              solution={solution}
+            />
+          )}
+        {solution !== null &&
+          problem.questionAnswer && (
+            <ProblemQuestion
+              question="questionAnswer"
+              setAnswer={this.setAnswer}
+              solution={solution}
+            />
+          )}
+        {solution !== null &&
+          problem.topics && (
+            <ProblemQuestion
+              question="topics"
+              setAnswer={this.setAnswer}
+              solution={solution}
+            />
+          )}
+        {solution !== null &&
+          problem.questionCustom &&
           problem.customText && (
             <ProblemQuestion
               label={problem.customText}
@@ -127,12 +126,6 @@ class YouTubeProblem extends React.PureComponent {
               solution={solution}
             />
           )}
-
-        {!onChange && (
-          <Button color="primary" onClick={this.onCommit} variant="raised">
-            Submit
-          </Button>
-        )}
       </Fragment>
     );
   }
