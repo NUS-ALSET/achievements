@@ -19,6 +19,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
+import SendIcon from "@material-ui/icons/Send";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import PropTypes from "prop-types";
@@ -56,7 +57,13 @@ class AssignmentsTable extends React.PureComponent {
   };
 
   getTooltip(assignment, solution) {
-    if (!solution.originalSolution) {
+    if (
+      !(
+        solution.originalSolution &&
+        solution.originalSolution.value &&
+        solution.originalSolution.value
+      )
+    ) {
       return "";
     }
     let result = `Created: ${new Date(
@@ -65,8 +72,6 @@ class AssignmentsTable extends React.PureComponent {
     switch (assignment.questionType) {
       case "PathProblem":
         if (
-          solution.originalSolution &&
-          solution.originalSolution.value &&
           solution.originalSolution.value.answers &&
           !isEmpty(solution.originalSolution.value.answers)
         ) {
@@ -86,21 +91,30 @@ class AssignmentsTable extends React.PureComponent {
               )
               .join("\n");
         }
+        if (solution.originalSolution.value.cells) {
+          result +=
+            "\nSolution:\n" +
+            solution.originalSolution.value.cells
+              .map(cell => cell.source.join(""))
+              .join("\n");
+        }
         return result;
       default:
         return result;
     }
   }
 
-  getSolution(assignment, solutions) {
+  getSolution(assignment, solutions, owner) {
     let solution = solutions[assignment.id];
     const result = (solution && solution.value) || "";
 
-    if (result) {
-      return (
-        <IconButton>
-          <DoneIcon />
+    if (!solution) {
+      return owner && APP_SETTING.isSuggesting ? (
+        <IconButton onClick={() => this.onSubmitClick(assignment)}>
+          <SendIcon />
         </IconButton>
+      ) : (
+        ""
       );
     }
 
@@ -115,7 +129,18 @@ class AssignmentsTable extends React.PureComponent {
             rel="noopener noreferrer"
             target="_blank"
           >
-            {result}
+            {APP_SETTING.isSuggesting ? (
+              <IconButton
+                onClick={() =>
+                  owner &&
+                  this.onSubmitClick(assignment, solutions[assignment.id])
+                }
+              >
+                <DoneIcon />
+              </IconButton>
+            ) : (
+              result
+            )}
           </a>
         ) : (
           undefined
@@ -123,7 +148,7 @@ class AssignmentsTable extends React.PureComponent {
       case "PathProblem":
         return solution ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
-            <div>
+            <span>
               {/http[s]?:\/\//.test(
                 solution.originalSolution && solution.originalSolution.value
               ) ? (
@@ -132,27 +157,71 @@ class AssignmentsTable extends React.PureComponent {
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  Completed
+                  {APP_SETTING.isSuggesting ? (
+                    <IconButton
+                      onClick={() =>
+                        owner &&
+                        this.onSubmitClick(assignment, solutions[assignment.id])
+                      }
+                    >
+                      <DoneIcon />
+                    </IconButton>
+                  ) : (
+                    "Completed"
+                  )}
                 </a>
+              ) : APP_SETTING.isSuggesting ? (
+                <IconButton
+                  onClick={() =>
+                    owner &&
+                    this.onSubmitClick(assignment, solutions[assignment.id])
+                  }
+                >
+                  <DoneIcon />
+                </IconButton>
               ) : (
                 result
               )}
-            </div>
+            </span>
           </Tooltip>
         ) : (
           result
         );
 
       case "Text":
-        return /http[s]?:\/\//.test(result) ? (
+        return /http[s]?:\/\//.test(result) && !owner ? (
           <a href={result} rel="noopener noreferrer" target="_blank">
-            Completed
+            {APP_SETTING.isSuggesting ? (
+              <IconButton>
+                <DoneIcon />
+              </IconButton>
+            ) : (
+              "Completed"
+            )}
           </a>
+        ) : APP_SETTING.isSuggesting ? (
+          <IconButton
+            onClick={() =>
+              this.onSubmitClick(assignment, solutions[assignment.id])
+            }
+          >
+            <DoneIcon />
+          </IconButton>
         ) : (
           result
         );
       default:
-        return result;
+        return APP_SETTING.isSuggesting ? (
+          <IconButton
+            onClick={() =>
+              owner && this.onSubmitClick(assignment, solutions[assignment.id])
+            }
+          >
+            <DoneIcon />
+          </IconButton>
+        ) : (
+          result
+        );
     }
   }
 
@@ -322,26 +391,31 @@ class AssignmentsTable extends React.PureComponent {
                   .map(assignment => (
                     <TableCell key={assignment.id}>
                       <Fragment>
-                        {this.getSolution(assignment, studentInfo.solutions)}
-
-                        {studentInfo.id === currentUser.id && (
-                          <Button
-                            onClick={() =>
-                              this.onSubmitClick(
-                                assignment,
-                                studentInfo.solutions[assignment.id]
-                              )
-                            }
-                            style={{
-                              marginLeft: 4
-                            }}
-                            variant="raised"
-                          >
-                            {studentInfo.solutions[assignment.id]
-                              ? "Update"
-                              : "Submit"}
-                          </Button>
+                        {this.getSolution(
+                          assignment,
+                          studentInfo.solutions,
+                          studentInfo.id === currentUser.id
                         )}
+
+                        {studentInfo.id === currentUser.id &&
+                          (!APP_SETTING.isSuggesting && (
+                            <Button
+                              onClick={() =>
+                                this.onSubmitClick(
+                                  assignment,
+                                  studentInfo.solutions[assignment.id]
+                                )
+                              }
+                              style={{
+                                marginLeft: 4
+                              }}
+                              variant="raised"
+                            >
+                              {studentInfo.solutions[assignment.id]
+                                ? "Update"
+                                : "Submit"}
+                            </Button>
+                          ))}
                       </Fragment>
                     </TableCell>
                   ))}
