@@ -162,6 +162,11 @@ function getValueToSort(solutions, sortField) {
   return aValue.value;
 }
 
+function checkVisibilitySolution(assignments, key) {
+  const assignment = assignments[key] || {};
+  return assignment.visible;
+}
+
 /**
  *
  * @param {AchievementsAppState} state
@@ -187,8 +192,11 @@ export const getCourseProps = (state, ownProps) => {
     .map(member => ({
       ...member,
       progress: {
-        totalSolutions: Object.keys(member.solutions).length,
+        totalSolutions: Object.keys(member.solutions).filter(key =>
+          checkVisibilitySolution(assignments, key)
+        ).length,
         lastSolutionTime: Object.keys(member.solutions)
+          .filter(key => checkVisibilitySolution(assignments, key))
           .map(
             id =>
               member.solutions[id].createdAt ||
@@ -238,7 +246,9 @@ export const getCourseProps = (state, ownProps) => {
     id: courseId,
     ...getFrom(state.firebase.data.courses, courseId),
     members: members.length ? sortedMembers : false,
-    totalAssignments: Object.keys(assignments).length,
+    totalAssignments: Object.keys(assignments).filter(key =>
+      checkVisibilitySolution(assignments, key)
+    ).length,
     assignments: Object.keys(assignments)
       .map(id => ({
         ...assignments[id],
