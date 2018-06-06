@@ -213,8 +213,8 @@ exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
 
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
-  .onWrite(event => {
-    const { courseId, studentId, assignmentId } = event.params;
+  .onWrite((change, context) => {
+    const { courseId, studentId, assignmentId } = context.params;
 
     return admin
       .database()
@@ -230,8 +230,8 @@ exports.handleNewSolution = functions.database
             .ref(`/visibleSolutions/${courseId}/${studentId}/${assignmentId}`)
             .set(
               assignment.solutionVisible
-                ? event.data.val()
-                : Object.assign(event.data.val(), { value: "Complete" })
+                ? change.after.val()
+                : Object.assign(change.after.val(), { value: "Complete" })
             );
         }
         return true;
@@ -242,12 +242,13 @@ exports.handleProfileRefreshRequest =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
   functions.database
     .ref("/updateProfileQueue/tasks/{requestId}")
-    .onCreate(event =>
+    .onCreate((snap, context) =>
       new Promise(resolve =>
-        processProfileRefreshRequest(event.data.val(), resolve)
+        processProfileRefreshRequest(snap.val(), resolve)
       ).then(() =>
-        admin.database
-          .ref(`/updateProfileQueue/tasks/${event.params.requestId}`)
+        admin
+          .database()
+          .ref(`/updateProfileQueue/tasks/${context.params.requestId}`)
           .remove()
       )
     );
