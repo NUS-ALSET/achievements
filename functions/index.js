@@ -229,7 +229,8 @@ exports.handleProfileRefreshRequest =
       new Promise(resolve =>
         processProfileRefreshRequest(snap.val(), resolve)
       ).then(() =>
-        admin.database
+        admin
+          .database()
           .ref(`/updateProfileQueue/tasks/${context.params.requestId}`)
           .remove()
       )
