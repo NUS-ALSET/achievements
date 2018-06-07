@@ -54,7 +54,7 @@ class Path extends React.PureComponent {
   onAddProblemClick = () => this.props.dispatch(pathProblemDialogShow());
 
   render() {
-    const { dispatch, match, pathProblems, pathStatus, ui } = this.props;
+    const { dispatch, match, pathProblems, pathStatus, ui, uid } = this.props;
 
     let pathName;
 
@@ -112,15 +112,16 @@ class Path extends React.PureComponent {
             </Button>
           ))}
         <ProblemsTable
+          currentUserId={uid}
           dispatch={dispatch}
-          pathOwnerId={pathProblems.owner}
+          pathOwnerId={pathProblems.path && pathProblems.path.owner}
           problems={pathProblems.problems || []}
           selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
         />
         <ProblemDialog
           dispatch={dispatch}
           open={ui.dialog.type === "ProblemChange"}
-          pathId={pathProblems.path && pathProblems.path.id}
+          pathId={(pathProblems.path && pathProblems.path.id) || ""}
           problem={ui.dialog.value}
         />
       </Fragment>

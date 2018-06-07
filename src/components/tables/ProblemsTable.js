@@ -34,7 +34,7 @@ class ProblemsTable extends React.PureComponent {
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
-    pathOwnerId: PropTypes.string,
+    pathOwnerId: PropTypes.any,
     problems: PropTypes.array.isRequired,
     selectedPathId: PropTypes.string
   };
@@ -42,13 +42,20 @@ class ProblemsTable extends React.PureComponent {
   onEditClick = problem => this.props.dispatch(pathProblemDialogShow(problem));
 
   render() {
-    const { classes, pathOwnerId, problems, selectedPathId } = this.props;
+    const {
+      classes,
+      currentUserId,
+      pathOwnerId,
+      problems,
+      selectedPathId
+    } = this.props;
 
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Problem name</TableCell>
+            {currentUserId !== pathOwnerId && <TableCell>Progress</TableCell>}
             <TableCell
               style={{
                 width: 240
@@ -62,6 +69,9 @@ class ProblemsTable extends React.PureComponent {
           {problems.map(problem => (
             <TableRow key={problem.id}>
               <TableCell>{problem.name}</TableCell>
+              {currentUserId !== pathOwnerId && (
+                <TableCell>{problem.solved}</TableCell>
+              )}
               <TableCell>
                 <Link
                   className={classes.link}
@@ -71,13 +81,15 @@ class ProblemsTable extends React.PureComponent {
                 >
                   <Button variant="raised">Open</Button>
                 </Link>
-                <Button
-                  className={classes.button}
-                  onClick={() => this.onEditClick(problem)}
-                  variant="raised"
-                >
-                  Edit
-                </Button>
+                {pathOwnerId === currentUserId && (
+                  <Button
+                    className={classes.button}
+                    onClick={() => this.onEditClick(problem)}
+                    variant="raised"
+                  >
+                    Edit
+                  </Button>
+                )}
               </TableCell>
             </TableRow>
           ))}
