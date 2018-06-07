@@ -7,13 +7,15 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import Button from "@material-ui/core/Button";
+import Icon from "@material-ui/core/Icon";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
-import Button from "@material-ui/core/Button";
+import DoneIcon from "@material-ui/icons/Done";
 
 import { Link } from "react-router-dom";
 
@@ -55,7 +57,7 @@ class ProblemsTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>Problem name</TableCell>
-            {currentUserId !== pathOwnerId && <TableCell>Progress</TableCell>}
+            {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
             <TableCell
               style={{
                 width: 240
@@ -70,7 +72,13 @@ class ProblemsTable extends React.PureComponent {
             <TableRow key={problem.id}>
               <TableCell>{problem.name}</TableCell>
               {currentUserId !== pathOwnerId && (
-                <TableCell>{problem.solved}</TableCell>
+                <TableCell>
+                  {problem.solved && (
+                    <Icon>
+                      <DoneIcon />
+                    </Icon>
+                  )}
+                </TableCell>
               )}
               <TableCell>
                 <Link

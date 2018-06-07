@@ -2,6 +2,21 @@ import { notificationShow } from "../Root/actions";
 
 const firebase = require("firebase");
 
+export const PATH_OPEN = "PATH_OPEN";
+export const pathOpen = pathId => ({
+  type: PATH_OPEN,
+  pathId
+});
+
+// In fact, it only fetches existance of solution, should be renamed?
+export const PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS =
+  "PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS";
+export const pathFetchProblemsSolutionsSuccess = (pathId, solutions) => ({
+  type: PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS,
+  pathId,
+  solutions
+});
+
 export const PATH_TOGGLE_JOIN_STATUS_REQUEST =
   "PATH_TOGGLE_JOIN_STATUS_REQUEST";
 export const pathToggleJoinStatusRequest = (

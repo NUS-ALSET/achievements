@@ -26,11 +26,13 @@ import {
   PATH_STATUS_OWNER,
   PATH_STATUS_NOT_JOINED
 } from "./selectors";
-import { pathToggleJoinStatusRequest } from "./actions";
+import { pathOpen, pathToggleJoinStatusRequest } from "./actions";
 import { pathProblemDialogShow } from "../Paths/actions";
 import ProblemDialog from "../../components/dialogs/ProblemDialog";
 
 import AddIcon from "@material-ui/icons/Add";
+import { sagaInjector } from "../../services/saga";
+import sagas from "./sagas";
 
 class Path extends React.PureComponent {
   static propTypes = {
@@ -41,6 +43,10 @@ class Path extends React.PureComponent {
     ui: PropTypes.any,
     uid: PropTypes.string
   };
+
+  componentDidMount() {
+    this.props.dispatch(pathOpen(this.props.match.params.pathId));
+  }
 
   changeJoinStatus = () =>
     this.props.dispatch(
@@ -128,6 +134,8 @@ class Path extends React.PureComponent {
     );
   }
 }
+
+sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
   pathProblems: pathProblemsSelector(state, ownProps),
