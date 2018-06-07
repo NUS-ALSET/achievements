@@ -480,6 +480,17 @@ export class PathsService {
       );
   }
 
+  fetchProblemsSolutions(uid, problems) {
+    return Promise.all(
+      problems.map(problem =>
+        this.firebase
+          .ref(`/problemSolutions/${problem.id}/${uid}`)
+          .once("value")
+          .then(data => ({ [problem.id]: !!data.val() }))
+      )
+    ).then(solutions => Object.assign({}, ...solutions));
+  }
+
   constructor(dependencies) {
     dependencies = dependencies || {};
 

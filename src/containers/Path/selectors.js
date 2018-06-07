@@ -32,6 +32,8 @@ const getProblems = (state, ownProps) => {
   );
 };
 
+const getProblemSolutions = state => state.path.problemSolutions || {};
+
 export const pathStatusSelector = createSelector(
   getUserId,
   getJoinedPaths,
@@ -50,10 +52,11 @@ export const pathStatusSelector = createSelector(
 export const pathProblemsSelector = createSelector(
   getPath,
   getProblems,
-  (path, problems) => ({
+  getProblemSolutions,
+  (path, problems, solutions) => ({
     path: path,
     problems: Object.keys(problems || {})
-      .map(id => ({ ...problems[id], id }))
+      .map(id => ({ ...problems[id], id, solved: solutions[id] }))
       .filter(
         problem =>
           path.id === path.owner ? !problem.path : problem.path === path.id

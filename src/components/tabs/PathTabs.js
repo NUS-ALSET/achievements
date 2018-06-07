@@ -23,7 +23,7 @@ const PATHS_TAB_JOINED = 0;
 const PATHS_TAB_OWNED = 1;
 const PATHS_TAB_PUBLIC = 2;
 
-class PathTabs extends React.PureComponent {
+class PathTabs extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     paths: PropTypes.object,
@@ -108,7 +108,11 @@ class PathTabs extends React.PureComponent {
           <Tab label="My Paths" />
           <Tab label="Public Paths" />
         </Tabs>
-        <PathsTable dispatch={dispatch} paths={paths} />
+        <PathsTable
+          dispatch={dispatch}
+          owner={this.state.currentTab === PATHS_TAB_OWNED}
+          paths={paths}
+        />
       </Fragment>
     );
   }

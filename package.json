@@ -13,6 +13,7 @@
     "classnames": "2.2.5",
     "date-fns": "^1.29.0",
     "downshift": "1.25.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "firebase": "4.9.0",
     "firebase-queue": "^1.6.1",
     "highlight": "^0.2.4",
@@ -54,6 +55,7 @@
     "chai": "^4.1.2",
     "cross-env": "^5.1.4",
     "css-loader": "^0.28.11",
+    "enzyme": "^3.3.0",
     "firebase-admin": "^5.12.0",
     "firebase-json": "^0.4.0",
     "firebase-mock": "^2.2.0",
@@ -86,8 +88,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
-    "coverage": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
+    "test": "CI=true react-scripts test --env=jsdom",
+    "coverage": "CI=true react-scripts test --env=jsdom --coverage",
+    "test-mocha": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
+    "coverage-mocha": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
     "eject": "react-scripts eject"
   }
 }

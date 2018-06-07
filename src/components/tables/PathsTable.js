@@ -36,15 +36,15 @@ const styles = theme => ({
 class PathsTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    currentUserId: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
+    owner: PropTypes.bool,
     paths: PropTypes.object.isRequired
   };
 
   onEditClick = path => this.props.dispatch(pathDialogShow(path));
 
   render() {
-    const { classes, paths } = this.props;
+    const { classes, owner, paths } = this.props;
 
     return (
       <Table>
@@ -53,6 +53,7 @@ class PathsTable extends React.PureComponent {
             <TableCell>Path name</TableCell>
             <TableCell
               style={{
+                // eslint-disable-next-line no-magic-numbers
                 width: APP_SETTING.isSuggesting ? 150 : 360
               }}
             >
@@ -74,22 +75,26 @@ class PathsTable extends React.PureComponent {
                         <SearchIcon />
                       </IconButton>
                     </Link>
-                    <IconButton onClick={() => this.onEditClick(path)}>
-                      <EditIcon />
-                    </IconButton>
+                    {owner && (
+                      <IconButton onClick={() => this.onEditClick(path)}>
+                        <EditIcon />
+                      </IconButton>
+                    )}
                   </TableCell>
                 ) : (
                   <TableCell>
                     <Link className={classes.link} to={`/paths/${path.id}`}>
                       <Button variant="raised">Open</Button>
                     </Link>
-                    <Button
-                      className={classes.button}
-                      onClick={() => this.onEditClick(path)}
-                      variant="raised"
-                    >
-                      Edit
-                    </Button>
+                    {owner && (
+                      <Button
+                        className={classes.button}
+                        onClick={() => this.onEditClick(path)}
+                        variant="raised"
+                      >
+                        Edit
+                      </Button>
+                    )}
                   </TableCell>
                 )}
               </TableRow>
