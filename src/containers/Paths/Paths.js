@@ -24,7 +24,7 @@ import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
 // import PathsList from "../../components/lists/PathsList";
 
-class Paths extends React.PureComponent {
+export class Paths extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     myPaths: PropTypes.object,
@@ -37,17 +37,8 @@ class Paths extends React.PureComponent {
     uid: PropTypes.any
   };
 
-  state = { tabIndex: 0 };
-
   render() {
-    const {
-      dispatch,
-      myPaths,
-      joinedPaths,
-      publicPaths,
-      ui,
-      uid
-    } = this.props;
+    const { dispatch, myPaths, joinedPaths, publicPaths, ui, uid } = this.props;
 
     return (
       <Fragment>
@@ -88,6 +79,7 @@ const mapStateToProps = state => ({
 
 export default compose(
   firebaseConnect((ownProps, store) => {
+    // I didn't find way to test this
     const firebaseAuth = store.getState().firebase.auth;
     return (
       !firebaseAuth.isEmpty && [
