@@ -23,7 +23,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import ProblemView from "../../components/problemViews/ProblemView";
 import Button from "@material-ui/core/Button/Button";
 
-class Problem extends React.PureComponent {
+export class Problem extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     match: PropTypes.object,
