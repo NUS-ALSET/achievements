@@ -25,10 +25,8 @@ describe("courses service tests", () => {
       )
       .catch(err => {
         assert.equal(err.message, "Missing name or password");
-      }));
+      })
+    
+    );
 
-  it("should validate existing course", () =>
-    service.validateNewCourse({
-      id: "test"
-    }));
 });
