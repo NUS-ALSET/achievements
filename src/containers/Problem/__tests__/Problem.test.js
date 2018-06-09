@@ -4,8 +4,8 @@ import sinon from "sinon";
 import { createShallow } from "@material-ui/core/test-utils";
 import Button from "@material-ui/core/Button";
 
-import { Problem } from "./Problem";
-import ProblemView from "../../components/problemViews/ProblemView";
+import { Problem } from "../Problem";
+import ProblemView from "../../../components/problemViews/ProblemView";
 
 describe("<Problem>", () => {
   let shallow;

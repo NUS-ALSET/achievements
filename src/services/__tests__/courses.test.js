@@ -1,5 +1,5 @@
 import assert from "assert";
-import { CoursesService } from "../../src/services/courses";
+import { CoursesService } from "../courses";
 
 describe("courses service tests", () => {
   /** @type {CoursesService} */
@@ -27,8 +27,9 @@ describe("courses service tests", () => {
         assert.equal(err.message, "Missing name or password");
       }));
 
-  it("should validate existing course", () =>
+  it("should validate existing course", () => {
     service.validateNewCourse({
       id: "test"
-    }));
+    });
+  });
 });

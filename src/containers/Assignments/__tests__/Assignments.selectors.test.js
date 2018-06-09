@@ -1,7 +1,7 @@
 import cloneDeep from "lodash/cloneDeep";
-import { getCourseProps } from "../../src/containers/Assignments/selectors";
+import { getCourseProps } from "../selectors";
 import assert from "assert";
-import { getTestState } from "../fixtures/getState";
+import { getTestState } from "../../../../tests/fixtures/getState";
 
 const COMMON_PROPS = {
   id: "abcTestCourseId",

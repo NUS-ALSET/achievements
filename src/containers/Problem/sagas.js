@@ -39,6 +39,11 @@ import { APP_SETTING } from "../../achievementsApp/config";
 
 const ONE_MINUTE = 60000;
 
+/**
+ * This saga executes on open Problem or show AddPathProblemSolutionDialog
+ * @param action
+ * @returns {IterableIterator<*>}
+ */
 export function* problemInitRequestHandler(action) {
   try {
     let uid = yield select(state => state.firebase.auth.uid);
@@ -60,11 +65,6 @@ export function* problemInitRequestHandler(action) {
       action.pathId,
       action.problemId
     );
-
-    // if (pathProblem) {
-    //   yield put(problemSolutionRefreshSuccess(action.problemId,
-    //     pathSolution));
-    // }
 
     if (!pathProblem) {
       throw new Error("Missing path problem");

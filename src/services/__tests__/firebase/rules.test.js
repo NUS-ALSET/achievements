@@ -1,9 +1,9 @@
 import assert from "assert";
 import targaryen from "targaryen";
 import json from "firebase-json";
-import { getTestState } from "../fixtures/getState";
+import { getTestState } from "../../../../tests/fixtures/getState";
 
-const rules = json.loadSync("./database.rules.json");
+const rulesTest = json.loadSync("./database.rules.json");
 
 describe("security rules tests", () => {
   let database;
@@ -11,7 +11,7 @@ describe("security rules tests", () => {
 
   beforeEach(() => {
     data = getTestState({}).firebase.data;
-    database = targaryen.database(rules, data);
+    database = targaryen.database(rulesTest, data);
   });
 
   it("should disallow write blacklistActions", () => {
