@@ -15,14 +15,13 @@ import { firebaseConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 
 import PathDialog from "../../components/dialogs/PathDialog";
-// import ProblemsTable from "../../components/tables/ProblemsTable";
 
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import { getProblems } from "./selectors";
 import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
-// import PathsList from "../../components/lists/PathsList";
+import { pathsOpen } from "./actions";
 
 export class Paths extends React.PureComponent {
   static propTypes = {
@@ -36,6 +35,10 @@ export class Paths extends React.PureComponent {
     // FIXIT: figure out correct type
     uid: PropTypes.any
   };
+
+  componentDidMount() {
+    this.props.dispatch(pathsOpen());
+  }
 
   render() {
     const { dispatch, myPaths, joinedPaths, publicPaths, ui, uid } = this.props;

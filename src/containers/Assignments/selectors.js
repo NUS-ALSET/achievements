@@ -225,6 +225,14 @@ export const getCourseProps = (state, ownProps) => {
       if (!["studentName", "progress"].includes(state.assignments.sort.field)) {
         aValue = getValueToSort(a.solutions, state.assignments.sort.field);
         bValue = getValueToSort(b.solutions, state.assignments.sort.field);
+        if (aValue === bValue) {
+          aValue =
+            a.solutions[state.assignments.sort.field] &&
+            a.solutions[state.assignments.sort.field].createdAt;
+          bValue =
+            b.solutions[state.assignments.sort.field] &&
+            b.solutions[state.assignments.sort.field].createdAt;
+        }
       }
       aValue = aValue || "";
       bValue = bValue || "";

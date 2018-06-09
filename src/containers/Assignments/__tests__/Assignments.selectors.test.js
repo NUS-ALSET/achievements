@@ -1,7 +1,7 @@
 import cloneDeep from "lodash/cloneDeep";
-import { getCourseProps } from "../../src/containers/Assignments/selectors";
+import { getCourseProps } from "../selectors";
 import assert from "assert";
-import { getTestState } from "../fixtures/getState";
+import { getTestState } from "../../../../tests/fixtures/getState";
 
 const COMMON_PROPS = {
   id: "abcTestCourseId",
@@ -191,6 +191,7 @@ describe("assignments selectors tests", () => {
 
     assert.deepEqual(courseProps, result);
   });
+
   it("should return props with solutions at other student by owner", () => {
     const courseProps = getCourseProps(
       getTestState({
@@ -252,5 +253,83 @@ describe("assignments selectors tests", () => {
     result.assignments[1].progress = "2/2";
 
     assert.deepEqual(courseProps, result);
+  });
+
+  it("should sort by value", () => {
+    const courseProps = getCourseProps(
+      getTestState({
+        sort: {
+          field: "abcTestAssignmentId",
+          direction: "asc"
+        }
+      }),
+      {
+        match: {
+          params: {
+            courseId: "abcTestCourseId"
+          }
+        }
+      }
+    );
+
+    expect(Object.keys(courseProps.members)).toEqual([
+      "abcTestUser2",
+      "abcTestUser1"
+    ]);
+  });
+
+  it("should sort by time", () => {
+    const courseProps = getCourseProps(
+      getTestState({
+        solutions: {
+          abcTestCourseId: {
+            abcTestUser1: {
+              defTestAssignmentId: {
+                value: "same-value",
+                createdAt: 1000
+              }
+            },
+            abcTestUser2: {
+              defTestAssignmentId: {
+                value: "same-value",
+                createdAt: 1001
+              }
+            }
+          }
+        },
+        visibleSolutions: {
+          abcTestCourseId: {
+            abcTestUser1: {
+              defTestAssignmentId: {
+                value: "same-value",
+                createdAt: 1000
+              }
+            },
+            abcTestUser2: {
+              defTestAssignmentId: {
+                value: "same-value",
+                createdAt: 1001
+              }
+            }
+          }
+        },
+        sort: {
+          field: "defTestAssignmentId",
+          direction: "desc"
+        }
+      }),
+      {
+        match: {
+          params: {
+            courseId: "abcTestCourseId"
+          }
+        }
+      }
+    );
+
+    expect(Object.keys(courseProps.members)).toEqual([
+      "abcTestUser2",
+      "abcTestUser1"
+    ]);
   });
 });

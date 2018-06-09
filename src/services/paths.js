@@ -443,6 +443,11 @@ export class PathsService {
                     .ref(`/paths/${id}`)
                     .once("value")
                     .then(snapshot => ({ id, ...snapshot.val() }))
+                    .then(path =>
+                      this.fetchPathProgress(uid, path.owner, path.id).then(
+                        solutions => Object.assign(path, solutions)
+                      )
+                    )
                 : Promise.resolve(false)
           )
         ).then(paths =>

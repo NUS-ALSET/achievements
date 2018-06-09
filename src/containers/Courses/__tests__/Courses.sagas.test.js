@@ -3,8 +3,8 @@ import sinon from "sinon";
 import {
   courseNewRequestHandle,
   courseRemoveRequestHandle
-} from "../../src/containers/Courses/sagas";
-import { coursesService } from "../../src/services/courses";
+} from "../sagas";
+import { coursesService } from "../../../services/courses";
 import {
   COURSE_HIDE_DIALOG,
   COURSE_NEW_FAIL,
@@ -14,11 +14,11 @@ import {
   courseNewSuccess,
   courseRemoveRequest,
   courseRemoveSuccess
-} from "../../src/containers/Courses/actions";
+} from "../actions";
 import assert from "assert";
 import { put, call } from "redux-saga/effects";
 import { runSaga } from "redux-saga";
-import { NOTIFICATION_SHOW } from "../../src/containers/Root/actions";
+import { NOTIFICATION_SHOW } from "../../Root/actions";
 
 describe("courses sagas tests", () => {
   beforeEach(() =>
@@ -50,7 +50,7 @@ describe("courses sagas tests", () => {
     next = generator.next();
     assert.deepEqual(next.value, put(courseNewSuccess("testName")));
   });
-/*
+
   it("should test remove course request sagas", () => {
     const generator = courseRemoveRequestHandle(
       courseRemoveRequest("testCourseId")
@@ -134,5 +134,4 @@ describe("courses sagas tests", () => {
       }
     ]);
   });
-  */
 });
