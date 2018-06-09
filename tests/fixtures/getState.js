@@ -2,6 +2,7 @@
  *
  * @param {Object} config
  * @param {String} [config.uid]
+ * @param {Number} [config.sort]
  * @param {Number} [config.tab]
  * @param {Object} [config.assignments]
  * @param {Object} [config.users]
@@ -15,7 +16,7 @@
 export const getTestState = config => ({
   assignments: {
     currentTab: config.tab || 0,
-    sort: {
+    sort: config.sort || {
       field: "studentName",
       direction: "asc"
     },

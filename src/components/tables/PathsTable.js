@@ -51,7 +51,16 @@ class PathsTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>Path name</TableCell>
-            {!owner && <TableCell>Progress</TableCell>}
+            {!owner && (
+              <TableCell
+                style={{
+                  // eslint-disable-next-line no-magic-numbers
+                  width: 150
+                }}
+              >
+                Progress
+              </TableCell>
+            )}
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
