@@ -1,7 +1,7 @@
 /* eslint-disable space-before-function-paren */
 import sinon from "sinon";
-import * as assignmentsSagas from "../../src/containers/Assignments/sagas";
-import { coursesService } from "../../src/services/courses";
+import * as assignmentsSagas from "../sagas";
+import { coursesService } from "../../../services/courses";
 import assert from "assert";
 import { runSaga } from "redux-saga";
 import {
@@ -9,8 +9,8 @@ import {
   ASSIGNMENT_ADD_SUCCESS,
   ASSIGNMENT_CLOSE_DIALOG,
   assignmentAddRequest
-} from "../../src/containers/Assignments/actions";
-import { NOTIFICATION_SHOW } from "../../src/containers/Root/actions";
+} from "../actions";
+import { NOTIFICATION_SHOW } from "../../Root/actions";
 
 describe("assignemnts sagas tests", () => {
   beforeEach(() =>

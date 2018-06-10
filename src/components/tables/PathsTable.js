@@ -51,6 +51,16 @@ class PathsTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>Path name</TableCell>
+            {!owner && (
+              <TableCell
+                style={{
+                  // eslint-disable-next-line no-magic-numbers
+                  width: 150
+                }}
+              >
+                Progress
+              </TableCell>
+            )}
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
@@ -68,6 +78,9 @@ class PathsTable extends React.PureComponent {
             .map(path => (
               <TableRow key={path.id}>
                 <TableCell>{path.name}</TableCell>
+                {!owner && (
+                  <TableCell>{`${path.solutions} of ${path.total}`}</TableCell>
+                )}
                 {APP_SETTING.isSuggesting ? (
                   <TableCell>
                     <Link className={classes.link} to={`/paths/${path.id}`}>

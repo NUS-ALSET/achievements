@@ -2,7 +2,7 @@ import assert from "assert";
 import sinon from "sinon";
 import firebasemock from "firebase-mock";
 import Promise from "bluebird";
-import { PathsService } from "../../src/services/paths";
+import { PathsService } from "../paths";
 
 const mockDatabase = new firebasemock.MockFirebase();
 const mockAuth = new firebasemock.MockFirebase();
