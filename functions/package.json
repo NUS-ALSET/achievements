@@ -7,5 +7,8 @@
     "firebase-functions": "^1.0.1",
     "firebase-queue": "^1.6.1"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "firebase-functions-test": "^0.1.2"
+  }
 }

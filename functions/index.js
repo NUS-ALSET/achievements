@@ -5,6 +5,8 @@ const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
 const axios = require("axios");
 
+const profileTriggers = require("./src/updateProfile");
+
 const ERROR_401 = 401;
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -15,115 +17,10 @@ const jupyterLambdaProcessor =
 
 admin.initializeApp();
 
-function processProfileRefreshRequest(data, resolve) {
-  switch (data.service) {
-    case "CodeCombat":
-      return admin
-        .database()
-        .ref(`/userAchievements/${data.uid}/${data.service}/achievements`)
-        .once("value")
-        .then(existing => existing.val() || {})
-        .then(existing =>
-          axios
-            .get(
-              `https://codecombat.com/db/user/${data.serviceId
-                .toLowerCase()
-                .replace(/[ _]/g, "-")
-                .replace(
-                  /[!@#$%^&*()]/g,
-                  ""
-                )}/level.sessions?project=state.complete,levelID,` +
-                "levelName,playtime,codeLanguage,created"
-            )
-            .then(response =>
-              response.data.filter(
-                levelInfo =>
-                  levelInfo &&
-                  levelInfo.levelID &&
-                  levelInfo.state &&
-                  levelInfo.state.complete
-              )
-            )
-            .then(levels => {
-              let achievements = false;
-              let events = false;
-
-              levels.forEach(levelInfo => {
-                if (!existing[levelInfo.levelID]) {
-                  achievements = achievements || {};
-                  events = events || {};
-                  achievements[levelInfo.levelID] = {
-                    name: levelInfo.levelName,
-                    created: levelInfo.created || "",
-                    playtime: (levelInfo && levelInfo.playtime) || 0,
-                    complete: true
-                  };
-                  const newEventKey = admin
-                    .database()
-                    .ref("/logged_events")
-                    .push().key;
-                  events[newEventKey] = {
-                    createdAt: {
-                      ".sv": "timestamp"
-                    },
-                    isAnonymous: true,
-                    type: "UPDATE_ACHIEVEMENTS_DATA",
-                    otherActionData: {
-                      uid: data.uid,
-                      levelId: levelInfo.levelID,
-                      complete: true,
-                      created: levelInfo.created || "",
-                      playtime: (levelInfo && levelInfo.playtime) || 0
-                    }
-                  };
-                }
-                return true;
-              });
-
-              return admin
-                .database()
-                .ref(`/userAchievements/${data.uid}/${data.service}`)
-                .update({
-                  lastUpdate: new Date().getTime(),
-                  totalAchievements: levels.filter(
-                    levelInfo =>
-                      levelInfo && levelInfo.state && levelInfo.state.complete
-                  ).length
-                })
-                .then(
-                  achievements
-                    ? admin
-                        .database()
-                        .ref(
-                          `/userAchievements/${data.uid}/${
-                            data.service
-                          }/achievements`
-                        )
-                        .update(achievements)
-                    : Promise.resolve()
-                )
-                .then(
-                  events
-                    ? admin
-                        .database()
-                        .ref("/logged_events")
-                        .update(events)
-                    : Promise.resolve()
-                );
-            })
-
-            .then(() => resolve())
-        )
-        .catch(err => console.error(err.message) || resolve());
-    default:
-      return Promise.resolve();
-  }
-}
-
 exports.handleNewProblemSolution =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
   functions.database
-    .ref("/jupyterSolutionsQueue/tasks/{requetsId}")
+    .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val().solution;
       axios({
@@ -221,48 +118,8 @@ exports.handleNewSolution = functions.database
       });
   });
 
-exports.handleProfileRefreshRequest =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
-  functions.database
-    .ref("/updateProfileQueue/tasks/{requestId}")
-    .onCreate((snap, context) =>
-      new Promise(resolve =>
-        processProfileRefreshRequest(snap.val(), resolve)
-      ).then(() =>
-        admin
-          .database()
-          .ref(`/updateProfileQueue/tasks/${context.params.requestId}`)
-          .remove()
-      )
-    );
-
-exports.handleProfileQueue = functions.https.onRequest((req, res) => {
-  const { token } = req.query;
-
-  if (!token) {
-    return res.status(ERROR_401).send("Token is missing");
-  }
-
-  admin
-    .database()
-    .ref("api_tokens/" + token)
-    .once("value")
-    .then(snapshot => {
-      if (!snapshot.val()) {
-        return res.status(ERROR_401).send("Invalid token");
-      }
-
-      const queue = new Queue(
-        admin.database().ref("/updateProfileQueue"),
-        (data, progress, resolve) => {
-          return processProfileRefreshRequest(data, resolve);
-        }
-      );
-
-      queue.addWorker();
-      res.send("Done");
-    });
-});
+exports.handleProfileRefreshRequest = profileTriggers.updateProfileDbTrigger;
+exports.handleProfileQueue = profileTriggers.updateProfileHttpTrigger;
 
 exports.downloadEvents = functions.https.onRequest((req, res) => {
   const { token, start, stop = 0 } = req.query;
