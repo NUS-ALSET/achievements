@@ -61,6 +61,7 @@
     "firebase-mock": "^2.2.0",
     "jsdom": "11.6.2",
     "jsdom-global": "3.0.2",
+    "lorem-ipsum": "^1.0.4",
     "mocha": "^5.1.1",
     "mockfirebase": "^0.12.0",
     "nyc": "^11.7.1",
