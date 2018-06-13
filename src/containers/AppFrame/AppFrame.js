@@ -1,7 +1,7 @@
 import { APP_SETTING } from "../../achievementsApp/config";
 import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
 // import { Home } from "../../components/Home";
-import Home from "../Home/Home";
+import Home from "../Home/AltHome";
 import { Route, HashRouter as Router } from "react-router-dom";
 import { connect } from "react-redux";
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
