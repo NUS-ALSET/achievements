@@ -33,6 +33,9 @@ import Admin from "../Admin/Admin";
 import Problem from "../Problem/Problem";
 import Path from "../Path/Path";
 
+// HomeV2 to test the kyGUI for Home Recommendation
+import HomeV2 from "../HomeView/HomeV2";
+
 const styles = theme => ({
   "@global": {
     html: {
@@ -208,6 +211,7 @@ class AppFrame extends React.Component {
             />
             <main className={classes.content}>
               <Route component={Home} exact path="(/|/home)" />
+              <Route component={HomeV2} exact path="(/homev2)" />
               <Route component={Admin} exact path="/admin" />
               <Route component={Courses} exact path="/courses" />
               <Route component={Assignments} exact path="/courses/:courseId" />
