@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 
 import YouTube from "react-youtube";
 
-import ProblemQuestion from "../ProblemQuestion";
+import ProblemQuestion from "./ProblemQuestion";
 
 class YouTubeProblem extends React.PureComponent {
   static propTypes = {
