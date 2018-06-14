@@ -3,15 +3,7 @@
  */
 const admin = require("firebase-admin");
 const axios = require("axios");
-const functions = require("firebase-functions");
 const Queue = require("firebase-queue");
-const checkToken = require("./utils/checkToken");
-
-const ERROR_500 = 500;
-const profilesRefreshApproach =
-  (functions.config().profiles &&
-    functions.config().profiles["refresh-approach"]) ||
-  "none";
 
 function updateProfile(data, resolve) {
   switch (data.service) {
@@ -111,38 +103,21 @@ function updateProfile(data, resolve) {
             })
 
             .then(() => resolve())
-        )
-        .catch(err => console.error(err.message) || resolve());
+        );
     default:
       return Promise.resolve();
   }
 }
 
-exports.updateProfile = updateProfile;
-exports.updateProfileHttpTrigger =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
-  functions.database
-    .ref("/updateProfileQueue/tasks/{requestId}")
-    .onCreate((snap, context) =>
-      new Promise(resolve => updateProfile(snap.val(), resolve)).then(() =>
-        admin
-          .database()
-          .ref(`/updateProfileQueue/tasks/${context.params.requestId}`)
-          .remove()
-      )
-    );
-exports.updateProfileDbTrigger = functions.https.onRequest((req, res) => {
-  return checkToken(req)
-    .then(() => {
-      const queue = new Queue(
-        admin.database().ref("/updateProfileQueue"),
-        (data, progress, resolve) => {
-          return updateProfile(data, resolve);
-        }
-      );
+exports.handler = updateProfile;
 
-      queue.addWorker();
-      res.send("Done");
-    })
-    .catch(err => res.status(err.code || ERROR_500).send(err.message));
-});
+exports.queueHandler = () => {
+  const queue = new Queue(
+    admin.database().ref("/updateProfileQueue"),
+    (data, progress, resolve) => {
+      return updateProfile(data, resolve);
+    }
+  );
+
+  queue.addWorker();
+};

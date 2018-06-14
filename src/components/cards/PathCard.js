@@ -7,6 +7,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import { Link } from "react-router-dom";
+
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
@@ -19,12 +21,14 @@ import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
 class PathCard extends React.PureComponent {
   static propTypes = {
     featured: PropTypes.bool,
+    path: PropTypes.string,
+    problem: PropTypes.string,
     title: PropTypes.string.isRequired,
     video: PropTypes.string
   };
 
   render() {
-    const { featured, title, video } = this.props;
+    const { featured, path, problem, title, video } = this.props;
 
     return (
       <Card
@@ -66,9 +70,11 @@ class PathCard extends React.PureComponent {
             width: "100%"
           }}
         >
-          <IconButton color="inherit">
-            <KeyboardArrowRightIcon />
-          </IconButton>
+          <Link to={`/paths/${path}/problems/${problem}`}>
+            <IconButton color="inherit">
+              <KeyboardArrowRightIcon />
+            </IconButton>
+          </Link>
         </CardActions>
       </Card>
     );

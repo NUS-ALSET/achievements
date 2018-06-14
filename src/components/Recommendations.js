@@ -60,7 +60,9 @@ class Recommendations extends React.PureComponent {
                 .slice(1)
                 .map(rec => (
                   <PathCard
-                    key={rec}
+                    key={rec.problem}
+                    path={rec.path}
+                    problem={rec.problem}
                     title={this.getRecTitle(rec)}
                     video={rec.video}
                   />
