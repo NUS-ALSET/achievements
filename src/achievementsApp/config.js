@@ -16,23 +16,26 @@ export const APP_SETTING = {
 // use different firebase database for different script
 // default as development
 const config = {
-  apiKey: "AIzaSyA232bBlzWT0fl3ST_KVC3Aay41yTMz5vM",
-  authDomain: "achievements-dev.firebaseapp.com",
-  databaseURL: "https://achievements-dev.firebaseio.com",
-  projectId: "achievements-dev",
-  storageBucket: "achievements-dev.appspot.com",
-  messagingSenderId: "479020625755"
+  "development":
+  {
+    apiKey: "AIzaSyA232bBlzWT0fl3ST_KVC3Aay41yTMz5vM",
+    authDomain: "achievements-dev.firebaseapp.com",
+    databaseURL: "https://achievements-dev.firebaseio.com",
+    projectId: "achievements-dev",
+    storageBucket: "achievements-dev.appspot.com",
+    messagingSenderId: "479020625755"
+  },
+  "production":
+  {
+    apiKey: "AIzaSyDQuGo8wKcxLbLZo56aYWLTdP2qrbMamYQ",
+    authDomain: "achievements-prod.firebaseapp.com",
+    databaseURL: "https://achievements-prod.firebaseio.com",
+    projectId: "achievements-prod",
+    storageBucket: "achievements-prod.appspot.com",
+    messagingSenderId: "829016923358"
+  }
 };
-
-if (process.env.NODE_ENV === 'production') {
-  config.apiKey = "AIzaSyDQuGo8wKcxLbLZo56aYWLTdP2qrbMamYQ";
-  config.authDomain = "achievements-prod.firebaseapp.com";
-  config.databaseURL = "https://achievements-prod.firebaseio.com";
-  config.projectId = "achievements-prod";
-  config.storageBucket = "achievements-prod.appspot.com";
-  config.messagingSenderId = "829016923358";
-}
-firebase.initializeApp(config);
+firebase.initializeApp(config[process.env.NODE_ENV || "development"]);
 
 export const authProvider = new firebase.auth.GoogleAuthProvider();
 // authProvider.addScope("https://www.googleapis.com/auth/drive.file");
