@@ -24,14 +24,6 @@ const config = {
   messagingSenderId: "479020625755"
 };
 
-if (process.env.NODE_ENV === 'production') {
-  config.apiKey = "AIzaSyDQuGo8wKcxLbLZo56aYWLTdP2qrbMamYQ";
-  config.authDomain = "achievements-prod.firebaseapp.com";
-  config.databaseURL = "https://achievements-prod.firebaseio.com";
-  config.projectId = "achievements-prod";
-  config.storageBucket = "achievements-prod.appspot.com";
-  config.messagingSenderId = "829016923358";
-}
 firebase.initializeApp(config);
 
 export const authProvider = new firebase.auth.GoogleAuthProvider();
