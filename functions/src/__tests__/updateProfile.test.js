@@ -18,6 +18,7 @@ describe("Update Profile tests", () => {
   });
 
   it("should update userAchievements", done => {
+    // Stub outgoing http requests
     const axiosStub = sinon.stub(axios, "get");
 
     // These stubs required for `admin.database().ref(...
@@ -30,11 +31,16 @@ describe("Update Profile tests", () => {
       get: () => databaseStub
     });
 
+    // Replacement for `admin.database().ref`
     databaseStub.returns({
       ref: refStub
     });
+
+    // Set mock responses for `admin.database().ref(..)
     refStub.withArgs("/userAchievements/abcd/CodeCombat/achievements").returns({
+      // Mock data for `once("value")` response
       once: () => Promise.resolve(new functions.database.DataSnapshot({})),
+      // Assert update data
       update: data => {
         assert.deepEqual(data, {
           testID: {
@@ -47,8 +53,13 @@ describe("Update Profile tests", () => {
         return Promise.resolve();
       }
     });
+
+    // Mock responses for `...ref("/logged_events")
     refStub.withArgs("/logged_events").returns({
+      // Reponse for `ref("/logged_events").push().key`
       push: () => ({ key: "deadbeef" }),
+
+      // Assert update data
       update: data => {
         assert.deepEqual(data, {
           deadbeef: {
@@ -76,6 +87,7 @@ describe("Update Profile tests", () => {
       }
     });
 
+    // HTTP mock response
     axiosStub.returns(
       Promise.resolve({
         data: [
@@ -92,6 +104,7 @@ describe("Update Profile tests", () => {
       })
     );
 
+    // Invoke test
     updateProfile(
       {
         uid: "abcd",

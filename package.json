@@ -90,7 +90,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "CI=true react-scripts test --env=jsdom",
-    "test:functions": "mocha --recursive './functions/{,!(node_modules)/**/}*.test.js'",
     "coverage": "CI=true react-scripts test --env=jsdom --coverage",
     "test-mocha": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
     "coverage-mocha": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",

@@ -32,13 +32,12 @@ You will also see any lint errors in the console.
 
 ### `npm build`
 
-Builds the app for production to the `build` folder.<br>
+Builds the app for production to the `build` folder.
 It correctly bundles React in production mode and optimizes the build for the best performance.
-
 
 ### `firebase deploy`
 
-Deploys the app and security rules to firebase. <br>
+Deploys the app and security rules to firebase. Specify your project id with `--project` flag
 
 ### `npm test`
 
@@ -47,3 +46,15 @@ Runs mocha tests for services and sagas
 ### `npm run coverage`
 
 Runs mocha tests with coverage report
+
+## Firebase functions
+Go to [functions readme](./functions/README.md)
+
+## Changing Firebase project
+There are 3 project-related points:
+ * `./src/achievementsApp/config.js` - replace `config` var with your project access config. It could be obtained at [firebase console](https://console.firebase.google.com/)
+ * `.firebaserc` - just use your project name
+ * `.travis.yml` - if you want add `travis` deployment just replace `project` field of `deploy` part
+
+ If you're going to push back your changes to source repository, make sure that you restore default values before PR
+

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 const admin = require("firebase-admin");
 
-const serviceAccount = require("../config/serviceAccountKey");
+const serviceAccount = require("../functions/config/serviceAccountKey");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
