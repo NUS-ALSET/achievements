@@ -435,7 +435,7 @@ export class PathsService {
       .then(snapshot => snapshot.val())
       .then(paths =>
         Promise.all(
-          Object.keys(paths).map(
+          Object.keys(paths || {}).map(
             id =>
               paths[id]
                 ? this.firebase
