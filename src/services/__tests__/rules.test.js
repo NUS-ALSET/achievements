@@ -1,7 +1,7 @@
 import assert from "assert";
 import targaryen from "targaryen";
 import json from "firebase-json";
-import { getTestState } from "../../../../tests/fixtures/getState";
+import { getTestState } from "../../../tests/fixtures/getState";
 
 const rulesTest = json.loadSync("./database.rules.json");
 
