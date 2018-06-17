@@ -58,7 +58,7 @@ export class PathsService {
       .then(
         () =>
           pathId[0] === "-"
-            ? this.firebase
+            ? firebase
                 .database()
                 .ref(`/paths/${pathId}`)
                 .once("value")
@@ -66,7 +66,7 @@ export class PathsService {
             : { owner: pathId, name: "Default" }
       )
       .then(pathInfo =>
-        this.firebase
+        firebase
           .database()
           .ref(`/problems/${pathInfo.owner}/${problemId}`)
           .once("value")
@@ -140,7 +140,7 @@ export class PathsService {
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {
-    let ref = this.firebase
+    let ref = firebase
       .database()
       .ref(`/problems/${pathOwner}`)
       .orderByChild("path");
@@ -157,7 +157,7 @@ export class PathsService {
       .then(problemKeys =>
         Promise.all(
           problemKeys.map(problemKey =>
-            this.firebase
+            firebase
               .database()
               .ref(`/problemSolutions/${problemKey}/${solverId}`)
               .once("value")
@@ -195,7 +195,7 @@ export class PathsService {
    * @returns {Promise<boolean>}
    */
   fetchSolutionFile(pathProblem, uid) {
-    return this.firebase
+    return firebase
       .database()
       .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
       .once("value")
@@ -217,12 +217,12 @@ export class PathsService {
   }
 
   pathChange(uid, pathInfo) {
-    const key = this.firebase
+    const key = firebase
       .database()
       .ref("/paths")
       .push().key;
 
-    return this.firebase
+    return firebase
       .database()
       .ref(`/paths/${key}`)
       .set({ ...pathInfo, owner: uid })
@@ -271,11 +271,11 @@ export class PathsService {
 
     const key =
       problemInfo.id ||
-      this.firebase
+      firebase
         .database()
         .ref(`/problems/${uid}`)
         .push().key;
-    const ref = this.firebase.database().ref(`/problems/${uid}/${key}`);
+    const ref = firebase.database().ref(`/problems/${uid}/${key}`);
 
     if (problemInfo.id) {
       delete problemInfo.id;
@@ -382,7 +382,7 @@ export class PathsService {
       .then(() => {
         switch (pathProblem.type) {
           case "jupyterInline":
-            return this.firebase
+            return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
@@ -390,13 +390,13 @@ export class PathsService {
             return this.fetchFile(this.getFileId(solution))
               .then(json => this.validateSolution(pathProblem, solution, json))
               .then(() =>
-                this.firebase
+                firebase
                   .database()
                   .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
                   .set(solution)
               );
           case "youtube":
-            return this.firebase
+            return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
@@ -412,7 +412,7 @@ export class PathsService {
    * @returns {Promise<Path[]>}
    */
   fetchPaths(uid) {
-    return this.firebase
+    return firebase
       .database()
       .ref("/paths")
       .orderByChild("owner")
@@ -428,17 +428,29 @@ export class PathsService {
   }
 
   togglePathJoinStatus(uid, pathId, status) {
-    const ref = this.firebase
-      .database()
-      .ref(`/studentJoinedPaths/${uid}/${pathId}`);
-    if (status) {
-      return ref.set(true);
-    }
-    return ref.remove();
+    return Promise.resolve()
+      .then(() => {
+        const ref = firebase
+          .database()
+          .ref(`/studentJoinedPaths/${uid}/${pathId}`);
+        if (status) {
+          return ref.set(true);
+        }
+        return ref.remove();
+      })
+      .then(
+        () =>
+          status &&
+          firebase
+            .database()
+            .ref(`/paths/${pathId}`)
+            .once("value")
+            .then(data => data.val())
+      );
   }
 
   fetchJoinedPaths(uid) {
-    return this.firebase
+    return firebase
       .database()
       .ref(`/studentJoinedPaths/${uid}`)
       .once("value")
@@ -448,7 +460,7 @@ export class PathsService {
           Object.keys(paths || {}).map(
             id =>
               paths[id]
-                ? this.firebase
+                ? firebase
                     .database()
                     .ref(`/paths/${id}`)
                     .once("value")
@@ -473,7 +485,7 @@ export class PathsService {
    * @returns {Promise<Array<Problem>>} list of problems
    */
   fetchProblems(uid, pathId) {
-    let ref = this.firebase.database().ref(`/problems/${uid}`);
+    let ref = firebase.database().ref(`/problems/${uid}`);
 
     if (pathId && pathId !== uid) {
       ref = ref.orderByChild("path").equalTo(pathId);
@@ -498,18 +510,12 @@ export class PathsService {
   fetchProblemsSolutions(uid, problems) {
     return Promise.all(
       problems.map(problem =>
-        this.firebase
+        firebase
           .ref(`/problemSolutions/${problem.id}/${uid}`)
           .once("value")
           .then(data => ({ [problem.id]: !!data.val() }))
       )
     ).then(solutions => Object.assign({}, ...solutions));
-  }
-
-  constructor(dependencies) {
-    dependencies = dependencies || {};
-
-    this.firebase = dependencies.firebase || firebase;
   }
 }
 

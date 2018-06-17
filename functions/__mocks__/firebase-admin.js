@@ -1,6 +1,6 @@
 import sinon from "sinon";
 
-class FirebaseMock {
+class FirebaseAdminMock {
   refreshDbStub() {
     this.dbStub = sinon.stub();
     this.dbStub.returns({
@@ -45,4 +45,4 @@ class FirebaseMock {
   }
 }
 
-export default new FirebaseMock();
+module.exports = new FirebaseAdminMock();

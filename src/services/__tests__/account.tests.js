@@ -1,5 +1,4 @@
 import firebase from "firebase";
-import sinon from "sinon";
 import { AccountService } from "../account";
 
 describe("Account tests", () => {
@@ -8,7 +7,6 @@ describe("Account tests", () => {
 
   beforeEach(() => {
     accountService = new AccountService();
-    firebase.restore();
   });
 
   afterEach(() => {
@@ -25,10 +23,6 @@ describe("Account tests", () => {
   });
 
   it("should process signIn", () => {
-    firebase.configure({
-      authStub: sinon.stub(),
-      refStub: sinon.stub()
-    });
     firebase.authStub.returns({
       signInWithPopup: () =>
         Promise.resolve({
@@ -52,6 +46,6 @@ describe("Account tests", () => {
       update: data =>
         expect(data).toEqual({ displayName: "testUser", email: "test@te.st" })
     });
-    accountService.signIn();
+    return accountService.signIn();
   });
 });

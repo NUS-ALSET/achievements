@@ -60,7 +60,7 @@ export function* pathOpenHandler(action) {
 }
 
 export function* pathToggleJoinStatusRequestHandler(action) {
-  yield call(pathsService.fetchJoinedPaths, action);
+  yield call(pathsService.togglePathJoinStatus, action);
 }
 
 export default [
