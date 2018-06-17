@@ -26,7 +26,7 @@ class SampleCarousel extends React.PureComponent {
 
   render() {
     // retrieve the dummyData
-    const { dataList } = this.props;
+    const { youtubeRecom, dataList } = this.props;
     console.log("??????", dataList);
 
     return (
@@ -36,13 +36,18 @@ class SampleCarousel extends React.PureComponent {
         className="customizeCarousel"
       >
         {dataList.map( (item, index) => (
-          <SampleCard
-            key={index}
-            title={item.name}
-            description={`${item.type} Python problem`}
-            path={item.owner}
-            problem={item.actualProblem}
-          />
+            <SampleCard
+              key={index}
+              title={item.name}
+              description={youtubeRecom
+                ? ""
+                : `${item.type} Python problem`}
+              path={item.owner}
+              problem={item.actualProblem}
+              video={youtubeRecom
+                ? item.youtubeURL
+                : ""}
+            />
         ))}
       </Carousel>
     );
