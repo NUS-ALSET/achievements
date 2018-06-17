@@ -37,14 +37,23 @@ describe("Account tests", () => {
     firebase.refStub.withArgs("/users/deadbeef").returns({
       once: () =>
         Promise.resolve({
-          val: () => ({})
+          val: () => ({
+            createdAt: "now"
+          })
         }),
       update: data =>
-        expect(data).toEqual({ displayName: "testUser", photoURL: "test" })
+        expect(data).toEqual({
+          createdAt: "now",
+          displayName: "testUser",
+          photoURL: "test"
+        })
     });
     firebase.refStub.withArgs("/usersPrivate/deadbeef").returns({
       update: data =>
-        expect(data).toEqual({ displayName: "testUser", email: "test@te.st" })
+        expect(data).toEqual({
+          displayName: "testUser",
+          email: "test@te.st"
+        })
     });
     return accountService.signIn();
   });
