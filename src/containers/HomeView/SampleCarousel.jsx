@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from "prop-types";
 
+import Button from '@material-ui/core/Button';
+import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
+import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
+
 import './NukaCarouselStyle.css';
 /* the Carousel is from nuka-carousel
  * by Ken Wheeler
- * more @ http://kenwheeler.github.io/nuka-carousel/ 
+ * more @ https://github.com/FormidableLabs/nuka-carousel
  */
 import Carousel from 'nuka-carousel';
 
@@ -16,7 +20,7 @@ import SampleCard from './SampleCard';
 
 
 // TODO: SampleCarousel and SampleCard will be stateless PureComponents
-// TODO: use the render*Controls for Nuka-Carousel to disable arrow 
+// TODO: incorporate this into the Firebase userRecommendations
 
 class SampleCarousel extends React.PureComponent {
   static propTypes = {
@@ -34,6 +38,35 @@ class SampleCarousel extends React.PureComponent {
         slidesToShow={4}
         cellSpacing={10}
         className="customizeCarousel"
+        renderCenterLeftControls={({ previousSlide, currentSlide }) => (
+          <Button
+            variant="fab"
+            mini
+            aria-label="prevSlide"
+            style={(currentSlide !== 0)
+              ? {visibility: "visible", left: "-22px"}
+              : {visibility: "hidden"}
+            }
+            onClick={previousSlide}
+          >
+            <KeyboardArrowLeftIcon />
+          </Button>
+        )}
+        renderCenterRightControls={({ nextSlide, currentSlide }) => (
+          <Button
+            variant="fab"
+            mini
+            aria-label="nexSlide"
+            style={(dataList.length < 4
+              || currentSlide === (dataList.length-4))
+              ? {visibility: "hidden"}
+              : {visibility: "visible", right: "-20px"}
+            }
+            onClick={nextSlide}
+          >
+            <KeyboardArrowRightIcon />
+          </Button>
+        )}
       >
         {dataList.map( (item, index) => (
             <SampleCard
