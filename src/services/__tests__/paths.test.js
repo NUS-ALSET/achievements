@@ -48,6 +48,11 @@ describe("Paths service tests", () => {
       frozen: 2
     }));
 
+  it("should join path", () => {
+
+    pathsService.togglePathJoinStatus();
+  });
+
   it("should return PathProblem", done => {
     mockDatabase
       .child("/paths/-testPathId")

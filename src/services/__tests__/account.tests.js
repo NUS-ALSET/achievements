@@ -4,31 +4,15 @@ import { AccountService } from "../account";
 
 describe("Account tests", () => {
   /** @type AccountService */
-  let oldDatabase;
   let accountService;
-  let fbAuth;
-  let fbDb;
-  let fbRef;
 
   beforeEach(() => {
-    fbAuth = sinon.stub(firebase, "auth");
-    fbDb = sinon.stub();
-    fbRef = sinon.stub();
-    oldDatabase = firebase.database;
-    Object.defineProperty(firebase, "database", {
-      configurable: true,
-      get: () => fbDb
-    });
-    fbDb.returns({
-      ref: () => fbRef
-    });
     accountService = new AccountService();
+    firebase.restore();
   });
 
   afterEach(() => {
-    fbAuth.restore();
-    delete firebase.database;
-    firebase.database = oldDatabase;
+    firebase.restore();
   });
 
   it("should process profile login", () => {
@@ -36,26 +20,37 @@ describe("Account tests", () => {
       AccountService.processProfile("CodeCombat", "ABC_ DE!#@%FG")
     ).toEqual("abc--defg");
     expect(
-      AccountService.processProfile("NotCodeCombat", "ABC_ DE!#@%FG")
-    ).toEqual("ABC_ DE!#@%FG");
+      AccountService.processProfile("NotCodeCombat", "ABC_ DE!#@%FGh")
+    ).toEqual("ABC_ DE!#@%FGh");
   });
 
   it("should process signIn", () => {
-    fbAuth.returns({
+    firebase.configure({
+      authStub: sinon.stub(),
+      refStub: sinon.stub()
+    });
+    firebase.authStub.returns({
       signInWithPopup: () =>
         Promise.resolve({
           user: {
-            uid: "deadbeef",
             displayName: "testUser",
-            photoURL: "test"
+            email: "test@te.st",
+            photoURL: "test",
+            uid: "deadbeef"
           }
         })
     });
-    fbRef.returns({
+    firebase.refStub.withArgs("/users/deadbeef").returns({
       once: () =>
         Promise.resolve({
           val: () => ({})
-        })
+        }),
+      update: data =>
+        expect(data).toEqual({ displayName: "testUser", photoURL: "test" })
+    });
+    firebase.refStub.withArgs("/usersPrivate/deadbeef").returns({
+      update: data =>
+        expect(data).toEqual({ displayName: "testUser", email: "test@te.st" })
     });
     accountService.signIn();
   });

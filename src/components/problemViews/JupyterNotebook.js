@@ -132,9 +132,21 @@ class JupyterNotebook extends React.PureComponent {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => action(this.state.solution)}>
-                      <RefreshIcon />
-                    </IconButton>
+                    {APP_SETTING.isSuggesting ? (
+                      <IconButton onClick={() => action(this.state.solution)}>
+                        <RefreshIcon />
+                      </IconButton>
+                    ) : (
+                      <Button
+                        color="primary"
+                        onClick={() => action(this.state.solution)}
+                        style={{
+                          marginBottom: 4
+                        }}
+                      >
+                        Run
+                      </Button>
+                    )}
                   </InputAdornment>
                 )
               }}

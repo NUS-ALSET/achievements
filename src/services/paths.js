@@ -427,6 +427,16 @@ export class PathsService {
       );
   }
 
+  togglePathJoinStatus(uid, pathId, status) {
+    const ref = this.firebase
+      .database()
+      .ref(`/studentJoinedPaths/${uid}/${pathId}`);
+    if (status) {
+      return ref.set(true);
+    }
+    return ref.remove();
+  }
+
   fetchJoinedPaths(uid) {
     return this.firebase
       .database()
