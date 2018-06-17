@@ -79,7 +79,11 @@ class PathsTable extends React.PureComponent {
               <TableRow key={path.id}>
                 <TableCell>{path.name}</TableCell>
                 {!owner && (
-                  <TableCell>{`${path.solutions} of ${path.total}`}</TableCell>
+                  <TableCell>
+                    {path.solutions !== undefined && path.total
+                      ? `${path.solutions} of ${path.total}`
+                      : ""}
+                  </TableCell>
                 )}
                 {APP_SETTING.isSuggesting ? (
                   <TableCell>

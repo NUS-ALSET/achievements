@@ -1,56 +1,50 @@
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
-const assert = require("assert");
 const sinon = require("sinon");
 const axios = require("axios");
-const test = require("firebase-functions-test")();
 
 const updateProfile = require("../updateProfile").handler;
 
 describe("Update Profile tests", () => {
-  let oldDatabase;
+  let axiosStub;
   beforeEach(() => {
-    oldDatabase = admin.database;
+    // Mock outgoing http requests
+    axiosStub = sinon.stub(axios, "get");
+    admin.restore();
   });
   afterEach(() => {
-    admin.database = oldDatabase;
-    test.cleanup();
+    axiosStub.restore();
+    admin.restore();
   });
 
-  it("should update userAchievements", done => {
-    const axiosStub = sinon.stub(axios, "get");
+  it("should update userAchievements", () => {
+    // Set mock responses for `admin.database().ref(..)
+    admin.refStub
+      .withArgs("/userAchievements/abcd/CodeCombat/achievements")
+      .returns({
+        // Mock data for `once("value")` response
+        once: () => admin.snap({}),
+        // Assert update data
+        update: data => {
+          expect(data).toEqual({
+            testID: {
+              name: "testName",
+              created: "now",
+              playtime: 0,
+              complete: true
+            }
+          });
+          return Promise.resolve();
+        }
+      });
 
-    // These stubs required for `admin.database().ref(...
-    const databaseStub = sinon.stub();
-    const refStub = sinon.stub();
-
-    // Replace admin.database() method
-    Object.defineProperty(admin, "database", {
-      configurable: true,
-      get: () => databaseStub
-    });
-
-    databaseStub.returns({
-      ref: refStub
-    });
-    refStub.withArgs("/userAchievements/abcd/CodeCombat/achievements").returns({
-      once: () => Promise.resolve(new functions.database.DataSnapshot({})),
-      update: data => {
-        assert.deepEqual(data, {
-          testID: {
-            name: "testName",
-            created: "now",
-            playtime: 0,
-            complete: true
-          }
-        });
-        return Promise.resolve();
-      }
-    });
-    refStub.withArgs("/logged_events").returns({
+    // Mock responses for `...ref("/logged_events")
+    admin.refStub.withArgs("/logged_events").returns({
+      // Reponse for `ref("/logged_events").push().key`
       push: () => ({ key: "deadbeef" }),
+
+      // Assert update data
       update: data => {
-        assert.deepEqual(data, {
+        expect(data).toEqual({
           deadbeef: {
             createdAt: {
               ".sv": "timestamp"
@@ -69,13 +63,14 @@ describe("Update Profile tests", () => {
         return Promise.resolve();
       }
     });
-    refStub.withArgs("/userAchievements/abcd/CodeCombat").returns({
+    admin.refStub.withArgs("/userAchievements/abcd/CodeCombat").returns({
       update: data => {
-        assert.equal(data.totalAchievements, 1);
+        expect(data.totalAchievements).toBe(1);
         return Promise.resolve();
       }
     });
 
+    // HTTP mock response
     axiosStub.returns(
       Promise.resolve({
         data: [
@@ -92,21 +87,14 @@ describe("Update Profile tests", () => {
       })
     );
 
-    updateProfile(
+    // Invoke test
+    return updateProfile(
       {
         uid: "abcd",
         service: "CodeCombat",
         serviceId: "test"
       },
       () => {}
-    )
-      .catch(err => err)
-      .then(err => {
-        axiosStub.restore();
-        if (err instanceof Error) {
-          return done(err);
-        }
-        done();
-      });
+    );
   });
 });

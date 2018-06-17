@@ -1,7 +1,24 @@
 import { call, put, select, take, takeLatest } from "redux-saga/effects";
-import { PATH_OPEN, pathFetchProblemsSolutionsSuccess } from "./actions";
+import {
+  PATH_OPEN,
+  PATH_PROBLEM_OPEN,
+  PATH_TOGGLE_JOIN_STATUS_REQUEST,
+  pathFetchProblemsSolutionsSuccess,
+  pathToggleJoinStatusRequest
+} from "./actions";
 import { pathsService } from "../../services/paths";
 import { PATHS_JOINED_FETCH_SUCCESS } from "../Paths/actions";
+
+export function* pathProblemOpenHandler(action) {
+  const data = yield select(state => ({
+    uid: state.firebase.auth.uid,
+    joinedPaths: state.paths.joinedPaths
+  }));
+
+  if (!data.joinedPaths[action.pathId]) {
+    yield put(pathToggleJoinStatusRequest(data.uid, action.pathId, true));
+  }
+}
 
 export function* pathOpenHandler(action) {
   if (!action.pathId || action.pathId[0] !== "-") {
@@ -42,8 +59,21 @@ export function* pathOpenHandler(action) {
   yield put(pathFetchProblemsSolutionsSuccess(action.pathId, solutions));
 }
 
+export function* pathToggleJoinStatusRequestHandler(action) {
+  yield call(pathsService.togglePathJoinStatus, action);
+}
+
 export default [
   function* watchPathOpenRequest() {
     yield takeLatest(PATH_OPEN, pathOpenHandler);
+  },
+  function* watchPathProblemOpen() {
+    yield takeLatest(PATH_PROBLEM_OPEN, pathProblemOpenHandler);
+  },
+  function* watchPathToggleJoinStatusRequest() {
+    yield takeLatest(
+      PATH_TOGGLE_JOIN_STATUS_REQUEST,
+      pathToggleJoinStatusRequestHandler
+    );
   }
 ];

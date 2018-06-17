@@ -11,6 +11,7 @@ import AceEditor from "react-ace";
 import "brace/mode/python";
 import "brace/theme/github";
 
+import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
@@ -24,6 +25,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import RefreshIcon from "@material-ui/icons/Refresh";
 
 import NotebookPreview from "@nteract/notebook-preview";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 class JupyterNotebook extends React.PureComponent {
   static propTypes = {
@@ -70,7 +72,8 @@ class JupyterNotebook extends React.PureComponent {
           {persistent ? (
             action &&
             this.state.solution &&
-            richEditor && (
+            richEditor &&
+            (APP_SETTING.isSuggesting ? (
               <IconButton
                 onClick={() => action(this.state.solution)}
                 style={{
@@ -80,7 +83,19 @@ class JupyterNotebook extends React.PureComponent {
               >
                 <RefreshIcon />
               </IconButton>
-            )
+            ) : (
+              <Button
+                color="primary"
+                onClick={() => action(this.state.solution)}
+                style={{
+                  position: "absolute",
+                  top: 4,
+                  right: 4
+                }}
+              >
+                Run
+              </Button>
+            ))
           ) : (
             <IconButton
               onClick={this.onSwitchCollapse}
@@ -117,9 +132,21 @@ class JupyterNotebook extends React.PureComponent {
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
-                    <IconButton onClick={() => action(this.state.solution)}>
-                      <RefreshIcon />
-                    </IconButton>
+                    {APP_SETTING.isSuggesting ? (
+                      <IconButton onClick={() => action(this.state.solution)}>
+                        <RefreshIcon />
+                      </IconButton>
+                    ) : (
+                      <Button
+                        color="primary"
+                        onClick={() => action(this.state.solution)}
+                        style={{
+                          marginBottom: 4
+                        }}
+                      >
+                        Run
+                      </Button>
+                    )}
                   </InputAdornment>
                 )
               }}

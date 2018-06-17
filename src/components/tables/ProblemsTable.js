@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { pathProblemDialogShow } from "../../containers/Paths/actions";
+import { pathProblemOpen } from "../../containers/Path/actions";
 
 const styles = theme => ({
   link: {
@@ -41,6 +42,8 @@ class ProblemsTable extends React.PureComponent {
     selectedPathId: PropTypes.string
   };
 
+  onOpenClick = (pathId, problem) =>
+    this.props.dispatch(pathProblemOpen(pathId, problem.id));
   onEditClick = problem => this.props.dispatch(pathProblemDialogShow(problem));
 
   render() {
@@ -87,7 +90,14 @@ class ProblemsTable extends React.PureComponent {
                     problem.id
                   }`}
                 >
-                  <Button variant="raised">Open</Button>
+                  <Button
+                    onClick={() =>
+                      this.onOpenClick(selectedPathId || pathOwnerId, problem)
+                    }
+                    variant="raised"
+                  >
+                    Open
+                  </Button>
                 </Link>
                 {pathOwnerId === currentUserId && (
                   <Button
