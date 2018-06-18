@@ -22,7 +22,7 @@ if (serviceAccount) {
   });
   // Otherwise, initialize with the default config.
 } else {
-  admin.initializeApp(functions.config().firebase);
+  // admin.initializeApp(functions.config().firebase);
 }
 
 function redirectToLogin(message, res) {
