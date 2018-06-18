@@ -91,6 +91,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "CI=true react-scripts test --env=jsdom",
+    "windows-test": "set CI=true &&react-scripts test --env=jsdom",
     "coverage": "CI=true react-scripts test --env=jsdom --coverage",
     "test-mocha": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
     "coverage-mocha": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
