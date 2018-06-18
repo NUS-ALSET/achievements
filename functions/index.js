@@ -5,6 +5,7 @@ const admin = require("firebase-admin");
 
 const checkToken = require("./src/utils/checkToken");
 
+const ltiLogin = require("./src/ltiLogin");
 const profileTriggers = require("./src/updateProfile");
 const jupyterTrigger = require("./src/executeJupyterSolution");
 const downloadEvents = require("./src/downloadEvents");
@@ -16,25 +17,7 @@ const profilesRefreshApproach =
   "none";
 const ERROR_500 = 500;
 
-let canCreateTokens = false;
-let serviceAccount = null;
-try {
-  serviceAccount = require("./adminsdk.json");
-  canCreateTokens = true;
-} catch (e) {
-  console.error(e.message);
-}
-
-// If service account deployed, then use it.
-if (serviceAccount) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: functions.config().firebase.databaseURL
-  });
-  // Otherwise, initialize with the default config.
-} else {
-  admin.initializeApp();
-}
+admin.initializeApp();
 
 exports.handleNewProblemSolution =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
@@ -88,5 +71,7 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
     })
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });
+
+exports.ltiLogin = functions.https.onRequest((req, res) => ltiLogin(req, res));
 
 exports.downloadEvents = downloadEvents.httpTrigger;

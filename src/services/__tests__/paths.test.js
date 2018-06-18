@@ -1,33 +1,20 @@
+import firebase from "firebase";
 import assert from "assert";
 import sinon from "sinon";
-import firebasemock from "firebase-mock";
 import Promise from "bluebird";
 import { PathsService } from "../paths";
-
-const mockDatabase = new firebasemock.MockFirebase();
-const mockAuth = new firebasemock.MockFirebase();
-const mockSDK = firebasemock.MockFirebaseSdk(
-  function(path) {
-    return mockDatabase.child(path);
-  },
-  function() {
-    return mockAuth;
-  }
-);
-
-const WORKAROUND_DELAY = 10;
 
 describe("Paths service tests", () => {
   /** @type {PathsService} */
   let pathsService;
   beforeEach(() => {
-    pathsService = new PathsService({
-      firebase: mockSDK
-    });
+    pathsService = new PathsService();
     sinon
       .stub(pathsService, "fetchFile")
       .callsFake(() => Promise.resolve({ foo: "bar" }));
   });
+
+  afterEach(() => firebase.restore());
 
   it("should fetch file id", () => {
     assert.equal(
@@ -48,18 +35,34 @@ describe("Paths service tests", () => {
       frozen: 2
     }));
 
-  it("should return PathProblem", done => {
-    mockDatabase
-      .child("/paths/-testPathId")
-      .set({ owner: "testOwner", name: "Test Path" });
-    const fetcher = pathsService.fetchPathProblem(
-      "-testPathId",
-      "testProblemId"
-    );
+  it("should join path", () => {
+    firebase.refStub.withArgs("/paths/testPath").returns({
+      once: () => firebase.snap("test value")
+    });
+    firebase.refStub.withArgs("/studentJoinedPaths/deadbeef/testPath").returns({
+      set: value => {
+        expect(value).toBe(true);
+      }
+    });
+    return pathsService
+      .togglePathJoinStatus("deadbeef", "testPath", true)
+      .then(result => expect(result).toBe("test value"));
+  });
 
-    Promise.resolve()
-      .then(() => {
-        mockDatabase.child("/problems/testOwner/testProblemId").set({
+  it("should leave path", done => {
+    firebase.refStub.withArgs("/studentJoinedPaths/deadbeef/testPath").returns({
+      remove: () => done()
+    });
+    pathsService.togglePathJoinStatus("deadbeef", "testPath", false);
+  });
+
+  it("should return PathProblem", () => {
+    firebase.refStub.withArgs("/paths/-testPathId").returns({
+      once: () => firebase.snap({ owner: "testOwner", name: "Test Path" })
+    });
+    firebase.refStub.withArgs("/problems/testOwner/testProblemId").returns({
+      once: () =>
+        firebase.snap({
           frozen: "2",
           name: "Test Jupyter Notebook",
           owner: "testOwner",
@@ -70,18 +73,10 @@ describe("Paths service tests", () => {
             "https://drive.google.com/file/d/" +
             "1xVSKXrVqY2lgNkCfSA7KPWU9B9vaj0_i/view",
           type: "jupyter"
-        });
-        mockDatabase.flush();
-      })
-      .delay(WORKAROUND_DELAY)
-      .then(() => {
-        mockDatabase
-          .child("/problems/testOwner/testProblemId")
-          .set({ owner: "testOwner", name: "Test Path" });
-        mockDatabase.flush();
-      });
-
-    fetcher
+        })
+    });
+    return pathsService
+      .fetchPathProblem("-testPathId", "testProblemId")
       .then(pathProblem =>
         assert.deepEqual(pathProblem, {
           pathId: "-testPathId",
@@ -113,8 +108,6 @@ describe("Paths service tests", () => {
             "1xVSKXrVqY2lgNkCfSA7KPWU9B9vaj0_i/view",
           type: "jupyter"
         })
-      )
-      .then(done)
-      .catch(done);
+      );
   });
 });

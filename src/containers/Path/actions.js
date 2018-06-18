@@ -1,7 +1,3 @@
-import { notificationShow } from "../Root/actions";
-
-const firebase = require("firebase");
-
 export const PATH_OPEN = "PATH_OPEN";
 export const pathOpen = pathId => ({
   type: PATH_OPEN,
@@ -19,28 +15,12 @@ export const pathFetchProblemsSolutionsSuccess = (pathId, solutions) => ({
 
 export const PATH_TOGGLE_JOIN_STATUS_REQUEST =
   "PATH_TOGGLE_JOIN_STATUS_REQUEST";
-export const pathToggleJoinStatusRequest = (
+export const pathToggleJoinStatusRequest = (userId, pathId, status) => ({
+  type: PATH_TOGGLE_JOIN_STATUS_REQUEST,
   userId,
   pathId,
   status
-) => dispatch =>
-  firebase
-    .database()
-    .ref(`/paths/${pathId}`)
-    .once("value")
-    .then(path =>
-      firebase
-        .database()
-        .ref(`/studentJoinedPaths/${userId}/${pathId}`)
-        .set(status)
-        .then(() =>
-          dispatch(pathToggleJoinStatusSuccess(pathId, status && path.val()))
-        )
-    )
-    .catch(err => {
-      dispatch(pathToggleJoinStatusFail(pathId, status, err.message));
-      dispatch(notificationShow(err.message));
-    });
+});
 
 export const PATH_TOGGLE_JOIN_STATUS_SUCCESS =
   "PATH_TOGGLE_JOIN_STATUS_SUCCESS";
@@ -56,4 +36,11 @@ export const pathToggleJoinStatusFail = (pathId, status, reason) => ({
   pathId,
   status,
   reason
+});
+
+export const PATH_PROBLEM_OPEN = "PATH_PROBLEM_OPEN";
+export const pathProblemOpen = (pathId, problemId) => ({
+  type: PATH_PROBLEM_OPEN,
+  pathId,
+  problemId
 });
