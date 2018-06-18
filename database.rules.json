@@ -254,19 +254,6 @@
         }
       }
     },
-    "users": {
-      ".read": "auth != null",
-      "$userKey": {
-        ".write": "auth != null && auth.uid == $userKey",
-      }
-    },
-    "usersPrivate": {
-      ".read": false,
-      "$userKey": {
-        ".read": "auth != null && auth.uid == $userKey",
-        ".write": "auth != null && auth.uid == $userKey"
-      }
-    },
     "userAchievements": {
       ".read": "auth != null",
       "$userKey": {
@@ -280,6 +267,25 @@
             }
           }
         }
+      }
+    },
+    "userRecommendations": {
+      "$userKey": {
+        ".read": "auth != null && auth.uid == $userKey",
+        ".write": false
+      }
+    },
+    "users": {
+      ".read": "auth != null",
+      "$userKey": {
+        ".write": "auth != null && auth.uid == $userKey",
+      }
+    },
+    "usersPrivate": {
+      ".read": false,
+      "$userKey": {
+        ".read": "auth != null && auth.uid == $userKey",
+        ".write": "auth != null && auth.uid == $userKey"
       }
     },
     "visibleSolutions": {

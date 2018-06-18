@@ -11,6 +11,10 @@ export const APP_SETTING = {
 };
 
 // Initialize Firebase
+// start script's process.env.NODE_ENV = 'development';
+// build script's process.env.NODE_ENV = 'production';
+// use different firebase database for different script
+// default as development
 const config = {
   apiKey: "AIzaSyA232bBlzWT0fl3ST_KVC3Aay41yTMz5vM",
   authDomain: "achievements-dev.firebaseapp.com",
@@ -19,6 +23,7 @@ const config = {
   storageBucket: "achievements-dev.appspot.com",
   messagingSenderId: "479020625755"
 };
+
 firebase.initializeApp(config);
 
 export const authProvider = new firebase.auth.GoogleAuthProvider();
