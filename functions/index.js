@@ -75,3 +75,7 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
 exports.ltiLogin = functions.https.onRequest((req, res) => ltiLogin(req, res));
 
 exports.downloadEvents = downloadEvents.httpTrigger;
+
+exports.yrtest = functions.https.onRequest((req, res) => {
+  res.status(200).send("YR TEST PASSED :D");
+});
