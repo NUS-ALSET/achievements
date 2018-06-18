@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 const updateProfile = require("./src/updateProfile");
 const executeJupyterSolution = require("./src/executeJupyterSolution");
 
-const serviceAccount = require("../config/serviceAccountKey");
+const serviceAccount = require("./config/serviceAccountKey");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

@@ -10,6 +10,14 @@
   },
   "private": true,
   "devDependencies": {
-    "firebase-functions-test": "^0.1.2"
+    "firebase-functions-test": "^0.1.2",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2"
+  },
+  "scripts": {
+    "start": "node ./localTriggers.js",
+    "test:jest": "jest",
+    "test": "mocha './{,!(node_modules)/**/}*.test.js'",
+    "coverage": "nyc --all --reporter=text mocha './{,!(node_modules)/**/}*.test.js'"
   }
 }
