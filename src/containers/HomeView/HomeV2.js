@@ -1,14 +1,28 @@
 import React from "react";
-import RecommendationListCardPy from "./RecommendationListCardPy";
-import RecommendationListCardYo from "./RecommendationListCardYo";
+import RecommendationListCard from "./RecommendationListCard";
+
+import DummyReduxState from './DummyDataFirebase';
 
 class HomeV2 extends React.PureComponent {
   render() {
+    // three dummy RecommendationListCard
+    // two for python problems, one for YouTube videos
     return (
       <div>
-        <RecommendationListCardPy />
+        <RecommendationListCard
+          RecomType="python"
+          dummyData={DummyReduxState.pythonBigList}
+        />
         <br />
-        <RecommendationListCardYo />
+        <RecommendationListCard
+          RecomType="python"
+          dummyData={DummyReduxState.pythonSmallList}
+        />
+        <br />
+        <RecommendationListCard
+          RecomType="youtube"
+          dummyData={DummyReduxState.YouTubeList}
+        />
       </div>
     );
   }
