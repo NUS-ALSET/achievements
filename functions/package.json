@@ -2,9 +2,9 @@
   "name": "functions",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
-    "axios": "^0.17.1",
     "@dinoboff/ims-lti": "^3.1.0-rc7",
-    "firebase-admin": "^5.11.0",
+    "axios": "^0.17.1",
+    "firebase-admin": "^5.12.1",
     "firebase-functions": "^1.0.1",
     "firebase-queue": "^1.6.1"
   },
