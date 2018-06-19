@@ -446,6 +446,12 @@ export class PathsService {
             .ref(`/paths/${pathId}`)
             .once("value")
             .then(data => data.val())
+            .then(path => ({ ...path, id: pathId }))
+            .then(path =>
+              pathsService
+                .fetchPathProgress(uid, path.owner, path.id)
+                .then(solutions => Object.assign(path, solutions))
+            )
       );
   }
 

@@ -36,6 +36,8 @@ describe("Paths service tests", () => {
     }));
 
   it("should join path", () => {
+    sinon.stub(pathsService, "fetchPathProgress");
+
     firebase.refStub.withArgs("/paths/testPath").returns({
       once: () => firebase.snap("test value")
     });
