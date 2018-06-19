@@ -86,6 +86,7 @@ function get_token(data, res, exists) {
 }
 
 function ltiLogin(req, res) {
+  console.log("we are here");
   let data = req.body;
   let oauth_consumer_key = data["oauth_consumer_key"];
   let user_id = data["user_id"];

@@ -61,13 +61,11 @@ class Breadcrumbs extends React.PureComponent {
             )
         )}
         {action && (
-          <Button
-            className={classes.breadcrumbAction}
-            onClick={action.handler}
-            variant="raised"
-          >
-            {action.label}
-          </Button>
+          <Toolbar className={classes.breadcrumbAction}>
+            <Button onClick={action.handler} variant="raised">
+              {action.label}
+            </Button>
+          </Toolbar>
         )}
       </Toolbar>
     );
