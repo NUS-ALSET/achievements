@@ -53,6 +53,14 @@ class PathTabs extends React.Component {
     switch (this.state.currentTab) {
       case PATHS_TAB_PUBLIC:
         paths = publicPaths;
+
+        // FIXIT: Dirty workaround, move that somewhere else
+        Object.keys(publicPaths || {}).forEach(key => {
+          if (joinedPaths[key]) {
+            publicPaths[key].solutions = joinedPaths[key].solutions;
+            publicPaths[key].total = joinedPaths[key].total;
+          }
+        });
         break;
       case PATHS_TAB_OWNED:
         paths = myPaths;
