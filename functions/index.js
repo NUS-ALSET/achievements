@@ -1,8 +1,12 @@
+/* eslint-disable no-magic-numbers */
+
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 const checkToken = require("./src/utils/checkToken");
 
+const api = require("./src/api");
+const ltiLogin = require("./src/ltiLogin");
 const profileTriggers = require("./src/updateProfile");
 const jupyterTrigger = require("./src/executeJupyterSolution");
 const downloadEvents = require("./src/downloadEvents");
@@ -69,4 +73,16 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });
 
+exports.api = functions.https.onRequest((req, res) => {
+  let { token, data } = req.query;
+
+  api.handler(token, data).then(output => res.send(output));
+});
+
+exports.ltiLogin = functions.https.onRequest(ltiLogin.handler);
+
 exports.downloadEvents = downloadEvents.httpTrigger;
+
+exports.yrtest = functions.https.onRequest((req, res) => {
+  res.status(200).send("YR TEST PASSED :D");
+});
