@@ -8,6 +8,7 @@ describe("Paths service tests", () => {
   /** @type {PathsService} */
   let pathsService;
   beforeEach(() => {
+    firebase.restore();
     pathsService = new PathsService();
     sinon
       .stub(pathsService, "fetchFile")
@@ -36,10 +37,16 @@ describe("Paths service tests", () => {
     }));
 
   it("should join path", () => {
-    sinon.stub(pathsService, "fetchPathProgress");
-
+    firebase.refStub.withArgs("/problems/cafebabe").returns({
+      orderByChild: () => ({
+        equalTo: () => ({ once: () => firebase.snap({}) })
+      })
+    });
     firebase.refStub.withArgs("/paths/testPath").returns({
-      once: () => firebase.snap("test value")
+      once: () =>
+        firebase.snap({
+          owner: "cafebabe"
+        })
     });
     firebase.refStub.withArgs("/studentJoinedPaths/deadbeef/testPath").returns({
       set: value => {
@@ -48,7 +55,14 @@ describe("Paths service tests", () => {
     });
     return pathsService
       .togglePathJoinStatus("deadbeef", "testPath", true)
-      .then(result => expect(result).toBe("test value"));
+      .then(result =>
+        expect(result).toEqual({
+          id: "testPath",
+          owner: "cafebabe",
+          solutions: 0,
+          total: 0
+        })
+      );
   });
 
   it("should leave path", done => {
