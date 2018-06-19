@@ -55,10 +55,6 @@ describe("Path sagas", () => {
       foo: "bar",
       owner: "testOwner"
     });
-    sinon.stub(pathsService, "fetchPathProgress").returns({
-      solution: "received"
-    });
-
     await runSaga(
       {
         getState: () => ({ firebase: { auth: { uid: "deadbeef" } } }),
@@ -74,15 +70,7 @@ describe("Path sagas", () => {
     expect(
       pathsService.togglePathJoinStatus.calledWith("deadbeef", "testPath", true)
     ).toBe(true);
-    expect(
-      pathsService.fetchPathProgress.calledWith(
-        "deadbeef",
-        "testOwner",
-        "testPath"
-      )
-    ).toBe(true);
     pathsService.togglePathJoinStatus.restore();
-    pathsService.fetchPathProgress.restore();
 
     expect(dispatched).toEqual([
       {
@@ -90,8 +78,7 @@ describe("Path sagas", () => {
         pathId: "testPath",
         status: {
           foo: "bar",
-          owner: "testOwner",
-          solution: "received"
+          owner: "testOwner"
         }
       }
     ]);
