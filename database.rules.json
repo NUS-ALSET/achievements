@@ -131,10 +131,6 @@
       ".write": "auth != null",
       ".indexOn": "createdAt"
     },
-    "outgoingRequestsQueue": {
-      ".read": false,
-      ".write": false
-    },
     "pathProblems": {
       ".read": "auth != null",
       "$userKey": {
