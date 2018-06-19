@@ -24,3 +24,12 @@ You could check testing approach [here](src/__tests__/updateProfile.test.js)
 
 ## Changing Firebase project
 The only project-related file is `./config/serviceAccountKey.json`.
+
+## Outgoing HTTP Requests
+Example of execution outgoing http requests:
+```
+http
+  .get("http://google.com")
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+```

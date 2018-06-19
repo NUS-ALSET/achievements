@@ -4,7 +4,9 @@ import {
   PATH_PROBLEM_OPEN,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   pathFetchProblemsSolutionsSuccess,
-  pathToggleJoinStatusRequest
+  pathToggleJoinStatusFail,
+  pathToggleJoinStatusRequest,
+  pathToggleJoinStatusSuccess
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import { PATHS_JOINED_FETCH_SUCCESS } from "../Paths/actions";
@@ -60,7 +62,22 @@ export function* pathOpenHandler(action) {
 }
 
 export function* pathToggleJoinStatusRequestHandler(action) {
-  yield call(pathsService.togglePathJoinStatus, action);
+  try {
+    const uid = yield select(state => state.firebase.auth.uid);
+    const path = yield call(
+      pathsService.togglePathJoinStatus,
+      uid,
+      action.pathId,
+      action.status
+    );
+    yield put(
+      pathToggleJoinStatusSuccess(action.pathId, action.status && path)
+    );
+  } catch (err) {
+    yield put(
+      pathToggleJoinStatusFail(action.pathId, action.status, err.message)
+    );
+  }
 }
 
 export default [
