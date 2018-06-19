@@ -76,12 +76,7 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
 exports.api = functions.https.onRequest((req, res) => {
   let { token, data } = req.query;
 
-  api
-    .handler(token, data)
-    .then(
-      output =>
-        console.log("asd", output.toString().slice(0, 30)) || res.send(output)
-    );
+  api.handler(token, data).then(output => res.send(output));
 });
 
 exports.ltiLogin = functions.https.onRequest(ltiLogin.handler);

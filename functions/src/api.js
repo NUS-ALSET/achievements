@@ -51,6 +51,7 @@ exports.handler = function api(token, data) {
                     }
                   })
                   .then(() => {
+                    // eslint-disable-next-line no-console
                     console.log("Recording api resource usage.");
 
                     // Update the total
