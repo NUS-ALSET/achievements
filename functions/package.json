@@ -4,11 +4,9 @@
   "dependencies": {
     "@dinoboff/ims-lti": "^3.1.0-rc7",
     "axios": "^0.17.1",
-<<<<<<< HEAD
-    "firebase-admin": "^5.12.1",
-=======
+
     "firebase-admin": "^5.11.0",
->>>>>>> 4a741e89b02a7386a16756294ad68a346705c0be
+
     "firebase-functions": "^1.0.1",
     "firebase-queue": "^1.6.1",
     "uuid": "^3.2.1"
