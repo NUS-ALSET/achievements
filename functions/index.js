@@ -72,7 +72,9 @@ exports.handleProfileQueue = functions.https.onRequest((req, res) => {
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });
 
-exports.ltiLogin = functions.https.onRequest((req, res) => ltiLogin(req, res));
+exports.ltiLogin = functions.https.onRequest((req, res) =>
+  ltiLogin.handler(req, res)
+);
 
 exports.downloadEvents = downloadEvents.httpTrigger;
 

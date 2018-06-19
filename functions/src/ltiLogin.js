@@ -6,13 +6,6 @@ const lti = require("@dinoboff/ims-lti");
 
 let canCreateTokens = false;
 let serviceAccount = null;
-try {
-  // noinspection JSFileReferences
-  serviceAccount = require("./adminsdk.json");
-  canCreateTokens = true;
-} catch (e) {
-  console.error(e.message);
-}
 
 // If service account deployed, then use it.
 if (serviceAccount) {
@@ -21,8 +14,6 @@ if (serviceAccount) {
     databaseURL: functions.config().firebase.databaseURL
   });
   // Otherwise, initialize with the default config.
-} else {
-  // admin.initializeApp(functions.config().firebase);
 }
 
 function redirectToLogin(message, res) {
