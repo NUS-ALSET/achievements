@@ -13,7 +13,12 @@ exports.handler = function api(token, data) {
       "problems",
       "paths",
       "problemSolutions",
-      "usage"
+      "usage",
+      "userSkills",
+      "problemSkills",
+      "userRecommendations",
+      "featureProblemPercentiles",
+      "featureRanking"
     ];
     if (!supportedDatatypes.includes(data)) {
       return "Unsupported data type " + data;
