@@ -105,6 +105,7 @@
     "expect": true,
     "gapi": true,
     "it": true,
+    "jest": true,
     "test": true
   },
   "extends": [

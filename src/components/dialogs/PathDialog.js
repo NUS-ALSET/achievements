@@ -33,7 +33,15 @@ class PathDialog extends React.PureComponent {
   catchReturn = event => event.key === "Enter" && this.onCommit();
   onFieldChange = (field, value) => this.setState({ [field]: value });
   onClose = () => this.props.dispatch(pathDialogHide());
-  onCommit = () => this.props.dispatch(pathChangeRequest(this.state));
+  onCommit = () =>
+    this.props.dispatch(
+      pathChangeRequest(
+        Object.assign(
+          this.props.path && this.props.path.id ? this.props.path : {},
+          this.state
+        )
+      )
+    );
 
   render() {
     const { path, open } = this.props;

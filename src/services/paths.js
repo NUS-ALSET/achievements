@@ -252,6 +252,17 @@ export class PathsService {
   }
 
   pathChange(uid, pathInfo) {
+    if (pathInfo.id) {
+      return firebase
+        .database()
+        .ref(`/paths/${pathInfo.id}`)
+        .update({
+          ...pathInfo,
+          owner: uid
+        })
+        .then(() => pathInfo.id);
+    }
+
     const key = firebase
       .database()
       .ref("/paths")
@@ -270,11 +281,22 @@ export class PathsService {
     if (!problemInfo.name) throw new Error("Missing problem name");
     if (!problemInfo.type) throw new Error("Missing problem type");
     switch (problemInfo.type) {
-      case "jupyterInline":
+      case "text":
+      case "profile":
+        break;
+      case "codeCombat":
+        if (!problemInfo.level) throw new Error("Missing CodeCombat level");
+        break;
+      case "codeCombatNumber":
+        if (!problemInfo.count) throw new Error("Missing levels count");
+        break;
       case "jupyter":
+      case "jupyterInline":
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
         if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
-        if (!problemInfo.frozen) throw new Error("Missing frozen");
+        if (!problemInfo.frozen) throw new Error("Missing frozen field");
+        if (problemInfo.type === "jupyterInline" && !problemInfo.code)
+          throw new Error("Missing code field");
         break;
       case "youtube":
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
@@ -286,10 +308,10 @@ export class PathsService {
             (problemInfo.questionCustom && problemInfo.customText)
           )
         ) {
-          throw new Error("Missing any of following question");
+          throw new Error("Missing any of following questions");
         }
         break;
-      case "text":
+      case "game":
         break;
       default:
         throw new Error("Invalid  problem type");
