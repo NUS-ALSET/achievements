@@ -1,9 +1,12 @@
 import { call, put, select, take, takeLatest } from "redux-saga/effects";
 import {
+  PATH_MORE_PROBLEMS_REQUEST,
   PATH_OPEN,
   PATH_PROBLEM_OPEN,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   pathFetchProblemsSolutionsSuccess,
+  pathMoreProblemsFail,
+  pathMoreProblemsSuccess,
   pathToggleJoinStatusFail,
   pathToggleJoinStatusRequest,
   pathToggleJoinStatusSuccess
@@ -80,6 +83,33 @@ export function* pathToggleJoinStatusRequestHandler(action) {
   }
 }
 
+export function* pathMoreProblemsRequestHandler(action) {
+  try {
+    yield call(
+      pathsService.storeMoreProblemsRequest,
+      action.userId,
+      action.pathId,
+      action.activityCount
+    );
+    yield put(
+      pathMoreProblemsSuccess(
+        action.userId,
+        action.pathId,
+        action.activityCount
+      )
+    );
+  } catch (err) {
+    yield put(
+      pathMoreProblemsFail(
+        action.userId,
+        action.pathId,
+        action.activityCount,
+        err.message
+      )
+    );
+  }
+}
+
 export default [
   function* watchPathOpenRequest() {
     yield takeLatest(PATH_OPEN, pathOpenHandler);
@@ -91,6 +121,12 @@ export default [
     yield takeLatest(
       PATH_TOGGLE_JOIN_STATUS_REQUEST,
       pathToggleJoinStatusRequestHandler
+    );
+  },
+  function* watchPathMoreProblemsRequest() {
+    yield takeLatest(
+      PATH_MORE_PROBLEMS_REQUEST,
+      pathMoreProblemsRequestHandler
     );
   }
 ];

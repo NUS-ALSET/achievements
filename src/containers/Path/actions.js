@@ -13,6 +13,36 @@ export const pathFetchProblemsSolutionsSuccess = (pathId, solutions) => ({
   solutions
 });
 
+export const PATH_MORE_PROBLEMS_REQUEST = "PATH_MORE_PROBLEMS_REQUEST";
+export const pathMoreProblemsRequest = (userId, pathId, activityCount) => ({
+  type: PATH_MORE_PROBLEMS_REQUEST,
+  userId,
+  pathId,
+  activityCount
+});
+
+export const PATH_MORE_PROBLEMS_SUCCESS = "PATH_MORE_PROBLEMS_SUCCESS";
+export const pathMoreProblemsSuccess = (userId, pathId, activityCount) => ({
+  type: PATH_MORE_PROBLEMS_SUCCESS,
+  userId,
+  pathId,
+  activityCount
+});
+
+export const PATH_MORE_PROBLEMS_FAIL = "PATH_MORE_PROBLEMS_FAIL";
+export const pathMoreProblemsFail = (
+  userId,
+  pathId,
+  activityCount,
+  reason
+) => ({
+  type: PATH_MORE_PROBLEMS_FAIL,
+  userId,
+  pathId,
+  activityCount,
+  reason
+});
+
 export const PATH_TOGGLE_JOIN_STATUS_REQUEST =
   "PATH_TOGGLE_JOIN_STATUS_REQUEST";
 export const pathToggleJoinStatusRequest = (userId, pathId, status) => ({

@@ -13,6 +13,41 @@ export const YOUTUBE_QUESTIONS = {
   questionCustom: "Custom question after watching this video"
 };
 
+export const PROBLEMS_TYPES = {
+  text: {
+    id: "text",
+    caption: "Text"
+  },
+  profile: {
+    id: "profile",
+    caption: "Enter Code Combat Profile"
+  },
+  codeCombat: {
+    id: "codeCombat",
+    caption: "Complete Code Combat Level"
+  },
+  codeCombatNumber: {
+    id: "codeCombatNumber",
+    caption: "Complete Number of Code Combat Levels"
+  },
+  jupyter: {
+    id: "jupyter",
+    caption: "Jupyter Notebook"
+  },
+  jupyterInline: {
+    id: "jupyterInline",
+    caption: "Jupyter Inline"
+  },
+  youtube: {
+    id: "youtube",
+    caption: "YouTube"
+  },
+  game: {
+    id: "game",
+    caption: "Game"
+  }
+};
+
 export class PathsService {
   auth() {
     return new Promise(resolve =>
@@ -517,11 +552,26 @@ export class PathsService {
     return Promise.all(
       problems.map(problem =>
         firebase
+          .database()
           .ref(`/problemSolutions/${problem.id}/${uid}`)
           .once("value")
           .then(data => ({ [problem.id]: !!data.val() }))
       )
     ).then(solutions => Object.assign({}, ...solutions));
+  }
+
+  storeMoreProblemsRequest(uid, pathId, activityCount) {
+    return firebase
+      .database()
+      .ref("/moreProblemsRequests")
+      .push({
+        sender: uid,
+        path: pathId,
+        activityCount: activityCount,
+        requestTime: {
+          ".sv": "timestamp"
+        }
+      });
   }
 }
 

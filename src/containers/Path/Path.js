@@ -26,7 +26,11 @@ import {
   PATH_STATUS_OWNER,
   PATH_STATUS_NOT_JOINED
 } from "./selectors";
-import { pathOpen, pathToggleJoinStatusRequest } from "./actions";
+import {
+  pathMoreProblemsRequest,
+  pathOpen,
+  pathToggleJoinStatusRequest
+} from "./actions";
 import { pathProblemDialogShow } from "../Paths/actions";
 import ProblemDialog from "../../components/dialogs/ProblemDialog";
 
@@ -48,6 +52,15 @@ class Path extends React.PureComponent {
     this.props.dispatch(pathOpen(this.props.match.params.pathId));
   }
 
+  requestMoreProblems = () =>
+    this.props.dispatch(
+      pathMoreProblemsRequest(
+        this.props.uid,
+        this.props.pathProblems.path.id,
+        this.props.pathProblems.problems.length
+      )
+    );
+
   changeJoinStatus = () =>
     this.props.dispatch(
       pathToggleJoinStatusRequest(
@@ -62,6 +75,9 @@ class Path extends React.PureComponent {
   render() {
     const { dispatch, match, pathProblems, pathStatus, ui, uid } = this.props;
 
+    const allFinished =
+      (pathProblems.problems || []).filter(problem => problem.solved).length ===
+      (pathProblems.problems || []).length;
     let pathName;
 
     if (match.params.pathId[0] !== "-") {
@@ -76,10 +92,20 @@ class Path extends React.PureComponent {
           action={
             pathStatus === PATH_STATUS_OWNER
               ? null
-              : {
-                  label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
-                  handler: this.changeJoinStatus.bind(this)
-                }
+              : (allFinished
+                  ? [
+                      {
+                        label: "Request more",
+                        handler: this.requestMoreProblems.bind(this)
+                      }
+                    ]
+                  : []
+                ).concat([
+                  {
+                    label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
+                    handler: this.changeJoinStatus.bind(this)
+                  }
+                ])
           }
           paths={[
             {
@@ -129,6 +155,7 @@ class Path extends React.PureComponent {
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathProblems.path && pathProblems.path.id) || ""}
           problem={ui.dialog.value}
+          uid={uid}
         />
       </Fragment>
     );

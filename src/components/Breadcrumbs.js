@@ -25,15 +25,18 @@ const styles = theme => ({
     textTransform: "uppercase",
     fontSize: "0.875rem"
   },
-  breadcrumbAction: {
+  breadcrumbActions: {
     position: "absolute",
     right: theme.spacing.unit
+  },
+  breadcrumbAction: {
+    marginLeft: theme.spacing.unit
   }
 });
 
 class Breadcrumbs extends React.PureComponent {
   static propTypes = {
-    action: PropTypes.object,
+    action: PropTypes.any,
     classes: PropTypes.object,
     paths: PropTypes.array.isRequired
   };
@@ -61,10 +64,23 @@ class Breadcrumbs extends React.PureComponent {
             )
         )}
         {action && (
-          <Toolbar className={classes.breadcrumbAction}>
-            <Button onClick={action.handler} variant="raised">
-              {action.label}
-            </Button>
+          <Toolbar className={classes.breadcrumbActions}>
+            {Array.isArray(action) ? (
+              action.map(action => (
+                <Button
+                  className={classes.breadcrumbAction}
+                  key={action.label}
+                  onClick={action.handler}
+                  variant="raised"
+                >
+                  {action.label}
+                </Button>
+              ))
+            ) : (
+              <Button onClick={action.handler} variant="raised">
+                {action.label}
+              </Button>
+            )}
           </Toolbar>
         )}
       </Toolbar>
