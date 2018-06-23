@@ -3,12 +3,24 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 11.03.18
  */
+/* eslint-disable react/display-name */
 
 import React from "react";
 import PropTypes from "prop-types";
-import JupyterProblem from "../../components/problemViews/JupyterProblem";
-import JupyterInlineProblem from "../../components/problemViews/JupyterInlineProblem";
-import YouTubeProblem from "../../components/problemViews/YouTubeProblem";
+import ReactLoadable from "react-loadable";
+
+const LoadableJupyterProblem = ReactLoadable({
+  loader: () => import("../../components/problemViews/JupyterProblem"),
+  loading: () => <div>Loading...</div>
+});
+const LoadableJupyterInlineProblem = ReactLoadable({
+  loader: () => import("../../components/problemViews/JupyterInlineProblem"),
+  loading: () => <div>Loading...</div>
+});
+const LoadableYouTubeProblem = ReactLoadable({
+  loader: () => import("../../components/problemViews/YouTubeProblem"),
+  loading: () => <div>Loading...</div>
+});
 
 class ProblemView extends React.PureComponent {
   static propTypes = {
@@ -29,7 +41,7 @@ class ProblemView extends React.PureComponent {
     return (
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         {pathProblem.type === "jupyter" && (
-          <JupyterProblem
+          <LoadableJupyterProblem
             dispatch={dispatch}
             onChange={onProblemChange}
             problem={pathProblem}
@@ -37,7 +49,7 @@ class ProblemView extends React.PureComponent {
           />
         )}
         {pathProblem.type === "jupyterInline" && (
-          <JupyterInlineProblem
+          <LoadableJupyterInlineProblem
             dispatch={dispatch}
             onChange={onProblemChange}
             problem={pathProblem}
@@ -45,7 +57,7 @@ class ProblemView extends React.PureComponent {
           />
         )}
         {pathProblem.type === "youtube" && (
-          <YouTubeProblem
+          <LoadableYouTubeProblem
             dispatch={dispatch}
             onChange={onProblemChange}
             problem={pathProblem}
