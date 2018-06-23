@@ -11,6 +11,7 @@ const profileTriggers = require("./src/updateProfile");
 const jupyterTrigger = require("./src/executeJupyterSolution");
 const downloadEvents = require("./src/downloadEvents");
 const solutionTriggers = require("./src/updateSolutionVisibility");
+const httpUtil= require("./src/utils/http").httpUtil;
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -83,6 +84,29 @@ exports.ltiLogin = functions.https.onRequest(ltiLogin.handler);
 
 exports.downloadEvents = downloadEvents.httpTrigger;
 
-exports.yrtest = functions.https.onRequest((req, res) => {
-  res.status(200).send("YR TEST PASSED :D");
+exports.getTest = functions.https.onRequest((req, res) => {
+  
+  const url = "https://s3-ap-southeast-1.amazonaws.com/alset-public/example_solutions.json"
+  data = {};
+  httpUtil.call(url, "get", data).then((resp) => {
+    //process1(resp)
+    // Just return dummy data for now. 
+    let temp = {"some":"data", "method":"get"};
+    res.status(200).send(temp);
+  })
+
+  
+});
+
+exports.postTest = functions.https.onRequest((req, res) => {
+  const url = "https://9dq7wcv20e.execute-api.us-west-2.amazonaws.com/dev/yrtest2"
+  data = {"A":{"B":"print('hi')"}};
+
+  httpUtil.call(url, "post", data).then((resp) => {
+    //process2(resp)
+    //Just return dummy data for now
+    let temp = {"some":"data", "method":"post"};
+    res.status(200).send(temp);
+  })
+
 });
