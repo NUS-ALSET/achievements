@@ -24,7 +24,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
 
-import ExternalProfileCard from "../../components/ExternalProfileCard";
+import ExternalProfileCard from "../../components/cards/ExternalProfileCard";
 import Grid from "@material-ui/core/Grid";
 
 import IconButton from "@material-ui/core/IconButton";
