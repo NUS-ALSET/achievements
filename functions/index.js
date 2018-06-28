@@ -84,120 +84,24 @@ exports.ltiLogin = functions.https.onRequest(ltiLogin.handler);
 
 exports.downloadEvents = downloadEvents.httpTrigger;
 
-exports.yrtest = functions.https.onRequest((req, res) => {
-  // Function to format the data:
-  const formatData = (qns, user, data, result) => {
-    // console.log(data["cells"][0]["source"])
-    result[qns] = {}
-    result[qns][user] = {}
-    result[qns][user] = data["cells"][0]["source"]
-    return new Promise((resolve, reject) => {
-      resolve(result);
-      reject(new Error("error inside formatData function"));
-      setTimeout(() => resolve("..."));
-    })
-  }
+// Fetch some JSON data from a remote site when npm start is running.
+exports.getTest = functions.https.onRequest((req, res) => {
+  const url = "https://s3-ap-southeast-1.amazonaws.com/alset-public/example_solutions.json"
+  data = {};
+  httpUtil.call(url, "get", data).then((resp) => {
+    res.status(200).send(resp);
+  })
+});
 
-  // PART 1: FORMATTING RESULTING DICTIONARY FROM
-  // SPECIFIED USER AND PROB KEY INTO DESIRED DICT
-  var newSol = {};
-  // use recursion to do synchrous requests
-  const getSolDict = (d, probkey, userkey, callback) => {
-    var rawSol = admin.database().ref(`problemSolutions/${probkey}/${userkey}/`).once("value").then(snapshot => {
-        // var formatPromise = formatData(probkey, userkey, snapshot.val(), d);
-        // formatPromise.then(function(respond) {
-        //   console.log(respond)
-        // }), function(error) {
-        //   console.error("Something went wrong here", error);
-        // }
+// Post data to a remote url and get json data back.
+exports.postTest = functions.https.onRequest((req, res) => {
+  const url = "https://9dq7wcv20e.execute-api.us-west-2.amazonaws.com/dev/yrtest2"
+  // Example of a ast parsing tasks sent to AWS lambda.
+  data = {"A":{"B":"print('hi')"}};
+  httpUtil.call(url, "post", data).then((resp) => {
+    res.status(200).send(resp);
+  })
 
-        // callback(probkey, userkey, snapshot.val(), d);
-
-    });
-  }
-
-  // Use this line to find the solution for a particular problemKey and userKey
-  getSolDict(newSol, "-LEgrNOmnWsFkr6nFHwO", "eVJVC9kde3QSiXAP989kivD9SZn2", formatData);
-  console.log(newSol)
-/*
-  // PART 2: MAKE A DICT THAT MATCHES ALL PROBS TO PUB PATHS
-  const allPubPath = [];
-  const pubPathQns = [];
-  // use recursion to do find a list of public paths
-  const findPubPath = (pubPathDict) => {
-    const pathNode = admin.database().ref(`paths/`).once("value").then(snapshot => {
-      const bigPathDic = snapshot.val();
-      for (var pathkey in bigPathDic) {
-        var pathInfo = bigPathDic[pathkey];
-        if(pathInfo.hasOwnProperty("isPublic")) {
-          pubPathDict.push(pathkey);
-        }
-      }
-      return new Promise((resolve, reject) => {
-        resolve(pubPathDict);
-        reject("something wrong with finding public paths");
-        setTimeout(() => resolve("..."));
-      })
-    });
-  }
-
-  const obtainQns = (data, pubPathList, allPubQns) => {
-    for (var prob in data) {
-      var probInfo = data[prob]
-      for (var probkey in probInfo) {
-        var innerInfo = probInfo[probkey];
-        if(innerInfo.hasOwnProperty("path")) {
-          if (pubPathList.includes(innerInfo["path"])) {
-            allPubQns.push(probkey);
-            // console.log(allPubQns)
-          }
-        }
-      }
-    }
-    return new Promise((resolve, reject) => {
-      resolve(allPubQns)
-      reject("cant find pub path qns");
-      setTimeout(() => resolve("..."));
-    })
-  }
-
-  const getPubQns = (allPubQns, pubPathList) => {
-    const problemRoute = admin.database().ref(`assignments/`).once("value").then(snapshot => {
-      const bigProblemDict = snapshot.val();
-      // var getPubQnsPromise = getPubQns(pubPathQns, ['-LAWnzTF7CfElqEPc8Eg']);
-      var obtainQnsPromise = obtainQns(bigProblemDict, pubPathList, allPubQns);
-      obtainQnsPromise.then(function(responds) {
-        // console.log(responds)
-      }), function(error) {
-        console.error("haha siao liao", error);
-      }
-      console.log(allPubQns)
-    })
-  }
-
-  // outside here, pubPathQns is still empty
-
-  // var findPubPathPromise = findPubPath(allPubPath);
-  // findPubPathPromise.then(function(respo) {
-  //   console.log(respo);
-  // }), function(error) {
-  //   console.error("gg", error);
-  // }
-
-
-
-  // PART 3: POST TO LAMBDA AND UPDATE IF ANY NEW NODES
-
-  // ################## DOESNT WORK: ##############################
-  // newdict = {'-LFGoFBJ7Ot4oC_jqfqD': {'TOT2Pe5KKIe8QufgPxM2S22VqHv1': '# def a function to return a and b combined with a space\ndef combineWord(a, b):\n    s = " "\n    seq = [a,b]\n    return s.join(seq)\n'}}
-  // httpUtil.call("https://9dq7wcv20e.execute-api.us-west-2.amazonaws.com/dev/yrtest2", "post", newdict).then((resp) => {
-  //   const skillsDict = resp;
-  //   res.status(200).send(resp);
-  // })
-
-  // making a new httpRequest function to
-*/
-  res.status(200).send("YR TEST PASSED :D");
 });
 
 exports.updateFPP = functions.https.onRequest((request, response) => {
