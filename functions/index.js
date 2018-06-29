@@ -118,119 +118,127 @@ exports.updateFPP = functions.https.onRequest((request, response) => {
   //response.status(200).send("DONE");
 });
 
-exports.yrtest = functions.https.onRequest((req, res) => {
-  // Function to format the data:
+exports.analyzeSolutionGivenUserAndProbKey = functions.https.onRequest((req, res) => {
+
+  // function to format data into desired dictionary:
   const formatData = (qns, user, data, result) => {
     // console.log(data["cells"][0]["source"])
     result[qns] = {}
     result[qns][user] = {}
     result[qns][user] = data["cells"][0]["source"]
-    return new Promise((resolve) => {
-      // console.log(result)
-      resolve(result)
-      setTimeout(() => resolve("..."));
-    }).then( (resp) => console.log(resp))
+    return result
   }
 
-  // PART 1: FORMATTING RESULTING DICTIONARY FROM
-  // SPECIFIED USER AND PROB KEY INTO DESIRED DICT
-  var newSol = {};
-  // use recursion to do synchrous requests
-  const getSolDict = (d, probkey, userkey, callback) => {
-    var rawSol = admin.database().ref(`problemSolutions/${probkey}/${userkey}/`).once("value").then(snapshot => {
-        // var formatPromise = formatData(probkey, userkey, snapshot.val(), d);
-        // formatPromise.then(function(respond) {
-        //   console.log(respond)
-        // }), function(error) {
-        //   console.error("Something went wrong here", error);
-        // }
-
-        return callback(probkey, userkey, snapshot.val(), d);
-
-    });
+  // function to retrieve "problemSolutions" node from database:
+  async function getSpecificSolutions (probkey, userkey) {
+    var rawSingleSol = null;
+    const specificRoute = admin.database().ref(`problemSolutions/${probkey}/${userkey}/`).once("value").then(snapshot => {
+      // console.log(snapshot.val())
+      rawSingleSol = snapshot.val();
+    })
+    await specificRoute
+    return rawSingleSol;
   }
 
-  // Use this line to find the solution for a particular problemKey and userKey
-  // getSolDict(newSol, "-LEgrNOmnWsFkr6nFHwO", "eVJVC9kde3QSiXAP989kivD9SZn2", formatData)
-  // Works without making a promise as well.
-  let promise = new Promise((resolve, reject) => getSolDict(newSol, "-LEgrNOmnWsFkr6nFHwO", "eVJVC9kde3QSiXAP989kivD9SZn2", formatData));
-/*
-  // PART 2: MAKE A DICT THAT MATCHES ALL PROBS TO PUB PATHS
-  const allPubPath = [];
-  const pubPathQns = [];
-  // use recursion to do find a list of public paths
-  const findPubPath = (pubPathDict) => {
-    const pathNode = admin.database().ref(`paths/`).once("value").then(snapshot => {
+  // create a dictionary to store output
+  var reformattedSingleSol = {}
+
+  // async function to do await
+  async function reformatData(probkey, userkey) {
+    var rawSingleSolPromise = await getSpecificSolutions(probkey, userkey);
+    const formatDataPromise = formatData(probkey, userkey, rawSingleSolPromise, reformattedSingleSol);
+    await formatDataPromise;
+    console.log(reformattedSingleSol)
+  }
+
+  reformatData("-LEgrNOmnWsFkr6nFHwO", "eVJVC9kde3QSiXAP989kivD9SZn2")
+
+  res.status(200).send("FUNCTION ONE ERROR-FREE~ ^^");
+});
+
+exports.analyzeSolutionsForPublicPaths = functions.https.onRequest((request, response) => {
+  // variable to store a list of all public paths:
+  var allPublicPaths = []
+
+  // 1. extract out all public paths:
+  async function getPubPaths() {
+    const pathRoute = admin.database().ref("paths/").once("value").then(snapshot => {
       const bigPathDic = snapshot.val();
       for (var pathkey in bigPathDic) {
         var pathInfo = bigPathDic[pathkey];
         if(pathInfo.hasOwnProperty("isPublic")) {
-          pubPathDict.push(pathkey);
+          allPublicPaths.push(pathkey);
         }
       }
-      return new Promise((resolve, reject) => {
-        resolve(pubPathDict);
-        reject("something wrong with finding public paths");
-        setTimeout(() => resolve("..."));
-      })
-    });
+    })
+    await pathRoute
+    // console.log(allPublicPaths)
+    return allPublicPaths
   }
 
-  const obtainQns = (data, pubPathList, allPubQns) => {
-    for (var prob in data) {
-      var probInfo = data[prob]
-      for (var probkey in probInfo) {
-        var innerInfo = probInfo[probkey];
-        if(innerInfo.hasOwnProperty("path")) {
-          if (pubPathList.includes(innerInfo["path"])) {
-            allPubQns.push(probkey);
-            // console.log(allPubQns)
+  // getPubPaths()
+
+  // variable to store all problems that belong to public paths:
+  var allPublicPathProblems = []
+
+  // 2. extract out all problems that belong to public paths:
+  async function getPubQns(pubPathList) {
+    const qnsRoute = admin.database().ref("problems/").once("value").then(snapshot => {
+      const bigQnsDic = snapshot.val();
+      for (var user in bigQnsDic) {
+        var probDic = bigQnsDic[user];
+        for (var prob in probDic) {
+          var probInfo = probDic[prob];
+          if (probInfo.hasOwnProperty("path")) {
+            pathDetail = probInfo["path"];
+            if(pubPathList.includes(pathDetail)) {
+              allPublicPathProblems.push(prob);
+            }
           }
         }
       }
-    }
-    return new Promise((resolve, reject) => {
-      resolve(allPubQns)
-      reject("cant find pub path qns");
-      setTimeout(() => resolve("..."));
     })
+    await qnsRoute
+    // console.log(allPublicPathProblems)
+    return allPublicPathProblems
   }
 
-  const getPubQns = (allPubQns, pubPathList) => {
-    const problemRoute = admin.database().ref(`assignments/`).once("value").then(snapshot => {
-      const bigProblemDict = snapshot.val();
-      // var getPubQnsPromise = getPubQns(pubPathQns, ['-LAWnzTF7CfElqEPc8Eg']);
-      var obtainQnsPromise = obtainQns(bigProblemDict, pubPathList, allPubQns);
-      obtainQnsPromise.then(function(responds) {
-        // console.log(responds)
-      }), function(error) {
-        console.error("haha siao liao", error);
+  // Create a dictionary to store solution dictionary
+  var solForPublicProblems = {}
+
+  // 3. retrieve all the solutions to the public qns
+  async function getSolutions(pubQnsList) {
+    const qnsRoute = admin.database().ref("problemSolutions/").once("value").then(snapshot => {
+      var bigSolDic = snapshot.val();
+      for (var probkey in bigSolDic) {
+        if (pubQnsList.includes(probkey)) {
+          var userSolDic = bigSolDic[probkey];
+          for (var userkey in userSolDic) {
+            var usersol = userSolDic[userkey];
+            if (usersol.hasOwnProperty("cells")) {
+              // if problemkey not in dic, create new entry
+              if (!(probkey in solForPublicProblems) ) {
+                solForPublicProblems[probkey] = {}
+              }
+              solForPublicProblems[probkey][userkey] = usersol["cells"][0]["source"];
+            }
+          }
+        }
       }
-      console.log(allPubQns)
     })
+    await qnsRoute
+    // console.log(solForPublicProblems)
+    return solForPublicProblems
   }
 
-  // outside here, pubPathQns is still empty
+  // an async function that automatically gets called to run all the above functions
+  (async() => {
+    const pubPath = await getPubPaths();
+    const pubQns = await getPubQns(pubPath);
+    // console.log(pubQns)
+    const pubSol = await getSolutions(pubQns);
+    console.log(solForPublicProblems)
+  }) ()
 
-  // var findPubPathPromise = findPubPath(allPubPath);
-  // findPubPathPromise.then(function(respo) {
-  //   console.log(respo);
-  // }), function(error) {
-  //   console.error("gg", error);
-  // }
-
-
-
-  // PART 3: POST TO LAMBDA AND UPDATE IF ANY NEW NODES
-
-  // ################## DOESNT WORK: ##############################
-  // newdict = {'-LFGoFBJ7Ot4oC_jqfqD': {'TOT2Pe5KKIe8QufgPxM2S22VqHv1': '# def a function to return a and b combined with a space\ndef combineWord(a, b):\n    s = " "\n    seq = [a,b]\n    return s.join(seq)\n'}}
-  // httpUtil.call("https://9dq7wcv20e.execute-api.us-west-2.amazonaws.com/dev/yrtest2", "post", newdict).then((resp) => {
-  //   const skillsDict = resp;
-  //   res.status(200).send(resp);
-  // })
-
-  // making a new httpRequest function to
-*/
-  res.status(200).send("YR TEST PASSED :D");
-});
+  response.status(200).send("PART TWO DONE :D")
+})
