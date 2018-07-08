@@ -8,6 +8,7 @@
 import React from "react";
 import ReactAce from "react-ace";
 
+// These imports make this module required to detach
 import "brace/mode/python";
 import "brace/theme/github";
 

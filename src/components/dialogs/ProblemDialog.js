@@ -24,17 +24,13 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 
-import {
-  pathDialogHide,
-  pathProblemChangeRequest
-} from "../../containers/Paths/actions";
-
 import { PROBLEMS_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 class ProblemDialog extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     pathId: PropTypes.string.isRequired,
     paths: PropTypes.array,
@@ -44,13 +40,23 @@ class ProblemDialog extends React.PureComponent {
   };
 
   state = {
-    type: ""
+    type: "text"
   };
 
   getTypeSpecificElements() {
     let { problem } = this.props;
-    problem = problem || {};
+    problem = Object.assign(problem || {}, this.state);
     switch (this.state.type || (problem && problem.type)) {
+      case PROBLEMS_TYPES.text.id:
+        return (
+          <TextField
+            fullWidth
+            label="Question"
+            margin="normal"
+            onChange={e => this.onFieldChange("question", e.target.value)}
+            value={problem.question}
+          />
+        );
       case PROBLEMS_TYPES.codeCombat.id:
         return (
           <FormControl fullWidth margin="normal">
@@ -235,18 +241,15 @@ class ProblemDialog extends React.PureComponent {
   }
 
   onFieldChange = (field, value) => this.setState({ [field]: value });
-  onClose = () => this.props.dispatch(pathDialogHide());
   onCommit = () => {
-    this.props.dispatch(
-      pathProblemChangeRequest(
-        this.props.pathId,
-        Object.assign(this.props.problem || {}, this.state, {
-          type:
-            this.state.type ||
-            (this.props.problem && this.props.problem.type) ||
-            "text"
-        })
-      )
+    this.props.onCommit(
+      this.props.pathId,
+      Object.assign(this.props.problem || {}, this.state, {
+        type:
+          this.state.type ||
+          (this.props.problem && this.props.problem.type) ||
+          "text"
+      })
     );
 
     // Clear state. Render will be invoked 1 time only
@@ -257,10 +260,10 @@ class ProblemDialog extends React.PureComponent {
   };
 
   render() {
-    const { problem, open } = this.props;
+    const { problem, onClose, open } = this.props;
 
     return (
-      <Dialog fullWidth onClose={this.onClose} open={open}>
+      <Dialog fullWidth onClose={onClose} open={open}>
         <DialogTitle>
           {problem && problem.id ? "Edit Problem" : "Add New Problem"}
         </DialogTitle>
@@ -296,7 +299,7 @@ class ProblemDialog extends React.PureComponent {
           {this.getTypeSpecificElements()}
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={this.onClose}>
+          <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button color="primary" onClick={this.onCommit} variant="raised">

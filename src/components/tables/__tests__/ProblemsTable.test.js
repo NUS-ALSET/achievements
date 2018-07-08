@@ -24,7 +24,8 @@ describe("<ProblemsTable>", () => {
     const wrapper = shallow(
       <ProblemsTable
         currentUserId="abcd"
-        dispatch={mockDispatch}
+        onEditProblem={mockDispatch}
+        onOpenProblem={mockDispatch}
         pathOwnerId="abcd"
         problems={[
           {
@@ -35,7 +36,7 @@ describe("<ProblemsTable>", () => {
       />
     );
 
-    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(2);
+    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
 
     expect(wrapper.find(Button).length).toEqual(2);
     wrapper
@@ -44,11 +45,8 @@ describe("<ProblemsTable>", () => {
       .simulate("click");
     expect(
       mockDispatch.calledWith({
-        type: "PATH_PROBLEM_DIALOG_SHOW",
-        problemInfo: {
-          id: "test",
-          name: "Test"
-        }
+        id: "test",
+        name: "Test"
       })
     ).toEqual(true);
   });
@@ -68,7 +66,7 @@ describe("<ProblemsTable>", () => {
       />
     );
 
-    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
+    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(4);
     expect(wrapper.find(Button).length).toEqual(1);
   });
 });

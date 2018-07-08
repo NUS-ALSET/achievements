@@ -66,7 +66,7 @@ class Breadcrumbs extends React.PureComponent {
         {action && (
           <Toolbar className={classes.breadcrumbActions}>
             {Array.isArray(action) ? (
-              action.map(action => (
+              action.filter(action => action).map(action => (
                 <Button
                   className={classes.breadcrumbAction}
                   key={action.label}

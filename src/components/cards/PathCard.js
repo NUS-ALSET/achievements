@@ -70,7 +70,7 @@ class PathCard extends React.PureComponent {
             width: "100%"
           }}
         >
-          <Link to={`/paths/${path}/problems/${problem}`}>
+          <Link to={`/paths/${path}/activities/${problem}`}>
             <IconButton color="inherit">
               <KeyboardArrowRightIcon />
             </IconButton>

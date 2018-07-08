@@ -282,6 +282,8 @@ export class PathsService {
     if (!problemInfo.type) throw new Error("Missing problem type");
     switch (problemInfo.type) {
       case "text":
+        if (!problemInfo.question) throw new Error("Missing question");
+        break;
       case "profile":
         break;
       case "codeCombat":
@@ -438,7 +440,8 @@ export class PathsService {
       .then(() => this.validateSolution(pathProblem, solution))
       .then(() => {
         switch (pathProblem.type) {
-          case "jupyterInline":
+          case PROBLEMS_TYPES.text.id:
+          case PROBLEMS_TYPES.jupyterInline.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -545,7 +548,7 @@ export class PathsService {
    *
    * @param {String} uid
    * @param {String} pathId
-   * @returns {Promise<Array<Problem>>} list of problems
+   * @returns {Promise<Array<Activity>>} list of problems
    */
   fetchProblems(uid, pathId) {
     let ref = firebase.database().ref(`/problems/${uid}`);

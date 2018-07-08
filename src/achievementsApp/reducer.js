@@ -10,7 +10,7 @@ import { cohorts } from "../containers/Cohorts/reducer";
 import { cohort } from "../containers/Cohort/reducer";
 import { path } from "../containers/Path/reducer";
 import { paths } from "../containers/Paths/reducer";
-import { problem } from "../containers/Problem/reducer";
+import { problem } from "../containers/Activity/reducer";
 
 export default combineReducers({
   firebase,

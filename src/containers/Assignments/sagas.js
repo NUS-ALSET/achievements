@@ -71,7 +71,7 @@ import {
   problemInitRequest,
   problemSolutionRefreshSuccess,
   problemSolveUpdate
-} from "../Problem/actions";
+} from "../Activity/actions";
 
 // Since we're able to check 1 and only 1 course at once then we'll keep
 // course members channel at almost global variable...
@@ -133,7 +133,7 @@ export function* updateNewAssignmentFieldHandler(action) {
     case "questionType":
       if (
         [
-          ASSIGNMENTS_TYPES.PathProblem.id,
+          ASSIGNMENTS_TYPES.PathActivity.id,
           ASSIGNMENTS_TYPES.PathProgress.id
         ].includes(action.value)
       ) {
@@ -320,11 +320,11 @@ export function* watchAssistantsControlRequestHandler(action) {
 export function* assignmentShowEditDialogHandler(action) {
   try {
     switch (action.assignment.questionType) {
-      case ASSIGNMENTS_TYPES.PathProblem.id:
+      case ASSIGNMENTS_TYPES.PathActivity.id:
         yield put(
           updateNewAssignmentField(
             "questionType",
-            ASSIGNMENTS_TYPES.PathProblem.id
+            ASSIGNMENTS_TYPES.PathActivity.id
           )
         );
         yield put(updateNewAssignmentField("path", action.assignment.path));

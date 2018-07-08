@@ -12,7 +12,8 @@ import {
   externalProfileDialogHide,
   externalProfileDialogShow,
   externalProfileRefreshRequest,
-  externalProfileRemoveDialogShow
+  externalProfileRemoveDialogShow,
+  externalProfileUpdateRequest
 } from "./actions";
 import { firebaseConnect } from "react-redux-firebase";
 import { notificationShow } from "../Root/actions";
@@ -120,6 +121,9 @@ class Account extends React.PureComponent {
     this.setState({ newDisplayName: event.target.value });
 
   showError = error => this.props.dispatch(notificationShow(error));
+  onProfileUpdate = profile => {
+    this.props.dispatch(externalProfileUpdateRequest(profile, "CodeCombat"));
+  };
 
   render() {
     const {
@@ -204,11 +208,10 @@ class Account extends React.PureComponent {
                   }
                 />
                 <AddProfileDialog
-                  dispatch={dispatch}
                   externalProfile={externalProfiles[externalProfileKey]}
                   inProgress={this.props.externalProfileInUpdate}
                   onClose={this.closeExternalProfileDialog}
-                  onError={this.showError}
+                  onCommit={this.onProfileUpdate}
                   open={this.props.showDialog}
                   uid={this.props.uid}
                 />

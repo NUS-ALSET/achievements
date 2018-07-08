@@ -92,7 +92,7 @@ class AddAssignmentDialog extends React.PureComponent {
             value={assignment.count}
           />
         );
-      case ASSIGNMENTS_TYPES.PathProblem.id:
+      case ASSIGNMENTS_TYPES.PathActivity.id:
         return (
           <Fragment>
             <TextField
@@ -111,7 +111,7 @@ class AddAssignmentDialog extends React.PureComponent {
             </TextField>
             <TextField
               fullWidth
-              label="Problem"
+              label="Activity"
               onChange={this.updateField("problem")}
               select
               value={assignment.problem || ""}

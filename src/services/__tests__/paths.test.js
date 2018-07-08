@@ -2,7 +2,7 @@ import firebase from "firebase";
 import assert from "assert";
 import sinon from "sinon";
 import Promise from "bluebird";
-import { PathsService } from "../paths";
+import { PathsService, PROBLEMS_TYPES } from "../paths";
 
 import correctProblems from "./data/correctProblems";
 import incorrectProblems from "./data/incorrectProblems";
@@ -186,5 +186,39 @@ describe("Paths service tests", () => {
           type: "jupyter"
         })
       );
+  });
+
+  describe("submit solutions variants", () => {
+    let spy;
+
+    beforeEach(() => (spy = jest.fn()));
+
+    it("should submit text solution", () => {
+      firebase.refStub
+        .withArgs("/problemSolutions/testProblem/deadbeef")
+        .returns({
+          set: data => {
+            spy();
+            expect(data).toBe("test solution");
+          }
+        });
+
+      return pathsService
+        .submitSolution(
+          "deadbeef",
+          {
+            owner: "deadbeef",
+            pathId: "testPath",
+            pathName: "Test Path",
+            problemId: "testProblem",
+            problemName: "Test Problem",
+            type: PROBLEMS_TYPES.text.id
+          },
+          "test solution"
+        )
+        .then(() => {
+          expect(spy.mock.calls.length).toBe(1);
+        });
+    });
   });
 });

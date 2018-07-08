@@ -32,7 +32,7 @@ import {
   takeLatest,
   throttle
 } from "redux-saga/effects";
-import { pathsService } from "../../services/paths";
+import { pathsService, PROBLEMS_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -67,7 +67,7 @@ export function* problemInitRequestHandler(action) {
     );
 
     if (!pathProblem) {
-      throw new Error("Missing path problem");
+      throw new Error("Missing path activity");
     }
 
     yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem));
@@ -81,7 +81,6 @@ export function* problemInitRequestHandler(action) {
             : action.solution.originalSolution.value
         )
       : call([pathsService, pathsService.fetchSolutionFile], pathProblem, uid);
-
     yield put(
       problemSolutionRefreshSuccess(action.problemId, solution || false)
     );
@@ -104,7 +103,8 @@ export function* problemSolutionRefreshRequestHandler(action) {
   }));
 
   switch (data.pathProblem.type) {
-    case "jupyterInline":
+    case PROBLEMS_TYPES.text.id:
+    case PROBLEMS_TYPES.jupyterInline.id:
       if (typeof action.fileId !== "object") {
         return yield put(
           problemSolutionRefreshSuccess(action.problemId, {

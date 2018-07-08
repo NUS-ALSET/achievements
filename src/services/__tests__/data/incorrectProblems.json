@@ -16,6 +16,13 @@
     }
   },
   {
+    "error": "Missing question",
+    "problem": {
+      "name": "test",
+      "type": "text"
+    }
+  },
+  {
     "error": "Missing CodeCombat level",
     "problem": {
       "name": "test",

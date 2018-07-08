@@ -7,7 +7,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
-import { problemSolveUpdate } from "../../containers/Problem/actions";
+import { problemSolveUpdate } from "../../containers/Activity/actions";
 import JupyterNotebook from "./JupyterNotebook";
 
 class JupyterProblem extends React.PureComponent {

@@ -22,7 +22,8 @@
   },
   {
     "name": "test",
-    "type": "text"
+    "type": "text",
+    "question": "test"
   },
   {
     "name": "test",

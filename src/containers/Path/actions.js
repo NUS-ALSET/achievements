@@ -4,6 +4,18 @@ export const pathOpen = pathId => ({
   pathId
 });
 
+export const PATH_OPEN_SOLUTION_DIALOG = "PATH_OPEN_SOLUTION_DIALOG";
+export const pathOpenSolutionDialog = (pathId, problemInfo) => ({
+  type: PATH_OPEN_SOLUTION_DIALOG,
+  pathId,
+  problemInfo
+});
+
+export const PATH_CLOSE_DIALOG = "PATH_CLOSE_DIALOG";
+export const pathCloseDialog = () => ({
+  type: PATH_CLOSE_DIALOG
+});
+
 // In fact, it only fetches existance of solution, should be renamed?
 export const PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS =
   "PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS";
