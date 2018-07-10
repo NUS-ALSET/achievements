@@ -23,7 +23,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import ProblemView from "../../components/problemViews/ProblemView";
 import Button from "@material-ui/core/Button/Button";
 
-export class Problem extends React.PureComponent {
+export class Activity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     match: PropTypes.object,
@@ -157,4 +157,4 @@ export default compose(
     );
   }),
   connect(mapStateToProps)
-)(Problem);
+)(Activity);

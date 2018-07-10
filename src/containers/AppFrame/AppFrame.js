@@ -2,7 +2,8 @@ import { APP_SETTING } from "../../achievementsApp/config";
 import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
 // import { Home } from "../../components/Home";
 import Home from "../Home/AltHome";
-import { Route, HashRouter as Router } from "react-router-dom";
+import { Route } from "react-router-dom";
+import { ConnectedRouter as Router } from "connected-react-router";
 import { connect } from "react-redux";
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
@@ -31,7 +32,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
 import Admin from "../Admin/Admin";
-import Problem from "../Problem/Problem";
+import Activity from "../Activity/Activity";
 import Path from "../Path/Path";
 
 // HomeV2 to test the kyGUI for Home Recommendation
@@ -100,9 +101,10 @@ const styles = theme => ({
 
 class AppFrame extends React.Component {
   static propTypes = {
+    anchorElId: PropTypes.any,
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func,
-    anchorElId: PropTypes.any,
+    history: PropTypes.any,
     mainDrawerOpen: PropTypes.bool,
     isAdmin: PropTypes.bool,
     userName: PropTypes.string,
@@ -134,10 +136,17 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const { classes, isAdmin, userId, userName, anchorElId } = this.props;
+    const {
+      anchorElId,
+      classes,
+      history,
+      isAdmin,
+      userId,
+      userName
+    } = this.props;
 
     return (
-      <Router>
+      <Router history={history}>
         <div className={classes.root}>
           <div className={classes.appFrame}>
             <AppBar
@@ -221,9 +230,9 @@ class AppFrame extends React.Component {
               <Route component={Paths} exact path="/paths" />
               <Route component={Path} exact path="/paths/:pathId" />
               <Route
-                component={Problem}
+                component={Activity}
                 exact
-                path="/paths/:pathId/problems/:problemId"
+                path="/paths/:pathId/activities/:problemId"
               />
               <Route
                 exact

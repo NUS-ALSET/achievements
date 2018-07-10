@@ -1,5 +1,5 @@
 /**
- * @file ProblemsTable component module
+ * @file ActivitiesTable component module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 22.02.18
  */
@@ -17,11 +17,7 @@ import TableRow from "@material-ui/core/TableRow";
 
 import DoneIcon from "@material-ui/icons/Done";
 
-import { Link } from "react-router-dom";
-
 import withStyles from "@material-ui/core/styles/withStyles";
-import { pathProblemDialogShow } from "../../containers/Paths/actions";
-import { pathProblemOpen } from "../../containers/Path/actions";
 
 const styles = theme => ({
   link: {
@@ -32,34 +28,32 @@ const styles = theme => ({
   }
 });
 
-class ProblemsTable extends React.PureComponent {
+class ActivitiesTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
-    dispatch: PropTypes.func.isRequired,
+    onEditProblem: PropTypes.func.isRequired,
+    onOpenProblem: PropTypes.func.isRequired,
     pathOwnerId: PropTypes.any,
-    problems: PropTypes.array.isRequired,
-    selectedPathId: PropTypes.string
+    problems: PropTypes.array.isRequired
   };
-
-  onOpenClick = (pathId, problem) =>
-    this.props.dispatch(pathProblemOpen(pathId, problem.id));
-  onEditClick = problem => this.props.dispatch(pathProblemDialogShow(problem));
 
   render() {
     const {
       classes,
       currentUserId,
+      onEditProblem,
+      onOpenProblem,
       pathOwnerId,
-      problems,
-      selectedPathId
+      problems
     } = this.props;
 
     return (
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Problem name</TableCell>
+            <TableCell>Activity name</TableCell>
+            <TableCell>Description</TableCell>
             {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
             <TableCell
               style={{
@@ -74,6 +68,7 @@ class ProblemsTable extends React.PureComponent {
           {problems.map(problem => (
             <TableRow key={problem.id}>
               <TableCell>{problem.name}</TableCell>
+              <TableCell>{problem.description}</TableCell>
               {currentUserId !== pathOwnerId && (
                 <TableCell>
                   {problem.solved && (
@@ -84,25 +79,13 @@ class ProblemsTable extends React.PureComponent {
                 </TableCell>
               )}
               <TableCell>
-                <Link
-                  className={classes.link}
-                  to={`/paths/${selectedPathId || pathOwnerId}/problems/${
-                    problem.id
-                  }`}
-                >
-                  <Button
-                    onClick={() =>
-                      this.onOpenClick(selectedPathId || pathOwnerId, problem)
-                    }
-                    variant="raised"
-                  >
-                    Open
-                  </Button>
-                </Link>
+                <Button onClick={() => onOpenProblem(problem)} variant="raised">
+                  Solve
+                </Button>
                 {pathOwnerId === currentUserId && (
                   <Button
                     className={classes.button}
-                    onClick={() => this.onEditClick(problem)}
+                    onClick={() => onEditProblem(problem)}
                     variant="raised"
                   >
                     Edit
@@ -117,4 +100,4 @@ class ProblemsTable extends React.PureComponent {
   }
 }
 
-export default withStyles(styles)(ProblemsTable);
+export default withStyles(styles)(ActivitiesTable);

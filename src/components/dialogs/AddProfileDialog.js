@@ -5,10 +5,6 @@
  */
 
 import CircularProgress from "@material-ui/core/CircularProgress";
-import {
-  externalProfileDialogHide,
-  externalProfileUpdateRequest
-} from "../../containers/Account/actions";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -23,12 +19,12 @@ import { AccountService } from "../../services/account";
 
 class AddProfileDialog extends React.PureComponent {
   static propTypes = {
-    inProgress: PropTypes.any,
-    open: PropTypes.bool.isRequired,
     externalProfile: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
-    onCommit: PropTypes.func,
-    defaultValue: PropTypes.string
+    defaultValue: PropTypes.string,
+    inProgress: PropTypes.any,
+    onClose: PropTypes.func.isRequired,
+    onCommit: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired
   };
 
   state = {
@@ -47,27 +43,19 @@ class AddProfileDialog extends React.PureComponent {
     if (event.key !== "Enter") {
       return;
     }
-    this.onCommitClick();
+    this.onCommit();
   };
-
-  onCommitClick = () => {
-    const { externalProfile, dispatch, onCommit } = this.props;
-    const { login } = this.state;
-
-    dispatch(externalProfileUpdateRequest(login, externalProfile.id));
-    if (onCommit) {
-      onCommit(login);
-    }
+  onCommit = () => {
+    this.props.onCommit(this.state.login);
+    this.props.onClose();
   };
-
-  onClose = () => this.props.dispatch(externalProfileDialogHide());
 
   render() {
-    const { externalProfile, inProgress } = this.props;
+    const { externalProfile, inProgress, onClose } = this.props;
     const url = `${externalProfile.url}/user/${this.state.login}`;
 
     return (
-      <Dialog onClose={this.onClose} open={this.props.open}>
+      <Dialog onClose={onClose} open={this.props.open}>
         <DialogTitle>Set {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
           <div>
@@ -86,13 +74,13 @@ class AddProfileDialog extends React.PureComponent {
           />
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={this.onClose}>
+          <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button
             color="primary"
             disabled={inProgress}
-            onClick={this.onCommitClick}
+            onClick={this.onCommit}
             variant="raised"
           >
             Commit

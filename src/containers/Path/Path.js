@@ -7,13 +7,14 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import { push } from "connected-react-router";
 
 import { APP_SETTING } from "../../achievementsApp/config";
 
 import Button from "@material-ui/core/Button";
 import Toolbar from "@material-ui/core/Toolbar";
 
-import ProblemsTable from "../../components/tables/ProblemsTable";
+import ActivitiesTable from "../../components/tables/ActivitiesTable";
 
 import { firebaseConnect } from "react-redux-firebase";
 
@@ -26,18 +27,44 @@ import {
   PATH_STATUS_OWNER,
   PATH_STATUS_NOT_JOINED
 } from "./selectors";
-import { pathOpen, pathToggleJoinStatusRequest } from "./actions";
-import { pathProblemDialogShow } from "../Paths/actions";
+import {
+  pathCloseDialog,
+  pathMoreProblemsRequest,
+  pathOpen,
+  pathOpenSolutionDialog,
+  pathToggleJoinStatusRequest
+} from "./actions";
+import {
+  pathProblemChangeRequest,
+  pathProblemDialogShow
+} from "../Paths/actions";
 import ProblemDialog from "../../components/dialogs/ProblemDialog";
 
 import AddIcon from "@material-ui/icons/Add";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
+import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
+import { PROBLEMS_TYPES } from "../../services/paths";
+import { notificationShow } from "../Root/actions";
+import { problemSolutionSubmitRequest } from "../Activity/actions";
+import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
+import { externalProfileUpdateRequest } from "../Account/actions";
 
-class Path extends React.PureComponent {
+class Path extends React.Component {
   static propTypes = {
-    dispatch: PropTypes.func,
     match: PropTypes.object,
+    onCloseDialog: PropTypes.func.isRequired,
+    onNotification: PropTypes.func.isRequired,
+    onOpen: PropTypes.func.isRequired,
+    onOpenSolution: PropTypes.func.isRequired,
+
+    onProblemChangeRequest: PropTypes.func.isRequired,
+    onProblemDialogShow: PropTypes.func.isRequired,
+    onProblemSolutionSubmit: PropTypes.func.isRequired,
+    onProfileUpdate: PropTypes.func.isRequired,
+    onPushPath: PropTypes.func.isRequired,
+    onRequestMoreProblems: PropTypes.func.isRequired,
+    onToggleJoinStatus: PropTypes.func.isRequired,
     pathProblems: PropTypes.object,
     pathStatus: PropTypes.string,
     ui: PropTypes.any,
@@ -45,23 +72,67 @@ class Path extends React.PureComponent {
   };
 
   componentDidMount() {
-    this.props.dispatch(pathOpen(this.props.match.params.pathId));
+    this.props.onOpen(this.props.match.params.pathId);
   }
 
-  changeJoinStatus = () =>
-    this.props.dispatch(
-      pathToggleJoinStatusRequest(
-        this.props.uid,
-        this.props.pathProblems.path.id,
-        this.props.pathStatus === PATH_STATUS_NOT_JOINED
-      )
+  onOpenProblem = problem => {
+    const {
+      onOpenSolution,
+      onProblemSolutionSubmit,
+      onPushPath,
+      pathProblems
+    } = this.props;
+    switch (problem.type) {
+      case PROBLEMS_TYPES.codeCombat.id:
+      case PROBLEMS_TYPES.codeCombatNumber.id:
+        onProblemSolutionSubmit(pathProblems.path.id, problem, "Completed");
+        break;
+      case PROBLEMS_TYPES.jupyterInline.id:
+      case PROBLEMS_TYPES.jupyter.id:
+      case PROBLEMS_TYPES.youtube.id:
+        onPushPath(`/paths/${pathProblems.path.id}/activities/${problem.id}`);
+        break;
+      default:
+        onOpenSolution(pathProblems.path.id, problem);
+    }
+  };
+
+  requestMoreProblems = () =>
+    this.props.onRequestMoreProblems(
+      this.props.uid,
+      this.props.pathProblems.path.id,
+      this.props.pathProblems.problems.length
     );
 
-  onAddProblemClick = () => this.props.dispatch(pathProblemDialogShow());
+  refreshSolutions = () => this.props.onNotification("test");
+
+  changeJoinStatus = () =>
+    this.props.onToggleJoinStatus(
+      this.props.uid,
+      this.props.pathProblems.path.id,
+      this.props.pathStatus === PATH_STATUS_NOT_JOINED
+    );
+
+  onAddProblemClick = () => this.props.onProblemDialogShow();
+  onProfileUpdate = profile =>
+    this.props.onProfileUpdate(profile, "CodeCombat");
 
   render() {
-    const { dispatch, match, pathProblems, pathStatus, ui, uid } = this.props;
+    const {
+      match,
+      onCloseDialog,
+      onProblemChangeRequest,
+      onProblemDialogShow,
+      onProblemSolutionSubmit,
+      pathProblems,
+      pathStatus,
+      ui,
+      uid
+    } = this.props;
 
+    const allFinished =
+      (pathProblems.problems || []).filter(problem => problem.solved).length ===
+      (pathProblems.problems || []).length;
     let pathName;
 
     if (match.params.pathId[0] !== "-") {
@@ -74,12 +145,20 @@ class Path extends React.PureComponent {
       <Fragment>
         <Breadcrumbs
           action={
-            pathStatus === PATH_STATUS_OWNER
-              ? null
-              : {
-                  label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
-                  handler: this.changeJoinStatus.bind(this)
-                }
+            pathStatus !== PATH_STATUS_OWNER && [
+              allFinished && {
+                label: "Request more",
+                handler: this.requestMoreProblems.bind(this)
+              },
+              !allFinished && {
+                label: "Refresh",
+                handler: this.refreshSolutions.bind(this)
+              },
+              {
+                label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
+                handler: this.changeJoinStatus.bind(this)
+              }
+            ]
           }
           paths={[
             {
@@ -117,18 +196,39 @@ class Path extends React.PureComponent {
               <AddIcon />
             </Button>
           ))}
-        <ProblemsTable
-          currentUserId={uid}
-          dispatch={dispatch}
+        <AddTextSolutionDialog
+          onClose={onCloseDialog}
+          onCommit={onProblemSolutionSubmit}
+          open={ui.dialog.type === `${PROBLEMS_TYPES.text.id}Solution`}
+          solution={ui.dialog.solution}
+          taskId={ui.dialog.taskId}
+        />
+        <AddProfileDialog
+          externalProfile={{
+            url: "https://codecombat.com",
+            id: "CodeCombat",
+            name: "Code Combat",
+            description: "learn to Code JavaScript by Playing a Game"
+          }}
+          onClose={onCloseDialog}
+          onCommit={this.onProfileUpdate}
+          open={ui.dialog.type === `${PROBLEMS_TYPES.profile.id}Solution`}
+        />
+        <ActivitiesTable
+          currentUserId={uid || "Anonymous"}
+          onEditProblem={onProblemDialogShow}
+          onOpenProblem={this.onOpenProblem}
           pathOwnerId={pathProblems.path && pathProblems.path.owner}
           problems={pathProblems.problems || []}
           selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
         />
         <ProblemDialog
-          dispatch={dispatch}
+          onClose={onCloseDialog}
+          onCommit={onProblemChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathProblems.path && pathProblems.path.id) || ""}
           problem={ui.dialog.value}
+          uid={uid || "Anonymous"}
         />
       </Fragment>
     );
@@ -140,9 +240,23 @@ sagaInjector.inject(sagas);
 const mapStateToProps = (state, ownProps) => ({
   pathProblems: pathProblemsSelector(state, ownProps),
   pathStatus: pathStatusSelector(state, ownProps),
-  ui: state.paths.ui,
+  ui: state.path.ui,
   uid: state.firebase.auth.uid
 });
+
+const mapDispatchToProps = {
+  onCloseDialog: pathCloseDialog,
+  onNotification: notificationShow,
+  onOpen: pathOpen,
+  onProfileUpdate: externalProfileUpdateRequest,
+  onOpenSolution: pathOpenSolutionDialog,
+  onProblemChangeRequest: pathProblemChangeRequest,
+  onProblemDialogShow: pathProblemDialogShow,
+  onProblemSolutionSubmit: problemSolutionSubmitRequest,
+  onPushPath: push,
+  onRequestMoreProblems: pathMoreProblemsRequest,
+  onToggleJoinStatus: pathToggleJoinStatusRequest
+};
 
 export default compose(
   withRouter,
@@ -161,5 +275,5 @@ export default compose(
       `/studentJoinedPaths/${uid}/${pathId}`
     ];
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Path);

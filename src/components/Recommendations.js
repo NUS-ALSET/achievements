@@ -43,6 +43,8 @@ class Recommendations extends React.PureComponent {
             <Grid item sm={4} xs={12}>
               <PathCard
                 featured={true}
+                path={recs[0].path}
+                problem={recs[0].problem}
                 title={this.getRecTitle(recs[0])}
                 video={recs[0].video}
               />

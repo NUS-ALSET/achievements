@@ -12,7 +12,7 @@ import cloneDeep from "lodash/cloneDeep";
 import {
   problemSolutionRefreshFail,
   problemSolveUpdate
-} from "../../containers/Problem/actions";
+} from "../../containers/Activity/actions";
 import { notificationShow } from "../../containers/Root/actions";
 import JupyterNotebook from "./JupyterNotebook";
 

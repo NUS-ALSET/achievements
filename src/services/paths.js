@@ -1,5 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
+import { coursesService } from "./courses";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -11,6 +12,41 @@ export const YOUTUBE_QUESTIONS = {
     "What is a question someone who watched this video " +
     "should be able to answer",
   questionCustom: "Custom question after watching this video"
+};
+
+export const PROBLEMS_TYPES = {
+  text: {
+    id: "text",
+    caption: "Text"
+  },
+  profile: {
+    id: "profile",
+    caption: "Enter Code Combat Profile"
+  },
+  codeCombat: {
+    id: "codeCombat",
+    caption: "Complete Code Combat Level"
+  },
+  codeCombatNumber: {
+    id: "codeCombatNumber",
+    caption: "Complete Number of Code Combat Levels"
+  },
+  jupyter: {
+    id: "jupyter",
+    caption: "Jupyter Notebook"
+  },
+  jupyterInline: {
+    id: "jupyterInline",
+    caption: "Jupyter Inline"
+  },
+  youtube: {
+    id: "youtube",
+    caption: "YouTube"
+  },
+  game: {
+    id: "game",
+    caption: "Game"
+  }
 };
 
 export class PathsService {
@@ -217,6 +253,17 @@ export class PathsService {
   }
 
   pathChange(uid, pathInfo) {
+    if (pathInfo.id) {
+      return firebase
+        .database()
+        .ref(`/paths/${pathInfo.id}`)
+        .update({
+          ...pathInfo,
+          owner: uid
+        })
+        .then(() => pathInfo.id);
+    }
+
     const key = firebase
       .database()
       .ref("/paths")
@@ -235,11 +282,24 @@ export class PathsService {
     if (!problemInfo.name) throw new Error("Missing problem name");
     if (!problemInfo.type) throw new Error("Missing problem type");
     switch (problemInfo.type) {
-      case "jupyterInline":
+      case "text":
+        if (!problemInfo.question) throw new Error("Missing question");
+        break;
+      case "profile":
+        break;
+      case "codeCombat":
+        if (!problemInfo.level) throw new Error("Missing CodeCombat level");
+        break;
+      case "codeCombatNumber":
+        if (!problemInfo.count) throw new Error("Missing levels count");
+        break;
       case "jupyter":
+      case "jupyterInline":
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
         if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
-        if (!problemInfo.frozen) throw new Error("Missing frozen");
+        if (!problemInfo.frozen) throw new Error("Missing frozen field");
+        if (problemInfo.type === "jupyterInline" && !problemInfo.code)
+          throw new Error("Missing code field");
         break;
       case "youtube":
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
@@ -251,10 +311,10 @@ export class PathsService {
             (problemInfo.questionCustom && problemInfo.customText)
           )
         ) {
-          throw new Error("Missing any of following question");
+          throw new Error("Missing any of following questions");
         }
         break;
-      case "text":
+      case "game":
         break;
       default:
         throw new Error("Invalid  problem type");
@@ -297,6 +357,16 @@ export class PathsService {
   validateSolution(uid, pathProblem, solution, json) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
+        case PROBLEMS_TYPES.codeCombat.id:
+          return coursesService.getAchievementsStatus(uid, {
+            questionType: "CodeCombat",
+            level: pathProblem.level
+          });
+        case PROBLEMS_TYPES.codeCombatNumber.id:
+          return coursesService.getAchievementsStatus(uid, {
+            questionType: "CodeCombat_Number",
+            count: pathProblem.count
+          });
         case "youtube":
           if (isEmpty(solution.youtubeEvents)) {
             throw new Error("Did you ever start watching this video?");
@@ -378,17 +448,26 @@ export class PathsService {
    */
   submitSolution(uid, pathProblem, solution) {
     return Promise.resolve()
-      .then(() => this.validateSolution(pathProblem, solution))
+      .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
         switch (pathProblem.type) {
-          case "jupyterInline":
+          case PROBLEMS_TYPES.codeCombat.id:
+          case PROBLEMS_TYPES.codeCombatNumber.id:
+            return firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set("Completed");
+          case PROBLEMS_TYPES.text.id:
+          case PROBLEMS_TYPES.jupyterInline.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
           case "jupyter":
             return this.fetchFile(this.getFileId(solution))
-              .then(json => this.validateSolution(pathProblem, solution, json))
+              .then(json =>
+                this.validateSolution(uid, pathProblem, solution, json)
+              )
               .then(() =>
                 firebase
                   .database()
@@ -488,7 +567,7 @@ export class PathsService {
    *
    * @param {String} uid
    * @param {String} pathId
-   * @returns {Promise<Array<Problem>>} list of problems
+   * @returns {Promise<Array<Activity>>} list of problems
    */
   fetchProblems(uid, pathId) {
     let ref = firebase.database().ref(`/problems/${uid}`);
@@ -517,11 +596,26 @@ export class PathsService {
     return Promise.all(
       problems.map(problem =>
         firebase
+          .database()
           .ref(`/problemSolutions/${problem.id}/${uid}`)
           .once("value")
           .then(data => ({ [problem.id]: !!data.val() }))
       )
     ).then(solutions => Object.assign({}, ...solutions));
+  }
+
+  storeMoreProblemsRequest(uid, pathId, activityCount) {
+    return firebase
+      .database()
+      .ref("/moreProblemsRequests")
+      .push({
+        sender: uid,
+        path: pathId,
+        activityCount: activityCount,
+        requestTime: {
+          ".sv": "timestamp"
+        }
+      });
   }
 }
 

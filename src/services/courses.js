@@ -32,9 +32,9 @@ export const ASSIGNMENTS_TYPES = {
     id: "CodeCombat_Number",
     caption: "Complete Number of Code Combat Levels"
   },
-  PathProblem: {
-    id: "PathProblem",
-    caption: "Path Problem"
+  PathActivity: {
+    id: "Activity",
+    caption: "Path Activity"
   },
   PathProgress: {
     id: "PathProgress",

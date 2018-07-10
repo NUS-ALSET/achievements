@@ -32,7 +32,7 @@ import {
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_REFRESH_SUCCESS
-} from "../Problem/actions";
+} from "../Activity/actions";
 
 const DAYS_IN_WEEK = 7;
 

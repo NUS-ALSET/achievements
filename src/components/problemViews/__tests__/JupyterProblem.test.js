@@ -6,7 +6,7 @@ import sinon from "sinon";
 
 import JupyterProblem from "../JupyterProblem";
 import JupyterNotebook from "../JupyterNotebook";
-import { PROBLEM_SOLVE_UPDATE } from "../../../containers/Problem/actions";
+import { PROBLEM_SOLVE_UPDATE } from "../../../containers/Activity/actions";
 
 describe("<JupyterProblem>", () => {
   let mockDispatch;

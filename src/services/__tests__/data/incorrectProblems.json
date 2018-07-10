@@ -1,0 +1,99 @@
+[
+  {
+    "error": "Missing problem",
+    "problem": false
+  },
+  {
+    "error": "Missing problem name",
+    "problem": {
+      "type": "text"
+    }
+  },
+  {
+    "error": "Missing problem type",
+    "problem": {
+      "name": "test"
+    }
+  },
+  {
+    "error": "Missing question",
+    "problem": {
+      "name": "test",
+      "type": "text"
+    }
+  },
+  {
+    "error": "Missing CodeCombat level",
+    "problem": {
+      "name": "test",
+      "type": "codeCombat"
+    }
+  },
+  {
+    "error": "Missing levels count",
+    "problem": {
+      "name": "test",
+      "type": "codeCombatNumber"
+    }
+  },
+  {
+    "error": "Missing problemURL",
+    "problem": {
+      "name": "test",
+      "type": "jupyter",
+      "solutionURL": "test",
+      "frozen": 2
+    }
+  },
+  {
+    "error": "Missing solutionURL",
+    "problem": {
+      "name": "test",
+      "type": "jupyter",
+      "problemURL": "test",
+      "frozen": 2
+    }
+  },
+  {
+    "error": "Missing frozen field",
+    "problem": {
+      "name": "test",
+      "type": "jupyter",
+      "problemURL": "test",
+      "solutionURL": "test"
+    }
+  },
+  {
+    "error": "Missing code field",
+    "problem": {
+      "name": "test",
+      "type": "jupyterInline",
+      "problemURL": "test",
+      "solutionURL": "test",
+      "frozen": 2
+    }
+  },
+  {
+    "error": "Missing youtubeURL",
+    "problem": {
+      "name": "test",
+      "type": "youtube",
+      "questionAfter": "test"
+    }
+  },
+  {
+    "error": "Missing any of following questions",
+    "problem": {
+      "name": "test",
+      "type": "youtube",
+      "youtubeURL": "test"
+    }
+  },
+  {
+    "error": "Invalid  problem type",
+    "problem": {
+      "name": "test",
+      "type": "wrongType"
+    }
+  }
+]
