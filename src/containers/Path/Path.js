@@ -14,7 +14,7 @@ import { APP_SETTING } from "../../achievementsApp/config";
 import Button from "@material-ui/core/Button";
 import Toolbar from "@material-ui/core/Toolbar";
 
-import ProblemsTable from "../../components/tables/ProblemsTable";
+import ActivitiesTable from "../../components/tables/ActivitiesTable";
 
 import { firebaseConnect } from "react-redux-firebase";
 
@@ -76,8 +76,17 @@ class Path extends React.Component {
   }
 
   onOpenProblem = problem => {
-    const { onOpenSolution, onPushPath, pathProblems } = this.props;
+    const {
+      onOpenSolution,
+      onProblemSolutionSubmit,
+      onPushPath,
+      pathProblems
+    } = this.props;
     switch (problem.type) {
+      case PROBLEMS_TYPES.codeCombat.id:
+      case PROBLEMS_TYPES.codeCombatNumber.id:
+        onProblemSolutionSubmit(pathProblems.path.id, problem, "Completed");
+        break;
       case PROBLEMS_TYPES.jupyterInline.id:
       case PROBLEMS_TYPES.jupyter.id:
       case PROBLEMS_TYPES.youtube.id:
@@ -205,7 +214,7 @@ class Path extends React.Component {
           onCommit={this.onProfileUpdate}
           open={ui.dialog.type === `${PROBLEMS_TYPES.profile.id}Solution`}
         />
-        <ProblemsTable
+        <ActivitiesTable
           currentUserId={uid || "Anonymous"}
           onEditProblem={onProblemDialogShow}
           onOpenProblem={this.onOpenProblem}

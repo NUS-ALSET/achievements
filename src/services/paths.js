@@ -1,5 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
+import { coursesService } from "./courses";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -356,6 +357,16 @@ export class PathsService {
   validateSolution(uid, pathProblem, solution, json) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
+        case PROBLEMS_TYPES.codeCombat.id:
+          return coursesService.getAchievementsStatus(uid, {
+            questionType: "CodeCombat",
+            level: pathProblem.level
+          });
+        case PROBLEMS_TYPES.codeCombatNumber.id:
+          return coursesService.getAchievementsStatus(uid, {
+            questionType: "CodeCombat_Number",
+            count: pathProblem.count
+          });
         case "youtube":
           if (isEmpty(solution.youtubeEvents)) {
             throw new Error("Did you ever start watching this video?");
@@ -437,9 +448,15 @@ export class PathsService {
    */
   submitSolution(uid, pathProblem, solution) {
     return Promise.resolve()
-      .then(() => this.validateSolution(pathProblem, solution))
+      .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
         switch (pathProblem.type) {
+          case PROBLEMS_TYPES.codeCombat.id:
+          case PROBLEMS_TYPES.codeCombatNumber.id:
+            return firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set("Completed");
           case PROBLEMS_TYPES.text.id:
           case PROBLEMS_TYPES.jupyterInline.id:
             return firebase
@@ -448,7 +465,9 @@ export class PathsService {
               .set(solution);
           case "jupyter":
             return this.fetchFile(this.getFileId(solution))
-              .then(json => this.validateSolution(pathProblem, solution, json))
+              .then(json =>
+                this.validateSolution(uid, pathProblem, solution, json)
+              )
               .then(() =>
                 firebase
                   .database()

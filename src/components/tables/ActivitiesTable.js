@@ -1,5 +1,5 @@
 /**
- * @file ProblemsTable component module
+ * @file ActivitiesTable component module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 22.02.18
  */
@@ -28,7 +28,7 @@ const styles = theme => ({
   }
 });
 
-class ProblemsTable extends React.PureComponent {
+class ActivitiesTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
@@ -52,7 +52,7 @@ class ProblemsTable extends React.PureComponent {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Problem name</TableCell>
+            <TableCell>Activity name</TableCell>
             <TableCell>Description</TableCell>
             {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
             <TableCell
@@ -80,7 +80,7 @@ class ProblemsTable extends React.PureComponent {
               )}
               <TableCell>
                 <Button onClick={() => onOpenProblem(problem)} variant="raised">
-                  Open
+                  Solve
                 </Button>
                 {pathOwnerId === currentUserId && (
                   <Button
@@ -100,4 +100,4 @@ class ProblemsTable extends React.PureComponent {
   }
 }
 
-export default withStyles(styles)(ProblemsTable);
+export default withStyles(styles)(ActivitiesTable);

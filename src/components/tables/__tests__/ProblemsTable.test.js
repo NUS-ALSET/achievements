@@ -7,9 +7,9 @@ import Button from "@material-ui/core/Button";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 
-import ProblemsTable from "../ProblemsTable";
+import ActivitiesTable from "../ActivitiesTable";
 
-describe("<ProblemsTable>", () => {
+describe("<ActivitiesTable>", () => {
   let shallow;
   let mockDispatch;
 
@@ -22,7 +22,7 @@ describe("<ProblemsTable>", () => {
 
   it("should generate row for owner", () => {
     const wrapper = shallow(
-      <ProblemsTable
+      <ActivitiesTable
         currentUserId="abcd"
         onEditProblem={mockDispatch}
         onOpenProblem={mockDispatch}
@@ -53,7 +53,7 @@ describe("<ProblemsTable>", () => {
 
   it("should generate row w/o edit button", () => {
     const wrapper = shallow(
-      <ProblemsTable
+      <ActivitiesTable
         currentUserId="abcd"
         dispatch={mockDispatch}
         pathOwnerId="efgh"

@@ -217,11 +217,14 @@ export function* problemCheckSolutionRequestHandler(action) {
 }
 
 export function* problemSolutionSubmitRequestHandler(action) {
+  let data;
   try {
-    const data = yield select(state => ({
+    data = yield select(state => ({
       uid: state.firebase.auth.uid,
       pathProblem:
-        state.problem.pathProblem || state.assignments.dialog.pathProblem
+        state.problem.pathProblem ||
+        state.assignments.dialog.pathProblem ||
+        action.problemId
     }));
     yield call(
       [pathsService, pathsService.submitSolution],
@@ -232,7 +235,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
     yield put(
       problemSolutionSubmitSuccess(
         action.pathId,
-        action.problemId,
+        data.pathProblem.id,
         action.payload
       )
     );
@@ -241,7 +244,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
     yield put(
       problemSolutionSubmitFail(
         action.pathId,
-        action.problemId,
+        data.pathProblem.id,
         action.payload,
         err.message
       )

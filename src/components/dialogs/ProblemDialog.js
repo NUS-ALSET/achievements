@@ -39,9 +39,7 @@ class ProblemDialog extends React.PureComponent {
     uid: PropTypes.string.isRequired
   };
 
-  state = {
-    type: "text"
-  };
+  state = {};
 
   getTypeSpecificElements() {
     let { problem } = this.props;
