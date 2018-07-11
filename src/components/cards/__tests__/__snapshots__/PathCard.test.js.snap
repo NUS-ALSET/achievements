@@ -37,7 +37,7 @@ ShallowWrapper {
 >
           <Link
                     replace={false}
-                    to="/paths/undefined/problems/undefined"
+                    to="/paths/undefined/activities/undefined"
           >
                     <WithStyles(IconButton)
                               color="inherit"
@@ -87,7 +87,7 @@ ShallowWrapper {
         "props": Object {
           "children": <Link
             replace={false}
-            to="/paths/undefined/problems/undefined"
+            to="/paths/undefined/activities/undefined"
 >
             <WithStyles(IconButton)
                         color="inherit"
@@ -115,7 +115,7 @@ ShallowWrapper {
               <pure(KeyboardArrowRight) />
 </WithStyles(IconButton)>,
             "replace": false,
-            "to": "/paths/undefined/problems/undefined",
+            "to": "/paths/undefined/activities/undefined",
           },
           "ref": null,
           "rendered": Object {
@@ -169,7 +169,7 @@ ShallowWrapper {
 >
             <Link
                         replace={false}
-                        to="/paths/undefined/problems/undefined"
+                        to="/paths/undefined/activities/undefined"
             >
                         <WithStyles(IconButton)
                                     color="inherit"
@@ -219,7 +219,7 @@ ShallowWrapper {
           "props": Object {
             "children": <Link
               replace={false}
-              to="/paths/undefined/problems/undefined"
+              to="/paths/undefined/activities/undefined"
 >
               <WithStyles(IconButton)
                             color="inherit"
@@ -247,7 +247,7 @@ ShallowWrapper {
                 <pure(KeyboardArrowRight) />
 </WithStyles(IconButton)>,
               "replace": false,
-              "to": "/paths/undefined/problems/undefined",
+              "to": "/paths/undefined/activities/undefined",
             },
             "ref": null,
             "rendered": Object {
