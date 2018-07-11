@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Breadcrumbs> Should test Breadcrumbs component 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <WithStyles(Breadcrumbs)
+    actions={Object {}}
+    paths={Array []}
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "actions": Object {},
+      "classes": Object {
+        "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
+        "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",
+        "breadcrumbLink": "Breadcrumbs-breadcrumbLink-1",
+        "breadcrumbText": "Breadcrumbs-breadcrumbText-2",
+      },
+      "paths": Array [],
+    },
+    "ref": null,
+    "rendered": null,
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "actions": Object {},
+        "classes": Object {
+          "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
+          "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",
+          "breadcrumbLink": "Breadcrumbs-breadcrumbLink-1",
+          "breadcrumbText": "Breadcrumbs-breadcrumbText-2",
+        },
+        "paths": Array [],
+      },
+      "ref": null,
+      "rendered": null,
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+    "context": Object {},
+  },
+}
+`;
