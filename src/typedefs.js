@@ -71,7 +71,7 @@
  */
 
 /**
- * @typedef {Object} Problem
+ * @typedef {Object} Activity
  * @property {String} id
  * @property {String} name
  * @property {String} type

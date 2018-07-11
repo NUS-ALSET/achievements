@@ -97,12 +97,15 @@
     "react"
   ],
   "globals": {
-    "describe": true,
-    "it": true,
-    "beforeEach": true,
-    "expect": true,
+    "afterAll": true,
     "afterEach": true,
+    "beforeAll": true,
+    "beforeEach": true,
+    "describe": true,
+    "expect": true,
     "gapi": true,
+    "it": true,
+    "jest": true,
     "test": true
   },
   "extends": [

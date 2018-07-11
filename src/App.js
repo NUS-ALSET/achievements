@@ -1,4 +1,6 @@
 import React from "react";
+import { createHashHistory } from "history";
+
 import AppFrame from "./containers/AppFrame/AppFrame";
 import Root from "./containers/Root/Root";
 import { Provider } from "react-redux";
@@ -11,7 +13,8 @@ import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
 import { historyService } from "./services/history";
 
-const store = configureStore();
+const history = createHashHistory();
+const store = configureStore(undefined, history);
 const theme = createMuiTheme({
   typography: {
     htmlFontSize: 14
@@ -28,7 +31,7 @@ class App extends React.Component {
         <CssBaseline />
         <Provider store={store}>
           <Root>
-            <AppFrame />
+            <AppFrame history={history}/>
           </Root>
         </Provider>
       </MuiThemeProvider>

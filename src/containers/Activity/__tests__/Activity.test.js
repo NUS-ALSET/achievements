@@ -4,10 +4,10 @@ import sinon from "sinon";
 import { createShallow } from "@material-ui/core/test-utils";
 import Button from "@material-ui/core/Button";
 
-import { Problem } from "../Problem";
+import { Activity } from "../Activity";
 import ProblemView from "../../../components/problemViews/ProblemView";
 
-describe("<Problem>", () => {
+describe("<Activity>", () => {
   let shallow;
   let mockDispatch;
 
@@ -17,19 +17,18 @@ describe("<Problem>", () => {
   });
 
   it("should check snapshot", () => {
-    const wrapper = shallow(<Problem match={{ params: {} }} />);
+    const wrapper = shallow(<Activity match={{ params: {} }} />);
 
     expect(wrapper).toMatchSnapshot();
   });
 
   it("should update internal state", () => {
     const wrapper = shallow(
-      <Problem
+      <Activity
         dispatch={mockDispatch}
         match={{
           params: {
-            pathId: "testPath",
-            problemId: "testProblem"
+            pathId: "testPath"
           }
         }}
         pathProblem={{}}
@@ -43,7 +42,7 @@ describe("<Problem>", () => {
 
   it("should dispatch problemSolutionSubmitRequest", () => {
     const wrapper = shallow(
-      <Problem
+      <Activity
         dispatch={mockDispatch}
         match={{
           params: {

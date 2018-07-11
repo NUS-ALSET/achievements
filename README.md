@@ -58,3 +58,8 @@ There are 3 project-related points:
 
  If you're going to push back your changes to source repository, make sure that you restore default values before PR
 
+## Code splitting notes
+
+ Try to use *huge* react components with [`react-loadable`](https://github.com/jamiebuilds/react-loadable) package. E.g.:
+  * [ReactAce](src/components/AceEditor) - detached component with all required imports
+  * [Usage](src/components/problemViews/JupyterNotebook.js#L28) - using with `react-loadable`

@@ -3,19 +3,18 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 09.06.18
  */
+/* eslint-disable react/display-name */
 
 import React from "react";
 import PropTypes from "prop-types";
-
-import AceEditor from "react-ace";
-import "brace/mode/python";
-import "brace/theme/github";
+import ReactLoadable from "react-loadable";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Collapse from "@material-ui/core/Collapse";
 import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -24,8 +23,17 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import RefreshIcon from "@material-ui/icons/Refresh";
 
-import NotebookPreview from "@nteract/notebook-preview";
 import { APP_SETTING } from "../../achievementsApp/config";
+
+const AceEditor = ReactLoadable({
+  loader: () => import("../AceEditor"),
+  loading: () => <LinearProgress />
+});
+
+const NotebookPreview = ReactLoadable({
+  loader: () => import("@nteract/notebook-preview"),
+  loading: () => <LinearProgress />
+});
 
 class JupyterNotebook extends React.PureComponent {
   static propTypes = {

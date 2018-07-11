@@ -9,17 +9,16 @@ describe("<Recommendations/>", () => {
   });
 
   it("Should test Recommendations component", () => {
-    const rec=[{
-      problem : null,
-      path : null,
-      video : null,
-      feature : null,
-      featureType : null
-    }];
-    const component = shallow(
-      <Recommendations  recs={rec}  title={""} />
-    );
+    const rec = [
+      {
+        problem: null,
+        path: null,
+        video: null,
+        feature: null,
+        featureType: null
+      }
+    ];
+    const component = shallow(<Recommendations recs={rec} title={""} />);
     expect(component).toMatchSnapshot();
   });
-
 });

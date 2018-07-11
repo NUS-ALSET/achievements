@@ -18,8 +18,8 @@ import { assignmentCloseDialog } from "../../containers/Assignments/actions";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import isEmpty from "lodash/isEmpty";
-import Problem from "../../containers/Problem/Problem";
-import { problemFinalize } from "../../containers/Problem/actions";
+import Activity from "../../containers/Activity/Activity";
+import { problemFinalize } from "../../containers/Activity/actions";
 
 const styles = () => ({
   dialog: {
@@ -37,7 +37,7 @@ const styles = () => ({
   loading: { transition: "all 0.5s ease !important" }
 });
 
-class AddPathProblemSolutionDialog extends React.PureComponent {
+class AddPathActivitySolutionDialog extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
@@ -82,7 +82,7 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
               overflowX: "hidden"
             }}
           >
-            <Problem
+            <Activity
               embedded={true}
               inDialog={true}
               onProblemChange={this.onProblemChange}
@@ -109,4 +109,4 @@ class AddPathProblemSolutionDialog extends React.PureComponent {
   }
 }
 
-export default withStyles(styles)(AddPathProblemSolutionDialog);
+export default withStyles(styles)(AddPathActivitySolutionDialog);

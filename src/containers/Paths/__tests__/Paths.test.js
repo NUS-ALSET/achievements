@@ -2,7 +2,7 @@ import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
 import sinon from "sinon";
 
-import { Paths } from "./Paths";
+import { Paths } from "../Paths";
 
 describe("<Paths.test.js>", () => {
   let shallow;

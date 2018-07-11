@@ -35,7 +35,7 @@ import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
-import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
+import AddPathActivitySolutionDialog from "../../components/dialogs/AddPathActivitySolutionDialog";
 import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
 import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
@@ -152,6 +152,13 @@ class Assignments extends React.Component {
     this.props.dispatch(assignmentCloseDialog());
   };
 
+  commitTextSolution = (solution, taskId) => {
+    const { course, dispatch } = this.props;
+
+    dispatch(assignmentSolutionRequest(course.id, taskId, solution));
+    dispatch(assignmentCloseDialog());
+  };
+
   refreshProfileSolutions = () =>
     this.props.dispatch(assignmentRefreshProfilesRequest(this.props.course.id));
 
@@ -261,12 +268,12 @@ class Assignments extends React.Component {
           studentName={ui && ui.dialog && ui.dialog.studentName}
         />
         <AddProfileDialog
-          dispatch={dispatch}
           externalProfile={{
             url: "https://codecombat.com",
             name: "Code Combat",
             id: "CodeCombat"
           }}
+          onClose={this.closeDialog}
           onCommit={this.onProfileCommit}
           open={ui.dialog && ui.dialog.type === "Profile"}
           uid={currentUser.id}
@@ -281,13 +288,13 @@ class Assignments extends React.Component {
           />
         )}
         <AddTextSolutionDialog
-          assignment={ui.currentAssignment}
-          courseId={course.id}
-          dispatch={dispatch}
+          onClose={this.closeDialog}
+          onCommit={this.commitTextSolution}
           open={ui.dialog && ui.dialog.type === "Text"}
           solution={ui.dialog && ui.dialog.value}
+          taskId={ui.currentAssignment && ui.currentAssignment.id}
         />
-        <AddPathProblemSolutionDialog
+        <AddPathActivitySolutionDialog
           assignment={ui.currentAssignment}
           dispatch={dispatch}
           loadingSolution={!!ui.dialog && ui.dialog.loadingSolution}

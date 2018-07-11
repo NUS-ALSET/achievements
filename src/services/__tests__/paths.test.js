@@ -2,7 +2,10 @@ import firebase from "firebase";
 import assert from "assert";
 import sinon from "sinon";
 import Promise from "bluebird";
-import { PathsService } from "../paths";
+import { PathsService, PROBLEMS_TYPES } from "../paths";
+
+import correctProblems from "./data/correctProblems";
+import incorrectProblems from "./data/incorrectProblems";
 
 describe("Paths service tests", () => {
   /** @type {PathsService} */
@@ -18,23 +21,81 @@ describe("Paths service tests", () => {
   afterEach(() => firebase.restore());
 
   it("should fetch file id", () => {
-    assert.equal(
+    expect(
+      pathsService.getFileId("https://drive.google.com/file/d/THE_FILE_ID/view")
+    ).toBe("THE_FILE_ID");
+    expect(
       pathsService.getFileId(
-        "https://drive.google.com/file/d/" +
-          "1kW5Zfe79S8mowBZOa2rDAxRxOsDP2wjF/view"
-      ),
-      "1kW5Zfe79S8mowBZOa2rDAxRxOsDP2wjF"
+        "https://colab.research.google.com/drive/THE_FILE_ID"
+      )
+    ).toBe("THE_FILE_ID");
+    expect(pathsService.getFileId("THE_FILE_ID")).toBe("THE_FILE_ID");
+  });
+
+  it("should validate problem", () => {
+    return Promise.all(
+      correctProblems.map(problem =>
+        Promise.resolve(pathsService.validateProblem(problem))
+      )
+    ).then(() =>
+      Promise.all(
+        incorrectProblems.map(item =>
+          expect(() => pathsService.validateProblem(item.problem)).toThrow(
+            item.error
+          )
+        )
+      )
     );
   });
 
-  it("should validate problem", () =>
-    pathsService.validateProblem({
-      name: "test",
-      type: "jupyter",
-      problemURL: "test",
-      solutionURL: "test",
-      frozen: 2
-    }));
+  it("should create new path", () => {
+    let spy = jest.fn();
+    firebase.refStub.withArgs("/paths").returns({
+      push: () => ({ key: "deadbeef" })
+    });
+    firebase.refStub.withArgs("/paths/deadbeef").returns({
+      set: data =>
+        Promise.resolve()
+          .then(() => spy())
+          .then(() =>
+            expect(data).toEqual({
+              name: "test",
+              owner: "testOwner"
+            })
+          )
+    });
+
+    return pathsService
+      .pathChange("testOwner", {
+        name: "test"
+      })
+      .then(result => expect(result).toBe("deadbeef"))
+      .then(() => expect(spy.mock.calls.length).toBe(1));
+  });
+
+  it("should update existing path", () => {
+    let spy = jest.fn();
+    firebase.refStub.withArgs("/paths/deadbeef").returns({
+      update: data =>
+        Promise.resolve()
+          .then(() => spy())
+          .then(() =>
+            expect(data).toEqual({
+              id: "deadbeef",
+              name: "test",
+              owner: "testOwner"
+            })
+          )
+    });
+
+    return pathsService
+      .pathChange("testOwner", {
+        id: "deadbeef",
+        name: "test"
+      })
+      .then(result => expect(result).toBe("deadbeef"))
+      .then(() => expect(spy.mock.calls.length).toBe(1));
+  });
 
   it("should join path", () => {
     firebase.refStub.withArgs("/problems/cafebabe").returns({
@@ -125,5 +186,39 @@ describe("Paths service tests", () => {
           type: "jupyter"
         })
       );
+  });
+
+  describe("submit solutions variants", () => {
+    let spy;
+
+    beforeEach(() => (spy = jest.fn()));
+
+    it("should submit text solution", () => {
+      firebase.refStub
+        .withArgs("/problemSolutions/testProblem/deadbeef")
+        .returns({
+          set: data => {
+            spy();
+            expect(data).toBe("test solution");
+          }
+        });
+
+      return pathsService
+        .submitSolution(
+          "deadbeef",
+          {
+            owner: "deadbeef",
+            pathId: "testPath",
+            pathName: "Test Path",
+            problemId: "testProblem",
+            problemName: "Test Problem",
+            type: PROBLEMS_TYPES.text.id
+          },
+          "test solution"
+        )
+        .then(() => {
+          expect(spy.mock.calls.length).toBe(1);
+        });
+    });
   });
 });

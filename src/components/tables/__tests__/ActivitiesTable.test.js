@@ -7,9 +7,9 @@ import Button from "@material-ui/core/Button";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 
-import ProblemsTable from "../ProblemsTable";
+import ActivitiesTable from "../ActivitiesTable";
 
-describe("<ProblemsTable>", () => {
+describe("<ActivitiesTable>", () => {
   let shallow;
   let mockDispatch;
 
@@ -22,9 +22,10 @@ describe("<ProblemsTable>", () => {
 
   it("should generate row for owner", () => {
     const wrapper = shallow(
-      <ProblemsTable
+      <ActivitiesTable
         currentUserId="abcd"
-        dispatch={mockDispatch}
+        onEditProblem={mockDispatch}
+        onOpenProblem={mockDispatch}
         pathOwnerId="abcd"
         problems={[
           {
@@ -35,7 +36,7 @@ describe("<ProblemsTable>", () => {
       />
     );
 
-    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(2);
+    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
 
     expect(wrapper.find(Button).length).toEqual(2);
     wrapper
@@ -44,20 +45,18 @@ describe("<ProblemsTable>", () => {
       .simulate("click");
     expect(
       mockDispatch.calledWith({
-        type: "PATH_PROBLEM_DIALOG_SHOW",
-        problemInfo: {
-          id: "test",
-          name: "Test"
-        }
+        id: "test",
+        name: "Test"
       })
     ).toEqual(true);
   });
 
   it("should generate row w/o edit button", () => {
     const wrapper = shallow(
-      <ProblemsTable
+      <ActivitiesTable
         currentUserId="abcd"
-        dispatch={mockDispatch}
+        onEditProblem={mockDispatch}
+        onOpenProblem={mockDispatch}
         pathOwnerId="efgh"
         problems={[
           {
@@ -68,7 +67,7 @@ describe("<ProblemsTable>", () => {
       />
     );
 
-    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
+    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(4);
     expect(wrapper.find(Button).length).toEqual(1);
   });
 });
