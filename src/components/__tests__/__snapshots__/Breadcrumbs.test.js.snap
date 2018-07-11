@@ -22,7 +22,8 @@ ShallowWrapper {
     "props": Object {
       "actions": Object {},
       "classes": Object {
-        "breadcrumbAction": "Breadcrumbs-breadcrumbAction-3",
+        "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
+        "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",
         "breadcrumbLink": "Breadcrumbs-breadcrumbLink-1",
         "breadcrumbText": "Breadcrumbs-breadcrumbText-2",
       },
@@ -40,7 +41,8 @@ ShallowWrapper {
       "props": Object {
         "actions": Object {},
         "classes": Object {
-          "breadcrumbAction": "Breadcrumbs-breadcrumbAction-3",
+          "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
+          "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",
           "breadcrumbLink": "Breadcrumbs-breadcrumbLink-1",
           "breadcrumbText": "Breadcrumbs-breadcrumbText-2",
         },
