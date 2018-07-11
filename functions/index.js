@@ -32,7 +32,7 @@ exports.handleNewProblemSolution =
 exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
   return checkToken(req)
     .then(() => {
-      exports.queueHandler();
+      jupyterTrigger.queueHandler();
       res.send("Done");
     })
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
@@ -67,7 +67,7 @@ exports.handleProfileRefreshRequest =
 exports.handleProfileQueue = functions.https.onRequest((req, res) => {
   return checkToken(req)
     .then(() => {
-      exports.queueHandler();
+      profileTriggers.queueHandler();
       res.send("Done");
     })
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
