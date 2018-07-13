@@ -33,7 +33,7 @@ export const ASSIGNMENTS_TYPES = {
     caption: "Complete Number of Code Combat Levels"
   },
   PathActivity: {
-    id: "Activity",
+    id: "PathActivity",
     caption: "Path Activity"
   },
   PathProgress: {
