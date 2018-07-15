@@ -6,11 +6,18 @@ const jupyterLambdaProcessor =
   "https://o6rpv1ofri.execute-api.ap-southeast-1.amazonaws.com/Prod";
 
 const executeJupyterSolution = (data, taskKey, owner) => {
-  axios({
-    url: jupyterLambdaProcessor,
-    method: "post",
-    data: data.solution
-  })
+  return admin
+    .database()
+    .ref("/config/jupyterLambdaProcessor")
+    .once("value")
+    .then(lambdaProcessor => lambdaProcessor.val())
+    .then(lambdaProcessor =>
+      axios({
+        url: lambdaProcessor || jupyterLambdaProcessor,
+        method: "post",
+        data: data.solution
+      })
+    )
     .then(response =>
       admin
         .database()
@@ -27,6 +34,9 @@ const executeJupyterSolution = (data, taskKey, owner) => {
           .database()
           .ref(`/jupyterSolutionsQueue/answers/${taskKey}`)
           .set(false)
+    )
+    .then(() =>
+      admin.database().ref(`/jupyterSolutionsQueue/answers/${taskKey}`)
     );
 };
 

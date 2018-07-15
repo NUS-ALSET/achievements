@@ -85,7 +85,11 @@ class Path extends React.Component {
     switch (problem.type) {
       case PROBLEMS_TYPES.codeCombat.id:
       case PROBLEMS_TYPES.codeCombatNumber.id:
-        onProblemSolutionSubmit(pathProblems.path.id, problem, "Completed");
+        onProblemSolutionSubmit(
+          pathProblems.path.id,
+          { problemId: problem.id, ...problem },
+          "Completed"
+        );
         break;
       case PROBLEMS_TYPES.jupyterInline.id:
       case PROBLEMS_TYPES.jupyter.id:
@@ -114,6 +118,19 @@ class Path extends React.Component {
     );
 
   onAddProblemClick = () => this.props.onProblemDialogShow();
+  onTextSolutionSubmit = (activityId, solution) => {
+    const { onCloseDialog, onProblemSolutionSubmit, pathProblems } = this.props;
+    const activity = pathProblems.problems.filter(
+      activity => activity.id === activityId
+    )[0];
+
+    onProblemSolutionSubmit(
+      pathProblems.path.id,
+      { ...activity, problemId: activity.id },
+      solution
+    );
+    onCloseDialog();
+  };
   onProfileUpdate = profile =>
     this.props.onProfileUpdate(profile, "CodeCombat");
 
@@ -123,7 +140,7 @@ class Path extends React.Component {
       onCloseDialog,
       onProblemChangeRequest,
       onProblemDialogShow,
-      onProblemSolutionSubmit,
+
       pathProblems,
       pathStatus,
       ui,
@@ -198,10 +215,10 @@ class Path extends React.Component {
           ))}
         <AddTextSolutionDialog
           onClose={onCloseDialog}
-          onCommit={onProblemSolutionSubmit}
+          onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${PROBLEMS_TYPES.text.id}Solution`}
           solution={ui.dialog.solution}
-          taskId={ui.dialog.taskId}
+          taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddProfileDialog
           externalProfile={{

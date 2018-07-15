@@ -413,13 +413,31 @@ export class PathsService {
                 .database()
                 .ref(`${answerPath}${answerKey}`)
                 .on("value", response => {
-                  if (response.val() === null) return;
-                  return response.val()
-                    ? resolve(JSON.parse(response.val().solution))
-                    : reject(
-                        new Error("Failing - Unable execute your solution")
-                      );
+                  if (response.val() === null) {
+                    return;
+                  }
+
+                  firebase
+                    .database()
+                    .ref(`${answerPath}${answerKey}`)
+                    .off();
+
+                  return firebase
+                    .database()
+                    .ref(`${answerPath}${answerKey}`)
+                    .remove()
+                    .then(
+                      () =>
+                        response.val()
+                          ? resolve(JSON.parse(response.val().solution))
+                          : reject(
+                              new Error(
+                                "Failing - Unable execute your solution"
+                              )
+                            )
+                    );
                 });
+
               return firebase
                 .database()
                 .ref(`/jupyterSolutionsQueue/tasks/${answerKey}`)

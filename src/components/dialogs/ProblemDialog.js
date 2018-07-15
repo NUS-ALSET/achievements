@@ -44,7 +44,7 @@ class ProblemDialog extends React.PureComponent {
   getTypeSpecificElements() {
     let { problem } = this.props;
     problem = Object.assign(problem || {}, this.state);
-    switch (this.state.type || (problem && problem.type)) {
+    switch (this.state.type || (problem && problem.type) || "text") {
       case PROBLEMS_TYPES.text.id:
         return (
           <TextField

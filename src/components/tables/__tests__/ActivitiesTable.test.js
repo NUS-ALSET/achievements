@@ -55,7 +55,8 @@ describe("<ActivitiesTable>", () => {
     const wrapper = shallow(
       <ActivitiesTable
         currentUserId="abcd"
-        dispatch={mockDispatch}
+        onEditProblem={mockDispatch}
+        onOpenProblem={mockDispatch}
         pathOwnerId="efgh"
         problems={[
           {
