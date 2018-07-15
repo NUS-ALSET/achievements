@@ -21,22 +21,26 @@ const executeJupyterSolution = (data, taskKey, owner) => {
     .then(response =>
       admin
         .database()
-        .ref(`/jupyterSolutionsQueue/answers/${taskKey}`)
+        .ref(`/jupyterSolutionsQueue/responses/${taskKey}`)
         .set({
           owner: owner,
           solution: JSON.stringify(response.data.ipynb)
         })
     )
-    .catch(
-      err =>
+    .catch(err => {
+      return (
         console.error(err.message) ||
         admin
           .database()
-          .ref(`/jupyterSolutionsQueue/answers/${taskKey}`)
+          .ref(`/jupyterSolutionsQueue/responses/${taskKey}`)
           .set(false)
-    )
+      );
+    })
     .then(() =>
-      admin.database().ref(`/jupyterSolutionsQueue/answers/${taskKey}`)
+      admin
+        .database()
+        .ref(`/jupyterSolutionsQueue/answers/${taskKey}`)
+        .remove()
     );
 };
 

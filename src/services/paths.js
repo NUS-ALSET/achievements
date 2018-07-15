@@ -403,7 +403,7 @@ export class PathsService {
               return true;
             });
             return new Promise((resolve, reject) => {
-              const answerPath = "/jupyterSolutionsQueue/answers/";
+              const answerPath = "/jupyterSolutionsQueue/responses/";
               const answerKey = firebase
                 .database()
                 .ref(answerPath)
