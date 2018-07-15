@@ -163,8 +163,13 @@ function getValueToSort(solutions, sortField) {
 }
 
 function checkVisibilitySolution(assignments, key) {
+  const now = new Date().getTime();
   const assignment = assignments[key] || {};
-  return assignment.visible;
+  return (
+    assignment.visible &&
+    new Date(assignment.open).getTime() < now &&
+    new Date(assignment.deadline).getTime() > now
+  );
 }
 
 /**

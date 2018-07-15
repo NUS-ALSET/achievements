@@ -112,10 +112,10 @@
       }
     },
     "jupyterSolutionsQueue": {
-      "answers": {
+      "responses": {
         "$taskKey": {
           ".read": "auth != null",
-          ".write": false
+          ".write": "!newData.exists()"
         }
       },
       "tasks": {
