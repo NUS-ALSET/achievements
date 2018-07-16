@@ -50,7 +50,11 @@ export const path = (
     case PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS:
       return {
         ...state,
-        problemSolutions: action.solutions
+        problemSolutions: Object.assign(
+          {},
+          state.problemSolutions,
+          action.solutions
+        )
       };
     default:
       return state;

@@ -1,6 +1,7 @@
 import {
   PROBLEM_FINALIZE,
   PROBLEM_INIT_SUCCESS,
+  PROBLEM_SOLUTION_CALCULATED_WRONG,
   PROBLEM_SOLUTION_PROVIDED_SUCCESS,
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
@@ -51,10 +52,10 @@ export const problem = (
           ...(state.solution || {}),
           ...action.payload,
           checked: true,
-          failed: false,
           loading: false
         }
       };
+    case PROBLEM_SOLUTION_CALCULATED_WRONG:
     case PROBLEM_SOLUTION_REFRESH_FAIL:
       return {
         ...state,

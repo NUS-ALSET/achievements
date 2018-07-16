@@ -53,6 +53,21 @@ class JupyterInlineProblem extends React.PureComponent {
     );
   };
 
+  getCalculatedSolution = solution => {
+    if (!solution) {
+      return "";
+    }
+    if (solution.failed) {
+      return " (Failed - Final output should be empty)";
+    }
+    if (solution.loading) {
+      return " (Checking)";
+    }
+    if (solution.checked) {
+      return " (Passed)";
+    }
+  };
+
   // Move it to paths
   getSolutionCode = (solution, problem) =>
     (this.state.solutionJSON &&
@@ -90,15 +105,11 @@ class JupyterInlineProblem extends React.PureComponent {
           title="Edit code"
         />
         {solution &&
-          solution.json && (
+          (solution.json || solution.loading) && (
             <JupyterNotebook
               solution={solution}
               title={
-                "Calculated Solution" +
-                ((solution &&
-                  solution.failed &&
-                  " - Failing - Final output should be empty") ||
-                  "")
+                "Calculated Solution" + this.getCalculatedSolution(solution)
               }
             />
           )}

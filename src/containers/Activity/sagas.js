@@ -36,6 +36,7 @@ import { pathsService, PROBLEMS_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
+import { pathFetchProblemsSolutionsSuccess } from "../Path/actions";
 
 const ONE_MINUTE = 60000;
 
@@ -238,6 +239,11 @@ export function* problemSolutionSubmitRequestHandler(action) {
         data.pathProblem.id,
         action.payload
       )
+    );
+    yield put(
+      pathFetchProblemsSolutionsSuccess(action.pathId, {
+        [data.pathProblem.id || data.pathProblem.problemId]: true
+      })
     );
     yield put(notificationShow("Solution submitted"));
   } catch (err) {
