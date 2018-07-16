@@ -232,11 +232,11 @@ class Path extends React.Component {
           open={ui.dialog.type === `${PROBLEMS_TYPES.profile.id}Solution`}
         />
         <ActivitiesTable
+          activities={pathProblems.problems || []}
           currentUserId={uid || "Anonymous"}
           onEditProblem={onProblemDialogShow}
           onOpenProblem={this.onOpenProblem}
           pathOwnerId={pathProblems.path && pathProblems.path.owner}
-          problems={pathProblems.problems || []}
           selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
         />
         <ProblemDialog
