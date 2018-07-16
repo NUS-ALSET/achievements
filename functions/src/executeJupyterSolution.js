@@ -15,7 +15,7 @@ const executeJupyterSolution = (data, taskKey, owner) => {
       axios({
         url: lambdaProcessor || jupyterLambdaProcessor,
         method: "post",
-        data: data.solution
+        data: { notebook: data.solution }
       })
     )
     .then(response =>
