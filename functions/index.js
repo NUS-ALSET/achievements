@@ -11,6 +11,7 @@ const profileTriggers = require("./src/updateProfile");
 const jupyterTrigger = require("./src/executeJupyterSolution");
 const downloadEvents = require("./src/downloadEvents");
 const solutionTriggers = require("./src/updateSolutionVisibility");
+const migrateActivities = require("./src/migrateActivities");
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -85,4 +86,11 @@ exports.downloadEvents = downloadEvents.httpTrigger;
 
 exports.yrtest = functions.https.onRequest((req, res) => {
   res.status(200).send("YR TEST PASSED :D");
+});
+
+exports.migrateActivities = functions.https.onRequest((req, res) => {
+  return checkToken(req)
+    .then(() => migrateActivities.handler())
+    .then(() => res.send("Done"))
+    .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });

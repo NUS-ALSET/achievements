@@ -47,7 +47,8 @@ describe("Paths sagas", () => {
         problemInfo: { level: "test-level", name: "test", type: "codeCombat" },
         problemKey: "testKey",
         type: "PATH_PROBLEM_CHANGE_SUCCESS"
-      }
+      },
+      { type: "PATH_CLOSE_DIALOG" }
     ]);
   });
 

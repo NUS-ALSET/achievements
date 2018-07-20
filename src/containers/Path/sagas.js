@@ -12,7 +12,12 @@ import {
   pathToggleJoinStatusSuccess
 } from "./actions";
 import { pathsService } from "../../services/paths";
-import { PATHS_JOINED_FETCH_SUCCESS } from "../Paths/actions";
+import {
+  PATH_PROBLEM_MOVE_REQUEST,
+  pathProblemMoveFail,
+  PATHS_JOINED_FETCH_SUCCESS
+} from "../Paths/actions";
+import { notificationShow } from "../Root/actions";
 
 export function* pathProblemOpenHandler(action) {
   const data = yield select(state => ({
@@ -83,6 +88,21 @@ export function* pathToggleJoinStatusRequestHandler(action) {
   }
 }
 
+export function* pathProblemMoveRequestHandler(action) {
+  try {
+  } catch (err) {
+    yield put(
+      pathProblemMoveFail(
+        action.pathId,
+        action.problemId,
+        action.direction,
+        err.message
+      )
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
 export function* pathMoreProblemsRequestHandler(action) {
   try {
     yield call(
@@ -122,6 +142,9 @@ export default [
       PATH_TOGGLE_JOIN_STATUS_REQUEST,
       pathToggleJoinStatusRequestHandler
     );
+  },
+  function* watchPathProblemMoveRequestHandler() {
+    yield takeLatest(PATH_PROBLEM_MOVE_REQUEST, pathProblemMoveRequestHandler);
   },
   function* watchPathMoreProblemsRequest() {
     yield takeLatest(

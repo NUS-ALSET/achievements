@@ -80,8 +80,8 @@ class PathsTable extends React.PureComponent {
                 <TableCell>{path.name}</TableCell>
                 {!owner && (
                   <TableCell>
-                    {path.solutions !== undefined && path.total
-                      ? `${path.solutions} of ${path.total}`
+                    {path.solutions !== undefined && path.totalActivities
+                      ? `${path.solutions} of ${path.totalActivities}`
                       : ""}
                   </TableCell>
                 )}

@@ -59,7 +59,7 @@ class ActivitiesTable extends React.PureComponent {
             {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
             <TableCell
               style={{
-                width: 240
+                width: pathOwnerId === currentUserId ? 450 : 200
               }}
             >
               Actions
