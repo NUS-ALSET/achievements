@@ -58,7 +58,7 @@ class PathTabs extends React.Component {
         Object.keys(publicPaths || {}).forEach(key => {
           if (joinedPaths[key]) {
             publicPaths[key].solutions = joinedPaths[key].solutions;
-            publicPaths[key].total = joinedPaths[key].total;
+            publicPaths[key].totalActivities = joinedPaths[key].totalActivities;
           }
         });
         break;

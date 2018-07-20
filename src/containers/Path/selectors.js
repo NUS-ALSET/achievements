@@ -22,18 +22,13 @@ const getPath = (state, ownProps) =>
 
 const getJoinedPaths = state => state.paths.joinedPaths || {};
 
-const getProblems = (state, ownProps) => {
+const getActivities = (state, ownProps) => {
   const path = getPath(state, ownProps);
 
-  return (
-    path &&
-    path.owner &&
-    state.firebase.data.problems &&
-    state.firebase.data.problems[path.owner]
-  );
+  return path && path.owner && state.firebase.data.activities;
 };
 
-const getProblemSolutions = state => state.path.problemSolutions || {};
+const getActivitiesSolutions = state => state.path.problemSolutions || {};
 
 export const pathStatusSelector = createSelector(
   getUserId,
@@ -50,7 +45,7 @@ export const pathStatusSelector = createSelector(
   }
 );
 
-const getProblemDescription = problem => {
+const getActivitySelector = problem => {
   switch (problem.type) {
     case PROBLEMS_TYPES.text.id:
       return problem.question || "Answer the question";
@@ -73,17 +68,17 @@ const getProblemDescription = problem => {
   }
 };
 
-export const pathProblemsSelector = createSelector(
+export const pathActivitiesSelector = createSelector(
   getPath,
-  getProblems,
-  getProblemSolutions,
-  (path, problems, solutions) => ({
+  getActivities,
+  getActivitiesSolutions,
+  (path, activities, solutions) => ({
     path: path,
-    problems: Object.keys(problems || {})
+    problems: Object.keys(activities || {})
       .map(id => ({
-        ...problems[id],
+        ...activities[id],
         id,
-        description: getProblemDescription(problems[id]),
+        description: getActivitySelector(activities[id]),
         solved: solutions[id]
       }))
       .filter(

@@ -60,7 +60,8 @@ describe("Paths service tests", () => {
           .then(() =>
             expect(data).toEqual({
               name: "test",
-              owner: "testOwner"
+              owner: "testOwner",
+              totalActivities: 0
             })
           )
     });
@@ -98,15 +99,16 @@ describe("Paths service tests", () => {
   });
 
   it("should join path", () => {
-    firebase.refStub.withArgs("/problems/cafebabe").returns({
-      orderByChild: () => ({
-        equalTo: () => ({ once: () => firebase.snap({}) })
-      })
-    });
+    firebase.refStub
+      .withArgs("/completedActivities/deadbeef/testPath")
+      .returns({
+        once: () => firebase.snap({})
+      });
     firebase.refStub.withArgs("/paths/testPath").returns({
       once: () =>
         firebase.snap({
-          owner: "cafebabe"
+          owner: "cafebabe",
+          total: 0
         })
     });
     firebase.refStub.withArgs("/studentJoinedPaths/deadbeef/testPath").returns({
@@ -137,7 +139,7 @@ describe("Paths service tests", () => {
     firebase.refStub.withArgs("/paths/-testPathId").returns({
       once: () => firebase.snap({ owner: "testOwner", name: "Test Path" })
     });
-    firebase.refStub.withArgs("/problems/testOwner/testProblemId").returns({
+    firebase.refStub.withArgs("/activities/testProblemId").returns({
       once: () =>
         firebase.snap({
           frozen: "2",
@@ -195,6 +197,14 @@ describe("Paths service tests", () => {
 
     it("should submit text solution", () => {
       firebase.refStub
+        .withArgs("/completedActivities/deadbeef/testPath/testProblem")
+        .returns({
+          set: data => {
+            spy();
+            expect(data).toBe(true);
+          }
+        });
+      firebase.refStub
         .withArgs("/problemSolutions/testProblem/deadbeef")
         .returns({
           set: data => {
@@ -209,6 +219,7 @@ describe("Paths service tests", () => {
           {
             owner: "deadbeef",
             pathId: "testPath",
+            path: "testPath",
             pathName: "Test Path",
             problemId: "testProblem",
             problemName: "Test Problem",
@@ -217,7 +228,7 @@ describe("Paths service tests", () => {
           "test solution"
         )
         .then(() => {
-          expect(spy.mock.calls.length).toBe(1);
+          expect(spy.mock.calls.length).toBe(2);
         });
     });
   });

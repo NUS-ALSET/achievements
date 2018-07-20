@@ -23,22 +23,23 @@ describe("<ActivitiesTable>", () => {
   it("should generate row for owner", () => {
     const wrapper = shallow(
       <ActivitiesTable
-        currentUserId="abcd"
-        onEditProblem={mockDispatch}
-        onOpenProblem={mockDispatch}
-        pathOwnerId="abcd"
-        problems={[
+        activities={[
           {
             id: "test",
             name: "Test"
           }
         ]}
+        currentUserId="abcd"
+        onEditProblem={mockDispatch}
+        onMoveProblem={mockDispatch}
+        onOpenProblem={mockDispatch}
+        pathOwnerId="abcd"
       />
     );
 
     expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
 
-    expect(wrapper.find(Button).length).toEqual(2);
+    expect(wrapper.find(Button).length).toEqual(4);
     wrapper
       .find(Button)
       .at(1)
@@ -49,21 +50,49 @@ describe("<ActivitiesTable>", () => {
         name: "Test"
       })
     ).toEqual(true);
+    wrapper
+      .find(Button)
+      .at(2)
+      .simulate("click");
+
+    expect(
+      mockDispatch.calledWith(
+        {
+          id: "test",
+          name: "Test"
+        },
+        "up"
+      )
+    ).toEqual(true);
+    wrapper
+      .find(Button)
+      .at(3)
+      .simulate("click");
+    expect(
+      mockDispatch.calledWith(
+        {
+          id: "test",
+          name: "Test"
+        },
+        "down"
+      )
+    ).toEqual(true);
   });
 
   it("should generate row w/o edit button", () => {
     const wrapper = shallow(
       <ActivitiesTable
-        currentUserId="abcd"
-        onEditProblem={mockDispatch}
-        onOpenProblem={mockDispatch}
-        pathOwnerId="efgh"
-        problems={[
+        activities={[
           {
             id: "test",
             name: "Test"
           }
         ]}
+        currentUserId="abcd"
+        onEditProblem={mockDispatch}
+        onMoveProblem={mockDispatch}
+        onOpenProblem={mockDispatch}
+        pathOwnerId="efgh"
       />
     );
 
