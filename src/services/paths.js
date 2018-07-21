@@ -85,11 +85,11 @@ export class PathsService {
 
   /**
    *
-   * @param {String}pathId
-   * @param problemId
+   * @param {String} pathId
+   * @param {String} activitiyId
    * @returns {Promise<PathProblem>}
    */
-  fetchPathProblem(pathId, problemId) {
+  fetchPathProblem(pathId, activitiyId) {
     return Promise.resolve()
       .then(
         () =>
@@ -104,14 +104,14 @@ export class PathsService {
       .then(pathInfo =>
         firebase
           .database()
-          .ref(`/problems/${pathInfo.owner}/${problemId}`)
+          .ref(`/activities/${activitiyId}`)
           .once("value")
           .then(data => data.val())
           .then(problem => ({
             problemName: problem.name,
             pathName: pathInfo.name,
             pathId: pathId,
-            problemId,
+            problemId: activitiyId,
             owner: pathInfo.owner,
             ...problem
           }))
@@ -176,36 +176,14 @@ export class PathsService {
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {
-    let ref = firebase
+    return firebase
       .database()
-      .ref(`/problems/${pathOwner}`)
-      .orderByChild("path");
-
-    if (pathId) {
-      ref = ref.equalTo(pathId);
-    } else {
-      ref = ref.endAt(null);
-    }
-
-    return ref
+      .ref(`/completedActivities/${solverId}/${pathId}`)
       .once("value")
-      .then(data => Object.keys(data.val() || {}))
-      .then(problemKeys =>
-        Promise.all(
-          problemKeys.map(problemKey =>
-            firebase
-              .database()
-              .ref(`/problemSolutions/${problemKey}/${solverId}`)
-              .once("value")
-              .then(data => data.val() || false)
-          )
-        )
-          .then(solutions => solutions.filter(solution => !!solution))
-          .then(existingSolutions => ({
-            solutions: existingSolutions.length,
-            total: problemKeys.length
-          }))
-      );
+      .then(snapshot => snapshot.val() || {})
+      .then(completed => ({
+        solutions: Object.keys(completed).length
+      }));
   }
 
   fetchFile(fileId) {
@@ -272,7 +250,7 @@ export class PathsService {
     return firebase
       .database()
       .ref(`/paths/${key}`)
-      .set({ ...pathInfo, owner: uid })
+      .set({ ...pathInfo, totalActivities: 0, owner: uid })
       .then(() => key);
   }
 
@@ -322,6 +300,9 @@ export class PathsService {
   }
 
   problemChange(uid, pathId, problemInfo) {
+    const isNew = !problemInfo.id;
+    let next;
+
     this.validateProblem(problemInfo);
 
     problemInfo.owner = uid;
@@ -333,17 +314,27 @@ export class PathsService {
       problemInfo.id ||
       firebase
         .database()
-        .ref(`/problems/${uid}`)
+        .ref("/activities")
         .push().key;
-    const ref = firebase.database().ref(`/problems/${uid}/${key}`);
+    const ref = firebase.database().ref(`/activities/${key}`);
 
     if (problemInfo.id) {
       delete problemInfo.id;
-      ref.update(problemInfo);
+      next = ref.update(problemInfo);
     } else {
-      ref.set(problemInfo);
+      next = ref.set(problemInfo);
     }
-    return key;
+    return next
+      .then(
+        () =>
+          // For new activity increase total counter by 1
+          isNew &&
+          firebase
+            .database()
+            .ref(`/paths/${pathId}/totalActivities`)
+            .transaction(activities => ++activities)
+      )
+      .then(() => key);
   }
 
   /**
@@ -500,7 +491,17 @@ export class PathsService {
           default:
             break;
         }
-      });
+      })
+      .then(() =>
+        firebase
+          .database()
+          .ref(
+            `/completedActivities/${uid}/${pathProblem.path}/${
+              pathProblem.problemId
+            }`
+          )
+          .set(true)
+      );
   }
 
   /**
@@ -588,12 +589,11 @@ export class PathsService {
    * @returns {Promise<Array<Activity>>} list of problems
    */
   fetchProblems(uid, pathId) {
-    let ref = firebase.database().ref(`/problems/${uid}`);
-
-    if (pathId && pathId !== uid) {
-      ref = ref.orderByChild("path").equalTo(pathId);
-    }
-    return ref
+    return firebase
+      .database()
+      .ref("/activities")
+      .orderByChild("path")
+      .equalTo(pathId)
       .once("value")
       .then(data => data.val())
       .then(problems =>
@@ -601,12 +601,6 @@ export class PathsService {
           ...problems[id],
           id
         }))
-      )
-      .then(
-        problems =>
-          pathId && pathId !== "default"
-            ? problems
-            : problems.filter(problem => !problem.path)
       );
   }
 

@@ -4,7 +4,7 @@
  * @created 22.02.18
  */
 
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
@@ -30,22 +30,24 @@ const styles = theme => ({
 
 class ActivitiesTable extends React.PureComponent {
   static propTypes = {
+    activities: PropTypes.array.isRequired,
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
     onEditProblem: PropTypes.func.isRequired,
     onOpenProblem: PropTypes.func.isRequired,
-    pathOwnerId: PropTypes.any,
-    problems: PropTypes.array.isRequired
+    onMoveProblem: PropTypes.func.isRequired,
+    pathOwnerId: PropTypes.any
   };
 
   render() {
     const {
+      activities,
       classes,
       currentUserId,
       onEditProblem,
+      onMoveProblem,
       onOpenProblem,
-      pathOwnerId,
-      problems
+      pathOwnerId
     } = this.props;
 
     return (
@@ -57,7 +59,7 @@ class ActivitiesTable extends React.PureComponent {
             {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
             <TableCell
               style={{
-                width: 240
+                width: pathOwnerId === currentUserId ? 450 : 200
               }}
             >
               Actions
@@ -65,13 +67,13 @@ class ActivitiesTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {problems.map(problem => (
-            <TableRow key={problem.id}>
-              <TableCell>{problem.name}</TableCell>
-              <TableCell>{problem.description}</TableCell>
+          {activities.map(activity => (
+            <TableRow key={activity.id}>
+              <TableCell>{activity.name}</TableCell>
+              <TableCell>{activity.description}</TableCell>
               {currentUserId !== pathOwnerId && (
                 <TableCell>
-                  {problem.solved && (
+                  {activity.solved && (
                     <Icon>
                       <DoneIcon />
                     </Icon>
@@ -79,17 +81,36 @@ class ActivitiesTable extends React.PureComponent {
                 </TableCell>
               )}
               <TableCell>
-                <Button onClick={() => onOpenProblem(problem)} variant="raised">
+                <Button
+                  onClick={() => onOpenProblem(activity)}
+                  variant="raised"
+                >
                   Solve
                 </Button>
                 {pathOwnerId === currentUserId && (
-                  <Button
-                    className={classes.button}
-                    onClick={() => onEditProblem(problem)}
-                    variant="raised"
-                  >
-                    Edit
-                  </Button>
+                  <Fragment>
+                    <Button
+                      className={classes.button}
+                      onClick={() => onEditProblem(activity)}
+                      variant="raised"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      className={classes.button}
+                      onClick={() => onMoveProblem(activity, "up")}
+                      variant="raised"
+                    >
+                      Up
+                    </Button>
+                    <Button
+                      className={classes.button}
+                      onClick={() => onMoveProblem(activity, "down")}
+                      variant="raised"
+                    >
+                      Down
+                    </Button>
+                  </Fragment>
                 )}
               </TableCell>
             </TableRow>

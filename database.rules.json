@@ -1,5 +1,13 @@
 {
   "rules": {
+    "activities": {
+      ".read": "auth != null",
+      "$problemKey": {
+        ".write": "auth != null && (
+            newData.child('owner').val() == auth.uid
+        )"
+      }
+    },
     "admins": {
       ".write": false,
       "$userKey": {
@@ -54,6 +62,12 @@
             )
           )
         "
+      }
+    },
+    "completedActivities": {
+      "$userKey": {
+        ".read": "auth != null && $userKey == auth.uid",
+        ".write": "auth != null && $userKey == auth.uid"
       }
     },
     "courseMembers": {
@@ -162,16 +176,6 @@
         "$userKey": {
           ".read": "auth != null",
           ".write": "auth != null && auth.uid == $userKey"
-        }
-      }
-    },
-    "problems": {
-      ".read": "auth != null",
-      "$userKey": {
-        "$problemKey": {
-          ".write": "auth != null && (
-              newData.child('owner').val() == auth.uid
-            )"
         }
       }
     },

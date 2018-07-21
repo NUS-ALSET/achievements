@@ -12,7 +12,10 @@ import {
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import { PATH_TOGGLE_JOIN_STATUS_SUCCESS } from "../Path/actions";
+import {
+  PATH_TOGGLE_JOIN_STATUS_SUCCESS,
+  pathCloseDialog
+} from "../Path/actions";
 
 export function* loginHandler(action) {
   // Auth GAPI to download files from google drive
@@ -62,6 +65,7 @@ export function* pathProblemChangeRequestHandler(action) {
       action.problemInfo
     );
     yield put(pathProblemChangeSuccess(action.pathId, action.problemInfo, key));
+    yield put(pathCloseDialog());
   } catch (err) {
     yield put(
       pathProblemChangeFail(action.pathId, action.problemInfo, err.message)

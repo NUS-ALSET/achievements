@@ -22,7 +22,7 @@ import withRouter from "react-router-dom/withRouter";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import {
   pathStatusSelector,
-  pathProblemsSelector,
+  pathActivitiesSelector,
   PATH_STATUS_JOINED,
   PATH_STATUS_OWNER,
   PATH_STATUS_NOT_JOINED
@@ -36,7 +36,8 @@ import {
 } from "./actions";
 import {
   pathProblemChangeRequest,
-  pathProblemDialogShow
+  pathProblemDialogShow,
+  pathProblemMoveRequest
 } from "../Paths/actions";
 import ProblemDialog from "../../components/dialogs/ProblemDialog";
 
@@ -60,6 +61,7 @@ class Path extends React.Component {
 
     onProblemChangeRequest: PropTypes.func.isRequired,
     onProblemDialogShow: PropTypes.func.isRequired,
+    onProblemMoveRequest: PropTypes.func.isRequired,
     onProblemSolutionSubmit: PropTypes.func.isRequired,
     onProfileUpdate: PropTypes.func.isRequired,
     onPushPath: PropTypes.func.isRequired,
@@ -140,7 +142,7 @@ class Path extends React.Component {
       onCloseDialog,
       onProblemChangeRequest,
       onProblemDialogShow,
-
+      onProblemMoveRequest,
       pathProblems,
       pathStatus,
       ui,
@@ -232,11 +234,12 @@ class Path extends React.Component {
           open={ui.dialog.type === `${PROBLEMS_TYPES.profile.id}Solution`}
         />
         <ActivitiesTable
+          activities={pathProblems.problems || []}
           currentUserId={uid || "Anonymous"}
           onEditProblem={onProblemDialogShow}
+          onMoveProblem={onProblemMoveRequest}
           onOpenProblem={this.onOpenProblem}
           pathOwnerId={pathProblems.path && pathProblems.path.owner}
-          problems={pathProblems.problems || []}
           selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
         />
         <ProblemDialog
@@ -255,7 +258,7 @@ class Path extends React.Component {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
-  pathProblems: pathProblemsSelector(state, ownProps),
+  pathProblems: pathActivitiesSelector(state, ownProps),
   pathStatus: pathStatusSelector(state, ownProps),
   ui: state.path.ui,
   uid: state.firebase.auth.uid
@@ -269,6 +272,7 @@ const mapDispatchToProps = {
   onOpenSolution: pathOpenSolutionDialog,
   onProblemChangeRequest: pathProblemChangeRequest,
   onProblemDialogShow: pathProblemDialogShow,
+  onProblemMoveRequest: pathProblemMoveRequest,
   onProblemSolutionSubmit: problemSolutionSubmitRequest,
   onPushPath: push,
   onRequestMoreProblems: pathMoreProblemsRequest,
@@ -288,7 +292,10 @@ export default compose(
 
     return [
       `/paths/${pathId}`,
-      "/problems",
+      {
+        path: "/activities",
+        queryParams: ["orderByChild=path", `equalTo=${pathId}`]
+      },
       `/studentJoinedPaths/${uid}/${pathId}`
     ];
   }),

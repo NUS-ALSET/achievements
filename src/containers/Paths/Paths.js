@@ -95,9 +95,6 @@ export default compose(
           path: "/paths",
           storeAs: "publicPaths",
           queryParams: ["orderByChild=isPublic", "equalTo=true"]
-        },
-        {
-          path: `/problems/${firebaseAuth.uid}`
         }
       ]
     );
