@@ -97,11 +97,16 @@
     "react"
   ],
   "globals": {
-    "describe": true,
-    "it": true,
-    "beforeEach": true,
+    "afterAll": true,
     "afterEach": true,
-    "gapi": true
+    "beforeAll": true,
+    "beforeEach": true,
+    "describe": true,
+    "expect": true,
+    "gapi": true,
+    "it": true,
+    "jest": true,
+    "test": true
   },
   "extends": [
     "eslint:recommended",

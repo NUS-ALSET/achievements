@@ -1,0 +1,209 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Paths.test.js> should check snapshot 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <Paths
+    dispatch={[Function]}
+    joinedPaths={Object {}}
+    myPaths={Object {}}
+    problems={Array []}
+    publicPaths={Object {}}
+    selectedPathId="asd"
+    ui={
+        Object {
+            "dialog": Object {},
+          }
+    }
+    uid="abcd"
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "function",
+    "props": Object {
+      "children": Array [
+        <WithStyles(Breadcrumbs)
+          paths={
+                    Array [
+                              Object {
+                                "label": "Paths",
+                              },
+                            ]
+          }
+/>,
+        <PathTabs
+          dispatch={[Function]}
+          joinedPaths={Object {}}
+          myPaths={
+                    Object {
+                              "abcd": Object {
+                                "name": "Default",
+                              },
+                            }
+          }
+          publicPaths={Object {}}
+/>,
+        <PathDialog
+          dispatch={[Function]}
+          open={false}
+          path={undefined}
+/>,
+      ],
+    },
+    "ref": null,
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "paths": Array [
+            Object {
+              "label": "Paths",
+            },
+          ],
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "dispatch": [Function],
+          "joinedPaths": Object {},
+          "myPaths": Object {
+            "abcd": Object {
+              "name": "Default",
+            },
+          },
+          "publicPaths": Object {},
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "dispatch": [Function],
+          "open": false,
+          "path": undefined,
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+    ],
+    "type": Symbol(react.fragment),
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "function",
+      "props": Object {
+        "children": Array [
+          <WithStyles(Breadcrumbs)
+            paths={
+                        Array [
+                                    Object {
+                                      "label": "Paths",
+                                    },
+                                  ]
+            }
+/>,
+          <PathTabs
+            dispatch={[Function]}
+            joinedPaths={Object {}}
+            myPaths={
+                        Object {
+                                    "abcd": Object {
+                                      "name": "Default",
+                                    },
+                                  }
+            }
+            publicPaths={Object {}}
+/>,
+          <PathDialog
+            dispatch={[Function]}
+            open={false}
+            path={undefined}
+/>,
+        ],
+      },
+      "ref": null,
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "paths": Array [
+              Object {
+                "label": "Paths",
+              },
+            ],
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "dispatch": [Function],
+            "joinedPaths": Object {},
+            "myPaths": Object {
+              "abcd": Object {
+                "name": "Default",
+              },
+            },
+            "publicPaths": Object {},
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "dispatch": [Function],
+            "open": false,
+            "path": undefined,
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+      ],
+      "type": Symbol(react.fragment),
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+    "context": Object {},
+  },
+}
+`;

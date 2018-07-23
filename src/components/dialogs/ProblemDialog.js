@@ -8,43 +8,91 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
-
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import Checkbox from "@material-ui/core/Checkbox";
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 
-import {
-  pathDialogHide,
-  pathProblemChangeRequest
-} from "../../containers/Paths/actions";
-import { YOUTUBE_QUESTIONS } from "../../services/paths";
+import { PROBLEMS_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 class ProblemDialog extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    pathId: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    problem: PropTypes.object
+    pathId: PropTypes.string.isRequired,
+    paths: PropTypes.array,
+    problems: PropTypes.array,
+    problem: PropTypes.object,
+    uid: PropTypes.string.isRequired
   };
 
-  state = {
-    type: ""
-  };
+  state = {};
 
   getTypeSpecificElements() {
     let { problem } = this.props;
-    problem = problem || {};
-    switch (this.state.type || (problem && problem.type)) {
-      case "jupyter":
+    problem = Object.assign(problem || {}, this.state);
+    switch (this.state.type || (problem && problem.type) || "text") {
+      case PROBLEMS_TYPES.text.id:
+        return (
+          <TextField
+            fullWidth
+            label="Question"
+            margin="normal"
+            onChange={e => this.onFieldChange("question", e.target.value)}
+            value={problem.question}
+          />
+        );
+      case PROBLEMS_TYPES.codeCombat.id:
+        return (
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
+            <Select
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              input={<Input id="select-multiple-levels" />}
+              margin="none"
+              onChange={e => this.onFieldChange("level", e.target.value)}
+              value={problem.level || ""}
+            >
+              {Object.keys(APP_SETTING.levels).map(id => (
+                <MenuItem key={APP_SETTING.levels[id].name} value={id}>
+                  {APP_SETTING.levels[id].name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        );
+      case PROBLEMS_TYPES.codeCombatNumber.id:
+        return (
+          <TextField
+            fullWidth
+            label="Levels amount"
+            margin="normal"
+            onChange={e => this.onFieldChange("count", e.target.value)}
+            type="number"
+            value={problem.count}
+          />
+        );
+      case PROBLEMS_TYPES.jupyter.id:
         return (
           <Fragment>
             <TextField
@@ -74,7 +122,7 @@ class ProblemDialog extends React.PureComponent {
             />
           </Fragment>
         );
-      case "jupyterInline":
+      case PROBLEMS_TYPES.jupyterInline.id:
         return (
           <Fragment>
             <TextField
@@ -113,7 +161,7 @@ class ProblemDialog extends React.PureComponent {
             />
           </Fragment>
         );
-      case "youtube":
+      case PROBLEMS_TYPES.youtube.id:
         return (
           <Fragment>
             <TextField
@@ -172,7 +220,7 @@ class ProblemDialog extends React.PureComponent {
             </FormControl>
           </Fragment>
         );
-      case "Game":
+      case PROBLEMS_TYPES.game.id:
         return (
           <TextField
             defaultValue={problem && problem.game}
@@ -191,18 +239,15 @@ class ProblemDialog extends React.PureComponent {
   }
 
   onFieldChange = (field, value) => this.setState({ [field]: value });
-  onClose = () => this.props.dispatch(pathDialogHide());
   onCommit = () => {
-    this.props.dispatch(
-      pathProblemChangeRequest(
-        this.props.pathId,
-        Object.assign(this.props.problem || {}, this.state, {
-          type:
-            this.state.type ||
-            (this.props.problem && this.props.problem.type) ||
-            "text"
-        })
-      )
+    this.props.onCommit(
+      this.props.pathId,
+      Object.assign(this.props.problem || {}, this.state, {
+        type:
+          this.state.type ||
+          (this.props.problem && this.props.problem.type) ||
+          "text"
+      })
     );
 
     // Clear state. Render will be invoked 1 time only
@@ -213,10 +258,10 @@ class ProblemDialog extends React.PureComponent {
   };
 
   render() {
-    const { problem, open } = this.props;
+    const { problem, onClose, open } = this.props;
 
     return (
-      <Dialog fullWidth onClose={this.onClose} open={open}>
+      <Dialog fullWidth onClose={onClose} open={open}>
         <DialogTitle>
           {problem && problem.id ? "Edit Problem" : "Add New Problem"}
         </DialogTitle>
@@ -243,16 +288,16 @@ class ProblemDialog extends React.PureComponent {
             select
             value={this.state.type || (problem && problem.type) || "text"}
           >
-            <MenuItem value="text">Text</MenuItem>
-            <MenuItem value="jupyter">Jupyter Notebook</MenuItem>
-            <MenuItem value="jupyterInline">Jupyter Inline</MenuItem>
-            <MenuItem value="youtube">YouTube</MenuItem>
-            <MenuItem value="game">Game</MenuItem>
+            {Object.keys(PROBLEMS_TYPES).map(key => (
+              <MenuItem key={key} value={key}>
+                {PROBLEMS_TYPES[key].caption}
+              </MenuItem>
+            ))}
           </TextField>
           {this.getTypeSpecificElements()}
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={this.onClose}>
+          <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button color="primary" onClick={this.onCommit} variant="raised">

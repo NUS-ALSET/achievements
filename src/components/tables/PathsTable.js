@@ -13,11 +13,16 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+
+import SearchIcon from "@material-ui/icons/Search";
+import EditIcon from "@material-ui/icons/Edit";
 
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { pathProblemDialogShow } from "../../containers/Paths/actions";
+import { pathDialogShow } from "../../containers/Paths/actions";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 const styles = theme => ({
   link: {
@@ -31,25 +36,35 @@ const styles = theme => ({
 class PathsTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    currentUserId: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
+    owner: PropTypes.bool,
     paths: PropTypes.object.isRequired
   };
 
-  onEditClick = problem => this.props.dispatch(pathProblemDialogShow(problem));
+  onEditClick = path => this.props.dispatch(pathDialogShow(path));
 
   render() {
-    const { classes, paths } = this.props;
+    const { classes, owner, paths } = this.props;
 
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Path name</TableCell>
-            <TableCell>Progress</TableCell>
+            {!owner && (
+              <TableCell
+                style={{
+                  // eslint-disable-next-line no-magic-numbers
+                  width: 150
+                }}
+              >
+                Progress
+              </TableCell>
+            )}
             <TableCell
               style={{
-                width: 360
+                // eslint-disable-next-line no-magic-numbers
+                width: APP_SETTING.isSuggesting ? 150 : 360
               }}
             >
               Actions
@@ -63,26 +78,42 @@ class PathsTable extends React.PureComponent {
             .map(path => (
               <TableRow key={path.id}>
                 <TableCell>{path.name}</TableCell>
-                <TableCell>{path.progress}</TableCell>
-                <TableCell>
-                  <Link className={classes.link} to={`/paths/${path.id}`}>
-                    <Button variant="raised">Open</Button>
-                  </Link>
-                  <Button
-                    className={classes.button}
-                    onClick={() => this.onEditClick(path)}
-                    variant="raised"
-                  >
-                    Refresh
-                  </Button>
-                  <Button
-                    className={classes.button}
-                    onClick={() => this.onEditClick(path)}
-                    variant="raised"
-                  >
-                    Edit
-                  </Button>
-                </TableCell>
+                {!owner && (
+                  <TableCell>
+                    {path.solutions !== undefined && path.totalActivities
+                      ? `${path.solutions} of ${path.totalActivities}`
+                      : ""}
+                  </TableCell>
+                )}
+                {APP_SETTING.isSuggesting ? (
+                  <TableCell>
+                    <Link className={classes.link} to={`/paths/${path.id}`}>
+                      <IconButton>
+                        <SearchIcon />
+                      </IconButton>
+                    </Link>
+                    {owner && (
+                      <IconButton onClick={() => this.onEditClick(path)}>
+                        <EditIcon />
+                      </IconButton>
+                    )}
+                  </TableCell>
+                ) : (
+                  <TableCell>
+                    <Link className={classes.link} to={`/paths/${path.id}`}>
+                      <Button variant="raised">Open</Button>
+                    </Link>
+                    {owner && (
+                      <Button
+                        className={classes.button}
+                        onClick={() => this.onEditClick(path)}
+                        variant="raised"
+                      >
+                        Edit
+                      </Button>
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             ))}
         </TableBody>

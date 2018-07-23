@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<NotificationArea> Should test Notification component 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <NotificationArea
+    handleClose={[Function]}
+    message="test"
+    open={true}
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "ContentProps": Object {
+        "aria-describedby": "message-id",
+      },
+      "action": Array [
+        <WithStyles(IconButton)
+          aria-label="Close"
+          color="inherit"
+          onClick={[Function]}
+>
+          <pure(Close) />
+</WithStyles(IconButton)>,
+      ],
+      "anchorOrigin": Object {
+        "horizontal": "left",
+        "vertical": "bottom",
+      },
+      "message": <span>
+        test
+</span>,
+      "open": true,
+    },
+    "ref": null,
+    "rendered": null,
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "ContentProps": Object {
+          "aria-describedby": "message-id",
+        },
+        "action": Array [
+          <WithStyles(IconButton)
+            aria-label="Close"
+            color="inherit"
+            onClick={[Function]}
+>
+            <pure(Close) />
+</WithStyles(IconButton)>,
+        ],
+        "anchorOrigin": Object {
+          "horizontal": "left",
+          "vertical": "bottom",
+        },
+        "message": <span>
+          test
+</span>,
+        "open": true,
+      },
+      "ref": null,
+      "rendered": null,
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+    "context": Object {},
+  },
+}
+`;

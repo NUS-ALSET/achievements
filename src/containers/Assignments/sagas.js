@@ -41,7 +41,6 @@ import {
   courseRemoveStudentFail,
   assignmentPathsFetchSuccess,
   assignmentProblemsFetchSuccess,
-  assignmentPathProblemFetchSuccess,
   ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
   assignmentSubmitRequest,
   COURSE_MOVE_STUDENT_DIALOG_SHOW,
@@ -69,9 +68,10 @@ import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { notificationShow } from "../Root/actions";
 import { pathsService } from "../../services/paths";
 import {
+  problemInitRequest,
   problemSolutionRefreshSuccess,
   problemSolveUpdate
-} from "../Problem/actions";
+} from "../Activity/actions";
 
 // Since we're able to check 1 and only 1 course at once then we'll keep
 // course members channel at almost global variable...
@@ -133,7 +133,7 @@ export function* updateNewAssignmentFieldHandler(action) {
     case "questionType":
       if (
         [
-          ASSIGNMENTS_TYPES.PathProblem.id,
+          ASSIGNMENTS_TYPES.PathActivity.id,
           ASSIGNMENTS_TYPES.PathProgress.id
         ].includes(action.value)
       ) {
@@ -171,7 +171,9 @@ export function* updateNewAssignmentFieldHandler(action) {
       );
 
       yield put(assignmentProblemsFetchSuccess(problems));
-      yield put(updateNewAssignmentField("problem", ""));
+      if (data.assignment.path !== action.value) {
+        yield put(updateNewAssignmentField("problem", ""));
+      }
       break;
     case "problem":
       problems = yield select(state => state.assignments.dialog.problems);
@@ -180,7 +182,11 @@ export function* updateNewAssignmentFieldHandler(action) {
         id: assignment.problem
       });
 
-      if (!data.manualUpdates.details && problem) {
+      if (
+        !data.manualUpdates.details &&
+        problem &&
+        problem.type !== "jupyterInline"
+      ) {
         // FIXIT: add `case` for problem type
         yield fork(function* subFork() {
           yield put(
@@ -314,11 +320,11 @@ export function* watchAssistantsControlRequestHandler(action) {
 export function* assignmentShowEditDialogHandler(action) {
   try {
     switch (action.assignment.questionType) {
-      case ASSIGNMENTS_TYPES.PathProblem.id:
+      case ASSIGNMENTS_TYPES.PathActivity.id:
         yield put(
           updateNewAssignmentField(
             "questionType",
-            ASSIGNMENTS_TYPES.PathProblem.id
+            ASSIGNMENTS_TYPES.PathActivity.id
           )
         );
         yield put(updateNewAssignmentField("path", action.assignment.path));
@@ -468,17 +474,20 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
     yield put(assignmentSubmitRequest(action.assignment, null));
     const pathProblem = yield call(
       [pathsService, pathsService.fetchPathProblem],
-      action.problemOwner,
+      action.assignment.path || action.problemOwner,
       action.problemId
     );
     yield put(
-      assignmentPathProblemFetchSuccess(pathProblem, {
-        id:
-          action.solution &&
-          action.solution.originalSolution &&
-          action.solution.originalSolution.value
-      })
+      problemInitRequest(
+        pathProblem.pathId,
+        pathProblem.problemId,
+        action.solution
+      )
     );
+
+    if (Math.random()) {
+      return Promise.resolve();
+    }
     if (pathProblem.type === "youtube") {
       yield put(
         problemSolutionRefreshSuccess(

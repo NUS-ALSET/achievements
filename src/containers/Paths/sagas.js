@@ -1,4 +1,4 @@
-import { call, select, takeLatest, put } from "redux-saga/effects";
+import { call, select, take, takeLatest, put } from "redux-saga/effects";
 import {
   PATH_CHANGE_REQUEST,
   PATH_PROBLEM_CHANGE_REQUEST,
@@ -7,10 +7,15 @@ import {
   pathGAPIAuthorized,
   pathProblemChangeFail,
   pathProblemChangeSuccess,
+  PATHS_OPEN,
   pathsJoinedFetchSuccess
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
+import {
+  PATH_TOGGLE_JOIN_STATUS_SUCCESS,
+  pathCloseDialog
+} from "../Path/actions";
 
 export function* loginHandler(action) {
   // Auth GAPI to download files from google drive
@@ -21,7 +26,16 @@ export function* loginHandler(action) {
     [pathsService, pathsService.fetchJoinedPaths],
     action.auth.uid
   );
+
   yield put(pathsJoinedFetchSuccess(joinedPaths));
+}
+
+export function* pathsOpenHandler() {
+  const uid = yield select(state => state.firebase.auth.uid);
+
+  if (!uid) {
+    yield take(PATH_TOGGLE_JOIN_STATUS_SUCCESS);
+  }
 }
 
 export function* pathChangeRequestHandler(action) {
@@ -51,6 +65,7 @@ export function* pathProblemChangeRequestHandler(action) {
       action.problemInfo
     );
     yield put(pathProblemChangeSuccess(action.pathId, action.problemInfo, key));
+    yield put(pathCloseDialog());
   } catch (err) {
     yield put(
       pathProblemChangeFail(action.pathId, action.problemInfo, err.message)
@@ -62,6 +77,9 @@ export function* pathProblemChangeRequestHandler(action) {
 export default [
   function* watchLogin() {
     yield takeLatest("@@reactReduxFirebase/LOGIN", loginHandler);
+  },
+  function* watchPathsOpen() {
+    yield takeLatest(PATHS_OPEN, pathsOpenHandler);
   },
   function* watchPathChangeRequest() {
     yield takeLatest(PATH_CHANGE_REQUEST, pathChangeRequestHandler);

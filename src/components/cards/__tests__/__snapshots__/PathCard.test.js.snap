@@ -1,0 +1,290 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<PathCard /> Should test PathCard component 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <PathCard
+    title=""
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {
+      "children": Array [
+        undefined,
+        <WithStyles(CardContent)>
+          <WithStyles(Typography) />
+</WithStyles(CardContent)>,
+        <WithStyles(CardActions)
+          style={
+                    Object {
+                              "background": "rgba(255,255,255,0.54)",
+                              "bottom": 0,
+                              "justifyContent": "flex-end",
+                              "position": "absolute",
+                              "width": "100%",
+                            }
+          }
+>
+          <Link
+                    replace={false}
+                    to="/paths/undefined/activities/undefined"
+          >
+                    <WithStyles(IconButton)
+                              color="inherit"
+                    >
+                              <pure(KeyboardArrowRight) />
+                    </WithStyles(IconButton)>
+          </Link>
+</WithStyles(CardActions)>,
+      ],
+      "style": Object {
+        "flex": 1,
+        "margin": 4,
+        "minHeight": 120,
+        "minWidth": 160,
+        "position": "relative",
+        "width": "25%",
+      },
+    },
+    "ref": null,
+    "rendered": Array [
+      undefined,
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "children": <WithStyles(Typography) />,
+        },
+        "ref": null,
+        "rendered": Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "children": "",
+          },
+          "ref": null,
+          "rendered": "",
+          "type": [Function],
+        },
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "children": <Link
+            replace={false}
+            to="/paths/undefined/activities/undefined"
+>
+            <WithStyles(IconButton)
+                        color="inherit"
+            >
+                        <pure(KeyboardArrowRight) />
+            </WithStyles(IconButton)>
+</Link>,
+          "style": Object {
+            "background": "rgba(255,255,255,0.54)",
+            "bottom": 0,
+            "justifyContent": "flex-end",
+            "position": "absolute",
+            "width": "100%",
+          },
+        },
+        "ref": null,
+        "rendered": Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "children": <WithStyles(IconButton)
+              color="inherit"
+>
+              <pure(KeyboardArrowRight) />
+</WithStyles(IconButton)>,
+            "replace": false,
+            "to": "/paths/undefined/activities/undefined",
+          },
+          "ref": null,
+          "rendered": Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "class",
+            "props": Object {
+              "children": <pure(KeyboardArrowRight) />,
+              "color": "inherit",
+            },
+            "ref": null,
+            "rendered": Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "class",
+              "props": Object {},
+              "ref": null,
+              "rendered": null,
+              "type": [Function],
+            },
+            "type": [Function],
+          },
+          "type": [Function],
+        },
+        "type": [Function],
+      },
+    ],
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {
+        "children": Array [
+          undefined,
+          <WithStyles(CardContent)>
+            <WithStyles(Typography) />
+</WithStyles(CardContent)>,
+          <WithStyles(CardActions)
+            style={
+                        Object {
+                                    "background": "rgba(255,255,255,0.54)",
+                                    "bottom": 0,
+                                    "justifyContent": "flex-end",
+                                    "position": "absolute",
+                                    "width": "100%",
+                                  }
+            }
+>
+            <Link
+                        replace={false}
+                        to="/paths/undefined/activities/undefined"
+            >
+                        <WithStyles(IconButton)
+                                    color="inherit"
+                        >
+                                    <pure(KeyboardArrowRight) />
+                        </WithStyles(IconButton)>
+            </Link>
+</WithStyles(CardActions)>,
+        ],
+        "style": Object {
+          "flex": 1,
+          "margin": 4,
+          "minHeight": 120,
+          "minWidth": 160,
+          "position": "relative",
+          "width": "25%",
+        },
+      },
+      "ref": null,
+      "rendered": Array [
+        undefined,
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "children": <WithStyles(Typography) />,
+          },
+          "ref": null,
+          "rendered": Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "class",
+            "props": Object {
+              "children": "",
+            },
+            "ref": null,
+            "rendered": "",
+            "type": [Function],
+          },
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "children": <Link
+              replace={false}
+              to="/paths/undefined/activities/undefined"
+>
+              <WithStyles(IconButton)
+                            color="inherit"
+              >
+                            <pure(KeyboardArrowRight) />
+              </WithStyles(IconButton)>
+</Link>,
+            "style": Object {
+              "background": "rgba(255,255,255,0.54)",
+              "bottom": 0,
+              "justifyContent": "flex-end",
+              "position": "absolute",
+              "width": "100%",
+            },
+          },
+          "ref": null,
+          "rendered": Object {
+            "instance": null,
+            "key": undefined,
+            "nodeType": "class",
+            "props": Object {
+              "children": <WithStyles(IconButton)
+                color="inherit"
+>
+                <pure(KeyboardArrowRight) />
+</WithStyles(IconButton)>,
+              "replace": false,
+              "to": "/paths/undefined/activities/undefined",
+            },
+            "ref": null,
+            "rendered": Object {
+              "instance": null,
+              "key": undefined,
+              "nodeType": "class",
+              "props": Object {
+                "children": <pure(KeyboardArrowRight) />,
+                "color": "inherit",
+              },
+              "ref": null,
+              "rendered": Object {
+                "instance": null,
+                "key": undefined,
+                "nodeType": "class",
+                "props": Object {},
+                "ref": null,
+                "rendered": null,
+                "type": [Function],
+              },
+              "type": [Function],
+            },
+            "type": [Function],
+          },
+          "type": [Function],
+        },
+      ],
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+    "context": Object {},
+  },
+}
+`;

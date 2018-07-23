@@ -9,44 +9,15 @@ import PropTypes from "prop-types";
 
 import cloneDeep from "lodash/cloneDeep";
 
-import AceEditor from "react-ace";
-
-import Button from "@material-ui/core/Button";
-import Collapse from "@material-ui/core/Collapse";
-import IconButton from "@material-ui/core/IconButton";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
-
-import RefreshIcon from "@material-ui/icons/Refresh";
-import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-
-import withStyles from "@material-ui/core/styles/withStyles";
-import NotebookPreview from "@nteract/notebook-preview";
-
-import "brace/mode/python";
-import "brace/theme/github";
-
 import {
   problemSolutionRefreshFail,
-  problemSolutionSubmitRequest,
-  problemSolveSuccess,
   problemSolveUpdate
-} from "../../containers/Problem/actions";
+} from "../../containers/Activity/actions";
 import { notificationShow } from "../../containers/Root/actions";
-
-const styles = theme => ({
-  solutionButtons: {
-    textDecoration: "none",
-    float: "right",
-    margin: `0 0 0 ${theme.spacing.unit}px`
-  }
-});
+import JupyterNotebook from "./JupyterNotebook";
 
 class JupyterInlineProblem extends React.PureComponent {
   static propTypes = {
-    classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
     problem: PropTypes.object,
@@ -54,48 +25,12 @@ class JupyterInlineProblem extends React.PureComponent {
   };
 
   state = {
-    solutionURL: "",
-    solutionJSON: false,
-    collapses: {
-      provided: false,
-      problem: true
-    }
+    solutionJSON: false
   };
 
-  closeDialog = () =>
-    this.props.dispatch(problemSolveSuccess(this.props.problem.problemId, ""));
-  onSolutionRefreshClick = () => {
-    const { dispatch, problem } = this.props;
-
-    if (!this.state.solutionJSON) {
-      return dispatch(notificationShow("Code wasn't changed"));
-    }
-
-    return dispatch(
-      problemSolveUpdate(
-        problem.pathId,
-        problem.problemId,
-        this.state.solutionJSON
-      )
-    );
-  };
-  onCommit = () => {
-    const { dispatch, problem, solution } = this.props;
-
-    dispatch(
-      problemSolutionSubmitRequest(problem.owner, problem.problemId, {
-        url: this.state.solutionURL,
-        data: solution
-      })
-    );
-    this.setState({
-      solutionURL: undefined,
-      solutionJSON: false
-    });
-  };
-
-  onEditorChange = value => {
+  onSolutionRefreshClick = value => {
     const { dispatch, onChange, problem } = this.props;
+
     const solutionJSON = cloneDeep(problem.problemJSON);
 
     solutionJSON.cells[Number(problem.code)].source = value
@@ -103,25 +38,57 @@ class JupyterInlineProblem extends React.PureComponent {
       .map(line => line + "\n");
 
     this.setState({
-      solutionJSON: solutionJSON
+      solutionJSON: solutionJSON || false
     });
     dispatch(problemSolutionRefreshFail());
     if (onChange) {
       onChange(solutionJSON);
     }
+    if (!solutionJSON) {
+      return dispatch(notificationShow("Code wasn't changed"));
+    }
+
+    return dispatch(
+      problemSolveUpdate(problem.pathId, problem.problemId, solutionJSON)
+    );
   };
 
-  onSwitchCollapse = (item, status) => {
-    this.setState({
-      collapses: {
-        [item]: status === undefined ? !this.state.collapses[item] : status
-      }
-    });
+  getCalculatedSolution = solution => {
+    if (!solution) {
+      return "";
+    }
+    if (solution.failed) {
+      return " (Failed - Final output should be empty)";
+    }
+    if (solution.loading) {
+      return " (Checking)";
+    }
+    if (solution.checked) {
+      return " (Passed)";
+    }
   };
+
+  // Move it to paths
+  getSolutionCode = (solution, problem) =>
+    (this.state.solutionJSON &&
+      this.state.solutionJSON.cells &&
+      this.state.solutionJSON.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n")) ||
+    (solution &&
+      solution.cells &&
+      solution.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n")) ||
+    (problem &&
+      problem.problemJSON &&
+      problem.problemJSON.cells &&
+      problem.problemJSON.cells[Number(problem.code)].source
+        .join("")
+        .replace(/\n\n/g, "\n"));
 
   render() {
     const {
-      onChange,
       /** @type {JupyterPathProblem} */
       problem,
       solution
@@ -129,142 +96,37 @@ class JupyterInlineProblem extends React.PureComponent {
 
     return (
       <Fragment>
-        <Paper style={{ margin: "24px 2px" }}>
-          <Typography style={{ position: "relative" }} variant="headline">
-            <span>Edit code</span>{" "}
-            <IconButton
-              onClick={() => this.onSolutionRefreshClick()}
-              style={{
-                position: "absolute",
-                right: 0
-              }}
-            >
-              <RefreshIcon />
-            </IconButton>
-          </Typography>
-          <AceEditor
-            editorProps={{ $blockScrolling: true }}
-            maxLines={20}
-            minLines={10}
-            mode="python"
-            onChange={this.onEditorChange}
-            onLoad={editor => editor.focus()}
-            theme="github"
-            value={
-              // FIXIT: extract to method
-              (this.state.solutionJSON &&
-                this.state.solutionJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n")) ||
-              (problem &&
-                problem.solutionJSON &&
-                problem.solutionJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n")) ||
-              (problem &&
-                problem.problemJSON &&
-                problem.problemJSON.cells[Number(problem.code)].source
-                  .join("")
-                  .replace(/\n\n/g, "\n"))
-            }
-          />
-        </Paper>
-        <Paper style={{ margin: "24px 2px" }}>
-          <Typography variant="headline">
-            Calculated Solution{solution &&
-              solution.failed &&
-              " - Failing - Final output should be empty"}
-          </Typography>
-          {solution &&
-            solution.json && (
-              <div
-                style={{
-                  textAlign: "left"
-                }}
-              >
-                <NotebookPreview notebook={solution.json} />
-              </div>
-            )}
-          {solution && solution.loading && <CircularProgress />}
-          {!onChange && (
-            <Button color="primary" onClick={this.onCommit} variant="raised">
-              Submit
-            </Button>
+        <JupyterNotebook
+          action={this.onSolutionRefreshClick}
+          defaultValue={this.getSolutionCode(solution, problem)}
+          persistent={true}
+          richEditor={true}
+          solution={false}
+          title="Edit code"
+        />
+        {solution &&
+          (solution.json || solution.loading) && (
+            <JupyterNotebook
+              solution={solution}
+              title={
+                "Calculated Solution" + this.getCalculatedSolution(solution)
+              }
+            />
           )}
-        </Paper>
         {solution &&
           solution.provided && (
-            <Paper style={{ margin: "24px 2px" }}>
-              <Typography style={{ position: "relative" }} variant="headline">
-                <span>Provided Solution</span>
-                <IconButton
-                  onClick={() => this.onSwitchCollapse("provided")}
-                  style={{
-                    position: "absolute",
-                    right: 0
-                  }}
-                >
-                  {this.state.collapses.provided ? (
-                    <ExpandLessIcon />
-                  ) : (
-                    <ExpandMoreIcon />
-                  )}
-                </IconButton>
-              </Typography>
-
-              <Collapse
-                collapsedHeight="10px"
-                in={this.state.collapses.provided}
-              >
-                <div
-                  style={{
-                    textAlign: "left"
-                  }}
-                >
-                  <NotebookPreview notebook={solution.provided} />
-                </div>
-              </Collapse>
-            </Paper>
+            <JupyterNotebook
+              solution={{ json: solution.provided }}
+              title="Provided solution"
+            />
           )}
-        <Paper style={{ margin: "24px 2px" }}>
-          <Typography style={{ position: "relative" }} variant="headline">
-            <span>Problem</span>
-            <IconButton
-              onClick={() => this.onSwitchCollapse("problem")}
-              style={{
-                position: "absolute",
-                right: 0
-              }}
-            >
-              {this.state.collapses.problem ? (
-                <ExpandLessIcon />
-              ) : (
-                <ExpandMoreIcon />
-              )}
-            </IconButton>
-          </Typography>
-          <Collapse collapsedHeight="10px" in={this.state.collapses.problem}>
-            <div
-              style={{
-                textAlign: "left"
-              }}
-            >
-              <NotebookPreview notebook={problem.problemJSON} />
-            </div>
-          </Collapse>
-          <Typography align="right" variant="caption">
-            <a
-              href={problem.problemColabURL}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Link
-            </a>
-          </Typography>
-        </Paper>
+        <JupyterNotebook
+          solution={{ json: problem.problemJSON }}
+          title="Problem"
+        />
       </Fragment>
     );
   }
 }
 
-export default withStyles(styles)(JupyterInlineProblem);
+export default JupyterInlineProblem;

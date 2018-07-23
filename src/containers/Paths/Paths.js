@@ -15,16 +15,15 @@ import { firebaseConnect } from "react-redux-firebase";
 import PropTypes from "prop-types";
 
 import PathDialog from "../../components/dialogs/PathDialog";
-// import ProblemsTable from "../../components/tables/ProblemsTable";
 
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import { getProblems } from "./selectors";
 import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
-// import PathsList from "../../components/lists/PathsList";
+import { pathsOpen } from "./actions";
 
-class Paths extends React.PureComponent {
+export class Paths extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     myPaths: PropTypes.object,
@@ -37,17 +36,12 @@ class Paths extends React.PureComponent {
     uid: PropTypes.any
   };
 
-  state = { tabIndex: 0 };
+  componentDidMount() {
+    this.props.dispatch(pathsOpen());
+  }
 
   render() {
-    const {
-      dispatch,
-      myPaths,
-      joinedPaths,
-      publicPaths,
-      ui,
-      uid
-    } = this.props;
+    const { dispatch, myPaths, joinedPaths, publicPaths, ui, uid } = this.props;
 
     return (
       <Fragment>
@@ -88,6 +82,7 @@ const mapStateToProps = state => ({
 
 export default compose(
   firebaseConnect((ownProps, store) => {
+    // I didn't find way to test this
     const firebaseAuth = store.getState().firebase.auth;
     return (
       !firebaseAuth.isEmpty && [
@@ -100,9 +95,6 @@ export default compose(
           path: "/paths",
           storeAs: "publicPaths",
           queryParams: ["orderByChild=isPublic", "equalTo=true"]
-        },
-        {
-          path: `/problems/${firebaseAuth.uid}`
         }
       ]
     );

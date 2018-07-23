@@ -19,11 +19,13 @@ import RemoveCourseDialog from "../../components/dialogs/RemoveCourseDialog";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Toolbar from "@material-ui/core/Toolbar";
+import Zoom from "@material-ui/core/Zoom";
 
 import AddIcon from "@material-ui/icons/Add";
 
 import sagas from "./sagas";
 import { APP_SETTING } from "../../achievementsApp/config";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const COURSE_TAB_JOINED = 0;
 const COURSE_TAB_OWNED = 1;
@@ -105,6 +107,7 @@ class Courses extends React.Component {
 
     return (
       <Fragment>
+        <Breadcrumbs paths={[{ label: "Courses" }]} />
         {!APP_SETTING.isSuggesting ? (
           <Toolbar>
             <Button
@@ -117,19 +120,21 @@ class Courses extends React.Component {
             </Button>
           </Toolbar>
         ) : (
-          <Button
-            aria-label="Add"
-            color="primary"
-            onClick={() => this.showNewCourseDialog()}
-            style={{
-              position: "fixed",
-              bottom: 20,
-              right: 20
-            }}
-            variant="fab"
-          >
-            <AddIcon />
-          </Button>
+          <Zoom in={currentTab === COURSE_TAB_OWNED}>
+            <Button
+              aria-label="Add"
+              color="primary"
+              onClick={() => this.showNewCourseDialog()}
+              style={{
+                position: "fixed",
+                bottom: 20,
+                right: 20
+              }}
+              variant="fab"
+            >
+              <AddIcon />
+            </Button>
+          </Zoom>
         )}
         <Tabs
           fullWidth

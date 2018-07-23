@@ -29,7 +29,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
     getFrom(state.firebase.data.visibleSolutions, courseId),
     student.id
   );
-  const result = Object.assign({}, solutions, publishedSolutions);
+  const result = Object.assign({}, publishedSolutions, solutions);
 
   Object.keys(Object.assign({}, solutions, publishedSolutions)).forEach(
     assignmentId => {
@@ -162,6 +162,16 @@ function getValueToSort(solutions, sortField) {
   return aValue.value;
 }
 
+function checkVisibilitySolution(assignments, key) {
+  const now = new Date().getTime();
+  const assignment = assignments[key] || {};
+  return (
+    assignment.visible &&
+    new Date(assignment.open).getTime() < now &&
+    new Date(assignment.deadline).getTime() > now
+  );
+}
+
 /**
  *
  * @param {AchievementsAppState} state
@@ -187,8 +197,11 @@ export const getCourseProps = (state, ownProps) => {
     .map(member => ({
       ...member,
       progress: {
-        totalSolutions: Object.keys(member.solutions).length,
+        totalSolutions: Object.keys(member.solutions).filter(key =>
+          checkVisibilitySolution(assignments, key)
+        ).length,
         lastSolutionTime: Object.keys(member.solutions)
+          .filter(key => checkVisibilitySolution(assignments, key))
           .map(
             id =>
               member.solutions[id].createdAt ||
@@ -217,6 +230,14 @@ export const getCourseProps = (state, ownProps) => {
       if (!["studentName", "progress"].includes(state.assignments.sort.field)) {
         aValue = getValueToSort(a.solutions, state.assignments.sort.field);
         bValue = getValueToSort(b.solutions, state.assignments.sort.field);
+        if (aValue === bValue) {
+          aValue =
+            a.solutions[state.assignments.sort.field] &&
+            a.solutions[state.assignments.sort.field].createdAt;
+          bValue =
+            b.solutions[state.assignments.sort.field] &&
+            b.solutions[state.assignments.sort.field].createdAt;
+        }
       }
       aValue = aValue || "";
       bValue = bValue || "";
@@ -238,7 +259,9 @@ export const getCourseProps = (state, ownProps) => {
     id: courseId,
     ...getFrom(state.firebase.data.courses, courseId),
     members: members.length ? sortedMembers : false,
-    totalAssignments: Object.keys(assignments).length,
+    totalAssignments: Object.keys(assignments).filter(key =>
+      checkVisibilitySolution(assignments, key)
+    ).length,
     assignments: Object.keys(assignments)
       .map(id => ({
         ...assignments[id],

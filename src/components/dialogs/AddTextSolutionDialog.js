@@ -4,10 +4,6 @@
  * @created 07.02.18
  */
 
-import {
-  assignmentCloseDialog,
-  assignmentSolutionRequest
-} from "../../containers/Assignments/actions";
 import Button from "@material-ui/core/Button";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -20,12 +16,12 @@ import TextField from "@material-ui/core/TextField";
 
 class AddTextSolutionDialog extends React.PureComponent {
   static propTypes = {
+    onClose: PropTypes.func.isRequired,
+    onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     solution: PropTypes.any,
 
-    courseId: PropTypes.string.isRequired,
-    dispatch: PropTypes.func.isRequired,
-    assignment: PropTypes.object
+    taskId: PropTypes.string
   };
 
   state = {
@@ -38,24 +34,16 @@ class AddTextSolutionDialog extends React.PureComponent {
     });
   };
 
-  catchReturn = event => event.key === "Enter" && this.onCommitClick();
-  onClose = () => this.props.dispatch(assignmentCloseDialog());
-
-  onCommitClick = () => {
-    const { courseId, assignment, dispatch } = this.props;
-
-    dispatch(
-      assignmentSolutionRequest(courseId, assignment.id, this.state.solution)
-    );
-    dispatch(assignmentCloseDialog());
-  };
+  catchReturn = event =>
+    event.key === "Enter" &&
+    this.props.onCommit(this.props.taskId, this.state.solution);
 
   render() {
-    const { open, solution } = this.props;
+    const { onClose, onCommit, open, solution, taskId } = this.props;
 
     return (
-      <Dialog onClose={this.onClose} open={open}>
-        <DialogTitle>Set Assignment Solution</DialogTitle>
+      <Dialog onClose={onClose} open={open}>
+        <DialogTitle>Text Solution</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -70,10 +58,14 @@ class AddTextSolutionDialog extends React.PureComponent {
           />
         </DialogContent>
         <DialogActions>
-          <Button color="secondary" onClick={this.onClose}>
+          <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommitClick} variant="raised">
+          <Button
+            color="primary"
+            onClick={() => onCommit(taskId, this.state.solution)}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>

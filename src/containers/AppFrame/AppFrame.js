@@ -1,7 +1,9 @@
 import { APP_SETTING } from "../../achievementsApp/config";
 import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
-import { Home } from "../../components/Home";
-import { Route, HashRouter as Router } from "react-router-dom";
+// import { Home } from "../../components/Home";
+import Home from "../Home/AltHome";
+import { Route } from "react-router-dom";
+import { ConnectedRouter as Router } from "connected-react-router";
 import { connect } from "react-redux";
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
@@ -30,8 +32,11 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
 import Admin from "../Admin/Admin";
-import Problem from "../Problem/Problem";
+import Activity from "../Activity/Activity";
 import Path from "../Path/Path";
+
+// HomeV2 to test the kyGUI for Home Recommendation
+import HomeV2 from "../HomeView/HomeV2";
 
 const styles = theme => ({
   "@global": {
@@ -96,9 +101,10 @@ const styles = theme => ({
 
 class AppFrame extends React.Component {
   static propTypes = {
+    anchorElId: PropTypes.any,
     classes: PropTypes.object.isRequired,
     dispatch: PropTypes.func,
-    anchorElId: PropTypes.any,
+    history: PropTypes.any,
     mainDrawerOpen: PropTypes.bool,
     isAdmin: PropTypes.bool,
     userName: PropTypes.string,
@@ -130,13 +136,24 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const { classes, isAdmin, userId, userName, anchorElId } = this.props;
+    const {
+      anchorElId,
+      classes,
+      history,
+      isAdmin,
+      userId,
+      userName
+    } = this.props;
 
     return (
-      <Router>
+      <Router history={history}>
         <div className={classes.root}>
           <div className={classes.appFrame}>
-            <AppBar className={classes.appBar} onClose={this.handleDrawerClose}>
+            <AppBar
+              className={classes.appBar}
+              color={APP_SETTING.isSuggesting ? "inherit" : "primary"}
+              onClose={this.handleDrawerClose}
+            >
               <Toolbar>
                 <Hidden implementation="css" lgUp>
                   <IconButton
@@ -204,6 +221,7 @@ class AppFrame extends React.Component {
             />
             <main className={classes.content}>
               <Route component={Home} exact path="(/|/home)" />
+              <Route component={HomeV2} exact path="(/homev2)" />
               <Route component={Admin} exact path="/admin" />
               <Route component={Courses} exact path="/courses" />
               <Route component={Assignments} exact path="/courses/:courseId" />
@@ -212,9 +230,9 @@ class AppFrame extends React.Component {
               <Route component={Paths} exact path="/paths" />
               <Route component={Path} exact path="/paths/:pathId" />
               <Route
-                component={Problem}
+                component={Activity}
                 exact
-                path="/paths/:pathId/problems/:problemId"
+                path="/paths/:pathId/activities/:problemId"
               />
               <Route
                 exact

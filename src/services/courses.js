@@ -32,9 +32,9 @@ export const ASSIGNMENTS_TYPES = {
     id: "CodeCombat_Number",
     caption: "Complete Number of Code Combat Levels"
   },
-  PathProblem: {
-    id: "PathProblem",
-    caption: "Path Problem"
+  PathActivity: {
+    id: "PathActivity",
+    caption: "Path Activity"
   },
   PathProgress: {
     id: "PathProgress",
@@ -147,7 +147,12 @@ export class CoursesService {
     const { name, password, description } = courseData;
 
     if (courseData.id) {
-      return firebase.ref(`/courses/${courseData.id}`).update(courseData);
+      return firebase
+        .set(`/coursePasswords/${courseData.id}`, password)
+        .then(() => {
+          delete courseData.password;
+          firebase.ref(`/courses/${courseData.id}`).update(courseData);
+        });
     }
 
     this.validateNewCourse(courseData);
@@ -745,7 +750,7 @@ export class CoursesService {
                     return Object.assign(
                       {
                         id,
-                        name: userInfo.displayName
+                        name: userInfo.displayName || ""
                       },
                       userInfo
                     );

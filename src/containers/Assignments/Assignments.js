@@ -1,5 +1,5 @@
 import LinearProgress from "@material-ui/core/LinearProgress";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import {
   assignmentCloseDialog,
   assignmentRefreshProfilesRequest,
@@ -24,27 +24,22 @@ import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AssignmentsTable from "../../components/tables/AssignmentsTable";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import RefreshIcon from "@material-ui/icons/Refresh";
 
 import Grid from "@material-ui/core/Grid";
 import InstructorTabs from "../../components/tabs/InstructorTabs";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import TextField from "@material-ui/core/TextField";
-import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
-import { APP_SETTING } from "../../achievementsApp/config";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
-import AddPathProblemSolutionDialog from "../../components/dialogs/AddPathProblemSolutionDialog";
+import AddPathActivitySolutionDialog from "../../components/dialogs/AddPathActivitySolutionDialog";
 import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
 import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -157,6 +152,13 @@ class Assignments extends React.Component {
     this.props.dispatch(assignmentCloseDialog());
   };
 
+  commitTextSolution = (solution, taskId) => {
+    const { course, dispatch } = this.props;
+
+    dispatch(assignmentSolutionRequest(course.id, taskId, solution));
+    dispatch(assignmentCloseDialog());
+  };
+
   refreshProfileSolutions = () =>
     this.props.dispatch(assignmentRefreshProfilesRequest(this.props.course.id));
 
@@ -196,15 +198,7 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const {
-      ui,
-      classes,
-      students,
-      auth,
-      dispatch,
-      course,
-      currentUser
-    } = this.props;
+    const { ui, students, auth, dispatch, course, currentUser } = this.props;
 
     if (!auth.isLoaded) {
       return <LinearProgress />;
@@ -245,33 +239,17 @@ class Assignments extends React.Component {
     }
     return (
       <Fragment>
-        <Toolbar>
-          <Link className={classes.breadcrumbLink} to="/courses">
-            <Typography className={classes.breadcrumbText}>Courses</Typography>
-          </Link>
-          <ChevronRightIcon />
-          <Typography className={classes.breadcrumbText}>
-            {course.name}
-          </Typography>
-          {course.owner === currentUser.id &&
-            (APP_SETTING.isSuggesting ? (
-              <div className={classes.actions}>
-                <IconButton onClick={this.refreshProfileSolutions}>
-                  <RefreshIcon />
-                </IconButton>
-              </div>
-            ) : (
-              <div className={classes.actions}>
-                <Button
-                  className={classes.action}
-                  onClick={this.refreshProfileSolutions}
-                  variant="raised"
-                >
-                  Refresh achievements
-                </Button>
-              </div>
-            ))}
-        </Toolbar>
+        <Breadcrumbs
+          paths={[
+            {
+              label: "Courses",
+              link: "/courses"
+            },
+            {
+              label: course.name
+            }
+          ]}
+        />
         <Typography gutterBottom>{course.description}</Typography>
         {AssignmentView}
         <RemoveStudentDialog
@@ -290,12 +268,12 @@ class Assignments extends React.Component {
           studentName={ui && ui.dialog && ui.dialog.studentName}
         />
         <AddProfileDialog
-          dispatch={dispatch}
           externalProfile={{
             url: "https://codecombat.com",
             name: "Code Combat",
             id: "CodeCombat"
           }}
+          onClose={this.closeDialog}
           onCommit={this.onProfileCommit}
           open={ui.dialog && ui.dialog.type === "Profile"}
           uid={currentUser.id}
@@ -310,13 +288,13 @@ class Assignments extends React.Component {
           />
         )}
         <AddTextSolutionDialog
-          assignment={ui.currentAssignment}
-          courseId={course.id}
-          dispatch={dispatch}
+          onClose={this.closeDialog}
+          onCommit={this.commitTextSolution}
           open={ui.dialog && ui.dialog.type === "Text"}
           solution={ui.dialog && ui.dialog.value}
+          taskId={ui.currentAssignment && ui.currentAssignment.id}
         />
-        <AddPathProblemSolutionDialog
+        <AddPathActivitySolutionDialog
           assignment={ui.currentAssignment}
           dispatch={dispatch}
           loadingSolution={!!ui.dialog && ui.dialog.loadingSolution}

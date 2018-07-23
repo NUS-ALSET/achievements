@@ -1,3 +1,8 @@
+export const PATHS_OPEN = "PATHS_OPEN";
+export const pathsOpen = () => ({
+  type: PATHS_OPEN
+});
+
 export const PATH_GAPI_AUTHORIZED = "PATH_GAPI_AUTHORIZED";
 export const pathGAPIAuthorized = status => ({
   type: PATH_GAPI_AUTHORIZED,
@@ -44,6 +49,31 @@ export const PATH_SELECT = "PATH_SELECT";
 export const pathSelect = pathId => ({
   type: PATH_SELECT,
   pathId
+});
+
+export const PATH_PROBLEM_MOVE_REQUEST = "PATH_PROBLEM_MOVE_REQUEST";
+export const pathProblemMoveRequest = (pathId, problemId, direction) => ({
+  type: PATH_PROBLEM_MOVE_REQUEST,
+  pathId,
+  problemId,
+  direction
+});
+
+export const PATH_PROBLEM_MOVE_SUCCESS = "PATH_PROBLEM_MOVE_SUCCESS";
+export const pathProblemMoveSuccess = (pathId, problemId, direction) => ({
+  type: PATH_PROBLEM_MOVE_SUCCESS,
+  pathId,
+  problemId,
+  direction
+});
+
+export const PATH_PROBLEM_MOVE_FAIL = "PATH_PROBLEM_MOVE_FAIL";
+export const pathProblemMoveFail = (pathId, problemId, direction, reason) => ({
+  type: PATH_PROBLEM_MOVE_FAIL,
+  pathId,
+  problemId,
+  direction,
+  reason
 });
 
 export const PATH_PROBLEM_CHANGE_REQUEST = "PATH_PROBLEM_CHANGE_REQUEST";

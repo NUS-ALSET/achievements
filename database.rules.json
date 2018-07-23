@@ -1,5 +1,13 @@
 {
   "rules": {
+    "activities": {
+      ".read": "auth != null",
+      "$problemKey": {
+        ".write": "auth != null && (
+            newData.child('owner').val() == auth.uid
+        )"
+      }
+    },
     "admins": {
       ".write": false,
       "$userKey": {
@@ -54,6 +62,12 @@
             )
           )
         "
+      }
+    },
+    "completedActivities": {
+      "$userKey": {
+        ".read": "auth != null && $userKey == auth.uid",
+        ".write": "auth != null && $userKey == auth.uid"
       }
     },
     "courseMembers": {
@@ -112,10 +126,10 @@
       }
     },
     "jupyterSolutionsQueue": {
-      "answers": {
+      "responses": {
         "$taskKey": {
           ".read": "auth != null",
-          ".write": false
+          ".write": "!newData.exists()"
         }
       },
       "tasks": {
@@ -130,6 +144,13 @@
       ".read": "auth != null",
       ".write": "auth != null",
       ".indexOn": "createdAt"
+    },
+    "moreProblemsRequests": {
+      "$requestKey": {
+        ".write": "auth != null &&
+          newData.child('sender').exists() &&
+          auth.uid == newData.child('sender').val()"
+      }
     },
     "pathProblems": {
       ".read": "auth != null",
@@ -155,16 +176,6 @@
         "$userKey": {
           ".read": "auth != null",
           ".write": "auth != null && auth.uid == $userKey"
-        }
-      }
-    },
-    "problems": {
-      ".read": "auth != null",
-      "$userKey": {
-        "$problemKey": {
-          ".write": "auth != null && (
-              newData.child('owner').val() == auth.uid
-            )"
         }
       }
     },
@@ -254,19 +265,6 @@
         }
       }
     },
-    "users": {
-      ".read": "auth != null",
-      "$userKey": {
-        ".write": "auth != null && auth.uid == $userKey",
-      }
-    },
-    "usersPrivate": {
-      ".read": false,
-      "$userKey": {
-        ".read": "auth != null && auth.uid == $userKey",
-        ".write": "auth != null && auth.uid == $userKey"
-      }
-    },
     "userAchievements": {
       ".read": "auth != null",
       "$userKey": {
@@ -280,6 +278,25 @@
             }
           }
         }
+      }
+    },
+    "userRecommendations": {
+      "$userKey": {
+        ".read": "auth != null && auth.uid == $userKey",
+        ".write": false
+      }
+    },
+    "users": {
+      ".read": "auth != null",
+      "$userKey": {
+        ".write": "auth != null && auth.uid == $userKey",
+      }
+    },
+    "usersPrivate": {
+      ".read": false,
+      "$userKey": {
+        ".read": "auth != null && auth.uid == $userKey",
+        ".write": "auth != null && auth.uid == $userKey"
       }
     },
     "visibleSolutions": {

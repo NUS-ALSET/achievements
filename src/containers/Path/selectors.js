@@ -1,4 +1,5 @@
 import { createSelector } from "reselect";
+import { PROBLEMS_TYPES } from "../../services/paths";
 
 export const PATH_STATUS_OWNER = "owner";
 export const PATH_STATUS_JOINED = "joined";
@@ -21,16 +22,13 @@ const getPath = (state, ownProps) =>
 
 const getJoinedPaths = state => state.paths.joinedPaths || {};
 
-const getProblems = (state, ownProps) => {
+const getActivities = (state, ownProps) => {
   const path = getPath(state, ownProps);
 
-  return (
-    path &&
-    path.owner &&
-    state.firebase.data.problems &&
-    state.firebase.data.problems[path.owner]
-  );
+  return path && path.owner && state.firebase.data.activities;
 };
+
+const getActivitiesSolutions = state => state.path.problemSolutions || {};
 
 export const pathStatusSelector = createSelector(
   getUserId,
@@ -47,13 +45,42 @@ export const pathStatusSelector = createSelector(
   }
 );
 
-export const pathProblemsSelector = createSelector(
+const getActivitySelector = problem => {
+  switch (problem.type) {
+    case PROBLEMS_TYPES.text.id:
+      return problem.question || "Answer the question";
+    case PROBLEMS_TYPES.profile.id:
+      return "Enter CodeCombat profile";
+    case PROBLEMS_TYPES.codeCombat.id:
+      return `Finish "${problem.level}" level at CodeCombat`;
+    case PROBLEMS_TYPES.codeCombatNumber.id:
+      return `Finish ${problem.count} levels at CodeCombat`;
+    case PROBLEMS_TYPES.jupyter.id:
+      return "Solve task at Jupyter Colab";
+    case PROBLEMS_TYPES.jupyterInline.id:
+      return "Solve jupyter task";
+    case PROBLEMS_TYPES.youtube.id:
+      return "Watch Video and answer for questions";
+    case PROBLEMS_TYPES.game.id:
+      return "Win the game";
+    default:
+      return "Usual activity";
+  }
+};
+
+export const pathActivitiesSelector = createSelector(
   getPath,
-  getProblems,
-  (path, problems) => ({
+  getActivities,
+  getActivitiesSolutions,
+  (path, activities, solutions) => ({
     path: path,
-    problems: Object.keys(problems || {})
-      .map(id => ({ ...problems[id], id }))
+    problems: Object.keys(activities || {})
+      .map(id => ({
+        ...activities[id],
+        id,
+        description: getActivitySelector(activities[id]),
+        solved: solutions[id]
+      }))
       .filter(
         problem =>
           path.id === path.owner ? !problem.path : problem.path === path.id

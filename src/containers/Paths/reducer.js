@@ -7,6 +7,7 @@ import {
   PATHS_JOINED_FETCH_SUCCESS
 } from "./actions";
 import {
+  PATH_CLOSE_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_FAIL,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   PATH_TOGGLE_JOIN_STATUS_SUCCESS
@@ -30,6 +31,16 @@ export const paths = (
       return {
         ...state,
         gapiAuthorized: action.status
+      };
+    case PATH_CLOSE_DIALOG:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            type: ""
+          }
+        }
       };
     case PATH_DIALOG_SHOW:
       return {

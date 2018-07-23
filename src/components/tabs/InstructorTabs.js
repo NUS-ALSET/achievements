@@ -4,24 +4,49 @@
  * @created 13.02.18
  */
 
-// import AddAssignmentDialog from "./dialogs/AddAssignmentDialog";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+
+import { withRouter } from "react-router-dom";
+
+import withStyles from "@material-ui/core/styles/withStyles";
+
+import Button from "@material-ui/core/Button";
+import Tab from "@material-ui/core/Tab";
+import Tabs from "@material-ui/core/Tabs";
+import Toolbar from "@material-ui/core/Toolbar";
+import Zoom from "@material-ui/core/Zoom";
+
+import { APP_SETTING } from "../../achievementsApp/config";
+
+import AddIcon from "@material-ui/icons/Add";
+import GroupIcon from "@material-ui/icons/Group";
+
 import AssignmentsEditorTable from "../tables/AssignmentsEditorTable";
 import AssignmentsTable from "../tables/AssignmentsTable";
 import DeleteAssignmentDialog from "../dialogs/DeleteAssignmentDialog";
-import PropTypes from "prop-types";
-import React, { Fragment } from "react";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+import {
+  assignmentsAssistantsShowRequest,
+  assignmentShowAddDialog
+} from "../../containers/Assignments/actions";
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
+const styles = theme => ({
+  buttonAction: {
+    marginRight: theme.spacing.unit
+  }
+});
+
 class InstructorTabs extends React.PureComponent {
   static propTypes = {
+    classes: PropTypes.object.isRequired,
     ui: PropTypes.object,
     course: PropTypes.object,
     currentUser: PropTypes.object,
+    match: PropTypes.object.isRequired,
     paths: PropTypes.array,
     problems: PropTypes.array,
 
@@ -32,7 +57,14 @@ class InstructorTabs extends React.PureComponent {
 
   getInstructorTab() {
     /** @type AssignmentProps */
-    const { course, ui, currentUser, dispatch, closeDialog } = this.props;
+    const {
+      classes,
+      course,
+      ui,
+      currentUser,
+      dispatch,
+      closeDialog
+    } = this.props;
 
     switch (ui.currentTab) {
       case INSTRUCTOR_TAB_ASSIGNMENTS:
@@ -48,6 +80,57 @@ class InstructorTabs extends React.PureComponent {
       case INSTRUCTOR_TAB_EDIT:
         return (
           <Fragment>
+            {APP_SETTING.isSuggesting ? (
+              <Fragment>
+                <Zoom in={true} unmountOnExit>
+                  <Button
+                    color="primary"
+                    onClick={() => this.onAddAssignmentClick()}
+                    style={{
+                      backfaceVisibility: "hidden",
+                      position: "fixed",
+                      bottom: 20,
+                      right: 20
+                    }}
+                    variant="fab"
+                  >
+                    <AddIcon />
+                  </Button>
+                </Zoom>
+                <Zoom in={true} unmountOnExit>
+                  <Button
+                    onClick={this.assignmentsAssistantsShowRequest}
+                    style={{
+                      backfaceVisibility: "hidden",
+                      position: "fixed",
+                      bottom: 80,
+                      right: 20
+                    }}
+                    variant="fab"
+                  >
+                    <GroupIcon />
+                  </Button>
+                </Zoom>
+              </Fragment>
+            ) : (
+              <Toolbar>
+                <Button
+                  className={classes.buttonAction}
+                  color="primary"
+                  onClick={this.onAddAssignmentClick}
+                  variant="raised"
+                >
+                  Add assignment
+                </Button>
+                <Button
+                  className={classes.buttonAction}
+                  onClick={this.assignmentsAssistantsShowRequest}
+                  variant="raised"
+                >
+                  Assistants
+                </Button>
+              </Toolbar>
+            )}
             <AssignmentsEditorTable
               assignments={course.assignments || {}}
               dispatch={dispatch}
@@ -75,6 +158,12 @@ class InstructorTabs extends React.PureComponent {
     }
   }
 
+  onAddAssignmentClick = () => this.props.dispatch(assignmentShowAddDialog());
+  assignmentsAssistantsShowRequest = () =>
+    this.props.dispatch(
+      assignmentsAssistantsShowRequest(this.props.match.params.courseId)
+    );
+
   render() {
     const { ui, handleTabChange } = this.props;
 
@@ -97,4 +186,4 @@ class InstructorTabs extends React.PureComponent {
   }
 }
 
-export default InstructorTabs;
+export default withStyles(styles)(withRouter(InstructorTabs));
