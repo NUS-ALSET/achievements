@@ -25,7 +25,7 @@ admin.initializeApp();
 exports.handleNewProblemSolution =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
   functions.database
-    .ref("/jupyterSolutionsQueue/responses/{requestId}")
+    .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
       jupyterTrigger.handler(data, data.taskKey, data.owner);
