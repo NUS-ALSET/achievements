@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import firebase from "firebase";
 import assert from "assert";
 import sinon from "sinon";
@@ -135,7 +136,7 @@ describe("Paths service tests", () => {
     pathsService.togglePathJoinStatus("deadbeef", "testPath", false);
   });
 
-  it("should return PathProblem", () => {
+  it("should return PathActivity", () => {
     firebase.refStub.withArgs("/paths/-testPathId").returns({
       once: () => firebase.snap({ owner: "testOwner", name: "Test Path" })
     });

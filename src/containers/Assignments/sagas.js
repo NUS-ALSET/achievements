@@ -670,7 +670,7 @@ export default [
   function* watchCourseAssignmentsClose() {
     yield takeLatest(COURSE_ASSIGNMENTS_CLOSE, courseAssignmentsCloseHandler);
   },
-  function* watchAssignmentSubmitRequest() {
+  function* watchAssignmentPathProblemSubmitRequest() {
     yield takeLatest(
       ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
       assignmentPathProblemSolutionRequestHandler
