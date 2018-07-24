@@ -70,7 +70,7 @@ class AssignmentsTable extends React.PureComponent {
       solution.originalSolution.createdAt
     ).toLocaleString()}`;
     switch (assignment.questionType) {
-      case "PathProblem":
+      case "PathActivity":
         if (
           solution.originalSolution.value.answers &&
           !isEmpty(solution.originalSolution.value.answers)
@@ -145,7 +145,7 @@ class AssignmentsTable extends React.PureComponent {
         ) : (
           undefined
         );
-      case "PathProblem":
+      case "PathActivity":
         return solution ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
             <span>
@@ -258,7 +258,7 @@ class AssignmentsTable extends React.PureComponent {
           assignmentSolutionRequest(course.id, assignment.id, "Complete")
         );
         break;
-      case "PathProblem":
+      case "PathActivity":
         dispatch(
           assignmentPathProblemSolutionRequest(
             assignment,
