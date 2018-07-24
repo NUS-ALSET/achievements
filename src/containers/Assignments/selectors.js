@@ -79,7 +79,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             value: "Completed"
           };
           return true;
-        case "PathProblem":
+        case "PathActivity":
           result[assignmentId] = {
             createdAt,
             published,
