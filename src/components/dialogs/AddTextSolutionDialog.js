@@ -63,7 +63,7 @@ class AddTextSolutionDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            onClick={() => onCommit(taskId, this.state.solution)}
+            onClick={() => onCommit(this.state.solution, taskId)}
             variant="raised"
           >
             Commit
