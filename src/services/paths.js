@@ -231,6 +231,10 @@ export class PathsService {
   }
 
   pathChange(uid, pathInfo) {
+    if (!(pathInfo.id || pathInfo.name)) {
+      throw new Error("Missing path name");
+    }
+
     if (pathInfo.id) {
       return firebase
         .database()
