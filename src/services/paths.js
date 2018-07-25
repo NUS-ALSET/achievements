@@ -33,11 +33,11 @@ export const PROBLEMS_TYPES = {
   },
   jupyter: {
     id: "jupyter",
-    caption: "Jupyter Notebook"
+    caption: "Colaboratory Notebook"
   },
   jupyterInline: {
     id: "jupyterInline",
-    caption: "Jupyter Inline"
+    caption: "Jupyter Notebook"
   },
   youtube: {
     id: "youtube",
