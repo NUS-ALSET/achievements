@@ -44,12 +44,12 @@ class PathDialog extends React.PureComponent {
     this.props.dispatch(pathDialogHide());
   };
   onCommit = () => {
-    this.setState({ name: "" });
     this.props.dispatch(
       pathChangeRequest(
         Object.assign(this.props.path || {}, this.removeEmpty(this.state))
       )
     );
+    this.setState({ name: "" });
   };
 
   render() {
