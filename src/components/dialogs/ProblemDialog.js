@@ -371,7 +371,7 @@ class ProblemDialog extends React.PureComponent {
     let index = 0;
     for (index = fileIndex + 1; index < this.state.problem.files.length; index++) {
         const file = this.state.problem.files[index];
-        if (file.type == 'dir') {
+        if (file.type === 'dir') {
             folderToFetch = file;
             break;
         }
@@ -404,7 +404,7 @@ fetchWholeCode = (fileIndex = -1) => {
   let fileToFetch = null;
   for (let index in this.state.problem.files) {
       const file = this.state.problem.files[index];
-      if (file.type !== 'dir' && parseInt(index) > parseInt(fileIndex)) {
+      if (file.type !== 'dir' && parseInt(index,10) > parseInt(fileIndex,10)) { 
           fileToFetch = { ...file, index };
           break;
       }
@@ -416,7 +416,7 @@ fetchWholeCode = (fileIndex = -1) => {
               this.setState({
                 problem :  {
                   ...this.state.problem,
-                  files : this.state.problem.files.map((f, i) => i == fileToFetch.index ? { ...f, code } : f)
+                  files : this.state.problem.files.map((f, i) => i === fileToFetch.index ? { ...f, code } : f)
                 },
                   
               })
@@ -480,9 +480,9 @@ handleError=(err='Error occurs.')=>{
   }
 
   render() {
-    const { problem, onClose, open } = this.props;
+    const { problem, open } = this.props;
     return (
-      <Dialog fullWidth onClose={onClose} open={open}>
+      <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
           {problem && problem.id ? "Edit Problem" : "Add New Problem"}
         </DialogTitle>
@@ -522,7 +522,7 @@ handleError=(err='Error occurs.')=>{
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised" disabled={this.state.loading || !this.state.name || this.state.type === PROBLEMS_TYPES.jest.id && this.state.problem && !this.state.problem.files}>
+          <Button color="primary" onClick={this.onCommit} variant="raised" disabled={this.state.loading || !this.state.name || (this.state.type === PROBLEMS_TYPES.jest.id && this.state.problem && !this.state.problem.files)}>
             Commit
           </Button>
         </DialogActions>
