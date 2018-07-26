@@ -46,6 +46,10 @@ export const PROBLEMS_TYPES = {
   game: {
     id: "game",
     caption: "Game"
+  },
+  jest:{
+    id : "jest",
+    caption : "Jest"
   }
 };
 
@@ -297,6 +301,10 @@ export class PathsService {
         }
         break;
       case "game":
+        break;
+      case "jest":
+        if (!problemInfo.githubURL) throw new Error("Missing GithubURL");
+        if (!problemInfo.files) throw new Error("Missing Files");
         break;
       default:
         throw new Error("Invalid  problem type");

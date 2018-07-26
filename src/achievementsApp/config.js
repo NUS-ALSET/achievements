@@ -7,7 +7,12 @@ export const APP_SETTING = {
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,
   defaultTimeout: 6000,
-  isSuggesting: window.location.href.includes("isSuggesting=true")
+  isSuggesting: window.location.href.includes("isSuggesting=true"),
+  GITHUB_BASE_URL : 'https://github.com/',
+  GITHUB_SERVER_URL : 'https://api.github.com',
+  RAW_GIT_URL : 'https://raw.githubusercontent.com',
+  AWS_SERVER_URL : 'https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest',
+  GITHUB_ACCESS_TOKEN : atob('NDlmNDE5OWM0MGNmM2Q1OTA1NTEwOTM3OWFiMzhmOGExYjcwMTE2Yw=='),
 };
 
 // Initialize Firebase
