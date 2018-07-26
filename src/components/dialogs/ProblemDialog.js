@@ -56,6 +56,7 @@ class ProblemDialog extends React.PureComponent {
     problem :{}
   };
   componentWillReceiveProps(nextProps){
+    this.resetState();
     if(nextProps.problem){
       this.setState({ problem : nextProps.problem || {}, type : nextProps.problem.type, name : nextProps.problem.name, githubURL : nextProps.problem.githubURL });  
     }
@@ -416,7 +417,7 @@ fetchWholeCode = (fileIndex = -1) => {
               this.setState({
                 problem :  {
                   ...this.state.problem,
-                  files : this.state.problem.files.map((f, i) => i === fileToFetch.index ? { ...f, code } : f)
+                  files : this.state.problem.files.map((f, i) => parseInt(i,10) === parseInt(fileToFetch.index,10) ? { ...f, code } : f)
                 },
                   
               })
