@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Brainenjii/achievements.svg?branch=develop)](https://travis-ci.org/Brainenjii/achievements)
+[![Build Status](https://travis-ci.org/NUS-ALSET/achievements.svg?branch=develop)](https://travis-ci.org/Brainenjii/achievements)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/NUS-ALSET/achievements.svg?columns=all)](https://waffle.io/NUS-ALSET/achievements)
 
