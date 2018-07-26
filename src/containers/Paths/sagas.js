@@ -40,14 +40,18 @@ export function* pathsOpenHandler() {
 
 export function* pathChangeRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
-  const key = yield call(
-    [pathsService, pathsService.pathChange],
-    uid,
-    action.pathInfo
-  );
+  try {
+    const key = yield call(
+      [pathsService, pathsService.pathChange],
+      uid,
+      action.pathInfo
+    );
 
-  yield put(pathChangeSuccess(action.pathInfo, key));
-  yield put(pathDialogHide());
+    yield put(pathChangeSuccess(action.pathInfo, key));
+    yield put(pathDialogHide());
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
 }
 
 export function* pathProblemChangeRequestHandler(action) {

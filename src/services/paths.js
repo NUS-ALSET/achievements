@@ -33,11 +33,11 @@ export const PROBLEMS_TYPES = {
   },
   jupyter: {
     id: "jupyter",
-    caption: "Jupyter Notebook"
+    caption: "Colaboratory Notebook"
   },
   jupyterInline: {
     id: "jupyterInline",
-    caption: "Jupyter Inline"
+    caption: "Jupyter Notebook"
   },
   youtube: {
     id: "youtube",
@@ -235,6 +235,10 @@ export class PathsService {
   }
 
   pathChange(uid, pathInfo) {
+    if (!(pathInfo.id || pathInfo.name)) {
+      throw new Error("Missing path name");
+    }
+
     if (pathInfo.id) {
       return firebase
         .database()
