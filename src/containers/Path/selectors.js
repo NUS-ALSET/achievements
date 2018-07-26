@@ -63,6 +63,8 @@ const getActivitySelector = problem => {
       return "Watch Video and answer for questions";
     case PROBLEMS_TYPES.game.id:
       return "Win the game";
+    case PROBLEMS_TYPES.jest.id:
+      return "Pass the Test";
     default:
       return "Usual activity";
   }
