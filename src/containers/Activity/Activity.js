@@ -20,7 +20,7 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
-import ProblemView from "../../components/problemViews/ProblemView";
+import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
 
 export class Activity extends React.PureComponent {
@@ -99,7 +99,7 @@ export class Activity extends React.PureComponent {
             ]}
           />
         )}
-        <ProblemView
+        <ActivityView
           dispatch={dispatch}
           onProblemChange={this.props.onProblemChange || this.onProblemChange}
           pathProblem={pathProblem}

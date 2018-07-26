@@ -24,6 +24,13 @@ export class AddCourseDialog extends React.Component {
     description: ""
   };
 
+  removeEmpty = value =>
+    Object.assign(
+      {},
+      ...Object.keys(value || {})
+        .filter(key => value[key])
+        .map(key => ({ [key]: value[key] }))
+    );
   onClose = () =>
     this.setState({
       name: "",
@@ -37,13 +44,7 @@ export class AddCourseDialog extends React.Component {
     let course = Object.assign({}, this.props.course, this.state);
 
     // Update only changed fields (state populates in `onChange` handler
-    Object.keys(course).forEach(field => {
-      if (!course[field]) {
-        delete course[field];
-      }
-    });
-
-    this.props.dispatch(courseNewRequest(course));
+    this.props.dispatch(courseNewRequest(this.removeEmpty(course)));
     this.onClose();
   };
 

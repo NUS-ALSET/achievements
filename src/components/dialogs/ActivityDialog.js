@@ -23,24 +23,25 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from '@material-ui/core/IconButton';
-import CloudDownload from '@material-ui/icons/CloudDownload';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Typography from '@material-ui/core/Typography';
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import IconButton from "@material-ui/core/IconButton";
+import CloudDownload from "@material-ui/icons/CloudDownload";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
 
 import { PROBLEMS_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
-const fetchDirectoryStructureFromGitub = (url) => {
-  return fetch(`${url}?access_token=${APP_SETTING.GITHUB_ACCESS_TOKEN}`)
-      .then(response => response.json())
-}
+const fetchDirectoryStructureFromGitub = url => {
+  return fetch(`${url}?access_token=${APP_SETTING.GITHUB_ACCESS_TOKEN}`).then(
+    response => response.json()
+  );
+};
 
-class ProblemDialog extends React.PureComponent {
+class ActivityDialog extends React.PureComponent {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
@@ -53,11 +54,16 @@ class ProblemDialog extends React.PureComponent {
   };
 
   state = {
-    problem :{}
+    problem: {}
   };
-  componentWillReceiveProps(nextProps){
-    if(nextProps.problem){
-      this.setState({ problem : nextProps.problem || {}, type : nextProps.problem.type, name : nextProps.problem.name, githubURL : nextProps.problem.githubURL });  
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.problem) {
+      this.setState({
+        problem: nextProps.problem || {},
+        type: nextProps.problem.type,
+        name: nextProps.problem.name,
+        githubURL: nextProps.problem.githubURL
+      });
     }
   }
   getTypeSpecificElements() {
@@ -253,204 +259,237 @@ class ProblemDialog extends React.PureComponent {
             <MenuItem value="Squad">Squad</MenuItem>
           </TextField>
         );
-        case PROBLEMS_TYPES.jest.id:
-          return (
-            <div>
-            <FormControl style={{width : '100%'}}>
-          <InputLabel htmlFor="githubURL">Github URL</InputLabel>
-          <Input
-            id="githubURL*"
-            type='text'
-            value={problem.githubURL || ''}
-            onChange={e => this.onFieldChange("githubURL", e.target.value)}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="Fetch files from github."
-                  onClick={this.handleGithubURLSubmit}
-                >
-                 {this.state.loading ?  <CircularProgress size={25}/> :  <CloudDownload /> }
-                
-                </IconButton> 
-              </InputAdornment>
-            }
-          />
-        </FormControl>
-            {this.state.problem && this.state.problem.files && 
-              <div>
-                 <Typography variant="body2" gutterBottom>
-        <CheckBoxIcon/> Check files to allow write access for users.
-      </Typography> 
-        {this.state.problem.files.map(file=>file.type==='file' &&
-            (
-              <ListItem
-              key={file.path}
-              role={undefined}
-              dense
-              button
-            >
-              <Checkbox
-               checked={!file.readOnly}
-                tabIndex={-1}
-                disableRipple
-                onChange={()=>this.handleReadOnlyFiles(file.path)}
+      case PROBLEMS_TYPES.jest.id:
+        return (
+          <div>
+            <FormControl style={{ width: "100%" }}>
+              <InputLabel htmlFor="githubURL">Github URL</InputLabel>
+              <Input
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Fetch files from github."
+                      onClick={this.handleGithubURLSubmit}
+                    >
+                      {this.state.loading ? (
+                        <CircularProgress size={25} />
+                      ) : (
+                        <CloudDownload />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                id="githubURL*"
+                onChange={e => this.onFieldChange("githubURL", e.target.value)}
+                type="text"
+                value={problem.githubURL || ""}
               />
-              <ListItemText primary={file.path} />
-            </ListItem>
-            )
-            )}
-            </div>
-            }
+            </FormControl>
+            {this.state.problem &&
+              this.state.problem.files && (
+                <div>
+                  <Typography gutterBottom variant="body2">
+                    <CheckBoxIcon /> Check files to allow write access for
+                    users.
+                  </Typography>
+                  {this.state.problem.files.map(
+                    file =>
+                      file.type === "file" && (
+                        <ListItem button dense key={file.path} role={undefined}>
+                          <Checkbox
+                            checked={!file.readOnly}
+                            disableRipple
+                            onChange={() => this.handleReadOnlyFiles(file.path)}
+                            tabIndex={-1}
+                          />
+                          <ListItemText primary={file.path} />
+                        </ListItem>
+                      )
+                  )}
+                </div>
+              )}
           </div>
-          )
+        );
       default:
     }
   }
-  showLoading =()=>{
-    this.setState(() => ({loading : true}));
-  }
-  hideLoading=()=>{
-    this.setState(() => ({ loading : false}));
-  }
-  handleReadOnlyFiles=(filePath)=>{
+  showLoading = () => {
+    this.setState(() => ({ loading: true }));
+  };
+  hideLoading = () => {
+    this.setState(() => ({ loading: false }));
+  };
+  handleReadOnlyFiles = filePath => {
     this.setState(() => ({
-      problem :{
+      problem: {
         ...this.state.problem,
-      files : this.state.problem.files.map(file=>file.path===filePath ? {...file, readOnly : !file.readOnly} : file)
+        files: this.state.problem.files.map(
+          file =>
+            file.path === filePath
+              ? { ...file, readOnly: !file.readOnly }
+              : file
+        )
       }
-    }))
-  }
-  handleGithubURLSubmit=()=>{
-    if(this.state.loading)
-      return;
-    const {githubURL} = this.state;
+    }));
+  };
+  handleGithubURLSubmit = () => {
+    if (this.state.loading) return;
+    const { githubURL } = this.state;
     if (!githubURL.includes(APP_SETTING.GITHUB_BASE_URL)) {
-      //this.showNotification('Not a Valid Github URL');
-      alert('Not a Valid Github URL');
+      // this.showNotification('Not a Valid Github URL');
+      alert("Not a Valid Github URL");
       return;
-  }
-  this.showLoading();
+    }
+    this.showLoading();
 
-  const params = githubURL.replace(APP_SETTING.GITHUB_BASE_URL, '').split('/');
-  let repoOwner = params[0];
-  let repoName = params[1];
-  let subPath = '';
-  if (params.length > 4) {
+    const params = githubURL
+      .replace(APP_SETTING.GITHUB_BASE_URL, "")
+      .split("/");
+    let repoOwner = params[0];
+    let repoName = params[1];
+    let subPath = "";
+    if (params.length > 4) {
       for (let i = 4; i < params.length; i++) {
-          subPath = `${subPath}/${params[i]}`;
+        subPath = `${subPath}/${params[i]}`;
       }
-  }
-  fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${repoOwner}/${repoName}/contents${subPath}`)
+    }
+    fetchDirectoryStructureFromGitub(
+      `${
+        APP_SETTING.GITHUB_SERVER_URL
+      }/repos/${repoOwner}/${repoName}/contents${subPath}`
+    )
       .then(files => {
-          if (files && files.length) {
-              //this.hideOutput();
-              this.setState({
-                repoDetails : {
-                  owner: repoOwner,
-                  name: repoName,
-                  folderPath: subPath,
-                },
-                problem :  {
-                  ...this.state.problem,
-                  githubURL,
-                  files : files.map(f=>({path : f.path, readOnly : true, type : f.type})),
-                },
-                  selectedFile: null
-              })
-              this.fetchWholeTree(-1);
-          } else {
-              this.handleError();
-          }
+        if (files && files.length) {
+          // this.hideOutput();
+          this.setState({
+            repoDetails: {
+              owner: repoOwner,
+              name: repoName,
+              folderPath: subPath
+            },
+            problem: {
+              ...this.state.problem,
+              githubURL,
+              files: files.map(f => ({
+                path: f.path,
+                readOnly: true,
+                type: f.type
+              }))
+            },
+            selectedFile: null
+          });
+          this.fetchWholeTree(-1);
+        } else {
+          this.handleError();
+        }
       })
       .catch(err => {
-        this.handleError(err);       
-      })
-  }
+        this.handleError(err);
+      });
+  };
   fetchWholeTree = (fileIndex = -1) => {
     let folderToFetch = null;
     let index = 0;
-    for (index = fileIndex + 1; index < this.state.problem.files.length; index++) {
-        const file = this.state.problem.files[index];
-        if (file.type === 'dir') {
-            folderToFetch = file;
-            break;
-        }
+    for (
+      index = fileIndex + 1;
+      index < this.state.problem.files.length;
+      index++
+    ) {
+      const file = this.state.problem.files[index];
+      if (file.type === "dir") {
+        folderToFetch = file;
+        break;
+      }
     }
     if (folderToFetch) {
-        fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/contents${folderToFetch.path}`)
-            .then(tree => {
-                if (tree && tree.length) {
-                  this.setState({
-                    problem :  {
-                      ...this.state.problem,
-                      files : ([...this.state.problem.files, ...tree]).map(f=>({path : f.path,readOnly : true,type:f.type}))
-                    },
-                  })
-                    this.fetchWholeTree(index);
-                } else {
-                    this.handleError();
-                }
-            })
-            .catch(err => {
-              this.handleError(err);
-            })
+      fetchDirectoryStructureFromGitub(
+        `${APP_SETTING.GITHUB_SERVER_URL}/repos/${
+          this.state.repoDetails.owner
+        }/${this.state.repoDetails.name}/contents${folderToFetch.path}`
+      )
+        .then(tree => {
+          if (tree && tree.length) {
+            this.setState({
+              problem: {
+                ...this.state.problem,
+                files: [...this.state.problem.files, ...tree].map(f => ({
+                  path: f.path,
+                  readOnly: true,
+                  type: f.type
+                }))
+              }
+            });
+            this.fetchWholeTree(index);
+          } else {
+            this.handleError();
+          }
+        })
+        .catch(err => {
+          this.handleError(err);
+        });
     } else {
-        this.hideLoading();
-        this.fetchWholeCode();
+      this.hideLoading();
+      this.fetchWholeCode();
     }
-}
+  };
 
-fetchWholeCode = (fileIndex = -1) => {
-  let fileToFetch = null;
-  for (let index in this.state.problem.files) {
-      const file = this.state.problem.files[index];
-      if (file.type !== 'dir' && parseInt(index,10) > parseInt(fileIndex,10)) { 
+  fetchWholeCode = (fileIndex = -1) => {
+    let fileToFetch = null;
+    for (let index in this.state.problem.files) {
+      if (this.state.problem.files.hasOwnProperty(index)) {
+        const file = this.state.problem.files[index];
+        if (
+          file.type !== "dir" &&
+          parseInt(index, 10) > parseInt(fileIndex, 10)
+        ) {
           fileToFetch = { ...file, index };
           break;
+        }
       }
-  }
-  if (fileToFetch) {
-      fetch(`${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/master/${fileToFetch.path}`)
-          .then(response => response.text())
-          .then(code => {
-              this.setState({
-                problem :  {
-                  ...this.state.problem,
-                  files : this.state.problem.files.map((f, i) => i === fileToFetch.index ? { ...f, code } : f)
-                },
-                  
-              })
-              this.fetchWholeCode(fileToFetch.index);
-
-          })
-          .catch(err => {
-              this.handleError(err);
-          })
-  } else {
-      const firstFile = this.state.problem.files.find(f => f.type !== 'dir');
+    }
+    if (fileToFetch) {
+      fetch(
+        `${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${
+          this.state.repoDetails.name
+        }/master/${fileToFetch.path}`
+      )
+        .then(response => response.text())
+        .then(code => {
+          this.setState({
+            problem: {
+              ...this.state.problem,
+              files: this.state.problem.files.map(
+                (f, i) => (i === fileToFetch.index ? { ...f, code } : f)
+              )
+            }
+          });
+          this.fetchWholeCode(fileToFetch.index);
+        })
+        .catch(err => {
+          this.handleError(err);
+        });
+    } else {
+      const firstFile = this.state.problem.files.find(f => f.type !== "dir");
       if (firstFile) {
+        // Do something
       }
-  }
-}
-handleError=(err='Error occurs.')=>{
-  this.hideLoading();
-  if(typeof err==='string'){
-    alert(err);
-  }else if(err.message){
-    alert(err.message);
-  }
-  else{
-    alert('Error occurs');
-  }
-}
+    }
+  };
+  handleError = (err = "Error occurs.") => {
+    this.hideLoading();
+    if (typeof err === "string") {
+      alert(err);
+    } else if (err.message) {
+      alert(err.message);
+    } else {
+      alert("Error occurs");
+    }
+  };
   onFieldChange = (field, value) => this.setState({ [field]: value });
   onCommit = () => {
-    if(this.state.type===PROBLEMS_TYPES.jest.id){
-      const {type, githubURL, problem: {files}, name} = this.state;
-      this.props.onCommit(
-        this.props.pathId,
-        {type, githubURL, files, name}
-      );
+    if (this.state.type === PROBLEMS_TYPES.jest.id) {
+      const { type, githubURL, problem: { files }, name } = this.state;
+      this.props.onCommit(this.props.pathId, { type, githubURL, files, name });
       return;
     }
     this.props.onCommit(
@@ -462,22 +501,21 @@ handleError=(err='Error occurs.')=>{
           "text"
       })
     );
-   
+
     this.resetState();
   };
 
-  onClose=()=>{
+  onClose = () => {
     this.resetState();
     this.props.onClose();
-    
-  }
-  resetState=()=>{
-     // Clear state. Render will be invoked 1 time only
+  };
+  resetState = () => {
+    // Clear state. Render will be invoked 1 time only
     Object.keys(this.state).forEach(
       key => this.setState({ [key]: undefined }) || true
     );
     this.setState({ type: "" });
-  }
+  };
 
   render() {
     const { problem, open } = this.props;
@@ -488,7 +526,7 @@ handleError=(err='Error occurs.')=>{
         </DialogTitle>
         <DialogContent
           style={{
-            width: '100%'
+            width: "100%"
           }}
         >
           <TextField
@@ -498,9 +536,9 @@ handleError=(err='Error occurs.')=>{
             label="Name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            value={this.state.name}
             onKeyPress={this.catchReturn}
             required
+            value={this.state.name}
           />
           <TextField
             fullWidth
@@ -522,7 +560,18 @@ handleError=(err='Error occurs.')=>{
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised" disabled={this.state.loading || !this.state.name || (this.state.type === PROBLEMS_TYPES.jest.id && this.state.problem && !this.state.problem.files)}>
+          <Button
+            color="primary"
+            disabled={
+              this.state.loading ||
+              !this.state.name ||
+              (this.state.type === PROBLEMS_TYPES.jest.id &&
+                this.state.problem &&
+                !this.state.problem.files)
+            }
+            onClick={this.onCommit}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>
@@ -531,4 +580,4 @@ handleError=(err='Error occurs.')=>{
   }
 }
 
-export default ProblemDialog;
+export default ActivityDialog;

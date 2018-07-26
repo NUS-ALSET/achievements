@@ -39,7 +39,7 @@ import {
   pathProblemDialogShow,
   pathProblemMoveRequest
 } from "../Paths/actions";
-import ProblemDialog from "../../components/dialogs/ProblemDialog";
+import ActivityDialog from "../../components/dialogs/ActivityDialog";
 
 import AddIcon from "@material-ui/icons/Add";
 import { sagaInjector } from "../../services/saga";
@@ -242,7 +242,7 @@ class Path extends React.Component {
           pathOwnerId={pathProblems.path && pathProblems.path.owner}
           selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
         />
-        <ProblemDialog
+        <ActivityDialog
           onClose={onCloseDialog}
           onCommit={onProblemChangeRequest}
           open={ui.dialog.type === "ProblemChange"}

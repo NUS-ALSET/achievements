@@ -1,5 +1,5 @@
 /**
- * @file JupyterProblem container module
+ * @file JupyterColabActivity container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 08.03.18
  */
@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import { problemSolveUpdate } from "../../containers/Activity/actions";
 import JupyterNotebook from "./JupyterNotebook";
 
-class JupyterProblem extends React.PureComponent {
+class JupyterColabActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
@@ -58,10 +58,11 @@ class JupyterProblem extends React.PureComponent {
         <JupyterNotebook
           solution={{ json: problem.problemJSON }}
           title="Problem"
+          url={problem.problemColabURL}
         />
       </Fragment>
     );
   }
 }
 
-export default JupyterProblem;
+export default JupyterColabActivity;
