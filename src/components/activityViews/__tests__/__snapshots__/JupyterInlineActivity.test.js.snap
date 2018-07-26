@@ -1,15 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<JupyterProblem> should check snapshot 1`] = `
+exports[`<JupyterInlineActivity> should check snapshot 1`] = `
 ShallowWrapper {
   "length": 1,
   Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <JupyterProblem
+  Symbol(enzyme.__unrendered__): <JupyterInlineActivity
     dispatch={[Function]}
     problem={
         Object {
-            "pathId": "testPath",
-            "problemId": "testProblem",
+            "problemJSON": "test",
           }
     }
 />,
@@ -30,14 +29,16 @@ ShallowWrapper {
           action={[Function]}
           defaultValue={undefined}
           persistent={true}
-          solution={undefined}
-          title="Calculated Solution"
+          richEditor={true}
+          solution={false}
+          title="Edit code"
 />,
+        undefined,
         undefined,
         <JupyterNotebook
           solution={
                     Object {
-                              "json": undefined,
+                              "json": "test",
                             }
           }
           title="Problem"
@@ -54,13 +55,15 @@ ShallowWrapper {
           "action": [Function],
           "defaultValue": undefined,
           "persistent": true,
-          "solution": undefined,
-          "title": "Calculated Solution",
+          "richEditor": true,
+          "solution": false,
+          "title": "Edit code",
         },
         "ref": null,
         "rendered": null,
         "type": [Function],
       },
+      undefined,
       undefined,
       Object {
         "instance": null,
@@ -68,7 +71,7 @@ ShallowWrapper {
         "nodeType": "class",
         "props": Object {
           "solution": Object {
-            "json": undefined,
+            "json": "test",
           },
           "title": "Problem",
         },
@@ -90,14 +93,16 @@ ShallowWrapper {
             action={[Function]}
             defaultValue={undefined}
             persistent={true}
-            solution={undefined}
-            title="Calculated Solution"
+            richEditor={true}
+            solution={false}
+            title="Edit code"
 />,
+          undefined,
           undefined,
           <JupyterNotebook
             solution={
                         Object {
-                                    "json": undefined,
+                                    "json": "test",
                                   }
             }
             title="Problem"
@@ -114,13 +119,15 @@ ShallowWrapper {
             "action": [Function],
             "defaultValue": undefined,
             "persistent": true,
-            "solution": undefined,
-            "title": "Calculated Solution",
+            "richEditor": true,
+            "solution": false,
+            "title": "Edit code",
           },
           "ref": null,
           "rendered": null,
           "type": [Function],
         },
+        undefined,
         undefined,
         Object {
           "instance": null,
@@ -128,7 +135,7 @@ ShallowWrapper {
           "nodeType": "class",
           "props": Object {
             "solution": Object {
-              "json": undefined,
+              "json": "test",
             },
             "title": "Problem",
           },

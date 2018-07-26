@@ -1,5 +1,5 @@
 /**
- * @file JupyterProblem container module
+ * @file JupyterColabActivity container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 08.03.18
  */
@@ -16,7 +16,7 @@ import {
 import { notificationShow } from "../../containers/Root/actions";
 import JupyterNotebook from "./JupyterNotebook";
 
-class JupyterInlineProblem extends React.PureComponent {
+class JupyterInlineActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
@@ -129,4 +129,4 @@ class JupyterInlineProblem extends React.PureComponent {
   }
 }
 
-export default JupyterInlineProblem;
+export default JupyterInlineActivity;

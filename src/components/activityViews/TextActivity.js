@@ -1,5 +1,5 @@
 /**
- * @file CodeCombatProfileProblem container module
+ * @file TextActivity container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 23.06.18
  */
@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 
-class CodeCombatProfileProblem extends React.Component {
+class TextActivity extends React.PureComponent {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
@@ -20,18 +20,18 @@ class CodeCombatProfileProblem extends React.Component {
   onChangeSolution = e => this.props.onChange({ value: e.target.value });
 
   render() {
-    const {solution } = this.props;
+    const { problem, solution } = this.props;
 
     return (
       <Fragment>
         <Typography align="left" gutterBottom variant="headline">
-          Enter CodeCombat Profile
+          {problem.question}
         </Typography>
         <TextField
           autoFocus
           defaultValue={(solution && solution.value) || ""}
           fullWidth
-          label="Profile"
+          label="Solution"
           multiline
           onChange={this.onChangeSolution}
           style={{
@@ -43,4 +43,4 @@ class CodeCombatProfileProblem extends React.Component {
   }
 }
 
-export default CodeCombatProfileProblem;
+export default TextActivity;

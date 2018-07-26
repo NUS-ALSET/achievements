@@ -1,5 +1,5 @@
 /**
- * @file ProblemView container module
+ * @file ActivityView container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 11.03.18
  */
@@ -7,20 +7,20 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import TextProblem from "./TextProblem";
+import TextActivity from "./TextActivity";
 
-import JupyterProblem from "../../components/problemViews/JupyterProblem";
-import JupyterInlineProblem from "../../components/problemViews/JupyterInlineProblem";
-import YouTubeProblem from "../../components/problemViews/YouTubeProblem";
+import JupyterProblem from "./JupyterColabActivity";
+import JupyterInlineProblem from "./JupyterInlineActivity";
+import YouTubeProblem from "./YouTubeActivity";
 
 const views = {
-  text: TextProblem,
+  text: TextActivity,
   jupyter: JupyterProblem,
   jupyterInline: JupyterInlineProblem,
   youtube: YouTubeProblem
 };
 
-class ProblemView extends React.PureComponent {
+class ActivityView extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     match: PropTypes.object,
@@ -56,4 +56,4 @@ class ProblemView extends React.PureComponent {
   }
 }
 
-export default ProblemView;
+export default ActivityView;
