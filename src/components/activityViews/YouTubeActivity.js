@@ -1,5 +1,5 @@
 /**
- * @file YouTubeProblem container module
+ * @file YouTubeActivity container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 08.03.18
  */
@@ -9,9 +9,9 @@ import PropTypes from "prop-types";
 
 import YouTube from "react-youtube";
 
-import ProblemQuestion from "./ProblemQuestion";
+import ActivityQuestion from "./ActivityQuestion";
 
-class YouTubeProblem extends React.PureComponent {
+class YouTubeActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
@@ -94,7 +94,7 @@ class YouTubeProblem extends React.PureComponent {
         />
         {solution !== null &&
           problem.questionAfter && (
-            <ProblemQuestion
+            <ActivityQuestion
               question="questionAfter"
               setAnswer={this.setAnswer}
               solution={solution}
@@ -102,7 +102,7 @@ class YouTubeProblem extends React.PureComponent {
           )}
         {solution !== null &&
           problem.questionAnswer && (
-            <ProblemQuestion
+            <ActivityQuestion
               question="questionAnswer"
               setAnswer={this.setAnswer}
               solution={solution}
@@ -110,7 +110,7 @@ class YouTubeProblem extends React.PureComponent {
           )}
         {solution !== null &&
           problem.topics && (
-            <ProblemQuestion
+            <ActivityQuestion
               question="topics"
               setAnswer={this.setAnswer}
               solution={solution}
@@ -119,7 +119,7 @@ class YouTubeProblem extends React.PureComponent {
         {solution !== null &&
           problem.questionCustom &&
           problem.customText && (
-            <ProblemQuestion
+            <ActivityQuestion
               label={problem.customText}
               question="customQuestion"
               setAnswer={this.setAnswer}
@@ -131,4 +131,4 @@ class YouTubeProblem extends React.PureComponent {
   }
 }
 
-export default YouTubeProblem;
+export default YouTubeActivity;

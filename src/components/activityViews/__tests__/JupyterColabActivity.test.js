@@ -4,11 +4,11 @@ import { createShallow } from "@material-ui/core/test-utils";
 
 import sinon from "sinon";
 
-import JupyterProblem from "../JupyterProblem";
+import JupyterColabActivity from "../JupyterColabActivity";
 import JupyterNotebook from "../JupyterNotebook";
 import { PROBLEM_SOLVE_UPDATE } from "../../../containers/Activity/actions";
 
-describe("<JupyterProblem>", () => {
+describe("<JupyterColabActivity>", () => {
   let mockDispatch;
   let shallow;
 
@@ -19,7 +19,7 @@ describe("<JupyterProblem>", () => {
 
   it("should check snapshot", () => {
     const wrapper = shallow(
-      <JupyterProblem
+      <JupyterColabActivity
         dispatch={mockDispatch}
         problem={{ pathId: "testPath", problemId: "testProblem" }}
       />
@@ -27,9 +27,9 @@ describe("<JupyterProblem>", () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it("should initiate JupyterProblem w/o solution", () => {
+  it("should initiate JupyterColabActivity w/o solution", () => {
     const wrapper = shallow(
-      <JupyterProblem
+      <JupyterColabActivity
         dispatch={mockDispatch}
         problem={{
           id: "testProblem",
@@ -54,9 +54,9 @@ describe("<JupyterProblem>", () => {
     });
   });
 
-  it("should initiate JupyterProblem with solution", () => {
+  it("should initiate JupyterColabActivity with solution", () => {
     const wrapper = shallow(
-      <JupyterProblem
+      <JupyterColabActivity
         dispatch={mockDispatch}
         problem={{
           id: "testProblem",
@@ -99,7 +99,7 @@ describe("<JupyterProblem>", () => {
   it("should dispatch problemSolutionSubmitRequest", () => {
     const mockChange = sinon.spy();
     const wrapper = shallow(
-      <JupyterProblem
+      <JupyterColabActivity
         dispatch={mockDispatch}
         onChange={mockChange}
         problem={{ pathId: "testPath", problemId: "testProblem" }}

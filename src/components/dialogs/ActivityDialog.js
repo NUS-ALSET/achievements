@@ -27,7 +27,7 @@ import TextField from "@material-ui/core/TextField";
 import { PROBLEMS_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
-class ProblemDialog extends React.PureComponent {
+class ActivityDialog extends React.PureComponent {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
@@ -309,4 +309,4 @@ class ProblemDialog extends React.PureComponent {
   }
 }
 
-export default ProblemDialog;
+export default ActivityDialog;
