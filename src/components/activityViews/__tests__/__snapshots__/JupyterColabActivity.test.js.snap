@@ -41,6 +41,7 @@ ShallowWrapper {
                             }
           }
           title="Problem"
+          url={undefined}
 />,
       ],
     },
@@ -71,6 +72,7 @@ ShallowWrapper {
             "json": undefined,
           },
           "title": "Problem",
+          "url": undefined,
         },
         "ref": null,
         "rendered": null,
@@ -101,6 +103,7 @@ ShallowWrapper {
                                   }
             }
             title="Problem"
+            url={undefined}
 />,
         ],
       },
@@ -131,6 +134,7 @@ ShallowWrapper {
               "json": undefined,
             },
             "title": "Problem",
+            "url": undefined,
           },
           "ref": null,
           "rendered": null,
