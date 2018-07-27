@@ -1,5 +1,5 @@
 /**
- * @file ProblemQuestion container module
+ * @file ActivityQuestion container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 10.03.18
  */
@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import TextField from "@material-ui/core/TextField";
 import { YOUTUBE_QUESTIONS } from "../../services/paths";
 
-class ProblemQuestion extends React.PureComponent {
+class ActivityQuestion extends React.PureComponent {
   static propTypes = {
     label: PropTypes.string,
     setAnswer: PropTypes.func.isRequired,
@@ -40,4 +40,4 @@ class ProblemQuestion extends React.PureComponent {
   }
 }
 
-export default ProblemQuestion;
+export default ActivityQuestion;

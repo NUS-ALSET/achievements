@@ -147,8 +147,12 @@ export class CoursesService {
     const { name, password, description } = courseData;
 
     if (courseData.id) {
-      return firebase
-        .set(`/coursePasswords/${courseData.id}`, password)
+      return Promise.resolve()
+        .then(
+          () =>
+            password &&
+            firebase.set(`/coursePasswords/${courseData.id}`, password)
+        )
         .then(() => {
           delete courseData.password;
           firebase.ref(`/courses/${courseData.id}`).update(courseData);

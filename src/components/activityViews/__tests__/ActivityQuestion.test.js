@@ -1,9 +1,9 @@
 import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
-import ProblemQuestion from "../ProblemQuestion";
+import ActivityQuestion from "../ActivityQuestion";
 import sinon from "sinon";
 
-describe("<ProblemQuestion>", () => {
+describe("<ActivityQuestion>", () => {
   let shallow;
 
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe("<ProblemQuestion>", () => {
 
   it("should check snapshot", () => {
     const wrapper = shallow(
-      <ProblemQuestion question="test" setAnswer={() => {}} />
+      <ActivityQuestion question="test" setAnswer={() => {}} />
     );
 
     expect(wrapper).toMatchSnapshot();
@@ -20,7 +20,11 @@ describe("<ProblemQuestion>", () => {
 
   it("should set label for problem question", () => {
     const wrapper = shallow(
-      <ProblemQuestion label="testLabel" question="test" setAnswer={() => {}} />
+      <ActivityQuestion
+        label="testLabel"
+        question="test"
+        setAnswer={() => {}}
+      />
     );
 
     expect(wrapper.prop("label")).toEqual("testLabel");
@@ -28,7 +32,7 @@ describe("<ProblemQuestion>", () => {
 
   it("should set predefined label for problem question", () => {
     const wrapper = shallow(
-      <ProblemQuestion question="topics" setAnswer={() => {}} />
+      <ActivityQuestion question="topics" setAnswer={() => {}} />
     );
 
     expect(wrapper.prop("label")).toEqual(
@@ -39,7 +43,7 @@ describe("<ProblemQuestion>", () => {
   it("should check change event", () => {
     let spy = sinon.spy();
     const wrapper = shallow(
-      <ProblemQuestion question="topics" setAnswer={spy} />
+      <ActivityQuestion question="topics" setAnswer={spy} />
     );
 
     wrapper.simulate("change", {

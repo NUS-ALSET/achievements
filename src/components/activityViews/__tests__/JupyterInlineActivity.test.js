@@ -3,9 +3,9 @@ import { createShallow } from "@material-ui/core/test-utils";
 
 import sinon from "sinon";
 
-import JupyterInlineProblem from "../JupyterInlineProblem";
+import JupyterInlineActivity from "../JupyterInlineActivity";
 
-describe("<JupyterInlineProblem>", () => {
+describe("<JupyterInlineActivity>", () => {
   let mockDispatch;
   let shallow;
 
@@ -16,7 +16,7 @@ describe("<JupyterInlineProblem>", () => {
 
   it("should check snapshot", () => {
     const wrapper = shallow(
-      <JupyterInlineProblem
+      <JupyterInlineActivity
         dispatch={mockDispatch}
         problem={{
           problemJSON: "test"
@@ -29,7 +29,7 @@ describe("<JupyterInlineProblem>", () => {
 
   it("is just mock test", () => {
     const wrapper = shallow(
-      <JupyterInlineProblem
+      <JupyterInlineActivity
         dispatch={mockDispatch}
         problem={{
           code: 0,
