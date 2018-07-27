@@ -45,6 +45,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
+import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog"
 import { PROBLEMS_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
@@ -148,7 +149,7 @@ class Path extends React.Component {
       ui,
       uid
     } = this.props;
-
+    console.log(this.props, this.state);
     const allFinished =
       (pathProblems.problems || []).filter(problem => problem.solved).length ===
       (pathProblems.problems || []).length;
@@ -201,20 +202,20 @@ class Path extends React.Component {
               </Button>
             </Toolbar>
           ) : (
-            <Button
-              aria-label="Add"
-              color="primary"
-              onClick={this.onAddProblemClick}
-              style={{
-                position: "fixed",
-                bottom: 20,
-                right: 20
-              }}
-              variant="fab"
-            >
-              <AddIcon />
-            </Button>
-          ))}
+              <Button
+                aria-label="Add"
+                color="primary"
+                onClick={this.onAddProblemClick}
+                style={{
+                  position: "fixed",
+                  bottom: 20,
+                  right: 20
+                }}
+                variant="fab"
+              >
+                <AddIcon />
+              </Button>
+            ))}
         <AddTextSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
@@ -222,6 +223,7 @@ class Path extends React.Component {
           solution={ui.dialog.solution}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
+        <AddJestSolutionDialog open={ui.dialog.type === `${PROBLEMS_TYPES.jest.id}Solution`} onClose={onCloseDialog}  problem={ui.dialog.value}/>
         <AddProfileDialog
           externalProfile={{
             url: "https://codecombat.com",
