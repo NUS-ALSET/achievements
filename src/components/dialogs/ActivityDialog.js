@@ -268,7 +268,7 @@ class ActivityDialog extends React.PureComponent {
             <FormControl style={{ width: '100%' }}>
               <InputLabel htmlFor="githubURL">Github URL</InputLabel>
               <Input
-                id="githubURL*"
+                id="githubURL"
                 type='text'
                 value={problem.githubURL || ''}
                 onChange={e => this.onFieldChange("githubURL", e.target.value)}
@@ -278,40 +278,41 @@ class ActivityDialog extends React.PureComponent {
                       aria-label="Fetch files from github."
                       onClick={this.handleGithubURLSubmit}
                     >
-                      {this.state.loading ? <CircularProgress size={25} /> : <CloudDownload />}
-
+                      {this.state.loading ? (
+                        <CircularProgress size={25} />
+                      ) : (
+                        <CloudDownload />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 }
               />
             </FormControl>
-            {this.state.files &&
-              <div>
-                <Typography variant="body2" gutterBottom>
-                  <CheckBoxIcon /> Check files to allow write access for users.
-                </Typography>
-                {this.state.files.map(file => file.type === 'file' &&
-                  (
-                    <ListItem
-                      key={file.path}
-                      role={undefined}
-                      dense
-                      button
-                    >
-                      <Checkbox
-                        checked={!file.readOnly}
-                        tabIndex={-1}
-                        disableRipple
-                        onChange={() => this.handleReadOnlyFiles(file.path)}
-                      />
-                      <ListItemText primary={file.path} />
-                    </ListItem>
-                  )
-                )}
-              </div>
-            }
+            {
+              this.state.files && (
+                <div>
+                  <Typography gutterBottom variant="body2">
+                    <CheckBoxIcon /> Check files to allow write access for
+                    users.
+                  </Typography>
+                  {this.state.files.map(
+                    file =>
+                      file.type === "file" && (
+                        <ListItem button dense key={file.path} role={undefined}>
+                          <Checkbox
+                            checked={!file.readOnly}
+                            disableRipple
+                            onChange={() => this.handleReadOnlyFiles(file.path)}
+                            tabIndex={-1}
+                          />
+                          <ListItemText primary={file.path} />
+                        </ListItem>
+                      )
+                  )}
+                </div>
+              )}
           </div>
-        )
+        );
       default:
     }
   }
@@ -331,8 +332,8 @@ class ActivityDialog extends React.PureComponent {
       return;
     const { githubURL } = this.state;
     if (!githubURL.includes(APP_SETTING.GITHUB_BASE_URL)) {
-      //this.showNotification('Not a Valid Github URL');
-      alert('Not a Valid Github URL');
+      // this.showNotification('Not a Valid Github URL');
+      alert("Not a Valid Github URL");
       return;
     }
     this.showLoading();
@@ -430,6 +431,7 @@ class ActivityDialog extends React.PureComponent {
     } else {
       const firstFile = this.state.files.find(f => f.type !== 'dir');
       if (firstFile) {
+        // Do something
       }
     }
   }
@@ -447,9 +449,6 @@ class ActivityDialog extends React.PureComponent {
   onFieldChange = (field, value) => this.setState({ [field]: value });
   onCommit = () => {
     const problem = { ...this.props.problem };
-    // if(problem.problem){
-    //   delete problem.problem;
-    // }
     if (this.state.type === PROBLEMS_TYPES.jest.id) {
       const { type, githubURL, name } = this.state;
       this.props.onCommit(
@@ -486,7 +485,7 @@ class ActivityDialog extends React.PureComponent {
       key => this.setState({ [key]: undefined }) || true
     );
     this.setState({ type: "" });
-  }
+  };
 
   render() {
     const { problem, open } = this.props;
@@ -497,7 +496,7 @@ class ActivityDialog extends React.PureComponent {
         </DialogTitle>
         <DialogContent
           style={{
-            width: '100%'
+            width: "100%"
           }}
         >
           <TextField
@@ -507,9 +506,9 @@ class ActivityDialog extends React.PureComponent {
             label="Name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            value={this.state.name}
             onKeyPress={this.catchReturn}
             required
+            value={this.state.name}
           />
           <TextField
             fullWidth
