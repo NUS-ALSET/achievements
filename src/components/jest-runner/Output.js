@@ -9,10 +9,10 @@ class Ouptut extends React.Component {
         const { output } = this.props;
         return (
             <div id="result-div">
-                <div className="wrap p-10" style={{height:'83px'}}>
-                    <h2 style={{lineHeight :0}}>Test Result</h2>
+                <div className="wrap p-10" style={{height:'71px'}}>
+                    <h2>Test Result</h2>
                     <div id="result-status" className="status">
-                        <span className="error"> {output.numFailedTests} ❌</span>
+                       {output.numFailedTests>0 && <span className="error"> {output.numFailedTests} ❌</span>}
                         <span className="success"> {output.numPassedTests} ✅</span>
                     </div>
                 </div>

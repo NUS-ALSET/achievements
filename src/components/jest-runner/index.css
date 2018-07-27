@@ -1,7 +1,8 @@
 
 .super {
   width: 100%;
-  min-height: calc(100vh - 64px);
+  height: calc(100vh - 64px);
+  overflow: auto;
   margin: 0 auto;
   background: #252a31;
   box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
@@ -149,7 +150,9 @@
   color: #fff;
   text-shadow: 0px 1px 0px rgba(0, 0, 0, .1);
   -webkit-font-smoothing: antialiased;
-  font-size: 3em;
+  font-size: 2.7em;
+  padding: 0;
+  margin: 0;
 }
 
 #title h3 {
@@ -440,16 +443,20 @@
 }
 
 .save-btn{
-  position: absolute;
-    top: 64px;
-    right: 0;
-    z-index: 99;
-    width: 85px;
-    height: 25px;
-    text-decoration: none;
-    background-color: #d8830e;
-    color: white;
-    border: 0;
-    cursor: pointer;
-    font-weight: bold;
+  position: fixed;
+  top: 13px;
+  right: -200px;
+  z-index: 99;
+  width: 160px;
+  height: 41px;
+  font-size: 25px;
+  text-decoration: none;
+  background-color: #d8830e;
+  color: white;
+  border: 0;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 9999;
+  border: solid 1px;
+  transition: all 0.5s ease-in-out;
 }

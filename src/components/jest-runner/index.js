@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from "react-dom";
 import Editor from './Editor';
 import Output from './Output';
 import Loader from './Loader';
@@ -18,12 +19,15 @@ class JestRunner extends React.Component {
             loading: false,
             output: null,
             notificationMsg: '',
-            selectedFile: props.files && props.files.length>0 ? props.files[0] : null,
+            selectedFile: this.getFirstWritableFile(props),
             files: props.files || []
         };
     }
+    getFirstWritableFile(props){
+        return props.files && props.files.length>0 ? ( props.files.find(f=>!f.readOnly) ? props.files.find(f=>!f.readOnly) : props.files[0] ) : null;
+    }
     componentWillReceiveProps(nextProps){
-        this.setState({ files : nextProps.files || [], selectedFile: nextProps.files && nextProps.files.length>0 ? nextProps.files[0] : null})
+        this.setState({ files : nextProps.files || [], selectedFile: this.getFirstWritableFile(nextProps) })
     }
     showNotification = (message) => {
         this.setState({ notificationMsg: message });
@@ -36,6 +40,9 @@ class JestRunner extends React.Component {
     }
     showOutput = (output) => {
         this.setState({ output: output });
+        const jestRunnerNode = ReactDOM.findDOMNode(this.refs.jestRunnerEle);
+        jestRunnerNode.scrollTo(0, 1000);
+        
     }
     hideOutput = () => {
         this.setState({ output: null });
@@ -77,7 +84,7 @@ class JestRunner extends React.Component {
         })
             .then(response => response.json())
             .then(data => {
-                console.log('server response', data, JSON.stringify(data));
+                console.log('server response', data);
                 if (data.message && data.message === 'Internal server error') {
                     // this.showOutput(data.message);
 
@@ -95,7 +102,7 @@ class JestRunner extends React.Component {
         const { output, loading, notificationMsg, files, selectedFile } = this.state;
         return (
             <div>
-                <div className="super">
+                <div className="super" ref="jestRunnerEle">
                     {files.length > 0 &&
                         <div className="mainWrap" id="editor-panel">
 

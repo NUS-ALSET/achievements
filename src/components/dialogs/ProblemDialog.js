@@ -58,7 +58,7 @@ class ProblemDialog extends React.PureComponent {
   componentWillReceiveProps(nextProps){
     this.resetState();
     if(nextProps.problem){
-      this.setState({ problem : nextProps.problem || {}, type : nextProps.problem.type, name : nextProps.problem.name, githubURL : nextProps.problem.githubURL });  
+      this.setState({ ...nextProps.problem,type : nextProps.problem.type, name : nextProps.problem.name, githubURL : nextProps.problem.githubURL, files : nextProps.problem.files  });  
     }
   }
   getTypeSpecificElements() {
@@ -277,12 +277,12 @@ class ProblemDialog extends React.PureComponent {
             }
           />
         </FormControl>
-            {this.state.problem && this.state.problem.files && 
+            {this.state.files && 
               <div>
                  <Typography variant="body2" gutterBottom>
         <CheckBoxIcon/> Check files to allow write access for users.
       </Typography> 
-        {this.state.problem.files.map(file=>file.type==='file' &&
+        {this.state.files.map(file=>file.type==='file' &&
             (
               <ListItem
               key={file.path}
@@ -315,10 +315,7 @@ class ProblemDialog extends React.PureComponent {
   }
   handleReadOnlyFiles=(filePath)=>{
     this.setState(() => ({
-      problem :{
-        ...this.state.problem,
-      files : this.state.problem.files.map(file=>file.path===filePath ? {...file, readOnly : !file.readOnly} : file)
-      }
+      files : this.state.files.map(file=>file.path===filePath ? {...file, readOnly : !file.readOnly} : file)
     }))
   }
   handleGithubURLSubmit=()=>{
@@ -351,11 +348,8 @@ class ProblemDialog extends React.PureComponent {
                   name: repoName,
                   folderPath: subPath,
                 },
-                problem :  {
-                  ...this.state.problem,
-                  githubURL,
-                  files : files.map(f=>({path : f.path, readOnly : true, type : f.type})),
-                },
+                githubURL,
+                files : files.map(f=>({path : f.path, readOnly : true, type : f.type})),
                   selectedFile: null
               })
               this.fetchWholeTree(-1);
@@ -370,8 +364,8 @@ class ProblemDialog extends React.PureComponent {
   fetchWholeTree = (fileIndex = -1) => {
     let folderToFetch = null;
     let index = 0;
-    for (index = fileIndex + 1; index < this.state.problem.files.length; index++) {
-        const file = this.state.problem.files[index];
+    for (index = fileIndex + 1; index < this.state.files.length; index++) {
+        const file = this.state.files[index];
         if (file.type === 'dir') {
             folderToFetch = file;
             break;
@@ -382,10 +376,9 @@ class ProblemDialog extends React.PureComponent {
             .then(tree => {
                 if (tree && tree.length) {
                   this.setState({
-                    problem :  {
-                      ...this.state.problem,
-                      files : ([...this.state.problem.files, ...tree]).map(f=>({path : f.path,readOnly : true,type:f.type}))
-                    },
+                   
+                      files : ([...this.state.files, ...tree]).map(f=>({path : f.path,readOnly : true,type:f.type}))
+                    
                   })
                     this.fetchWholeTree(index);
                 } else {
@@ -403,8 +396,8 @@ class ProblemDialog extends React.PureComponent {
 
 fetchWholeCode = (fileIndex = -1) => {
   let fileToFetch = null;
-  for (let index in this.state.problem.files) {
-      const file = this.state.problem.files[index];
+  for (let index in this.state.files) {
+      const file = this.state.files[index];
       if (file.type !== 'dir' && parseInt(index,10) > parseInt(fileIndex,10)) { 
           fileToFetch = { ...file, index };
           break;
@@ -415,10 +408,9 @@ fetchWholeCode = (fileIndex = -1) => {
           .then(response => response.text())
           .then(code => {
               this.setState({
-                problem :  {
-                  ...this.state.problem,
-                  files : this.state.problem.files.map((f, i) => parseInt(i,10) === parseInt(fileToFetch.index,10) ? { ...f, code } : f)
-                },
+               
+                  files : this.state.files.map((f, i) => parseInt(i,10) === parseInt(fileToFetch.index,10) ? { ...f, code } : f)
+                
                   
               })
               this.fetchWholeCode(fileToFetch.index);
@@ -428,7 +420,7 @@ fetchWholeCode = (fileIndex = -1) => {
               this.handleError(err);
           })
   } else {
-      const firstFile = this.state.problem.files.find(f => f.type !== 'dir');
+      const firstFile = this.state.files.find(f => f.type !== 'dir');
       if (firstFile) {
       }
   }
@@ -446,20 +438,28 @@ handleError=(err='Error occurs.')=>{
 }
   onFieldChange = (field, value) => this.setState({ [field]: value });
   onCommit = () => {
+    const problem = { ...this.props.problem };
+    // if(problem.problem){
+    //   delete problem.problem;
+    // }
     if(this.state.type===PROBLEMS_TYPES.jest.id){
-      const {type, githubURL, problem: {files}, name} = this.state;
+      const {type, githubURL, name} = this.state;
       this.props.onCommit(
         this.props.pathId,
-        {type, githubURL, files, name}
+        {
+          ...problem,
+          type, githubURL, name,
+          files : this.state.files
+        }
       );
       return;
     }
     this.props.onCommit(
       this.props.pathId,
-      Object.assign(this.props.problem || {}, this.state, {
+      Object.assign(problem || {}, this.state, {
         type:
           this.state.type ||
-          (this.props.problem && this.props.problem.type) ||
+          (problem && problem.type) ||
           "text"
       })
     );
@@ -523,7 +523,7 @@ handleError=(err='Error occurs.')=>{
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised" disabled={this.state.loading || !this.state.name || (this.state.type === PROBLEMS_TYPES.jest.id && this.state.problem && !this.state.problem.files)}>
+          <Button color="primary" onClick={this.onCommit} variant="raised" disabled={this.state.loading || !this.state.name ||  !this.state.type ||(this.state.type === PROBLEMS_TYPES.jest.id  && !this.state.files)}>
             Commit
           </Button>
         </DialogActions>

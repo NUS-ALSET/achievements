@@ -41,7 +41,8 @@ class AddJestSolutionDialog extends React.PureComponent {
         onCommit: PropTypes.func.isRequired,
         open: PropTypes.bool.isRequired,
         solution: PropTypes.any,
-        taskId: PropTypes.string
+        taskId: PropTypes.string,
+        classes: PropTypes.object.isRequired
     };
 
     state = {
@@ -70,7 +71,7 @@ class AddJestSolutionDialog extends React.PureComponent {
     render() {
         const { 
             // onClose, onCommit,  solution, taskId, 
-            open,classes, problem } = this.props;
+            open, classes, problem } = this.props;
 
         return (
             <Dialog
@@ -89,32 +90,15 @@ class AddJestSolutionDialog extends React.PureComponent {
                             {problem && problem.name}
                         </Typography>
                         <Typography variant="title" color="inherit">
-                             Jest Editor
+                             ALSET Editor
                         </Typography>
-                       
-                        {/* <Button color="inherit" onClick={this.handleClose}>
-                            save
-              </Button> */}
                     </Toolbar>
                 </AppBar>
                 {open && problem && <JestRunner files={problem.files} problem={problem} />}
-                {/* <List>
-                    <ListItem button>
-                        <ListItemText primary="Phone ringtone" secondary="Titania" />
-                    </ListItem>
-                    <Divider />
-                    <ListItem button>
-                        <ListItemText primary="Default notification ringtone" secondary="Tethys" />
-                    </ListItem>
-                </List> */}
             </Dialog>
         );
     }
 }
-
-// AddJestSolutionDialog.propTypes = {
-//     classes: PropTypes.object.isRequired,
-// };
 
 export default withStyles(styles)(AddJestSolutionDialog);
 

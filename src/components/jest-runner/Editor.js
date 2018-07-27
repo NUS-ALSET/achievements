@@ -20,6 +20,7 @@ class Editor extends React.Component {
             code: '',
             extension: 'jsx'
         }
+        this.isResetUndoManager=false;
     }
     
     componentWillReceiveProps(nextProps) {
@@ -34,20 +35,28 @@ class Editor extends React.Component {
             let ext = exts[exts.length - 1];
             ext = extensions[ext] ? extensions[ext] : ext;
             this.setState({ code: nextProps.selectedFile.code, extension: ext });
-            setTimeout(() => {
-                const session = this.refs.AceEditor.editor.getSession();
-                const undoManager = session.getUndoManager();
-                undoManager.reset();
-                session.setUndoManager(undoManager);
-            }, 1000)
+            this.isResetUndoManager=true;
         }
+    }
+    resetUndoManager=()=>{
+        if(this.isResetUndoManager){
+            const session = this.refs.AceEditor.editor.getSession();
+            const undoManager = session.getUndoManager();
+            undoManager.reset();
+            session.setUndoManager(undoManager);
+            this.isResetUndoManager=false;
+        }
+    }
+    componentDidUpdate(){
+        this.resetUndoManager();
+    }
+    componentDidMount(){
+        this.resetUndoManager();
     }
     render() {
         return (
             <div className="editor">
-                { this.props.selectedFile.code!==this.state.code &&
-                    <button className="save-btn" onClick={()=>this.props.saveFile(this.props.selectedFile, this.state.code)}>Save File</button>
-                }
+                <button className="save-btn" style={{ right :this.props.selectedFile.code===this.state.code ? '-200px' : '14px' }} onClick={()=>this.props.saveFile(this.props.selectedFile, this.state.code)}>Save File</button>
                 <AceEditor
                     ref="AceEditor"
                     mode={this.state.extension}
