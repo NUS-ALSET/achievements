@@ -633,6 +633,102 @@ export class PathsService {
         }
       });
   }
+
+  /**
+   *
+   * @param {Array<Activity>}activities
+   */
+  checkActivitiesOrder(activities) {
+    let needUpdate = false;
+    activities = activities.sort((a, b) => {
+      if (!a.orderIndex) {
+        needUpdate = true;
+        return 1;
+      }
+      if (!b.orderIndex) {
+        needUpdate = true;
+        return -1;
+      }
+      if (a.orderIndex < b.orderIndex) {
+        return -1;
+      } else if (a.orderIndex > b.orderIndex) {
+        return 1;
+      }
+      return 0;
+    });
+    if (needUpdate) {
+      let maxOrderIndex = 0;
+      const updated = [];
+      for (const activity of activities) {
+        if (!activity.orderIndex) {
+          maxOrderIndex += 1;
+          updated.push(activity);
+          activity.orderIndex = maxOrderIndex;
+        }
+        maxOrderIndex = Math.max(maxOrderIndex, activity.orderIndex);
+      }
+      return Promise.all(
+        updated.map(activity =>
+          firebase
+            .database()
+            .ref(`/activities/${activity.id}`)
+            .update({ orderIndex: activity.orderIndex })
+        )
+      ).then(() => activities);
+    }
+    return Promise.resolve(activities);
+  }
+
+  /**
+   *
+   * @param uid
+   * @param pathId
+   * @param {Array<Activity>}activities
+   * @param activityId
+   * @param direction
+   */
+  moveActivity(uid, pathId, activities, activityId, direction) {
+    return this.checkActivitiesOrder(activities).then(activities => {
+      let activityIndex = -1;
+      let siblingActivity;
+      let targetActivity;
+
+      activities.forEach((activity, index) => {
+        if (activity.id === activityId) {
+          activityIndex = index;
+          return false;
+        }
+        return true;
+      });
+      if (activityIndex === -1) {
+        throw new Error("Unable find requested activity");
+      }
+      targetActivity = activities[activityIndex];
+      if (direction === "up") {
+        siblingActivity = activities[activityIndex - 1];
+      } else {
+        siblingActivity = activities[activityIndex + 1];
+      }
+
+      if (!siblingActivity) {
+        return Promise.resolve();
+      }
+      return firebase
+        .database()
+        .ref(`/activities/${targetActivity.id}`)
+        .update({
+          orderIndex: siblingActivity.orderIndex
+        })
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/activities/${siblingActivity.id}`)
+            .update({
+              orderIndex: targetActivity.orderIndex
+            })
+        );
+    });
+  }
 }
 
 /** @type PathsService */

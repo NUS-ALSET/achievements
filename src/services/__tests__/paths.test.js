@@ -233,4 +233,16 @@ describe("Paths service tests", () => {
         });
     });
   });
+
+  describe("moving activity", () => {
+    beforeEach(() => sinon.stub(pathsService, "checkActivitiesOrder"));
+    afterEach(() => pathsService.checkActivitiesOrder.restore());
+
+    it("should move activity", () =>
+      pathsService
+        .moveActivity()
+        .then(() =>
+          expect(pathsService.checkActivitiesOrder.calledOnce).toBe(true)
+        ));
+  });
 });

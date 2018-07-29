@@ -85,5 +85,11 @@ export const pathActivitiesSelector = createSelector(
         problem =>
           path.id === path.owner ? !problem.path : problem.path === path.id
       )
+      .sort(
+        (a, b) =>
+          a.orderIndex === b.orderIndex
+            ? 0
+            : a.orderIndex < b.orderIndex ? -1 : 1
+      )
   })
 );

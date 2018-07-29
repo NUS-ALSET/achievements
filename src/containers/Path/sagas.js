@@ -13,8 +13,8 @@ import {
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import {
-  PATH_PROBLEM_MOVE_REQUEST,
-  pathProblemMoveFail,
+  PATH_ACTIVITY_MOVE_REQUEST,
+  pathActivityMoveFail,
   PATHS_JOINED_FETCH_SUCCESS
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
@@ -88,13 +88,30 @@ export function* pathToggleJoinStatusRequestHandler(action) {
   }
 }
 
-export function* pathProblemMoveRequestHandler(action) {
+export function* pathActivityMoveRequestHandler(action) {
   try {
+    const data = yield select(state => ({
+      uid: state.firebase.auth.uid,
+      activities: state.firebase.data.activities || {}
+    }));
+
+    const activities = Object.keys(data.activities)
+      .map(id => ({ ...data.activities[id], id }))
+      .filter(activity => activity.path === action.pathId);
+
+    yield call(
+      [pathsService, pathsService.moveActivity],
+      data.uid,
+      action.pathId,
+      activities,
+      action.activityId,
+      action.direction
+    );
   } catch (err) {
     yield put(
-      pathProblemMoveFail(
+      pathActivityMoveFail(
         action.pathId,
-        action.problemId,
+        action.activityId,
         action.direction,
         err.message
       )
@@ -143,8 +160,11 @@ export default [
       pathToggleJoinStatusRequestHandler
     );
   },
-  function* watchPathProblemMoveRequestHandler() {
-    yield takeLatest(PATH_PROBLEM_MOVE_REQUEST, pathProblemMoveRequestHandler);
+  function* watchPathActivityMoveRequest() {
+    yield takeLatest(
+      PATH_ACTIVITY_MOVE_REQUEST,
+      pathActivityMoveRequestHandler
+    );
   },
   function* watchPathMoreProblemsRequest() {
     yield takeLatest(
