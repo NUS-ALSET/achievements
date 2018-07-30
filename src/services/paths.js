@@ -360,6 +360,8 @@ export class PathsService {
   validateSolution(uid, pathProblem, solution, json) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
+        case PROBLEMS_TYPES.jest.id:
+            return Promise.resolve();
         case PROBLEMS_TYPES.codeCombat.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
@@ -480,10 +482,11 @@ export class PathsService {
               .set("Completed");
           case PROBLEMS_TYPES.text.id:
           case PROBLEMS_TYPES.jupyterInline.id:
+          case PROBLEMS_TYPES.jest.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(solution);
+              .set(solution)
           case "jupyter":
             return this.fetchFile(this.getFileId(solution))
               .then(json =>

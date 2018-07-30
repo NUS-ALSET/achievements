@@ -51,20 +51,28 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
     problemSolution: {}
   };
 
-  onProblemChange = problemSolution => this.setState({ problemSolution });
+  onProblemChange = problemSolution =>{ 
+    this.setState({ problemSolution });
+    if(problemSolution.solvedFiles){
+      this.onCommitClick(problemSolution);
+    }
+  }
   catchReturn = event => event.key === "Enter" && this.onCommitClick();
   onClose = () => {
     this.props.dispatch(problemFinalize());
     this.props.dispatch(assignmentCloseDialog());
   };
-  onCommitClick = () =>
-    isEmpty(this.state.problemSolution)
+  onCommitClick = (problemSolution = null) =>{
+    const solution = problemSolution ||  this.state.problemSolution;
+    isEmpty(solution)
       ? this.onClose()
-      : this.props.onCommit(this.state.problemSolution);
+      : this.props.onCommit(solution);
+  }
+  
 
   render() {
     const { classes, open, pathProblem, solution } = this.props;
-
+    
     return (
       <Fragment>
         <Dialog

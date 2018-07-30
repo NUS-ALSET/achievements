@@ -20,14 +20,35 @@ class JestRunner extends React.Component {
             output: null,
             notificationMsg: '',
             selectedFile: this.getFirstWritableFile(props),
-            files: props.files || []
+            files: this.getFiles(props),
+            solution : props.solution
         };
+        this.testSolution=null;
     }
     getFirstWritableFile(props){
-        return props.files && props.files.length>0 ? ( props.files.find(f=>!f.readOnly) ? props.files.find(f=>!f.readOnly) : props.files[0] ) : null;
+        const files = this.getFiles(props);
+        return files && files.length>0 ? ( files.find(f=>!f.readOnly) ? files.find(f=>!f.readOnly) : files[0] ) : null;
+    }
+    getFiles(props){
+        let files=[];
+        if(props.files){
+            files = props.files;
+        }
+        if(props.solution && props.solution.solvedFiles){
+            files = files.map(f=>{
+                const solvedFile = props.solution.solvedFiles.find(f1=>f.path === f1.path);
+                return solvedFile ? solvedFile : f;
+            })
+        }
+        return files;
     }
     componentWillReceiveProps(nextProps){
-        this.setState({ files : nextProps.files || [], selectedFile: this.getFirstWritableFile(nextProps) })
+        
+        this.setState({ 
+            files : this.getFiles(nextProps),
+            selectedFile: this.getFirstWritableFile(nextProps),
+            solution : nextProps.solution
+        })
     }
     showNotification = (message) => {
         this.setState({ notificationMsg: message });
@@ -42,7 +63,10 @@ class JestRunner extends React.Component {
         this.setState({ output: output });
         const jestRunnerNode = ReactDOM.findDOMNode(this.refs.jestRunnerEle);
         jestRunnerNode.scrollTo(0, 1000);
-        
+        this.testSolution = {
+            files : [...this.state.files],
+            output : output
+        }
     }
     hideOutput = () => {
         this.setState({ output: null });
@@ -75,6 +99,7 @@ class JestRunner extends React.Component {
             }
         })
         this.showLoading();
+        this.testSolution=null;
         fetch(APP_SETTING.AWS_SERVER_URL, {
             method: 'POST',
             body: JSON.stringify({ files: body }),
@@ -98,8 +123,11 @@ class JestRunner extends React.Component {
                 // this.showResult(err.message);
             })
     }
+    submitTest=()=>{
+        this.props.onSubmit(this.testSolution);
+    }
     render() {
-        const { output, loading, notificationMsg, files, selectedFile } = this.state;
+        const { output, loading, notificationMsg, files, selectedFile, solution } = this.state;
         return (
             <div>
                 <div className="super" ref="jestRunnerEle">
@@ -113,11 +141,24 @@ class JestRunner extends React.Component {
 
                             <div style={{ height: '97px' }}>
                                 <p className="note">Note :Only files with <span  role="img" aria-label={'Editble'}>✅</span> icon are editable.</p>
-                                <button className="bigBtn" id="postButton" onClick={this.postFiles}>Run Tests</button>
+                                <button className="bigBtn"  onClick={this.postFiles}>Run Tests</button>
                             </div>
 
                         </div>}
-                    {output && <Output output={output} />}
+                    {
+                        solution && solution.testResult && 
+                        <Output output={solution.testResult} isSubmitted={true} />
+                    }
+                    {output && 
+                        <div>
+                            <Output output={output} />
+                            <div style={{ height: '97px' }}>
+                                <button className="bigBtn"  onClick={this.submitTest}>{solution && solution.testResult ? 'Update Solution' : 'Submit Solution'}</button>
+                            </div>
+                        </div>
+                    }
+                    
+                    
                 </div>
                 {loading && <Loader />}
                 <Notification message={notificationMsg} />

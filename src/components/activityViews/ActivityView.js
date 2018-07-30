@@ -45,10 +45,7 @@ class ActivityView extends React.PureComponent {
     let SpecificView = views[pathProblem.type];
     const extraProps=pathProblem.type==="jest" ? {
         onClose: this.handleClose,
-        onCommit: ()=>{},
         open: this.state.open,
-        solution: {},
-        taskId: ""
     } : {};
     if (!SpecificView) {
       // noinspection JSUnusedAssignment

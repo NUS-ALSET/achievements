@@ -38,7 +38,8 @@ function Transition(props) {
 class AddJestSolutionDialog extends React.PureComponent {
     static propTypes = {
         onClose: PropTypes.func.isRequired,
-        onCommit: PropTypes.func.isRequired,
+        onCommit: PropTypes.func,
+        onChange: PropTypes.func,
         open: PropTypes.bool.isRequired,
         solution: PropTypes.any,
         taskId: PropTypes.string,
@@ -64,38 +65,49 @@ class AddJestSolutionDialog extends React.PureComponent {
         this.props.onClose();
     };
 
-    catchReturn = event =>
-        event.key === "Enter" &&
-        this.props.onCommit(this.state.solution, this.props.taskId);
-
+    handleSubmit = solution =>{
+        const finalSolution ={
+            solvedFiles : solution.files.filter(f=>!f.readOnly),
+            testResult : solution.output
+        };
+        if(this.props.onCommit){
+            this.props.onCommit(this.props.taskId, finalSolution );
+        }
+        if(this.props.onChange){
+            this.props.onChange(finalSolution);
+        }
+        this.handleClose();     
+    }
     render() {
         const { 
-            // onClose, onCommit,  solution, taskId, 
-            open, classes, problem } = this.props;
+            // onClose, onCommit, taskId, 
+            open, classes, problem, solution } = this.props;
 
         return (
-            <Dialog
-                fullScreen
-                open={open}
-                onClose={this.handleClose}
-                TransitionComponent={Transition}
-                className={classes.root}
-            >
-                <AppBar className={classes.appBar}>
-                    <Toolbar>
-                        <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
-                            <CloseIcon />
-                        </IconButton>
-                        <Typography variant="title" color="inherit" className={classes.flex}>
-                            {problem && problem.name}
-                        </Typography>
-                        <Typography variant="title" color="inherit">
-                             ALSET Editor
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
-                {open && problem && <JestRunner files={problem.files} problem={problem} />}
-            </Dialog>
+            <div>
+                <Dialog
+                    fullScreen
+                    open={open}
+                    onClose={this.handleClose}
+                    TransitionComponent={Transition}
+                    className={classes.root}
+                >
+                    <AppBar className={classes.appBar}>
+                        <Toolbar>
+                            <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
+                                <CloseIcon />
+                            </IconButton>
+                            <Typography variant="title" color="inherit" className={classes.flex}>
+                                {problem && problem.name}
+                            </Typography>
+                            <Typography variant="title" color="inherit">
+                                ALSET Editor
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    {open && problem && <JestRunner files={problem.files} problem={problem} solution={solution} onSubmit={this.handleSubmit}/>}
+                </Dialog>
+            </div>
         );
     }
 }
