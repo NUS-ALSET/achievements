@@ -83,9 +83,12 @@ export const pathActivitiesSelector = createSelector(
         description: getActivitySelector(activities[id]),
         solved: solutions[id]
       }))
-      .filter(
-        problem =>
-          path.id === path.owner ? !problem.path : problem.path === path.id
+      .filter(problem => problem.path === path.id)
+      .sort(
+        (a, b) =>
+          a.orderIndex === b.orderIndex
+            ? 0
+            : a.orderIndex < b.orderIndex ? -1 : 1
       )
   })
 );

@@ -233,4 +233,37 @@ describe("Paths service tests", () => {
         });
     });
   });
+
+  describe("moving activity", () => {
+    beforeEach(() => sinon.stub(pathsService, "checkActivitiesOrder"));
+    afterEach(() => pathsService.checkActivitiesOrder.restore());
+
+    it("should move activity", () => {
+      let calls = 0;
+      const activities = [
+        {
+          id: "cafebabe",
+          orderIndex: 1
+        },
+        {
+          id: "deadbeef",
+          orderIndex: 2
+        }
+      ];
+      firebase.refStub.returns({
+        update: () => {
+          calls += 1;
+          return Promise.resolve();
+        }
+      });
+
+      pathsService.checkActivitiesOrder.returns(Promise.resolve(activities));
+      return pathsService
+        .moveActivity("testUser", "testPath", activities, "deadbeef", "up")
+        .then(() => {
+          expect(pathsService.checkActivitiesOrder.calledOnce).toBe(true);
+          expect(calls).toBe(2);
+        });
+    });
+  });
 });
