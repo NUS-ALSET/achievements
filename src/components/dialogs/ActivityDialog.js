@@ -42,6 +42,7 @@ const fetchDirectoryStructureFromGitub = url => {
 };
 
 class ActivityDialog extends React.PureComponent {
+
   static propTypes = {
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
@@ -57,12 +58,14 @@ class ActivityDialog extends React.PureComponent {
     problem: {}
   };
   componentWillReceiveProps(nextProps) {
+    this.resetState();
     if (nextProps.problem) {
       this.setState({
-        problem: nextProps.problem || {},
-        type: nextProps.problem.type,
-        name: nextProps.problem.name,
-        githubURL: nextProps.problem.githubURL
+        ...nextProps.problem,
+        type: nextProps.problem.type || "",
+        name: nextProps.problem.name || "",
+        githubURL: nextProps.problem.githubURL || "",
+        files: nextProps.problem.files || []
       });
     }
   }
@@ -262,9 +265,13 @@ class ActivityDialog extends React.PureComponent {
       case PROBLEMS_TYPES.jest.id:
         return (
           <div>
-            <FormControl style={{ width: "100%" }}>
+            <FormControl style={{ width: '100%' }}>
               <InputLabel htmlFor="githubURL">Github URL</InputLabel>
               <Input
+                id="githubURL"
+                type='text'
+                value={problem.githubURL || ''}
+                onChange={e => this.onFieldChange("githubURL", e.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -279,20 +286,16 @@ class ActivityDialog extends React.PureComponent {
                     </IconButton>
                   </InputAdornment>
                 }
-                id="githubURL*"
-                onChange={e => this.onFieldChange("githubURL", e.target.value)}
-                type="text"
-                value={problem.githubURL || ""}
               />
             </FormControl>
-            {this.state.problem &&
-              this.state.problem.files && (
+            {
+              this.state.files && (
                 <div>
                   <Typography gutterBottom variant="body2">
                     <CheckBoxIcon /> Check files to allow write access for
                     users.
                   </Typography>
-                  {this.state.problem.files.map(
+                  {this.state.files.map(
                     file =>
                       file.type === "file" && (
                         <ListItem button dense key={file.path} role={undefined}>
@@ -315,25 +318,18 @@ class ActivityDialog extends React.PureComponent {
   }
   showLoading = () => {
     this.setState(() => ({ loading: true }));
-  };
+  }
   hideLoading = () => {
     this.setState(() => ({ loading: false }));
-  };
-  handleReadOnlyFiles = filePath => {
+  }
+  handleReadOnlyFiles = (filePath) => {
     this.setState(() => ({
-      problem: {
-        ...this.state.problem,
-        files: this.state.problem.files.map(
-          file =>
-            file.path === filePath
-              ? { ...file, readOnly: !file.readOnly }
-              : file
-        )
-      }
-    }));
-  };
+      files: this.state.files.map(file => file.path === filePath ? { ...file, readOnly: !file.readOnly } : file)
+    }))
+  }
   handleGithubURLSubmit = () => {
-    if (this.state.loading) return;
+    if (this.state.loading)
+      return;
     const { githubURL } = this.state;
     if (!githubURL.includes(APP_SETTING.GITHUB_BASE_URL)) {
       // this.showNotification('Not a Valid Github URL');
@@ -342,42 +338,29 @@ class ActivityDialog extends React.PureComponent {
     }
     this.showLoading();
 
-    const params = githubURL
-      .replace(APP_SETTING.GITHUB_BASE_URL, "")
-      .split("/");
+    const params = githubURL.replace(APP_SETTING.GITHUB_BASE_URL, '').split('/');
     let repoOwner = params[0];
     let repoName = params[1];
-    let subPath = "";
+    let subPath = '';
     if (params.length > 4) {
       for (let i = 4; i < params.length; i++) {
         subPath = `${subPath}/${params[i]}`;
       }
     }
-    fetchDirectoryStructureFromGitub(
-      `${
-        APP_SETTING.GITHUB_SERVER_URL
-      }/repos/${repoOwner}/${repoName}/contents${subPath}`
-    )
+    fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${repoOwner}/${repoName}/contents${subPath}`)
       .then(files => {
         if (files && files.length) {
-          // this.hideOutput();
+          //this.hideOutput();
           this.setState({
             repoDetails: {
               owner: repoOwner,
               name: repoName,
-              folderPath: subPath
+              folderPath: subPath,
             },
-            problem: {
-              ...this.state.problem,
-              githubURL,
-              files: files.map(f => ({
-                path: f.path,
-                readOnly: true,
-                type: f.type
-              }))
-            },
+            githubURL,
+            files: files.map(f => ({ path: f.path, readOnly: true, type: f.type })),
             selectedFile: null
-          });
+          })
           this.fetchWholeTree(-1);
         } else {
           this.handleError();
@@ -385,40 +368,27 @@ class ActivityDialog extends React.PureComponent {
       })
       .catch(err => {
         this.handleError(err);
-      });
-  };
+      })
+  }
   fetchWholeTree = (fileIndex = -1) => {
     let folderToFetch = null;
     let index = 0;
-    for (
-      index = fileIndex + 1;
-      index < this.state.problem.files.length;
-      index++
-    ) {
-      const file = this.state.problem.files[index];
-      if (file.type === "dir") {
+    for (index = fileIndex + 1; index < this.state.files.length; index++) {
+      const file = this.state.files[index];
+      if (file.type === 'dir') {
         folderToFetch = file;
         break;
       }
     }
     if (folderToFetch) {
-      fetchDirectoryStructureFromGitub(
-        `${APP_SETTING.GITHUB_SERVER_URL}/repos/${
-          this.state.repoDetails.owner
-        }/${this.state.repoDetails.name}/contents${folderToFetch.path}`
-      )
+      fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/contents${folderToFetch.path}`)
         .then(tree => {
           if (tree && tree.length) {
             this.setState({
-              problem: {
-                ...this.state.problem,
-                files: [...this.state.problem.files, ...tree].map(f => ({
-                  path: f.path,
-                  readOnly: true,
-                  type: f.type
-                }))
-              }
-            });
+
+              files: ([...this.state.files, ...tree]).map(f => ({ path: f.path, readOnly: true, type: f.type }))
+
+            })
             this.fetchWholeTree(index);
           } else {
             this.handleError();
@@ -426,78 +396,77 @@ class ActivityDialog extends React.PureComponent {
         })
         .catch(err => {
           this.handleError(err);
-        });
+        })
     } else {
       this.hideLoading();
       this.fetchWholeCode();
     }
-  };
+  }
 
   fetchWholeCode = (fileIndex = -1) => {
     let fileToFetch = null;
-    for (let index in this.state.problem.files) {
-      if (this.state.problem.files.hasOwnProperty(index)) {
-        const file = this.state.problem.files[index];
-        if (
-          file.type !== "dir" &&
-          parseInt(index, 10) > parseInt(fileIndex, 10)
-        ) {
-          fileToFetch = { ...file, index };
-          break;
-        }
+    for (let index in this.state.files) {
+      const file = this.state.files[index];
+      if (file.type !== 'dir' && parseInt(index, 10) > parseInt(fileIndex, 10)) {
+        fileToFetch = { ...file, index };
+        break;
       }
     }
     if (fileToFetch) {
-      fetch(
-        `${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${
-          this.state.repoDetails.name
-        }/master/${fileToFetch.path}`
-      )
+      fetch(`${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/master/${fileToFetch.path}`)
         .then(response => response.text())
         .then(code => {
           this.setState({
-            problem: {
-              ...this.state.problem,
-              files: this.state.problem.files.map(
-                (f, i) => (i === fileToFetch.index ? { ...f, code } : f)
-              )
-            }
-          });
+
+            files: this.state.files.map((f, i) => parseInt(i, 10) === parseInt(fileToFetch.index, 10) ? { ...f, code } : f)
+
+
+          })
           this.fetchWholeCode(fileToFetch.index);
+
         })
         .catch(err => {
           this.handleError(err);
-        });
+        })
     } else {
-      const firstFile = this.state.problem.files.find(f => f.type !== "dir");
+      const firstFile = this.state.files.find(f => f.type !== 'dir');
       if (firstFile) {
         // Do something
       }
     }
-  };
-  handleError = (err = "Error occurs.") => {
+  }
+  handleError = (err = 'Error occurs.') => {
     this.hideLoading();
-    if (typeof err === "string") {
+    if (typeof err === 'string') {
       alert(err);
     } else if (err.message) {
       alert(err.message);
-    } else {
-      alert("Error occurs");
     }
-  };
+    else {
+      alert('Error occurs');
+    }
+  }
   onFieldChange = (field, value) => this.setState({ [field]: value });
   onCommit = () => {
+    const problem = { ...this.props.problem };
     if (this.state.type === PROBLEMS_TYPES.jest.id) {
-      const { type, githubURL, problem: { files }, name } = this.state;
-      this.props.onCommit(this.props.pathId, { type, githubURL, files, name });
+      const { type, githubURL, name } = this.state;
+      this.props.onCommit(
+        this.props.pathId,
+        {
+          ...problem,
+          type, githubURL, name,
+          files: this.state.files
+        }
+      );
       return;
     }
     this.props.onCommit(
       this.props.pathId,
-      Object.assign(this.props.problem || {}, this.state, {
+      Object.assign(problem || {}, this.state, {
         type:
           this.state.type ||
-          (this.props.problem && this.props.problem.type) ||
+          (problem && problem.type) ||
           "text"
       })
     );
@@ -508,7 +477,8 @@ class ActivityDialog extends React.PureComponent {
   onClose = () => {
     this.resetState();
     this.props.onClose();
-  };
+
+  }
   resetState = () => {
     // Clear state. Render will be invoked 1 time only
     Object.keys(this.state).forEach(
@@ -560,18 +530,15 @@ class ActivityDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            color="primary"
-            disabled={
-              this.state.loading ||
-              !this.state.name ||
-              (this.state.type === PROBLEMS_TYPES.jest.id &&
-                this.state.problem &&
-                !this.state.problem.files)
-            }
-            onClick={this.onCommit}
-            variant="raised"
-          >
+          <Button 
+            color="primary" 
+            onClick={this.onCommit} 
+            variant="raised" 
+            disabled={this.state.loading 
+              || !this.state.name 
+              || !this.state.type 
+              || (this.state.type === PROBLEMS_TYPES.jest.id && !this.state.files)}
+            >
             Commit
           </Button>
         </DialogActions>

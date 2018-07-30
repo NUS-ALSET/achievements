@@ -45,6 +45,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
+import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
 import { PROBLEMS_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
@@ -226,6 +227,11 @@ class Path extends React.Component {
           open={ui.dialog.type === `${PROBLEMS_TYPES.text.id}Solution`}
           solution={ui.dialog.solution}
           taskId={ui.dialog.value && ui.dialog.value.id}
+        />
+        <AddJestSolutionDialog
+          onClose={onCloseDialog}
+          open={ui.dialog.type === `${PROBLEMS_TYPES.jest.id}Solution`}
+          problem={ui.dialog.value}
         />
         <AddProfileDialog
           externalProfile={{

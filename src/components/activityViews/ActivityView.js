@@ -13,11 +13,14 @@ import JupyterProblem from "./JupyterColabActivity";
 import JupyterInlineProblem from "./JupyterInlineActivity";
 import YouTubeProblem from "./YouTubeActivity";
 
+import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog"
+
 const views = {
   text: TextActivity,
   jupyter: JupyterProblem,
   jupyterInline: JupyterInlineProblem,
-  youtube: YouTubeProblem
+  youtube: YouTubeProblem,
+  jest : AddJestSolutionDialog
 };
 
 class ActivityView extends React.PureComponent {
@@ -26,13 +29,27 @@ class ActivityView extends React.PureComponent {
     match: PropTypes.object,
     pathProblem: PropTypes.any,
     onProblemChange: PropTypes.func.isRequired,
-    solution: PropTypes.any
+    solution: PropTypes.any,
   };
-
+  state={
+    open : true
+  }
+  handleClose=()=>{
+    this.setState({ open : false});
+  }
+  componentWillReceiveProps(){
+    this.setState({ open : true});
+  }
   render() {
     const { dispatch, onProblemChange, pathProblem, solution } = this.props;
     let SpecificView = views[pathProblem.type];
-
+    const extraProps=pathProblem.type==="jest" ? {
+        onClose: this.handleClose,
+        onCommit: ()=>{},
+        open: this.state.open,
+        solution: {},
+        taskId: ""
+    } : {};
     if (!SpecificView) {
       // noinspection JSUnusedAssignment
       SpecificView = <div>Wrong problem type</div>;
@@ -42,7 +59,6 @@ class ActivityView extends React.PureComponent {
     if (!(pathProblem && solution)) {
       return <div>Loading</div>;
     }
-
     return (
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         <SpecificView
@@ -50,6 +66,7 @@ class ActivityView extends React.PureComponent {
           onChange={onProblemChange}
           problem={pathProblem}
           solution={solution}
+          {...extraProps}
         />
       </div>
     );
