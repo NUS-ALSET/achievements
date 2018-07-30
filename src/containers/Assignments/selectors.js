@@ -79,6 +79,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             value: "Completed"
           };
           return true;
+        // Backward compatibility
+        case "PathProblem":
         case "PathActivity":
           result[assignmentId] = {
             createdAt,

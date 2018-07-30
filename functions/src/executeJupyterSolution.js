@@ -3,7 +3,8 @@ const axios = require("axios");
 const Queue = require("firebase-queue");
 
 const jupyterLambdaProcessor =
-  "https://o6rpv1ofri.execute-api.ap-southeast-1.amazonaws.com/Prod";
+  "https://bi3umkz9u7.execute-api.ap-southeast-1.amazonaws.com" +
+  "/prod/notebook_runner";
 
 const executeJupyterSolution = (data, taskKey, owner) => {
   return admin

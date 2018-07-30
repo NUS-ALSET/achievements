@@ -43,7 +43,7 @@ class JupyterNotebook extends React.PureComponent {
     persistent: PropTypes.bool,
     richEditor: PropTypes.bool,
     solution: PropTypes.any,
-    title: PropTypes.string.isRequired,
+    title: PropTypes.any.isRequired,
     url: PropTypes.string
   };
 
