@@ -299,7 +299,10 @@ class Assignments extends React.Component {
           dispatch={dispatch}
           loadingSolution={!!ui.dialog && ui.dialog.loadingSolution}
           onCommit={this.onPathProblemSolutionCommit}
-          open={ui.dialog && ui.dialog.type === "PathActivity"}
+          open={
+            ui.dialog &&
+            ["PathActivity", "PathProblem"].includes(ui.dialog.type)
+          }
           pathProblem={ui.dialog.pathProblem}
           solution={ui.dialog.solution}
         />

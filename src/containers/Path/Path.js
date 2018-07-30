@@ -37,7 +37,7 @@ import {
 import {
   pathProblemChangeRequest,
   pathProblemDialogShow,
-  pathProblemMoveRequest
+  pathActivityMoveRequest
 } from "../Paths/actions";
 import ActivityDialog from "../../components/dialogs/ActivityDialog";
 
@@ -76,6 +76,12 @@ class Path extends React.Component {
   componentDidMount() {
     this.props.onOpen(this.props.match.params.pathId);
   }
+
+  onMoveProblem = (problem, direction) => {
+    const { pathProblems, onProblemMoveRequest } = this.props;
+
+    onProblemMoveRequest(pathProblems.path.id, problem.id, direction);
+  };
 
   onOpenProblem = problem => {
     const {
@@ -119,7 +125,7 @@ class Path extends React.Component {
       this.props.pathStatus === PATH_STATUS_NOT_JOINED
     );
 
-  onAddProblemClick = () => this.props.onProblemDialogShow();
+  onAddActivityClick = () => this.props.onProblemDialogShow();
   onTextSolutionSubmit = (activityId, solution) => {
     const { onCloseDialog, onProblemSolutionSubmit, pathProblems } = this.props;
     const activity = pathProblems.problems.filter(
@@ -142,7 +148,6 @@ class Path extends React.Component {
       onCloseDialog,
       onProblemChangeRequest,
       onProblemDialogShow,
-      onProblemMoveRequest,
       pathProblems,
       pathStatus,
       ui,
@@ -194,17 +199,17 @@ class Path extends React.Component {
             <Toolbar>
               <Button
                 color="primary"
-                onClick={this.onAddProblemClick}
+                onClick={this.onAddActivityClick}
                 variant="raised"
               >
-                Add Problem
+                Add Activity
               </Button>
             </Toolbar>
           ) : (
             <Button
               aria-label="Add"
               color="primary"
-              onClick={this.onAddProblemClick}
+              onClick={this.onAddActivityClick}
               style={{
                 position: "fixed",
                 bottom: 20,
@@ -237,7 +242,7 @@ class Path extends React.Component {
           activities={pathProblems.problems || []}
           currentUserId={uid || "Anonymous"}
           onEditProblem={onProblemDialogShow}
-          onMoveProblem={onProblemMoveRequest}
+          onMoveProblem={this.onMoveProblem}
           onOpenProblem={this.onOpenProblem}
           pathOwnerId={pathProblems.path && pathProblems.path.owner}
           selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
@@ -272,7 +277,7 @@ const mapDispatchToProps = {
   onOpenSolution: pathOpenSolutionDialog,
   onProblemChangeRequest: pathProblemChangeRequest,
   onProblemDialogShow: pathProblemDialogShow,
-  onProblemMoveRequest: pathProblemMoveRequest,
+  onProblemMoveRequest: pathActivityMoveRequest,
   onProblemSolutionSubmit: problemSolutionSubmitRequest,
   onPushPath: push,
   onRequestMoreProblems: pathMoreProblemsRequest,
