@@ -56,7 +56,7 @@ class Editor extends React.Component {
     render() {
         return (
             <div className="editor">
-                <button className="save-btn" style={{ right :this.props.selectedFile.code===this.state.code ? '-200px' : '14px' }} onClick={()=>this.props.saveFile(this.props.selectedFile, this.state.code)}>Save File</button>
+                <button className="save-btn" style={{ right :this.props.selectedFile.code===this.state.code ? '-250px' : '0px' }} onClick={()=>this.props.saveFile(this.props.selectedFile, this.state.code)}>Save File</button>
                 <AceEditor
                     ref="AceEditor"
                     mode={this.state.extension}

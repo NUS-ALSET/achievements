@@ -28,6 +28,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import IconButton from "@material-ui/core/IconButton";
 import CloudDownload from "@material-ui/icons/CloudDownload";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import LinkIcon from "@material-ui/icons/Link";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
@@ -57,6 +58,7 @@ class ActivityDialog extends React.PureComponent {
   state = {
     problem: {}
   };
+  fetchedGithubURL = '';
   componentWillReceiveProps(nextProps) {
     this.resetState();
     if (nextProps.problem) {
@@ -67,6 +69,7 @@ class ActivityDialog extends React.PureComponent {
         githubURL: nextProps.problem.githubURL || "",
         files: nextProps.problem.files || []
       });
+      this.fetchedGithubURL = nextProps.problem.githubURL || "";
     }
   }
   getTypeSpecificElements() {
@@ -289,16 +292,18 @@ class ActivityDialog extends React.PureComponent {
               />
             </FormControl>
             {
-              this.state.files && (
+              this.state.files && this.state.files.length>0 && (
                 <div>
+                  <Typography gutterBottom variant="body2" style={{ margin : '12px 0px'}}>
+                    <CheckBoxIcon style={{ float : 'left'}} /> Check files to allow write access for users.
+                  </Typography>
                   <Typography gutterBottom variant="body2">
-                    <CheckBoxIcon /> Check files to allow write access for
-                    users.
+                   {this.fetchedGithubURL &&  <LinkIcon style={{ float : 'left'}} />} {this.fetchedGithubURL}
                   </Typography>
                   {this.state.files.map(
                     file =>
                       file.type === "file" && (
-                        <ListItem button dense key={file.path} role={undefined}>
+                        <ListItem button dense key={file.path} role={undefined} style={{ padding : '0px 25px'}}>
                           <Checkbox
                             checked={!file.readOnly}
                             disableRipple
@@ -331,9 +336,10 @@ class ActivityDialog extends React.PureComponent {
     if (this.state.loading)
       return;
     const { githubURL } = this.state;
+    this.fetchedGithubURL = "";
+    this.setState({ files : [] });
     if (!githubURL.includes(APP_SETTING.GITHUB_BASE_URL)) {
-      // this.showNotification('Not a Valid Github URL');
-      alert("Not a Valid Github URL");
+      this.handleError('Not a Valid Github URL');
       return;
     }
     this.showLoading();
@@ -351,6 +357,7 @@ class ActivityDialog extends React.PureComponent {
       .then(files => {
         if (files && files.length) {
           //this.hideOutput();
+          this.fetchedGithubURL=githubURL;
           this.setState({
             repoDetails: {
               owner: repoOwner,
@@ -361,9 +368,11 @@ class ActivityDialog extends React.PureComponent {
             files: files.map(f => ({ path: f.path, readOnly: true, type: f.type })),
             selectedFile: null
           })
+          console.log(subPath,files);
           this.fetchWholeTree(-1);
         } else {
-          this.handleError();
+          console.log(files);
+          this.handleError(files);
         }
       })
       .catch(err => {
@@ -386,7 +395,7 @@ class ActivityDialog extends React.PureComponent {
           if (tree && tree.length) {
             this.setState({
 
-              files: ([...this.state.files, ...tree]).map(f => ({ path: f.path, readOnly: true, type: f.type }))
+              files: ([...this.state.files, ...tree])
 
             })
             this.fetchWholeTree(index);
@@ -417,10 +426,7 @@ class ActivityDialog extends React.PureComponent {
         .then(response => response.text())
         .then(code => {
           this.setState({
-
             files: this.state.files.map((f, i) => parseInt(i, 10) === parseInt(fileToFetch.index, 10) ? { ...f, code } : f)
-
-
           })
           this.fetchWholeCode(fileToFetch.index);
 
@@ -429,10 +435,7 @@ class ActivityDialog extends React.PureComponent {
           this.handleError(err);
         })
     } else {
-      const firstFile = this.state.files.find(f => f.type !== 'dir');
-      if (firstFile) {
-        // Do something
-      }
+      this.setState({ files : this.state.files.map(f => ({ path: f.path.replace(`${this.state.repoDetails.folderPath.slice(1)}/`,''), readOnly: true, type: f.type , code : f.code}))})
     }
   }
   handleError = (err = 'Error occurs.') => {
@@ -450,12 +453,14 @@ class ActivityDialog extends React.PureComponent {
   onCommit = () => {
     const problem = { ...this.props.problem };
     if (this.state.type === PROBLEMS_TYPES.jest.id) {
-      const { type, githubURL, name } = this.state;
+      const { type, name } = this.state;
       this.props.onCommit(
         this.props.pathId,
         {
           ...problem,
-          type, githubURL, name,
+          type,
+          name,
+          githubURL : this.fetchedGithubURL,
           files: this.state.files
         }
       );
