@@ -6,11 +6,11 @@ class Ouptut extends React.Component {
         this.state = {}
     }
     render() {
-        const { output } = this.props;
+        const { output , isSubmitted=false} = this.props;
         return (
             <div id="result-div">
                 <div className="wrap p-10" style={{height:'71px'}}>
-                    <h2>Test Result</h2>
+                    <h2>{isSubmitted ? 'Submitted Result' : 'Test Result' }</h2>
                     <div id="result-status" className="status">
                        {output.numFailedTests>0 && <span className="error"> {output.numFailedTests} ❌</span>}
                         <span className="success"> {output.numPassedTests} ✅</span>
@@ -41,7 +41,7 @@ class Ouptut extends React.Component {
                                             </div>
 
                                         </div>
-                                        {result.failureMessages.length > 0 &&
+                                        {result.failureMessages && result.failureMessages.length > 0 &&
                                             <div class="log-err console">
                                                 <pre>{result.failureMessages}</pre>
                                             </div>}
