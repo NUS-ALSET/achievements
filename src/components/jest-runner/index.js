@@ -149,12 +149,14 @@ class JestRunner extends React.Component {
                         solution && solution.testResult && 
                         <Output output={solution.testResult} isSubmitted={true} />
                     }
-                    {output && 
+                    {output &&
                         <div>
                             <Output output={output} />
-                            <div style={{ height: '97px' }}>
-                                <button className="bigBtn"  onClick={this.submitTest}>{solution && solution.testResult ? 'Update Solution' : 'Submit Solution'}</button>
-                            </div>
+                            {output.success &&
+                                <div style={{ height: '97px' }}>
+                                    <button className="bigBtn"  onClick={this.submitTest}>{solution && solution.testResult ? 'Update Solution' : 'Submit Solution'}</button>
+                                </div>
+                            }
                         </div>
                     }
                     
