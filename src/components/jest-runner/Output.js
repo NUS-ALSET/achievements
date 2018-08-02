@@ -42,7 +42,7 @@ class Ouptut extends React.Component {
 
                                         </div>
                                         {result.failureMessages && result.failureMessages.length > 0 &&
-                                            <div class="log-err console">
+                                            <div className="log-err console">
                                                 <pre>{result.failureMessages}</pre>
                                             </div>}
                                     </div>)

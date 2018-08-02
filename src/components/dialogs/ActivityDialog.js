@@ -36,8 +36,8 @@ import Typography from "@material-ui/core/Typography";
 import { PROBLEMS_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
-const fetchDirectoryStructureFromGitub = url => {
-  return fetch(`${url}?access_token=${APP_SETTING.GITHUB_ACCESS_TOKEN}`).then(
+const fetchDirectoryStructureFromGitub = (url,branch='master') => {
+  return fetch(`${url}?access_token=${APP_SETTING.GITHUB_ACCESS_TOKEN}&&ref=${branch}`).then(
     response => response.json()
   );
 };
@@ -83,7 +83,7 @@ class ActivityDialog extends React.PureComponent {
             label="Question"
             margin="normal"
             onChange={e => this.onFieldChange("question", e.target.value)}
-            value={problem.question}
+            value={problem.question || ''}
           />
         );
       case PROBLEMS_TYPES.codeCombat.id:
@@ -347,13 +347,14 @@ class ActivityDialog extends React.PureComponent {
     const params = githubURL.replace(APP_SETTING.GITHUB_BASE_URL, '').split('/');
     let repoOwner = params[0];
     let repoName = params[1];
+    let branch = params[3] || 'master';
     let subPath = '';
     if (params.length > 4) {
       for (let i = 4; i < params.length; i++) {
         subPath = `${subPath}/${params[i]}`;
       }
     }
-    fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${repoOwner}/${repoName}/contents${subPath}`)
+    fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${repoOwner}/${repoName}/contents${subPath}`,branch)
       .then(files => {
         if (files && files.length) {
           //this.hideOutput();
@@ -363,6 +364,7 @@ class ActivityDialog extends React.PureComponent {
               owner: repoOwner,
               name: repoName,
               folderPath: subPath,
+              branch 
             },
             githubURL,
             files: files.map(f => ({ path: f.path, readOnly: true, type: f.type })),
@@ -390,12 +392,12 @@ class ActivityDialog extends React.PureComponent {
       }
     }
     if (folderToFetch) {
-      fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/contents${folderToFetch.path}`)
+      fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/contents${folderToFetch.path}`,this.state.repoDetails.branch)
         .then(tree => {
           if (tree && tree.length) {
             this.setState({
 
-              files: ([...this.state.files, ...tree])
+              files: [ ...this.state.files, ...(tree.map(f => ({ path: f.path, readOnly: true, type: f.type })))]
 
             })
             this.fetchWholeTree(index);
@@ -416,13 +418,13 @@ class ActivityDialog extends React.PureComponent {
     let fileToFetch = null;
     for (let index in this.state.files) {
       const file = this.state.files[index];
-      if (file.type !== 'dir' && parseInt(index, 10) > parseInt(fileIndex, 10)) {
+      if (file.type === 'file' && parseInt(index, 10) > parseInt(fileIndex, 10)) {
         fileToFetch = { ...file, index };
         break;
       }
     }
     if (fileToFetch) {
-      fetch(`${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/master/${fileToFetch.path}`)
+      fetch(`${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/${this.state.repoDetails.branch}/${fileToFetch.path}`)
         .then(response => response.text())
         .then(code => {
           this.setState({
@@ -435,7 +437,7 @@ class ActivityDialog extends React.PureComponent {
           this.handleError(err);
         })
     } else {
-      this.setState({ files : this.state.files.map(f => ({ path: f.path.replace(`${this.state.repoDetails.folderPath.slice(1)}/`,''), readOnly: true, type: f.type , code : f.code}))})
+      this.setState({ files : this.state.files.map(f => ({ path: f.path.replace(`${this.state.repoDetails.folderPath.slice(1)}/`,''), readOnly: true, type: f.type , code : f.code})).filter(f=>f.type==='file') })
     }
   }
   handleError = (err = 'Error occurs.') => {
@@ -464,19 +466,18 @@ class ActivityDialog extends React.PureComponent {
           files: this.state.files
         }
       );
-      return;
+    }else{
+      this.props.onCommit(
+        this.props.pathId,
+        Object.assign(problem || {}, this.state, {
+          type:
+            this.state.type ||
+            (problem && problem.type) ||
+            "text"
+        })
+      );
     }
-    this.props.onCommit(
-      this.props.pathId,
-      Object.assign(problem || {}, this.state, {
-        type:
-          this.state.type ||
-          (problem && problem.type) ||
-          "text"
-      })
-    );
-
-    this.resetState();
+    this.onClose  ();
   };
 
   onClose = () => {
@@ -506,14 +507,13 @@ class ActivityDialog extends React.PureComponent {
         >
           <TextField
             autoFocus
-            defaultValue={problem && problem.name}
             fullWidth
             label="Name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
             onKeyPress={this.catchReturn}
             required
-            value={this.state.name}
+            value={this.state.name || ''}
           />
           <TextField
             fullWidth
@@ -539,10 +539,10 @@ class ActivityDialog extends React.PureComponent {
             color="primary" 
             onClick={this.onCommit} 
             variant="raised" 
-            disabled={this.state.loading 
+            disabled={this.state.loading
               || !this.state.name 
               || !this.state.type 
-              || (this.state.type === PROBLEMS_TYPES.jest.id && !this.state.files)}
+              || (this.state.type === PROBLEMS_TYPES.jest.id && !(this.state.files && this.state.files.length>0))}
             >
             Commit
           </Button>
