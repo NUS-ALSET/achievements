@@ -42,7 +42,7 @@ class ActivityView extends React.PureComponent {
   }
   componentWillReceiveProps(nextProps){
     this.setState({ open : true});
-    if(this.props.pathProblem.type=='profile' && this.props.userAchievements && this.props.userAchievements.CodeCombat && this.props.userAchievements.CodeCombat.id){
+    if(this.props.pathProblem.type==='profile' && this.props.userAchievements && this.props.userAchievements.CodeCombat && this.props.userAchievements.CodeCombat.id){
       this.props.onCommit({
         type : 'SOLUTION',
         solution : {
