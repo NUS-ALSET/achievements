@@ -51,15 +51,15 @@ import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
+import { pathActivities } from "../../types";
 
-class Path extends React.Component {
+export class Path extends React.Component {
   static propTypes = {
     match: PropTypes.object,
     onCloseDialog: PropTypes.func.isRequired,
     onNotification: PropTypes.func.isRequired,
     onOpen: PropTypes.func.isRequired,
     onOpenSolution: PropTypes.func.isRequired,
-
     onProblemChangeRequest: PropTypes.func.isRequired,
     onProblemDialogShow: PropTypes.func.isRequired,
     onProblemMoveRequest: PropTypes.func.isRequired,
@@ -68,7 +68,7 @@ class Path extends React.Component {
     onPushPath: PropTypes.func.isRequired,
     onRequestMoreProblems: PropTypes.func.isRequired,
     onToggleJoinStatus: PropTypes.func.isRequired,
-    pathProblems: PropTypes.object,
+    pathActivities: pathActivities,
     pathStatus: PropTypes.string,
     ui: PropTypes.any,
     uid: PropTypes.string
@@ -79,9 +79,9 @@ class Path extends React.Component {
   }
 
   onMoveProblem = (problem, direction) => {
-    const { pathProblems, onProblemMoveRequest } = this.props;
+    const { pathActivities, onProblemMoveRequest } = this.props;
 
-    onProblemMoveRequest(pathProblems.path.id, problem.id, direction);
+    onProblemMoveRequest(pathActivities.path.id, problem.id, direction);
   };
 
   onOpenProblem = problem => {
@@ -89,13 +89,13 @@ class Path extends React.Component {
       onOpenSolution,
       onProblemSolutionSubmit,
       onPushPath,
-      pathProblems
+      pathActivities
     } = this.props;
     switch (problem.type) {
       case PROBLEMS_TYPES.codeCombat.id:
       case PROBLEMS_TYPES.codeCombatNumber.id:
         onProblemSolutionSubmit(
-          pathProblems.path.id,
+          pathActivities.path.id,
           { problemId: problem.id, ...problem },
           "Completed"
         );
@@ -103,18 +103,18 @@ class Path extends React.Component {
       case PROBLEMS_TYPES.jupyterInline.id:
       case PROBLEMS_TYPES.jupyter.id:
       case PROBLEMS_TYPES.youtube.id:
-        onPushPath(`/paths/${pathProblems.path.id}/activities/${problem.id}`);
+        onPushPath(`/paths/${pathActivities.path.id}/activities/${problem.id}`);
         break;
       default:
-        onOpenSolution(pathProblems.path.id, problem);
+        onOpenSolution(pathActivities.path.id, problem);
     }
   };
 
   requestMoreProblems = () =>
     this.props.onRequestMoreProblems(
       this.props.uid,
-      this.props.pathProblems.path.id,
-      this.props.pathProblems.problems.length
+      this.props.pathActivities.path.id,
+      this.props.pathActivities.activities.length
     );
 
   refreshSolutions = () => this.props.onNotification("test");
@@ -122,19 +122,23 @@ class Path extends React.Component {
   changeJoinStatus = () =>
     this.props.onToggleJoinStatus(
       this.props.uid,
-      this.props.pathProblems.path.id,
+      this.props.pathActivities.path.id,
       this.props.pathStatus === PATH_STATUS_NOT_JOINED
     );
 
   onAddActivityClick = () => this.props.onProblemDialogShow();
   onTextSolutionSubmit = (activityId, solution) => {
-    const { onCloseDialog, onProblemSolutionSubmit, pathProblems } = this.props;
-    const activity = pathProblems.problems.filter(
+    const {
+      onCloseDialog,
+      onProblemSolutionSubmit,
+      pathActivities
+    } = this.props;
+    const activity = pathActivities.activities.filter(
       activity => activity.id === activityId
     )[0];
 
     onProblemSolutionSubmit(
-      pathProblems.path.id,
+      pathActivities.path.id,
       { ...activity, problemId: activity.id },
       solution
     );
@@ -149,22 +153,23 @@ class Path extends React.Component {
       onCloseDialog,
       onProblemChangeRequest,
       onProblemDialogShow,
-      pathProblems,
+      pathActivities,
       pathStatus,
       ui,
       uid
     } = this.props;
 
     const allFinished =
-      (pathProblems.problems || []).filter(problem => problem.solved).length ===
-      (pathProblems.problems || []).length;
+      (pathActivities.activities || []).filter(problem => problem.solved)
+        .length === (pathActivities.activities || []).length;
     let pathName;
 
     if (match.params.pathId[0] !== "-") {
       pathName = "Default";
     }
 
-    pathName = pathName || (pathProblems.path && pathProblems.path.name) || "";
+    pathName =
+      pathName || (pathActivities.path && pathActivities.path.name) || "";
 
     return (
       <Fragment>
@@ -205,6 +210,7 @@ class Path extends React.Component {
               >
                 Add Activity
               </Button>
+              <Button>Collaborators</Button>
             </Toolbar>
           ) : (
             <Button
@@ -245,19 +251,19 @@ class Path extends React.Component {
           open={ui.dialog.type === `${PROBLEMS_TYPES.profile.id}Solution`}
         />
         <ActivitiesTable
-          activities={pathProblems.problems || []}
+          activities={pathActivities.activities || []}
           currentUserId={uid || "Anonymous"}
           onEditProblem={onProblemDialogShow}
           onMoveProblem={this.onMoveProblem}
           onOpenProblem={this.onOpenProblem}
-          pathOwnerId={pathProblems.path && pathProblems.path.owner}
-          selectedPathId={(pathProblems.path && pathProblems.path.id) || ""}
+          pathOwnerId={pathActivities.path && pathActivities.path.owner}
+          selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
         <ActivityDialog
           onClose={onCloseDialog}
           onCommit={onProblemChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
-          pathId={(pathProblems.path && pathProblems.path.id) || ""}
+          pathId={(pathActivities.path && pathActivities.path.id) || ""}
           problem={ui.dialog.value}
           uid={uid || "Anonymous"}
         />
@@ -269,7 +275,7 @@ class Path extends React.Component {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
-  pathProblems: pathActivitiesSelector(state, ownProps),
+  pathActivities: pathActivitiesSelector(state, ownProps),
   pathStatus: pathStatusSelector(state, ownProps),
   ui: state.path.ui,
   uid: state.firebase.auth.uid

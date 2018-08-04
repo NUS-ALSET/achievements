@@ -49,8 +49,7 @@ class ActivityDialog extends React.PureComponent {
     open: PropTypes.bool.isRequired,
     pathId: PropTypes.string.isRequired,
     paths: PropTypes.array,
-    problems: PropTypes.array,
-    problem: PropTypes.object,
+    activity: PropTypes.object,
     uid: PropTypes.string.isRequired
   };
 
@@ -70,9 +69,10 @@ class ActivityDialog extends React.PureComponent {
     }
   }
   getTypeSpecificElements() {
-    let { problem } = this.props;
-    problem = Object.assign(problem || {}, this.state);
-    switch (this.state.type || (problem && problem.type) || "text") {
+    let { activity } = this.props;
+
+    activity = Object.assign(activity || {}, this.state);
+    switch (this.state.type || (activity && activity.type) || "text") {
       case PROBLEMS_TYPES.text.id:
         return (
           <TextField
@@ -80,7 +80,7 @@ class ActivityDialog extends React.PureComponent {
             label="Question"
             margin="normal"
             onChange={e => this.onFieldChange("question", e.target.value)}
-            value={problem.question}
+            value={activity.question}
           />
         );
       case PROBLEMS_TYPES.codeCombat.id:
@@ -99,7 +99,7 @@ class ActivityDialog extends React.PureComponent {
               input={<Input id="select-multiple-levels" />}
               margin="none"
               onChange={e => this.onFieldChange("level", e.target.value)}
-              value={problem.level || ""}
+              value={activity.level || ""}
             >
               {Object.keys(APP_SETTING.levels).map(id => (
                 <MenuItem key={APP_SETTING.levels[id].name} value={id}>
@@ -117,14 +117,14 @@ class ActivityDialog extends React.PureComponent {
             margin="normal"
             onChange={e => this.onFieldChange("count", e.target.value)}
             type="number"
-            value={problem.count}
+            value={activity.count}
           />
         );
       case PROBLEMS_TYPES.jupyter.id:
         return (
           <Fragment>
             <TextField
-              defaultValue={problem && problem.problemURL}
+              defaultValue={activity && activity.problemURL}
               fullWidth
               label="Problem Notebook URL"
               margin="dense"
@@ -132,7 +132,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.solutionURL}
+              defaultValue={activity && activity.solutionURL}
               fullWidth
               label="Solution Notebook URL"
               margin="dense"
@@ -140,7 +140,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.frozen}
+              defaultValue={activity && activity.frozen}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -154,7 +154,7 @@ class ActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <TextField
-              defaultValue={problem && problem.problemURL}
+              defaultValue={activity && activity.problemURL}
               fullWidth
               label="Problem Notebook URL"
               margin="dense"
@@ -162,7 +162,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.solutionURL}
+              defaultValue={activity && activity.solutionURL}
               fullWidth
               label="Solution Notebook URL"
               margin="dense"
@@ -170,7 +170,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.frozen}
+              defaultValue={activity && activity.frozen}
               fullWidth
               label="Default code block"
               margin="dense"
@@ -179,7 +179,7 @@ class ActivityDialog extends React.PureComponent {
               type="number"
             />
             <TextField
-              defaultValue={problem && problem.frozen}
+              defaultValue={activity && activity.frozen}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -193,7 +193,7 @@ class ActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <TextField
-              defaultValue={problem && problem.youtubeURL}
+              defaultValue={activity && activity.youtubeURL}
               fullWidth
               label="YouTube URL"
               margin="dense"
@@ -219,7 +219,7 @@ class ActivityDialog extends React.PureComponent {
                         checked={
                           this.state[questionType] ||
                           (this.state[questionType] === undefined &&
-                            problem[questionType])
+                            activity[questionType])
                         }
                         color="primary"
                         onChange={e =>
@@ -232,10 +232,10 @@ class ActivityDialog extends React.PureComponent {
                   />
                 ))}
                 <TextField
-                  defaultValue={problem && problem.customText}
+                  defaultValue={activity && activity.customText}
                   disabled={
                     this.state.questionCustom === undefined
-                      ? !(problem && problem.questionCustom)
+                      ? !(activity && activity.questionCustom)
                       : !this.state.questionCustom
                   }
                   fullWidth
@@ -251,7 +251,7 @@ class ActivityDialog extends React.PureComponent {
       case PROBLEMS_TYPES.game.id:
         return (
           <TextField
-            defaultValue={problem && problem.game}
+            defaultValue={activity && activity.game}
             fullWidth
             label="Game Variant"
             margin="dense"
@@ -463,10 +463,10 @@ class ActivityDialog extends React.PureComponent {
     }
     this.props.onCommit(
       this.props.pathId,
-      Object.assign(problem || {}, this.state, {
+      Object.assign(this.props.activity || {}, this.state, {
         type:
           this.state.type ||
-          (problem && problem.type) ||
+          (this.props.activity && this.props.activity.type) ||
           "text"
       })
     );
@@ -488,11 +488,11 @@ class ActivityDialog extends React.PureComponent {
   };
 
   render() {
-    const { problem, open } = this.props;
+    const { activity, open } = this.props;
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
-          {problem && problem.id ? "Edit Problem" : "Add New Problem"}
+          {activity && activity.id ? "Edit Problem" : "Add New Problem"}
         </DialogTitle>
         <DialogContent
           style={{
@@ -501,7 +501,7 @@ class ActivityDialog extends React.PureComponent {
         >
           <TextField
             autoFocus
-            defaultValue={problem && problem.name}
+            defaultValue={activity && activity.name}
             fullWidth
             label="Name"
             margin="dense"
@@ -516,7 +516,7 @@ class ActivityDialog extends React.PureComponent {
             margin="dense"
             onChange={e => this.onFieldChange("type", e.target.value)}
             select
-            value={this.state.type || (problem && problem.type) || "text"}
+            value={this.state.type || (activity && activity.type) || "text"}
           >
             {Object.keys(PROBLEMS_TYPES).map(key => (
               <MenuItem key={key} value={key}>
@@ -530,13 +530,13 @@ class ActivityDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button 
-            color="primary" 
-            onClick={this.onCommit} 
-            variant="raised" 
-            disabled={this.state.loading 
-              || !this.state.name 
-              || !this.state.type 
+          <Button
+            color="primary"
+            onClick={this.onCommit}
+            variant="raised"
+            disabled={this.state.loading
+              || !this.state.name
+              || !this.state.type
               || (this.state.type === PROBLEMS_TYPES.jest.id && !this.state.files)}
             >
             Commit

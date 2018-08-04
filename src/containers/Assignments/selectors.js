@@ -1,4 +1,7 @@
+/* eslint-disable no-continue */
 // Tab with instructor view
+import { ASSIGNMENTS_TYPES } from "../../services/courses";
+
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
@@ -51,7 +54,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       }
 
       switch (assignment.questionType) {
-        case "Text":
+        case ASSIGNMENTS_TYPES.Text.id:
           result[assignmentId] = {
             createdAt,
             value: solution,
@@ -59,7 +62,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published
           };
           return true;
-        case "Profile":
+        case ASSIGNMENTS_TYPES.Profile.id:
           result[assignmentId] = {
             createdAt,
             published,
@@ -70,8 +73,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
               : ""
           };
           return true;
-        case "CodeCombat":
-        case "CodeCombat_Number":
+        case ASSIGNMENTS_TYPES.CodeCombat.id:
+        case ASSIGNMENTS_TYPES.CodeCombat_Number.id:
           result[assignmentId] = {
             createdAt,
             published,
@@ -81,7 +84,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           return true;
         // Backward compatibility
         case "PathProblem":
-        case "PathActivity":
+        case ASSIGNMENTS_TYPES.PathActivity.id:
           result[assignmentId] = {
             createdAt,
             published,
@@ -90,7 +93,16 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             value: "Completed"
           };
           return true;
-        case "PathProgress":
+        case ASSIGNMENTS_TYPES.PathProgress.id:
+          result[assignmentId] = {
+            createdAt,
+            published,
+            validated: userAchievements.id === solution,
+            originalSolution: result[assignmentId],
+            value: solution
+          };
+          return true;
+        case ASSIGNMENTS_TYPES.TeamFormation.id:
           result[assignmentId] = {
             createdAt,
             published,
@@ -106,6 +118,102 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
   );
 
   return result;
+};
+
+/**
+ *
+ * @param {Object}assignments hash map with assignments
+ * @param {Object} members hash map with members
+ */
+const processTeamSolutions = (assignments, members) => {
+  let needProcess = false;
+  let teamFormations = [];
+
+  if (Array.isArray(members)) {
+    members = Object.assign(
+      {},
+      ...members.map(member => ({ [member.id]: member }))
+    );
+  }
+
+  // FIXIT: move team tasks under team formations
+  let teamTasks = [];
+
+  for (const key of Object.keys(assignments)) {
+    switch (assignments[key].questionType) {
+      case ASSIGNMENTS_TYPES.TeamFormation.id:
+        needProcess = true;
+        teamFormations.push({
+          key,
+          teams: {}
+        });
+        break;
+      case ASSIGNMENTS_TYPES.TeamText.id:
+        needProcess = true;
+        teamTasks.push(key);
+        break;
+      default:
+    }
+  }
+  if (!needProcess) {
+    return;
+  }
+  // Collect all team formations and
+  // last answers for team tasks (currently Text only)
+  for (const memberKey of Object.keys(members)) {
+    const member = members[memberKey];
+    if (!member.solutions) {
+      continue;
+    }
+    for (const teamFormation of teamFormations) {
+      const solution = member.solutions[teamFormation.key];
+      if (!(solution && teamFormation)) {
+        continue;
+      }
+      teamFormation.teams[solution.value] = teamFormation.teams[
+        solution.value
+      ] || {
+        members: [],
+        last: {}
+      };
+
+      // Got team instance
+      const team = teamFormation.teams[solution.value];
+      team.members.push(member.id);
+      for (const teamTaskKey of teamTasks) {
+        team.last[teamTaskKey] = team.last[teamTaskKey] || { createdAt: 0 };
+
+        // Fetch last task solution for team
+        if (
+          member.solutions[teamTaskKey] &&
+          team.last[teamTaskKey].createdAt <
+            member.solutions[teamTaskKey].createdAt
+        ) {
+          team.last[teamTaskKey] = member.solutions[teamTaskKey];
+        }
+      }
+    }
+  }
+
+  // Update solutions for team members
+  for (const teamFormation of teamFormations) {
+    for (const teamName of Object.keys(teamFormation.teams)) {
+      const team = teamFormation.teams[teamName];
+      for (const memberKey of team.members) {
+        const member = members[memberKey];
+        member.solutions[teamFormation.key].value = `${teamName} (${
+          team.members.length
+        })`;
+        for (const lastKey of Object.keys(team.last)) {
+          member.solutions[lastKey] = team.last[lastKey];
+        }
+      }
+    }
+  }
+
+  // GC helper
+  teamFormations = null;
+  teamTasks = null;
 };
 
 /**
@@ -256,6 +364,8 @@ export const getCourseProps = (state, ownProps) => {
     sortedMembers[member.id] = member;
     return true;
   });
+
+  processTeamSolutions(assignments, members);
 
   return {
     id: courseId,
