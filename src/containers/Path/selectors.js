@@ -76,7 +76,7 @@ export const pathActivitiesSelector = createSelector(
   getActivitiesSolutions,
   (path, activities, solutions) => ({
     path: path,
-    problems: Object.keys(activities || {})
+    activities: Object.keys(activities || {})
       .map(id => ({
         ...activities[id],
         id,
