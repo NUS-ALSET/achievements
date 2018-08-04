@@ -80,6 +80,11 @@ ShallowWrapper {
           solution={undefined}
           taskId={undefined}
 />,
+        <WithStyles(AddJestSolutionDialog)
+          onClose={[Function]}
+          open={false}
+          problem={undefined}
+/>,
         <AddProfileDialog
           externalProfile={
                     Object {
@@ -155,6 +160,19 @@ ShallowWrapper {
           "open": false,
           "solution": undefined,
           "taskId": undefined,
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "onClose": [Function],
+          "open": false,
+          "problem": undefined,
         },
         "ref": null,
         "rendered": null,
@@ -256,6 +274,11 @@ ShallowWrapper {
             solution={undefined}
             taskId={undefined}
 />,
+          <WithStyles(AddJestSolutionDialog)
+            onClose={[Function]}
+            open={false}
+            problem={undefined}
+/>,
           <AddProfileDialog
             externalProfile={
                         Object {
@@ -331,6 +354,19 @@ ShallowWrapper {
             "open": false,
             "solution": undefined,
             "taskId": undefined,
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "onClose": [Function],
+            "open": false,
+            "problem": undefined,
           },
           "ref": null,
           "rendered": null,
