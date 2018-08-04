@@ -36,46 +36,45 @@ import Typography from "@material-ui/core/Typography";
 import { PROBLEMS_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
-const fetchDirectoryStructureFromGitub = (url,branch='master') => {
-  return fetch(`${url}?access_token=${APP_SETTING.GITHUB_ACCESS_TOKEN}&&ref=${branch}`).then(
-    response => response.json()
-  );
+const fetchDirectoryStructureFromGitub = (url, branch = "master") => {
+  return fetch(
+    `${url}?access_token=${APP_SETTING.GITHUB_ACCESS_TOKEN}&&ref=${branch}`
+  ).then(response => response.json());
 };
 
 class ActivityDialog extends React.PureComponent {
-
   static propTypes = {
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     pathId: PropTypes.string.isRequired,
     paths: PropTypes.array,
-    problems: PropTypes.array,
-    problem: PropTypes.object,
+    activity: PropTypes.object,
     uid: PropTypes.string.isRequired
   };
 
   state = {
     problem: {}
   };
-  fetchedGithubURL = '';
+  fetchedGithubURL = "";
   componentWillReceiveProps(nextProps) {
     this.resetState();
-    if (nextProps.problem) {
+    if (nextProps.activity) {
       this.setState({
-        ...nextProps.problem,
-        type: nextProps.problem.type || "",
-        name: nextProps.problem.name || "",
-        githubURL: nextProps.problem.githubURL || "",
-        files: nextProps.problem.files || []
+        ...nextProps.activity,
+        type: nextProps.activity.type || "",
+        name: nextProps.activity.name || "",
+        githubURL: nextProps.activity.githubURL || "",
+        files: nextProps.activity.files || []
       });
-      this.fetchedGithubURL = nextProps.problem.githubURL || "";
+      this.fetchedGithubURL = nextProps.activity.githubURL || "";
     }
   }
   getTypeSpecificElements() {
-    let { problem } = this.props;
-    problem = Object.assign(problem || {}, this.state);
-    switch (this.state.type || (problem && problem.type) || "text") {
+    let { activity } = this.props;
+
+    activity = Object.assign(activity || {}, this.state);
+    switch (this.state.type || (activity && activity.type) || "text") {
       case PROBLEMS_TYPES.text.id:
         return (
           <TextField
@@ -83,7 +82,7 @@ class ActivityDialog extends React.PureComponent {
             label="Question"
             margin="normal"
             onChange={e => this.onFieldChange("question", e.target.value)}
-            value={problem.question || ''}
+            value={activity.question || ""}
           />
         );
       case PROBLEMS_TYPES.codeCombat.id:
@@ -102,7 +101,7 @@ class ActivityDialog extends React.PureComponent {
               input={<Input id="select-multiple-levels" />}
               margin="none"
               onChange={e => this.onFieldChange("level", e.target.value)}
-              value={problem.level || ""}
+              value={activity.level || ""}
             >
               {Object.keys(APP_SETTING.levels).map(id => (
                 <MenuItem key={APP_SETTING.levels[id].name} value={id}>
@@ -120,14 +119,14 @@ class ActivityDialog extends React.PureComponent {
             margin="normal"
             onChange={e => this.onFieldChange("count", e.target.value)}
             type="number"
-            value={problem.count}
+            value={activity.count}
           />
         );
       case PROBLEMS_TYPES.jupyter.id:
         return (
           <Fragment>
             <TextField
-              defaultValue={problem && problem.problemURL}
+              defaultValue={activity && activity.problemURL}
               fullWidth
               label="Problem Notebook URL"
               margin="dense"
@@ -135,7 +134,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.solutionURL}
+              defaultValue={activity && activity.solutionURL}
               fullWidth
               label="Solution Notebook URL"
               margin="dense"
@@ -143,7 +142,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.frozen}
+              defaultValue={activity && activity.frozen}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -157,7 +156,7 @@ class ActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <TextField
-              defaultValue={problem && problem.problemURL}
+              defaultValue={activity && activity.problemURL}
               fullWidth
               label="Problem Notebook URL"
               margin="dense"
@@ -165,7 +164,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.solutionURL}
+              defaultValue={activity && activity.solutionURL}
               fullWidth
               label="Solution Notebook URL"
               margin="dense"
@@ -173,7 +172,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={problem && problem.frozen}
+              defaultValue={activity && activity.frozen}
               fullWidth
               label="Default code block"
               margin="dense"
@@ -182,7 +181,7 @@ class ActivityDialog extends React.PureComponent {
               type="number"
             />
             <TextField
-              defaultValue={problem && problem.frozen}
+              defaultValue={activity && activity.frozen}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -196,7 +195,7 @@ class ActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <TextField
-              defaultValue={problem && problem.youtubeURL}
+              defaultValue={activity && activity.youtubeURL}
               fullWidth
               label="YouTube URL"
               margin="dense"
@@ -222,7 +221,7 @@ class ActivityDialog extends React.PureComponent {
                         checked={
                           this.state[questionType] ||
                           (this.state[questionType] === undefined &&
-                            problem[questionType])
+                            activity[questionType])
                         }
                         color="primary"
                         onChange={e =>
@@ -235,10 +234,10 @@ class ActivityDialog extends React.PureComponent {
                   />
                 ))}
                 <TextField
-                  defaultValue={problem && problem.customText}
+                  defaultValue={activity && activity.customText}
                   disabled={
                     this.state.questionCustom === undefined
-                      ? !(problem && problem.questionCustom)
+                      ? !(activity && activity.questionCustom)
                       : !this.state.questionCustom
                   }
                   fullWidth
@@ -254,7 +253,7 @@ class ActivityDialog extends React.PureComponent {
       case PROBLEMS_TYPES.game.id:
         return (
           <TextField
-            defaultValue={problem && problem.game}
+            defaultValue={activity && activity.game}
             fullWidth
             label="Game Variant"
             margin="dense"
@@ -268,13 +267,9 @@ class ActivityDialog extends React.PureComponent {
       case PROBLEMS_TYPES.jest.id:
         return (
           <div>
-            <FormControl style={{ width: '100%' }}>
+            <FormControl style={{ width: "100%" }}>
               <InputLabel htmlFor="githubURL">Github URL</InputLabel>
               <Input
-                id="githubURL"
-                type='text'
-                value={problem.githubURL || ''}
-                onChange={e => this.onFieldChange("githubURL", e.target.value)}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -289,21 +284,39 @@ class ActivityDialog extends React.PureComponent {
                     </IconButton>
                   </InputAdornment>
                 }
+                id="githubURL"
+                onChange={e => this.onFieldChange("githubURL", e.target.value)}
+                type="text"
+                value={activity.githubURL || ""}
               />
             </FormControl>
-            {
-              this.state.files && this.state.files.length>0 && (
+            {this.state.files &&
+              this.state.files.length > 0 && (
                 <div>
-                  <Typography gutterBottom variant="body2" style={{ margin : '12px 0px'}}>
-                    <CheckBoxIcon style={{ float : 'left'}} /> Check files to allow write access for users.
+                  <Typography
+                    gutterBottom
+                    style={{ margin: "12px 0px" }}
+                    variant="body2"
+                  >
+                    <CheckBoxIcon style={{ float: "left" }} /> Check files to
+                    allow write access for users.
                   </Typography>
                   <Typography gutterBottom variant="body2">
-                   {this.fetchedGithubURL &&  <LinkIcon style={{ float : 'left'}} />} {this.fetchedGithubURL}
+                    {this.fetchedGithubURL && (
+                      <LinkIcon style={{ float: "left" }} />
+                    )}{" "}
+                    {this.fetchedGithubURL}
                   </Typography>
                   {this.state.files.map(
                     file =>
                       file.type === "file" && (
-                        <ListItem button dense key={file.path} role={undefined} style={{ padding : '0px 25px'}}>
+                        <ListItem
+                          button
+                          dense
+                          key={file.path}
+                          role={undefined}
+                          style={{ padding: "0px 25px" }}
+                        >
                           <Checkbox
                             checked={!file.readOnly}
                             disableRipple
@@ -323,51 +336,64 @@ class ActivityDialog extends React.PureComponent {
   }
   showLoading = () => {
     this.setState(() => ({ loading: true }));
-  }
+  };
   hideLoading = () => {
     this.setState(() => ({ loading: false }));
-  }
-  handleReadOnlyFiles = (filePath) => {
+  };
+  handleReadOnlyFiles = filePath => {
     this.setState(() => ({
-      files: this.state.files.map(file => file.path === filePath ? { ...file, readOnly: !file.readOnly } : file)
-    }))
-  }
+      files: this.state.files.map(
+        file =>
+          file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
+      )
+    }));
+  };
   handleGithubURLSubmit = () => {
-    if (this.state.loading)
-      return;
+    if (this.state.loading) return;
     const { githubURL } = this.state;
     this.fetchedGithubURL = "";
-    this.setState({ files : [] });
+    this.setState({ files: [] });
     if (!githubURL.includes(APP_SETTING.GITHUB_BASE_URL)) {
-      this.handleError('Not a Valid Github URL');
+      this.handleError("Not a Valid Github URL");
       return;
     }
     this.showLoading();
 
-    const params = githubURL.replace(APP_SETTING.GITHUB_BASE_URL, '').split('/');
+    const params = githubURL
+      .replace(APP_SETTING.GITHUB_BASE_URL, "")
+      .split("/");
     let repoOwner = params[0];
     let repoName = params[1];
-    let branch = params[3] || 'master';
-    let subPath = '';
+    let branch = params[3] || "master";
+    let subPath = "";
     if (params.length > 4) {
       for (let i = 4; i < params.length; i++) {
         subPath = `${subPath}/${params[i]}`;
       }
     }
-    fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${repoOwner}/${repoName}/contents${subPath}`,branch)
+    fetchDirectoryStructureFromGitub(
+      `${
+        APP_SETTING.GITHUB_SERVER_URL
+      }/repos/${repoOwner}/${repoName}/contents${subPath}`,
+      branch
+    )
       .then(files => {
         if (files && files.length) {
-          //this.hideOutput();
-          this.fetchedGithubURL=githubURL;
+          // this.hideOutput();
+          this.fetchedGithubURL = githubURL;
           this.setState({
             repoDetails: {
               owner: repoOwner,
               name: repoName,
               folderPath: subPath,
-              branch 
+              branch
             },
             githubURL,
-            files: files.map(f => ({ path: f.path, readOnly: true, type: f.type })),
+            files: files.map(f => ({
+              path: f.path,
+              readOnly: true,
+              type: f.type
+            })),
             selectedFile: null
           })
           this.fetchWholeTree(-1);
@@ -378,27 +404,37 @@ class ActivityDialog extends React.PureComponent {
       })
       .catch(err => {
         this.handleError(err);
-      })
-  }
+      });
+  };
   fetchWholeTree = (fileIndex = -1) => {
     let folderToFetch = null;
     let index = 0;
     for (index = fileIndex + 1; index < this.state.files.length; index++) {
       const file = this.state.files[index];
-      if (file.type === 'dir') {
+      if (file.type === "dir") {
         folderToFetch = file;
         break;
       }
     }
     if (folderToFetch) {
-      fetchDirectoryStructureFromGitub(`${APP_SETTING.GITHUB_SERVER_URL}/repos/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/contents${folderToFetch.path}`,this.state.repoDetails.branch)
+      fetchDirectoryStructureFromGitub(
+        `${APP_SETTING.GITHUB_SERVER_URL}/repos/${
+          this.state.repoDetails.owner
+        }/${this.state.repoDetails.name}/contents${folderToFetch.path}`,
+        this.state.repoDetails.branch
+      )
         .then(tree => {
           if (tree && tree.length) {
             this.setState({
-
-              files: [ ...this.state.files, ...(tree.map(f => ({ path: f.path, readOnly: true, type: f.type })))]
-
-            })
+              files: [
+                ...this.state.files,
+                ...tree.map(f => ({
+                  path: f.path,
+                  readOnly: true,
+                  type: f.type
+                }))
+              ]
+            });
             this.fetchWholeTree(index);
           } else {
             this.handleError();
@@ -406,84 +442,99 @@ class ActivityDialog extends React.PureComponent {
         })
         .catch(err => {
           this.handleError(err);
-        })
+        });
     } else {
       this.hideLoading();
       this.fetchWholeCode();
     }
-  }
+  };
 
   fetchWholeCode = (fileIndex = -1) => {
     let fileToFetch = null;
     for (let index in this.state.files) {
       const file = this.state.files[index];
-      if (file.type === 'file' && parseInt(index, 10) > parseInt(fileIndex, 10)) {
+      if (
+        file.type === "file" &&
+        parseInt(index, 10) > parseInt(fileIndex, 10)
+      ) {
         fileToFetch = { ...file, index };
         break;
       }
     }
     if (fileToFetch) {
-      fetch(`${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${this.state.repoDetails.name}/${this.state.repoDetails.branch}/${fileToFetch.path}`)
+      fetch(
+        `${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${
+          this.state.repoDetails.name
+        }/${this.state.repoDetails.branch}/${fileToFetch.path}`
+      )
         .then(response => response.text())
         .then(code => {
           this.setState({
-            files: this.state.files.map((f, i) => parseInt(i, 10) === parseInt(fileToFetch.index, 10) ? { ...f, code } : f)
-          })
+            files: this.state.files.map(
+              (f, i) =>
+                parseInt(i, 10) === parseInt(fileToFetch.index, 10)
+                  ? { ...f, code }
+                  : f
+            )
+          });
           this.fetchWholeCode(fileToFetch.index);
-
         })
         .catch(err => {
           this.handleError(err);
-        })
+        });
     } else {
-      this.setState({ files : this.state.files.map(f => ({ path: f.path.replace(`${this.state.repoDetails.folderPath.slice(1)}/`,''), readOnly: true, type: f.type , code : f.code})).filter(f=>f.type==='file') })
+      this.setState({
+        files: this.state.files
+          .map(f => ({
+            path: f.path.replace(
+              `${this.state.repoDetails.folderPath.slice(1)}/`,
+              ""
+            ),
+            readOnly: true,
+            type: f.type,
+            code: f.code
+          }))
+          .filter(f => f.type === "file")
+      });
     }
-  }
-  handleError = (err = 'Error occurs.') => {
+  };
+  handleError = (err = "Error occurs.") => {
     this.hideLoading();
-    if (typeof err === 'string') {
+    if (typeof err === "string") {
       alert(err);
     } else if (err.message) {
       alert(err.message);
+    } else {
+      alert("Error occurs");
     }
-    else {
-      alert('Error occurs');
-    }
-  }
+  };
   onFieldChange = (field, value) => this.setState({ [field]: value });
   onCommit = () => {
-    const problem = { ...this.props.problem };
+    const activity = { ...this.props.activity };
     if (this.state.type === PROBLEMS_TYPES.jest.id) {
       const { type, name } = this.state;
+      this.props.onCommit(this.props.pathId, {
+        ...activity,
+        type,
+        name,
+        githubURL: this.fetchedGithubURL,
+        files: this.state.files
+      });
+    } else {
       this.props.onCommit(
         this.props.pathId,
-        {
-          ...problem,
-          type,
-          name,
-          githubURL : this.fetchedGithubURL,
-          files: this.state.files
-        }
-      );
-    }else{
-      this.props.onCommit(
-        this.props.pathId,
-        Object.assign(problem || {}, this.state, {
-          type:
-            this.state.type ||
-            (problem && problem.type) ||
-            "text"
+        Object.assign(activity || {}, this.state, {
+          type: this.state.type || (activity && activity.type) || "text"
         })
       );
     }
-    this.onClose  ();
+    this.onClose();
   };
 
   onClose = () => {
     this.resetState();
     this.props.onClose();
-
-  }
+  };
   resetState = () => {
     // Clear state. Render will be invoked 1 time only
     Object.keys(this.state).forEach(
@@ -493,11 +544,11 @@ class ActivityDialog extends React.PureComponent {
   };
 
   render() {
-    const { problem, open } = this.props;
+    const { activity, open } = this.props;
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
-          {problem && problem.id ? "Edit Problem" : "Add New Problem"}
+          {activity && activity.id ? "Edit Problem" : "Add New Problem"}
         </DialogTitle>
         <DialogContent
           style={{
@@ -512,7 +563,7 @@ class ActivityDialog extends React.PureComponent {
             onChange={e => this.onFieldChange("name", e.target.value)}
             onKeyPress={this.catchReturn}
             required
-            value={this.state.name || ''}
+            value={this.state.name || ""}
           />
           <TextField
             fullWidth
@@ -520,7 +571,7 @@ class ActivityDialog extends React.PureComponent {
             margin="dense"
             onChange={e => this.onFieldChange("type", e.target.value)}
             select
-            value={this.state.type || (problem && problem.type) || "text"}
+            value={this.state.type || (activity && activity.type) || "text"}
           >
             {Object.keys(PROBLEMS_TYPES).map(key => (
               <MenuItem key={key} value={key}>
@@ -534,15 +585,18 @@ class ActivityDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button 
-            color="primary" 
-            onClick={this.onCommit} 
-            variant="raised" 
-            disabled={this.state.loading
-              || !this.state.name 
-              || !this.state.type 
-              || (this.state.type === PROBLEMS_TYPES.jest.id && !(this.state.files && this.state.files.length>0))}
-            >
+          <Button
+            color="primary"
+            disabled={
+              this.state.loading ||
+              !this.state.name ||
+              !this.state.type ||
+              (this.state.type === PROBLEMS_TYPES.jest.id &&
+                !(this.state.files && this.state.files.length > 0))
+            }
+            onClick={this.onCommit}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>

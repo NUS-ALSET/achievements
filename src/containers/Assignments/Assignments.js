@@ -11,7 +11,7 @@ import {
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { coursesService } from "../../services/courses";
+import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import {
   getAssignmentsUIProps,
@@ -290,7 +290,14 @@ class Assignments extends React.Component {
         <AddTextSolutionDialog
           onClose={this.closeDialog}
           onCommit={this.commitTextSolution}
-          open={ui.dialog && ui.dialog.type === "Text"}
+          open={
+            ui.dialog &&
+            [
+              ASSIGNMENTS_TYPES.TeamFormation.id,
+              ASSIGNMENTS_TYPES.TeamText.id,
+              ASSIGNMENTS_TYPES.Text.id
+            ].includes(ui.dialog.type)
+          }
           solution={ui.dialog && ui.dialog.value}
           taskId={ui.currentAssignment && ui.currentAssignment.id}
         />

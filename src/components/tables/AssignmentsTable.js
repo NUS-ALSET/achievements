@@ -283,6 +283,14 @@ class AssignmentsTable extends React.PureComponent {
           )
         );
         break;
+      case ASSIGNMENTS_TYPES.TeamFormation.id:
+        dispatch(
+          assignmentSubmitRequest(assignment, {
+            ...solution,
+            value: solution.value.replace(/ \(\d+\)$/, "")
+          })
+        );
+        break;
       default:
         dispatch(assignmentSubmitRequest(assignment, solution));
     }
