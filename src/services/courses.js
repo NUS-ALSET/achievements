@@ -32,6 +32,14 @@ export const ASSIGNMENTS_TYPES = {
     id: "CodeCombat_Number",
     caption: "Complete Number of Code Combat Levels"
   },
+  TeamFormation: {
+    id: "TeamFormation",
+    caption: "Team Formation"
+  },
+  TeamText: {
+    id: "TeamText",
+    caption: "Team Text"
+  },
   PathActivity: {
     id: "PathActivity",
     caption: "Path Activity"

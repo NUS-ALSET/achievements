@@ -206,7 +206,7 @@ export function* updateNewAssignmentFieldHandler(action) {
   }
 }
 
-export function* assignmentSolutionRequestHandler(action) {
+export function* assignmentSubmitRequestHandler(action) {
   const assignment = yield select(
     state =>
       state.firebase.data.assignments[action.courseId][action.assignmentId]
@@ -606,7 +606,7 @@ export default [
   function* watchAssignmentSubmitRequest() {
     yield takeLatest(
       ASSIGNMENT_SOLUTION_REQUEST,
-      assignmentSolutionRequestHandler
+      assignmentSubmitRequestHandler
     );
   },
   function* watchUpdateAssignmentRequest() {
