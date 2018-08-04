@@ -128,8 +128,12 @@ export class Path extends React.Component {
 
   onAddActivityClick = () => this.props.onProblemDialogShow();
   onTextSolutionSubmit = (activityId, solution) => {
-    const { onCloseDialog, onProblemSolutionSubmit, pathProblems } = this.props;
-    const activity = pathProblems.problems.find(
+    const {
+      onCloseDialog,
+      onProblemSolutionSubmit,
+      pathActivities
+    } = this.props;
+    const activity = pathActivities.activities.find(
       activity => activity.id === activityId
     );
 
@@ -231,12 +235,12 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddJestSolutionDialog
-          open={ui.dialog.type === `${PROBLEMS_TYPES.jest.id}Solution`}
           onClose={onCloseDialog}
-          problem={ui.dialog.value}
           onCommit={this.onTextSolutionSubmit}
+          open={ui.dialog.type === `${PROBLEMS_TYPES.jest.id}Solution`}
+          problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
-          />
+        />
         <AddProfileDialog
           externalProfile={{
             url: "https://codecombat.com",

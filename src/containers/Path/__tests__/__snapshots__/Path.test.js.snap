@@ -82,8 +82,10 @@ ShallowWrapper {
 />,
         <WithStyles(AddJestSolutionDialog)
           onClose={[Function]}
+          onCommit={[Function]}
           open={false}
           problem={undefined}
+          taskId={undefined}
 />,
         <AddProfileDialog
           externalProfile={
@@ -171,8 +173,10 @@ ShallowWrapper {
         "nodeType": "class",
         "props": Object {
           "onClose": [Function],
+          "onCommit": [Function],
           "open": false,
           "problem": undefined,
+          "taskId": undefined,
         },
         "ref": null,
         "rendered": null,
@@ -276,8 +280,10 @@ ShallowWrapper {
 />,
           <WithStyles(AddJestSolutionDialog)
             onClose={[Function]}
+            onCommit={[Function]}
             open={false}
             problem={undefined}
+            taskId={undefined}
 />,
           <AddProfileDialog
             externalProfile={
@@ -365,8 +371,10 @@ ShallowWrapper {
           "nodeType": "class",
           "props": Object {
             "onClose": [Function],
+            "onCommit": [Function],
             "open": false,
             "problem": undefined,
+            "taskId": undefined,
           },
           "ref": null,
           "rendered": null,
