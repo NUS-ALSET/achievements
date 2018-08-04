@@ -444,19 +444,20 @@
 
 .save-btn{
   position: fixed;
-  top: 13px;
+  top: 0px;
   right: -200px;
   z-index: 99;
-  width: 160px;
-  height: 41px;
+  width: 188px;
+  height: 64px;
   font-size: 25px;
   text-decoration: none;
   background-color: #d8830e;
   color: white;
-  border: 0;
+  border: 2px solid white;
   cursor: pointer;
   font-weight: bold;
   z-index: 9999;
-  border: solid 1px;
+  -webkit-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
 }
