@@ -370,7 +370,6 @@ class ActivityDialog extends React.PureComponent {
             files: files.map(f => ({ path: f.path, readOnly: true, type: f.type })),
             selectedFile: null
           })
-          console.log(subPath,files);
           this.fetchWholeTree(-1);
         } else {
           console.log(files);
