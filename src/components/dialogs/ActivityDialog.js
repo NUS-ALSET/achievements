@@ -395,8 +395,7 @@ class ActivityDialog extends React.PureComponent {
               type: f.type
             })),
             selectedFile: null
-          });
-          console.log(subPath, files);
+          })
           this.fetchWholeTree(-1);
         } else {
           console.log(files);

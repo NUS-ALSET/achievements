@@ -32,11 +32,13 @@ describe("<Activity>", () => {
           }
         }}
         pathProblem={{}}
-      />
+      >
+      {()=>{}}
+      </Activity>
     );
 
     expect(wrapper.state("problemSolution"), {});
-    wrapper.find(ActivityView).simulate("problem-change", "test");
+    wrapper.find(Button).simulate("problem-change", "test");
     expect(wrapper.state("problemSolution"), "test");
   });
 
@@ -47,11 +49,13 @@ describe("<Activity>", () => {
         match={{
           params: {
             pathId: "testPath",
-            problemId: "testProblem"
+            problemId: "testProblem",
           }
         }}
         pathProblem={{}}
-      />
+      >
+      {()=>{}}
+      </Activity>
     );
 
     wrapper.setState({
