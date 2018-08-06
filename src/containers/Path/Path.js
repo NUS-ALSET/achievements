@@ -266,7 +266,7 @@ export class Path extends React.Component {
           onCommit={onProblemChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathActivities.path && pathActivities.path.id) || ""}
-          problem={ui.dialog.value}
+          activity={ui.dialog.value}
           uid={uid || "Anonymous"}
         />
       </Fragment>
