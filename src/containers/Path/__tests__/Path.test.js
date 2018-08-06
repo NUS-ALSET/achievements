@@ -33,6 +33,7 @@ describe("<Path>", () => {
         onRequestMoreProblems={spy}
         onToggleJoinStatus={spy}
         pathActivities={{
+          activities : []
         }}
         pathStatus="test"
         ui={{

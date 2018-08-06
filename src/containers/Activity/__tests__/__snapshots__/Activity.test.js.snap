@@ -24,6 +24,11 @@ ShallowWrapper {
     "nodeType": "host",
     "props": Object {
       "children": "Loading",
+      "style": Object {
+        "padding": "20px 0px",
+        "textAlign": "center",
+        "width": "100%",
+      },
     },
     "ref": null,
     "rendered": "Loading",
@@ -36,6 +41,11 @@ ShallowWrapper {
       "nodeType": "host",
       "props": Object {
         "children": "Loading",
+        "style": Object {
+          "padding": "20px 0px",
+          "textAlign": "center",
+          "width": "100%",
+        },
       },
       "ref": null,
       "rendered": "Loading",
