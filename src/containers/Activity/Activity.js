@@ -84,7 +84,7 @@ export class Activity extends React.PureComponent {
   render() {
     const {embedded, pathProblem, solution} = this.props;
     if (!pathProblem) {
-      return <div style={{ width : '100%', textAlign : 'center', 'padding' : '20px 0px'}}>Loading</div>;
+      return <div >Loading</div>;
     }
 
     return (
