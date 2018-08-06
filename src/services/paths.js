@@ -700,25 +700,18 @@ export class PathsService {
    */
   moveActivity(uid, pathId, activities, activityId, direction) {
     return this.checkActivitiesOrder(activities).then(activities => {
-      let activityIndex = -1;
       let siblingActivity;
-      let targetActivity;
-
-      activities.forEach((activity, index) => {
-        if (activity.id === activityId) {
-          activityIndex = index;
-          return false;
-        }
-        return true;
-      });
-      if (activityIndex === -1) {
+      
+      let targetActivity = activities.find(a=>a.id === activityId);
+  
+      if (!targetActivity) {
         throw new Error("Unable find requested activity");
       }
-      targetActivity = activities[activityIndex];
+
       if (direction === "up") {
-        siblingActivity = activities[activityIndex - 1];
+        siblingActivity = activities.find(a=>a.orderIndex === targetActivity.orderIndex - 1);
       } else {
-        siblingActivity = activities[activityIndex + 1];
+        siblingActivity = activities.find(a=>a.orderIndex === targetActivity.orderIndex + 1);
       }
 
       if (!siblingActivity) {
