@@ -53,21 +53,30 @@ class ActivityDialog extends React.PureComponent {
     uid: PropTypes.string.isRequired
   };
 
-  state = {
-    problem: {}
-  };
+  state = {};
   fetchedGithubURL = "";
   componentWillReceiveProps(nextProps) {
     this.resetState();
     if (nextProps.activity) {
+      let state={};
+      if(nextProps.activity.type===PROBLEMS_TYPES.jupyterInline.id){
+        state={
+          code: nextProps.activity.code || 1,
+          frozen : nextProps.activity.frozen || 1
+        }
+      }else if(nextProps.activity.type===PROBLEMS_TYPES.jest.id){
+        state={
+          githubURL: nextProps.activity.githubURL || "",
+          files: nextProps.activity.files || []
+        }
+       this.fetchedGithubURL = nextProps.activity.githubURL || "";
+      }
       this.setState({
         ...nextProps.activity,
         type: nextProps.activity.type || "",
         name: nextProps.activity.name || "",
-        githubURL: nextProps.activity.githubURL || "",
-        files: nextProps.activity.files || []
+       ...state
       });
-      this.fetchedGithubURL = nextProps.activity.githubURL || "";
     }
   }
   getTypeSpecificElements() {
@@ -172,7 +181,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={activity && activity.frozen}
+              defaultValue={'1' || (activity && activity.code)}
               fullWidth
               label="Default code block"
               margin="dense"
@@ -181,7 +190,7 @@ class ActivityDialog extends React.PureComponent {
               type="number"
             />
             <TextField
-              defaultValue={activity && activity.frozen}
+              defaultValue={'1' || (activity && activity.frozen)}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -508,7 +517,16 @@ class ActivityDialog extends React.PureComponent {
       alert("Error occurs");
     }
   };
-  onFieldChange = (field, value) => this.setState({ [field]: value });
+  onFieldChange = (field, value) => {
+    let state={}
+    if(field==='type' && value===PROBLEMS_TYPES.jupyterInline.id){
+      state={
+        code : 1,
+        frozen : 1
+      }
+    }
+    this.setState({ [field]: value , ...state})
+  };
   onCommit = () => {
     const activity = { ...this.props.activity };
     if (this.state.type === PROBLEMS_TYPES.jest.id) {
