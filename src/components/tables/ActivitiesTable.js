@@ -60,6 +60,18 @@ class ActivitiesTable extends React.PureComponent {
       pathOwnerId
     } = this.props;
 
+  let minOrderIndex = Infinity;
+  let maxOrderIndex = -Infinity;
+
+  (activities || []).forEach(activity=>{
+    if(activity.orderIndex < minOrderIndex){
+      minOrderIndex = activity.orderIndex;
+    }
+    if(activity.orderIndex > maxOrderIndex){
+      maxOrderIndex = activity.orderIndex;
+    }
+  })
+
     return (
       <Fragment>
         <Table>
@@ -125,6 +137,7 @@ class ActivitiesTable extends React.PureComponent {
           >
             Edit
           </MenuItem>
+         {this.state.activity && this.state.activity.orderIndex!==minOrderIndex &&  
           <MenuItem
             className={classes.button}
             onClick={() =>
@@ -134,6 +147,9 @@ class ActivitiesTable extends React.PureComponent {
           >
             Move Up
           </MenuItem>
+        }
+        {
+          this.state.activity && this.state.activity.orderIndex!==maxOrderIndex && 
           <MenuItem
             className={classes.button}
             onClick={() =>
@@ -144,6 +160,7 @@ class ActivitiesTable extends React.PureComponent {
           >
             Move Down
           </MenuItem>
+        }
         </Menu>
       </Fragment>
     );

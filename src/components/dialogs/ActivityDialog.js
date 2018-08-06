@@ -53,7 +53,9 @@ class ActivityDialog extends React.PureComponent {
     uid: PropTypes.string.isRequired
   };
 
-  state = {};
+  state = {
+    type : 'text'
+  };
   fetchedGithubURL = "";
   componentWillReceiveProps(nextProps) {
     this.resetState();
@@ -73,7 +75,7 @@ class ActivityDialog extends React.PureComponent {
       }
       this.setState({
         ...nextProps.activity,
-        type: nextProps.activity.type || "",
+        type: nextProps.activity.type || "text",
         name: nextProps.activity.name || "",
        ...state
       });
@@ -558,7 +560,7 @@ class ActivityDialog extends React.PureComponent {
     Object.keys(this.state).forEach(
       key => this.setState({ [key]: undefined }) || true
     );
-    this.setState({ type: "" });
+    this.setState({ type: "text" });
   };
 
   render() {

@@ -146,12 +146,30 @@ export class Path extends React.Component {
   };
   onProfileUpdate = profile =>
     this.props.onProfileUpdate(profile, "CodeCombat");
-
+  
+  onProblemChangeRequest = (id,data)=>{
+    const { pathActivities={}, onProblemChangeRequest } = this.props;
+    const activities = pathActivities.activities || [];
+    let additionalData = {};
+    if (!data.id) {
+      let maxOrderIndex = -Infinity;
+      activities.forEach(activity => {
+        maxOrderIndex = activity.orderIndex > maxOrderIndex ? activity.orderIndex : maxOrderIndex;
+      })
+      maxOrderIndex = maxOrderIndex === -Infinity ? 1 : maxOrderIndex +1;
+      additionalData = {
+        orderIndex : maxOrderIndex
+      };
+    }
+    onProblemChangeRequest(id, {
+      ...data,
+      ...additionalData
+    })
+  }
   render() {
     const {
       match,
       onCloseDialog,
-      onProblemChangeRequest,
       onProblemDialogShow,
       pathActivities,
       pathStatus,
@@ -170,7 +188,6 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
-
     return (
       <Fragment>
         <Breadcrumbs
@@ -263,7 +280,7 @@ export class Path extends React.Component {
         />
         <ActivityDialog
           onClose={onCloseDialog}
-          onCommit={onProblemChangeRequest}
+          onCommit={this.onProblemChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathActivities.path && pathActivities.path.id) || ""}
           activity={ui.dialog.value}
