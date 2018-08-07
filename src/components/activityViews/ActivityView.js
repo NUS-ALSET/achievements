@@ -8,6 +8,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import TextActivity from "./TextActivity";
+import ProfileActivity from "./ProfileActivity";
 
 import JupyterProblem from "./JupyterColabActivity";
 import JupyterInlineProblem from "./JupyterInlineActivity";
@@ -17,6 +18,7 @@ import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog"
 
 const views = {
   text: TextActivity,
+  profile : ProfileActivity,
   jupyter: JupyterProblem,
   jupyterInline: JupyterInlineProblem,
   youtube: YouTubeProblem,
@@ -36,9 +38,18 @@ class ActivityView extends React.PureComponent {
   }
   handleClose=()=>{
     this.setState({ open : false});
+    this.props.onClose();
   }
-  componentWillReceiveProps(){
+  componentWillReceiveProps(nextProps){
     this.setState({ open : true});
+    if(this.props.pathProblem.type==='profile' && this.props.userAchievements && this.props.userAchievements.CodeCombat && this.props.userAchievements.CodeCombat.id){
+      this.props.onCommit({
+        type : 'SOLUTION',
+        solution : {
+          value : this.props.userAchievements.CodeCombat.id
+        }
+      })
+    }
   }
   render() {
     const { dispatch, onProblemChange, pathProblem, solution } = this.props;
@@ -63,6 +74,9 @@ class ActivityView extends React.PureComponent {
           onChange={onProblemChange}
           problem={pathProblem}
           solution={solution}
+          userAchievements={this.props.userAchievements}
+          onClose={this.props.onClose}
+          onCommit={this.props.onCommit}
           {...extraProps}
         />
       </div>

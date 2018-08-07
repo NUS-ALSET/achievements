@@ -71,11 +71,11 @@ class AddJestSolutionDialog extends React.PureComponent {
             solvedFiles : solution.files.filter(f=>!f.readOnly),
             testResult : solution.output
         };
-        if(this.props.onCommit){
-            this.props.onCommit(this.props.taskId, finalSolution );
-        }
+        
         if(this.props.onChange){
-            this.props.onChange(finalSolution);
+            this.props.onCommit({ type : 'SOLUTION', solution : finalSolution});
+        }else{
+            this.props.onCommit(this.props.taskId, finalSolution );
         }
         this.handleClose();     
     }
