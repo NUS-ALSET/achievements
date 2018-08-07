@@ -181,6 +181,7 @@ const processTeamSolutions = (assignments, members) => {
       const team = teamFormation.teams[solution.value];
       team.members.push(member.id);
       for (const teamTaskKey of teamTasks) {
+        // We need `createdAt` to get clean sorting but we doesn't need empty solution (with createdAt with 0)
         team.last[teamTaskKey] = team.last[teamTaskKey] || { createdAt: 0 };
 
         // Fetch last task solution for team
@@ -205,7 +206,10 @@ const processTeamSolutions = (assignments, members) => {
           team.members.length
         })`;
         for (const lastKey of Object.keys(team.last)) {
-          member.solutions[lastKey] = team.last[lastKey];
+          // Not real solution if zero createdAt
+          if (team.last[lastKey].createdAt) {
+            member.solutions[lastKey] = team.last[lastKey];
+          }
         }
       }
     }
@@ -295,15 +299,18 @@ export const getCourseProps = (state, ownProps) => {
   const instructorView = state.assignments.currentTab === INSTRUCTOR_TAB_VIEW;
   const assignmentsEdit = state.assignments.currentTab === INSTRUCTOR_TAB_EDIT;
   const now = new Date().getTime();
-  const members = state.assignments.courseMembers
-    .map(courseMember => ({
-      ...courseMember,
-      solutions: getStudentSolutions(state, courseId, courseMember, {
-        onlyVisible: !(
-          instructorView || courseMember.id === state.firebase.auth.uid
-        )
-      })
-    }))
+  let members = state.assignments.courseMembers.map(courseMember => ({
+    ...courseMember,
+    solutions: getStudentSolutions(state, courseId, courseMember, {
+      onlyVisible: !(
+        instructorView || courseMember.id === state.firebase.auth.uid
+      )
+    })
+  }));
+
+  processTeamSolutions(assignments, members);
+
+  members = members
     .map(member => ({
       ...member,
       progress: {
@@ -364,8 +371,6 @@ export const getCourseProps = (state, ownProps) => {
     sortedMembers[member.id] = member;
     return true;
   });
-
-  processTeamSolutions(assignments, members);
 
   return {
     id: courseId,

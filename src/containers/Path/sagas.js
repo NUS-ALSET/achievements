@@ -1,12 +1,19 @@
 import { call, put, select, take, takeLatest } from "redux-saga/effects";
 import {
+  PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
   PATH_OPEN,
   PATH_PROBLEM_OPEN,
+  PATH_REMOVE_COLLABORATOR_REQUEST,
+  PATH_SHOW_COLLABORATORS_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
+  pathAddCollaboratorFail,
+  pathAddCollaboratorSuccess,
   pathFetchProblemsSolutionsSuccess,
   pathMoreProblemsFail,
   pathMoreProblemsSuccess,
+  pathRemoveCollaboratorFail,
+  pathRemoveCollaboratorSuccess,
   pathToggleJoinStatusFail,
   pathToggleJoinStatusRequest,
   pathToggleJoinStatusSuccess
@@ -147,6 +154,48 @@ export function* pathMoreProblemsRequestHandler(action) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
+export function* pathShowCollaboratorsDialogHandler(action) {
+  /*
+  yield put(
+    pathCollaboratorsFetchSuccess(action.pathId, [
+      {
+        id: "test",
+        photoURL:
+          "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
+        displayName: "test"
+      }
+    ])
+  );
+  */
+}
+export function* pathAddCollaboratorRequestHandler(action) {
+  try {
+    yield put(pathAddCollaboratorSuccess(action.pathId, action.collaboratorId));
+  } catch (err) {
+    yield put(
+      pathAddCollaboratorFail(action.pathId, action.collaboratorId, err.message)
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+export function* pathRemoveCollaboratorRequestHandler(action) {
+  try {
+    yield put(
+      pathRemoveCollaboratorSuccess(action.pathId, action.collaboratorId)
+    );
+  } catch (err) {
+    yield put(
+      pathRemoveCollaboratorFail(
+        action.pathId,
+        action.collaboratorId,
+        err.message
+      )
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchPathOpenRequest() {
     yield takeLatest(PATH_OPEN, pathOpenHandler);
@@ -170,6 +219,25 @@ export default [
     yield takeLatest(
       PATH_MORE_PROBLEMS_REQUEST,
       pathMoreProblemsRequestHandler
+    );
+  },
+
+  function* watchPathShowCollaboratorsDialog() {
+    yield takeLatest(
+      PATH_SHOW_COLLABORATORS_DIALOG,
+      pathShowCollaboratorsDialogHandler
+    );
+  },
+  function* watchPathAddCollaboratorRequestHandler() {
+    yield takeLatest(
+      PATH_ADD_COLLABORATOR_REQUEST,
+      pathAddCollaboratorRequestHandler
+    );
+  },
+  function* watchPathRemoveCollaboratorRequestHandler() {
+    yield takeLatest(
+      PATH_REMOVE_COLLABORATOR_REQUEST,
+      pathRemoveCollaboratorRequestHandler
     );
   }
 ];
