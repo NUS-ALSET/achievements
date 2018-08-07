@@ -47,9 +47,15 @@ class AddAssignmentDialog extends React.PureComponent {
   onClose = () => this.props.dispatch(assignmentCloseDialog());
   onCommit = () => {
     const { courseId, dispatch, assignment } = this.props;
-
+    
     dispatch(assignmentAddRequest(courseId, assignment));
   };
+
+  componentWillReceiveProps(nextProps){
+    if(!this.props.open && nextProps.open && nextProps.assignment && nextProps.assignment.questionType){
+        this.updateField('questionType')({ target : { value : nextProps.assignment.questionType}});
+    }
+  }
 
   getAssignmentSpecificFields(assignment) {
     let { paths, problems, uid } = this.props;

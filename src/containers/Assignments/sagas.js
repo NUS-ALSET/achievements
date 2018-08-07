@@ -143,7 +143,7 @@ export function* updateNewAssignmentFieldHandler(action) {
         );
 
         yield put(assignmentPathsFetchSuccess(paths));
-        yield put(updateNewAssignmentField("path", data.uid));
+        yield put(updateNewAssignmentField("path", (assignment.path || data.uid)));
 
         if (!data.manualUpdates.details) {
           yield put(
