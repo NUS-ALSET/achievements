@@ -7,7 +7,9 @@ import {
   assignmentSwitchTab,
   coursePasswordEnterSuccess,
   courseAssignmentsClose,
-  courseAssignmentsOpen
+  courseAssignmentsOpen,
+  assignmentAssistantKeyChange,
+  assignmentAddAssistantRequest
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -281,10 +283,14 @@ class Assignments extends React.Component {
         {currentUser.isOwner && (
           <ControlAssistantsDialog
             assistants={(ui.dialog && ui.dialog.assistants) || []}
-            course={course}
             dispatch={dispatch}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
+            onAddAssistant={assignmentAddAssistantRequest}
+            onAssistantKeyChange={assignmentAssistantKeyChange}
+            onClose={assignmentCloseDialog}
+            onRemoveAssistant={() => {}}
             open={ui.dialog && ui.dialog.type === "CourseAssistants"}
+            target={course.id}
           />
         )}
         <AddTextSolutionDialog

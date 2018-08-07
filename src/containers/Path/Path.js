@@ -11,8 +11,11 @@ import { push } from "connected-react-router";
 
 import { APP_SETTING } from "../../achievementsApp/config";
 
+import withStyles from "@material-ui/core/styles/withStyles";
+
 import Button from "@material-ui/core/Button";
 import Toolbar from "@material-ui/core/Toolbar";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import ActivitiesTable from "../../components/tables/ActivitiesTable";
 
@@ -28,10 +31,13 @@ import {
   PATH_STATUS_NOT_JOINED
 } from "./selectors";
 import {
+  pathAddCollaboratorRequest,
   pathCloseDialog,
   pathMoreProblemsRequest,
   pathOpen,
   pathOpenSolutionDialog,
+  pathRemoveCollaboratorRequest,
+  pathShowCollaboratorsDialog,
   pathToggleJoinStatusRequest
 } from "./actions";
 import {
@@ -52,10 +58,21 @@ import { problemSolutionSubmitRequest } from "../Activity/actions";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types";
+import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
+import { assignmentAssistantKeyChange } from "../Assignments/actions";
+
+const styles = theme => ({
+  toolbarButton: {
+    marginLeft: theme.spacing.unit
+  }
+});
 
 export class Path extends React.Component {
   static propTypes = {
+    classes: PropTypes.object,
     match: PropTypes.object,
+    onAddAssistant: PropTypes.func.isRequired,
+    onAssistantKeyChange: PropTypes.func.isRequired,
     onCloseDialog: PropTypes.func.isRequired,
     onNotification: PropTypes.func.isRequired,
     onOpen: PropTypes.func.isRequired,
@@ -66,7 +83,9 @@ export class Path extends React.Component {
     onProblemSolutionSubmit: PropTypes.func.isRequired,
     onProfileUpdate: PropTypes.func.isRequired,
     onPushPath: PropTypes.func.isRequired,
+    onRemoveAssistant: PropTypes.func.isRequired,
     onRequestMoreProblems: PropTypes.func.isRequired,
+    onShowCollaboratorsClick: PropTypes.func.isRequired,
     onToggleJoinStatus: PropTypes.func.isRequired,
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
@@ -146,18 +165,49 @@ export class Path extends React.Component {
   };
   onProfileUpdate = profile =>
     this.props.onProfileUpdate(profile, "CodeCombat");
-
+  
+  onProblemChangeRequest = (id,data)=>{
+    const { pathActivities={}, onProblemChangeRequest } = this.props;
+    const activities = pathActivities.activities || [];
+    let additionalData = {};
+    if (!data.id) {
+      let maxOrderIndex = -Infinity;
+      activities.forEach(activity => {
+        maxOrderIndex = activity.orderIndex > maxOrderIndex ? activity.orderIndex : maxOrderIndex;
+      })
+      maxOrderIndex = maxOrderIndex === -Infinity ? 1 : maxOrderIndex +1;
+      additionalData = {
+        orderIndex : maxOrderIndex
+      };
+    }
+    onProblemChangeRequest(id, {
+      ...data,
+      ...additionalData
+    })
+  }
   render() {
     const {
+      classes,
       match,
+      onAddAssistant,
+      onAssistantKeyChange,
       onCloseDialog,
-      onProblemChangeRequest,
       onProblemDialogShow,
+      onShowCollaboratorsClick,
+      onRemoveAssistant,
       pathActivities,
       pathStatus,
       ui,
       uid
     } = this.props;
+
+    if (!uid) {
+      return <div>Login required to display this page</div>;
+    }
+
+    if (!(pathActivities && pathActivities.path)) {
+      return <LinearProgress />;
+    }
 
     const allFinished =
       (pathActivities.activities || []).filter(problem => problem.solved)
@@ -170,7 +220,6 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
-
     return (
       <Fragment>
         <Breadcrumbs
@@ -210,7 +259,13 @@ export class Path extends React.Component {
               >
                 Add Activity
               </Button>
-              <Button>Collaborators</Button>
+              <Button
+                className={classes.toolbarButton}
+                onClick={() => onShowCollaboratorsClick(pathActivities.path.id)}
+                variant="raised"
+              >
+                Collaborators
+              </Button>
             </Toolbar>
           ) : (
             <Button
@@ -263,11 +318,21 @@ export class Path extends React.Component {
         />
         <ActivityDialog
           onClose={onCloseDialog}
-          onCommit={onProblemChangeRequest}
+          onCommit={this.onProblemChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathActivities.path && pathActivities.path.id) || ""}
-          problem={ui.dialog.value}
+          activity={ui.dialog.value}
           uid={uid || "Anonymous"}
+        />
+        <ControlAssistantsDialog
+          assistants={(ui.dialog && ui.dialog.assistants)}
+          newAssistant={ui.dialog && ui.dialog.newAssistant}
+          onAddAssistant={onAddAssistant}
+          onAssistantKeyChange={onAssistantKeyChange}
+          onClose={onCloseDialog}
+          onRemoveAssistant={onRemoveAssistant}
+          open={ui.dialog.type === "CollaboratorsControl"}
+          target={pathActivities.path && pathActivities.path.id}
         />
       </Fragment>
     );
@@ -284,9 +349,12 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = {
+  onAddAssistant: pathAddCollaboratorRequest,
+  onAssistantKeyChange: assignmentAssistantKeyChange,
   onCloseDialog: pathCloseDialog,
   onNotification: notificationShow,
   onOpen: pathOpen,
+  onShowCollaboratorsClick: pathShowCollaboratorsDialog,
   onProfileUpdate: externalProfileUpdateRequest,
   onOpenSolution: pathOpenSolutionDialog,
   onProblemChangeRequest: pathProblemChangeRequest,
@@ -294,11 +362,13 @@ const mapDispatchToProps = {
   onProblemMoveRequest: pathActivityMoveRequest,
   onProblemSolutionSubmit: problemSolutionSubmitRequest,
   onPushPath: push,
+  onRemoveAssistant: pathRemoveCollaboratorRequest,
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest
 };
 
 export default compose(
+  withStyles(styles),
   withRouter,
   firebaseConnect((ownProps, store) => {
     const state = store.getState();

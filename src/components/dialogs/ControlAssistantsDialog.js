@@ -13,65 +13,55 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import TextField from "@material-ui/core/TextField";
-import List, {
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  ListItemSecondaryAction
-} from "@material-ui/core/List";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+
 import Avatar from "@material-ui/core/Avatar";
 
 import DeleteIcon from "@material-ui/icons/Delete";
-
-import {
-  assignmentAddAssistantRequest,
-  assignmentAssistantKeyChange,
-  assignmentCloseDialog,
-  assignmentRemoveAssistantRequest
-} from "../../containers/Assignments/actions";
-import { notificationShow } from "../../containers/Root/actions";
 
 class ControlAssistantsDialog extends React.PureComponent {
   static propTypes = {
     assistants: PropTypes.array,
     newAssistant: PropTypes.any,
-    dispatch: PropTypes.func.isRequired,
+    onAddAssistant: PropTypes.func.isRequired,
+    onAssistantKeyChange: PropTypes.func.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onRemoveAssistant: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    course: PropTypes.object
+    target: PropTypes.string.isRequired
   };
 
   state = {
     newAssistantKey: ""
   };
 
-  onClose = () => {
-    this.props.dispatch(assignmentCloseDialog());
-  };
-
   addAssistant = () =>
-    this.props.dispatch(
-      this.props.newAssistant
-        ? assignmentAddAssistantRequest(
-            this.props.course.id,
-            this.props.newAssistant.id
-          )
-        : notificationShow("Missing Assistant to add")
-    );
+    this.props.onAddAssistant(this.props.target, this.props.newAssistant.id);
 
   removeAssistant = assistantId =>
-    this.props.dispatch(
-      assignmentRemoveAssistantRequest(this.props.course.id, assistantId)
-    );
+    this.props.onRemoveAssistant(this.props.target, assistantId);
 
   onKeyChange = e => {
     this.setState({
       newAssistantKey: e.target.value
     });
-    this.props.dispatch(assignmentAssistantKeyChange(e.target.value));
+    this.props.onAssistantKeyChange(e.target.value);
   };
 
   render() {
-    const { open, assistants, newAssistant } = this.props;
+    const {
+      open,
+      assistants,
+      newAssistant,
+      onAddAssistant,
+      onClose,
+      onRemoveAssistant,
+      target
+    } = this.props;
     let keyInputMessage = "Enter User key";
 
     if (this.state.newAssistantKey) {
@@ -83,7 +73,7 @@ class ControlAssistantsDialog extends React.PureComponent {
     }
 
     return (
-      <Dialog onClose={this.onClose} open={open}>
+      <Dialog onClose={onClose} open={open}>
         <DialogTitle>Control Assistants</DialogTitle>
         <DialogContent>
           <TextField
@@ -99,7 +89,7 @@ class ControlAssistantsDialog extends React.PureComponent {
           />
           <Button
             disabled={!newAssistant}
-            onClick={this.addAssistant}
+            onClick={() => onAddAssistant(target, newAssistant.id)}
             variant="raised"
           >
             Add
@@ -110,15 +100,15 @@ class ControlAssistantsDialog extends React.PureComponent {
               overflow: "auto"
             }}
           >
-            {assistants.map(assistant => (
+            {(assistants || []).map(assistant => (
               <ListItem key={assistant.id}>
                 <ListItemIcon>
-                  <Avatar src={assistant.photoURL} />
+                  <Avatar src={assistant.photoURL || ""} />
                 </ListItemIcon>
-                <ListItemText primary={assistant.displayName} />
+                <ListItemText primary={assistant.displayName || ""} />
                 <ListItemSecondaryAction>
                   <IconButton
-                    onClick={() => this.removeAssistant(assistant.id)}
+                    onClick={() => onRemoveAssistant(target, assistant.id)}
                   >
                     <DeleteIcon />
                   </IconButton>
@@ -128,7 +118,7 @@ class ControlAssistantsDialog extends React.PureComponent {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" variant="raised">
+          <Button color="primary" onClick={onClose} variant="raised">
             Commit
           </Button>
         </DialogActions>

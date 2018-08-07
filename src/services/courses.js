@@ -800,7 +800,11 @@ export class CoursesService {
       .database()
       .ref(`/users/${userKey}`)
       .once("value")
-      .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
+      .then(
+        userData =>
+          (userData.val() && Object.assign({ id: userKey }, userData.val())) ||
+          false
+      );
   }
 
   fetchCourses(userKey) {
