@@ -286,7 +286,7 @@ class AssignmentsTable extends React.PureComponent {
       case ASSIGNMENTS_TYPES.TeamFormation.id:
         dispatch(
           assignmentSubmitRequest(assignment, {
-            ...solution,
+            ...(solution || {}),
             value: 
               solution &&
               solution.value &&
