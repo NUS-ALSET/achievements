@@ -105,6 +105,11 @@ export const getTestState = config => ({
           abcTestAssistant1: true
         }
       },
+      paths: {
+        abcTestPathId: {
+          owner: "abcTestUser1"
+        }
+      },
       solutions: config.solutions || {
         abcTestCourseId: {
           abcTestUser1: {
