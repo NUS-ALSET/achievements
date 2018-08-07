@@ -152,6 +152,12 @@
           auth.uid == newData.child('sender').val()"
       }
     },
+    "pathAssistants": {
+      "$pathKey": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == root.child('paths/' + $pathKey + '/owner').val()"
+      }
+    },
     "pathProblems": {
       ".read": "auth != null",
       "$userKey": {
