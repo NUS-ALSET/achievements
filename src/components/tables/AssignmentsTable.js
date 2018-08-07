@@ -121,7 +121,7 @@ class AssignmentsTable extends React.PureComponent {
     }
 
     switch (assignment.questionType) {
-      case "Profile":
+      case ASSIGNMENTS_TYPES.Profile.id:
         return solution ? (
           <a
             href={`https://codecombat.com/user/${AccountService.processProfile(
@@ -149,7 +149,7 @@ class AssignmentsTable extends React.PureComponent {
         );
       // Backward compatibility
       case "PathProblem":
-      case "PathActivity":
+      case ASSIGNMENTS_TYPES.PathActivity.id:
         return solution ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
             <span>
@@ -192,8 +192,9 @@ class AssignmentsTable extends React.PureComponent {
           result
         );
 
-      case "Text":
-        return /http[s]?:\/\//.test(result) && !owner ? (
+      case ASSIGNMENTS_TYPES.Text.id:
+      case ASSIGNMENTS_TYPES.TeamText.id:
+        return /http[s]?:\/\//.test(result) ? (
           <a href={result} rel="noopener noreferrer" target="_blank">
             {APP_SETTING.isSuggesting ? (
               <IconButton>
@@ -285,13 +286,14 @@ class AssignmentsTable extends React.PureComponent {
         break;
       case ASSIGNMENTS_TYPES.TeamFormation.id:
         dispatch(
-          assignmentSubmitRequest(assignment, {
-            ...(solution || {}),
-            value: 
-              solution &&
-              solution.value &&
-              solution.value.replace(/ \(\d+\)$/, "")
-          })
+          assignmentSubmitRequest(
+            assignment,
+            solution &&
+              solution.value && {
+                ...solution,
+                value: solution.value.replace(/ \(\d+\)$/, "")
+              }
+          )
         );
         break;
       default:

@@ -20,6 +20,8 @@ describe("<Path>", () => {
             pathId: "testPath"
           }
         }}
+        onAddAssistant={spy}
+        onAssistantKeyChange={spy}
         onCloseDialog={spy}
         onNotification={spy}
         onOpen={spy}
@@ -30,11 +32,11 @@ describe("<Path>", () => {
         onProblemSolutionSubmit={spy}
         onProfileUpdate={spy}
         onPushPath={spy}
+        onRemoveAssistant={spy}
         onRequestMoreProblems={spy}
+        onShowCollaboratorsClick={spy}
         onToggleJoinStatus={spy}
-        pathActivities={{
-          activities : []
-        }}
+        pathActivities={{}}
         pathStatus="test"
         ui={{
           dialog: false
