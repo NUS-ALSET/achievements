@@ -100,6 +100,11 @@ export const getTestState = config => ({
           abcTestUser2: true
         }
       },
+      pathAssistants: {
+        abcTestPathId: {
+          abcTestAssistant1: true
+        }
+      },
       solutions: config.solutions || {
         abcTestCourseId: {
           abcTestUser1: {

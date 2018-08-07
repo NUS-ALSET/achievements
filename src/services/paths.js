@@ -729,6 +729,47 @@ export class PathsService {
         );
     });
   }
+
+  /**
+   *
+   * @param {String} pathId
+   */
+  fetchPathCollaborators(pathId) {
+    return firebase
+      .database()
+      .ref(`/pathAssistants/${pathId}`)
+      .once("value")
+      .then(snapshot => snapshot.val() || {})
+      .then(assistants =>
+        Promise.all(
+          Object.keys(assistants).map(id =>
+            firebase
+              .database()
+              .ref(`/users/${id}`)
+              .once("value")
+              .then(snapshot => snapshot.val() || {})
+              .then(user => ({ ...user, id }))
+          )
+        )
+      );
+  }
+
+  /**
+   *
+   * @param {String} pathId
+   * @param {String} collaboratorId empty param leads to remove that
+   * collaborator
+   * @param {String} action - could be `add` and `remove` only
+   */
+  updatePathCollaborator(pathId, collaboratorId, action) {
+    const ref = firebase
+      .database()
+      .ref(`/pathAssistants/${pathId}/${collaboratorId}`);
+    if (action === "add") {
+      return ref.set(true);
+    }
+    return ref.remove();
+  }
 }
 
 /** @type PathsService */
