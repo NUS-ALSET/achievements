@@ -6,26 +6,27 @@
 
 import React from "react";
 import PropTypes from "prop-types";
+
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-
-import Avatar from "@material-ui/core/Avatar";
+import TextField from "@material-ui/core/TextField";
 
 import DeleteIcon from "@material-ui/icons/Delete";
 
-class ControlAssistantsDialog extends React.PureComponent {
+class ControlAssistantsDialog extends React.Component {
   static propTypes = {
-    assistants: PropTypes.array,
+    assistants: PropTypes.any,
     newAssistant: PropTypes.any,
     onAddAssistant: PropTypes.func.isRequired,
     onAssistantKeyChange: PropTypes.func.isRequired,
@@ -100,21 +101,25 @@ class ControlAssistantsDialog extends React.PureComponent {
               overflow: "auto"
             }}
           >
-            {(assistants || []).map(assistant => (
-              <ListItem key={assistant.id}>
-                <ListItemIcon>
-                  <Avatar src={assistant.photoURL || ""} />
-                </ListItemIcon>
-                <ListItemText primary={assistant.displayName || ""} />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    onClick={() => onRemoveAssistant(target, assistant.id)}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
+            {assistants ? (
+              assistants.map(assistant => (
+                <ListItem key={assistant.id}>
+                  <ListItemIcon>
+                    <Avatar src={assistant.photoURL || ""} />
+                  </ListItemIcon>
+                  <ListItemText primary={assistant.displayName || ""} />
+                  <ListItemSecondaryAction>
+                    <IconButton
+                      onClick={() => onRemoveAssistant(target, assistant.id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))
+            ) : (
+              <LinearProgress />
+            )}
           </List>
         </DialogContent>
         <DialogActions>
