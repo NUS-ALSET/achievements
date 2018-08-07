@@ -287,7 +287,10 @@ class AssignmentsTable extends React.PureComponent {
         dispatch(
           assignmentSubmitRequest(assignment, {
             ...solution,
-            value: solution.value && solution.value.replace(/ \(\d+\)$/, "")
+            value: 
+              solution &&
+              solution.value &&
+              solution.value.replace(/ \(\d+\)$/, "")
           })
         );
         break;
