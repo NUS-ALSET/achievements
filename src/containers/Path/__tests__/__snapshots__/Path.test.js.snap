@@ -24,7 +24,11 @@ ShallowWrapper {
     onPushPath={[Function]}
     onRequestMoreProblems={[Function]}
     onToggleJoinStatus={[Function]}
-    pathActivities={Object {}}
+    pathActivities={
+        Object {
+            "activities": Array [],
+          }
+    }
     pathStatus="test"
     ui={
         Object {
@@ -110,11 +114,11 @@ ShallowWrapper {
           selectedPathId=""
 />,
         <ActivityDialog
+          activity={undefined}
           onClose={[Function]}
           onCommit={[Function]}
           open={false}
           pathId=""
-          problem={undefined}
           uid="testUser"
 />,
       ],
@@ -223,11 +227,11 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
+          "activity": undefined,
           "onClose": [Function],
           "onCommit": [Function],
           "open": false,
           "pathId": "",
-          "problem": undefined,
           "uid": "testUser",
         },
         "ref": null,
@@ -308,11 +312,11 @@ ShallowWrapper {
             selectedPathId=""
 />,
           <ActivityDialog
+            activity={undefined}
             onClose={[Function]}
             onCommit={[Function]}
             open={false}
             pathId=""
-            problem={undefined}
             uid="testUser"
 />,
         ],
@@ -421,11 +425,11 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
+            "activity": undefined,
             "onClose": [Function],
             "onCommit": [Function],
             "open": false,
             "pathId": "",
-            "problem": undefined,
             "uid": "testUser",
           },
           "ref": null,
