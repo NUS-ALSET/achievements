@@ -14,7 +14,7 @@ export const YOUTUBE_QUESTIONS = {
   questionCustom: "Custom question after watching this video"
 };
 
-export const PROBLEMS_TYPES = {
+export const ACTIVITY_TYPES = {
   text: {
     id: "text",
     caption: "Text"
@@ -264,26 +264,26 @@ export class PathsService {
     if (!problemInfo.name) throw new Error("Missing problem name");
     if (!problemInfo.type) throw new Error("Missing problem type");
     switch (problemInfo.type) {
-      case "text":
+      case ACTIVITY_TYPES.text.id:
         if (!problemInfo.question) throw new Error("Missing question");
         break;
-      case "profile":
+      case ACTIVITY_TYPES.profile.id:
         break;
-      case "codeCombat":
+      case ACTIVITY_TYPES.codeCombat.id:
         if (!problemInfo.level) throw new Error("Missing CodeCombat level");
         break;
-      case "codeCombatNumber":
+      case ACTIVITY_TYPES.codeCombatNumber.id:
         if (!problemInfo.count) throw new Error("Missing levels count");
         break;
-      case "jupyter":
-      case "jupyterInline":
+      case ACTIVITY_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
         if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
         if (!problemInfo.frozen) throw new Error("Missing frozen field");
         if (problemInfo.type === "jupyterInline" && !problemInfo.code)
           throw new Error("Missing code field");
         break;
-      case "youtube":
+      case ACTIVITY_TYPES.youtube.id:
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
         if (
           !(
@@ -296,7 +296,7 @@ export class PathsService {
           throw new Error("Missing any of following questions");
         }
         break;
-      case "game":
+      case ACTIVITY_TYPES.game.id:
         break;
       default:
         throw new Error("Invalid  problem type");
@@ -352,12 +352,12 @@ export class PathsService {
   validateSolution(uid, pathProblem, solution, json) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
-        case PROBLEMS_TYPES.codeCombat.id:
+        case ACTIVITY_TYPES.codeCombat.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
             level: pathProblem.level
           });
-        case PROBLEMS_TYPES.codeCombatNumber.id:
+        case ACTIVITY_TYPES.codeCombatNumber.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat_Number",
             count: pathProblem.count
@@ -464,14 +464,14 @@ export class PathsService {
       .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
         switch (pathProblem.type) {
-          case PROBLEMS_TYPES.codeCombat.id:
-          case PROBLEMS_TYPES.codeCombatNumber.id:
+          case ACTIVITY_TYPES.codeCombat.id:
+          case ACTIVITY_TYPES.codeCombatNumber.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set("Completed");
-          case PROBLEMS_TYPES.text.id:
-          case PROBLEMS_TYPES.jupyterInline.id:
+          case ACTIVITY_TYPES.text.id:
+          case ACTIVITY_TYPES.jupyterInline.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)

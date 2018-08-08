@@ -1,5 +1,5 @@
 import { createSelector } from "reselect";
-import { PROBLEMS_TYPES } from "../../services/paths";
+import { ACTIVITY_TYPES } from "../../services/paths";
 
 export const PATH_STATUS_OWNER = "owner";
 export const PATH_STATUS_JOINED = "joined";
@@ -47,21 +47,21 @@ export const pathStatusSelector = createSelector(
 
 const getActivitySelector = problem => {
   switch (problem.type) {
-    case PROBLEMS_TYPES.text.id:
+    case ACTIVITY_TYPES.text.id:
       return problem.question || "Answer the question";
-    case PROBLEMS_TYPES.profile.id:
+    case ACTIVITY_TYPES.profile.id:
       return "Enter CodeCombat profile";
-    case PROBLEMS_TYPES.codeCombat.id:
+    case ACTIVITY_TYPES.codeCombat.id:
       return `Finish "${problem.level}" level at CodeCombat`;
-    case PROBLEMS_TYPES.codeCombatNumber.id:
+    case ACTIVITY_TYPES.codeCombatNumber.id:
       return `Finish ${problem.count} levels at CodeCombat`;
-    case PROBLEMS_TYPES.jupyter.id:
+    case ACTIVITY_TYPES.jupyter.id:
       return "Solve task at Jupyter Colab";
-    case PROBLEMS_TYPES.jupyterInline.id:
+    case ACTIVITY_TYPES.jupyterInline.id:
       return "Solve jupyter task";
-    case PROBLEMS_TYPES.youtube.id:
+    case ACTIVITY_TYPES.youtube.id:
       return "Watch Video and answer for questions";
-    case PROBLEMS_TYPES.game.id:
+    case ACTIVITY_TYPES.game.id:
       return "Win the game";
     default:
       return "Usual activity";
