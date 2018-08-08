@@ -47,9 +47,9 @@ export const ACTIVITY_TYPES = {
     id: "game",
     caption: "Game"
   },
-  jest:{
-    id : "jest",
-    caption : "Jest"
+  jest: {
+    id: "jest",
+    caption: "Jest"
   }
 };
 
@@ -361,7 +361,7 @@ export class PathsService {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
         case ACTIVITY_TYPES.jest.id:
-            return Promise.resolve();
+          return Promise.resolve();
         case ACTIVITY_TYPES.codeCombat.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
@@ -699,16 +699,20 @@ export class PathsService {
     return this.checkActivitiesOrder(activities).then(activities => {
       let siblingActivity;
 
-      let targetActivity = activities.find(a=>a.id === activityId);
+      let targetActivity = activities.find(a => a.id === activityId);
 
       if (!targetActivity) {
         throw new Error("Unable find requested activity");
       }
 
       if (direction === "up") {
-        siblingActivity = activities.find(a=>a.orderIndex === targetActivity.orderIndex - 1);
+        siblingActivity = activities.find(
+          a => a.orderIndex === targetActivity.orderIndex - 1
+        );
       } else {
-        siblingActivity = activities.find(a=>a.orderIndex === targetActivity.orderIndex + 1);
+        siblingActivity = activities.find(
+          a => a.orderIndex === targetActivity.orderIndex + 1
+        );
       }
 
       if (!siblingActivity) {

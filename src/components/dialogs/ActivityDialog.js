@@ -54,30 +54,30 @@ class ActivityDialog extends React.PureComponent {
   };
 
   state = {
-    type : 'text'
+    type: "text"
   };
   fetchedGithubURL = "";
   componentWillReceiveProps(nextProps) {
     this.resetState();
     if (nextProps.activity) {
-      let state={};
-      if(nextProps.activity.type===PROBLEMS_TYPES.jupyterInline.id){
-        state={
+      let state = {};
+      if (nextProps.activity.type === ACTIVITY_TYPES.jupyterInline.id) {
+        state = {
           code: nextProps.activity.code || 1,
-          frozen : nextProps.activity.frozen || 1
-        }
-      }else if(nextProps.activity.type===PROBLEMS_TYPES.jest.id){
-        state={
+          frozen: nextProps.activity.frozen || 1
+        };
+      } else if (nextProps.activity.type === ACTIVITY_TYPES.jest.id) {
+        state = {
           githubURL: nextProps.activity.githubURL || "",
           files: nextProps.activity.files || []
-        }
-       this.fetchedGithubURL = nextProps.activity.githubURL || "";
+        };
+        this.fetchedGithubURL = nextProps.activity.githubURL || "";
       }
       this.setState({
         ...nextProps.activity,
         type: nextProps.activity.type || "text",
         name: nextProps.activity.name || "",
-       ...state
+        ...state
       });
     }
   }
@@ -183,7 +183,7 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={'1' || (activity && activity.code)}
+              defaultValue={"1" || (activity && activity.code)}
               fullWidth
               label="Default code block"
               margin="dense"
@@ -192,7 +192,7 @@ class ActivityDialog extends React.PureComponent {
               type="number"
             />
             <TextField
-              defaultValue={'1' || (activity && activity.frozen)}
+              defaultValue={"1" || (activity && activity.frozen)}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -275,7 +275,7 @@ class ActivityDialog extends React.PureComponent {
             <MenuItem value="Squad">Squad</MenuItem>
           </TextField>
         );
-      case PROBLEMS_TYPES.jest.id:
+      case ACTIVITY_TYPES.jest.id:
         return (
           <div>
             <FormControl style={{ width: "100%" }}>
@@ -406,9 +406,10 @@ class ActivityDialog extends React.PureComponent {
               type: f.type
             })),
             selectedFile: null
-          })
+          });
           this.fetchWholeTree(-1);
         } else {
+          // eslint-disable-next-line no-console
           console.log(files);
           this.handleError(files);
         }
@@ -462,6 +463,8 @@ class ActivityDialog extends React.PureComponent {
 
   fetchWholeCode = (fileIndex = -1) => {
     let fileToFetch = null;
+
+    // eslint-disable-next-line guard-for-in
     for (let index in this.state.files) {
       const file = this.state.files[index];
       if (
@@ -520,18 +523,18 @@ class ActivityDialog extends React.PureComponent {
     }
   };
   onFieldChange = (field, value) => {
-    let state={}
-    if(field==='type' && value===PROBLEMS_TYPES.jupyterInline.id){
-      state={
-        code : 1,
-        frozen : 1
-      }
+    let state = {};
+    if (field === "type" && value === ACTIVITY_TYPES.jupyterInline.id) {
+      state = {
+        code: 1,
+        frozen: 1
+      };
     }
-    this.setState({ [field]: value , ...state})
+    this.setState({ [field]: value, ...state });
   };
   onCommit = () => {
     const activity = { ...this.props.activity };
-    if (this.state.type === PROBLEMS_TYPES.jest.id) {
+    if (this.state.type === ACTIVITY_TYPES.jest.id) {
       const { type, name } = this.state;
       this.props.onCommit(this.props.pathId, {
         ...activity,
@@ -611,7 +614,7 @@ class ActivityDialog extends React.PureComponent {
               this.state.loading ||
               !this.state.name ||
               !this.state.type ||
-              (this.state.type === PROBLEMS_TYPES.jest.id &&
+              (this.state.type === ACTIVITY_TYPES.jest.id &&
                 !(this.state.files && this.state.files.length > 0))
             }
             onClick={this.onCommit}

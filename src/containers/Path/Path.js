@@ -181,25 +181,28 @@ export class Path extends React.Component {
     onCloseDialog();
   };
 
-  onProblemChangeRequest = (id,data)=>{
-    const { pathActivities={}, onProblemChangeRequest } = this.props;
+  onProblemChangeRequest = (id, data) => {
+    const { pathActivities = {}, onProblemChangeRequest } = this.props;
     const activities = pathActivities.activities || [];
     let additionalData = {};
     if (!data.id) {
       let maxOrderIndex = -Infinity;
       activities.forEach(activity => {
-        maxOrderIndex = activity.orderIndex > maxOrderIndex ? activity.orderIndex : maxOrderIndex;
-      })
-      maxOrderIndex = maxOrderIndex === -Infinity ? 1 : maxOrderIndex +1;
+        maxOrderIndex =
+          activity.orderIndex > maxOrderIndex
+            ? activity.orderIndex
+            : maxOrderIndex;
+      });
+      maxOrderIndex = maxOrderIndex === -Infinity ? 1 : maxOrderIndex + 1;
       additionalData = {
-        orderIndex : maxOrderIndex
+        orderIndex: maxOrderIndex
       };
     }
     onProblemChangeRequest(id, {
       ...data,
       ...additionalData
-    })
-  }
+    });
+  };
   render() {
     const {
       classes,
@@ -309,7 +312,7 @@ export class Path extends React.Component {
         <AddJestSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog.type === `${PROBLEMS_TYPES.jest.id}Solution`}
+          open={ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`}
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
