@@ -33,7 +33,7 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 
-import { PROBLEMS_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
+import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 const fetchDirectoryStructureFromGitub = (url, branch = "master") => {
@@ -86,7 +86,7 @@ class ActivityDialog extends React.PureComponent {
 
     activity = Object.assign(activity || {}, this.state);
     switch (this.state.type || (activity && activity.type) || "text") {
-      case PROBLEMS_TYPES.text.id:
+      case ACTIVITY_TYPES.text.id:
         return (
           <TextField
             fullWidth
@@ -96,7 +96,7 @@ class ActivityDialog extends React.PureComponent {
             value={activity.question || ""}
           />
         );
-      case PROBLEMS_TYPES.codeCombat.id:
+      case ACTIVITY_TYPES.codeCombat.id:
         return (
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
@@ -122,7 +122,7 @@ class ActivityDialog extends React.PureComponent {
             </Select>
           </FormControl>
         );
-      case PROBLEMS_TYPES.codeCombatNumber.id:
+      case ACTIVITY_TYPES.codeCombatNumber.id:
         return (
           <TextField
             fullWidth
@@ -133,7 +133,7 @@ class ActivityDialog extends React.PureComponent {
             value={activity.count}
           />
         );
-      case PROBLEMS_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.jupyter.id:
         return (
           <Fragment>
             <TextField
@@ -163,7 +163,7 @@ class ActivityDialog extends React.PureComponent {
             />
           </Fragment>
         );
-      case PROBLEMS_TYPES.jupyterInline.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
         return (
           <Fragment>
             <TextField
@@ -202,7 +202,7 @@ class ActivityDialog extends React.PureComponent {
             />
           </Fragment>
         );
-      case PROBLEMS_TYPES.youtube.id:
+      case ACTIVITY_TYPES.youtube.id:
         return (
           <Fragment>
             <TextField
@@ -261,7 +261,7 @@ class ActivityDialog extends React.PureComponent {
             </FormControl>
           </Fragment>
         );
-      case PROBLEMS_TYPES.game.id:
+      case ACTIVITY_TYPES.game.id:
         return (
           <TextField
             defaultValue={activity && activity.game}
@@ -593,9 +593,9 @@ class ActivityDialog extends React.PureComponent {
             select
             value={this.state.type || (activity && activity.type) || "text"}
           >
-            {Object.keys(PROBLEMS_TYPES).map(key => (
+            {Object.keys(ACTIVITY_TYPES).map(key => (
               <MenuItem key={key} value={key}>
-                {PROBLEMS_TYPES[key].caption}
+                {ACTIVITY_TYPES[key].caption}
               </MenuItem>
             ))}
           </TextField>

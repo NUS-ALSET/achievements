@@ -52,7 +52,7 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
-import { PROBLEMS_TYPES } from "../../services/paths";
+import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
@@ -70,6 +70,7 @@ const styles = theme => ({
 export class Path extends React.Component {
   static propTypes = {
     classes: PropTypes.object,
+    codeCombatProfile: PropTypes.any,
     match: PropTypes.object,
     onAddAssistant: PropTypes.func.isRequired,
     onAssistantKeyChange: PropTypes.func.isRequired,
@@ -111,17 +112,17 @@ export class Path extends React.Component {
       pathActivities
     } = this.props;
     switch (problem.type) {
-      case PROBLEMS_TYPES.codeCombat.id:
-      case PROBLEMS_TYPES.codeCombatNumber.id:
+      case ACTIVITY_TYPES.codeCombat.id:
+      case ACTIVITY_TYPES.codeCombatNumber.id:
         onProblemSolutionSubmit(
           pathActivities.path.id,
           { problemId: problem.id, ...problem },
           "Completed"
         );
         break;
-      case PROBLEMS_TYPES.jupyterInline.id:
-      case PROBLEMS_TYPES.jupyter.id:
-      case PROBLEMS_TYPES.youtube.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
+      case ACTIVITY_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.youtube.id:
         onPushPath(`/paths/${pathActivities.path.id}/activities/${problem.id}`);
         break;
       default:
@@ -146,7 +147,7 @@ export class Path extends React.Component {
     );
 
   onAddActivityClick = () => this.props.onProblemDialogShow();
-  onTextSolutionSubmit = (activityId, solution) => {
+  onTextSolutionSubmit = (solution, activityId) => {
     const {
       onCloseDialog,
       onProblemSolutionSubmit,
@@ -163,9 +164,23 @@ export class Path extends React.Component {
     );
     onCloseDialog();
   };
-  onProfileUpdate = profile =>
-    this.props.onProfileUpdate(profile, "CodeCombat");
-  
+  onProfileUpdate = profile => {
+    const {
+      onCloseDialog,
+      onProblemSolutionSubmit,
+      onProfileUpdate,
+      ui
+    } = this.props;
+
+    onProfileUpdate(profile, "CodeCombat");
+    onProblemSolutionSubmit(
+      ui.dialog.value.path,
+      { ...ui.dialog.value, problemId: ui.dialog.value.id },
+      profile
+    );
+    onCloseDialog();
+  };
+
   onProblemChangeRequest = (id,data)=>{
     const { pathActivities={}, onProblemChangeRequest } = this.props;
     const activities = pathActivities.activities || [];
@@ -188,6 +203,7 @@ export class Path extends React.Component {
   render() {
     const {
       classes,
+      codeCombatProfile,
       match,
       onAddAssistant,
       onAssistantKeyChange,
@@ -220,6 +236,7 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
+
     return (
       <Fragment>
         <Breadcrumbs
@@ -285,7 +302,7 @@ export class Path extends React.Component {
         <AddTextSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog.type === `${PROBLEMS_TYPES.text.id}Solution`}
+          open={ui.dialog.type === `${ACTIVITY_TYPES.text.id}Solution`}
           solution={ui.dialog.solution}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
@@ -297,6 +314,7 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddProfileDialog
+          defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
           externalProfile={{
             url: "https://codecombat.com",
             id: "CodeCombat",
@@ -305,7 +323,7 @@ export class Path extends React.Component {
           }}
           onClose={onCloseDialog}
           onCommit={this.onProfileUpdate}
-          open={ui.dialog.type === `${PROBLEMS_TYPES.profile.id}Solution`}
+          open={ui.dialog.type === `${ACTIVITY_TYPES.profile.id}Solution`}
         />
         <ActivitiesTable
           activities={pathActivities.activities || []}
@@ -317,15 +335,15 @@ export class Path extends React.Component {
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
         <ActivityDialog
+          activity={ui.dialog.value}
           onClose={onCloseDialog}
           onCommit={this.onProblemChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathActivities.path && pathActivities.path.id) || ""}
-          activity={ui.dialog.value}
           uid={uid || "Anonymous"}
         />
         <ControlAssistantsDialog
-          assistants={(ui.dialog && ui.dialog.assistants)}
+          assistants={ui.dialog && ui.dialog.assistants}
           newAssistant={ui.dialog && ui.dialog.newAssistant}
           onAddAssistant={onAddAssistant}
           onAssistantKeyChange={onAssistantKeyChange}
@@ -345,7 +363,12 @@ const mapStateToProps = (state, ownProps) => ({
   pathActivities: pathActivitiesSelector(state, ownProps),
   pathStatus: pathStatusSelector(state, ownProps),
   ui: state.path.ui,
-  uid: state.firebase.auth.uid
+  uid: state.firebase.auth.uid,
+  // FIXIT: move it to selectors
+  codeCombatProfile:
+    state.firebase.data.userAchievements &&
+    state.firebase.data.userAchievements[state.firebase.auth.uid] &&
+    state.firebase.data.userAchievements[state.firebase.auth.uid].CodeCombat
 });
 
 const mapDispatchToProps = {
@@ -380,12 +403,14 @@ export default compose(
     }
 
     return [
+      `/completedActivities/${uid}/${pathId}`,
       `/paths/${pathId}`,
       {
         path: "/activities",
         queryParams: ["orderByChild=path", `equalTo=${pathId}`]
       },
-      `/studentJoinedPaths/${uid}/${pathId}`
+      `/studentJoinedPaths/${uid}/${pathId}`,
+      `userAchievements/${uid}/CodeCombat`
     ];
   }),
   connect(mapStateToProps, mapDispatchToProps)

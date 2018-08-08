@@ -3,7 +3,7 @@ import firebase from "firebase";
 import assert from "assert";
 import sinon from "sinon";
 import Promise from "bluebird";
-import { PathsService, PROBLEMS_TYPES } from "../paths";
+import { PathsService, ACTIVITY_TYPES } from "../paths";
 
 import correctProblems from "./data/correctProblems";
 import incorrectProblems from "./data/incorrectProblems";
@@ -224,7 +224,7 @@ describe("Paths service tests", () => {
             pathName: "Test Path",
             problemId: "testProblem",
             problemName: "Test Problem",
-            type: PROBLEMS_TYPES.text.id
+            type: ACTIVITY_TYPES.text.id
           },
           "test solution"
         )
