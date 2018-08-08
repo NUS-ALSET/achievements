@@ -32,6 +32,14 @@ export const ASSIGNMENTS_TYPES = {
     id: "CodeCombat_Number",
     caption: "Complete Number of Code Combat Levels"
   },
+  TeamFormation: {
+    id: "TeamFormation",
+    caption: "Team Formation"
+  },
+  TeamText: {
+    id: "TeamText",
+    caption: "Team Text"
+  },
   PathActivity: {
     id: "PathActivity",
     caption: "Path Activity"
@@ -147,8 +155,12 @@ export class CoursesService {
     const { name, password, description } = courseData;
 
     if (courseData.id) {
-      return firebase
-        .set(`/coursePasswords/${courseData.id}`, password)
+      return Promise.resolve()
+        .then(
+          () =>
+            password &&
+            firebase.set(`/coursePasswords/${courseData.id}`, password)
+        )
         .then(() => {
           delete courseData.password;
           firebase.ref(`/courses/${courseData.id}`).update(courseData);
@@ -788,7 +800,11 @@ export class CoursesService {
       .database()
       .ref(`/users/${userKey}`)
       .once("value")
-      .then(userData => Object.assign({ id: userKey }, userData.val() || {}));
+      .then(
+        userData =>
+          (userData.val() && Object.assign({ id: userKey }, userData.val())) ||
+          false
+      );
   }
 
   fetchCourses(userKey) {

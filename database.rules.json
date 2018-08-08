@@ -2,10 +2,17 @@
   "rules": {
     "activities": {
       ".read": "auth != null",
-      "$problemKey": {
-        ".write": "auth != null && (
-            newData.child('owner').val() == auth.uid
-        )"
+      "$activityKey": {
+        ".write": "auth != null &&
+          newData.child('path').exists() &&
+          root.child('paths/' + newData.child('path').val()).exists() && (
+            root.child('paths/' + newData.child('path').val() +
+              '/owner').val() == auth.uid ||
+            root.child('pathAssistants/' + newData.child('path').val() +
+              '/' + auth.uid).exists()
+
+          )
+        "
       }
     },
     "admins": {
@@ -152,6 +159,12 @@
           auth.uid == newData.child('sender').val()"
       }
     },
+    "pathAssistants": {
+      "$pathKey": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == root.child('paths/' + $pathKey + '/owner').val()"
+      }
+    },
     "pathProblems": {
       ".read": "auth != null",
       "$userKey": {
@@ -172,7 +185,7 @@
       }
     },
     "problemSolutions": {
-      "$problemKey": {
+      "$activityKey": {
         "$userKey": {
           ".read": "auth != null",
           ".write": "auth != null && auth.uid == $userKey"

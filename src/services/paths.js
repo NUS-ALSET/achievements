@@ -33,11 +33,11 @@ export const PROBLEMS_TYPES = {
   },
   jupyter: {
     id: "jupyter",
-    caption: "Jupyter Notebook"
+    caption: "Colaboratory Notebook"
   },
   jupyterInline: {
     id: "jupyterInline",
-    caption: "Jupyter Inline"
+    caption: "Jupyter Notebook"
   },
   youtube: {
     id: "youtube",
@@ -46,6 +46,10 @@ export const PROBLEMS_TYPES = {
   game: {
     id: "game",
     caption: "Game"
+  },
+  jest:{
+    id : "jest",
+    caption : "Jest"
   }
 };
 
@@ -231,6 +235,10 @@ export class PathsService {
   }
 
   pathChange(uid, pathInfo) {
+    if (!(pathInfo.id || pathInfo.name)) {
+      throw new Error("Missing path name");
+    }
+
     if (pathInfo.id) {
       return firebase
         .database()
@@ -294,6 +302,10 @@ export class PathsService {
         break;
       case "game":
         break;
+      case "jest":
+        if (!problemInfo.githubURL) throw new Error("Missing GithubURL");
+        if (!problemInfo.files) throw new Error("Missing Files");
+        break;
       default:
         throw new Error("Invalid  problem type");
     }
@@ -348,6 +360,8 @@ export class PathsService {
   validateSolution(uid, pathProblem, solution, json) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
+        case PROBLEMS_TYPES.jest.id:
+            return Promise.resolve();
         case PROBLEMS_TYPES.codeCombat.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
@@ -468,10 +482,11 @@ export class PathsService {
               .set("Completed");
           case PROBLEMS_TYPES.text.id:
           case PROBLEMS_TYPES.jupyterInline.id:
+          case PROBLEMS_TYPES.jest.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(solution);
+              .set(solution)
           case "jupyter":
             return this.fetchFile(this.getFileId(solution))
               .then(json =>
@@ -628,6 +643,136 @@ export class PathsService {
           ".sv": "timestamp"
         }
       });
+  }
+
+  /**
+   *
+   * @param {Array<Activity>}activities
+   */
+  checkActivitiesOrder(activities) {
+    let needUpdate = false;
+    activities = activities.sort((a, b) => {
+      if (!a.orderIndex) {
+        needUpdate = true;
+        return 1;
+      }
+      if (!b.orderIndex) {
+        needUpdate = true;
+        return -1;
+      }
+      if (a.orderIndex < b.orderIndex) {
+        return -1;
+      } else if (a.orderIndex > b.orderIndex) {
+        return 1;
+      }
+      return 0;
+    });
+    if (needUpdate) {
+      let maxOrderIndex = 0;
+      const updated = [];
+      for (const activity of activities) {
+        if (!activity.orderIndex) {
+          maxOrderIndex += 1;
+          updated.push(activity);
+          activity.orderIndex = maxOrderIndex;
+        }
+        maxOrderIndex = Math.max(maxOrderIndex, activity.orderIndex);
+      }
+      return Promise.all(
+        updated.map(activity =>
+          firebase
+            .database()
+            .ref(`/activities/${activity.id}`)
+            .update({ orderIndex: activity.orderIndex })
+        )
+      ).then(() => activities);
+    }
+    return Promise.resolve(activities);
+  }
+
+  /**
+   *
+   * @param uid
+   * @param pathId
+   * @param {Array<Activity>}activities
+   * @param activityId
+   * @param direction
+   */
+  moveActivity(uid, pathId, activities, activityId, direction) {
+    return this.checkActivitiesOrder(activities).then(activities => {
+      let siblingActivity;
+      
+      let targetActivity = activities.find(a=>a.id === activityId);
+  
+      if (!targetActivity) {
+        throw new Error("Unable find requested activity");
+      }
+
+      if (direction === "up") {
+        siblingActivity = activities.find(a=>a.orderIndex === targetActivity.orderIndex - 1);
+      } else {
+        siblingActivity = activities.find(a=>a.orderIndex === targetActivity.orderIndex + 1);
+      }
+
+      if (!siblingActivity) {
+        return Promise.resolve();
+      }
+      return firebase
+        .database()
+        .ref(`/activities/${targetActivity.id}`)
+        .update({
+          orderIndex: siblingActivity.orderIndex
+        })
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/activities/${siblingActivity.id}`)
+            .update({
+              orderIndex: targetActivity.orderIndex
+            })
+        );
+    });
+  }
+
+  /**
+   *
+   * @param {String} pathId
+   */
+  fetchPathCollaborators(pathId) {
+    return firebase
+      .database()
+      .ref(`/pathAssistants/${pathId}`)
+      .once("value")
+      .then(snapshot => snapshot.val() || {})
+      .then(assistants =>
+        Promise.all(
+          Object.keys(assistants).map(id =>
+            firebase
+              .database()
+              .ref(`/users/${id}`)
+              .once("value")
+              .then(snapshot => snapshot.val() || {})
+              .then(user => ({ ...user, id }))
+          )
+        )
+      );
+  }
+
+  /**
+   *
+   * @param {String} pathId
+   * @param {String} collaboratorId empty param leads to remove that
+   * collaborator
+   * @param {String} action - could be `add` and `remove` only
+   */
+  updatePathCollaborator(pathId, collaboratorId, action) {
+    const ref = firebase
+      .database()
+      .ref(`/pathAssistants/${pathId}/${collaboratorId}`);
+    if (action === "add") {
+      return ref.set(true);
+    }
+    return ref.remove();
   }
 }
 

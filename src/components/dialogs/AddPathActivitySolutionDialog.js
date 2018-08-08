@@ -51,20 +51,23 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
     problemSolution: {}
   };
 
-  onProblemChange = problemSolution => this.setState({ problemSolution });
+  onProblemChange = problemSolution =>{
+    this.setState({ problemSolution });
+  }
   catchReturn = event => event.key === "Enter" && this.onCommitClick();
   onClose = () => {
     this.props.dispatch(problemFinalize());
     this.props.dispatch(assignmentCloseDialog());
   };
-  onCommitClick = () =>
-    isEmpty(this.state.problemSolution)
+  onCommitClick = (data=null) =>{
+    const solution = data && data.type==='SOLUTION' ? data.solution : this.state.problemSolution;
+    isEmpty(solution)
       ? this.onClose()
-      : this.props.onCommit(this.state.problemSolution);
+      : this.props.onCommit(solution);
+  }
 
   render() {
     const { classes, open, pathProblem, solution } = this.props;
-
     return (
       <Fragment>
         <Dialog
@@ -75,34 +78,43 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           onClose={this.onClose}
           open={open}
         >
-          <DialogTitle>Set Assignment Solution</DialogTitle>
-          <DialogContent
-            style={{
-              textAlign: "center",
-              overflowX: "hidden"
-            }}
-          >
+          <DialogTitle>Set Assignment Solution</DialogTitle>          
             <Activity
               embedded={true}
               inDialog={true}
               onProblemChange={this.onProblemChange}
               pathProblem={pathProblem}
               solution={solution}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button color="secondary" onClick={this.onClose}>
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              disabled={!(solution && solution.checked && !solution.failed)}
-              onClick={this.onCommitClick}
-              variant="raised"
+              onCommit={this.onCommitClick}
+              onClose={this.onClose}
             >
-              Commit
-            </Button>
-          </DialogActions>
+              {
+                (activityView, submitHandler, props) => (
+                  <div>
+                <DialogContent
+                  style={{
+                    overflowX: "hidden"
+                  }}
+                >
+                {activityView(props)}
+                </DialogContent>
+                <DialogActions>
+                  <Button color="secondary" onClick={this.onClose}>
+                    Cancel
+                  </Button>
+                    <Button
+                      color="primary"
+                      disabled={!(solution && solution.checked && !solution.failed)}
+                      onClick={submitHandler}
+                      variant="raised"
+                    >
+                      Commit
+                    </Button>
+                </DialogActions>
+                </div>
+                  )
+                }
+            </Activity>
         </Dialog>
       </Fragment>
     );

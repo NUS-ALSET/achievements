@@ -21,6 +21,7 @@ import Typography from "@material-ui/core/Typography";
 
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import RefreshIcon from "@material-ui/icons/Refresh";
 
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -42,7 +43,8 @@ class JupyterNotebook extends React.PureComponent {
     persistent: PropTypes.bool,
     richEditor: PropTypes.bool,
     solution: PropTypes.any,
-    title: PropTypes.string.isRequired
+    title: PropTypes.any.isRequired,
+    url: PropTypes.string
   };
 
   state = {
@@ -66,7 +68,8 @@ class JupyterNotebook extends React.PureComponent {
       persistent,
       richEditor,
       solution,
-      title
+      title,
+      url
     } = this.props;
     return (
       <Paper style={{ margin: "24px 2px" }}>
@@ -77,6 +80,22 @@ class JupyterNotebook extends React.PureComponent {
           variant="headline"
         >
           <span>{title}</span>
+          {url && (
+            <IconButton
+              style={{
+                position: "absolute",
+                right: 48
+              }}
+            >
+              <a
+                href={url}
+                style={{ position: "absolute", top: 10 }}
+                target="_blank"
+              >
+                <OpenInNewIcon />
+              </a>
+            </IconButton>
+          )}
           {persistent ? (
             action &&
             this.state.solution &&

@@ -62,6 +62,7 @@ ShallowWrapper {
             <span>
               test
 </span>,
+            undefined,
             <WithStyles(IconButton)
               onClick={[Function]}
               style={
@@ -92,6 +93,7 @@ ShallowWrapper {
             "rendered": "test",
             "type": "span",
           },
+          undefined,
           Object {
             "instance": null,
             "key": undefined,
@@ -174,6 +176,7 @@ ShallowWrapper {
               <span>
                 test
 </span>,
+              undefined,
               <WithStyles(IconButton)
                 onClick={[Function]}
                 style={
@@ -204,6 +207,7 @@ ShallowWrapper {
               "rendered": "test",
               "type": "span",
             },
+            undefined,
             Object {
               "instance": null,
               "key": undefined,

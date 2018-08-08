@@ -63,6 +63,8 @@ const getActivitySelector = problem => {
       return "Watch Video and answer for questions";
     case PROBLEMS_TYPES.game.id:
       return "Win the game";
+    case PROBLEMS_TYPES.jest.id:
+      return "Pass the Test";
     default:
       return "Usual activity";
   }
@@ -74,16 +76,19 @@ export const pathActivitiesSelector = createSelector(
   getActivitiesSolutions,
   (path, activities, solutions) => ({
     path: path,
-    problems: Object.keys(activities || {})
+    activities: Object.keys(activities || {})
       .map(id => ({
         ...activities[id],
         id,
         description: getActivitySelector(activities[id]),
         solved: solutions[id]
       }))
-      .filter(
-        problem =>
-          path.id === path.owner ? !problem.path : problem.path === path.id
+      .filter(problem => problem.path === path.id)
+      .sort(
+        (a, b) =>
+          a.orderIndex === b.orderIndex
+            ? 0
+            : a.orderIndex < b.orderIndex ? -1 : 1
       )
   })
 );

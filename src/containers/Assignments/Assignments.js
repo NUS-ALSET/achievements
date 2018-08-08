@@ -7,11 +7,13 @@ import {
   assignmentSwitchTab,
   coursePasswordEnterSuccess,
   courseAssignmentsClose,
-  courseAssignmentsOpen
+  courseAssignmentsOpen,
+  assignmentAssistantKeyChange,
+  assignmentAddAssistantRequest
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { coursesService } from "../../services/courses";
+import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import {
   getAssignmentsUIProps,
@@ -281,16 +283,27 @@ class Assignments extends React.Component {
         {currentUser.isOwner && (
           <ControlAssistantsDialog
             assistants={(ui.dialog && ui.dialog.assistants) || []}
-            course={course}
             dispatch={dispatch}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
+            onAddAssistant={assignmentAddAssistantRequest}
+            onAssistantKeyChange={assignmentAssistantKeyChange}
+            onClose={assignmentCloseDialog}
+            onRemoveAssistant={() => {}}
             open={ui.dialog && ui.dialog.type === "CourseAssistants"}
+            target={course.id}
           />
         )}
         <AddTextSolutionDialog
           onClose={this.closeDialog}
           onCommit={this.commitTextSolution}
-          open={ui.dialog && ui.dialog.type === "Text"}
+          open={
+            ui.dialog &&
+            [
+              ASSIGNMENTS_TYPES.TeamFormation.id,
+              ASSIGNMENTS_TYPES.TeamText.id,
+              ASSIGNMENTS_TYPES.Text.id
+            ].includes(ui.dialog.type)
+          }
           solution={ui.dialog && ui.dialog.value}
           taskId={ui.currentAssignment && ui.currentAssignment.id}
         />
@@ -299,7 +312,10 @@ class Assignments extends React.Component {
           dispatch={dispatch}
           loadingSolution={!!ui.dialog && ui.dialog.loadingSolution}
           onCommit={this.onPathProblemSolutionCommit}
-          open={ui.dialog && ui.dialog.type === "PathActivity"}
+          open={
+            ui.dialog &&
+            ["PathActivity", "PathProblem"].includes(ui.dialog.type)
+          }
           pathProblem={ui.dialog.pathProblem}
           solution={ui.dialog.solution}
         />

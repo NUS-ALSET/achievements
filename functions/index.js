@@ -28,7 +28,7 @@ exports.handleNewProblemSolution =
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
-      jupyterTrigger.handler(data, data.taskKey, data.owner);
+      return jupyterTrigger.handler(data, data.taskKey, data.owner);
     });
 
 exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {

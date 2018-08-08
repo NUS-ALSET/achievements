@@ -1,20 +1,28 @@
 import { call, put, select, take, takeLatest } from "redux-saga/effects";
 import {
+  PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
   PATH_OPEN,
   PATH_PROBLEM_OPEN,
+  PATH_REMOVE_COLLABORATOR_REQUEST,
+  PATH_SHOW_COLLABORATORS_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
+  pathAddCollaboratorFail,
+  pathAddCollaboratorSuccess,
+  pathCollaboratorsFetchSuccess,
   pathFetchProblemsSolutionsSuccess,
   pathMoreProblemsFail,
   pathMoreProblemsSuccess,
+  pathRemoveCollaboratorFail,
+  pathRemoveCollaboratorSuccess,
   pathToggleJoinStatusFail,
   pathToggleJoinStatusRequest,
   pathToggleJoinStatusSuccess
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import {
-  PATH_PROBLEM_MOVE_REQUEST,
-  pathProblemMoveFail,
+  PATH_ACTIVITY_MOVE_REQUEST,
+  pathActivityMoveFail,
   PATHS_JOINED_FETCH_SUCCESS
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
@@ -88,13 +96,30 @@ export function* pathToggleJoinStatusRequestHandler(action) {
   }
 }
 
-export function* pathProblemMoveRequestHandler(action) {
+export function* pathActivityMoveRequestHandler(action) {
   try {
+    const data = yield select(state => ({
+      uid: state.firebase.auth.uid,
+      activities: state.firebase.data.activities || {}
+    }));
+
+    const activities = Object.keys(data.activities)
+      .map(id => ({ ...data.activities[id], id }))
+      .filter(activity => activity.path === action.pathId);
+
+    yield call(
+      [pathsService, pathsService.moveActivity],
+      data.uid,
+      action.pathId,
+      activities,
+      action.activityId,
+      action.direction
+    );
   } catch (err) {
     yield put(
-      pathProblemMoveFail(
+      pathActivityMoveFail(
         action.pathId,
-        action.problemId,
+        action.activityId,
         action.direction,
         err.message
       )
@@ -130,6 +155,63 @@ export function* pathMoreProblemsRequestHandler(action) {
   }
 }
 
+/**
+ * Note: there is names "collision" - `collaborators` at courses called as
+ * `assistants`, so, somewhere I tried to keep consistence, somewhere I lost it
+ * @param action
+ * @returns {IterableIterator<*>}
+ */
+export function* pathShowCollaboratorsDialogHandler(action) {
+  try {
+    const collaborators = yield call(
+      pathsService.fetchPathCollaborators,
+      action.pathId
+    );
+    yield put(pathCollaboratorsFetchSuccess(action.pathId, collaborators));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* pathAddCollaboratorRequestHandler(action) {
+  try {
+    yield call(
+      pathsService.updatePathCollaborator,
+      action.pathId,
+      action.collaboratorId,
+      "add"
+    );
+    yield put(pathAddCollaboratorSuccess(action.pathId, action.collaboratorId));
+  } catch (err) {
+    yield put(
+      pathAddCollaboratorFail(action.pathId, action.collaboratorId, err.message)
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+export function* pathRemoveCollaboratorRequestHandler(action) {
+  try {
+    yield call(
+      pathsService.updatePathCollaborator,
+      action.pathId,
+      action.collaboratorId,
+      "remove"
+    );
+    yield put(
+      pathRemoveCollaboratorSuccess(action.pathId, action.collaboratorId)
+    );
+  } catch (err) {
+    yield put(
+      pathRemoveCollaboratorFail(
+        action.pathId,
+        action.collaboratorId,
+        err.message
+      )
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchPathOpenRequest() {
     yield takeLatest(PATH_OPEN, pathOpenHandler);
@@ -143,13 +225,35 @@ export default [
       pathToggleJoinStatusRequestHandler
     );
   },
-  function* watchPathProblemMoveRequestHandler() {
-    yield takeLatest(PATH_PROBLEM_MOVE_REQUEST, pathProblemMoveRequestHandler);
+  function* watchPathActivityMoveRequest() {
+    yield takeLatest(
+      PATH_ACTIVITY_MOVE_REQUEST,
+      pathActivityMoveRequestHandler
+    );
   },
   function* watchPathMoreProblemsRequest() {
     yield takeLatest(
       PATH_MORE_PROBLEMS_REQUEST,
       pathMoreProblemsRequestHandler
+    );
+  },
+
+  function* watchPathShowCollaboratorsDialog() {
+    yield takeLatest(
+      PATH_SHOW_COLLABORATORS_DIALOG,
+      pathShowCollaboratorsDialogHandler
+    );
+  },
+  function* watchPathAddCollaboratorRequestHandler() {
+    yield takeLatest(
+      PATH_ADD_COLLABORATOR_REQUEST,
+      pathAddCollaboratorRequestHandler
+    );
+  },
+  function* watchPathRemoveCollaboratorRequestHandler() {
+    yield takeLatest(
+      PATH_REMOVE_COLLABORATOR_REQUEST,
+      pathRemoveCollaboratorRequestHandler
     );
   }
 ];
