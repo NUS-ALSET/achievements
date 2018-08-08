@@ -28,7 +28,9 @@ const getActivities = (state, ownProps) => {
   return path && path.owner && state.firebase.data.activities;
 };
 
-const getActivitiesSolutions = state => state.path.problemSolutions || {};
+const getActivitiesSolutions = state =>
+  (state.firebase.data.completedActivities || {})[state.firebase.auth.uid] ||
+  {};
 
 export const pathStatusSelector = createSelector(
   getUserId,
@@ -73,20 +75,20 @@ export const pathActivitiesSelector = createSelector(
   getActivities,
   getActivitiesSolutions,
   (path, activities, solutions) => ({
-    path: path,
-    activities: Object.keys(activities || {})
-      .map(id => ({
-        ...activities[id],
-        id,
-        description: getActivitySelector(activities[id]),
-        solved: solutions[id]
-      }))
-      .filter(problem => problem.path === path.id)
-      .sort(
-        (a, b) =>
-          a.orderIndex === b.orderIndex
-            ? 0
-            : a.orderIndex < b.orderIndex ? -1 : 1
-      )
-  })
+      path: path,
+      activities: Object.keys(activities || {})
+        .map(id => ({
+          ...activities[id],
+          id,
+          description: getActivitySelector(activities[id]),
+          solved: solutions[path.id] && solutions[path.id][id]
+        }))
+        .filter(problem => problem.path === path.id)
+        .sort(
+          (a, b) =>
+            a.orderIndex === b.orderIndex
+              ? 0
+              : a.orderIndex < b.orderIndex ? -1 : 1
+        )
+    })
 );

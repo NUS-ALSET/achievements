@@ -10,7 +10,6 @@ import {
   pathAddCollaboratorFail,
   pathAddCollaboratorSuccess,
   pathCollaboratorsFetchSuccess,
-  pathFetchProblemsSolutionsSuccess,
   pathMoreProblemsFail,
   pathMoreProblemsSuccess,
   pathRemoveCollaboratorFail,
@@ -52,7 +51,7 @@ export function* pathOpenHandler(action) {
   );
   if (!owner) {
     yield take(PATHS_JOINED_FETCH_SUCCESS);
-    owner = yield select(
+    yield select(
       state =>
         state.paths &&
         state.paths.joinedPaths &&
@@ -60,21 +59,6 @@ export function* pathOpenHandler(action) {
         state.paths.joinedPaths[action.pathId].owner
     );
   }
-  // FIXIT: join in previous select
-  const uid = yield select(state => state.firebase.auth.uid);
-  const problems = yield call(
-    [pathsService, pathsService.fetchProblems],
-    owner,
-    action.pathId
-  );
-
-  const solutions = yield call(
-    [pathsService, pathsService.fetchProblemsSolutions],
-    uid,
-    problems
-  );
-
-  yield put(pathFetchProblemsSolutionsSuccess(action.pathId, solutions));
 }
 
 export function* pathToggleJoinStatusRequestHandler(action) {

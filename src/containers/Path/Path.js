@@ -172,7 +172,11 @@ export class Path extends React.Component {
     } = this.props;
 
     onProfileUpdate(profile, "CodeCombat");
-    onProblemSolutionSubmit(ui.dialog.value.path, ui.dialog.value, profile);
+    onProblemSolutionSubmit(
+      ui.dialog.value.path,
+      { ...ui.dialog.value, problemId: ui.dialog.value.id },
+      profile
+    );
     onCloseDialog();
   };
 
@@ -372,6 +376,7 @@ export default compose(
     }
 
     return [
+      `/completedActivities/${uid}/${pathId}`,
       `/paths/${pathId}`,
       {
         path: "/activities",
