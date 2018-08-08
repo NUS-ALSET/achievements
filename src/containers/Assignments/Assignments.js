@@ -201,7 +201,7 @@ class Assignments extends React.Component {
 
   render() {
     const { ui, students, auth, dispatch, course, currentUser } = this.props;
-
+    
     if (!auth.isLoaded) {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
@@ -320,7 +320,7 @@ class Assignments extends React.Component {
           solution={ui.dialog.solution}
         />
         <AddPathProgressSolutionDialog
-          assignmentId={ui.currentAssignment && ui.currentAssignment.id}
+          assignment={ui.currentAssignment}
           courseId={course.id}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "PathProgress"}
@@ -349,14 +349,14 @@ sagaInjector.inject(sagas);
  * @returns {*} props
  */
 const mapStateToProps = (state, ownProps) => ({
-  ui: getAssignmentsUIProps(state),
-  currentUser: getCurrentUserProps(state, ownProps),
-  course: getCourseProps(state, ownProps),
-  auth: state.firebase.auth,
-  students: state.firebase.data.courseMembers,
-  courseMembers: state.assignments.courseMembers,
-  assistants: state.assignments.assistants
-});
+    ui: getAssignmentsUIProps(state),
+    currentUser: getCurrentUserProps(state, ownProps),
+    course: getCourseProps(state, ownProps),
+    auth: state.firebase.auth,
+    students: state.firebase.data.courseMembers,
+    courseMembers: state.assignments.courseMembers,
+    assistants: state.assignments.assistants
+  });
 
 export default compose(
   withRouter,

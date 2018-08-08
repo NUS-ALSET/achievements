@@ -10,12 +10,18 @@ class Notification extends React.Component {
     }
     componentWillReceiveProps(nextProps) {
         this.setState({ hide: !nextProps.message });
+        this.clearTimer();
         this.timer=setTimeout(() => {
             this.setState({ hide: true });
         }, 3000)
     }
+    clearTimer=()=>{
+        if(this.timer){
+            window.clearTimeout(this.timer);
+        }
+    }
     componentWillUnmount(){
-        window.clearTimeout(this.timer);
+        this.clearTimer();
     }
     render() {
         return this.state.hide ? '' :

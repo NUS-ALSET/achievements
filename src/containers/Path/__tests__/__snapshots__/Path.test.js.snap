@@ -28,7 +28,11 @@ ShallowWrapper {
     onRequestMoreProblems={[Function]}
     onShowCollaboratorsClick={[Function]}
     onToggleJoinStatus={[Function]}
-    pathActivities={Object {}}
+    pathActivities={
+        Object {
+            "activities": Array [],
+          }
+    }
     pathStatus="test"
     ui={
         Object {
