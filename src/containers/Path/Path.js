@@ -69,6 +69,7 @@ const styles = theme => ({
 export class Path extends React.Component {
   static propTypes = {
     classes: PropTypes.object,
+    codeCombatProfile: PropTypes.any,
     match: PropTypes.object,
     onAddAssistant: PropTypes.func.isRequired,
     onAssistantKeyChange: PropTypes.func.isRequired,
@@ -178,6 +179,7 @@ export class Path extends React.Component {
   render() {
     const {
       classes,
+      codeCombatProfile,
       match,
       onAddAssistant,
       onAssistantKeyChange,
@@ -282,6 +284,7 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddProfileDialog
+          defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
           externalProfile={{
             url: "https://codecombat.com",
             id: "CodeCombat",
@@ -330,7 +333,11 @@ const mapStateToProps = (state, ownProps) => ({
   pathActivities: pathActivitiesSelector(state, ownProps),
   pathStatus: pathStatusSelector(state, ownProps),
   ui: state.path.ui,
-  uid: state.firebase.auth.uid
+  uid: state.firebase.auth.uid,
+  codeCombatProfile:
+    state.firebase.data.userAchievements &&
+    state.firebase.data.userAchievements[state.firebase.auth.uid] &&
+    state.firebase.data.userAchievements[state.firebase.auth.uid].CodeCombat
 });
 
 const mapDispatchToProps = {
@@ -370,7 +377,8 @@ export default compose(
         path: "/activities",
         queryParams: ["orderByChild=path", `equalTo=${pathId}`]
       },
-      `/studentJoinedPaths/${uid}/${pathId}`
+      `/studentJoinedPaths/${uid}/${pathId}`,
+      `userAchievements/${uid}/CodeCombat`
     ];
   }),
   connect(mapStateToProps, mapDispatchToProps)
