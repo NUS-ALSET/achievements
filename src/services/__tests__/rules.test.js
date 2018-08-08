@@ -169,4 +169,16 @@ describe("security rules tests", () => {
       assert.equal(permitted, true);
     });
   });
+
+  describe("activities tests", () => {
+    it("should allow assistant write to activities", () => {
+      const { permitted } = database
+        .as({ uid: "abcTestAssistant1" })
+        .write("/activities/abcTestActivitiyId", {
+          path: "abcTestPathId"
+        });
+
+      assert.equal(permitted, true);
+    });
+  });
 });

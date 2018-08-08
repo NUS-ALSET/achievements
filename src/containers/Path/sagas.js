@@ -9,6 +9,7 @@ import {
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   pathAddCollaboratorFail,
   pathAddCollaboratorSuccess,
+  pathCollaboratorsFetchSuccess,
   pathFetchProblemsSolutionsSuccess,
   pathMoreProblemsFail,
   pathMoreProblemsSuccess,
@@ -154,23 +155,32 @@ export function* pathMoreProblemsRequestHandler(action) {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
+/**
+ * Note: there is names "collision" - `collaborators` at courses called as
+ * `assistants`, so, somewhere I tried to keep consistence, somewhere I lost it
+ * @param action
+ * @returns {IterableIterator<*>}
+ */
 export function* pathShowCollaboratorsDialogHandler(action) {
-  /*
-  yield put(
-    pathCollaboratorsFetchSuccess(action.pathId, [
-      {
-        id: "test",
-        photoURL:
-          "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
-        displayName: "test"
-      }
-    ])
-  );
-  */
+  try {
+    const collaborators = yield call(
+      pathsService.fetchPathCollaborators,
+      action.pathId
+    );
+    yield put(pathCollaboratorsFetchSuccess(action.pathId, collaborators));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
 }
+
 export function* pathAddCollaboratorRequestHandler(action) {
   try {
+    yield call(
+      pathsService.updatePathCollaborator,
+      action.pathId,
+      action.collaboratorId,
+      "add"
+    );
     yield put(pathAddCollaboratorSuccess(action.pathId, action.collaboratorId));
   } catch (err) {
     yield put(
@@ -181,6 +191,12 @@ export function* pathAddCollaboratorRequestHandler(action) {
 }
 export function* pathRemoveCollaboratorRequestHandler(action) {
   try {
+    yield call(
+      pathsService.updatePathCollaborator,
+      action.pathId,
+      action.collaboratorId,
+      "remove"
+    );
     yield put(
       pathRemoveCollaboratorSuccess(action.pathId, action.collaboratorId)
     );
