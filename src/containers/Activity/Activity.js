@@ -16,9 +16,7 @@ import {
   problemInitRequest,
   problemSolutionSubmitRequest
 } from "./actions";
-import {
-  externalProfileUpdateRequest
-} from "../Account/actions";
+import { externalProfileUpdateRequest } from "../Account/actions";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
@@ -39,7 +37,7 @@ export class Activity extends React.PureComponent {
   state = {
     problemSolution: {}
   };
- 
+
   componentDidMount() {
     if (this.props.match.params.pathId && this.props.match.params.problemId) {
       this.props.dispatch(
@@ -59,33 +57,49 @@ export class Activity extends React.PureComponent {
       )
     );
   }
- 
-  onProblemChange = problemSolution =>{
+
+  onProblemChange = problemSolution => {
     this.setState({ problemSolution });
-    this.props.onProblemChange(problemSolution);
-  }
-  onCommit = () =>{
+    return (
+      this.props.onProblemChange && this.props.onProblemChange(problemSolution)
+    );
+  };
+  onCommit = () => {
+    this.props.dispatch(
+      problemSolutionSubmitRequest(
+        this.props.match.params.pathId,
+        this.props.match.params.problemId,
+        this.state.problemSolution
+      )
+    );
+  };
+
+  propsCommit = data => {
+    if (
+      this.props.pathProblem.type === "profile" &&
+      !(data && data.type === "SOLUTION")
+    ) {
       this.props.dispatch(
-        problemSolutionSubmitRequest(
-          this.props.match.params.pathId,
-          this.props.match.params.problemId,
-          this.state.problemSolution
+        externalProfileUpdateRequest(
+          this.state.problemSolution.value,
+          "CodeCombat"
         )
       );
-  }
-
-  propsCommit=(data)=>{
-    if(this.props.pathProblem.type==='profile' && !(data && data.type==='SOLUTION')){
-      this.props.dispatch(externalProfileUpdateRequest(this.state.problemSolution.value, "CodeCombat"));
-    }else{
+    } else {
       this.props.onCommit(data);
     }
-  }
+  };
 
   render() {
-    const {embedded, pathProblem, solution} = this.props;
+    const { embedded, dispatch, pathProblem, solution } = this.props;
     if (!pathProblem) {
-      return <div style={{ width : '100%', textAlign : 'center', 'padding' : '20px 0px'}} >Loading</div>;
+      return (
+        <div
+          style={{ width: "100%", textAlign: "center", padding: "20px 0px" }}
+        >
+          Loading
+        </div>
+      );
     }
 
     return (
@@ -107,9 +121,24 @@ export class Activity extends React.PureComponent {
             ]}
           />
         )}
-        {
-          this.props.children(activityView, this.propsCommit , {...this.props, onCommit : this.propsCommit, onProblemChange : this.onProblemChange})
-        }
+        {typeof this.props.children === "function" ? (
+          this.props.children(activityView, this.propsCommit, {
+            ...this.props,
+            onCommit: this.propsCommit,
+            onProblemChange: this.onProblemChange
+          })
+        ) : (
+          <ActivityView
+            dispatch={dispatch}
+            onProblemChange={this.props.onProblemChange || this.onProblemChange}
+            pathProblem={pathProblem}
+            solution={solution}
+            style={{
+              paddingBottom: 20,
+              textAlign: "center"
+            }}
+          />
+        )}
         {!embedded && (
           <div
             style={{
@@ -139,22 +168,22 @@ export class Activity extends React.PureComponent {
 }
 
 // HOC for activityView
-const activityView = (props) => (  
-    <ActivityView
-      {...props}
-      style={{
-        paddingBottom: 20,
-        textAlign: "center"
-      }}
-    />
-)
+const activityView = props => (
+  <ActivityView
+    {...props}
+    style={{
+      paddingBottom: 20,
+      textAlign: "center"
+    }}
+  />
+);
 
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
   pathProblem: ownProps.pathProblem || state.problem.pathProblem,
   solution: ownProps.solution || state.problem.solution,
-  userAchievements: (state.firebase.data.myAchievements || {})
+  userAchievements: state.firebase.data.myAchievements || {}
 });
 
 export default compose(
@@ -163,12 +192,13 @@ export default compose(
     const firebaseAuth = store.getState().firebase.auth;
     return (
       !firebaseAuth.isEmpty && [
-        `/problemSolutions/${ownProps.match.params.problemId}/${firebaseAuth.uid}`,
+        `/problemSolutions/${ownProps.match.params.problemId}/${
+          firebaseAuth.uid
+        }`,
         {
           path: `/userAchievements/${firebaseAuth.uid}`,
-          storeAs: 'myAchievements',
+          storeAs: "myAchievements"
         }
-        ,
       ]
     );
   }),
