@@ -325,7 +325,6 @@ openSolution=(assignment,solution)=>{
       currentUser,
       sortState
     } = this.props;
-    console.log('AssignmentsTable', this.props);
 
     return (
       <Table>
@@ -431,8 +430,10 @@ openSolution=(assignment,solution)=>{
                           studentInfo.solutions,
                           studentInfo.id === currentUser.id
                         )}
-                         { isInstructor && studentInfo.solutions[assignment.id] && assignment.questionType==="PathActivity" &&
-                            <IconButton 
+                         { isInstructor
+                          && studentInfo.solutions[assignment.id]
+                          && assignment.questionType==="PathActivity"
+                          && <IconButton
                               onClick={()=>this.openSolution(
                                 assignment,
                                 studentInfo.solutions[assignment.id]

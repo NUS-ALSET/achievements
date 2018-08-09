@@ -185,6 +185,7 @@ class JupyterNotebook extends React.PureComponent {
               label="Enter the url to your public solution on Colab"
               onChange={this.onChange}
               style={{ padding: 24, position: "relative" }}
+              disabled={readOnly}
             />
           ))}
         {solution &&

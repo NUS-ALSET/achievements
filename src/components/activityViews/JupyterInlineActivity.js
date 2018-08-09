@@ -116,6 +116,7 @@ class JupyterInlineActivity extends React.PureComponent {
           (solution.json || solution.loading) && (
             <JupyterNotebook
               solution={solution}
+              readOnly={readOnly}
               title={
                 <Fragment>
                   Calculated Solution
@@ -127,11 +128,13 @@ class JupyterInlineActivity extends React.PureComponent {
         {solution &&
           solution.provided && (
             <JupyterNotebook
+              readOnly={readOnly}
               solution={{ json: solution.provided }}
               title="Provided solution"
             />
           )}
         <JupyterNotebook
+          readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
           title="Problem"
         />
