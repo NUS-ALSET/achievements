@@ -128,6 +128,7 @@ class JestRunner extends React.Component {
     }
     render() {
         const { output, loading, notificationMsg, files, selectedFile, solution } = this.state;
+        const { readOnly } = this.props;
         return (
             <div>
                 <div className="super" ref="jestRunnerEle">
@@ -136,12 +137,14 @@ class JestRunner extends React.Component {
 
                             <div className="container" id="container">
                                 <FileDirectory files={files} selectedFile={selectedFile} openFile={this.openFile} />
-                                <Editor selectedFile={selectedFile} saveFile={this.saveFile} />
+                                <Editor selectedFile={selectedFile} saveFile={this.saveFile} readOnly={readOnly} />
                             </div>
 
-                            <div style={{ height: '97px' }}>
+                           <div style={{ height: '97px' }}>
                                 <p className="note">Note :Only files with <span  role="img" aria-label={'Editble'}>✅</span> icon are editable.</p>
+                                {!readOnly &&
                                 <button className="bigBtn"  onClick={this.postFiles}>Run Tests</button>
+                                }
                             </div>
 
                         </div>}

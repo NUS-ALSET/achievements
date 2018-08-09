@@ -44,7 +44,8 @@ class JupyterNotebook extends React.PureComponent {
     richEditor: PropTypes.bool,
     solution: PropTypes.any,
     title: PropTypes.any.isRequired,
-    url: PropTypes.string
+    url: PropTypes.string,
+    readOnly : PropTypes.bool
   };
 
   state = {
@@ -69,7 +70,8 @@ class JupyterNotebook extends React.PureComponent {
       richEditor,
       solution,
       title,
-      url
+      url,
+      readOnly
     } = this.props;
     return (
       <Paper style={{ margin: "24px 2px" }}>
@@ -147,6 +149,7 @@ class JupyterNotebook extends React.PureComponent {
               onLoad={editor => editor.focus()}
               theme="github"
               value={this.state.solution || defaultValue || ""}
+              readOnly={readOnly}
             />
           ) : (
             <TextField

@@ -1,17 +1,19 @@
 export const PROBLEM_INIT_REQUEST = "PROBLEM_INIT_REQUEST";
-export const problemInitRequest = (pathId, problemId, solution) => ({
+export const problemInitRequest = (pathId, problemId, solution,readOnly=false) => ({
   type: PROBLEM_INIT_REQUEST,
   problemId,
   pathId,
-  solution
+  solution,
+  readOnly
 });
 
 export const PROBLEM_INIT_SUCCESS = "PROBLEM_INIT_SUCCESS";
-export const problemInitSuccess = (pathId, problemId, payload) => ({
+export const problemInitSuccess = (pathId, problemId, payload, readOnly=false) => ({
   type: PROBLEM_INIT_SUCCESS,
   problemId,
   pathId,
-  payload
+  payload,
+  readOnly
 });
 
 export const PROBLEM_INIT_FAIL = "PROBLEM_INIT_FAIL";

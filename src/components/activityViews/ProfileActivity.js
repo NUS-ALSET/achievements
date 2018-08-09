@@ -21,7 +21,8 @@ class ProfileActivity extends React.PureComponent {
     onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
     solution: PropTypes.object,
-    userAchievements: PropTypes.object
+    userAchievements: PropTypes.object,
+    readOnly : PropTypes.bool
   };
   state = {
     login: ""
@@ -33,7 +34,7 @@ class ProfileActivity extends React.PureComponent {
   };
 
   render() {
-    const { problem, solution, userAchievements} = this.props;
+    const { problem, solution, userAchievements, readOnly} = this.props;
     const userName = userAchievements && userAchievements.CodeCombat && userAchievements.CodeCombat.id  ? userAchievements.CodeCombat.id : solution.value;
     const url = `${externalProfile.url}/user/${this.state.login || solution.value}`;
     return (
@@ -51,6 +52,7 @@ class ProfileActivity extends React.PureComponent {
             label="Profile"
             onChange={this.onProfileChange}
             onKeyPress={this.catchReturn}
+            disabled={readOnly}
             style={{
               marginBottom: 4
             }}

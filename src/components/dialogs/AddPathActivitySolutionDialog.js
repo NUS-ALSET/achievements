@@ -67,7 +67,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
   }
 
   render() {
-    const { classes, open, pathProblem, solution } = this.props;
+    const { classes, open, pathProblem, solution, readOnly } = this.props;
     return (
       <Fragment>
         <Dialog
@@ -78,7 +78,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           onClose={this.onClose}
           open={open}
         >
-          <DialogTitle>Set Assignment Solution</DialogTitle>          
+          <DialogTitle>{ readOnly ? 'Student' : 'Set'} Assignment Solution {readOnly ? '( Read Only) ' : ''}</DialogTitle>          
             <Activity
               embedded={true}
               inDialog={true}
@@ -87,6 +87,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
               solution={solution}
               onCommit={this.onCommitClick}
               onClose={this.onClose}
+              readOnly={readOnly}
             >
               {
                 (activityView, submitHandler, props) => (
@@ -100,9 +101,10 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
                 </DialogContent>
                 <DialogActions>
                   <Button color="secondary" onClick={this.onClose}>
-                    Cancel
+                    {readOnly ? 'Close' : 'Cancel'}
                   </Button>
-                    <Button
+                  { !readOnly &&
+                      <Button
                       color="primary"
                       disabled={!(solution && solution.checked && !solution.failed)}
                       onClick={submitHandler}
@@ -110,6 +112,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
                     >
                       Commit
                     </Button>
+                  }
                 </DialogActions>
                 </div>
                   )

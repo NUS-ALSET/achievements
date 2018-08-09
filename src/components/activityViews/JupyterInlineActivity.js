@@ -22,7 +22,8 @@ class JupyterInlineActivity extends React.PureComponent {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
     problem: PropTypes.object,
-    solution: PropTypes.object
+    solution: PropTypes.object,
+    readOnly : PropTypes.bool
   };
 
   state = {
@@ -96,9 +97,10 @@ class JupyterInlineActivity extends React.PureComponent {
     const {
       /** @type {JupyterPathProblem} */
       problem,
-      solution
+      solution,
+      readOnly
     } = this.props;
-
+    
     return (
       <Fragment>
         <JupyterNotebook
@@ -107,7 +109,8 @@ class JupyterInlineActivity extends React.PureComponent {
           persistent={true}
           richEditor={true}
           solution={false}
-          title="Edit code"
+          readOnly={readOnly}
+          title={readOnly ? "Submitted Code" : "Edit code"}
         />
         {solution &&
           (solution.json || solution.loading) && (

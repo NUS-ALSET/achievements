@@ -481,7 +481,8 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
       problemInitRequest(
         pathProblem.pathId,
         pathProblem.problemId,
-        action.solution
+        action.solution,
+        action.readOnly
       )
     );
 

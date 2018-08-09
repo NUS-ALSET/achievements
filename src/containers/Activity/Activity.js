@@ -33,7 +33,8 @@ export class Activity extends React.PureComponent {
     onProblemChange: PropTypes.func,
     pathProblem: PropTypes.any,
     solution: PropTypes.any,
-    embedded: PropTypes.bool
+    embedded: PropTypes.bool,
+    readOnly : PropTypes.bool
   };
 
   state = {
@@ -75,7 +76,10 @@ export class Activity extends React.PureComponent {
   }
 
   propsCommit=(data)=>{
-    if(this.props.pathProblem.type==='profile' && !(data && data.type==='SOLUTION')){
+    if(this.props.readOnly){
+      return ;
+    }
+    if( this.props.pathProblem.type==='profile' && !(data && data.type==='SOLUTION')){
       this.props.dispatch(externalProfileUpdateRequest(this.state.problemSolution.value, "CodeCombat"));
     }else{
       this.props.onCommit(data);
@@ -83,9 +87,9 @@ export class Activity extends React.PureComponent {
   }
 
   render() {
-    const {embedded, pathProblem, solution} = this.props;
+    const {embedded, pathProblem, solution, readOnly} = this.props;
     if (!pathProblem) {
-      return <div style={{ width : '100%', textAlign : 'center', 'padding' : '20px 0px'}} >Loading</div>;
+      return <div style={{ width : '100%', textAlign : 'center', 'padding' : '20px 0px'}} >Loading...</div>;
     }
 
     return (
@@ -108,9 +112,9 @@ export class Activity extends React.PureComponent {
           />
         )}
         {
-          this.props.children(activityView, this.propsCommit , {...this.props, onCommit : this.propsCommit, onProblemChange : this.onProblemChange})
+         typeof this.props.children==='function' && this.props.children(activityView, this.propsCommit , {...this.props, onCommit : this.propsCommit, onProblemChange : this.onProblemChange})
         }
-        {!embedded && (
+        {!readOnly && !embedded && (
           <div
             style={{
               bottom: 0,
