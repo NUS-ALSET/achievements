@@ -23,7 +23,7 @@ ShallowWrapper {
     "key": undefined,
     "nodeType": "host",
     "props": Object {
-      "children": "Loading",
+      "children": "Loading...",
       "style": Object {
         "padding": "20px 0px",
         "textAlign": "center",
@@ -31,7 +31,7 @@ ShallowWrapper {
       },
     },
     "ref": null,
-    "rendered": "Loading",
+    "rendered": "Loading...",
     "type": "div",
   },
   Symbol(enzyme.__nodes__): Array [
@@ -40,7 +40,7 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "host",
       "props": Object {
-        "children": "Loading",
+        "children": "Loading...",
         "style": Object {
           "padding": "20px 0px",
           "textAlign": "center",
@@ -48,7 +48,7 @@ ShallowWrapper {
         },
       },
       "ref": null,
-      "rendered": "Loading",
+      "rendered": "Loading...",
       "type": "div",
     },
   ],
