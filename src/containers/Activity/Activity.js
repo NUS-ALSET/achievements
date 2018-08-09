@@ -60,6 +60,17 @@ export class Activity extends React.PureComponent {
 
   onProblemChange = problemSolution => {
     this.setState({ problemSolution });
+    this.props.onProblemChange(problemSolution);
+  }
+  onCommit = () =>{
+      this.props.dispatch(
+        problemSolutionSubmitRequest(
+          this.props.match.params.pathId,
+          this.props.match.params.problemId,
+          this.state.problemSolution
+        )
+      );
+  }
   };
   onCommit = () => {
     this.props.dispatch(

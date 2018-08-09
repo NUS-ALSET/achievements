@@ -358,7 +358,6 @@ export class CoursesService {
 
   submitSolution(courseId, assignment, value) {
     const userId = this.getUser("uid");
-
     return Promise.resolve()
       .then(() => {
         switch (assignment.questionType) {
@@ -378,7 +377,21 @@ export class CoursesService {
             createdAt: new Date().getTime(),
             value
           });
-      });
+      })
+      .then((res) =>{
+          if(userId && assignment.path && assignment.problem){
+            firebase
+            .database()
+            .ref(
+              `/completedActivities/${userId}/${assignment.path}/${
+                assignment.problem
+              }`
+            )
+            .set(true)
+          }
+          return res;
+        }
+      );
   }
 
   /**
