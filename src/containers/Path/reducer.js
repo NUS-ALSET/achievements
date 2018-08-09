@@ -114,7 +114,8 @@ export const path = (
         ui: {
           ...state.ui,
           dialog: {
-            type: "CollaboratorsControl"
+            type: "CollaboratorsControl",
+            assistants: false
           }
         }
       };

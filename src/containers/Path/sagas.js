@@ -9,7 +9,7 @@ import {
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   pathAddCollaboratorFail,
   pathAddCollaboratorSuccess,
-  pathFetchProblemsSolutionsSuccess,
+  pathCollaboratorsFetchSuccess,
   pathMoreProblemsFail,
   pathMoreProblemsSuccess,
   pathRemoveCollaboratorFail,
@@ -51,7 +51,7 @@ export function* pathOpenHandler(action) {
   );
   if (!owner) {
     yield take(PATHS_JOINED_FETCH_SUCCESS);
-    owner = yield select(
+    yield select(
       state =>
         state.paths &&
         state.paths.joinedPaths &&
@@ -59,21 +59,6 @@ export function* pathOpenHandler(action) {
         state.paths.joinedPaths[action.pathId].owner
     );
   }
-  // FIXIT: join in previous select
-  const uid = yield select(state => state.firebase.auth.uid);
-  const problems = yield call(
-    [pathsService, pathsService.fetchProblems],
-    owner,
-    action.pathId
-  );
-
-  const solutions = yield call(
-    [pathsService, pathsService.fetchProblemsSolutions],
-    uid,
-    problems
-  );
-
-  yield put(pathFetchProblemsSolutionsSuccess(action.pathId, solutions));
 }
 
 export function* pathToggleJoinStatusRequestHandler(action) {
@@ -154,23 +139,32 @@ export function* pathMoreProblemsRequestHandler(action) {
   }
 }
 
-// eslint-disable-next-line no-unused-vars
+/**
+ * Note: there is names "collision" - `collaborators` at courses called as
+ * `assistants`, so, somewhere I tried to keep consistence, somewhere I lost it
+ * @param action
+ * @returns {IterableIterator<*>}
+ */
 export function* pathShowCollaboratorsDialogHandler(action) {
-  /*
-  yield put(
-    pathCollaboratorsFetchSuccess(action.pathId, [
-      {
-        id: "test",
-        photoURL:
-          "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
-        displayName: "test"
-      }
-    ])
-  );
-  */
+  try {
+    const collaborators = yield call(
+      pathsService.fetchPathCollaborators,
+      action.pathId
+    );
+    yield put(pathCollaboratorsFetchSuccess(action.pathId, collaborators));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
 }
+
 export function* pathAddCollaboratorRequestHandler(action) {
   try {
+    yield call(
+      pathsService.updatePathCollaborator,
+      action.pathId,
+      action.collaboratorId,
+      "add"
+    );
     yield put(pathAddCollaboratorSuccess(action.pathId, action.collaboratorId));
   } catch (err) {
     yield put(
@@ -181,6 +175,12 @@ export function* pathAddCollaboratorRequestHandler(action) {
 }
 export function* pathRemoveCollaboratorRequestHandler(action) {
   try {
+    yield call(
+      pathsService.updatePathCollaborator,
+      action.pathId,
+      action.collaboratorId,
+      "remove"
+    );
     yield put(
       pathRemoveCollaboratorSuccess(action.pathId, action.collaboratorId)
     );
