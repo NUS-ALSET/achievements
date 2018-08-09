@@ -60,17 +60,9 @@ export class Activity extends React.PureComponent {
 
   onProblemChange = problemSolution => {
     this.setState({ problemSolution });
-    this.props.onProblemChange(problemSolution);
-  }
-  onCommit = () =>{
-      this.props.dispatch(
-        problemSolutionSubmitRequest(
-          this.props.match.params.pathId,
-          this.props.match.params.problemId,
-          this.state.problemSolution
-        )
-      );
-  }
+    return (
+      this.props.onProblemChange && this.props.onProblemChange(problemSolution)
+    );
   };
   onCommit = () => {
     this.props.dispatch(
@@ -129,7 +121,7 @@ export class Activity extends React.PureComponent {
             ]}
           />
         )}
-        {this.props.children ? (
+        {typeof this.props.children === "function" ? (
           this.props.children(activityView, this.propsCommit, {
             ...this.props,
             onCommit: this.propsCommit,
