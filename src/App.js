@@ -31,7 +31,7 @@ class App extends React.Component {
         <CssBaseline />
         <Provider store={store}>
           <Root>
-            <AppFrame history={history}/>
+            <AppFrame history={history} />
           </Root>
         </Provider>
       </MuiThemeProvider>

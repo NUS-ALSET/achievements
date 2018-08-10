@@ -150,6 +150,8 @@ class JupyterNotebook extends React.PureComponent {
             />
           ) : (
             <TextField
+              defaultValue={this.state.solution || defaultValue || ""}
+              fullWidth
               InputLabelProps={{
                 style: {
                   top: 24,
@@ -177,8 +179,6 @@ class JupyterNotebook extends React.PureComponent {
                   </InputAdornment>
                 )
               }}
-              defaultValue={this.state.solution || defaultValue || ""}
-              fullWidth
               label="Enter the url to your public solution on Colab"
               onChange={this.onChange}
               style={{ padding: 24, position: "relative" }}

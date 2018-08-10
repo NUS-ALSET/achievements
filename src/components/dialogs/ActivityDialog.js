@@ -60,6 +60,8 @@ class ActivityDialog extends React.PureComponent {
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
             <Select
+              input={<Input id="select-multiple-levels" />}
+              margin="none"
               MenuProps={{
                 PaperProps: {
                   style: {
@@ -68,8 +70,6 @@ class ActivityDialog extends React.PureComponent {
                   }
                 }
               }}
-              input={<Input id="select-multiple-levels" />}
-              margin="none"
               onChange={e => this.onFieldChange("level", e.target.value)}
               value={activity.level || ""}
             >

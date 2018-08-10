@@ -9,7 +9,8 @@ import {
   courseAssignmentsClose,
   courseAssignmentsOpen,
   assignmentAssistantKeyChange,
-  assignmentAddAssistantRequest
+  assignmentAddAssistantRequest,
+  assignmentsSolutionsRefreshRequest
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -163,6 +164,10 @@ class Assignments extends React.Component {
 
   refreshProfileSolutions = () =>
     this.props.dispatch(assignmentRefreshProfilesRequest(this.props.course.id));
+  refreshSolutions = () =>
+    this.props.dispatch(
+      assignmentsSolutionsRefreshRequest(this.props.course.id)
+    );
 
   getPasswordView() {
     return (
@@ -242,6 +247,12 @@ class Assignments extends React.Component {
     return (
       <Fragment>
         <Breadcrumbs
+          action={
+            currentUser.isOwner && {
+              label: "Refresh",
+              handler: this.refreshSolutions
+            }
+          }
           paths={[
             {
               label: "Courses",

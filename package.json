@@ -67,6 +67,7 @@
     "mocha": "^5.1.1",
     "mockfirebase": "^0.12.0",
     "nyc": "^11.7.1",
+    "prettier": "^1.14.2",
     "proxyquire": "^2.0.1",
     "react-scripts": "^1.1.4",
     "react-test-renderer": "^16.4.0",
@@ -95,6 +96,10 @@
     "coverage": "CI=true react-scripts test --env=jsdom --coverage",
     "test-mocha": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
     "coverage-mocha": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "eslint": "eslint --fix src",
+    "prettier": "prettier --write src/**/*.{js,ts}",
+    "lint": "./scripts/lint.sh",
+    "lint-window": "./scripts/lint.bat"
   }
 }

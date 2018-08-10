@@ -386,5 +386,8 @@ export default compose(
       `userAchievements/${uid}/CodeCombat`
     ];
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Path);

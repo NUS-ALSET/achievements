@@ -38,8 +38,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     ) {
       return "No progress";
     }
-    return `${pathProgress.solutions /
-      pathProgress.totalActivities *
+    return `${(pathProgress.solutions / pathProgress.totalActivities) *
       FULL_PROGRESS}%`;
   };
   getProgressMessage = () => {

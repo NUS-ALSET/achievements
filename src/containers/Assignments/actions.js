@@ -488,3 +488,25 @@ export const courseMyCoursesFetchSuccess = courses => ({
   type: COURSE_MY_COURSES_FETCH_SUCCESS,
   courses
 });
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST";
+export const assignmentsSolutionsRefreshRequest = courseId => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
+  courseId
+});
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS";
+export const assignmentsSolutionsRefreshSuccess = courseId => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS,
+  courseId
+});
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL";
+export const assignmentsSolutionsRefreshFail = (courseId, reason) => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL,
+  courseId,
+  reason
+});

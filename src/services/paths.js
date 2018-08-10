@@ -176,14 +176,19 @@ export class PathsService {
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {
-    return firebase
-      .database()
-      .ref(`/completedActivities/${solverId}/${pathId}`)
-      .once("value")
-      .then(snapshot => snapshot.val() || {})
-      .then(completed => ({
-        solutions: Object.keys(completed).length
-      }));
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/completedActivities/${solverId}/${pathId}`)
+        .once("value")
+        .then(snapshot => snapshot.val() || {})
+        .then(completed => Object.keys(completed).length),
+      firebase
+        .database()
+        .ref(`/paths/${pathId}/totalActivities`)
+        .once("value")
+        .then(snapshot => snapshot.val())
+    ]).then(data => ({ solutions: data[0], totalActivities: data[1] }));
   }
 
   fetchFile(fileId) {

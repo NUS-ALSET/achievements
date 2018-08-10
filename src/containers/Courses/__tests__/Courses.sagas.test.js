@@ -1,9 +1,6 @@
 /* eslint-disable space-before-function-paren */
 import sinon from "sinon";
-import {
-  courseNewRequestHandle,
-  courseRemoveRequestHandle
-} from "../sagas";
+import { courseNewRequestHandle, courseRemoveRequestHandle } from "../sagas";
 import { coursesService } from "../../../services/courses";
 import {
   COURSE_HIDE_DIALOG,
@@ -22,8 +19,7 @@ import { NOTIFICATION_SHOW } from "../../Root/actions";
 
 describe("courses sagas tests", () => {
   beforeEach(() =>
-    sinon.stub(coursesService, "createNewCourse").callsFake(() => "someKey")
-  );
+    sinon.stub(coursesService, "createNewCourse").callsFake(() => "someKey"));
   afterEach(() => coursesService.createNewCourse.restore());
 
   it("should test new course requests sagas", () => {

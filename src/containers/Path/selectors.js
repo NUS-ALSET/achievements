@@ -75,20 +75,22 @@ export const pathActivitiesSelector = createSelector(
   getActivities,
   getActivitiesSolutions,
   (path, activities, solutions) => ({
-      path: path,
-      activities: Object.keys(activities || {})
-        .map(id => ({
-          ...activities[id],
-          id,
-          description: getActivitySelector(activities[id]),
-          solved: solutions[path.id] && solutions[path.id][id]
-        }))
-        .filter(problem => problem.path === path.id)
-        .sort(
-          (a, b) =>
-            a.orderIndex === b.orderIndex
-              ? 0
-              : a.orderIndex < b.orderIndex ? -1 : 1
-        )
-    })
+    path: path,
+    activities: Object.keys(activities || {})
+      .map(id => ({
+        ...activities[id],
+        id,
+        description: getActivitySelector(activities[id]),
+        solved: solutions[path.id] && solutions[path.id][id]
+      }))
+      .filter(problem => problem.path === path.id)
+      .sort(
+        (a, b) =>
+          a.orderIndex === b.orderIndex
+            ? 0
+            : a.orderIndex < b.orderIndex
+              ? -1
+              : 1
+      )
+  })
 );
