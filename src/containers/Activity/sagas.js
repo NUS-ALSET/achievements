@@ -53,7 +53,7 @@ export function* problemInitRequestHandler(action) {
       uid = yield select(state => state.firebase.auth.uid);
     }
 
-    yield put(problemInitSuccess(action.pathId, action.problemId, null));
+    yield put(problemInitSuccess(action.pathId, action.problemId, null, action.readOnly));
 
     const gapiAuthrozied = yield select(state => state.paths.gapiAuthorized);
 
@@ -71,7 +71,7 @@ export function* problemInitRequestHandler(action) {
       throw new Error("Missing path activity");
     }
 
-    yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem));
+    yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem, action.readOnly));
 
     const solution = yield action.solution &&
     action.solution.originalSolution &&

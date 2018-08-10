@@ -72,7 +72,8 @@ class Assignments extends React.Component {
     auth: PropTypes.object,
     match: PropTypes.object,
     students: PropTypes.object,
-    courseMembers: PropTypes.array
+    courseMembers: PropTypes.array,
+    readOnly : PropTypes.bool
   };
   state = {
     password: ""
@@ -200,7 +201,7 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const { ui, students, auth, dispatch, course, currentUser } = this.props;
+    const { ui, students, auth, dispatch, course, currentUser, readOnly } = this.props;
     
     if (!auth.isLoaded) {
       return <LinearProgress />;
@@ -318,6 +319,7 @@ class Assignments extends React.Component {
           }
           pathProblem={ui.dialog.pathProblem}
           solution={ui.dialog.solution}
+          readOnly={readOnly}
         />
         <AddPathProgressSolutionDialog
           assignment={ui.currentAssignment}
@@ -355,8 +357,9 @@ const mapStateToProps = (state, ownProps) => ({
     auth: state.firebase.auth,
     students: state.firebase.data.courseMembers,
     courseMembers: state.assignments.courseMembers,
-    assistants: state.assignments.assistants
-  });
+    assistants: state.assignments.assistants,
+    readOnly : state.problem && state.problem.readOnly
+});
 
 export default compose(
   withRouter,

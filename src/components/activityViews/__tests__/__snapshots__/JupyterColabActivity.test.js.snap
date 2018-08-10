@@ -30,11 +30,13 @@ ShallowWrapper {
           action={[Function]}
           defaultValue={undefined}
           persistent={true}
+          readOnly={undefined}
           solution={undefined}
           title="Calculated Solution"
 />,
         undefined,
         <JupyterNotebook
+          readOnly={undefined}
           solution={
                     Object {
                               "json": undefined,
@@ -55,6 +57,7 @@ ShallowWrapper {
           "action": [Function],
           "defaultValue": undefined,
           "persistent": true,
+          "readOnly": undefined,
           "solution": undefined,
           "title": "Calculated Solution",
         },
@@ -68,6 +71,7 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
+          "readOnly": undefined,
           "solution": Object {
             "json": undefined,
           },
@@ -92,11 +96,13 @@ ShallowWrapper {
             action={[Function]}
             defaultValue={undefined}
             persistent={true}
+            readOnly={undefined}
             solution={undefined}
             title="Calculated Solution"
 />,
           undefined,
           <JupyterNotebook
+            readOnly={undefined}
             solution={
                         Object {
                                     "json": undefined,
@@ -117,6 +123,7 @@ ShallowWrapper {
             "action": [Function],
             "defaultValue": undefined,
             "persistent": true,
+            "readOnly": undefined,
             "solution": undefined,
             "title": "Calculated Solution",
           },
@@ -130,6 +137,7 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
+            "readOnly": undefined,
             "solution": Object {
               "json": undefined,
             },

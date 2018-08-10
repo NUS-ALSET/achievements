@@ -32,6 +32,7 @@ class ActivityView extends React.PureComponent {
     pathProblem: PropTypes.any,
     onProblemChange: PropTypes.func.isRequired,
     solution: PropTypes.any,
+    readOnly : PropTypes.bool
   };
   state={
     open : true
@@ -52,7 +53,7 @@ class ActivityView extends React.PureComponent {
     }
   }
   render() {
-    const { dispatch, onProblemChange, pathProblem, solution } = this.props;
+    const { dispatch, onProblemChange, pathProblem, solution, readOnly } = this.props;
     let SpecificView = views[pathProblem.type];
     const extraProps=pathProblem.type==="jest" ? {
         onClose: this.handleClose,
@@ -77,6 +78,7 @@ class ActivityView extends React.PureComponent {
           userAchievements={this.props.userAchievements}
           onClose={this.props.onClose}
           onCommit={this.props.onCommit}
+          readOnly={readOnly}
           {...extraProps}
         />
       </div>

@@ -44,7 +44,8 @@ class AddJestSolutionDialog extends React.PureComponent {
         open: PropTypes.bool.isRequired,
         solution: PropTypes.any,
         taskId: PropTypes.string,
-        classes: PropTypes.object.isRequired
+        classes: PropTypes.object.isRequired,
+        readOnly : PropTypes.bool
     };
 
     state = {
@@ -82,7 +83,7 @@ class AddJestSolutionDialog extends React.PureComponent {
     render() {
         const { 
             // onClose, onCommit, taskId, 
-            open, classes, problem, solution } = this.props;
+            open, classes, problem, solution, readOnly } = this.props;
 
         return (
             <div>
@@ -99,7 +100,7 @@ class AddJestSolutionDialog extends React.PureComponent {
                                 <CloseIcon />
                             </IconButton>
                             <Typography variant="title" color="inherit" className={classes.flex}>
-                                {problem && problem.name}
+                                {problem && problem.name} {readOnly ? '( Read Only )' : ''}
                             </Typography>
                             <Typography variant="title" color="inherit">
                                 {/* ALSET Editor */}
@@ -113,7 +114,15 @@ class AddJestSolutionDialog extends React.PureComponent {
                             }
                         </Toolbar>
                     </AppBar>
-                    {open && problem && <JestRunner files={problem.files} problem={problem} solution={solution} onSubmit={this.handleSubmit}/>}
+                    {open && problem && 
+                        <JestRunner 
+                        files={problem.files} 
+                        problem={problem} 
+                        solution={solution} 
+                        onSubmit={this.handleSubmit}
+                        readOnly={readOnly}
+                        />
+                    }
                 </Dialog>
             </div>
         );

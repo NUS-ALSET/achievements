@@ -195,13 +195,15 @@ export const assignmentPathProblemSolutionRequest = (
   assignment,
   problemOwner,
   problemId,
-  solution
+  solution,
+  readOnly=false
 ) => ({
   type: ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
   assignment,
   problemOwner,
   problemId,
-  solution
+  solution,
+  readOnly
 });
 
 export const ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST =

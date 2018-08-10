@@ -21,6 +21,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import SendIcon from "@material-ui/icons/Send";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
+import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -55,7 +56,7 @@ class AssignmentsTable extends React.PureComponent {
     currentUser: PropTypes.object,
     ui: PropTypes.object
   };
-
+ 
   getTooltip(assignment, solution) {
     if (
       !(
@@ -301,6 +302,20 @@ class AssignmentsTable extends React.PureComponent {
     }
   };
 
+openSolution=(assignment,solution)=>{
+    if(assignment.questionType==="PathActivity"){
+      this.props.dispatch(
+        assignmentPathProblemSolutionRequest(
+          assignment,
+          this.props.course.owner,
+          assignment.problem,
+          solution,
+          true
+        )
+      );
+    }
+  }
+
   render() {
     const {
       classes,
@@ -415,6 +430,18 @@ class AssignmentsTable extends React.PureComponent {
                           studentInfo.solutions,
                           studentInfo.id === currentUser.id
                         )}
+                         { isInstructor
+                          && studentInfo.solutions[assignment.id]
+                          && assignment.questionType==="PathActivity"
+                          && <IconButton
+                              onClick={()=>this.openSolution(
+                                assignment,
+                                studentInfo.solutions[assignment.id]
+                              )}
+                            >
+                            <RemoveRedEye />
+                          </IconButton>
+                          }
 
                         {studentInfo.id === currentUser.id &&
                           (!APP_SETTING.isSuggesting && (

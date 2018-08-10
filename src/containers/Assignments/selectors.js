@@ -48,7 +48,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       if (!solution) {
         return true;
       }
-
+      
       if (options.onlyVisible && !assignment.solutionVisible) {
         solution = "Completed";
       }
@@ -59,7 +59,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             createdAt,
             value: solution,
             validated: true,
-            published
+            published,
+            solution
           };
           return true;
         case ASSIGNMENTS_TYPES.Profile.id:
@@ -70,7 +71,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             orderValue: userAchievements.totalAchievements,
             value: userAchievements.id
               ? `${userAchievements.id} (${userAchievements.totalAchievements})`
-              : ""
+              : "",
+              solution
           };
           return true;
         case ASSIGNMENTS_TYPES.CodeCombat.id:
@@ -79,7 +81,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             createdAt,
             published,
             validated: userAchievements.id === solution,
-            value: "Completed"
+            value: "Completed",
+            solution,
           };
           return true;
         // Backward compatibility
@@ -90,7 +93,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: "Completed"
+            value: "Completed",
+            solution
           };
           return true;
         case ASSIGNMENTS_TYPES.PathProgress.id:
@@ -99,7 +103,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: solution
+            value: solution,
+            solution
           };
           return true;
         case ASSIGNMENTS_TYPES.TeamFormation.id:
@@ -108,7 +113,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: solution
+            value: solution,
+            solution
           };
           return true;
         default:

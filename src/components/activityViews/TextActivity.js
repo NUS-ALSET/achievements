@@ -14,13 +14,14 @@ class TextActivity extends React.PureComponent {
   static propTypes = {
     onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
-    solution: PropTypes.object
+    solution: PropTypes.object,
+    readOnly : PropTypes.bool
   };
 
   onChangeSolution = e => this.props.onChange({ value: e.target.value });
 
   render() {
-    const { problem, solution } = this.props;
+    const { problem, solution,readOnly } = this.props;
 
     return (
       <Fragment>
@@ -34,6 +35,7 @@ class TextActivity extends React.PureComponent {
           label="Solution"
           multiline
           onChange={this.onChangeSolution}
+          disabled={readOnly}
           style={{
             marginBottom: 4
           }}
