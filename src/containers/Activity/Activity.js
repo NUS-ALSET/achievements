@@ -23,6 +23,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 
 import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
+import isEqual from "lodash/isEqual";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
@@ -49,7 +50,13 @@ export class Activity extends React.PureComponent {
       );
     }
   }
-
+  componentWillReceiveProps(nextProps){
+    if(
+      !isEqual(nextProps.pathProblem, this.props.pathProblem)
+    ){
+    this.onProblemChange({});
+    }
+  }
   componentWillUnmount() {
     this.props.dispatch(
       problemFinalize(
