@@ -201,7 +201,14 @@ export class PathsService {
         if (data.code && data.code === NOT_FOUND_ERROR) {
           return reject(new Error("Failing - Your solution is not public."));
         }
-        resolve(data);
+        resolve({
+          ...data,
+          cells : data.cells.filter(d=>d.source.join('').replace(/\n/g,'')),
+          result : {
+            ...data.result,
+            cells : data.result.cells.filter(d=>d.source.join('').replace(/\n/g,'').length>0)
+          }
+        });
       })
     );
   }
@@ -388,10 +395,10 @@ export class PathsService {
         case "jupyterInline":
           if (json) {
             const frozenSolution = json.cells
-              .filter(cell => cell.source.join().trim())
+              .filter(cell => cell.source.join('').trim())
               .slice(-pathProblem.frozen);
             const frozenProblem = pathProblem.problemJSON.cells
-              .filter(cell => cell.source.join().trim())
+              .filter(cell => cell.source.join('').trim())
               .slice(-pathProblem.frozen);
 
             frozenProblem.forEach((cell, index) => {
