@@ -101,3 +101,125 @@ export interface ICourse {
   totalAssignments: number;
   assignments: ICourseAssignment[];
 }
+
+export interface IPathInfo {
+  id: string;
+  name: string;
+  owner: string;
+  totalActivities: number;
+}
+
+/**
+ * Super interface for path activities particular interfaces
+ */
+export interface IPathActivityBase {
+  id: string;
+  name: string;
+  description: string;
+  owner: string;
+  path: string;
+  solved: boolean;
+}
+
+// Type guards for activities
+export const ACTIVITY_TEXT = "text";
+export type ACTIVITY_TEXT = typeof ACTIVITY_TEXT;
+export const ACTIVITY_PROFILE = "profile";
+export type ACTIVITY_PROFILE = typeof ACTIVITY_PROFILE;
+export const ACTIVITY_CODECOMBAT = "codeCombat";
+export type ACTIVITY_CODECOMBAT = typeof ACTIVITY_CODECOMBAT;
+export const ACTIVITY_CODECOMBATNUMBER = "codeCombatNumber";
+export type ACTIVITY_CODECOMBATNUMBER = typeof ACTIVITY_CODECOMBATNUMBER;
+export const ACTIVITY_JUPYTER = "jupyter";
+export type ACTIVITY_JUPYTER = typeof ACTIVITY_JUPYTER;
+export const ACTIVITY_JUPYTERINLINE = "jupyterInline";
+export type ACTIVITY_JUPYTERINLINE = typeof ACTIVITY_JUPYTERINLINE;
+export const ACTIVITY_YOUTUBE = "youtube";
+export type ACTIVITY_YOUTUBE = typeof ACTIVITY_YOUTUBE;
+export const ACTIVITY_GAME = "game";
+export type ACTIVITY_GAME = typeof ACTIVITY_GAME;
+
+/**
+ * Text activity
+ */
+export interface IPathActivityText extends IPathActivityBase {
+  type: ACTIVITY_TEXT;
+  question: string;
+}
+
+/**
+ * Profile activity
+ */
+export interface IPathActivityProfile extends IPathActivityBase {
+  type: ACTIVITY_PROFILE;
+}
+
+/**
+ * CodeCombat activity
+ */
+export interface IPathActivityCodeCombat extends IPathActivityBase {
+  type: ACTIVITY_CODECOMBAT;
+  level: string;
+}
+
+/**
+ * CodeCombatNumber activity
+ */
+export interface IPathActivityCodeCombatNumber extends IPathActivityBase {
+  type: ACTIVITY_CODECOMBATNUMBER;
+  count: number;
+}
+
+/**
+ * Jupyter colaboratory activity
+ */
+export interface IPathActivityJupyter extends IPathActivityBase {
+  type: ACTIVITY_JUPYTER;
+  frozen: number;
+  problemURL: string;
+  solutionURL: string;
+}
+
+/**
+ * Jupyter Inline activity
+ */
+export interface IPathActivityJupyterInline extends IPathActivityBase {
+  type: ACTIVITY_JUPYTERINLINE;
+  code: number;
+  frozen: number;
+  problemURL: string;
+  solutionURL: string;
+}
+
+/**
+ * Youtube activity
+ */
+export interface IPathActivityYoutube extends IPathActivityBase {
+  type: ACTIVITY_YOUTUBE;
+  topics: boolean;
+  questionAfter: boolean;
+  questionAnswer: boolean;
+  questionCustom: boolean;
+  customText?: string;
+  youtubeURL: string;
+}
+
+/**
+ * Game activity
+ */
+export interface IPathActivityGame extends IPathActivityBase {
+  type: ACTIVITY_GAME;
+}
+
+export type PathActivity = IPathActivityText |
+IPathActivityProfile |
+IPathActivityCodeCombat |
+IPathActivityCodeCombatNumber |
+IPathActivityJupyter |
+IPathActivityJupyterInline |
+IPathActivityYoutube;
+
+export interface IPathActivities {
+  path: IPathInfo;
+  activities: PathActivity[]
+}

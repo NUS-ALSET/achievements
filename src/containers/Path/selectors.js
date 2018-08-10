@@ -7,6 +7,11 @@ export const PATH_STATUS_NOT_JOINED = "not_joined";
 
 const getUserId = state => state.firebase.auth.uid;
 
+const getCodeCombatProfile = state =>
+  state.firebase.data.userAchievements &&
+  state.firebase.data.userAchievements[state.firebase.auth.uid] &&
+  state.firebase.data.userAchievements[state.firebase.auth.uid].CodeCombat;
+
 const getPath = (state, ownProps) =>
   ownProps.match.params.pathId[0] === "-"
     ? state.firebase.data.paths &&
@@ -88,9 +93,12 @@ export const pathActivitiesSelector = createSelector(
         (a, b) =>
           a.orderIndex === b.orderIndex
             ? 0
-            : a.orderIndex < b.orderIndex
-              ? -1
-              : 1
+            : a.orderIndex < b.orderIndex ? -1 : 1
       )
   })
+);
+
+export const codeCombatProfileSelector = createSelector(
+  getCodeCombatProfile,
+  profile => profile
 );
