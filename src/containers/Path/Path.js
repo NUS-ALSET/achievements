@@ -28,7 +28,8 @@ import {
   pathActivitiesSelector,
   PATH_STATUS_JOINED,
   PATH_STATUS_OWNER,
-  PATH_STATUS_NOT_JOINED
+  PATH_STATUS_NOT_JOINED,
+  codeCombatProfileSelector
 } from "./selectors";
 import {
   pathAddCollaboratorRequest,
@@ -36,6 +37,7 @@ import {
   pathMoreProblemsRequest,
   pathOpen,
   pathOpenSolutionDialog,
+  pathRefreshSolutionsRequest,
   pathRemoveCollaboratorRequest,
   pathShowCollaboratorsDialog,
   pathToggleJoinStatusRequest
@@ -84,6 +86,7 @@ export class Path extends React.Component {
     onProblemSolutionSubmit: PropTypes.func.isRequired,
     onProfileUpdate: PropTypes.func.isRequired,
     onPushPath: PropTypes.func.isRequired,
+    onRefreshSolutions: PropTypes.func.isRequired,
     onRemoveAssistant: PropTypes.func.isRequired,
     onRequestMoreProblems: PropTypes.func.isRequired,
     onShowCollaboratorsClick: PropTypes.func.isRequired,
@@ -137,7 +140,8 @@ export class Path extends React.Component {
       this.props.pathActivities.activities.length
     );
 
-  refreshSolutions = () => this.props.onNotification("test");
+  refreshSolutions = () =>
+    this.props.onRefreshSolutions(this.props.pathActivities.path.id);
 
   changeJoinStatus = () =>
     this.props.onToggleJoinStatus(
@@ -367,11 +371,7 @@ const mapStateToProps = (state, ownProps) => ({
   pathStatus: pathStatusSelector(state, ownProps),
   ui: state.path.ui,
   uid: state.firebase.auth.uid,
-  // FIXIT: move it to selectors
-  codeCombatProfile:
-    state.firebase.data.userAchievements &&
-    state.firebase.data.userAchievements[state.firebase.auth.uid] &&
-    state.firebase.data.userAchievements[state.firebase.auth.uid].CodeCombat
+  codeCombatProfile: codeCombatProfileSelector(state)
 });
 
 const mapDispatchToProps = {
@@ -388,6 +388,7 @@ const mapDispatchToProps = {
   onProblemMoveRequest: pathActivityMoveRequest,
   onProblemSolutionSubmit: problemSolutionSubmitRequest,
   onPushPath: push,
+  onRefreshSolutions: pathRefreshSolutionsRequest,
   onRemoveAssistant: pathRemoveCollaboratorRequest,
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest

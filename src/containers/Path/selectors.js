@@ -7,6 +7,11 @@ export const PATH_STATUS_NOT_JOINED = "not_joined";
 
 const getUserId = state => state.firebase.auth.uid;
 
+const getCodeCombatProfile = state =>
+  state.firebase.data.userAchievements &&
+  state.firebase.data.userAchievements[state.firebase.auth.uid] &&
+  state.firebase.data.userAchievements[state.firebase.auth.uid].CodeCombat;
+
 const getPath = (state, ownProps) =>
   ownProps.match.params.pathId[0] === "-"
     ? state.firebase.data.paths &&
@@ -77,20 +82,25 @@ export const pathActivitiesSelector = createSelector(
   getActivities,
   getActivitiesSolutions,
   (path, activities, solutions) => ({
-      path: path,
-      activities: Object.keys(activities || {})
-        .map(id => ({
-          ...activities[id],
-          id,
-          description: getActivitySelector(activities[id]),
-          solved: solutions[path.id] && solutions[path.id][id]
-        }))
-        .filter(problem => problem.path === path.id)
-        .sort(
-          (a, b) =>
-            a.orderIndex === b.orderIndex
-              ? 0
-              : a.orderIndex < b.orderIndex ? -1 : 1
-        )
-    })
+    path: path,
+    activities: Object.keys(activities || {})
+      .map(id => ({
+        ...activities[id],
+        id,
+        description: getActivitySelector(activities[id]),
+        solved: solutions[path.id] && solutions[path.id][id]
+      }))
+      .filter(problem => problem.path === path.id)
+      .sort(
+        (a, b) =>
+          a.orderIndex === b.orderIndex
+            ? 0
+            : a.orderIndex < b.orderIndex ? -1 : 1
+      )
+  })
+);
+
+export const codeCombatProfileSelector = createSelector(
+  getCodeCombatProfile,
+  profile => profile
 );

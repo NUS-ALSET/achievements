@@ -66,6 +66,8 @@ class AddAssignmentDialog extends React.PureComponent {
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
             <Select
+              input={<Input id="select-multiple-levels" />}
+              margin="none"
               MenuProps={{
                 PaperProps: {
                   style: {
@@ -74,8 +76,6 @@ class AddAssignmentDialog extends React.PureComponent {
                   }
                 }
               }}
-              input={<Input id="select-multiple-levels" />}
-              margin="none"
               onChange={this.updateField("level")}
               value={assignment.level || ""}
             >
@@ -210,10 +210,10 @@ class AddAssignmentDialog extends React.PureComponent {
           />
           {this.getAssignmentSpecificFields(assignment)}
           <TextField
+            fullWidth
             InputLabelProps={{
               shrink: true
             }}
-            fullWidth
             label="Open"
             margin="normal"
             onChange={this.updateField("open")}
@@ -221,10 +221,10 @@ class AddAssignmentDialog extends React.PureComponent {
             value={assignment.open || ""}
           />
           <TextField
+            fullWidth
             InputLabelProps={{
               shrink: true
             }}
-            fullWidth
             label="Deadline"
             margin="normal"
             onChange={this.updateField("deadline")}
