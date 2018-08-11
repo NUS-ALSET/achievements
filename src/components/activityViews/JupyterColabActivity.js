@@ -1,5 +1,5 @@
 /**
- * @file JupyterProblem container module
+ * @file JupyterColabActivity container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 08.03.18
  */
@@ -10,12 +10,13 @@ import PropTypes from "prop-types";
 import { problemSolveUpdate } from "../../containers/Activity/actions";
 import JupyterNotebook from "./JupyterNotebook";
 
-class JupyterProblem extends React.PureComponent {
+class JupyterColabActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
     problem: PropTypes.object.isRequired,
-    solution: PropTypes.object
+    solution: PropTypes.object,
+    readOnly : PropTypes.bool
   };
 
   onSolutionRefreshClick = solutionURL => {
@@ -34,7 +35,8 @@ class JupyterProblem extends React.PureComponent {
     const {
       /** @type {JupyterPathProblem} */
       problem,
-      solution
+      solution,
+      readOnly
     } = this.props;
 
     return (
@@ -44,6 +46,7 @@ class JupyterProblem extends React.PureComponent {
           defaultValue={solution && solution.id}
           persistent={true}
           solution={solution}
+          readOnly={readOnly}
           title="Calculated Solution"
         />
         {solution &&
@@ -53,15 +56,18 @@ class JupyterProblem extends React.PureComponent {
                 json: solution.provided
               }}
               title="Provided Solution"
+              readOnly={readOnly}
             />
           )}
         <JupyterNotebook
           solution={{ json: problem.problemJSON }}
           title="Problem"
+          url={problem.problemColabURL}
+          readOnly={readOnly}
         />
       </Fragment>
     );
   }
 }
 
-export default JupyterProblem;
+export default JupyterColabActivity;

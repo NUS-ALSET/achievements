@@ -21,6 +21,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import SendIcon from "@material-ui/icons/Send";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
+import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -55,7 +56,7 @@ class AssignmentsTable extends React.PureComponent {
     currentUser: PropTypes.object,
     ui: PropTypes.object
   };
-
+ 
   getTooltip(assignment, solution) {
     if (
       !(
@@ -70,7 +71,9 @@ class AssignmentsTable extends React.PureComponent {
       solution.originalSolution.createdAt
     ).toLocaleString()}`;
     switch (assignment.questionType) {
+      // Backward compatibility
       case "PathProblem":
+      case "PathActivity":
         if (
           solution.originalSolution.value.answers &&
           !isEmpty(solution.originalSolution.value.answers)
@@ -119,7 +122,7 @@ class AssignmentsTable extends React.PureComponent {
     }
 
     switch (assignment.questionType) {
-      case "Profile":
+      case ASSIGNMENTS_TYPES.Profile.id:
         return solution ? (
           <a
             href={`https://codecombat.com/user/${AccountService.processProfile(
@@ -145,7 +148,9 @@ class AssignmentsTable extends React.PureComponent {
         ) : (
           undefined
         );
+      // Backward compatibility
       case "PathProblem":
+      case ASSIGNMENTS_TYPES.PathActivity.id:
         return solution ? (
           <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
             <span>
@@ -188,8 +193,9 @@ class AssignmentsTable extends React.PureComponent {
           result
         );
 
-      case "Text":
-        return /http[s]?:\/\//.test(result) && !owner ? (
+      case ASSIGNMENTS_TYPES.Text.id:
+      case ASSIGNMENTS_TYPES.TeamText.id:
+        return /http[s]?:\/\//.test(result) ? (
           <a href={result} rel="noopener noreferrer" target="_blank">
             {APP_SETTING.isSuggesting ? (
               <IconButton>
@@ -258,7 +264,9 @@ class AssignmentsTable extends React.PureComponent {
           assignmentSolutionRequest(course.id, assignment.id, "Complete")
         );
         break;
+      // Backward compatibility
       case "PathProblem":
+      case "PathActivity":
         dispatch(
           assignmentPathProblemSolutionRequest(
             assignment,
@@ -277,10 +285,36 @@ class AssignmentsTable extends React.PureComponent {
           )
         );
         break;
+      case ASSIGNMENTS_TYPES.TeamFormation.id:
+        dispatch(
+          assignmentSubmitRequest(
+            assignment,
+            solution &&
+              solution.value && {
+                ...solution,
+                value: solution.value.replace(/ \(\d+\)$/, "")
+              }
+          )
+        );
+        break;
       default:
         dispatch(assignmentSubmitRequest(assignment, solution));
     }
   };
+
+openSolution=(assignment,solution)=>{
+    if(assignment.questionType==="PathActivity"){
+      this.props.dispatch(
+        assignmentPathProblemSolutionRequest(
+          assignment,
+          this.props.course.owner,
+          assignment.problem,
+          solution,
+          true
+        )
+      );
+    }
+  }
 
   render() {
     const {
@@ -396,6 +430,18 @@ class AssignmentsTable extends React.PureComponent {
                           studentInfo.solutions,
                           studentInfo.id === currentUser.id
                         )}
+                         { isInstructor
+                          && studentInfo.solutions[assignment.id]
+                          && assignment.questionType==="PathActivity"
+                          && <IconButton
+                              onClick={()=>this.openSolution(
+                                assignment,
+                                studentInfo.solutions[assignment.id]
+                              )}
+                            >
+                            <RemoveRedEye />
+                          </IconButton>
+                          }
 
                         {studentInfo.id === currentUser.id &&
                           (!APP_SETTING.isSuggesting && (

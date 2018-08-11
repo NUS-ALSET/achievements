@@ -7,11 +7,14 @@ import {
   assignmentSwitchTab,
   coursePasswordEnterSuccess,
   courseAssignmentsClose,
-  courseAssignmentsOpen
+  courseAssignmentsOpen,
+  assignmentAssistantKeyChange,
+  assignmentAddAssistantRequest,
+  assignmentsSolutionsRefreshRequest
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { coursesService } from "../../services/courses";
+import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import {
   getAssignmentsUIProps,
@@ -70,7 +73,8 @@ class Assignments extends React.Component {
     auth: PropTypes.object,
     match: PropTypes.object,
     students: PropTypes.object,
-    courseMembers: PropTypes.array
+    courseMembers: PropTypes.array,
+    readOnly : PropTypes.bool
   };
   state = {
     password: ""
@@ -161,6 +165,10 @@ class Assignments extends React.Component {
 
   refreshProfileSolutions = () =>
     this.props.dispatch(assignmentRefreshProfilesRequest(this.props.course.id));
+  refreshSolutions = () =>
+    this.props.dispatch(
+      assignmentsSolutionsRefreshRequest(this.props.course.id)
+    );
 
   getPasswordView() {
     return (
@@ -198,8 +206,8 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const { ui, students, auth, dispatch, course, currentUser } = this.props;
-
+    const { ui, students, auth, dispatch, course, currentUser, readOnly } = this.props;
+    
     if (!auth.isLoaded) {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
@@ -240,6 +248,12 @@ class Assignments extends React.Component {
     return (
       <Fragment>
         <Breadcrumbs
+          action={
+            currentUser.isOwner && {
+              label: "Refresh",
+              handler: this.refreshSolutions
+            }
+          }
           paths={[
             {
               label: "Courses",
@@ -281,16 +295,27 @@ class Assignments extends React.Component {
         {currentUser.isOwner && (
           <ControlAssistantsDialog
             assistants={(ui.dialog && ui.dialog.assistants) || []}
-            course={course}
             dispatch={dispatch}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
+            onAddAssistant={assignmentAddAssistantRequest}
+            onAssistantKeyChange={assignmentAssistantKeyChange}
+            onClose={assignmentCloseDialog}
+            onRemoveAssistant={() => {}}
             open={ui.dialog && ui.dialog.type === "CourseAssistants"}
+            target={course.id}
           />
         )}
         <AddTextSolutionDialog
           onClose={this.closeDialog}
           onCommit={this.commitTextSolution}
-          open={ui.dialog && ui.dialog.type === "Text"}
+          open={
+            ui.dialog &&
+            [
+              ASSIGNMENTS_TYPES.TeamFormation.id,
+              ASSIGNMENTS_TYPES.TeamText.id,
+              ASSIGNMENTS_TYPES.Text.id
+            ].includes(ui.dialog.type)
+          }
           solution={ui.dialog && ui.dialog.value}
           taskId={ui.currentAssignment && ui.currentAssignment.id}
         />
@@ -299,12 +324,16 @@ class Assignments extends React.Component {
           dispatch={dispatch}
           loadingSolution={!!ui.dialog && ui.dialog.loadingSolution}
           onCommit={this.onPathProblemSolutionCommit}
-          open={ui.dialog && ui.dialog.type === "PathProblem"}
+          open={
+            ui.dialog &&
+            ["PathActivity", "PathProblem"].includes(ui.dialog.type)
+          }
           pathProblem={ui.dialog.pathProblem}
           solution={ui.dialog.solution}
+          readOnly={readOnly}
         />
         <AddPathProgressSolutionDialog
-          assignmentId={ui.currentAssignment && ui.currentAssignment.id}
+          assignment={ui.currentAssignment}
           courseId={course.id}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "PathProgress"}
@@ -333,13 +362,14 @@ sagaInjector.inject(sagas);
  * @returns {*} props
  */
 const mapStateToProps = (state, ownProps) => ({
-  ui: getAssignmentsUIProps(state),
-  currentUser: getCurrentUserProps(state, ownProps),
-  course: getCourseProps(state, ownProps),
-  auth: state.firebase.auth,
-  students: state.firebase.data.courseMembers,
-  courseMembers: state.assignments.courseMembers,
-  assistants: state.assignments.assistants
+    ui: getAssignmentsUIProps(state),
+    currentUser: getCurrentUserProps(state, ownProps),
+    course: getCourseProps(state, ownProps),
+    auth: state.firebase.auth,
+    students: state.firebase.data.courseMembers,
+    courseMembers: state.assignments.courseMembers,
+    assistants: state.assignments.assistants,
+    readOnly : state.problem && state.problem.readOnly
 });
 
 export default compose(

@@ -195,13 +195,15 @@ export const assignmentPathProblemSolutionRequest = (
   assignment,
   problemOwner,
   problemId,
-  solution
+  solution,
+  readOnly=false
 ) => ({
   type: ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
   assignment,
   problemOwner,
   problemId,
-  solution
+  solution,
+  readOnly
 });
 
 export const ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST =
@@ -487,4 +489,26 @@ export const COURSE_MY_COURSES_FETCH_SUCCESS =
 export const courseMyCoursesFetchSuccess = courses => ({
   type: COURSE_MY_COURSES_FETCH_SUCCESS,
   courses
+});
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST";
+export const assignmentsSolutionsRefreshRequest = courseId => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
+  courseId
+});
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS";
+export const assignmentsSolutionsRefreshSuccess = courseId => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS,
+  courseId
+});
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL";
+export const assignmentsSolutionsRefreshFail = (courseId, reason) => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL,
+  courseId,
+  reason
 });

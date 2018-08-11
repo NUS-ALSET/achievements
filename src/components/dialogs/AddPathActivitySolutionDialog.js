@@ -51,20 +51,29 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
     problemSolution: {}
   };
 
-  onProblemChange = problemSolution => this.setState({ problemSolution });
+  onProblemChange = problemSolution =>{
+    this.setState({ problemSolution });
+  }
+  resetState=()=>{
+    this.setState({problemSolution : {}});
+  }
   catchReturn = event => event.key === "Enter" && this.onCommitClick();
   onClose = () => {
+    this.resetState();
     this.props.dispatch(problemFinalize());
     this.props.dispatch(assignmentCloseDialog());
   };
-  onCommitClick = () =>
-    isEmpty(this.state.problemSolution)
+
+  onCommitClick = (data=null) =>{
+    const solution = data && data.type==='SOLUTION' ? data.solution : this.state.problemSolution;
+    isEmpty(solution)
       ? this.onClose()
-      : this.props.onCommit(this.state.problemSolution);
+      : this.props.onCommit(solution);
+  }
 
   render() {
-    const { classes, open, pathProblem, solution } = this.props;
-
+    const { classes, open, pathProblem, solution, readOnly } = this.props;
+    const { problemSolution } = this.state;
     return (
       <Fragment>
         <Dialog
@@ -75,34 +84,51 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           onClose={this.onClose}
           open={open}
         >
-          <DialogTitle>Set Assignment Solution</DialogTitle>
-          <DialogContent
-            style={{
-              textAlign: "center",
-              overflowX: "hidden"
-            }}
-          >
+          <DialogTitle>{ readOnly ? 'Student' : 'Set'} Assignment Solution {readOnly ? '( Read Only) ' : ''}</DialogTitle>          
             <Activity
               embedded={true}
               inDialog={true}
               onProblemChange={this.onProblemChange}
               pathProblem={pathProblem}
               solution={solution}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button color="secondary" onClick={this.onClose}>
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              disabled={!(solution && solution.checked && !solution.failed)}
-              onClick={this.onCommitClick}
-              variant="raised"
+              onCommit={this.onCommitClick}
+              onClose={this.onClose}
+              readOnly={readOnly}
             >
-              Commit
-            </Button>
-          </DialogActions>
+              {
+                (activityView, submitHandler, props) => (
+                  <div>
+                <DialogContent
+                  style={{
+                    overflowX: "hidden"
+                  }}
+                >
+                {activityView(props)}
+                </DialogContent>
+                <DialogActions>
+                  <Button color="secondary" onClick={this.onClose}>
+                    {readOnly ? 'Close' : 'Cancel'}
+                  </Button>
+                  { !readOnly &&
+                      <Button
+                      color="primary"
+                      disabled={!(
+                        typeof problemSolution==='object' 
+                        ? problemSolution.hasOwnProperty('value') 
+                          ? problemSolution.value 
+                          : !isEmpty(problemSolution) 
+                        : problemSolution)}
+                      onClick={submitHandler}
+                      variant="raised"
+                    >
+                      Commit
+                    </Button>
+                  }
+                </DialogActions>
+                </div>
+                  )
+                }
+            </Activity>
         </Dialog>
       </Fragment>
     );

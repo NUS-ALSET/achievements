@@ -1,8 +1,9 @@
+/* eslint-disable no-magic-numbers */
 import firebase from "firebase";
 import assert from "assert";
 import sinon from "sinon";
 import Promise from "bluebird";
-import { PathsService, PROBLEMS_TYPES } from "../paths";
+import { PathsService, ACTIVITY_TYPES } from "../paths";
 
 import correctProblems from "./data/correctProblems";
 import incorrectProblems from "./data/incorrectProblems";
@@ -60,7 +61,8 @@ describe("Paths service tests", () => {
           .then(() =>
             expect(data).toEqual({
               name: "test",
-              owner: "testOwner"
+              owner: "testOwner",
+              totalActivities: 0
             })
           )
     });
@@ -98,16 +100,20 @@ describe("Paths service tests", () => {
   });
 
   it("should join path", () => {
-    firebase.refStub.withArgs("/problems/cafebabe").returns({
-      orderByChild: () => ({
-        equalTo: () => ({ once: () => firebase.snap({}) })
-      })
-    });
+    firebase.refStub
+      .withArgs("/completedActivities/deadbeef/testPath")
+      .returns({
+        once: () => firebase.snap({})
+      });
     firebase.refStub.withArgs("/paths/testPath").returns({
       once: () =>
         firebase.snap({
-          owner: "cafebabe"
+          owner: "cafebabe",
+          totalActivities: 0
         })
+    });
+    firebase.refStub.withArgs("/paths/testPath/totalActivities").returns({
+      once: () => firebase.snap(0)
     });
     firebase.refStub.withArgs("/studentJoinedPaths/deadbeef/testPath").returns({
       set: value => {
@@ -121,7 +127,7 @@ describe("Paths service tests", () => {
           id: "testPath",
           owner: "cafebabe",
           solutions: 0,
-          total: 0
+          totalActivities: 0
         })
       );
   });
@@ -133,11 +139,11 @@ describe("Paths service tests", () => {
     pathsService.togglePathJoinStatus("deadbeef", "testPath", false);
   });
 
-  it("should return PathProblem", () => {
+  it("should return PathActivity", () => {
     firebase.refStub.withArgs("/paths/-testPathId").returns({
       once: () => firebase.snap({ owner: "testOwner", name: "Test Path" })
     });
-    firebase.refStub.withArgs("/problems/testOwner/testProblemId").returns({
+    firebase.refStub.withArgs("/activities/testProblemId").returns({
       once: () =>
         firebase.snap({
           frozen: "2",
@@ -195,6 +201,14 @@ describe("Paths service tests", () => {
 
     it("should submit text solution", () => {
       firebase.refStub
+        .withArgs("/completedActivities/deadbeef/testPath/testProblem")
+        .returns({
+          set: data => {
+            spy();
+            expect(data).toBe(true);
+          }
+        });
+      firebase.refStub
         .withArgs("/problemSolutions/testProblem/deadbeef")
         .returns({
           set: data => {
@@ -209,15 +223,49 @@ describe("Paths service tests", () => {
           {
             owner: "deadbeef",
             pathId: "testPath",
+            path: "testPath",
             pathName: "Test Path",
             problemId: "testProblem",
             problemName: "Test Problem",
-            type: PROBLEMS_TYPES.text.id
+            type: ACTIVITY_TYPES.text.id
           },
           "test solution"
         )
         .then(() => {
-          expect(spy.mock.calls.length).toBe(1);
+          expect(spy.mock.calls.length).toBe(2);
+        });
+    });
+  });
+
+  describe("moving activity", () => {
+    beforeEach(() => sinon.stub(pathsService, "checkActivitiesOrder"));
+    afterEach(() => pathsService.checkActivitiesOrder.restore());
+
+    it("should move activity", () => {
+      let calls = 0;
+      const activities = [
+        {
+          id: "cafebabe",
+          orderIndex: 1
+        },
+        {
+          id: "deadbeef",
+          orderIndex: 2
+        }
+      ];
+      firebase.refStub.returns({
+        update: () => {
+          calls += 1;
+          return Promise.resolve();
+        }
+      });
+
+      pathsService.checkActivitiesOrder.returns(Promise.resolve(activities));
+      return pathsService
+        .moveActivity("testUser", "testPath", activities, "deadbeef", "up")
+        .then(() => {
+          expect(pathsService.checkActivitiesOrder.calledOnce).toBe(true);
+          expect(calls).toBe(2);
         });
     });
   });

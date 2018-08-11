@@ -60,12 +60,12 @@ class AppDrawer extends React.PureComponent {
       <div className={className}>
         <Hidden lgUp>
           <Drawer
-            ModalProps={{
-              keepMounted: true
-            }}
             anchor="left"
             classes={{
               paper: classes.someClass
+            }}
+            ModalProps={{
+              keepMounted: true
             }}
             onClose={onRequestClose}
             open={mobileDrawerOpen}

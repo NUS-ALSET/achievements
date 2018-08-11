@@ -1,5 +1,20 @@
 {
   "rules": {
+    "activities": {
+      ".read": "auth != null",
+      "$activityKey": {
+        ".write": "auth != null &&
+          newData.child('path').exists() &&
+          root.child('paths/' + newData.child('path').val()).exists() && (
+            root.child('paths/' + newData.child('path').val() +
+              '/owner').val() == auth.uid ||
+            root.child('pathAssistants/' + newData.child('path').val() +
+              '/' + auth.uid).exists()
+
+          )
+        "
+      }
+    },
     "admins": {
       ".write": false,
       "$userKey": {
@@ -54,6 +69,12 @@
             )
           )
         "
+      }
+    },
+    "completedActivities": {
+      "$userKey": {
+        ".read": true,
+        ".write": "auth != null && $userKey == auth.uid"
       }
     },
     "courseMembers": {
@@ -138,6 +159,12 @@
           auth.uid == newData.child('sender').val()"
       }
     },
+    "pathAssistants": {
+      "$pathKey": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == root.child('paths/' + $pathKey + '/owner').val()"
+      }
+    },
     "pathProblems": {
       ".read": "auth != null",
       "$userKey": {
@@ -158,20 +185,10 @@
       }
     },
     "problemSolutions": {
-      "$problemKey": {
+      "$activityKey": {
         "$userKey": {
           ".read": "auth != null",
           ".write": "auth != null && auth.uid == $userKey"
-        }
-      }
-    },
-    "problems": {
-      ".read": "auth != null",
-      "$userKey": {
-        "$problemKey": {
-          ".write": "auth != null && (
-              newData.child('owner').val() == auth.uid
-            )"
         }
       }
     },

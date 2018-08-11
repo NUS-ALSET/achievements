@@ -1,5 +1,5 @@
 /**
- * @file JupyterProblem container module
+ * @file JupyterColabActivity container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 08.03.18
  */
@@ -15,13 +15,15 @@ import {
 } from "../../containers/Activity/actions";
 import { notificationShow } from "../../containers/Root/actions";
 import JupyterNotebook from "./JupyterNotebook";
+import Typography from "@material-ui/core/Typography";
 
-class JupyterInlineProblem extends React.PureComponent {
+class JupyterInlineActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
     problem: PropTypes.object,
-    solution: PropTypes.object
+    solution: PropTypes.object,
+    readOnly : PropTypes.bool
   };
 
   state = {
@@ -58,13 +60,17 @@ class JupyterInlineProblem extends React.PureComponent {
       return "";
     }
     if (solution.failed) {
-      return " (Failed - Final output should be empty)";
+      return (
+        <Typography color="error">
+          (Error- Final output should be empty)
+        </Typography>
+      );
     }
     if (solution.loading) {
-      return " (Checking)";
+      return <Typography color="textSecondary">(Checking)</Typography>;
     }
     if (solution.checked) {
-      return " (Passed)";
+      return <Typography color="primary">(Passed)</Typography>;
     }
   };
 
@@ -91,9 +97,10 @@ class JupyterInlineProblem extends React.PureComponent {
     const {
       /** @type {JupyterPathProblem} */
       problem,
-      solution
+      solution,
+      readOnly
     } = this.props;
-
+    
     return (
       <Fragment>
         <JupyterNotebook
@@ -102,25 +109,32 @@ class JupyterInlineProblem extends React.PureComponent {
           persistent={true}
           richEditor={true}
           solution={false}
-          title="Edit code"
+          readOnly={readOnly}
+          title={readOnly ? "Submitted Code" : "Edit code"}
         />
         {solution &&
           (solution.json || solution.loading) && (
             <JupyterNotebook
               solution={solution}
+              readOnly={readOnly}
               title={
-                "Calculated Solution" + this.getCalculatedSolution(solution)
+                <Fragment>
+                  Calculated Solution
+                  {this.getCalculatedSolution(solution)}
+                </Fragment>
               }
             />
           )}
         {solution &&
           solution.provided && (
             <JupyterNotebook
+              readOnly={readOnly}
               solution={{ json: solution.provided }}
               title="Provided solution"
             />
           )}
         <JupyterNotebook
+          readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
           title="Problem"
         />
@@ -129,4 +143,4 @@ class JupyterInlineProblem extends React.PureComponent {
   }
 }
 
-export default JupyterInlineProblem;
+export default JupyterInlineActivity;

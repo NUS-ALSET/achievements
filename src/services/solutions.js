@@ -1,6 +1,10 @@
 import cloneDeep from "lodash/cloneDeep";
 import each from "lodash/each";
 import firebase from "firebase";
+import { ASSIGNMENTS_TYPES, coursesService } from "./courses";
+
+const FULL_PERCENTAGE = 100;
+const MAX_FRACTIONAL = 2;
 
 export class SolutionsService {
   fetchOwnCourses(uid) {
@@ -11,6 +15,107 @@ export class SolutionsService {
       .equalTo(uid)
       .once("value")
       .then(response => response.val());
+  }
+
+  /**
+   *
+   * @param {ICourse} course
+   */
+  refreshSolutions(course) {
+    return Promise.resolve()
+      .then(() => {
+        // Collect all assignment with type PathProgress and fetch required
+        // paths
+        let paths = false;
+
+        for (const assignment of course.assignments) {
+          if (assignment.questionType === ASSIGNMENTS_TYPES.PathProgress.id) {
+            paths = paths || {};
+            paths[assignment.path] = paths[assignment.paths] || [];
+            paths[assignment.path].push(assignment);
+          }
+        }
+
+        if (!paths) {
+          return Promise.resolve();
+        }
+
+        // Fetch total activities count for all mentioned paths
+        return (
+          Promise.all(
+            Object.keys(paths).map(pathId =>
+              firebase
+                .database()
+                .ref(`/paths/${pathId}/totalActivities`)
+                .once("value")
+                .then(snapshot => ({
+                  pathId,
+                  total: snapshot.val()
+                }))
+            )
+          )
+            // Remove empty paths from list
+            .then(pathsData => pathsData.filter(pathInfo => pathInfo.total))
+            .then(pathsData =>
+              Promise.all(
+                Object.keys(course.members).map(memberId =>
+                  firebase
+                    .database()
+                    .ref(`/completedActivities/${memberId}`)
+                    .once("value")
+                    .then(snapshot => snapshot.val() || {})
+                    .then(completed => ({
+                      memberId,
+                      completed
+                    }))
+                )
+              )
+                .then(completedData => {
+                  const changes = [];
+                  for (const pathInfo of pathsData) {
+                    for (const completedInfo of completedData) {
+                      if (completedInfo.completed[pathInfo.pathId]) {
+                        const assignments = paths[pathInfo.pathId];
+                        changes.push({
+                          assignments,
+                          memberId: completedInfo.memberId,
+                          value:
+                            (FULL_PERCENTAGE *
+                              Object.keys(
+                                completedInfo.completed[pathInfo.pathId] || {}
+                              ).length) /
+                            pathInfo.total
+                        });
+                      }
+                    }
+                  }
+                  return changes;
+                })
+                .then(changes =>
+                  Promise.all(
+                    changes.map(changeInfo =>
+                      Promise.all(
+                        changeInfo.assignments.map(assignment =>
+                          coursesService.submitSolution(
+                            course.id,
+                            assignment,
+                            `${changeInfo.value
+                              .toFixed(MAX_FRACTIONAL)
+                              .replace(/\.?0+$/, "")}%`,
+                            changeInfo.memberId
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+            )
+        );
+      })
+      .catch(err => {
+        console.error(err.stack);
+        throw err;
+      });
   }
 
   processHiddenSolutions(solutions, assignments) {

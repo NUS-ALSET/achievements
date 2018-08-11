@@ -36,7 +36,7 @@ class AddTextSolutionDialog extends React.PureComponent {
 
   catchReturn = event =>
     event.key === "Enter" &&
-    this.props.onCommit(this.props.taskId, this.state.solution);
+    this.props.onCommit(this.state.solution, this.props.taskId);
 
   render() {
     const { onClose, onCommit, open, solution, taskId } = this.props;
@@ -63,7 +63,7 @@ class AddTextSolutionDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            onClick={() => onCommit(taskId, this.state.solution)}
+            onClick={() => onCommit(this.state.solution, taskId)}
             variant="raised"
           >
             Commit

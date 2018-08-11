@@ -12,7 +12,10 @@ import {
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import { PATH_TOGGLE_JOIN_STATUS_SUCCESS } from "../Path/actions";
+import {
+  PATH_TOGGLE_JOIN_STATUS_SUCCESS,
+  pathCloseDialog
+} from "../Path/actions";
 
 export function* loginHandler(action) {
   // Auth GAPI to download files from google drive
@@ -37,14 +40,18 @@ export function* pathsOpenHandler() {
 
 export function* pathChangeRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
-  const key = yield call(
-    [pathsService, pathsService.pathChange],
-    uid,
-    action.pathInfo
-  );
+  try {
+    const key = yield call(
+      [pathsService, pathsService.pathChange],
+      uid,
+      action.pathInfo
+    );
 
-  yield put(pathChangeSuccess(action.pathInfo, key));
-  yield put(pathDialogHide());
+    yield put(pathChangeSuccess(action.pathInfo, key));
+    yield put(pathDialogHide());
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
 }
 
 export function* pathProblemChangeRequestHandler(action) {
@@ -62,6 +69,7 @@ export function* pathProblemChangeRequestHandler(action) {
       action.problemInfo
     );
     yield put(pathProblemChangeSuccess(action.pathId, action.problemInfo, key));
+    yield put(pathCloseDialog());
   } catch (err) {
     yield put(
       pathProblemChangeFail(action.pathId, action.problemInfo, err.message)

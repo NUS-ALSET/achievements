@@ -14,7 +14,7 @@ export const YOUTUBE_QUESTIONS = {
   questionCustom: "Custom question after watching this video"
 };
 
-export const PROBLEMS_TYPES = {
+export const ACTIVITY_TYPES = {
   text: {
     id: "text",
     caption: "Text"
@@ -33,11 +33,11 @@ export const PROBLEMS_TYPES = {
   },
   jupyter: {
     id: "jupyter",
-    caption: "Jupyter Notebook"
+    caption: "Colaboratory Notebook"
   },
   jupyterInline: {
     id: "jupyterInline",
-    caption: "Jupyter Inline"
+    caption: "Jupyter Notebook"
   },
   youtube: {
     id: "youtube",
@@ -46,6 +46,10 @@ export const PROBLEMS_TYPES = {
   game: {
     id: "game",
     caption: "Game"
+  },
+  jest: {
+    id: "jest",
+    caption: "Jest"
   }
 };
 
@@ -85,11 +89,11 @@ export class PathsService {
 
   /**
    *
-   * @param {String}pathId
-   * @param problemId
+   * @param {String} pathId
+   * @param {String} activitiyId
    * @returns {Promise<PathProblem>}
    */
-  fetchPathProblem(pathId, problemId) {
+  fetchPathProblem(pathId, activitiyId) {
     return Promise.resolve()
       .then(
         () =>
@@ -104,14 +108,14 @@ export class PathsService {
       .then(pathInfo =>
         firebase
           .database()
-          .ref(`/problems/${pathInfo.owner}/${problemId}`)
+          .ref(`/activities/${activitiyId}`)
           .once("value")
           .then(data => data.val())
           .then(problem => ({
             problemName: problem.name,
             pathName: pathInfo.name,
             pathId: pathId,
-            problemId,
+            problemId: activitiyId,
             owner: pathInfo.owner,
             ...problem
           }))
@@ -176,36 +180,19 @@ export class PathsService {
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {
-    let ref = firebase
-      .database()
-      .ref(`/problems/${pathOwner}`)
-      .orderByChild("path");
-
-    if (pathId) {
-      ref = ref.equalTo(pathId);
-    } else {
-      ref = ref.endAt(null);
-    }
-
-    return ref
-      .once("value")
-      .then(data => Object.keys(data.val() || {}))
-      .then(problemKeys =>
-        Promise.all(
-          problemKeys.map(problemKey =>
-            firebase
-              .database()
-              .ref(`/problemSolutions/${problemKey}/${solverId}`)
-              .once("value")
-              .then(data => data.val() || false)
-          )
-        )
-          .then(solutions => solutions.filter(solution => !!solution))
-          .then(existingSolutions => ({
-            solutions: existingSolutions.length,
-            total: problemKeys.length
-          }))
-      );
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/completedActivities/${solverId}/${pathId}`)
+        .once("value")
+        .then(snapshot => snapshot.val() || {})
+        .then(completed => Object.keys(completed).length),
+      firebase
+        .database()
+        .ref(`/paths/${pathId}/totalActivities`)
+        .once("value")
+        .then(snapshot => snapshot.val())
+    ]).then(data => ({ solutions: data[0], totalActivities: data[1] }));
   }
 
   fetchFile(fileId) {
@@ -219,7 +206,16 @@ export class PathsService {
         if (data.code && data.code === NOT_FOUND_ERROR) {
           return reject(new Error("Failing - Your solution is not public."));
         }
-        resolve(data);
+        resolve({
+          ...data,
+          cells: data.cells.filter(d => d.source.join("").replace(/\n/g, "")),
+          result: {
+            ...data.result,
+            cells: data.result.cells.filter(
+              d => d.source.join("").replace(/\n/g, "").length > 0
+            )
+          }
+        });
       })
     );
   }
@@ -253,6 +249,10 @@ export class PathsService {
   }
 
   pathChange(uid, pathInfo) {
+    if (!(pathInfo.id || pathInfo.name)) {
+      throw new Error("Missing path name");
+    }
+
     if (pathInfo.id) {
       return firebase
         .database()
@@ -272,7 +272,7 @@ export class PathsService {
     return firebase
       .database()
       .ref(`/paths/${key}`)
-      .set({ ...pathInfo, owner: uid })
+      .set({ ...pathInfo, totalActivities: 0, owner: uid })
       .then(() => key);
   }
 
@@ -282,26 +282,26 @@ export class PathsService {
     if (!problemInfo.name) throw new Error("Missing problem name");
     if (!problemInfo.type) throw new Error("Missing problem type");
     switch (problemInfo.type) {
-      case "text":
+      case ACTIVITY_TYPES.text.id:
         if (!problemInfo.question) throw new Error("Missing question");
         break;
-      case "profile":
+      case ACTIVITY_TYPES.profile.id:
         break;
-      case "codeCombat":
+      case ACTIVITY_TYPES.codeCombat.id:
         if (!problemInfo.level) throw new Error("Missing CodeCombat level");
         break;
-      case "codeCombatNumber":
+      case ACTIVITY_TYPES.codeCombatNumber.id:
         if (!problemInfo.count) throw new Error("Missing levels count");
         break;
-      case "jupyter":
-      case "jupyterInline":
+      case ACTIVITY_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
         if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
         if (!problemInfo.frozen) throw new Error("Missing frozen field");
         if (problemInfo.type === "jupyterInline" && !problemInfo.code)
           throw new Error("Missing code field");
         break;
-      case "youtube":
+      case ACTIVITY_TYPES.youtube.id:
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
         if (
           !(
@@ -314,7 +314,11 @@ export class PathsService {
           throw new Error("Missing any of following questions");
         }
         break;
-      case "game":
+      case ACTIVITY_TYPES.game.id:
+        break;
+      case ACTIVITY_TYPES.jest.id:
+        if (!problemInfo.githubURL) throw new Error("Missing GithubURL");
+        if (!problemInfo.files) throw new Error("Missing Files");
         break;
       default:
         throw new Error("Invalid  problem type");
@@ -322,6 +326,9 @@ export class PathsService {
   }
 
   problemChange(uid, pathId, problemInfo) {
+    const isNew = !problemInfo.id;
+    let next;
+
     this.validateProblem(problemInfo);
 
     problemInfo.owner = uid;
@@ -333,17 +340,27 @@ export class PathsService {
       problemInfo.id ||
       firebase
         .database()
-        .ref(`/problems/${uid}`)
+        .ref("/activities")
         .push().key;
-    const ref = firebase.database().ref(`/problems/${uid}/${key}`);
+    const ref = firebase.database().ref(`/activities/${key}`);
 
     if (problemInfo.id) {
       delete problemInfo.id;
-      ref.update(problemInfo);
+      next = ref.update(problemInfo);
     } else {
-      ref.set(problemInfo);
+      next = ref.set(problemInfo);
     }
-    return key;
+    return next
+      .then(
+        () =>
+          // For new activity increase total counter by 1
+          isNew &&
+          firebase
+            .database()
+            .ref(`/paths/${pathId}/totalActivities`)
+            .transaction(activities => ++activities)
+      )
+      .then(() => key);
   }
 
   /**
@@ -357,12 +374,14 @@ export class PathsService {
   validateSolution(uid, pathProblem, solution, json) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
-        case PROBLEMS_TYPES.codeCombat.id:
+        case ACTIVITY_TYPES.jest.id:
+          return Promise.resolve();
+        case ACTIVITY_TYPES.codeCombat.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
             level: pathProblem.level
           });
-        case PROBLEMS_TYPES.codeCombatNumber.id:
+        case ACTIVITY_TYPES.codeCombatNumber.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat_Number",
             count: pathProblem.count
@@ -383,10 +402,10 @@ export class PathsService {
         case "jupyterInline":
           if (json) {
             const frozenSolution = json.cells
-              .filter(cell => cell.source.join().trim())
+              .filter(cell => cell.source.join("").trim())
               .slice(-pathProblem.frozen);
             const frozenProblem = pathProblem.problemJSON.cells
-              .filter(cell => cell.source.join().trim())
+              .filter(cell => cell.source.join("").trim())
               .slice(-pathProblem.frozen);
 
             frozenProblem.forEach((cell, index) => {
@@ -460,28 +479,35 @@ export class PathsService {
    * Store solution at firebase
    *
    * @param {String} uid
-   * @param {PathProblem} pathProblem
+   * @param {PathActivity} pathProblem
    * @param {any} solution
    * @returns {Promise<any>}
    */
   submitSolution(uid, pathProblem, solution) {
+    pathProblem = {
+      ...pathProblem,
+      problemId: pathProblem.problemId || pathProblem.id
+    };
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
         switch (pathProblem.type) {
-          case PROBLEMS_TYPES.codeCombat.id:
-          case PROBLEMS_TYPES.codeCombatNumber.id:
+          case ACTIVITY_TYPES.codeCombat.id:
+          case ACTIVITY_TYPES.codeCombatNumber.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set("Completed");
-          case PROBLEMS_TYPES.text.id:
-          case PROBLEMS_TYPES.jupyterInline.id:
+          case ACTIVITY_TYPES.text.id:
+          case ACTIVITY_TYPES.jupyterInline.id:
+          case ACTIVITY_TYPES.jest.id:
+          case ACTIVITY_TYPES.profile.id:
+          case ACTIVITY_TYPES.youtube.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
-          case "jupyter":
+          case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
               .then(json =>
                 this.validateSolution(uid, pathProblem, solution, json)
@@ -492,15 +518,20 @@ export class PathsService {
                   .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
                   .set(solution)
               );
-          case "youtube":
-            return firebase
-              .database()
-              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(solution);
           default:
             break;
         }
-      });
+      })
+      .then(() =>
+        firebase
+          .database()
+          .ref(
+            `/completedActivities/${uid}/${pathProblem.path}/${
+              pathProblem.problemId
+            }`
+          )
+          .set(true)
+      );
   }
 
   /**
@@ -588,12 +619,11 @@ export class PathsService {
    * @returns {Promise<Array<Activity>>} list of problems
    */
   fetchProblems(uid, pathId) {
-    let ref = firebase.database().ref(`/problems/${uid}`);
-
-    if (pathId && pathId !== uid) {
-      ref = ref.orderByChild("path").equalTo(pathId);
-    }
-    return ref
+    return firebase
+      .database()
+      .ref("/activities")
+      .orderByChild("path")
+      .equalTo(pathId)
       .once("value")
       .then(data => data.val())
       .then(problems =>
@@ -601,12 +631,6 @@ export class PathsService {
           ...problems[id],
           id
         }))
-      )
-      .then(
-        problems =>
-          pathId && pathId !== "default"
-            ? problems
-            : problems.filter(problem => !problem.path)
       );
   }
 
@@ -634,6 +658,165 @@ export class PathsService {
           ".sv": "timestamp"
         }
       });
+  }
+
+  /**
+   *
+   * @param {Array<Activity>}activities
+   */
+  checkActivitiesOrder(activities) {
+    let needUpdate = false;
+    activities = activities.sort((a, b) => {
+      if (!a.orderIndex) {
+        needUpdate = true;
+        return 1;
+      }
+      if (!b.orderIndex) {
+        needUpdate = true;
+        return -1;
+      }
+      if (a.orderIndex < b.orderIndex) {
+        return -1;
+      } else if (a.orderIndex > b.orderIndex) {
+        return 1;
+      }
+      return 0;
+    });
+    if (needUpdate) {
+      let maxOrderIndex = 0;
+      const updated = [];
+      for (const activity of activities) {
+        if (!activity.orderIndex) {
+          maxOrderIndex += 1;
+          updated.push(activity);
+          activity.orderIndex = maxOrderIndex;
+        }
+        maxOrderIndex = Math.max(maxOrderIndex, activity.orderIndex);
+      }
+      return Promise.all(
+        updated.map(activity =>
+          firebase
+            .database()
+            .ref(`/activities/${activity.id}`)
+            .update({ orderIndex: activity.orderIndex })
+        )
+      ).then(() => activities);
+    }
+    return Promise.resolve(activities);
+  }
+
+  /**
+   *
+   * @param uid
+   * @param pathId
+   * @param {Array<Activity>}activities
+   * @param activityId
+   * @param direction
+   */
+  moveActivity(uid, pathId, activities, activityId, direction) {
+    return this.checkActivitiesOrder(activities).then(activities => {
+      let siblingActivity;
+
+      let targetActivity = activities.find(a => a.id === activityId);
+
+      if (!targetActivity) {
+        throw new Error("Unable find requested activity");
+      }
+
+      if (direction === "up") {
+        siblingActivity = activities.find(
+          a => a.orderIndex === targetActivity.orderIndex - 1
+        );
+      } else {
+        siblingActivity = activities.find(
+          a => a.orderIndex === targetActivity.orderIndex + 1
+        );
+      }
+
+      if (!siblingActivity) {
+        return Promise.resolve();
+      }
+      return firebase
+        .database()
+        .ref(`/activities/${targetActivity.id}`)
+        .update({
+          orderIndex: siblingActivity.orderIndex
+        })
+        .then(() =>
+          firebase
+            .database()
+            .ref(`/activities/${siblingActivity.id}`)
+            .update({
+              orderIndex: targetActivity.orderIndex
+            })
+        );
+    });
+  }
+
+  /**
+   *
+   * @param {String} pathId
+   */
+  fetchPathCollaborators(pathId) {
+    return firebase
+      .database()
+      .ref(`/pathAssistants/${pathId}`)
+      .once("value")
+      .then(snapshot => snapshot.val() || {})
+      .then(assistants =>
+        Promise.all(
+          Object.keys(assistants).map(id =>
+            firebase
+              .database()
+              .ref(`/users/${id}`)
+              .once("value")
+              .then(snapshot => snapshot.val() || {})
+              .then(user => ({ ...user, id }))
+          )
+        )
+      );
+  }
+
+  /**
+   *
+   * @param {String} pathId
+   * @param {String} collaboratorId empty param leads to remove that
+   * collaborator
+   * @param {String} action - could be `add` and `remove` only
+   */
+  updatePathCollaborator(pathId, collaboratorId, action) {
+    const ref = firebase
+      .database()
+      .ref(`/pathAssistants/${pathId}/${collaboratorId}`);
+    if (action === "add") {
+      return ref.set(true);
+    }
+    return ref.remove();
+  }
+
+  /**
+   * @param {String} uid
+   * @param {IPathActivities} pathActivities
+   * @param {Object} codeCombatProfile
+   */
+  refreshPathSolutions(uid, pathActivities, codeCombatProfile) {
+    const actions = [];
+
+    if (!(codeCombatProfile && codeCombatProfile.id)) {
+      throw new Error("Missing CodeCombat profile");
+    }
+
+    for (const activity of pathActivities.activities) {
+      if (
+        [
+          ACTIVITY_TYPES.codeCombat.id,
+          ACTIVITY_TYPES.codeCombatNumber.id
+        ].includes(activity.type)
+      ) {
+        actions.push(this.submitSolution(uid, activity, "Completed"));
+      }
+    }
+    return Promise.all(actions);
   }
 }
 

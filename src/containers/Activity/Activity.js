@@ -16,12 +16,14 @@ import {
   problemInitRequest,
   problemSolutionSubmitRequest
 } from "./actions";
+import { externalProfileUpdateRequest } from "../Account/actions";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
-import ProblemView from "../../components/problemViews/ProblemView";
+import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
+import isEqual from "lodash/isEqual";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
@@ -30,7 +32,8 @@ export class Activity extends React.PureComponent {
     onProblemChange: PropTypes.func,
     pathProblem: PropTypes.any,
     solution: PropTypes.any,
-    embedded: PropTypes.bool
+    embedded: PropTypes.bool,
+    readOnly : PropTypes.bool
   };
 
   state = {
@@ -47,7 +50,13 @@ export class Activity extends React.PureComponent {
       );
     }
   }
-
+  componentWillReceiveProps(nextProps){
+    if(
+      !isEqual(nextProps.pathProblem, this.props.pathProblem)
+    ){
+    this.onProblemChange({});
+    }
+  }
   componentWillUnmount() {
     this.props.dispatch(
       problemFinalize(
@@ -57,8 +66,13 @@ export class Activity extends React.PureComponent {
     );
   }
 
-  onProblemChange = problemSolution => this.setState({ problemSolution });
-  onCommit = () =>
+  onProblemChange = problemSolution => {
+    this.setState({ problemSolution });
+    return (
+      this.props.onProblemChange && this.props.onProblemChange(problemSolution)
+    );
+  };
+  onCommit = () => {
     this.props.dispatch(
       problemSolutionSubmitRequest(
         this.props.match.params.pathId,
@@ -66,18 +80,37 @@ export class Activity extends React.PureComponent {
         this.state.problemSolution
       )
     );
+  };
+
+  propsCommit = data => {
+    if(this.props.readOnly){
+      return ;
+    }
+    if (
+      this.props.pathProblem.type === "profile" &&
+      !(data && data.type === "SOLUTION")
+    ) {
+      this.props.dispatch(
+        externalProfileUpdateRequest(
+          this.state.problemSolution.value,
+          "CodeCombat"
+        )
+      );
+    } else {
+      this.props.onCommit(data);
+    }
+  };
 
   render() {
-    const {
-      /** @type PathProblem */
-      pathProblem,
-      dispatch,
-      solution,
-      embedded
-    } = this.props;
-
+    const { embedded, dispatch, pathProblem, solution, readOnly } = this.props;
     if (!pathProblem) {
-      return <div>Loading</div>;
+      return (
+        <div
+          style={{ width: "100%", textAlign: "center", padding: "20px 0px" }}
+        >
+          Loading...
+        </div>
+      );
     }
 
     return (
@@ -99,17 +132,25 @@ export class Activity extends React.PureComponent {
             ]}
           />
         )}
-        <ProblemView
-          dispatch={dispatch}
-          onProblemChange={this.props.onProblemChange || this.onProblemChange}
-          pathProblem={pathProblem}
-          solution={solution}
-          style={{
-            paddingBottom: 20,
-            textAlign: "center"
-          }}
-        />
-        {!embedded && (
+        {typeof this.props.children === "function" ? (
+          this.props.children(activityView, this.propsCommit, {
+            ...this.props,
+            onCommit: this.propsCommit,
+            onProblemChange: this.onProblemChange
+          })
+        ) : (
+          <ActivityView
+            dispatch={dispatch}
+            onProblemChange={this.props.onProblemChange || this.onProblemChange}
+            pathProblem={pathProblem}
+            solution={solution}
+            style={{
+              paddingBottom: 20,
+              textAlign: "center"
+            }}
+          />
+        )}
+        {!readOnly && !embedded && (
           <div
             style={{
               bottom: 0,
@@ -137,11 +178,23 @@ export class Activity extends React.PureComponent {
   }
 }
 
+// HOC for activityView
+const activityView = props => (
+  <ActivityView
+    {...props}
+    style={{
+      paddingBottom: 20,
+      textAlign: "center"
+    }}
+  />
+);
+
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
   pathProblem: ownProps.pathProblem || state.problem.pathProblem,
-  solution: ownProps.solution || state.problem.solution
+  solution: ownProps.solution || state.problem.solution,
+  userAchievements: state.firebase.data.myAchievements || {}
 });
 
 export default compose(
@@ -152,7 +205,11 @@ export default compose(
       !firebaseAuth.isEmpty && [
         `/problemSolutions/${ownProps.match.params.problemId}/${
           firebaseAuth.uid
-        }`
+        }`,
+        {
+          path: `/userAchievements/${firebaseAuth.uid}`,
+          storeAs: "myAchievements"
+        }
       ]
     );
   }),

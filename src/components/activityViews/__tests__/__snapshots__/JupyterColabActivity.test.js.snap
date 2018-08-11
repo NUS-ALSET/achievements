@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<JupyterProblem> should check snapshot 1`] = `
+exports[`<JupyterColabActivity> should check snapshot 1`] = `
 ShallowWrapper {
   "length": 1,
   Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <JupyterProblem
+  Symbol(enzyme.__unrendered__): <JupyterColabActivity
     dispatch={[Function]}
     problem={
         Object {
@@ -30,17 +30,20 @@ ShallowWrapper {
           action={[Function]}
           defaultValue={undefined}
           persistent={true}
+          readOnly={undefined}
           solution={undefined}
           title="Calculated Solution"
 />,
         undefined,
         <JupyterNotebook
+          readOnly={undefined}
           solution={
                     Object {
                               "json": undefined,
                             }
           }
           title="Problem"
+          url={undefined}
 />,
       ],
     },
@@ -54,6 +57,7 @@ ShallowWrapper {
           "action": [Function],
           "defaultValue": undefined,
           "persistent": true,
+          "readOnly": undefined,
           "solution": undefined,
           "title": "Calculated Solution",
         },
@@ -67,10 +71,12 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
+          "readOnly": undefined,
           "solution": Object {
             "json": undefined,
           },
           "title": "Problem",
+          "url": undefined,
         },
         "ref": null,
         "rendered": null,
@@ -90,17 +96,20 @@ ShallowWrapper {
             action={[Function]}
             defaultValue={undefined}
             persistent={true}
+            readOnly={undefined}
             solution={undefined}
             title="Calculated Solution"
 />,
           undefined,
           <JupyterNotebook
+            readOnly={undefined}
             solution={
                         Object {
                                     "json": undefined,
                                   }
             }
             title="Problem"
+            url={undefined}
 />,
         ],
       },
@@ -114,6 +123,7 @@ ShallowWrapper {
             "action": [Function],
             "defaultValue": undefined,
             "persistent": true,
+            "readOnly": undefined,
             "solution": undefined,
             "title": "Calculated Solution",
           },
@@ -127,10 +137,12 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
+            "readOnly": undefined,
             "solution": Object {
               "json": undefined,
             },
             "title": "Problem",
+            "url": undefined,
           },
           "ref": null,
           "rendered": null,

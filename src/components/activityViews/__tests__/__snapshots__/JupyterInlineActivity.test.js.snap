@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<JupyterInlineProblem> should check snapshot 1`] = `
+exports[`<JupyterInlineActivity> should check snapshot 1`] = `
 ShallowWrapper {
   "length": 1,
   Symbol(enzyme.__root__): [Circular],
-  Symbol(enzyme.__unrendered__): <JupyterInlineProblem
+  Symbol(enzyme.__unrendered__): <JupyterInlineActivity
     dispatch={[Function]}
     problem={
         Object {
@@ -29,6 +29,7 @@ ShallowWrapper {
           action={[Function]}
           defaultValue={undefined}
           persistent={true}
+          readOnly={undefined}
           richEditor={true}
           solution={false}
           title="Edit code"
@@ -36,6 +37,7 @@ ShallowWrapper {
         undefined,
         undefined,
         <JupyterNotebook
+          readOnly={undefined}
           solution={
                     Object {
                               "json": "test",
@@ -55,6 +57,7 @@ ShallowWrapper {
           "action": [Function],
           "defaultValue": undefined,
           "persistent": true,
+          "readOnly": undefined,
           "richEditor": true,
           "solution": false,
           "title": "Edit code",
@@ -70,6 +73,7 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
+          "readOnly": undefined,
           "solution": Object {
             "json": "test",
           },
@@ -93,6 +97,7 @@ ShallowWrapper {
             action={[Function]}
             defaultValue={undefined}
             persistent={true}
+            readOnly={undefined}
             richEditor={true}
             solution={false}
             title="Edit code"
@@ -100,6 +105,7 @@ ShallowWrapper {
           undefined,
           undefined,
           <JupyterNotebook
+            readOnly={undefined}
             solution={
                         Object {
                                     "json": "test",
@@ -119,6 +125,7 @@ ShallowWrapper {
             "action": [Function],
             "defaultValue": undefined,
             "persistent": true,
+            "readOnly": undefined,
             "richEditor": true,
             "solution": false,
             "title": "Edit code",
@@ -134,6 +141,7 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
+            "readOnly": undefined,
             "solution": Object {
               "json": "test",
             },

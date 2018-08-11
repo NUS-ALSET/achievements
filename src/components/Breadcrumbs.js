@@ -15,6 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+import { breadcrumbAction, breadcrumbPath } from "../types";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -36,9 +37,9 @@ const styles = theme => ({
 
 class Breadcrumbs extends React.PureComponent {
   static propTypes = {
-    action: PropTypes.any,
+    action: PropTypes.oneOf(PropTypes.arrayOf(breadcrumbAction)),
     classes: PropTypes.object,
-    paths: PropTypes.array.isRequired
+    paths: PropTypes.arrayOf(breadcrumbPath).isRequired
   };
 
   render() {

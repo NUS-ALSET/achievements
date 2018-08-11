@@ -5,7 +5,7 @@ import { createShallow } from "@material-ui/core/test-utils";
 import Button from "@material-ui/core/Button";
 
 import { Activity } from "../Activity";
-import ProblemView from "../../../components/problemViews/ProblemView";
+import ActivityView from "../../../components/activityViews/ActivityView";
 
 describe("<Activity>", () => {
   let shallow;
@@ -32,11 +32,13 @@ describe("<Activity>", () => {
           }
         }}
         pathProblem={{}}
-      />
+      >
+      {()=>{}}
+      </Activity>
     );
 
     expect(wrapper.state("problemSolution"), {});
-    wrapper.find(ProblemView).simulate("problem-change", "test");
+    wrapper.find(Button).simulate("problem-change", "test");
     expect(wrapper.state("problemSolution"), "test");
   });
 
@@ -47,11 +49,13 @@ describe("<Activity>", () => {
         match={{
           params: {
             pathId: "testPath",
-            problemId: "testProblem"
+            problemId: "testProblem",
           }
         }}
         pathProblem={{}}
-      />
+      >
+      {()=>{}}
+      </Activity>
     );
 
     wrapper.setState({

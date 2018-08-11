@@ -4,11 +4,13 @@
  * @created 22.02.18
  */
 
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
 import Icon from "@material-ui/core/Icon";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -18,6 +20,8 @@ import TableRow from "@material-ui/core/TableRow";
 import DoneIcon from "@material-ui/icons/Done";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+
+const COLUMN_ACTIONS_WIDTH = 240;
 
 const styles = theme => ({
   link: {
@@ -30,72 +34,135 @@ const styles = theme => ({
 
 class ActivitiesTable extends React.PureComponent {
   static propTypes = {
+    activities: PropTypes.array.isRequired,
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
     onEditProblem: PropTypes.func.isRequired,
     onOpenProblem: PropTypes.func.isRequired,
-    pathOwnerId: PropTypes.any,
-    problems: PropTypes.array.isRequired
+    onMoveProblem: PropTypes.func.isRequired,
+    pathOwnerId: PropTypes.any
   };
+
+  state = {
+    activity: null
+  };
+
+  selectActivity = activity => this.setState({ activity });
 
   render() {
     const {
+      activities,
       classes,
       currentUserId,
       onEditProblem,
+      onMoveProblem,
       onOpenProblem,
-      pathOwnerId,
-      problems
+      pathOwnerId
     } = this.props;
 
+  let minOrderIndex = Infinity;
+  let maxOrderIndex = -Infinity;
+
+  (activities || []).forEach(activity=>{
+    if(activity.orderIndex < minOrderIndex){
+      minOrderIndex = activity.orderIndex;
+    }
+    if(activity.orderIndex > maxOrderIndex){
+      maxOrderIndex = activity.orderIndex;
+    }
+  })
+
     return (
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Activity name</TableCell>
-            <TableCell>Description</TableCell>
-            {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
-            <TableCell
-              style={{
-                width: 240
-              }}
-            >
-              Actions
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {problems.map(problem => (
-            <TableRow key={problem.id}>
-              <TableCell>{problem.name}</TableCell>
-              <TableCell>{problem.description}</TableCell>
-              {currentUserId !== pathOwnerId && (
-                <TableCell>
-                  {problem.solved && (
-                    <Icon>
-                      <DoneIcon />
-                    </Icon>
-                  )}
-                </TableCell>
-              )}
-              <TableCell>
-                <Button onClick={() => onOpenProblem(problem)} variant="raised">
-                  Solve
-                </Button>
-                {pathOwnerId === currentUserId && (
-                  <Button
-                    className={classes.button}
-                    onClick={() => onEditProblem(problem)}
-                    variant="raised"
-                  >
-                    Edit
-                  </Button>
-                )}
+      <Fragment>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Activity name</TableCell>
+              <TableCell>Description</TableCell>
+              {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
+              <TableCell style={{ width: COLUMN_ACTIONS_WIDTH }}>
+                Actions
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {activities.map(activity => (
+              <TableRow key={activity.id}>
+                <TableCell>{activity.name}</TableCell>
+                <TableCell>{activity.description}</TableCell>
+                {currentUserId !== pathOwnerId && (
+                  <TableCell>
+                    {activity.solved && (
+                      <Icon>
+                        <DoneIcon />
+                      </Icon>
+                    )}
+                  </TableCell>
+                )}
+                <TableCell>
+                  <Button
+                    onClick={() => onOpenProblem(activity)}
+                    variant="raised"
+                  >
+                    Solve
+                  </Button>
+                  {pathOwnerId === currentUserId && (
+                    <Button
+                      className={classes.button}
+                      id={activity.id}
+                      onClick={() => this.selectActivity(activity)}
+                      variant="raised"
+                    >
+                      More
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <Menu
+          anchorEl={document.getElementById(
+            this.state.activity && this.state.activity.id
+          )}
+          onClose={() => this.selectActivity()}
+          open={!!this.state.activity}
+        >
+          <MenuItem
+            className={classes.button}
+            onClick={() =>
+              this.selectActivity() || onEditProblem(this.state.activity)
+            }
+            variant="raised"
+          >
+            Edit
+          </MenuItem>
+         {this.state.activity && this.state.activity.orderIndex!==minOrderIndex &&  
+          <MenuItem
+            className={classes.button}
+            onClick={() =>
+              this.selectActivity() || onMoveProblem(this.state.activity, "up")
+            }
+            variant="raised"
+          >
+            Move Up
+          </MenuItem>
+        }
+        {
+          this.state.activity && this.state.activity.orderIndex!==maxOrderIndex && 
+          <MenuItem
+            className={classes.button}
+            onClick={() =>
+              this.selectActivity() ||
+              onMoveProblem(this.state.activity, "down")
+            }
+            variant="raised"
+          >
+            Move Down
+          </MenuItem>
+        }
+        </Menu>
+      </Fragment>
     );
   }
 }

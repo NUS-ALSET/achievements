@@ -10,7 +10,7 @@ module.exports = req => {
     throw error;
   }
 
-  admin
+  return admin
     .database()
     .ref("api_tokens/" + token)
     .once("value")

@@ -51,6 +51,36 @@ export const pathSelect = pathId => ({
   pathId
 });
 
+export const PATH_ACTIVITY_MOVE_REQUEST = "PATH_ACTIVITY_MOVE_REQUEST";
+export const pathActivityMoveRequest = (pathId, activityId, direction) => ({
+  type: PATH_ACTIVITY_MOVE_REQUEST,
+  pathId,
+  activityId,
+  direction
+});
+
+export const PATH_ACTIVITY_MOVE_SUCCESS = "PATH_ACTIVITY_MOVE_SUCCESS";
+export const pathActivityMoveSuccess = (pathId, activityId, direction) => ({
+  type: PATH_ACTIVITY_MOVE_SUCCESS,
+  pathId,
+  activityId,
+  direction
+});
+
+export const PATH_ACTIVITY_MOVE_FAIL = "PATH_ACTIVITY_MOVE_FAIL";
+export const pathActivityMoveFail = (
+  pathId,
+  activityId,
+  direction,
+  reason
+) => ({
+  type: PATH_ACTIVITY_MOVE_FAIL,
+  pathId,
+  activityId,
+  direction,
+  reason
+});
+
 export const PATH_PROBLEM_CHANGE_REQUEST = "PATH_PROBLEM_CHANGE_REQUEST";
 export const pathProblemChangeRequest = (pathId, problemInfo) => ({
   type: PATH_PROBLEM_CHANGE_REQUEST,

@@ -11,7 +11,8 @@ const profileTriggers = require("./src/updateProfile");
 const jupyterTrigger = require("./src/executeJupyterSolution");
 const downloadEvents = require("./src/downloadEvents");
 const solutionTriggers = require("./src/updateSolutionVisibility");
-const httpUtil= require("./src/utils/http").httpUtil;
+const httpUtil = require("./src/utils/http").httpUtil;
+const migrateActivities = require("./src/migrateActivities");
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -24,10 +25,10 @@ admin.initializeApp();
 exports.handleNewProblemSolution =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
   functions.database
-    .ref("/jupyterSolutionsQueue/responses/{requestId}")
+    .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
-      jupyterTrigger.handler(data, data.taskKey, data.owner);
+      return jupyterTrigger.handler(data, data.taskKey, data.owner);
     });
 
 exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
@@ -84,22 +85,31 @@ exports.ltiLogin = functions.https.onRequest(ltiLogin.handler);
 
 exports.downloadEvents = downloadEvents.httpTrigger;
 
-// Fetch some JSON data from a remote site when npm start is running. 
+// Fetch some JSON data from a remote site when npm start is running.
 exports.getTest = functions.https.onRequest((req, res) => {
-  const url = "https://s3-ap-southeast-1.amazonaws.com/alset-public/example_solutions.json"
-  data = {};
-  httpUtil.call(url, "get", data).then((resp) => {
+  const url =
+    "https://s3-ap-southeast-1.amazonaws.com/alset-public/" +
+    "example_solutions.json";
+  const data = {};
+  httpUtil.call(url, "get", data).then(resp => {
     res.status(200).send(resp);
-  })
+  });
 });
 
-// Post data to a remote url and get json data back. 
+// Post data to a remote url and get json data back.
 exports.postTest = functions.https.onRequest((req, res) => {
-  const url = "https://9dq7wcv20e.execute-api.us-west-2.amazonaws.com/dev/yrtest2"
-  // Example of a ast parsing tasks sent to AWS lambda. 
-  data = {"A":{"B":"print('hi')"}};
-  httpUtil.call(url, "post", data).then((resp) => {
+  const url =
+    "https://9dq7wcv20e.execute-api.us-west-2.amazonaws.com/dev/yrtest2";
+  // Example of a ast parsing tasks sent to AWS lambda.
+  const data = { A: { B: "print('hi')" } };
+  httpUtil.call(url, "post", data).then(resp => {
     res.status(200).send(resp);
-  })
+  });
+});
 
+exports.migrateActivities = functions.https.onRequest((req, res) => {
+  return checkToken(req)
+    .then(() => migrateActivities.handler())
+    .then(() => res.send("Done"))
+    .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });

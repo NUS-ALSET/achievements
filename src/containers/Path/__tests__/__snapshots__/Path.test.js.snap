@@ -1,0 +1,80 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Path> should check snapshot 1`] = `
+ShallowWrapper {
+  "length": 1,
+  Symbol(enzyme.__root__): [Circular],
+  Symbol(enzyme.__unrendered__): <Path
+    match={
+        Object {
+            "params": Object {
+              "pathId": "testPath",
+            },
+          }
+    }
+    onAddAssistant={[Function]}
+    onAssistantKeyChange={[Function]}
+    onCloseDialog={[Function]}
+    onNotification={[Function]}
+    onOpen={[Function]}
+    onOpenSolution={[Function]}
+    onProblemChangeRequest={[Function]}
+    onProblemDialogShow={[Function]}
+    onProblemMoveRequest={[Function]}
+    onProblemSolutionSubmit={[Function]}
+    onProfileUpdate={[Function]}
+    onPushPath={[Function]}
+    onRemoveAssistant={[Function]}
+    onRequestMoreProblems={[Function]}
+    onShowCollaboratorsClick={[Function]}
+    onToggleJoinStatus={[Function]}
+    pathActivities={
+        Object {
+            "activities": Array [],
+          }
+    }
+    pathStatus="test"
+    ui={
+        Object {
+            "dialog": false,
+          }
+    }
+    uid="testUser"
+/>,
+  Symbol(enzyme.__renderer__): Object {
+    "batchedUpdates": [Function],
+    "getNode": [Function],
+    "render": [Function],
+    "simulateEvent": [Function],
+    "unmount": [Function],
+  },
+  Symbol(enzyme.__node__): Object {
+    "instance": null,
+    "key": undefined,
+    "nodeType": "class",
+    "props": Object {},
+    "ref": null,
+    "rendered": null,
+    "type": [Function],
+  },
+  Symbol(enzyme.__nodes__): Array [
+    Object {
+      "instance": null,
+      "key": undefined,
+      "nodeType": "class",
+      "props": Object {},
+      "ref": null,
+      "rendered": null,
+      "type": [Function],
+    },
+  ],
+  Symbol(enzyme.__options__): Object {
+    "adapter": ReactSixteenAdapter {
+      "options": Object {
+        "enableComponentDidUpdateOnSetState": true,
+      },
+    },
+    "context": Object {},
+  },
+}
+`;
