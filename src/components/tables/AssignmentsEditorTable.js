@@ -121,11 +121,11 @@ class AssignmentsEditorTable extends React.Component {
                 </TableCell>
                 <TableCell>
                   <TextField
+                    className={classes.dateEdit}
+                    defaultValue={assignment.open || "2018-01-01T09:00"}
                     InputLabelProps={{
                       shrink: true
                     }}
-                    className={classes.dateEdit}
-                    defaultValue={assignment.open || "2018-01-01T09:00"}
                     onChange={event =>
                       this.onUpdateAssignment(
                         assignment.id,
@@ -138,11 +138,11 @@ class AssignmentsEditorTable extends React.Component {
                 </TableCell>
                 <TableCell>
                   <TextField
+                    className={classes.dateEdit}
+                    defaultValue={assignment.deadline}
                     InputLabelProps={{
                       shrink: true
                     }}
-                    className={classes.dateEdit}
-                    defaultValue={assignment.deadline}
                     onChange={event =>
                       this.onUpdateAssignment(
                         assignment.id,

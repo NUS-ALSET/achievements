@@ -101,6 +101,8 @@ class ActivityDialog extends React.PureComponent {
           <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
             <Select
+              input={<Input id="select-multiple-levels" />}
+              margin="none"
               MenuProps={{
                 PaperProps: {
                   style: {
@@ -109,8 +111,6 @@ class ActivityDialog extends React.PureComponent {
                   }
                 }
               }}
-              input={<Input id="select-multiple-levels" />}
-              margin="none"
               onChange={e => this.onFieldChange("level", e.target.value)}
               value={activity.level || ""}
             >
@@ -125,10 +125,11 @@ class ActivityDialog extends React.PureComponent {
       case ACTIVITY_TYPES.codeCombatNumber.id:
         return (
           <TextField
+            defaultValue={activity && String(activity.count || "1")}
             fullWidth
             label="Levels amount"
             margin="normal"
-            onChange={e => this.onFieldChange("count", e.target.value)}
+            onChange={e => this.onFieldChange("count", Number(e.target.value))}
             type="number"
             value={activity.count}
           />
@@ -153,11 +154,13 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={activity && activity.frozen}
+              defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
-              onChange={e => this.onFieldChange("frozen", e.target.value)}
+              onChange={e =>
+                this.onFieldChange("frozen", Number(e.target.value))
+              }
               onKeyPress={this.catchReturn}
               type="number"
             />
@@ -183,20 +186,22 @@ class ActivityDialog extends React.PureComponent {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              defaultValue={"1" || (activity && activity.code)}
+              defaultValue={activity && String(activity.code || "1")}
               fullWidth
               label="Default code block"
               margin="dense"
-              onChange={e => this.onFieldChange("code", e.target.value)}
+              onChange={e => this.onFieldChange("code", Number(e.target.value))}
               onKeyPress={this.catchReturn}
               type="number"
             />
             <TextField
-              defaultValue={"1" || (activity && activity.frozen)}
+              defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
-              onChange={e => this.onFieldChange("frozen", e.target.value)}
+              onChange={e =>
+                this.onFieldChange("frozen", Number(e.target.value))
+              }
               onKeyPress={this.catchReturn}
               type="number"
             />

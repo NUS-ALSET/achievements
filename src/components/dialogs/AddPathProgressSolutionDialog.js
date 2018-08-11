@@ -44,7 +44,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     }
     const progress=parseFloat(
       pathProgress.solutions / pathProgress.totalActivities * FULL_PROGRESS
-    ).toFixed(2);
+    ).toFixed(2).replace(/\.0+$/, "");
     return `${progress}%`;
   };
   getProgressMessage = () => {

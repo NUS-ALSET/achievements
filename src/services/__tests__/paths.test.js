@@ -109,8 +109,11 @@ describe("Paths service tests", () => {
       once: () =>
         firebase.snap({
           owner: "cafebabe",
-          total: 0
+          totalActivities: 0
         })
+    });
+    firebase.refStub.withArgs("/paths/testPath/totalActivities").returns({
+      once: () => firebase.snap(0)
     });
     firebase.refStub.withArgs("/studentJoinedPaths/deadbeef/testPath").returns({
       set: value => {
@@ -124,7 +127,7 @@ describe("Paths service tests", () => {
           id: "testPath",
           owner: "cafebabe",
           solutions: 0,
-          total: 0
+          totalActivities: 0
         })
       );
   });

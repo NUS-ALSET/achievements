@@ -73,7 +73,7 @@
     },
     "completedActivities": {
       "$userKey": {
-        ".read": "auth != null && $userKey == auth.uid",
+        ".read": true,
         ".write": "auth != null && $userKey == auth.uid"
       }
     },

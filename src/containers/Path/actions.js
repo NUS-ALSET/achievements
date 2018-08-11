@@ -146,3 +146,22 @@ export const pathProblemOpen = (pathId, problemId) => ({
   pathId,
   problemId
 });
+
+export const PATH_REFRESH_SOLUTIONS_REQUEST = "PATH_REFRESH_SOLUTIONS_REQUEST";
+export const pathRefreshSolutionsRequest = pathId => ({
+  type: PATH_REFRESH_SOLUTIONS_REQUEST,
+  pathId
+});
+
+export const PATH_REFRESH_SOLUTIONS_SUCCESS = "PATH_REFRESH_SOLUTIONS_SUCCESS";
+export const pathRefreshSolutionsSuccess = pathId => ({
+  type: PATH_REFRESH_SOLUTIONS_SUCCESS,
+  pathId
+});
+
+export const PATH_REFRESH_SOLUTIONS_FAIL = "PATH_REFRESH_SOLUTIONS_FAIL";
+export const pathRefreshSolutionsFail = (pathId, reason) => ({
+  type: PATH_REFRESH_SOLUTIONS_FAIL,
+  pathId,
+  reason
+});

@@ -180,14 +180,19 @@ export class PathsService {
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {
-    return firebase
-      .database()
-      .ref(`/completedActivities/${solverId}/${pathId}`)
-      .once("value")
-      .then(snapshot => snapshot.val() || {})
-      .then(completed => ({
-        solutions: Object.keys(completed).length
-      }));
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/completedActivities/${solverId}/${pathId}`)
+        .once("value")
+        .then(snapshot => snapshot.val() || {})
+        .then(completed => Object.keys(completed).length),
+      firebase
+        .database()
+        .ref(`/paths/${pathId}/totalActivities`)
+        .once("value")
+        .then(snapshot => snapshot.val())
+    ]).then(data => ({ solutions: data[0], totalActivities: data[1] }));
   }
 
   fetchFile(fileId) {
@@ -203,10 +208,12 @@ export class PathsService {
         }
         resolve({
           ...data,
-          cells : data.cells.filter(d=>d.source.join('').replace(/\n/g,'')),
-          result : {
+          cells: data.cells.filter(d => d.source.join("").replace(/\n/g, "")),
+          result: {
             ...data.result,
-            cells : data.result.cells.filter(d=>d.source.join('').replace(/\n/g,'').length>0)
+            cells: data.result.cells.filter(
+              d => d.source.join("").replace(/\n/g, "").length > 0
+            )
           }
         });
       })
@@ -395,10 +402,10 @@ export class PathsService {
         case "jupyterInline":
           if (json) {
             const frozenSolution = json.cells
-              .filter(cell => cell.source.join('').trim())
+              .filter(cell => cell.source.join("").trim())
               .slice(-pathProblem.frozen);
             const frozenProblem = pathProblem.problemJSON.cells
-              .filter(cell => cell.source.join('').trim())
+              .filter(cell => cell.source.join("").trim())
               .slice(-pathProblem.frozen);
 
             frozenProblem.forEach((cell, index) => {
@@ -472,11 +479,15 @@ export class PathsService {
    * Store solution at firebase
    *
    * @param {String} uid
-   * @param {PathProblem} pathProblem
+   * @param {PathActivity} pathProblem
    * @param {any} solution
    * @returns {Promise<any>}
    */
   submitSolution(uid, pathProblem, solution) {
+    pathProblem = {
+      ...pathProblem,
+      problemId: pathProblem.problemId || pathProblem.id
+    };
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
@@ -781,6 +792,31 @@ export class PathsService {
       return ref.set(true);
     }
     return ref.remove();
+  }
+
+  /**
+   * @param {String} uid
+   * @param {IPathActivities} pathActivities
+   * @param {Object} codeCombatProfile
+   */
+  refreshPathSolutions(uid, pathActivities, codeCombatProfile) {
+    const actions = [];
+
+    if (!(codeCombatProfile && codeCombatProfile.id)) {
+      throw new Error("Missing CodeCombat profile");
+    }
+
+    for (const activity of pathActivities.activities) {
+      if (
+        [
+          ACTIVITY_TYPES.codeCombat.id,
+          ACTIVITY_TYPES.codeCombatNumber.id
+        ].includes(activity.type)
+      ) {
+        actions.push(this.submitSolution(uid, activity, "Completed"));
+      }
+    }
+    return Promise.all(actions);
   }
 }
 
