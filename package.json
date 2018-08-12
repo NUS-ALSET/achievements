@@ -101,7 +101,7 @@
     "windows-test": "set CI=true &&react-scripts test --env=jsdom",
     "coverage": "CI=true react-scripts test --env=jsdom --coverage",
     "test-mocha": "mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
-    "lint": "",
+    "lint-windows": "./scripts/lint.bat",
     "coverage-mocha": "cross-env NODE_ENV=test nyc mocha --require babel-core/register --require babel-polyfill --require jsdom-global/register --recursive ./tests",
     "eject": "react-scripts eject",
     "eslint": "eslint --fix src",
