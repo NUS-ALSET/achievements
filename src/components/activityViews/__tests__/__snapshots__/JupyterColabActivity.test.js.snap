@@ -2,7 +2,6 @@
 
 exports[`<JupyterColabActivity> should check snapshot 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <JupyterColabActivity
     dispatch={[Function]}
@@ -156,9 +155,17 @@ ShallowWrapper {
     "adapter": ReactSixteenAdapter {
       "options": Object {
         "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getSnapshotBeforeUpdate": true,
+        },
       },
     },
+    "attachTo": undefined,
     "context": Object {},
+    "hydrateIn": undefined,
   },
 }
 `;
