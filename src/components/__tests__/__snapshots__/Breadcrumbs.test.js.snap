@@ -5,7 +5,6 @@ ShallowWrapper {
   "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <WithStyles(Breadcrumbs)
-    actions={Object {}}
     paths={Array []}
 />,
   Symbol(enzyme.__renderer__): Object {
@@ -20,7 +19,6 @@ ShallowWrapper {
     "key": undefined,
     "nodeType": "class",
     "props": Object {
-      "actions": Object {},
       "classes": Object {
         "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
         "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",
@@ -39,7 +37,6 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "class",
       "props": Object {
-        "actions": Object {},
         "classes": Object {
           "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
           "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",

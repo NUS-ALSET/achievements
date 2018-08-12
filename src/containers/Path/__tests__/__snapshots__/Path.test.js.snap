@@ -15,20 +15,17 @@ ShallowWrapper {
     onAddAssistant={[Function]}
     onAssistantKeyChange={[Function]}
     onCloseDialog={[Function]}
-    onNotification={[Function]}
     onOpen={[Function]}
-    onOpenSolution={[Function]}
     onProblemChangeRequest={[Function]}
-    onProblemDialogShow={[Function]}
-    onProblemMoveRequest={[Function]}
-    onProblemSolutionSubmit={[Function]}
-    onProfileUpdate={[Function]}
-    onPushPath={[Function]}
     onRemoveAssistant={[Function]}
-    onRequestMoreProblems={[Function]}
-    onShowCollaboratorsClick={[Function]}
-    onToggleJoinStatus={[Function]}
-    pathActivities={Object {}}
+    pathActivities={
+        Object {
+            "activities": Array [],
+            "path": Object {
+              "id": "",
+            },
+          }
+    }
     pathStatus="test"
     ui={
         Object {
@@ -47,21 +44,413 @@ ShallowWrapper {
   Symbol(enzyme.__node__): Object {
     "instance": null,
     "key": undefined,
-    "nodeType": "class",
-    "props": Object {},
+    "nodeType": "function",
+    "props": Object {
+      "children": Array [
+        <WithStyles(Breadcrumbs)
+          action={
+                    Array [
+                              Object {
+                                "handler": [Function],
+                                "label": "Request more",
+                              },
+                              false,
+                              Object {
+                                "handler": [Function],
+                                "label": "Join",
+                              },
+                            ]
+          }
+          paths={
+                    Array [
+                              Object {
+                                "label": "Paths",
+                                "link": "/paths",
+                              },
+                              Object {
+                                "label": "Default",
+                              },
+                            ]
+          }
+/>,
+        false,
+        <AddTextSolutionDialog
+          onClose={[Function]}
+          onCommit={[Function]}
+          open={false}
+          solution={undefined}
+          taskId={undefined}
+/>,
+        <AddProfileDialog
+          defaultValue=""
+          externalProfile={
+                    Object {
+                              "description": "learn to Code JavaScript by Playing a Game",
+                              "id": "CodeCombat",
+                              "name": "Code Combat",
+                              "url": "https://codecombat.com",
+                            }
+          }
+          onClose={[Function]}
+          onCommit={[Function]}
+          open={false}
+/>,
+        <WithStyles(ActivitiesTable)
+          activities={Array []}
+          currentUserId="testUser"
+          onEditProblem={undefined}
+          onMoveProblem={[Function]}
+          onOpenProblem={[Function]}
+          pathOwnerId={undefined}
+          selectedPathId=""
+/>,
+        <ActivityDialog
+          activity={undefined}
+          onClose={[Function]}
+          onCommit={[Function]}
+          open={false}
+          pathId=""
+          uid="testUser"
+/>,
+        <ControlAssistantsDialog
+          assistants={false}
+          newAssistant={false}
+          onAddAssistant={[Function]}
+          onAssistantKeyChange={[Function]}
+          onClose={[Function]}
+          onRemoveAssistant={[Function]}
+          open={false}
+          target=""
+/>,
+      ],
+    },
     "ref": null,
-    "rendered": null,
-    "type": [Function],
+    "rendered": Array [
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "action": Array [
+            Object {
+              "handler": [Function],
+              "label": "Request more",
+            },
+            false,
+            Object {
+              "handler": [Function],
+              "label": "Join",
+            },
+          ],
+          "paths": Array [
+            Object {
+              "label": "Paths",
+              "link": "/paths",
+            },
+            Object {
+              "label": "Default",
+            },
+          ],
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      false,
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "onClose": [Function],
+          "onCommit": [Function],
+          "open": false,
+          "solution": undefined,
+          "taskId": undefined,
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "defaultValue": "",
+          "externalProfile": Object {
+            "description": "learn to Code JavaScript by Playing a Game",
+            "id": "CodeCombat",
+            "name": "Code Combat",
+            "url": "https://codecombat.com",
+          },
+          "onClose": [Function],
+          "onCommit": [Function],
+          "open": false,
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "activities": Array [],
+          "currentUserId": "testUser",
+          "onEditProblem": undefined,
+          "onMoveProblem": [Function],
+          "onOpenProblem": [Function],
+          "pathOwnerId": undefined,
+          "selectedPathId": "",
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "activity": undefined,
+          "onClose": [Function],
+          "onCommit": [Function],
+          "open": false,
+          "pathId": "",
+          "uid": "testUser",
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+      Object {
+        "instance": null,
+        "key": undefined,
+        "nodeType": "class",
+        "props": Object {
+          "assistants": false,
+          "newAssistant": false,
+          "onAddAssistant": [Function],
+          "onAssistantKeyChange": [Function],
+          "onClose": [Function],
+          "onRemoveAssistant": [Function],
+          "open": false,
+          "target": "",
+        },
+        "ref": null,
+        "rendered": null,
+        "type": [Function],
+      },
+    ],
+    "type": Symbol(react.fragment),
   },
   Symbol(enzyme.__nodes__): Array [
     Object {
       "instance": null,
       "key": undefined,
-      "nodeType": "class",
-      "props": Object {},
+      "nodeType": "function",
+      "props": Object {
+        "children": Array [
+          <WithStyles(Breadcrumbs)
+            action={
+                        Array [
+                                    Object {
+                                      "handler": [Function],
+                                      "label": "Request more",
+                                    },
+                                    false,
+                                    Object {
+                                      "handler": [Function],
+                                      "label": "Join",
+                                    },
+                                  ]
+            }
+            paths={
+                        Array [
+                                    Object {
+                                      "label": "Paths",
+                                      "link": "/paths",
+                                    },
+                                    Object {
+                                      "label": "Default",
+                                    },
+                                  ]
+            }
+/>,
+          false,
+          <AddTextSolutionDialog
+            onClose={[Function]}
+            onCommit={[Function]}
+            open={false}
+            solution={undefined}
+            taskId={undefined}
+/>,
+          <AddProfileDialog
+            defaultValue=""
+            externalProfile={
+                        Object {
+                                    "description": "learn to Code JavaScript by Playing a Game",
+                                    "id": "CodeCombat",
+                                    "name": "Code Combat",
+                                    "url": "https://codecombat.com",
+                                  }
+            }
+            onClose={[Function]}
+            onCommit={[Function]}
+            open={false}
+/>,
+          <WithStyles(ActivitiesTable)
+            activities={Array []}
+            currentUserId="testUser"
+            onEditProblem={undefined}
+            onMoveProblem={[Function]}
+            onOpenProblem={[Function]}
+            pathOwnerId={undefined}
+            selectedPathId=""
+/>,
+          <ActivityDialog
+            activity={undefined}
+            onClose={[Function]}
+            onCommit={[Function]}
+            open={false}
+            pathId=""
+            uid="testUser"
+/>,
+          <ControlAssistantsDialog
+            assistants={false}
+            newAssistant={false}
+            onAddAssistant={[Function]}
+            onAssistantKeyChange={[Function]}
+            onClose={[Function]}
+            onRemoveAssistant={[Function]}
+            open={false}
+            target=""
+/>,
+        ],
+      },
       "ref": null,
-      "rendered": null,
-      "type": [Function],
+      "rendered": Array [
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "action": Array [
+              Object {
+                "handler": [Function],
+                "label": "Request more",
+              },
+              false,
+              Object {
+                "handler": [Function],
+                "label": "Join",
+              },
+            ],
+            "paths": Array [
+              Object {
+                "label": "Paths",
+                "link": "/paths",
+              },
+              Object {
+                "label": "Default",
+              },
+            ],
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        false,
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "onClose": [Function],
+            "onCommit": [Function],
+            "open": false,
+            "solution": undefined,
+            "taskId": undefined,
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "defaultValue": "",
+            "externalProfile": Object {
+              "description": "learn to Code JavaScript by Playing a Game",
+              "id": "CodeCombat",
+              "name": "Code Combat",
+              "url": "https://codecombat.com",
+            },
+            "onClose": [Function],
+            "onCommit": [Function],
+            "open": false,
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "activities": Array [],
+            "currentUserId": "testUser",
+            "onEditProblem": undefined,
+            "onMoveProblem": [Function],
+            "onOpenProblem": [Function],
+            "pathOwnerId": undefined,
+            "selectedPathId": "",
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "activity": undefined,
+            "onClose": [Function],
+            "onCommit": [Function],
+            "open": false,
+            "pathId": "",
+            "uid": "testUser",
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+        Object {
+          "instance": null,
+          "key": undefined,
+          "nodeType": "class",
+          "props": Object {
+            "assistants": false,
+            "newAssistant": false,
+            "onAddAssistant": [Function],
+            "onAssistantKeyChange": [Function],
+            "onClose": [Function],
+            "onRemoveAssistant": [Function],
+            "open": false,
+            "target": "",
+          },
+          "ref": null,
+          "rendered": null,
+          "type": [Function],
+        },
+      ],
+      "type": Symbol(react.fragment),
     },
   ],
   Symbol(enzyme.__options__): Object {
