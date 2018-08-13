@@ -2,7 +2,6 @@
 
 exports[`<Home> Should test Home component 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <Home />,
   Symbol(enzyme.__renderer__): Object {
@@ -17,10 +16,10 @@ ShallowWrapper {
     "key": undefined,
     "nodeType": "host",
     "props": Object {
-      "children": "Under Development",
+      "children": "This is the home route",
     },
     "ref": null,
-    "rendered": "Under Development",
+    "rendered": "This is the home route",
     "type": "div",
   },
   Symbol(enzyme.__nodes__): Array [
@@ -29,10 +28,10 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "host",
       "props": Object {
-        "children": "Under Development",
+        "children": "This is the home route",
       },
       "ref": null,
-      "rendered": "Under Development",
+      "rendered": "This is the home route",
       "type": "div",
     },
   ],
@@ -40,9 +39,17 @@ ShallowWrapper {
     "adapter": ReactSixteenAdapter {
       "options": Object {
         "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getSnapshotBeforeUpdate": true,
+        },
       },
     },
+    "attachTo": undefined,
     "context": Object {},
+    "hydrateIn": undefined,
   },
 }
 `;
