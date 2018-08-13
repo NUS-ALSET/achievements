@@ -37,7 +37,10 @@ const styles = theme => ({
 
 class Breadcrumbs extends React.PureComponent {
   static propTypes = {
-    action: PropTypes.oneOf(PropTypes.arrayOf(breadcrumbAction)),
+    action: PropTypes.oneOfType([
+      PropTypes.arrayOf(breadcrumbAction),
+      breadcrumbAction
+    ]),
     classes: PropTypes.object,
     paths: PropTypes.arrayOf(breadcrumbPath).isRequired
   };

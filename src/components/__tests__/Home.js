@@ -1,10 +1,15 @@
 import React from "react";
 import { Home } from "../Home";
-import renderer from "react-test-renderer";
+import { createShallow } from "@material-ui/core/test-utils";
 
-it("Should test Home component", () => {
-  const component = renderer.create(<Home />);
+describe("<Home>", () => {
+  let shallow;
+  beforeEach(() => {
+    shallow = createShallow();
+  });
 
-  let tree = component.toJSON();
-  expect(tree).toMatchSnapshot();
+  it("Should test Home component", () => {
+    const component = shallow(<Home />);
+    expect(component).toMatchSnapshot();
+  });
 });

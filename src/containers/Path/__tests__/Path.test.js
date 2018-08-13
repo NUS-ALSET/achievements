@@ -23,21 +23,14 @@ describe("<Path>", () => {
         onAddAssistant={spy}
         onAssistantKeyChange={spy}
         onCloseDialog={spy}
-        onNotification={spy}
         onOpen={spy}
-        onOpenSolution={spy}
         onProblemChangeRequest={spy}
-        onProblemDialogShow={spy}
-        onProblemMoveRequest={spy}
-        onProblemSolutionSubmit={spy}
-        onProfileUpdate={spy}
-        onPushPath={spy}
         onRemoveAssistant={spy}
-        onRequestMoreProblems={spy}
-        onShowCollaboratorsClick={spy}
-        onToggleJoinStatus={spy}
         pathActivities={{
-          activities : []
+          activities: [],
+          path: {
+            id: ""
+          }
         }}
         pathStatus="test"
         ui={{
