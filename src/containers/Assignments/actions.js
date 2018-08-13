@@ -512,3 +512,9 @@ export const assignmentsSolutionsRefreshFail = (courseId, reason) => ({
   courseId,
   reason
 });
+
+export const ASSIGNMENTS_SHOW_HIDDEN_TOGGLE = "ASSIGNMENTS_SHOW_HIDDEN_TOGGLE";
+export const assignmentsShowHiddenToggle = (courseId) => ({
+  type: ASSIGNMENTS_SHOW_HIDDEN_TOGGLE,
+  courseId
+});

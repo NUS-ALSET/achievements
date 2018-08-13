@@ -80,13 +80,6 @@ ShallowWrapper {
           solution={undefined}
           taskId={undefined}
 />,
-        <WithStyles(AddJestSolutionDialog)
-          onClose={[Function]}
-          onCommit={[Function]}
-          open={false}
-          problem={undefined}
-          taskId={undefined}
-/>,
         <AddProfileDialog
           defaultValue=""
           externalProfile={
@@ -172,21 +165,6 @@ ShallowWrapper {
           "onCommit": [Function],
           "open": false,
           "solution": undefined,
-          "taskId": undefined,
-        },
-        "ref": null,
-        "rendered": null,
-        "type": [Function],
-      },
-      Object {
-        "instance": null,
-        "key": undefined,
-        "nodeType": "class",
-        "props": Object {
-          "onClose": [Function],
-          "onCommit": [Function],
-          "open": false,
-          "problem": undefined,
           "taskId": undefined,
         },
         "ref": null,
@@ -308,13 +286,6 @@ ShallowWrapper {
             solution={undefined}
             taskId={undefined}
 />,
-          <WithStyles(AddJestSolutionDialog)
-            onClose={[Function]}
-            onCommit={[Function]}
-            open={false}
-            problem={undefined}
-            taskId={undefined}
-/>,
           <AddProfileDialog
             defaultValue=""
             externalProfile={
@@ -400,21 +371,6 @@ ShallowWrapper {
             "onCommit": [Function],
             "open": false,
             "solution": undefined,
-            "taskId": undefined,
-          },
-          "ref": null,
-          "rendered": null,
-          "type": [Function],
-        },
-        Object {
-          "instance": null,
-          "key": undefined,
-          "nodeType": "class",
-          "props": Object {
-            "onClose": [Function],
-            "onCommit": [Function],
-            "open": false,
-            "problem": undefined,
             "taskId": undefined,
           },
           "ref": null,
