@@ -21,7 +21,8 @@ import {
   COURSE_MOVE_STUDENT_DIALOG_SHOW,
   COURSE_MY_COURSES_FETCH_SUCCESS,
   ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS,
-  ASSIGNMENT_MANUAL_UPDATE_FIELD
+  ASSIGNMENT_MANUAL_UPDATE_FIELD,
+  ASSIGNMENTS_SHOW_HIDDEN_TOGGLE
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -41,6 +42,7 @@ export const assignments = (
     currentTab: 0,
     dialog: false,
     courseMembers: [],
+    showHiddenAssignments: false,
     sort: {
       field: "studentName",
       direction: "asc"
@@ -321,6 +323,11 @@ export const assignments = (
           ...state.dialog,
           courses: action.courses
         }
+      };
+    case ASSIGNMENTS_SHOW_HIDDEN_TOGGLE:
+      return {
+        ...state,
+        showHiddenAssignments: !state.showHiddenAssignments
       };
     default:
       return state;

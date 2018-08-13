@@ -138,6 +138,7 @@
 /**
  * @typedef {Object} AssignmentsState
  *
+ * @property {Boolean} showHiddenAssignments
  * @property {Number} currentTab
  * @property {Object| Boolean} dialog
  * @property {Object} sort

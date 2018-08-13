@@ -10,7 +10,8 @@ import {
   courseAssignmentsOpen,
   assignmentAssistantKeyChange,
   assignmentAddAssistantRequest,
-  assignmentsSolutionsRefreshRequest
+  assignmentsSolutionsRefreshRequest,
+  assignmentsShowHiddenToggle
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -168,6 +169,8 @@ class Assignments extends React.Component {
     this.props.dispatch(
       assignmentsSolutionsRefreshRequest(this.props.course.id)
     );
+  toggleHiddenShow = () =>
+    this.props.dispatch(assignmentsShowHiddenToggle(this.props.course.id));
 
   getPasswordView() {
     return (
@@ -248,10 +251,16 @@ class Assignments extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            currentUser.isOwner && {
-              label: "Refresh",
-              handler: this.refreshSolutions
-            }
+            currentUser.isOwner && [
+              {
+                label: "Refresh",
+                handler: this.refreshSolutions
+              },
+              {
+                label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
+                handler: this.toggleHiddenShow
+              }
+            ]
           }
           paths={[
             {
