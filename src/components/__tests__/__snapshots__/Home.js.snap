@@ -16,10 +16,10 @@ ShallowWrapper {
     "key": undefined,
     "nodeType": "host",
     "props": Object {
-      "children": "This is the home route",
+      "children": "Under Development",
     },
     "ref": null,
-    "rendered": "This is the home route",
+    "rendered": "Under Development",
     "type": "div",
   },
   Symbol(enzyme.__nodes__): Array [
@@ -28,10 +28,10 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "host",
       "props": Object {
-        "children": "This is the home route",
+        "children": "Under Development",
       },
       "ref": null,
-      "rendered": "This is the home route",
+      "rendered": "Under Development",
       "type": "div",
     },
   ],
