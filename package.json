@@ -19,7 +19,7 @@
     "lodash": "^4.17.10",
     "matter-js": "^0.14.1",
     "mdi-react": "^2.1.19",
-    "nuka-carousel": "^4.2.1",
+    "nuka-carousel": "^4.3.6",
     "prop-types": "^15.6.0",
     "react": "^16.3.2",
     "react-ace": "^6.1.1",

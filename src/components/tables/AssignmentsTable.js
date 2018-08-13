@@ -21,7 +21,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import SendIcon from "@material-ui/icons/Send";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
-import RemoveRedEye from '@material-ui/icons/RemoveRedEye';
+import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -302,8 +302,8 @@ class AssignmentsTable extends React.PureComponent {
     }
   };
 
-openSolution=(assignment,solution)=>{
-    if(assignment.questionType==="PathActivity"){
+  openSolution = (assignment, solution) => {
+    if (assignment.questionType === "PathActivity") {
       this.props.dispatch(
         assignmentPathProblemSolutionRequest(
           assignment,
@@ -314,7 +314,7 @@ openSolution=(assignment,solution)=>{
         )
       );
     }
-  }
+  };
 
   render() {
     const {
@@ -417,27 +417,28 @@ openSolution=(assignment,solution)=>{
                   {studentInfo.name.slice(0, MAX_NAME_LENGTH) +
                     (studentInfo.length > MAX_NAME_LENGTH ? "..." : "")}
                 </TableCell>
-                {course.assignments
-                  .map(assignment => (
-                    <TableCell key={assignment.id}>
-                      <Fragment>
-                        {this.getSolution(
-                          assignment,
-                          studentInfo.solutions,
-                          studentInfo.id === currentUser.id
-                        )}
-                         { isInstructor
-                          && studentInfo.solutions[assignment.id]
-                          && assignment.questionType==="PathActivity"
-                          && <IconButton
-                              onClick={()=>this.openSolution(
+                {course.assignments.map(assignment => (
+                  <TableCell key={assignment.id}>
+                    <Fragment>
+                      {this.getSolution(
+                        assignment,
+                        studentInfo.solutions,
+                        studentInfo.id === currentUser.id
+                      )}
+                      {isInstructor &&
+                        studentInfo.solutions[assignment.id] &&
+                        assignment.questionType === "PathActivity" && (
+                          <IconButton
+                            onClick={() =>
+                              this.openSolution(
                                 assignment,
                                 studentInfo.solutions[assignment.id]
-                              )}
-                            >
+                              )
+                            }
+                          >
                             <RemoveRedEye />
                           </IconButton>
-                          }
+                        )}
 
                       {studentInfo.id === currentUser.id &&
                         (!APP_SETTING.isSuggesting && (
