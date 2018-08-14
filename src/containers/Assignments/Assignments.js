@@ -11,7 +11,8 @@ import {
   assignmentAssistantKeyChange,
   assignmentAddAssistantRequest,
   assignmentsSolutionsRefreshRequest,
-  assignmentsShowHiddenToggle
+  assignmentsShowHiddenToggle,
+  assignmentRemoveAssistantRequest
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -171,6 +172,14 @@ class Assignments extends React.Component {
     );
   toggleHiddenShow = () =>
     this.props.dispatch(assignmentsShowHiddenToggle(this.props.course.id));
+  onAddAssistant = (courseId, assistantId) =>
+    this.props.dispatch(assignmentAddAssistantRequest(courseId, assistantId));
+  onAssistantKeyChange = assistantKey =>
+    this.props.dispatch(assignmentAssistantKeyChange(assistantKey));
+  onRemoveAssistant = (courseId, assistantId) =>
+    this.props.dispatch(
+      assignmentRemoveAssistantRequest(courseId, assistantId)
+    );
 
   getPasswordView() {
     return (
@@ -303,12 +312,11 @@ class Assignments extends React.Component {
         {currentUser.isOwner && (
           <ControlAssistantsDialog
             assistants={(ui.dialog && ui.dialog.assistants) || []}
-            dispatch={dispatch}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
-            onAddAssistant={assignmentAddAssistantRequest}
-            onAssistantKeyChange={assignmentAssistantKeyChange}
-            onClose={assignmentCloseDialog}
-            onRemoveAssistant={() => {}}
+            onAddAssistant={this.onAddAssistant}
+            onAssistantKeyChange={this.onAssistantKeyChange}
+            onClose={this.closeDialog}
+            onRemoveAssistant={this.onRemoveAssistant}
             open={ui.dialog && ui.dialog.type === "CourseAssistants"}
             target={course.id}
           />
