@@ -1,6 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
+import { notificationShow } from "../containers//Root/actions";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -53,6 +54,9 @@ export const ACTIVITY_TYPES = {
   }
 };
 
+
+
+
 export class PathsService {
   auth() {
     return new Promise(resolve =>
@@ -70,6 +74,13 @@ export class PathsService {
           .then(resolve);
       })
     );
+  }
+  setStore(store) {
+    this.store = store;
+  }
+
+  dispatch(action) {
+    this.store.dispatch(action);
   }
 
   static getColabURL(fileId) {
@@ -344,14 +355,14 @@ export class PathsService {
         .push().key;
     const ref = firebase.database().ref(`/activities/${key}`);
     if(problemInfo.type===ACTIVITY_TYPES.jupyterInline.id){
-      return this.analysisAndSaveSolution(uid, pathId, problemInfo, ref, isNew,next,key);
+      return this.analyseProblem(uid, pathId, problemInfo, ref, isNew,next,key);
     }else{
-      return this.saveSolution(uid, pathId, problemInfo, ref, isNew,next,key)
+      return this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key)
     }
 
   }
 
-  saveSolution(uid, pathId, problemInfo, ref, isNew,next,key){
+  saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key){
     if (problemInfo.id) {
       delete problemInfo.id;
       next = ref.update( problemInfo );
@@ -371,12 +382,13 @@ export class PathsService {
       .then(() => key);
   }
 
-  analysisAndSaveSolution(uid, pathId, problemInfo, ref, isNew,next,key){
+  analyseProblem(uid, pathId, problemInfo, ref, isNew,next,key){
     return new Promise((resolve, reject) => {
       const fileId= this.getFileId(problemInfo.problemURL);
       if(fileId){
         this.fetchFile(fileId)
         .then(solution=>{
+        this.dispatch(notificationShow("analysing your code..."));
         const editableBlockCode= solution.cells.slice(0,solution.cells.length - problemInfo.frozen).map(c=>c.cell_type==='code' ? c.source.join("") : "" ).join("");
         const taskKey=firebase
           .ref(`/jupyterSolutionAnalysisQueue/tasks`)
@@ -402,17 +414,16 @@ export class PathsService {
               .then(
                 () =>{
                   if(response.val()){
+                    this.dispatch(notificationShow("Analysis complete"));
                     resolve(
-                      this.saveSolution(uid, pathId, {...problemInfo, givenSkills : response.val().solution ||  {}}, ref, isNew,next,key)
+                      this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills : response.val().solution ||  {}}, ref, isNew,next,key)
                     )
                   }else{
-                  resolve(this.saveSolution(uid, pathId, problemInfo, ref, isNew,next,key));
-                  console.log( "Failing - Unable to analysis your Editable block code");
-                    // reject(
-                    //   new Error(
-                    //     "Failing - Unable to analysis your Editable block code"
-                    //   )
-                    // )
+                  console.log('"Failing - Unable to analysis your editable block code');
+                  this.dispatch(notificationShow("Failing - Unable to analysis your Editable block code"));
+                  setTimeout(()=>{
+                    resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key));
+                  },1000)
                   }
                 }
               );
@@ -425,7 +436,7 @@ export class PathsService {
           });
         })
       }else{
-        resolve(this.saveSolution(uid, pathId, problemInfo, ref, isNew,next,key))
+        resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
       }
     });
   }
