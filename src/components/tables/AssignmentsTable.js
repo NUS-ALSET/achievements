@@ -43,6 +43,9 @@ const MAX_NAME_LENGTH = 15;
 const styles = theme => ({
   narrowCell: {
     padding: theme.spacing.unit
+  },
+  noWrap : {
+    whiteSpace: 'nowrap'
   }
 });
 
@@ -348,7 +351,7 @@ class AssignmentsTable extends React.PureComponent {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>
+            <TableCell className={classes.noWrap}>
               <TableSortLabel
                 active={sortState.field === "studentName"}
                 direction={sortState.direction}
@@ -416,7 +419,7 @@ class AssignmentsTable extends React.PureComponent {
             const studentInfo = course.members[id];
             return (
               <TableRow key={studentInfo.id}>
-                <TableCell>
+                <TableCell className={classes.noWrap}>
                   {isInstructor &&
                     course.owner === currentUser.id && (
                       <Fragment>
@@ -436,7 +439,7 @@ class AssignmentsTable extends React.PureComponent {
                     (studentInfo.length > MAX_NAME_LENGTH ? "..." : "")}
                 </TableCell>
                 {course.assignments.map(assignment => (
-                  <TableCell key={assignment.id}>
+                  <TableCell key={assignment.id}  className={classes.noWrap}>
                     <Fragment>
                       {this.getSolution(
                         assignment,
@@ -481,7 +484,7 @@ class AssignmentsTable extends React.PureComponent {
                   </TableCell>
                 ))}
                 {isInstructor && (
-                  <TableCell>
+                  <TableCell  className={classes.noWrap}>
                     {`${studentInfo.progress.totalSolutions} / ${
                       course.totalAssignments
                     } ${
