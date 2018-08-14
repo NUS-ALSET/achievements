@@ -9,6 +9,8 @@
 [![Build Status](https://travis-ci.org/NUS-ALSET/achievements.svg?branch=master)](https://travis-ci.org/NUS-ALSET/achievements)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/NUS-ALSET/achievements.svg?columns=all)](https://waffle.io/NUS-ALSET/achievements)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/NUS-ALSET/achievements.svg)](http://isitmaintained.com/project/NUS-ALSET/achievements "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/NUS-ALSET/achievements.svg)](http://isitmaintained.com/project/NUS-ALSET/achievements "Percentage of issues still open")
 
 **An integrated web application for learning and teaching programming:computer:**
 @[https://achievements-prod.firebaseapp.com/](https://achievements-prod.firebaseapp.com/#/home)
