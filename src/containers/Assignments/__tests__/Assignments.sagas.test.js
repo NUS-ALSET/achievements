@@ -14,8 +14,7 @@ import { NOTIFICATION_SHOW } from "../../Root/actions";
 
 describe("assignemnts sagas tests", () => {
   beforeEach(() =>
-    sinon.stub(coursesService, "addAssignment").callsFake(() => {})
-  );
+    sinon.stub(coursesService, "addAssignment").callsFake(() => {}));
 
   afterEach(() => coursesService.addAssignment.restore());
 

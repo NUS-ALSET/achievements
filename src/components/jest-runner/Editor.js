@@ -68,7 +68,7 @@ class Editor extends React.Component {
                     fontSize={16}
                     editorProps={{ $blockScrolling: true }}
                     showPrintMargin={false}
-                    readOnly={this.props.selectedFile && this.props.selectedFile.readOnly}
+                    readOnly={this.props.selectedFile && (this.props.selectedFile.readOnly || this.props.readOnly)}
                     onChange={(v) => { this.setState({ code: v }) }}
                 />
             </div>

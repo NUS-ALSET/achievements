@@ -32,7 +32,7 @@ import {
   takeLatest,
   throttle
 } from "redux-saga/effects";
-import { pathsService, PROBLEMS_TYPES } from "../../services/paths";
+import { pathsService, ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -53,7 +53,7 @@ export function* problemInitRequestHandler(action) {
       uid = yield select(state => state.firebase.auth.uid);
     }
 
-    yield put(problemInitSuccess(action.pathId, action.problemId, null));
+    yield put(problemInitSuccess(action.pathId, action.problemId, null, action.readOnly));
 
     const gapiAuthrozied = yield select(state => state.paths.gapiAuthorized);
 
@@ -71,7 +71,7 @@ export function* problemInitRequestHandler(action) {
       throw new Error("Missing path activity");
     }
 
-    yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem));
+    yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem, action.readOnly));
 
     const solution = yield action.solution &&
     action.solution.originalSolution &&
@@ -104,8 +104,8 @@ export function* problemSolutionRefreshRequestHandler(action) {
   }));
 
   switch (data.pathProblem.type) {
-    case PROBLEMS_TYPES.text.id:
-    case PROBLEMS_TYPES.jupyterInline.id:
+    case ACTIVITY_TYPES.text.id:
+    case ACTIVITY_TYPES.jupyterInline.id:
       if (typeof action.fileId !== "object") {
         return yield put(
           problemSolutionRefreshSuccess(action.problemId, {

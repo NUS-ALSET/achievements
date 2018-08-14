@@ -2,10 +2,8 @@
 
 exports[`<Breadcrumbs> Should test Breadcrumbs component 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <WithStyles(Breadcrumbs)
-    actions={Object {}}
     paths={Array []}
 />,
   Symbol(enzyme.__renderer__): Object {
@@ -20,7 +18,6 @@ ShallowWrapper {
     "key": undefined,
     "nodeType": "class",
     "props": Object {
-      "actions": Object {},
       "classes": Object {
         "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
         "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",
@@ -39,7 +36,6 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "class",
       "props": Object {
-        "actions": Object {},
         "classes": Object {
           "breadcrumbAction": "Breadcrumbs-breadcrumbAction-4",
           "breadcrumbActions": "Breadcrumbs-breadcrumbActions-3",
@@ -57,9 +53,17 @@ ShallowWrapper {
     "adapter": ReactSixteenAdapter {
       "options": Object {
         "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getSnapshotBeforeUpdate": true,
+        },
       },
     },
+    "attachTo": undefined,
     "context": Object {},
+    "hydrateIn": undefined,
   },
 }
 `;

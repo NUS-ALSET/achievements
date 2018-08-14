@@ -3,7 +3,7 @@ import firebase from "firebase";
 import assert from "assert";
 import sinon from "sinon";
 import Promise from "bluebird";
-import { PathsService, PROBLEMS_TYPES } from "../paths";
+import { PathsService, ACTIVITY_TYPES } from "../paths";
 
 import correctProblems from "./data/correctProblems";
 import incorrectProblems from "./data/incorrectProblems";
@@ -109,8 +109,11 @@ describe("Paths service tests", () => {
       once: () =>
         firebase.snap({
           owner: "cafebabe",
-          total: 0
+          totalActivities: 0
         })
+    });
+    firebase.refStub.withArgs("/paths/testPath/totalActivities").returns({
+      once: () => firebase.snap(0)
     });
     firebase.refStub.withArgs("/studentJoinedPaths/deadbeef/testPath").returns({
       set: value => {
@@ -124,7 +127,7 @@ describe("Paths service tests", () => {
           id: "testPath",
           owner: "cafebabe",
           solutions: 0,
-          total: 0
+          totalActivities: 0
         })
       );
   });
@@ -224,7 +227,7 @@ describe("Paths service tests", () => {
             pathName: "Test Path",
             problemId: "testProblem",
             problemName: "Test Problem",
-            type: PROBLEMS_TYPES.text.id
+            type: ACTIVITY_TYPES.text.id
           },
           "test solution"
         )

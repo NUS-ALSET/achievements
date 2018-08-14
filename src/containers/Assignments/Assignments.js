@@ -9,7 +9,9 @@ import {
   courseAssignmentsClose,
   courseAssignmentsOpen,
   assignmentAssistantKeyChange,
-  assignmentAddAssistantRequest
+  assignmentAddAssistantRequest,
+  assignmentsSolutionsRefreshRequest,
+  assignmentsShowHiddenToggle
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -72,7 +74,8 @@ class Assignments extends React.Component {
     auth: PropTypes.object,
     match: PropTypes.object,
     students: PropTypes.object,
-    courseMembers: PropTypes.array
+    courseMembers: PropTypes.array,
+    readOnly : PropTypes.bool
   };
   state = {
     password: ""
@@ -163,6 +166,12 @@ class Assignments extends React.Component {
 
   refreshProfileSolutions = () =>
     this.props.dispatch(assignmentRefreshProfilesRequest(this.props.course.id));
+  refreshSolutions = () =>
+    this.props.dispatch(
+      assignmentsSolutionsRefreshRequest(this.props.course.id)
+    );
+  toggleHiddenShow = () =>
+    this.props.dispatch(assignmentsShowHiddenToggle(this.props.course.id));
 
   getPasswordView() {
     return (
@@ -200,8 +209,8 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const { ui, students, auth, dispatch, course, currentUser } = this.props;
-
+    const { ui, students, auth, dispatch, course, currentUser, readOnly } = this.props;
+    
     if (!auth.isLoaded) {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
@@ -242,6 +251,18 @@ class Assignments extends React.Component {
     return (
       <Fragment>
         <Breadcrumbs
+          action={
+            currentUser.isOwner && [
+              {
+                label: "Refresh",
+                handler: this.refreshSolutions
+              },
+              {
+                label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
+                handler: this.toggleHiddenShow
+              }
+            ]
+          }
           paths={[
             {
               label: "Courses",
@@ -318,9 +339,10 @@ class Assignments extends React.Component {
           }
           pathProblem={ui.dialog.pathProblem}
           solution={ui.dialog.solution}
+          readOnly={readOnly}
         />
         <AddPathProgressSolutionDialog
-          assignmentId={ui.currentAssignment && ui.currentAssignment.id}
+          assignment={ui.currentAssignment}
           courseId={course.id}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "PathProgress"}
@@ -349,13 +371,14 @@ sagaInjector.inject(sagas);
  * @returns {*} props
  */
 const mapStateToProps = (state, ownProps) => ({
-  ui: getAssignmentsUIProps(state),
-  currentUser: getCurrentUserProps(state, ownProps),
-  course: getCourseProps(state, ownProps),
-  auth: state.firebase.auth,
-  students: state.firebase.data.courseMembers,
-  courseMembers: state.assignments.courseMembers,
-  assistants: state.assignments.assistants
+    ui: getAssignmentsUIProps(state),
+    currentUser: getCurrentUserProps(state, ownProps),
+    course: getCourseProps(state, ownProps),
+    auth: state.firebase.auth,
+    students: state.firebase.data.courseMembers,
+    courseMembers: state.assignments.courseMembers,
+    assistants: state.assignments.assistants,
+    readOnly : state.problem && state.problem.readOnly
 });
 
 export default compose(

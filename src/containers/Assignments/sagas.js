@@ -50,7 +50,10 @@ import {
   courseMoveStudentSuccess,
   ASSIGNMENT_PATH_PROGRESS_SOLUTION_REQUEST,
   assignmentPathProgressFetchSuccess,
-  ASSIGNMENT_SHOW_EDIT_DIALOG
+  ASSIGNMENT_SHOW_EDIT_DIALOG,
+  ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
+  assignmentsSolutionsRefreshSuccess,
+  assignmentsSolutionsRefreshFail
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -72,6 +75,8 @@ import {
   problemSolutionRefreshSuccess,
   problemSolveUpdate
 } from "../Activity/actions";
+import { solutionsService } from "../../services/solutions";
+import { getCourseProps } from "./selectors";
 
 // Since we're able to check 1 and only 1 course at once then we'll keep
 // course members channel at almost global variable...
@@ -143,7 +148,7 @@ export function* updateNewAssignmentFieldHandler(action) {
         );
 
         yield put(assignmentPathsFetchSuccess(paths));
-        yield put(updateNewAssignmentField("path", data.uid));
+        yield put(updateNewAssignmentField("path", (assignment.path || data.uid)));
 
         if (!data.manualUpdates.details) {
           yield put(
@@ -481,7 +486,8 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
       problemInitRequest(
         pathProblem.pathId,
         pathProblem.problemId,
-        action.solution
+        action.solution,
+        action.readOnly
       )
     );
 
@@ -584,6 +590,20 @@ export function* courseMoveStudentRequestHandler(action) {
         err.message
       )
     );
+  }
+}
+
+export function* assignmentsSolutionsRefreshRequestHandler(action) {
+  try {
+    const course = yield select(state =>
+      getCourseProps(state, { match: { params: action } })
+    );
+
+    yield call(solutionsService.refreshSolutions, course);
+    yield put(assignmentsSolutionsRefreshSuccess(action.courseId));
+  } catch (err) {
+    yield put(assignmentsSolutionsRefreshFail(action.courseId, err.message));
+    yield put(notificationShow(err.message));
   }
 }
 
@@ -692,6 +712,12 @@ export default [
     yield takeLatest(
       COURSE_MOVE_STUDENT_REQUEST,
       courseMoveStudentRequestHandler
+    );
+  },
+  function* watchAssignmentsSolutionsRefreshRequest() {
+    yield takeLatest(
+      ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
+      assignmentsSolutionsRefreshRequestHandler
     );
   }
 ];

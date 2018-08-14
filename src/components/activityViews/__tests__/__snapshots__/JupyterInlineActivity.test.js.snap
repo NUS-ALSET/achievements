@@ -2,7 +2,6 @@
 
 exports[`<JupyterInlineActivity> should check snapshot 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <JupyterInlineActivity
     dispatch={[Function]}
@@ -29,6 +28,7 @@ ShallowWrapper {
           action={[Function]}
           defaultValue={undefined}
           persistent={true}
+          readOnly={undefined}
           richEditor={true}
           solution={false}
           title="Edit code"
@@ -36,6 +36,7 @@ ShallowWrapper {
         undefined,
         undefined,
         <JupyterNotebook
+          readOnly={undefined}
           solution={
                     Object {
                               "json": "test",
@@ -55,6 +56,7 @@ ShallowWrapper {
           "action": [Function],
           "defaultValue": undefined,
           "persistent": true,
+          "readOnly": undefined,
           "richEditor": true,
           "solution": false,
           "title": "Edit code",
@@ -70,6 +72,7 @@ ShallowWrapper {
         "key": undefined,
         "nodeType": "class",
         "props": Object {
+          "readOnly": undefined,
           "solution": Object {
             "json": "test",
           },
@@ -93,6 +96,7 @@ ShallowWrapper {
             action={[Function]}
             defaultValue={undefined}
             persistent={true}
+            readOnly={undefined}
             richEditor={true}
             solution={false}
             title="Edit code"
@@ -100,6 +104,7 @@ ShallowWrapper {
           undefined,
           undefined,
           <JupyterNotebook
+            readOnly={undefined}
             solution={
                         Object {
                                     "json": "test",
@@ -119,6 +124,7 @@ ShallowWrapper {
             "action": [Function],
             "defaultValue": undefined,
             "persistent": true,
+            "readOnly": undefined,
             "richEditor": true,
             "solution": false,
             "title": "Edit code",
@@ -134,6 +140,7 @@ ShallowWrapper {
           "key": undefined,
           "nodeType": "class",
           "props": Object {
+            "readOnly": undefined,
             "solution": Object {
               "json": "test",
             },
@@ -151,9 +158,17 @@ ShallowWrapper {
     "adapter": ReactSixteenAdapter {
       "options": Object {
         "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getSnapshotBeforeUpdate": true,
+        },
       },
     },
+    "attachTo": undefined,
     "context": Object {},
+    "hydrateIn": undefined,
   },
 }
 `;

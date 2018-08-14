@@ -21,6 +21,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import SendIcon from "@material-ui/icons/Send";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
+import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
 
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -301,6 +302,20 @@ class AssignmentsTable extends React.PureComponent {
     }
   };
 
+  openSolution = (assignment, solution) => {
+    if (assignment.questionType === "PathActivity") {
+      this.props.dispatch(
+        assignmentPathProblemSolutionRequest(
+          assignment,
+          this.props.course.owner,
+          assignment.problem,
+          solution,
+          true
+        )
+      );
+    }
+  };
+
   render() {
     const {
       classes,
@@ -324,50 +339,47 @@ class AssignmentsTable extends React.PureComponent {
                 Student name
               </TableSortLabel>
             </TableCell>
-            {course.assignments
-              .filter(assignment => assignment.visible)
-              .map(assignment => (
-                <TableCell
-                  classes={{
-                    root: classes.narrowCell
-                  }}
-                  key={assignment.id}
-                  style={{
-                    whiteSpace: "normal",
-                    wordWrap: "break-word"
-                  }}
+            {course.assignments.map(assignment => (
+              <TableCell
+                classes={{
+                  root: classes.narrowCell
+                }}
+                key={assignment.id}
+                style={{
+                  whiteSpace: "normal",
+                  wordWrap: "break-word"
+                }}
+              >
+                <TableSortLabel
+                  active={sortState.field === assignment.id}
+                  direction={sortState.direction}
+                  onClick={() => this.onSortClick(assignment)}
                 >
-                  <TableSortLabel
-                    active={sortState.field === assignment.id}
-                    direction={sortState.direction}
-                    onClick={() => this.onSortClick(assignment)}
-                  >
-                    {assignment.name}
-                  </TableSortLabel>
-                  <div>
-                    {assignment.details && (
-                      <a
-                        href={assignment.details}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        details
-                      </a>
-                    )}
-                    {(assignment.details ? " " : "") + assignment.progress ||
-                      ""}
-                  </div>
-                  {!APP_SETTING.isSuggesting && (
-                    <div>
-                      {assignment.deadline &&
-                        `Deadline in ${distanceInWords(
-                          assignment.deadline,
-                          new Date()
-                        )}`}
-                    </div>
+                  {assignment.name}
+                </TableSortLabel>
+                <div>
+                  {assignment.details && (
+                    <a
+                      href={assignment.details}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      details
+                    </a>
                   )}
-                </TableCell>
-              ))}
+                  {(assignment.details ? " " : "") + assignment.progress || ""}
+                </div>
+                {!APP_SETTING.isSuggesting && (
+                  <div>
+                    {assignment.deadline &&
+                      `Deadline in ${distanceInWords(
+                        assignment.deadline,
+                        new Date()
+                      )}`}
+                  </div>
+                )}
+              </TableCell>
+            ))}
             {isInstructor && (
               <TableCell>
                 <TableSortLabel
@@ -405,39 +417,51 @@ class AssignmentsTable extends React.PureComponent {
                   {studentInfo.name.slice(0, MAX_NAME_LENGTH) +
                     (studentInfo.length > MAX_NAME_LENGTH ? "..." : "")}
                 </TableCell>
-                {course.assignments
-                  .filter(assignment => assignment.visible)
-                  .map(assignment => (
-                    <TableCell key={assignment.id}>
-                      <Fragment>
-                        {this.getSolution(
-                          assignment,
-                          studentInfo.solutions,
-                          studentInfo.id === currentUser.id
+                {course.assignments.map(assignment => (
+                  <TableCell key={assignment.id}>
+                    <Fragment>
+                      {this.getSolution(
+                        assignment,
+                        studentInfo.solutions,
+                        studentInfo.id === currentUser.id
+                      )}
+                      {isInstructor &&
+                        studentInfo.solutions[assignment.id] &&
+                        assignment.questionType === "PathActivity" && (
+                          <IconButton
+                            onClick={() =>
+                              this.openSolution(
+                                assignment,
+                                studentInfo.solutions[assignment.id]
+                              )
+                            }
+                          >
+                            <RemoveRedEye />
+                          </IconButton>
                         )}
 
-                        {studentInfo.id === currentUser.id &&
-                          (!APP_SETTING.isSuggesting && (
-                            <Button
-                              onClick={() =>
-                                this.onSubmitClick(
-                                  assignment,
-                                  studentInfo.solutions[assignment.id]
-                                )
-                              }
-                              style={{
-                                marginLeft: 4
-                              }}
-                              variant="raised"
-                            >
-                              {studentInfo.solutions[assignment.id]
-                                ? "Update"
-                                : "Submit"}
-                            </Button>
-                          ))}
-                      </Fragment>
-                    </TableCell>
-                  ))}
+                      {studentInfo.id === currentUser.id &&
+                        (!APP_SETTING.isSuggesting && (
+                          <Button
+                            onClick={() =>
+                              this.onSubmitClick(
+                                assignment,
+                                studentInfo.solutions[assignment.id]
+                              )
+                            }
+                            style={{
+                              marginLeft: 4
+                            }}
+                            variant="raised"
+                          >
+                            {studentInfo.solutions[assignment.id]
+                              ? "Update"
+                              : "Submit"}
+                          </Button>
+                        ))}
+                    </Fragment>
+                  </TableCell>
+                ))}
                 {isInstructor && (
                   <TableCell>
                     {`${studentInfo.progress.totalSolutions} / ${

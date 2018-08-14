@@ -19,7 +19,8 @@ export const problem = (
     case PROBLEM_INIT_SUCCESS:
       return {
         ...state,
-        pathProblem: action.payload
+        pathProblem: action.payload,
+        readOnly : action.readOnly
       };
     case PROBLEM_FINALIZE:
       return {

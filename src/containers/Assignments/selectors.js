@@ -48,7 +48,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       if (!solution) {
         return true;
       }
-
+      
       if (options.onlyVisible && !assignment.solutionVisible) {
         solution = "Completed";
       }
@@ -59,7 +59,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             createdAt,
             value: solution,
             validated: true,
-            published
+            published,
+            solution
           };
           return true;
         case ASSIGNMENTS_TYPES.Profile.id:
@@ -70,7 +71,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             orderValue: userAchievements.totalAchievements,
             value: userAchievements.id
               ? `${userAchievements.id} (${userAchievements.totalAchievements})`
-              : ""
+              : "",
+              solution
           };
           return true;
         case ASSIGNMENTS_TYPES.CodeCombat.id:
@@ -79,7 +81,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             createdAt,
             published,
             validated: userAchievements.id === solution,
-            value: "Completed"
+            value: "Completed",
+            solution,
           };
           return true;
         // Backward compatibility
@@ -90,7 +93,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: "Completed"
+            value: "Completed",
+            solution
           };
           return true;
         case ASSIGNMENTS_TYPES.PathProgress.id:
@@ -99,7 +103,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: solution
+            value: solution,
+            solution
           };
           return true;
         case ASSIGNMENTS_TYPES.TeamFormation.id:
@@ -108,7 +113,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: solution
+            value: solution,
+            solution
           };
           return true;
         default:
@@ -236,6 +242,7 @@ const getFrom = (source, field) => {
  * @returns {Object} ui props
  */
 export const getAssignmentsUIProps = state => ({
+  showHiddenAssignments: state.assignments.showHiddenAssignments,
   sortState: state.assignments.sort,
   currentTab: state.assignments.currentTab,
   dialog: state.assignments.dialog,
@@ -276,9 +283,14 @@ function getValueToSort(solutions, sortField) {
   return aValue.value;
 }
 
-function checkVisibilitySolution(assignments, key) {
+function checkVisibilitySolution(assignments, key, options) {
   const now = new Date().getTime();
   const assignment = assignments[key] || {};
+
+  if (options.showHiddenAssignments) {
+    return true;
+  }
+
   return (
     assignment.visible &&
     new Date(assignment.open).getTime() < now &&
@@ -299,6 +311,10 @@ export const getCourseProps = (state, ownProps) => {
   const instructorView = state.assignments.currentTab === INSTRUCTOR_TAB_VIEW;
   const assignmentsEdit = state.assignments.currentTab === INSTRUCTOR_TAB_EDIT;
   const now = new Date().getTime();
+  const options = {
+    showHiddenAssignments: state.assignments.showHiddenAssignments
+  };
+
   let members = state.assignments.courseMembers.map(courseMember => ({
     ...courseMember,
     solutions: getStudentSolutions(state, courseId, courseMember, {
@@ -315,10 +331,10 @@ export const getCourseProps = (state, ownProps) => {
       ...member,
       progress: {
         totalSolutions: Object.keys(member.solutions).filter(key =>
-          checkVisibilitySolution(assignments, key)
+          checkVisibilitySolution(assignments, key, options)
         ).length,
         lastSolutionTime: Object.keys(member.solutions)
-          .filter(key => checkVisibilitySolution(assignments, key))
+          .filter(key => checkVisibilitySolution(assignments, key, options))
           .map(
             id =>
               member.solutions[id].createdAt ||
@@ -377,7 +393,7 @@ export const getCourseProps = (state, ownProps) => {
     ...getFrom(state.firebase.data.courses, courseId),
     members: members.length ? sortedMembers : false,
     totalAssignments: Object.keys(assignments).filter(key =>
-      checkVisibilitySolution(assignments, key)
+      checkVisibilitySolution(assignments, key, options)
     ).length,
     assignments: Object.keys(assignments)
       .map(id => ({
@@ -390,9 +406,10 @@ export const getCourseProps = (state, ownProps) => {
       .filter(
         assignment =>
           assignmentsEdit ||
-          (assignment.visible &&
-            new Date(assignment.open).getTime() < now &&
-            new Date(assignment.deadline).getTime() > now)
+          (options.showHiddenAssignments ||
+            (assignment.visible &&
+              new Date(assignment.open).getTime() < now &&
+              new Date(assignment.deadline).getTime() > now))
       )
       .sort((a, b) => {
         if (a.orderIndex > b.orderIndex) {

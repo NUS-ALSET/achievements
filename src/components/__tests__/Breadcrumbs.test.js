@@ -12,9 +12,7 @@ describe("<Breadcrumbs>", () => {
   });
 
   it("Should test Breadcrumbs component", () => {
-    const component = shallow(
-      <Breadcrumbs actions={{}} paths={[]} />
-    );
+    const component = shallow(<Breadcrumbs paths={[]} />);
     expect(component).toMatchSnapshot();
   });
 

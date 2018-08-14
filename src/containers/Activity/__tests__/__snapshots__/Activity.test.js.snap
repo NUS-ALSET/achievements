@@ -2,7 +2,6 @@
 
 exports[`<Activity> should check snapshot 1`] = `
 ShallowWrapper {
-  "length": 1,
   Symbol(enzyme.__root__): [Circular],
   Symbol(enzyme.__unrendered__): <Activity
     match={
@@ -23,7 +22,7 @@ ShallowWrapper {
     "key": undefined,
     "nodeType": "host",
     "props": Object {
-      "children": "Loading",
+      "children": "Loading...",
       "style": Object {
         "padding": "20px 0px",
         "textAlign": "center",
@@ -31,7 +30,7 @@ ShallowWrapper {
       },
     },
     "ref": null,
-    "rendered": "Loading",
+    "rendered": "Loading...",
     "type": "div",
   },
   Symbol(enzyme.__nodes__): Array [
@@ -40,7 +39,7 @@ ShallowWrapper {
       "key": undefined,
       "nodeType": "host",
       "props": Object {
-        "children": "Loading",
+        "children": "Loading...",
         "style": Object {
           "padding": "20px 0px",
           "textAlign": "center",
@@ -48,7 +47,7 @@ ShallowWrapper {
         },
       },
       "ref": null,
-      "rendered": "Loading",
+      "rendered": "Loading...",
       "type": "div",
     },
   ],
@@ -56,9 +55,17 @@ ShallowWrapper {
     "adapter": ReactSixteenAdapter {
       "options": Object {
         "enableComponentDidUpdateOnSetState": true,
+        "lifecycles": Object {
+          "componentDidUpdate": Object {
+            "onSetState": true,
+          },
+          "getSnapshotBeforeUpdate": true,
+        },
       },
     },
+    "attachTo": undefined,
     "context": Object {},
+    "hydrateIn": undefined,
   },
 }
 `;

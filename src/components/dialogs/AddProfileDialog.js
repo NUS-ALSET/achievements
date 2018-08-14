@@ -27,9 +27,7 @@ class AddProfileDialog extends React.PureComponent {
     open: PropTypes.bool.isRequired
   };
 
-  state = {
-    login: ""
-  };
+  state = {};
 
   onProfileChange = e => {
     const { externalProfile } = this.props;
@@ -46,13 +44,15 @@ class AddProfileDialog extends React.PureComponent {
     this.onCommit();
   };
   onCommit = () => {
-    this.props.onCommit(this.state.login);
+    this.props.onCommit(this.state.login || this.props.defaultValue);
     this.props.onClose();
   };
 
   render() {
-    const { externalProfile, inProgress, onClose } = this.props;
-    const url = `${externalProfile.url}/user/${this.state.login}`;
+    const { externalProfile, defaultValue, inProgress, onClose } = this.props;
+    const login =
+      this.state.login === undefined ? defaultValue || "" : this.state.login;
+    const url = `${externalProfile.url}/user/${login}`;
 
     return (
       <Dialog onClose={onClose} open={this.props.open}>
@@ -70,7 +70,7 @@ class AddProfileDialog extends React.PureComponent {
             style={{
               width: 560
             }}
-            value={this.state.login}
+            value={login}
           />
         </DialogContent>
         <DialogActions>

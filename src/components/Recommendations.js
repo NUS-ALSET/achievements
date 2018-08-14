@@ -58,17 +58,15 @@ class Recommendations extends React.PureComponent {
               }}
               xs={12}
             >
-              {recs
-                .slice(1)
-                .map(rec => (
-                  <PathCard
-                    key={rec.problem}
-                    path={rec.path}
-                    problem={rec.problem}
-                    title={this.getRecTitle(rec)}
-                    video={rec.video}
-                  />
-                ))}
+              {recs.slice(1).map(rec => (
+                <PathCard
+                  key={rec.problem}
+                  path={rec.path}
+                  problem={rec.problem}
+                  title={this.getRecTitle(rec)}
+                  video={rec.video}
+                />
+              ))}
             </Grid>
           </Grid>
         </Paper>
