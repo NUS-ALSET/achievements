@@ -9,7 +9,14 @@ import ListItemText from "@material-ui/core/ListItemText";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 
-import StarIcon from "@material-ui/icons/Star";
+// material-ui icons in front of the drawer tabs
+import Whatshot from "@material-ui/icons/Whatshot";
+import School from "@material-ui/icons/School";
+import Explore from "@material-ui/icons/Explore";
+import Group from "@material-ui/icons/Group";
+import Person from "@material-ui/icons/Person";
+// isAdmin might not be serving any function anymore
+import Security from "@material-ui/icons/Security";
 
 const linkStyle = {
   textDecoration: "none"
@@ -22,7 +29,7 @@ export const DrawerMenuItems = (onRequestClose, userId, isAdmin) => (
       <Link style={linkStyle} to={"/home"}>
         <ListItem button>
           <ListItemIcon>
-            <StarIcon />
+            <Whatshot />
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
@@ -30,7 +37,7 @@ export const DrawerMenuItems = (onRequestClose, userId, isAdmin) => (
       <Link style={linkStyle} to={"/courses"}>
         <ListItem button>
           <ListItemIcon>
-            <StarIcon />
+            <School />
           </ListItemIcon>
           <ListItemText primary="Courses" />
         </ListItem>
@@ -38,7 +45,7 @@ export const DrawerMenuItems = (onRequestClose, userId, isAdmin) => (
       <Link style={linkStyle} to={"/paths"}>
         <ListItem button>
           <ListItemIcon>
-            <StarIcon />
+            <Explore />
           </ListItemIcon>
           <ListItemText primary="Paths" />
         </ListItem>
@@ -49,7 +56,7 @@ export const DrawerMenuItems = (onRequestClose, userId, isAdmin) => (
       <Link style={linkStyle} to={"/cohorts"}>
         <ListItem button>
           <ListItemIcon>
-            <StarIcon />
+            <Group />
           </ListItemIcon>
           <ListItemText primary="Cohorts" />
         </ListItem>
@@ -57,7 +64,7 @@ export const DrawerMenuItems = (onRequestClose, userId, isAdmin) => (
       <Link style={linkStyle} to={`/profile/${userId || "non-logged"}`}>
         <ListItem button>
           <ListItemIcon>
-            <StarIcon />
+            <Person />
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItem>
@@ -66,7 +73,7 @@ export const DrawerMenuItems = (onRequestClose, userId, isAdmin) => (
         <Link style={linkStyle} to={"/admin"}>
           <ListItem button>
             <ListItemIcon>
-              <StarIcon />
+              <Security />
             </ListItemIcon>
             <ListItemText primary="Administration" />
           </ListItem>
