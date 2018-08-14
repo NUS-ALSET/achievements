@@ -23,8 +23,6 @@ import {
   assignmentSolutionRequest
 } from "../../containers/Assignments/actions";
 
-const FULL_PROGRESS = 100;
-
 class AddPathProgressSolutionDialog extends React.PureComponent {
   static propTypes = {
     assignment: PropTypes.any,
@@ -42,10 +40,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     ) {
       return "No progress";
     }
-    const progress=parseFloat(
-      pathProgress.solutions / pathProgress.totalActivities * FULL_PROGRESS
-    ).toFixed(2).replace(/\.0+$/, "");
-    return `${progress}%`;
+    return `${pathProgress.solutions} of ${pathProgress.totalActivities}`;
   };
   getProgressMessage = () => {
     const pathProgress = this.props.pathProgress;

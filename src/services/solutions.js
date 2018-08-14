@@ -3,9 +3,6 @@ import each from "lodash/each";
 import firebase from "firebase";
 import { ASSIGNMENTS_TYPES, coursesService } from "./courses";
 
-const FULL_PERCENTAGE = 100;
-const MAX_FRACTIONAL = 2;
-
 export class SolutionsService {
   fetchOwnCourses(uid) {
     return firebase
@@ -79,12 +76,11 @@ export class SolutionsService {
                         changes.push({
                           assignments,
                           memberId: completedInfo.memberId,
-                          value:
-                            (FULL_PERCENTAGE *
-                              Object.keys(
-                                completedInfo.completed[pathInfo.pathId] || {}
-                              ).length) /
-                            pathInfo.total
+                          value: `${
+                            Object.keys(
+                              completedInfo.completed[pathInfo.pathId] || {}
+                            ).length
+                          } /${pathInfo.total}`
                         });
                       }
                     }
@@ -99,9 +95,7 @@ export class SolutionsService {
                           coursesService.submitSolution(
                             course.id,
                             assignment,
-                            `${changeInfo.value
-                              .toFixed(MAX_FRACTIONAL)
-                              .replace(/\.?0+$/, "")}%`,
+                            changeInfo.value,
                             changeInfo.memberId
                           )
                         )
