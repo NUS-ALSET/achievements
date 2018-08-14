@@ -36,6 +36,7 @@ import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import { APP_SETTING } from "../../achievementsApp/config";
 
+const MAX_TEXT_LENGTH = 40;
 const MAX_NAME_LENGTH = 15;
 
 const styles = theme => ({
@@ -104,6 +105,23 @@ class AssignmentsTable extends React.PureComponent {
       default:
         return result;
     }
+  }
+
+  /**
+   *
+   * @param {String} result
+   */
+  getReducedLength(result) {
+    result = result || "";
+
+    if (result.length > MAX_TEXT_LENGTH) {
+      return (
+        <Tooltip title={result}>
+          <span>{result.slice(1, MAX_TEXT_LENGTH)}</span>
+        </Tooltip>
+      );
+    }
+    return result;
   }
 
   getSolution(assignment, solutions, owner) {
@@ -213,7 +231,7 @@ class AssignmentsTable extends React.PureComponent {
             <DoneIcon />
           </IconButton>
         ) : (
-          result
+          this.getReducedLength(result)
         );
       default:
         return APP_SETTING.isSuggesting ? (
