@@ -308,7 +308,7 @@ class Assignments extends React.Component {
             newAssistant={ui.dialog && ui.dialog.newAssistant}
             onAddAssistant={assignmentAddAssistantRequest}
             onAssistantKeyChange={assignmentAssistantKeyChange}
-            onClose={assignmentCloseDialog}
+            onClose={this.closeDialog}
             onRemoveAssistant={() => {}}
             open={ui.dialog && ui.dialog.type === "CourseAssistants"}
             target={course.id}
