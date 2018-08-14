@@ -67,7 +67,7 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.jupyterInline.id:
       return "Solve jupyter task";
     case ACTIVITY_TYPES.youtube.id:
-      return "Watch Video and answer for questions";
+      return "Watch Video and answer the questions";
     case ACTIVITY_TYPES.game.id:
       return "Win the game";
     case ACTIVITY_TYPES.jest.id:
