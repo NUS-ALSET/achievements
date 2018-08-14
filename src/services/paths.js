@@ -390,10 +390,11 @@ export class PathsService {
         .then(solution=>{
         this.dispatch(notificationShow("analysing your code..."));
         const editableBlockCode= solution.cells.slice(0,solution.cells.length - problemInfo.frozen).map(c=>c.cell_type==='code' ? c.source.join("") : "" ).join("");
+        let timer= null;
         const taskKey=firebase
           .ref(`/jupyterSolutionAnalysisQueue/tasks`)
           .push().key;
-
+         
           firebase
           .database()
           .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
@@ -401,6 +402,7 @@ export class PathsService {
             if (response.val() === null) {
               return;
             }
+            window.clearTimeout(timer);
 
             firebase
               .database()
@@ -427,6 +429,7 @@ export class PathsService {
                   }
                 }
               );
+
           });
           firebase
           .ref(`/jupyterSolutionAnalysisQueue/tasks/${taskKey}`).set({
@@ -434,6 +437,16 @@ export class PathsService {
             owner : uid,
             solution : editableBlockCode || "",
           });
+          timer=setTimeout(()=>{
+            firebase
+            .database()
+            .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
+            .off();
+            this.dispatch(notificationShow("Analysis timeout"));
+            setTimeout(()=>{
+              resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
+            },1000)
+          },4000);
         })
       }else{
         resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
