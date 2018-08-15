@@ -441,9 +441,7 @@ export class CoursesService {
     return {
       showActions: isOwner,
       value: solution
-        ? assignment.solutionVisible || isOwner
-          ? solution
-          : "Complete"
+        ? assignment.solutionVisible || isOwner ? solution : "Complete"
         : ""
     };
   }
@@ -860,6 +858,12 @@ export class CoursesService {
         firebase
           .database()
           .ref(`/visibleSolutions/${courseId}/${studentId}`)
+          .remove()
+      )
+      .then(() =>
+        firebase
+          .database()
+          .ref(`/studentCoursePasswords/${courseId}/${studentId}`)
           .remove()
       );
   }
