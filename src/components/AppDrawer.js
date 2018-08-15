@@ -7,6 +7,9 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
 
+// import the NUS ALSET Achievements Logo background image
+import AppLogo from "../assets/NUS_ALSET_Achievements_Logo.png";
+
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
 
@@ -28,6 +31,10 @@ const styles = theme => ({
     justifyContent: "flex-end",
     padding: "0 8px",
     backgroundColor: theme.palette.background.paper,
+    backgroundImage: `url(${AppLogo})`,
+    backgroundSize: "contain",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "50% 50%",
     ...theme.mixins.toolbar
   }
 });
