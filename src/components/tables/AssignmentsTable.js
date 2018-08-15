@@ -42,6 +42,10 @@ const MAX_NAME_LENGTH = 15;
 const styles = theme => ({
   narrowCell: {
     padding: theme.spacing.unit
+  },
+  noWrapTooltip: {
+    maxWidth: "none",
+    minWidth: "none"
   }
 });
 
@@ -112,11 +116,13 @@ class AssignmentsTable extends React.PureComponent {
    * @param {String} result
    */
   getReducedLength(result) {
+    const { classes } = this.props;
+
     result = result || "";
 
     if (result.length > MAX_TEXT_LENGTH) {
       return (
-        <Tooltip title={result}>
+        <Tooltip classes={{ tooltip: classes.noWrapTooltip }} title={result}>
           <span>{result.slice(1, MAX_TEXT_LENGTH)}</span>
         </Tooltip>
       );
@@ -125,6 +131,7 @@ class AssignmentsTable extends React.PureComponent {
   }
 
   getSolution(assignment, solutions, owner) {
+    const { classes } = this.props;
     let solution = solutions[assignment.id];
     const result = (solution && solution.value) || "";
 
@@ -169,7 +176,10 @@ class AssignmentsTable extends React.PureComponent {
       case "PathProblem":
       case ASSIGNMENTS_TYPES.PathActivity.id:
         return solution ? (
-          <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
+          <Tooltip
+            classes={{ tooltip: classes.noWrapTooltip }}
+            title={<pre>{this.getTooltip(assignment, solution)}</pre>}
+          >
             <span>
               {/http[s]?:\/\//.test(
                 solution.originalSolution && solution.originalSolution.value
