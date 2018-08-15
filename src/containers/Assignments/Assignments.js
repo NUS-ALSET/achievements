@@ -76,7 +76,7 @@ class Assignments extends React.Component {
     match: PropTypes.object,
     students: PropTypes.object,
     courseMembers: PropTypes.array,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
   };
   state = {
     password: ""
@@ -218,8 +218,16 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const { ui, students, auth, dispatch, course, currentUser, readOnly } = this.props;
-    
+    const {
+      ui,
+      students,
+      auth,
+      dispatch,
+      course,
+      currentUser,
+      readOnly
+    } = this.props;
+
     if (!auth.isLoaded) {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
@@ -346,8 +354,8 @@ class Assignments extends React.Component {
             ["PathActivity", "PathProblem"].includes(ui.dialog.type)
           }
           pathProblem={ui.dialog.pathProblem}
-          solution={ui.dialog.solution}
           readOnly={readOnly}
+          solution={ui.dialog.solution}
         />
         <AddPathProgressSolutionDialog
           assignment={ui.currentAssignment}
@@ -379,14 +387,14 @@ sagaInjector.inject(sagas);
  * @returns {*} props
  */
 const mapStateToProps = (state, ownProps) => ({
-    ui: getAssignmentsUIProps(state),
-    currentUser: getCurrentUserProps(state, ownProps),
-    course: getCourseProps(state, ownProps),
-    auth: state.firebase.auth,
-    students: state.firebase.data.courseMembers,
-    courseMembers: state.assignments.courseMembers,
-    assistants: state.assignments.assistants,
-    readOnly : state.problem && state.problem.readOnly
+  ui: getAssignmentsUIProps(state),
+  currentUser: getCurrentUserProps(state, ownProps),
+  course: getCourseProps(state, ownProps),
+  auth: state.firebase.auth,
+  students: state.firebase.data.courseMembers,
+  courseMembers: state.assignments.courseMembers,
+  assistants: state.assignments.assistants,
+  readOnly: state.problem && state.problem.readOnly
 });
 
 export default compose(
