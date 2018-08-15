@@ -341,6 +341,7 @@ export const getCourseProps = (state, ownProps) => {
       }
     }))
     .sort((a, b) => {
+      const sortAssignment = assignments[state.assignments.sort.field];
       let aValue = a.name;
       let bValue = b.name;
       let result = 0;
@@ -368,6 +369,19 @@ export const getCourseProps = (state, ownProps) => {
       }
       aValue = aValue || "";
       bValue = bValue || "";
+
+      // Sorting TeamFormation for members count
+      if (
+        sortAssignment &&
+        sortAssignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id
+      ) {
+        const aCountData = (aValue.match(/\(\d+\)$/) || [])[0];
+        const bCountData = (bValue.match(/\(\d+\)$/) || [])[0];
+        if (aCountData !== bCountData) {
+          aValue = aCountData;
+          bValue = bCountData;
+        }
+      }
 
       if (aValue > bValue) {
         result = 1;
