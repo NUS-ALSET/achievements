@@ -349,7 +349,7 @@ class AssignmentsTable extends React.PureComponent {
   };
 
   openSolution = (assignment, solution) => {
-    if (assignment.questionType === "PathActivity") {
+    if (["PathActivity", "PathProblem"].includes(assignment.questionType)) {
       this.props.dispatch(
         assignmentPathProblemSolutionRequest(
           assignment,
@@ -468,19 +468,22 @@ class AssignmentsTable extends React.PureComponent {
                           studentInfo.id === currentUser.id
                         )}
                         {isInstructor &&
-                        studentInfo.solutions[assignment.id] &&
-                        assignment.questionType === "PathActivity" && (
-                          <IconButton
-                            onClick={() =>
-                              this.openSolution(
-                                assignment,
-                                studentInfo.solutions[assignment.id]
-                              )
-                            }
-                          >
-                            <RemoveRedEye />
-                          </IconButton>
-                        )}
+                          studentInfo.solutions[assignment.id] &&
+                          // Add old type support
+                          ["PathActivity", "PathProblem"].includes(
+                            assignment.questionType
+                          ) && (
+                            <IconButton
+                              onClick={() =>
+                                this.openSolution(
+                                  assignment,
+                                  studentInfo.solutions[assignment.id]
+                                )
+                              }
+                            >
+                              <RemoveRedEye />
+                            </IconButton>
+                          )}
 
                         {studentInfo.id === currentUser.id &&
                           (!APP_SETTING.isSuggesting && (
