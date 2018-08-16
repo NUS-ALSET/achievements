@@ -892,6 +892,16 @@ export class PathsService {
    */
   refreshPathSolutions(uid, pathActivities, codeCombatProfile) {
     const actions = [];
+    const needUpdate = !!pathActivities.activities.find(activity =>
+      [
+        ACTIVITY_TYPES.codeCombat.id,
+        ACTIVITY_TYPES.codeCombatNumber.id
+      ].includes(activity.type)
+    );
+
+    if (!needUpdate) {
+      return Promise.resolve();
+    }
 
     if (!(codeCombatProfile && codeCombatProfile.id)) {
       throw new Error("Missing CodeCombat profile");

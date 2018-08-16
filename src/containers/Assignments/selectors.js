@@ -48,7 +48,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       if (!solution) {
         return true;
       }
-      
+
       if (options.onlyVisible && !assignment.solutionVisible) {
         solution = "Completed";
       }
@@ -72,7 +72,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             value: userAchievements.id
               ? `${userAchievements.id} (${userAchievements.totalAchievements})`
               : "",
-              solution
+            solution
           };
           return true;
         case ASSIGNMENTS_TYPES.CodeCombat.id:
@@ -82,7 +82,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             value: "Completed",
-            solution,
+            solution
           };
           return true;
         // Backward compatibility
@@ -347,6 +347,7 @@ export const getCourseProps = (state, ownProps) => {
       }
     }))
     .sort((a, b) => {
+      const sortAssignment = assignments[state.assignments.sort.field];
       let aValue = a.name;
       let bValue = b.name;
       let result = 0;
@@ -375,6 +376,21 @@ export const getCourseProps = (state, ownProps) => {
       aValue = aValue || "";
       bValue = bValue || "";
 
+      // Sorting TeamFormation for members count
+      if (
+        sortAssignment &&
+        sortAssignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id &&
+        typeof aValue === "string" &&
+        typeof bValue === "string"
+      ) {
+        const aCountData = (aValue.match(/\(\d+\)$/) || [])[0];
+        const bCountData = (bValue.match(/\(\d+\)$/) || [])[0];
+        if (aCountData !== bCountData) {
+          aValue = aCountData;
+          bValue = bCountData;
+        }
+      }
+
       if (aValue > bValue) {
         result = 1;
       } else if (aValue < bValue) {
@@ -385,6 +401,7 @@ export const getCourseProps = (state, ownProps) => {
 
   members.forEach(member => {
     sortedMembers[member.id] = member;
+    sortedMembers[member.id].name = sortedMembers[member.id].name || "";
     return true;
   });
 

@@ -250,7 +250,7 @@
               root.child('courses/' + $courseKey + '/owner').val() == auth.uid
             ) &&
             root.child('coursePasswords/' + $courseKey).exists() &&
-            root.child('coursePasswords/' + $courseKey).val() == newData.val()"
+            (root.child('coursePasswords/' + $courseKey).val() == newData.val() || !newData.exists())"
         }
       }
     },
