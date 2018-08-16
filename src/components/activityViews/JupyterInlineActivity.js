@@ -33,7 +33,7 @@ class JupyterInlineActivity extends React.PureComponent {
 
   componentWillReceiveProps(nextProps){
     const { onChange, problem ,solution} = this.props;
-    const solutionJSON = cloneDeep(problem.problemJSON);  
+    const solutionJSON = this.state.solutionJSON && {...this.state.solutionJSON}; 
     if(onChange && solutionJSON && !isEqual(nextProps.solution, solution)){
     const final={
       ...solutionJSON,
