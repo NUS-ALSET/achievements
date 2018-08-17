@@ -21,6 +21,7 @@ ShallowWrapper {
     "props": Object {
       "classes": Object {
         "narrowCell": "AssignmentsTable-narrowCell-1",
+        "noWrapTooltip": "AssignmentsTable-noWrapTooltip-2",
       },
       "dispatch": [Function],
       "isInstructor": false,
@@ -37,6 +38,7 @@ ShallowWrapper {
       "props": Object {
         "classes": Object {
           "narrowCell": "AssignmentsTable-narrowCell-1",
+          "noWrapTooltip": "AssignmentsTable-noWrapTooltip-2",
         },
         "dispatch": [Function],
         "isInstructor": false,

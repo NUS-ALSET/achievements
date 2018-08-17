@@ -535,6 +535,11 @@ class ActivityDialog extends React.PureComponent {
         frozen: 1
       };
     }
+    if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
+      state={
+        name : APP_SETTING.levels[value].name
+      }
+    }
     this.setState({ [field]: value, ...state });
   };
   onCommit = () => {

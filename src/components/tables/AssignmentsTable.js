@@ -11,37 +11,50 @@ import {
   assignmentPathProgressSolutionRequest
 } from "../../containers/Assignments/actions";
 
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
+
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-
-import DeleteIcon from "@material-ui/icons/Delete";
-import DoneIcon from "@material-ui/icons/Done";
-import SendIcon from "@material-ui/icons/Send";
-import UserSwitch from "mdi-react/AccountSwitchIcon";
-import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
-
-import PropTypes from "prop-types";
-import React, { Fragment } from "react";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import MenuItem from "@material-ui/core/MenuItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import MenuList from "@material-ui/core/MenuList";
+import Paper from "@material-ui/core/Paper";
+import Popper from "@material-ui/core/Popper";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Tooltip from "@material-ui/core/Tooltip";
+
+import DeleteIcon from "@material-ui/icons/Delete";
+import DoneIcon from "@material-ui/icons/Done";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
+import SendIcon from "@material-ui/icons/Send";
+import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import { AccountService } from "../../services/account";
 import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import { APP_SETTING } from "../../achievementsApp/config";
 
+const MAX_TEXT_LENGTH = 40;
 const MAX_NAME_LENGTH = 15;
 
 const styles = theme => ({
   narrowCell: {
     padding: theme.spacing.unit
+  },
+  noWrapTooltip: {
+    maxWidth: "none",
+    minWidth: "none"
   }
 });
 
@@ -55,6 +68,11 @@ class AssignmentsTable extends React.PureComponent {
     sortState: PropTypes.object,
     currentUser: PropTypes.object,
     ui: PropTypes.object
+  };
+
+  state = {
+    menuAnchor: null,
+    currentStudent: null
   };
 
   getTooltip(assignment, solution) {
@@ -107,7 +125,27 @@ class AssignmentsTable extends React.PureComponent {
     }
   }
 
+  /**
+   *
+   * @param {String} result
+   */
+  getReducedLength(result) {
+    const { classes } = this.props;
+
+    result = result || "";
+
+    if (result.length > MAX_TEXT_LENGTH) {
+      return (
+        <Tooltip classes={{ tooltip: classes.noWrapTooltip }} title={result}>
+          <span>{result.slice(1, MAX_TEXT_LENGTH)}</span>
+        </Tooltip>
+      );
+    }
+    return result;
+  }
+
   getSolution(assignment, solutions, owner) {
+    const { classes } = this.props;
     let solution = solutions[assignment.id];
     const result = (solution && solution.value) || "";
 
@@ -152,7 +190,10 @@ class AssignmentsTable extends React.PureComponent {
       case "PathProblem":
       case ASSIGNMENTS_TYPES.PathActivity.id:
         return solution ? (
-          <Tooltip title={<pre>{this.getTooltip(assignment, solution)}</pre>}>
+          <Tooltip
+            classes={{ tooltip: classes.noWrapTooltip }}
+            title={<pre>{this.getTooltip(assignment, solution)}</pre>}
+          >
             <span>
               {/http[s]?:\/\//.test(
                 solution.originalSolution && solution.originalSolution.value
@@ -214,7 +255,7 @@ class AssignmentsTable extends React.PureComponent {
             <DoneIcon />
           </IconButton>
         ) : (
-          result
+          this.getReducedLength(result)
         );
       default:
         return APP_SETTING.isSuggesting ? (
@@ -248,6 +289,11 @@ class AssignmentsTable extends React.PureComponent {
         studentInfo.name
       )
     );
+
+  onCloseStudentMenu = () =>
+    this.setState({ menuAnchor: false, currentStudent: false });
+  onShowStudentMenu = (studentInfo, e) =>
+    this.setState({ menuAnchor: e.target, currentStudent: studentInfo });
 
   onSortClick = assignment =>
     this.props.dispatch(
@@ -303,7 +349,7 @@ class AssignmentsTable extends React.PureComponent {
   };
 
   openSolution = (assignment, solution) => {
-    if (assignment.questionType === "PathActivity") {
+    if (["PathActivity", "PathProblem"].includes(assignment.questionType)) {
       this.props.dispatch(
         assignmentPathProblemSolutionRequest(
           assignment,
@@ -325,161 +371,191 @@ class AssignmentsTable extends React.PureComponent {
       currentUser,
       sortState
     } = this.props;
+    const { currentStudent } = this.state;
 
     return (
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>
-              <TableSortLabel
-                active={sortState.field === "studentName"}
-                direction={sortState.direction}
-                onClick={() => this.onSortClick("studentName")}
-              >
-                Student name
-              </TableSortLabel>
-            </TableCell>
-            {course.assignments.map(assignment => (
-              <TableCell
-                classes={{
-                  root: classes.narrowCell
-                }}
-                key={assignment.id}
-                style={{
-                  whiteSpace: "normal",
-                  wordWrap: "break-word"
-                }}
-              >
-                <TableSortLabel
-                  active={sortState.field === assignment.id}
-                  direction={sortState.direction}
-                  onClick={() => this.onSortClick(assignment)}
-                >
-                  {assignment.name}
-                </TableSortLabel>
-                <div>
-                  {assignment.details && (
-                    <a
-                      href={assignment.details}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                    >
-                      details
-                    </a>
-                  )}
-                  {(assignment.details ? " " : "") + assignment.progress || ""}
-                </div>
-                {!APP_SETTING.isSuggesting && (
-                  <div>
-                    {assignment.deadline &&
-                      `Deadline in ${distanceInWords(
-                        assignment.deadline,
-                        new Date()
-                      )}`}
-                  </div>
-                )}
-              </TableCell>
-            ))}
-            {isInstructor && (
+      <Fragment>
+        <Table>
+          <TableHead>
+            <TableRow>
               <TableCell>
                 <TableSortLabel
-                  active={sortState.field === "progress"}
+                  active={sortState.field === "studentName"}
                   direction={sortState.direction}
-                  onClick={() => this.onSortClick("progress")}
+                  onClick={() => this.onSortClick("studentName")}
                 >
-                  Progress
+                  Student name
                 </TableSortLabel>
               </TableCell>
-            )}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {Object.keys(course.members).map(id => {
-            const studentInfo = course.members[id];
-            return (
-              <TableRow key={studentInfo.id}>
-                <TableCell>
-                  {isInstructor &&
-                    course.owner === currentUser.id && (
-                      <Fragment>
-                        <IconButton
-                          onClick={() => this.onStudentMoveClick(studentInfo)}
-                        >
-                          <UserSwitch style={{ fill: "rgba(0, 0, 0, 0.54)" }} />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => this.onStudentRemoveClick(studentInfo)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Fragment>
+              {course.assignments.map(assignment => (
+                <TableCell
+                  classes={{
+                    root: classes.narrowCell
+                  }}
+                  key={assignment.id}
+                  style={{
+                    whiteSpace: "normal",
+                    wordWrap: "break-word"
+                  }}
+                >
+                  <TableSortLabel
+                    active={sortState.field === assignment.id}
+                    direction={sortState.direction}
+                    onClick={() => this.onSortClick(assignment)}
+                  >
+                    {assignment.name}
+                  </TableSortLabel>
+                  <div>
+                    {assignment.details && (
+                      <a
+                        href={assignment.details}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        details
+                      </a>
                     )}
-                  {studentInfo.name.slice(0, MAX_NAME_LENGTH) +
-                    (studentInfo.length > MAX_NAME_LENGTH ? "..." : "")}
+                    {(assignment.details ? " " : "") + assignment.progress ||
+                      ""}
+                  </div>
+                  {!APP_SETTING.isSuggesting && (
+                    <div>
+                      {assignment.deadline &&
+                        `Deadline in ${distanceInWords(
+                          assignment.deadline,
+                          new Date()
+                        )}`}
+                    </div>
+                  )}
                 </TableCell>
-                {course.assignments.map(assignment => (
-                  <TableCell key={assignment.id}>
-                    <Fragment>
-                      {this.getSolution(
-                        assignment,
-                        studentInfo.solutions,
-                        studentInfo.id === currentUser.id
-                      )}
-                      {isInstructor &&
-                        studentInfo.solutions[assignment.id] &&
-                        assignment.questionType === "PathActivity" && (
-                          <IconButton
-                            onClick={() =>
-                              this.openSolution(
-                                assignment,
-                                studentInfo.solutions[assignment.id]
-                              )
-                            }
-                          >
-                            <RemoveRedEye />
-                          </IconButton>
-                        )}
-
-                      {studentInfo.id === currentUser.id &&
-                        (!APP_SETTING.isSuggesting && (
-                          <Button
-                            onClick={() =>
-                              this.onSubmitClick(
-                                assignment,
-                                studentInfo.solutions[assignment.id]
-                              )
-                            }
-                            style={{
-                              marginLeft: 4
-                            }}
-                            variant="raised"
-                          >
-                            {studentInfo.solutions[assignment.id]
-                              ? "Update"
-                              : "Submit"}
-                          </Button>
-                        ))}
-                    </Fragment>
-                  </TableCell>
-                ))}
-                {isInstructor && (
+              ))}
+              {isInstructor && (
+                <TableCell>
+                  <TableSortLabel
+                    active={sortState.field === "progress"}
+                    direction={sortState.direction}
+                    onClick={() => this.onSortClick("progress")}
+                  >
+                    Progress
+                  </TableSortLabel>
+                </TableCell>
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {Object.keys(course.members).map(id => {
+              const studentInfo = course.members[id];
+              return (
+                <TableRow key={studentInfo.id}>
                   <TableCell>
-                    {`${studentInfo.progress.totalSolutions} / ${
-                      course.totalAssignments
-                    } ${
-                      studentInfo.progress.lastSolutionTime
-                        ? new Date(
-                            studentInfo.progress.lastSolutionTime
-                          ).toLocaleTimeString()
-                        : ""
-                    }`}
+                    {isInstructor &&
+                      course.owner === currentUser.id && (
+                        <IconButton
+                          onClick={e => this.onShowStudentMenu(studentInfo, e)}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                      )}
+                    {studentInfo.name.slice(0, MAX_NAME_LENGTH) +
+                      (studentInfo.name.length > MAX_NAME_LENGTH ? "..." : "")}
                   </TableCell>
-                )}
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
+                  {course.assignments.map(assignment => (
+                    <TableCell key={assignment.id}>
+                      <Fragment>
+                        {this.getSolution(
+                          assignment,
+                          studentInfo.solutions,
+                          studentInfo.id === currentUser.id
+                        )}
+                        {isInstructor &&
+                          studentInfo.solutions[assignment.id] &&
+                          // Add old type support
+                          ["PathActivity", "PathProblem"].includes(
+                            assignment.questionType
+                          ) && (
+                            <IconButton
+                              onClick={() =>
+                                this.openSolution(
+                                  assignment,
+                                  studentInfo.solutions[assignment.id]
+                                )
+                              }
+                            >
+                              <RemoveRedEye />
+                            </IconButton>
+                          )}
+
+                        {studentInfo.id === currentUser.id &&
+                          (!APP_SETTING.isSuggesting && (
+                            <Button
+                              onClick={() =>
+                                this.onSubmitClick(
+                                  assignment,
+                                  studentInfo.solutions[assignment.id]
+                                )
+                              }
+                              style={{
+                                marginLeft: 4
+                              }}
+                              variant="raised"
+                            >
+                              {studentInfo.solutions[assignment.id]
+                                ? "Update"
+                                : "Submit"}
+                            </Button>
+                          ))}
+                      </Fragment>
+                    </TableCell>
+                  ))}
+                  {isInstructor && (
+                    <TableCell>
+                      {`${studentInfo.progress.totalSolutions} / ${
+                        course.totalAssignments
+                      } ${
+                        studentInfo.progress.lastSolutionTime
+                          ? new Date(
+                              studentInfo.progress.lastSolutionTime
+                            ).toLocaleTimeString()
+                          : ""
+                      }`}
+                    </TableCell>
+                  )}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+        {currentStudent && (
+          <Popper
+            anchorEl={this.state.menuAnchor}
+            open={true}
+            placement="left-start"
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={this.onCloseStudentMenu}>
+                <MenuList>
+                  <MenuItem
+                    onClick={() => this.onStudentMoveClick(currentStudent)}
+                  >
+                    <ListItemIcon>
+                      <UserSwitch style={{ fill: "rgba(0, 0, 0, 0.54)" }} />
+                    </ListItemIcon>
+                    <ListItemText>Move student to another course</ListItemText>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => this.onStudentRemoveClick(currentStudent)}
+                  >
+                    <ListItemIcon>
+                      <DeleteIcon />
+                    </ListItemIcon>
+                    <ListItemText>Remove student from course</ListItemText>
+                  </MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Popper>
+        )}
+      </Fragment>
     );
   }
 }

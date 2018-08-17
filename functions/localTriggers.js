@@ -2,6 +2,7 @@ const admin = require("firebase-admin");
 
 const updateProfile = require("./src/updateProfile");
 const executeJupyterSolution = require("./src/executeJupyterSolution");
+const analyseJupyterSolution = require("./src/analyseJupyterSolution");
 const outgoingRequests = require("./src/outgoingRequest");
 
 const serviceAccount = require("./config/serviceAccountKey");
@@ -14,3 +15,4 @@ admin.initializeApp({
 updateProfile.queueHandler();
 executeJupyterSolution.queueHandler();
 outgoingRequests.queueHandler();
+analyseJupyterSolution.queueHandler();

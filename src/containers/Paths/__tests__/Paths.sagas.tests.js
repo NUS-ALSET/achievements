@@ -48,6 +48,10 @@ describe("Paths sagas", () => {
         problemKey: "testKey",
         type: "PATH_PROBLEM_CHANGE_SUCCESS"
       },
+      {
+        message: "Problem Saved",
+        type: "NOTIFICATION_SHOW"
+      },
       { type: "PATH_CLOSE_DIALOG" }
     ]);
   });

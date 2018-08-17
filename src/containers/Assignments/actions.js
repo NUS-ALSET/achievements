@@ -196,7 +196,7 @@ export const assignmentPathProblemSolutionRequest = (
   problemOwner,
   problemId,
   solution,
-  readOnly=false
+  readOnly = false
 ) => ({
   type: ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
   assignment,
@@ -514,7 +514,15 @@ export const assignmentsSolutionsRefreshFail = (courseId, reason) => ({
 });
 
 export const ASSIGNMENTS_SHOW_HIDDEN_TOGGLE = "ASSIGNMENTS_SHOW_HIDDEN_TOGGLE";
-export const assignmentsShowHiddenToggle = (courseId) => ({
+export const assignmentsShowHiddenToggle = courseId => ({
   type: ASSIGNMENTS_SHOW_HIDDEN_TOGGLE,
   courseId
 });
+
+/*
+export const ASSIGNMENTS_TEST_SOMETHING = "ASSIGNMENTS_TEST_SOMETHING";
+export const assignmentsTestSomething = courseId => ({
+  type: ASSIGNMENTS_TEST_SOMETHING,
+  courseId
+});
+*/
