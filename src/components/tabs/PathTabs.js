@@ -113,7 +113,7 @@ class PathTabs extends React.Component {
           value={this.state.currentTab}
         >
           <Tab label="Joined Paths" />
-          <Tab label="My Paths" />
+          <Tab label="Created Paths" />
           <Tab label="Public Paths" />
         </Tabs>
         <PathsTable

@@ -17,9 +17,17 @@ import { historyService } from "./services/history";
 const history = createHashHistory();
 const store = configureStore(undefined, history);
 const theme = createMuiTheme({
+  // palette: {
+    // primary: {
+      // main: '#1a237e'//deepblue,
+    // },
+    // secondary: {
+      // main: '#c62828'//red,
+    // },
+  // },
   typography: {
     htmlFontSize: 14
-  }
+  },
 });
 
 coursesService.setStore(store);
