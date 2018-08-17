@@ -205,7 +205,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
       }
       default : {
         status = null;
-        errMsg = err,message;
+        errMsg = err.message;
       }
     }
     yield put(problemSolutionExecutionFail(action.problemId, { status }))
