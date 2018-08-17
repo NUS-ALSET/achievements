@@ -1,5 +1,5 @@
 import { APP_SETTING } from "../achievementsApp/config";
-import { DrawerMenuItems } from "./AppDrawerElements";
+import AppDrawerElements from "./AppDrawerElements";
 
 import { compose } from "redux";
 
@@ -59,7 +59,7 @@ class AppDrawer extends React.PureComponent {
             </IconButton>
           </Hidden>
         </div>
-        {DrawerMenuItems(onRequestClose, userId, isAdmin)}
+        {AppDrawerElements(onRequestClose, userId, isAdmin)}
       </div>
     );
 

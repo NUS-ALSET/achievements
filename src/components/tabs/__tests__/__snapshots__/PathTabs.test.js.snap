@@ -45,7 +45,7 @@ ShallowWrapper {
                     label="Joined Paths"
           />
           <WithStyles(Tab)
-                    label="My Paths"
+                    label="Created Paths"
           />
           <WithStyles(Tab)
                     label="Public Paths"
@@ -108,7 +108,7 @@ ShallowWrapper {
               label="Joined Paths"
 />,
             <WithStyles(Tab)
-              label="My Paths"
+              label="Created Paths"
 />,
             <WithStyles(Tab)
               label="Public Paths"
@@ -138,7 +138,7 @@ ShallowWrapper {
             "key": undefined,
             "nodeType": "class",
             "props": Object {
-              "label": "My Paths",
+              "label": "Created Paths",
             },
             "ref": null,
             "rendered": null,
@@ -206,7 +206,7 @@ ShallowWrapper {
                         label="Joined Paths"
             />
             <WithStyles(Tab)
-                        label="My Paths"
+                        label="Created Paths"
             />
             <WithStyles(Tab)
                         label="Public Paths"
@@ -269,7 +269,7 @@ ShallowWrapper {
                 label="Joined Paths"
 />,
               <WithStyles(Tab)
-                label="My Paths"
+                label="Created Paths"
 />,
               <WithStyles(Tab)
                 label="Public Paths"
@@ -299,7 +299,7 @@ ShallowWrapper {
               "key": undefined,
               "nodeType": "class",
               "props": Object {
-                "label": "My Paths",
+                "label": "Created Paths",
               },
               "ref": null,
               "rendered": null,
