@@ -8,7 +8,6 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import cloneDeep from "lodash/cloneDeep";
-import isEqual from "lodash/isEqual";
 
 import {
   problemSolutionRefreshFail,

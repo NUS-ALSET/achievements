@@ -203,6 +203,10 @@ export function* problemSolutionRefreshRequestHandler(action) {
         errMsg = 'Failing - You have changed the last code block.';
         break;
       }
+      default : {
+        status = null;
+        errMsg = err,message;
+      }
     }
     yield put(problemSolutionExecutionFail(action.problemId, { status }))
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
