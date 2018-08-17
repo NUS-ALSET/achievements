@@ -1,42 +1,49 @@
-import { APP_SETTING } from "../../achievementsApp/config";
-import AppBarMenuItems from "../../components/AppBarMenuItems";
-// import { Home } from "../../components/Home";
-import Home from "../Home/AltHome";
+import React, { Fragment } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import { ConnectedRouter as Router } from "connected-react-router";
-import { connect } from "react-redux";
+
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
-import Account from "../../containers/Account/Account";
-import AppBar from "@material-ui/core/AppBar";
 
+import { APP_SETTING } from "../../achievementsApp/config";
+
+// for Drawer and AppBar
+import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
 
-import Assignments from "../Assignments/Assignments";
-import Button from "@material-ui/core/Button";
-import Courses from "../Courses/Courses";
-
-import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
-
-import Menu from "@material-ui/core/Menu";
-import MenuIcon from "@material-ui/icons/Menu";
-
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import Paths from "../Paths/Paths";
-import PropTypes from "prop-types";
-import React, { Fragment } from "react";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import withStyles from "@material-ui/core/styles/withStyles";
+// for Routes
+import Home from "../Home/AltHome";
+import Account from "../../containers/Account/Account";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
 import Admin from "../Admin/Admin";
 import Activity from "../Activity/Activity";
+import Assignments from "../Assignments/Assignments";
+import Courses from "../Courses/Courses";
 import Path from "../Path/Path";
-
+import Paths from "../Paths/Paths";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeView/HomeV2";
+
+// from Material-UI
+import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
+import Hidden from "@material-ui/core/Hidden";
+import IconButton from "@material-ui/core/IconButton";
+import Menu from "@material-ui/core/Menu";
+// MenuIcon is the Hamburger Icon to toggle Drawer
+import MenuIcon from "@material-ui/icons/Menu";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import withStyles from "@material-ui/core/styles/withStyles";
+
+/* this AppFrame is the main framework of our UI,
+ * it describes the responsive drawer with an appbar
+ * Routes are passed as props to be rendered within this component*/
+
 
 const styles = theme => ({
   "@global": {
@@ -73,7 +80,8 @@ const styles = theme => ({
   },
   appBar: {
     [theme.breakpoints.up("lg")]: {
-      width: "calc(100% - " + APP_SETTING.drawerWidth + "px)"
+      // up.lg = large or more, 1280px or larger
+      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`,
     }
   },
   drawer: {
@@ -87,7 +95,7 @@ const styles = theme => ({
     height: "calc(100% - 56px)",
     marginTop: 56,
     [theme.breakpoints.up("lg")]: {
-      width: "calc(100% - " + APP_SETTING.drawerWidth + "px)"
+      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`,
     },
     [theme.breakpoints.up("sm")]: {
       height: "calc(100% - 64px)",
