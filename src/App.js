@@ -11,6 +11,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
+import { pathsService } from "./services/paths";
 import { historyService } from "./services/history";
 
 const history = createHashHistory();
@@ -23,6 +24,7 @@ const theme = createMuiTheme({
 
 coursesService.setStore(store);
 historyService.setStore(store);
+pathsService.setStore(store);
 
 class App extends React.Component {
   render() {
