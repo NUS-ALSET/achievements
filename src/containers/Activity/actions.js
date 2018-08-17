@@ -60,12 +60,10 @@ export const problemSolutionRefreshSuccess = (problemId, payload) => ({
   payload
 });
 
-export const PROBLEM_SOLUTION_EXECUTION_FAIL = 
-  "PROBLEM_SOLUTION_EXECUTION_FAIL";
-
-export const problemSolutionExecutionFail = (problemId, payload) => ({
-  type :PROBLEM_SOLUTION_EXECUTION_FAIL,
-  problemId,
+export const PROBLEM_SOLUTION_EXECUTION_STATUS = 
+  "PROBLEM_SOLUTION_EXECUTION_STATUS";
+export const problemSolutionExecutionStatus = (payload) => ({
+  type :PROBLEM_SOLUTION_EXECUTION_STATUS,
   payload
 })
 

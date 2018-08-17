@@ -20,7 +20,7 @@ import {
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
   problemSolutionSubmitSuccess,
-  problemSolutionExecutionFail
+  problemSolutionExecutionStatus
 } from "./actions";
 import { delay } from "redux-saga";
 
@@ -126,6 +126,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
   try {
     yield put(notificationShow("Fetching your solution"));
+    yield put(problemSolutionExecutionStatus({ status : 'CHECKING' }));
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
@@ -146,6 +147,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
+    yield put(problemSolutionExecutionStatus({ status : 'EXECUTING' }));
     yield put(notificationShow("Checking your solution"));
 
     const { solution, timedOut } = yield race({
@@ -172,7 +174,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
-        yield put(problemSolutionExecutionFail(action.problemId, { status : 'FAILED' }))
+        yield put(problemSolutionExecutionStatus( { status : 'FAILING' }))
         yield put(
           notificationShow(
             "Failing - Your solution did not pass the provided tests."
@@ -180,11 +182,11 @@ export function* problemSolutionRefreshRequestHandler(action) {
         );
       } else {
         yield put(notificationShow("Solution is valid"));
-        yield put(problemSolutionExecutionFail(action.problemId, { status : 'COMPLETED' }))
+        yield put(problemSolutionExecutionStatus( { status : 'COMPLETE' }))
       }
     }
     yield put(
-      problemSolutionRefreshSuccess(action.problemId, {
+      problemSolutionRefreshSuccess( {
         id: pathSolution.id,
         json: solution,
       })
@@ -208,7 +210,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
         errMsg = err.message;
       }
     }
-    yield put(problemSolutionExecutionFail(action.problemId, { status }))
+    yield put(problemSolutionExecutionStatus({ status }))
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
     yield put(notificationShow(errMsg));
   }
