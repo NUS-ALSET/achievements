@@ -356,8 +356,9 @@ export class CoursesService {
       });
   }
 
-  submitSolution(courseId, assignment, value) {
-    const userId = this.getUser("uid");
+  submitSolution(courseId, assignment, value, userId) {
+    userId = userId || this.getUser("uid");
+
     return Promise.resolve()
       .then(() => {
         switch (assignment.questionType) {
@@ -857,6 +858,12 @@ export class CoursesService {
         firebase
           .database()
           .ref(`/visibleSolutions/${courseId}/${studentId}`)
+          .remove()
+      )
+      .then(() =>
+        firebase
+          .database()
+          .ref(`/studentCoursePasswords/${courseId}/${studentId}`)
           .remove()
       );
   }

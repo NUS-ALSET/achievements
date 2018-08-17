@@ -1,5 +1,5 @@
 import { APP_SETTING } from "../../achievementsApp/config";
-import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
+import AppBarMenuItems from "../../components/AppBarMenuItems";
 // import { Home } from "../../components/Home";
 import Home from "../Home/AltHome";
 import { Route } from "react-router-dom";
@@ -22,7 +22,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Menu from "@material-ui/core/Menu";
 import MenuIcon from "@material-ui/icons/Menu";
 
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 import Paths from "../Paths/Paths";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -184,7 +184,7 @@ class AppFrame extends React.Component {
                       id="loginMenuButton"
                       onClick={this.handleMenuOpen}
                     >
-                      <MoreVertIcon />
+                      <AccountCircle />
                     </IconButton>
                     <Menu
                       anchorEl={
@@ -195,7 +195,7 @@ class AppFrame extends React.Component {
                       onClose={this.handleMenuClose}
                       open={!!anchorElId}
                     >
-                      <AppBarMenuItemsExport
+                      <AppBarMenuItems
                         isAuth={userId}
                         login={this.handleLogin}
                         logout={this.handleLogout}

@@ -91,7 +91,7 @@
       }
     ],
     "react/prefer-es6-class": 2,
-    "react/jsx-sort-props": 2
+    "react/jsx-sort-props": [2, {"ignoreCase": true}]
   },
   "plugins": [
     "react"

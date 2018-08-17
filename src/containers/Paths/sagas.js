@@ -69,6 +69,7 @@ export function* pathProblemChangeRequestHandler(action) {
       action.problemInfo
     );
     yield put(pathProblemChangeSuccess(action.pathId, action.problemInfo, key));
+    yield put(notificationShow('Problem Saved'));
     yield put(pathCloseDialog());
   } catch (err) {
     yield put(

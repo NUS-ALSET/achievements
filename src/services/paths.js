@@ -1,6 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
+import { notificationShow } from "../containers//Root/actions";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -53,6 +54,9 @@ export const ACTIVITY_TYPES = {
   }
 };
 
+
+
+
 export class PathsService {
   auth() {
     return new Promise(resolve =>
@@ -70,6 +74,13 @@ export class PathsService {
           .then(resolve);
       })
     );
+  }
+  setStore(store) {
+    this.store = store;
+  }
+
+  dispatch(action) {
+    this.store.dispatch(action);
   }
 
   static getColabURL(fileId) {
@@ -180,14 +191,19 @@ export class PathsService {
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {
-    return firebase
-      .database()
-      .ref(`/completedActivities/${solverId}/${pathId}`)
-      .once("value")
-      .then(snapshot => snapshot.val() || {})
-      .then(completed => ({
-        solutions: Object.keys(completed).length
-      }));
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/completedActivities/${solverId}/${pathId}`)
+        .once("value")
+        .then(snapshot => snapshot.val() || {})
+        .then(completed => Object.keys(completed).length),
+      firebase
+        .database()
+        .ref(`/paths/${pathId}/totalActivities`)
+        .once("value")
+        .then(snapshot => snapshot.val())
+    ]).then(data => ({ solutions: data[0], totalActivities: data[1] }));
   }
 
   fetchFile(fileId) {
@@ -203,10 +219,12 @@ export class PathsService {
         }
         resolve({
           ...data,
-          cells : data.cells.filter(d=>d.source.join('').replace(/\n/g,'')),
-          result : {
+          cells: data.cells.filter(d => d.source.join("").replace(/\n/g, "")),
+          result: {
             ...data.result,
-            cells : data.result.cells.filter(d=>d.source.join('').replace(/\n/g,'').length>0)
+            cells: data.result.cells.filter(
+              d => d.source.join("").replace(/\n/g, "").length > 0
+            )
           }
         });
       })
@@ -336,12 +354,20 @@ export class PathsService {
         .ref("/activities")
         .push().key;
     const ref = firebase.database().ref(`/activities/${key}`);
+    if(problemInfo.type===ACTIVITY_TYPES.jupyterInline.id){
+      return this.analyseProblem(uid, pathId, problemInfo, ref, isNew,next,key);
+    }else{
+      return this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key)
+    }
 
+  }
+
+  saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key){
     if (problemInfo.id) {
       delete problemInfo.id;
-      next = ref.update(problemInfo);
+      next = ref.update( problemInfo );
     } else {
-      next = ref.set(problemInfo);
+      next = ref.set( problemInfo );
     }
     return next
       .then(
@@ -354,6 +380,78 @@ export class PathsService {
             .transaction(activities => ++activities)
       )
       .then(() => key);
+  }
+
+  analyseProblem(uid, pathId, problemInfo, ref, isNew,next,key){
+    return new Promise((resolve, reject) => {
+      const fileId= this.getFileId(problemInfo.problemURL);
+      if(fileId){
+        this.fetchFile(fileId)
+        .then(solution=>{
+        this.dispatch(notificationShow("analysing your code..."));
+        const editableBlockCode= solution.cells.slice(0,solution.cells.length - problemInfo.frozen).map(c=>c.cell_type==='code' ? c.source.join("") : "" ).join("");
+        let timer= null;
+        const taskKey=firebase
+          .ref(`/jupyterSolutionAnalysisQueue/tasks`)
+          .push().key;
+         
+          firebase
+          .database()
+          .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
+          .on("value", response => {
+            if (response.val() === null) {
+              return;
+            }
+            window.clearTimeout(timer);
+
+            firebase
+              .database()
+              .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
+              .off();
+
+              firebase
+              .database()
+              .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
+              .remove()
+              .then(
+                () =>{
+                  if(response.val()){
+                    this.dispatch(notificationShow("Analysis complete"));
+                    resolve(
+                      this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills : response.val().solution ||  {}}, ref, isNew,next,key)
+                    )
+                  }else{
+                  console.log('"Failing - Unable to analysis your editable block code');
+                  this.dispatch(notificationShow("Failing - Unable to analysis your Editable block code"));
+                  setTimeout(()=>{
+                    resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key));
+                  },1000)
+                  }
+                }
+              );
+
+          });
+          firebase
+          .ref(`/jupyterSolutionAnalysisQueue/tasks/${taskKey}`).set({
+            taskKey,
+            owner : uid,
+            solution : editableBlockCode || "",
+          });
+          timer=setTimeout(()=>{
+            firebase
+            .database()
+            .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
+            .off();
+            this.dispatch(notificationShow("Analysis timeout"));
+            setTimeout(()=>{
+              resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
+            },1000)
+          },4000);
+        })
+      }else{
+        resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
+      }
+    });
   }
 
   /**
@@ -395,10 +493,10 @@ export class PathsService {
         case "jupyterInline":
           if (json) {
             const frozenSolution = json.cells
-              .filter(cell => cell.source.join('').trim())
+              .filter(cell => cell.source.join("").trim())
               .slice(-pathProblem.frozen);
             const frozenProblem = pathProblem.problemJSON.cells
-              .filter(cell => cell.source.join('').trim())
+              .filter(cell => cell.source.join("").trim())
               .slice(-pathProblem.frozen);
 
             frozenProblem.forEach((cell, index) => {
@@ -472,11 +570,15 @@ export class PathsService {
    * Store solution at firebase
    *
    * @param {String} uid
-   * @param {PathProblem} pathProblem
+   * @param {PathActivity} pathProblem
    * @param {any} solution
    * @returns {Promise<any>}
    */
   submitSolution(uid, pathProblem, solution) {
+    pathProblem = {
+      ...pathProblem,
+      problemId: pathProblem.problemId || pathProblem.id
+    };
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
@@ -781,6 +883,41 @@ export class PathsService {
       return ref.set(true);
     }
     return ref.remove();
+  }
+
+  /**
+   * @param {String} uid
+   * @param {IPathActivities} pathActivities
+   * @param {Object} codeCombatProfile
+   */
+  refreshPathSolutions(uid, pathActivities, codeCombatProfile) {
+    const actions = [];
+    const needUpdate = !!pathActivities.activities.find(activity =>
+      [
+        ACTIVITY_TYPES.codeCombat.id,
+        ACTIVITY_TYPES.codeCombatNumber.id
+      ].includes(activity.type)
+    );
+
+    if (!needUpdate) {
+      return Promise.resolve();
+    }
+
+    if (!(codeCombatProfile && codeCombatProfile.id)) {
+      throw new Error("Missing CodeCombat profile");
+    }
+
+    for (const activity of pathActivities.activities) {
+      if (
+        [
+          ACTIVITY_TYPES.codeCombat.id,
+          ACTIVITY_TYPES.codeCombatNumber.id
+        ].includes(activity.type)
+      ) {
+        actions.push(this.submitSolution(uid, activity, "Completed"));
+      }
+    }
+    return Promise.all(actions);
   }
 }
 

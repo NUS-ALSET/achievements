@@ -1,11 +1,14 @@
 import { APP_SETTING } from "../achievementsApp/config";
-import { DrawerMenuItems } from "./AppDrawerElements";
+import AppDrawerElements from "./AppDrawerElements";
 
 import { compose } from "redux";
 
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
+
+// import the NUS ALSET Achievements Logo background image
+import AppLogo from "../assets/NUS_ALSET_Achievements_Logo.png";
 
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
@@ -28,6 +31,10 @@ const styles = theme => ({
     justifyContent: "flex-end",
     padding: "0 8px",
     backgroundColor: theme.palette.background.paper,
+    backgroundImage: `url(${AppLogo})`,
+    backgroundSize: "contain",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "50% 50%",
     ...theme.mixins.toolbar
   }
 });
@@ -52,7 +59,7 @@ class AppDrawer extends React.PureComponent {
             </IconButton>
           </Hidden>
         </div>
-        {DrawerMenuItems(onRequestClose, userId, isAdmin)}
+        {AppDrawerElements(onRequestClose, userId, isAdmin)}
       </div>
     );
 
@@ -60,12 +67,12 @@ class AppDrawer extends React.PureComponent {
       <div className={className}>
         <Hidden lgUp>
           <Drawer
-            ModalProps={{
-              keepMounted: true
-            }}
             anchor="left"
             classes={{
               paper: classes.someClass
+            }}
+            ModalProps={{
+              keepMounted: true
             }}
             onClose={onRequestClose}
             open={mobileDrawerOpen}

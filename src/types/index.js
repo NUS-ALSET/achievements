@@ -1,4 +1,4 @@
-import { arrayOf, shape, string, number, boolean } from "prop-types";
+import { arrayOf, boolean, func, number, shape, string } from "prop-types";
 
 // A problem could have other fields depending on its type
 export const activity = shape({
@@ -20,4 +20,14 @@ export const pathActivities = shape({
     totalActivities: number
   }),
   activities: arrayOf(activity).isRequired
+});
+
+export const breadcrumbAction = shape({
+  label: string.isRequired,
+  handler: func.isRequired
+});
+
+export const breadcrumbPath = shape({
+  label: string.isRequired,
+  link: string
 });

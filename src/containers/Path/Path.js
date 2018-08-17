@@ -28,7 +28,8 @@ import {
   pathActivitiesSelector,
   PATH_STATUS_JOINED,
   PATH_STATUS_OWNER,
-  PATH_STATUS_NOT_JOINED
+  PATH_STATUS_NOT_JOINED,
+  codeCombatProfileSelector
 } from "./selectors";
 import {
   pathAddCollaboratorRequest,
@@ -36,6 +37,7 @@ import {
   pathMoreProblemsRequest,
   pathOpen,
   pathOpenSolutionDialog,
+  pathRefreshSolutionsRequest,
   pathRemoveCollaboratorRequest,
   pathShowCollaboratorsDialog,
   pathToggleJoinStatusRequest
@@ -72,22 +74,23 @@ export class Path extends React.Component {
     classes: PropTypes.object,
     codeCombatProfile: PropTypes.any,
     match: PropTypes.object,
-    onAddAssistant: PropTypes.func.isRequired,
-    onAssistantKeyChange: PropTypes.func.isRequired,
-    onCloseDialog: PropTypes.func.isRequired,
-    onNotification: PropTypes.func.isRequired,
-    onOpen: PropTypes.func.isRequired,
-    onOpenSolution: PropTypes.func.isRequired,
-    onProblemChangeRequest: PropTypes.func.isRequired,
-    onProblemDialogShow: PropTypes.func.isRequired,
-    onProblemMoveRequest: PropTypes.func.isRequired,
-    onProblemSolutionSubmit: PropTypes.func.isRequired,
-    onProfileUpdate: PropTypes.func.isRequired,
-    onPushPath: PropTypes.func.isRequired,
-    onRemoveAssistant: PropTypes.func.isRequired,
-    onRequestMoreProblems: PropTypes.func.isRequired,
-    onShowCollaboratorsClick: PropTypes.func.isRequired,
-    onToggleJoinStatus: PropTypes.func.isRequired,
+    onAddAssistant: PropTypes.func,
+    onAssistantKeyChange: PropTypes.func,
+    onCloseDialog: PropTypes.func,
+    onNotification: PropTypes.func,
+    onOpen: PropTypes.func,
+    onOpenSolution: PropTypes.func,
+    onProblemChangeRequest: PropTypes.func,
+    onProblemDialogShow: PropTypes.func,
+    onProblemMoveRequest: PropTypes.func,
+    onProblemSolutionSubmit: PropTypes.func,
+    onProfileUpdate: PropTypes.func,
+    onPushPath: PropTypes.func,
+    onRefreshSolutions: PropTypes.func,
+    onRemoveAssistant: PropTypes.func,
+    onRequestMoreProblems: PropTypes.func,
+    onShowCollaboratorsClick: PropTypes.func,
+    onToggleJoinStatus: PropTypes.func,
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
     ui: PropTypes.any,
@@ -137,7 +140,8 @@ export class Path extends React.Component {
       this.props.pathActivities.activities.length
     );
 
-  refreshSolutions = () => this.props.onNotification("test");
+  refreshSolutions = () =>
+    this.props.onRefreshSolutions(this.props.pathActivities.path.id);
 
   changeJoinStatus = () =>
     this.props.onToggleJoinStatus(
@@ -244,7 +248,7 @@ export class Path extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            pathStatus !== PATH_STATUS_OWNER && [
+            pathStatus !== PATH_STATUS_OWNER ? [
               allFinished && {
                 label: "Request more",
                 handler: this.requestMoreProblems.bind(this)
@@ -257,7 +261,7 @@ export class Path extends React.Component {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
               }
-            ]
+            ] : []
           }
           paths={[
             {
@@ -367,11 +371,7 @@ const mapStateToProps = (state, ownProps) => ({
   pathStatus: pathStatusSelector(state, ownProps),
   ui: state.path.ui,
   uid: state.firebase.auth.uid,
-  // FIXIT: move it to selectors
-  codeCombatProfile:
-    state.firebase.data.userAchievements &&
-    state.firebase.data.userAchievements[state.firebase.auth.uid] &&
-    state.firebase.data.userAchievements[state.firebase.auth.uid].CodeCombat
+  codeCombatProfile: codeCombatProfileSelector(state)
 });
 
 const mapDispatchToProps = {
@@ -388,6 +388,7 @@ const mapDispatchToProps = {
   onProblemMoveRequest: pathActivityMoveRequest,
   onProblemSolutionSubmit: problemSolutionSubmitRequest,
   onPushPath: push,
+  onRefreshSolutions: pathRefreshSolutionsRequest,
   onRemoveAssistant: pathRemoveCollaboratorRequest,
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest

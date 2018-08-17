@@ -18,8 +18,6 @@ import Typography from "@material-ui/core/Typography";
 
 import LaunchIcon from "@material-ui/icons/KeyboardArrowRight";
 
-import loremIpsum from "lorem-ipsum";
-
 const recsMock = {
   paths: [
     "If-then II",
@@ -69,7 +67,7 @@ class Home extends React.PureComponent {
                       <LaunchIcon />
                     </IconButton>
                   }
-                  subtitle={loremIpsum()}
+                  subtitle={"Text"}
                 />
               </GridListTile>
             ))}
@@ -89,7 +87,7 @@ class Home extends React.PureComponent {
                       <LaunchIcon />
                     </IconButton>
                   }
-                  subtitle={loremIpsum()}
+                  subtitle={"Text"}
                 />
               </GridListTile>
             ))}
@@ -113,7 +111,7 @@ class Home extends React.PureComponent {
                       <LaunchIcon />
                     </IconButton>
                   }
-                  subtitle={loremIpsum()}
+                  subtitle={"Text"}
                 />
               </GridListTile>
             ))}
@@ -124,6 +122,8 @@ class Home extends React.PureComponent {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  //
+});
 
 export default compose(connect(mapStateToProps))(Home);

@@ -196,7 +196,7 @@ export const assignmentPathProblemSolutionRequest = (
   problemOwner,
   problemId,
   solution,
-  readOnly=false
+  readOnly = false
 ) => ({
   type: ASSIGNMENT_PATH_PROBLEM_SOLUTION_REQUEST,
   assignment,
@@ -490,3 +490,39 @@ export const courseMyCoursesFetchSuccess = courses => ({
   type: COURSE_MY_COURSES_FETCH_SUCCESS,
   courses
 });
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST";
+export const assignmentsSolutionsRefreshRequest = courseId => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
+  courseId
+});
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS";
+export const assignmentsSolutionsRefreshSuccess = courseId => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_SUCCESS,
+  courseId
+});
+
+export const ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL =
+  "ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL";
+export const assignmentsSolutionsRefreshFail = (courseId, reason) => ({
+  type: ASSIGNMENTS_SOLUTIONS_REFRESH_FAIL,
+  courseId,
+  reason
+});
+
+export const ASSIGNMENTS_SHOW_HIDDEN_TOGGLE = "ASSIGNMENTS_SHOW_HIDDEN_TOGGLE";
+export const assignmentsShowHiddenToggle = courseId => ({
+  type: ASSIGNMENTS_SHOW_HIDDEN_TOGGLE,
+  courseId
+});
+
+/*
+export const ASSIGNMENTS_TEST_SOMETHING = "ASSIGNMENTS_TEST_SOMETHING";
+export const assignmentsTestSomething = courseId => ({
+  type: ASSIGNMENTS_TEST_SOMETHING,
+  courseId
+});
+*/
