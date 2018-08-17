@@ -60,6 +60,15 @@ export const problemSolutionRefreshSuccess = (problemId, payload) => ({
   payload
 });
 
+export const PROBLEM_SOLUTION_EXECUTION_FAIL = 
+  "PROBLEM_SOLUTION_EXECUTION_FAIL";
+
+export const problemSolutionExecutionFail = (problemId, payload) => ({
+  type :PROBLEM_SOLUTION_EXECUTION_FAIL,
+  problemId,
+  payload
+})
+
 export const PROBLEM_SOLUTION_CALCULATED_WRONG =
   "PROBLEM_SOLUTION_CALCULATED_WRONG";
 export const problemSolutionCalculatedWrong = () => ({

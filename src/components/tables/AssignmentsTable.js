@@ -213,7 +213,7 @@ class AssignmentsTable extends React.PureComponent {
                       <DoneIcon />
                     </IconButton>
                   ) : (
-                    "Completed"
+                    result || "COMPLETED"
                   )}
                 </a>
               ) : APP_SETTING.isSuggesting ? (

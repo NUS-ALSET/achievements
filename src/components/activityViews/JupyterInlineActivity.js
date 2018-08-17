@@ -31,17 +31,6 @@ class JupyterInlineActivity extends React.PureComponent {
     solutionJSON: false
   };
 
-  componentWillReceiveProps(nextProps){
-    const { onChange, problem ,solution} = this.props;
-    const solutionJSON = this.state.solutionJSON && {...this.state.solutionJSON}; 
-    if(onChange && solutionJSON && !isEqual(nextProps.solution, solution)){
-    const final={
-      ...solutionJSON,
-      status : nextProps.solution.checked ? nextProps.solution.failed ? 'FAILED' : 'COMPLETED' : 'NOT_EXECUTED'
-    };
-    onChange(final);
-    }
-  }
   onSolutionRefreshClick = value => {
     const { dispatch, onChange, problem } = this.props;
 

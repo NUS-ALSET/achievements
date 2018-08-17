@@ -5,7 +5,8 @@ import {
   PROBLEM_SOLUTION_PROVIDED_SUCCESS,
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
-  PROBLEM_SOLUTION_REFRESH_SUCCESS
+  PROBLEM_SOLUTION_REFRESH_SUCCESS,
+  PROBLEM_SOLUTION_EXECUTION_FAIL
 } from "./actions";
 
 export const problem = (
@@ -56,6 +57,17 @@ export const problem = (
           loading: false
         }
       };
+    case PROBLEM_SOLUTION_EXECUTION_FAIL : {
+      return {
+        ...state,
+        solution: {
+          ...(state.solution || {}),
+          ...action.payload,
+          checked: true,
+          loading: false
+        }
+      }
+    }
     case PROBLEM_SOLUTION_CALCULATED_WRONG:
     case PROBLEM_SOLUTION_REFRESH_FAIL:
       return {

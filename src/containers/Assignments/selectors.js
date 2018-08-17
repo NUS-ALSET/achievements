@@ -90,7 +90,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: (((result[assignmentId]) || {}).value || {}).status || "COMPLETED"
+            value: ((result[assignmentId]) || {}).status || "COMPLETED"
           };
           return true;
         case ASSIGNMENTS_TYPES.PathProgress.id:
