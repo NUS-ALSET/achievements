@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 
+// MUI's CssBaseline applies the normalization of CSS styles across browsers
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import { configureStore } from "./achievementsApp/store";
@@ -17,14 +18,14 @@ import { historyService } from "./services/history";
 const history = createHashHistory();
 const store = configureStore(undefined, history);
 const theme = createMuiTheme({
-  // palette: {
-    // primary: {
-      // main: '#1a237e'//deepblue,
-    // },
-    // secondary: {
-      // main: '#c62828'//red,
-    // },
-  // },
+  palette: {
+    primary: {
+      main: '#1a237e'//deepblue,
+    },
+    secondary: {
+      main: '#c62828'//red,
+    },
+  },
   typography: {
     htmlFontSize: 14
   },
