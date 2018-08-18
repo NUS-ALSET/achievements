@@ -22,6 +22,7 @@ ShallowWrapper {
       "classes": Object {
         "narrowCell": "AssignmentsTable-narrowCell-1",
         "noWrapTooltip": "AssignmentsTable-noWrapTooltip-2",
+        "nowrap": "AssignmentsTable-nowrap-3",
       },
       "dispatch": [Function],
       "isInstructor": false,
@@ -39,6 +40,7 @@ ShallowWrapper {
         "classes": Object {
           "narrowCell": "AssignmentsTable-narrowCell-1",
           "noWrapTooltip": "AssignmentsTable-noWrapTooltip-2",
+          "nowrap": "AssignmentsTable-nowrap-3",
         },
         "dispatch": [Function],
         "isInstructor": false,
