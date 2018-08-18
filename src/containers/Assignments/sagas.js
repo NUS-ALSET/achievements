@@ -223,13 +223,18 @@ export function* assignmentSubmitRequestHandler(action) {
     state =>
       state.problem.pathProblem
   );
+  const status = yield select(
+    state => state.problem.solution.status
+  )
+
   try {
     yield call(
       [coursesService, coursesService.submitSolution],
       action.courseId,
       { ...assignment, id: action.assignmentId,problemJSON },
-      
-      action.solution
+      action.solution,
+      null,
+      status
     );
     yield put(assignmentSolutionSuccess(action.courseId, action.assignmentId));
     yield put(

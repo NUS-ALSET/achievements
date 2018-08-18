@@ -358,7 +358,7 @@ export class CoursesService {
       });
   }
 
-  submitSolution(courseId, assignment, value, userId) {
+  submitSolution(courseId, assignment, value, userId,status=null) {
     userId = userId || this.getUser("uid");
 
     return Promise.resolve()
@@ -378,7 +378,8 @@ export class CoursesService {
           .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
           .set({
             createdAt: new Date().getTime(),
-            value
+            value,
+            status
           });
       })
       .then((res) => {

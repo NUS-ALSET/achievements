@@ -2,6 +2,10 @@ import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
 import { codeAnalysisService } from "./codeAnalysis";
+import { 
+  SOLUTION_PRIVATE_LINK,
+  SOLUTION_MODIFIED_TESTS
+} from "../containers//Root/actions";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -215,7 +219,7 @@ export class PathsService {
     return new Promise((resolve, reject) =>
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
-          return reject(new Error("Failing - Your solution is not public."));
+          return reject(new Error(SOLUTION_PRIVATE_LINK));
         }
         resolve({
           ...data,
@@ -449,7 +453,7 @@ export class PathsService {
                 cell.source.join("").trim() !== solution.source.join("").trim()
               ) {
                 throw new Error(
-                  "Failing - You have changed the last code block."
+                   SOLUTION_MODIFIED_TESTS
                 );
               }
               return true;
