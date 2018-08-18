@@ -219,13 +219,16 @@ export function* assignmentSubmitRequestHandler(action) {
     state =>
       state.firebase.data.assignments[action.courseId][action.assignmentId]
   );
-
+  const problemJSON = yield select(
+    state =>
+      state.problem.pathProblem
+  );
   try {
     yield call(
       [coursesService, coursesService.submitSolution],
       action.courseId,
-      { ...assignment, id: action.assignmentId },
-
+      { ...assignment, id: action.assignmentId,problemJSON },
+      
       action.solution
     );
     yield put(assignmentSolutionSuccess(action.courseId, action.assignmentId));
