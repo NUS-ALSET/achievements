@@ -55,6 +55,9 @@ const styles = theme => ({
   noWrapTooltip: {
     maxWidth: "none",
     minWidth: "none"
+  },
+  nowrap : {
+    whiteSpace : 'nowrap'
   }
 });
 
@@ -378,7 +381,7 @@ class AssignmentsTable extends React.PureComponent {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell className={classes.nowrap}>
                 <TableSortLabel
                   active={sortState.field === "studentName"}
                   direction={sortState.direction}
@@ -388,7 +391,8 @@ class AssignmentsTable extends React.PureComponent {
                 </TableSortLabel>
               </TableCell>
               {course.assignments.map(assignment => (
-                <TableCell
+                <TableCell 
+                  className={classes.nowrap}
                   classes={{
                     root: classes.narrowCell
                   }}
@@ -430,7 +434,7 @@ class AssignmentsTable extends React.PureComponent {
                 </TableCell>
               ))}
               {isInstructor && (
-                <TableCell>
+                <TableCell className={classes.nowrap} >
                   <TableSortLabel
                     active={sortState.field === "progress"}
                     direction={sortState.direction}
@@ -447,7 +451,8 @@ class AssignmentsTable extends React.PureComponent {
               const studentInfo = course.members[id];
               return (
                 <TableRow key={studentInfo.id}>
-                  <TableCell>
+                  <TableCell 
+                    className={classes.nowrap}>
                     {isInstructor &&
                       course.owner === currentUser.id && (
                         <IconButton
@@ -460,7 +465,8 @@ class AssignmentsTable extends React.PureComponent {
                       (studentInfo.name.length > MAX_NAME_LENGTH ? "..." : "")}
                   </TableCell>
                   {course.assignments.map(assignment => (
-                    <TableCell key={assignment.id}>
+                    <TableCell 
+                      className={classes.nowrap} key={assignment.id}>
                       <Fragment>
                         {this.getSolution(
                           assignment,
@@ -508,7 +514,8 @@ class AssignmentsTable extends React.PureComponent {
                     </TableCell>
                   ))}
                   {isInstructor && (
-                    <TableCell>
+                    <TableCell 
+                      className={classes.nowrap}>
                       {`${studentInfo.progress.totalSolutions} / ${
                         course.totalAssignments
                       } ${
