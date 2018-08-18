@@ -24,15 +24,13 @@ const COMMON_PROPS = {
           createdAt: 1000,
           value: "test-user-1 (100)",
           validated: true,
-          published: true,
-          solution: "test-user-1",
+          published: true
         },
         defTestAssignmentId: {
           createdAt: 1001,
           value: "Completed",
           validated: true,
-          published: true,
-          solution: "Completed",
+          published: true
         }
       }
     },
@@ -52,8 +50,7 @@ const COMMON_PROPS = {
           createdAt: 1000,
           value: "test-user-2 (10)",
           validated: true,
-          published: true,
-          solution: "test-user-2",
+          published: true
         }
       }
     }
@@ -109,8 +106,7 @@ describe("assignments selectors tests", () => {
       createdAt: 1001,
       published: true,
       validated: true,
-      value: "Test User 1",
-      solution: "Test User 1"
+      value: "Test User 1"
     };
     result.members.abcTestUser1.progress.totalSolutions = 2;
 
@@ -138,8 +134,7 @@ describe("assignments selectors tests", () => {
       createdAt: 1001,
       published: true,
       validated: true,
-      value: "Test User 1",
-      solution: "Test User 1"
+      value: "Test User 1"
     };
 
     result.members.abcTestUser1.progress.totalSolutions = 2;
@@ -160,8 +155,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 1",
-                createdAt: 1001,
-                solution: "Test User 1"
+                createdAt: 1001
               }
             },
             abcTestUser2: {
@@ -171,8 +165,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 2",
-                createdAt: 1001,
-                solution: "Test User 2"
+                createdAt: 1001
               }
             }
           }
@@ -193,8 +186,7 @@ describe("assignments selectors tests", () => {
       createdAt: 1001,
       published: true,
       validated: true,
-      value: "Test User 1",
-      solution: "Test User 1"
+      value: "Test User 1"
     };
 
     assert.deepEqual(courseProps, result);
@@ -213,8 +205,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 1",
-                createdAt: 1001,
-                solution: "Test User 1"
+                createdAt: 1001
               }
             },
             abcTestUser2: {
@@ -224,8 +215,7 @@ describe("assignments selectors tests", () => {
               },
               defTestAssignmentId: {
                 value: "Test User 2",
-                createdAt: 1002,
-                solution: "Test User 2"
+                createdAt: 1002
               }
             }
           }
@@ -246,15 +236,13 @@ describe("assignments selectors tests", () => {
       createdAt: 1001,
       published: true,
       validated: true,
-      value: "Test User 1",
-      solution: "Test User 1"
+      value: "Test User 1"
     };
     result.members.abcTestUser2.solutions.defTestAssignmentId = {
       createdAt: 1002,
       published: false,
       validated: true,
-      value: "Test User 2",
-      solution: "Test User 2"
+      value: "Test User 2"
     };
 
     result.members.abcTestUser2.progress = {
@@ -298,15 +286,13 @@ describe("assignments selectors tests", () => {
             abcTestUser1: {
               defTestAssignmentId: {
                 value: "same-value",
-                createdAt: 1000,
-                solution: "same-value"
+                createdAt: 1000
               }
             },
             abcTestUser2: {
               defTestAssignmentId: {
                 value: "same-value",
-                createdAt: 1001,
-                solution: "same-value"
+                createdAt: 1001
               }
             }
           }
@@ -316,15 +302,13 @@ describe("assignments selectors tests", () => {
             abcTestUser1: {
               defTestAssignmentId: {
                 value: "same-value",
-                createdAt: 1000,
-                solution: "same-value"
+                createdAt: 1000
               }
             },
             abcTestUser2: {
               defTestAssignmentId: {
                 value: "same-value",
-                createdAt: 1001,
-                solution: "same-value"
+                createdAt: 1001
               }
             }
           }
