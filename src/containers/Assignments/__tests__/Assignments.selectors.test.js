@@ -33,7 +33,7 @@ const COMMON_PROPS = {
           value: "Completed",
           validated: true,
           published: true,
-          solution: "Completed",
+          solution: "Completed"
         }
       }
     },
