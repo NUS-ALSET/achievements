@@ -1,6 +1,10 @@
+/* eslint-disable no-magic-numbers */
+
 import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
 import Recommendations from "../Recommendations";
+
+import PathCard from "../cards/PathCard";
 
 describe("<Recommendations/>", () => {
   let shallow;
@@ -19,6 +23,6 @@ describe("<Recommendations/>", () => {
       }
     ];
     const component = shallow(<Recommendations recs={rec} title={""} />);
-    expect(component).toMatchSnapshot();
+    expect(component.find(PathCard).length).toBe(1);
   });
 });

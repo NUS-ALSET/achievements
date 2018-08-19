@@ -10,6 +10,6 @@ describe("<NotImplemented />", () => {
 
   it("Should test NotImplemented component", () => {
     const component = shallow(<NotImplemented />);
-    expect(component).toMatchSnapshot();
+    expect(component.text()).toBe("Not Implemented");
   });
 });

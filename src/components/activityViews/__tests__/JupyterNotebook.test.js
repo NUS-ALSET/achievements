@@ -17,12 +17,6 @@ describe("<JupyterNotebook>", () => {
     spy = sinon.spy();
   });
 
-  it("should check snapshot", () => {
-    const wrapper = shallow(<JupyterNotebook title="test" />);
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it("should change internal state", () => {
     const wrapper = shallow(
       <JupyterNotebook action={spy} solution={false} title="test" />
