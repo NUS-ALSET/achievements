@@ -53,7 +53,7 @@ class AddAssignmentDialog extends React.PureComponent {
   };
 
   getAssignmentSpecificFields(assignment) {
-    let { activities, course, paths, uid } = this.props;
+    let { activities, paths, uid } = this.props;
 
     switch (assignment.questionType) {
       case ASSIGNMENTS_TYPES.CodeCombat.id:
@@ -158,34 +158,17 @@ class AddAssignmentDialog extends React.PureComponent {
             ))}
           </TextField>
         );
-      case ASSIGNMENTS_TYPES.TeamText.id:
-        return (
-          <TextField
-            fullWidth
-            label="Team Formation Assignment"
-            onChange={this.updateField("teamFormation")}
-            select
-            value={assignment.teamFormation || ""}
-          >
-            {course.assignments
-              .filter(
-                assignment =>
-                  assignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id
-              )
-              .map(assignment => (
-                <MenuItem key={assignment.id} value={assignment.id}>
-                  {assignment.name}
-                </MenuItem>
-              ))}
-          </TextField>
-        );
-
       default:
     }
   }
 
   render() {
-    let { assignment, open } = this.props;
+    let { assignment, course, open } = this.props;
+    const teamFormations = course.assignments.filter(
+      assignment =>
+        assignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id
+    );
+
     assignment = assignment || {};
 
     return (
@@ -225,6 +208,37 @@ class AddAssignmentDialog extends React.PureComponent {
             onKeyPress={this.manualChangeField("details")}
             value={assignment.details || ""}
           />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={assignment.useTeams || false}
+                onChange={e =>
+                  this.updateField("useTeams")({
+                    target: {
+                      value: e.target.checked
+                    }
+                  })
+                }
+                value="useTeams"
+              />
+            }
+            disabled={!teamFormations.length}
+            label="Use team formation"
+          />
+          <TextField
+            disabled={!(teamFormations.length && assignment.useTeams)}
+            fullWidth
+            label="Team Formation Assignment"
+            onChange={this.updateField("teamFormation")}
+            select
+            value={assignment.teamFormation || ""}
+          >
+            {teamFormations.map(assignment => (
+              <MenuItem key={assignment.id} value={assignment.id}>
+                {assignment.name}
+              </MenuItem>
+            ))}
+          </TextField>
           {this.getAssignmentSpecificFields(assignment)}
           <TextField
             fullWidth

@@ -53,6 +53,10 @@ class AssignmentsEditorTable extends React.Component {
       return false;
     }
 
+    if (assignments.length !== nextProps.assignments.length) {
+      return true;
+    }
+
     assignments.forEach((assignment, index) => {
       const newOne = nextProps.assignments[index];
       for (const field of Object.keys(assignment)) {
