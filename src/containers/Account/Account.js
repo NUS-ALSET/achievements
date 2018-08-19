@@ -150,11 +150,7 @@ class Account extends React.PureComponent {
           <Grid item xs={3}>
             <Card className={classes.card}>
               <CardMedia
-                image={
-                  (user && user.photoURL) ||
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ" +
-                    "AAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-                }
+                image={user && user.photoURL}
                 style={{ height: 240 }}
                 title={this.props.userName}
               />
