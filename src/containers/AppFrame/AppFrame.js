@@ -15,6 +15,8 @@ import AppDrawer from "../../components/AppDrawer";
 
 // for Routes
 import Home from "../Home/AltHome";
+// TODO: both account/ and profile/ point to this Account component
+// need to figure out why need both?
 import Account from "../../containers/Account/Account";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
@@ -187,7 +189,6 @@ class AppFrame extends React.Component {
                       aria-haspopup="true"
                       aria-label="More"
                       aria-owns="Open right Menu"
-                      className={classes.menuButtonRight}
                       color="inherit"
                       id="loginMenuButton"
                       onClick={this.handleMenuOpen}

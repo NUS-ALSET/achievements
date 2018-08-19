@@ -142,18 +142,18 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
     </MenuList>
 
     <Divider />
-    
+
     <MenuList
       onClick={onRequestClose}
     >
       <MenuItem
         component={Link}
-        to="/homev2"
-        selected={"/homev2" === location.pathname}
+        to="/home"
+        selected={"/home" === location.pathname}
       >
         <ListItem>
           <ListItemIcon>
-          {("/homev2" === location.pathname)
+          {("/home" === location.pathname)
             ? <GithubIcon style={{fill: "red"}} />
             : <GithubIcon />}
           </ListItemIcon>
