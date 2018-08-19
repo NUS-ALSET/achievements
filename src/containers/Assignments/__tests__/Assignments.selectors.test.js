@@ -89,7 +89,7 @@ describe("assignments selectors tests", () => {
       }
     });
 
-    assert.deepEqual(courseProps, COMMON_PROPS);
+    assert.deepStrictEqual(courseProps, COMMON_PROPS);
   });
 
   // Course owner should take value from `/solutions` ref, not from `/visibleSolutions`
@@ -111,7 +111,7 @@ describe("assignments selectors tests", () => {
     };
     result.members.abcTestUser1.progress.totalSolutions = 2;
 
-    assert.deepEqual(courseProps, result);
+    assert.deepStrictEqual(courseProps, result);
   });
 
   // Student will receive real values for his solutions
@@ -140,7 +140,7 @@ describe("assignments selectors tests", () => {
 
     result.members.abcTestUser1.progress.totalSolutions = 2;
 
-    assert.deepEqual(courseProps, result);
+    assert.deepStrictEqual(courseProps, result);
   });
 
   it("should return props with solutions at other student", () => {
@@ -190,7 +190,7 @@ describe("assignments selectors tests", () => {
       value: "Test User 1"
     };
 
-    assert.deepEqual(courseProps, result);
+    assert.deepStrictEqual(courseProps, result);
   });
 
   it("should return props with solutions at other student by owner", () => {
@@ -253,7 +253,7 @@ describe("assignments selectors tests", () => {
 
     result.assignments[1].progress = "2/2";
 
-    assert.deepEqual(courseProps, result);
+    assert.deepStrictEqual(courseProps, result);
   });
 
   it("should sort by value", () => {

@@ -15,7 +15,7 @@ import Typography from "@material-ui/core/Typography";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { breadcrumbAction, breadcrumbPath } from "../types";
+import { breadcrumbAction, breadcrumbPath } from "../types/index";
 
 const styles = theme => ({
   breadcrumbLink: {

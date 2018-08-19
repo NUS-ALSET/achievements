@@ -28,7 +28,7 @@ import {
   assignmentManualUpdateField,
   updateNewAssignmentField
 } from "../../containers/Assignments/actions";
-import { courseInfo, entityInfo } from "../../types";
+import { courseInfo, entityInfo } from "../../types/index";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {

@@ -45,7 +45,7 @@ import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
 import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { courseInfo } from "../../types";
+import { courseInfo } from "../../types/index";
 
 const styles = theme => ({
   breadcrumbLink: {

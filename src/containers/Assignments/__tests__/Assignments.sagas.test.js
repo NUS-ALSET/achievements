@@ -33,7 +33,7 @@ describe("assignemnts sagas tests", () => {
       })
     ).done;
 
-    assert.deepEqual(dispatched, [
+    assert.deepStrictEqual(dispatched, [
       {
         type: ASSIGNMENT_CLOSE_DIALOG
       },
@@ -61,7 +61,7 @@ describe("assignemnts sagas tests", () => {
       assignmentAddRequest("testCourseId", {})
     ).done;
 
-    assert.deepEqual(dispatched, [
+    assert.deepStrictEqual(dispatched, [
       {
         type: ASSIGNMENT_ADD_FAIL,
         error: "Name required for Assignment"

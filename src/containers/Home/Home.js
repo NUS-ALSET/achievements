@@ -122,7 +122,8 @@ class Home extends React.PureComponent {
   }
 }
 
-const mapStateToProps = state => ({
+// add state param when needed
+const mapStateToProps = () => ({
   //
 });
 

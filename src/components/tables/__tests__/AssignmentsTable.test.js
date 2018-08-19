@@ -18,6 +18,6 @@ describe("<AssignmentsTable>", () => {
       <AssignmentsTable dispatch={dispatch} isInstructor={false} />
     );
 
-    expect(wrapper.find(TableHead).length).toBe(0)
+    expect(wrapper.find(TableHead).length).toBe(0);
   });
 });

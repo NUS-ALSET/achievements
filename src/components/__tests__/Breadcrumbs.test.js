@@ -1,13 +1,11 @@
 import React from "react";
-import { createMount, createShallow } from "@material-ui/core/test-utils";
+import { createMount } from "@material-ui/core/test-utils";
 import Button from "@material-ui/core/Button";
 import Breadcrumbs from "../Breadcrumbs";
 
 describe("<Breadcrumbs>", () => {
   let mount;
-  let shallow;
   beforeEach(() => {
-    shallow = createShallow();
     mount = createMount();
   });
 
