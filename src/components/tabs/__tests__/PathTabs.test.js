@@ -18,12 +18,6 @@ describe("<PathTabs>", () => {
     mockDispatch = sinon.spy();
   });
 
-  it("should check snapshot", () => {
-    const wrapper = shallow(<PathTabs dispatch={mockDispatch} myPaths={{}} />);
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it("should change tab", () => {
     const wrapper = shallow(<PathTabs dispatch={mockDispatch} myPaths={{}} />);
 

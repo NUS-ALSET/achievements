@@ -10,6 +10,6 @@ describe("<Home>", () => {
 
   it("Should test Home component", () => {
     const component = shallow(<Home />);
-    expect(component).toMatchSnapshot();
+    expect(component.text()).toBe("This is the home route");
   });
 });

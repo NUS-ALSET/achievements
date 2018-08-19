@@ -59,7 +59,7 @@ import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
-import { pathActivities } from "../../types";
+import { pathActivities } from "../../types/index";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 

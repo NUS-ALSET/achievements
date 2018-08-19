@@ -45,6 +45,7 @@ import MoveStudentDialog from "../../components/dialogs/MoveStudentDialog";
 import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgressSolutionDialog";
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import { courseInfo } from "../../types/index";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -70,7 +71,7 @@ class Assignments extends React.Component {
     classes: PropTypes.any,
     ui: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
-    course: PropTypes.object.isRequired,
+    course: courseInfo,
     firebase: PropTypes.object,
     auth: PropTypes.object,
     match: PropTypes.object,
@@ -365,12 +366,13 @@ class Assignments extends React.Component {
           pathProgress={ui.dialog && ui.dialog.pathProgress}
         />
         <AddAssignmentDialog
+          activities={(ui.dialog && ui.dialog.activities) || []}
           assignment={ui.dialog && ui.dialog.value}
-          courseId={course && course.id}
+          course={course}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "AddAssignment"}
           paths={(ui.dialog && ui.dialog.paths) || []}
-          problems={(ui.dialog && ui.dialog.problems) || []}
+          teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
           uid={currentUser && currentUser.id}
         />
       </Fragment>

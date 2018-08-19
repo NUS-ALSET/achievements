@@ -91,6 +91,7 @@ class JupyterNotebook extends React.PureComponent {
             >
               <a
                 href={url}
+                rel="noopener noreferrer"
                 style={{ position: "absolute", top: 10 }}
                 target="_blank"
               >

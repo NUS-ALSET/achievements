@@ -161,7 +161,7 @@ describe("Paths service tests", () => {
     return pathsService
       .fetchPathProblem("-testPathId", "testProblemId")
       .then(pathProblem =>
-        assert.deepEqual(pathProblem, {
+        assert.deepStrictEqual(pathProblem, {
           pathId: "-testPathId",
           pathName: "Test Path",
           problemId: "testProblemId",

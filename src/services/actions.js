@@ -37,8 +37,8 @@ export class ActionsService {
     return obj;
   }
 
-  // eslint-disable-next-line no-unused-vars
-  catchAction = store => next => action => {
+  // add `store` as first param if needed
+  catchAction = () => next => action => {
     const currentUserId =
       firebase.auth().currentUser && firebase.auth().currentUser.uid;
     if (this.consumerKey === undefined && currentUserId) {

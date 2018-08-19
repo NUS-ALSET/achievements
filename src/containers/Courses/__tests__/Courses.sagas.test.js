@@ -29,22 +29,22 @@ describe("courses sagas tests", () => {
     let next;
 
     next = generator.next();
-    assert.deepEqual(
+    assert.deepStrictEqual(
       next.value,
       call(coursesService.validateNewCourse, newCourseData)
     );
 
     next = generator.next();
-    assert.deepEqual(next.value, put(courseHideDialog()));
+    assert.deepStrictEqual(next.value, put(courseHideDialog()));
 
     next = generator.next();
-    assert.deepEqual(
+    assert.deepStrictEqual(
       next.value,
       call([coursesService, coursesService.createNewCourse], newCourseData)
     );
 
     next = generator.next();
-    assert.deepEqual(next.value, put(courseNewSuccess("testName")));
+    assert.deepStrictEqual(next.value, put(courseNewSuccess("testName")));
   });
 
   it("should test remove course request sagas", () => {
@@ -54,19 +54,22 @@ describe("courses sagas tests", () => {
     let next;
 
     next = generator.next();
-    assert.deepEqual(next.value, put(courseHideDialog()));
+    assert.deepStrictEqual(next.value, put(courseHideDialog()));
 
     next = generator.next();
-    assert.deepEqual(
+    assert.deepStrictEqual(
       next.value,
       call([coursesService, coursesService.deleteCourse], "testCourseId")
     );
 
     next = generator.next();
-    assert.deepEqual(next.value, put(courseRemoveSuccess("testCourseId")));
+    assert.deepStrictEqual(
+      next.value,
+      put(courseRemoveSuccess("testCourseId"))
+    );
 
     next = generator.next();
-    assert.equal(next.value, undefined);
+    assert.strictEqual(next.value, undefined);
   });
 
   it("should process course creation saga", async () => {
@@ -88,7 +91,7 @@ describe("courses sagas tests", () => {
 
     assert(coursesService.createNewCourse.called);
 
-    assert.deepEqual(dispatched, [
+    assert.deepStrictEqual(dispatched, [
       {
         type: COURSE_HIDE_DIALOG
       },
@@ -118,7 +121,7 @@ describe("courses sagas tests", () => {
 
     assert(!coursesService.createNewCourse.called);
 
-    assert.deepEqual(dispatched, [
+    assert.deepStrictEqual(dispatched, [
       {
         type: COURSE_NEW_FAIL,
         name: "",

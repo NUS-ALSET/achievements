@@ -128,12 +128,13 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
 
 /**
  *
- * @param {Object}assignments hash map with assignments
- * @param {Object} members hash map with members
+ * @param {ICourseAssignmentsMap}assignments hash map with assignments
+ * @param {ICourseMembersMap} members hash map with members
  */
-const processTeamSolutions = (assignments, members) => {
-  let needProcess = false;
-  let teamFormations = [];
+export const processTeamSolutions = (assignments, members) => {
+  const teamFormations = {};
+  let firstTeamFormation = "";
+  const teamFormationKeys = [];
 
   if (Array.isArray(members)) {
     members = Object.assign(
@@ -142,88 +143,86 @@ const processTeamSolutions = (assignments, members) => {
     );
   }
 
-  // FIXIT: move team tasks under team formations
-  let teamTasks = [];
-
+  // Collect team formations
   for (const key of Object.keys(assignments)) {
-    switch (assignments[key].questionType) {
-      case ASSIGNMENTS_TYPES.TeamFormation.id:
-        needProcess = true;
-        teamFormations.push({
-          key,
-          teams: {}
-        });
-        break;
-      case ASSIGNMENTS_TYPES.TeamText.id:
-        needProcess = true;
-        teamTasks.push(key);
-        break;
-      default:
+    if (assignments[key].questionType === ASSIGNMENTS_TYPES.TeamFormation.id) {
+      firstTeamFormation = firstTeamFormation || key;
+      teamFormations[key] = {
+        teams: {},
+        tasks: []
+      };
+      teamFormationKeys.push(key);
     }
   }
-  if (!needProcess) {
-    return;
+
+  if (!firstTeamFormation) {
+    return Promise.resolve();
   }
-  // Collect all team formations and
-  // last answers for team tasks (currently Text only)
+
+  // Distributive team tasks by team formations
+  for (const key of Object.keys(assignments)) {
+    /** @type {ICourseAssignmentBase} */
+    const assignment = assignments[key];
+    let team;
+
+    if (assignment.useTeams) {
+      if (!assignment.teamFormation) {
+        team = teamFormations[firstTeamFormation];
+      } else {
+        team = teamFormations[assignment.teamFormation];
+      }
+      if (team) {
+        team.tasks.push(key);
+      }
+    }
+  }
+
+  // Fill team members and last teams solutions
   for (const memberKey of Object.keys(members)) {
-    const member = members[memberKey];
-    if (!member.solutions) {
-      continue;
-    }
-    for (const teamFormation of teamFormations) {
-      const solution = member.solutions[teamFormation.key];
-      if (!(solution && teamFormation)) {
+    for (const teamFormationKey of teamFormationKeys) {
+      const solutions = members[memberKey].solutions;
+      const teamFormation = teamFormations[teamFormationKey];
+      const teamName =
+        solutions &&
+        solutions[teamFormationKey] &&
+        solutions[teamFormationKey].value;
+
+      if (!(teamName && solutions)) {
         continue;
       }
-      teamFormation.teams[solution.value] = teamFormation.teams[
-        solution.value
-      ] || {
-        members: [],
-        last: {}
-      };
 
-      // Got team instance
-      const team = teamFormation.teams[solution.value];
-      team.members.push(member.id);
-      for (const teamTaskKey of teamTasks) {
-        // We need `createdAt` to get clean sorting but we doesn't need empty solution (with createdAt with 0)
-        team.last[teamTaskKey] = team.last[teamTaskKey] || { createdAt: 0 };
-
-        // Fetch last task solution for team
-        if (
-          member.solutions[teamTaskKey] &&
-          team.last[teamTaskKey].createdAt <
-            member.solutions[teamTaskKey].createdAt
-        ) {
-          team.last[teamTaskKey] = member.solutions[teamTaskKey];
+      let team = teamFormation.teams[teamName];
+      if (!team) {
+        team = { members: [], answers: {} };
+        teamFormation.teams[teamName] = team;
+      }
+      team.members.push(memberKey);
+      for (const taskKey of teamFormation.tasks) {
+        const taskSolution = solutions[taskKey] || { createdAt: 0 };
+        team.answers[taskKey] = team.answers[taskKey] || { createdAt: 0 };
+        if (team.answers[taskKey].createdAt < taskSolution.createdAt) {
+          team.answers[taskKey] = taskSolution;
         }
       }
     }
   }
 
   // Update solutions for team members
-  for (const teamFormation of teamFormations) {
+  for (const teamFormationKey of Object.keys(teamFormations)) {
+    const teamFormation = teamFormations[teamFormationKey];
     for (const teamName of Object.keys(teamFormation.teams)) {
       const team = teamFormation.teams[teamName];
       for (const memberKey of team.members) {
         const member = members[memberKey];
-        member.solutions[teamFormation.key].value = `${teamName} (${
+        member.solutions[teamFormationKey].value = `${teamName} (${
           team.members.length
         })`;
-        for (const lastKey of Object.keys(team.last)) {
-          // Not real solution if zero createdAt
-          if (team.last[lastKey].createdAt) {
-            member.solutions[lastKey] = team.last[lastKey];
-          }
+        for (const taskKey of Object.keys(team.answers)) {
+          member.solutions[taskKey] = team.answers[taskKey];
         }
       }
     }
   }
-
-  // GC helper
-  teamFormations = null;
-  teamTasks = null;
 };
 
 /**
@@ -314,6 +313,11 @@ export const getCourseProps = (state, ownProps) => {
   const options = {
     showHiddenAssignments: state.assignments.showHiddenAssignments
   };
+  const courseData = getFrom(state.firebase.data, "courses")[courseId];
+
+  if (!courseData) {
+    return null;
+  }
 
   let members = state.assignments.courseMembers.map(courseMember => ({
     ...courseMember,
@@ -407,8 +411,8 @@ export const getCourseProps = (state, ownProps) => {
 
   return {
     id: courseId,
-    ...getFrom(state.firebase.data.courses, courseId),
-    members: members.length ? sortedMembers : false,
+    ...courseData,
+    members: sortedMembers,
     totalAssignments: Object.keys(assignments).filter(key =>
       checkVisibilitySolution(assignments, key, options)
     ).length,
