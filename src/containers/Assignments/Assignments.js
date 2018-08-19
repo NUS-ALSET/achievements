@@ -17,7 +17,7 @@ import {
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
-import { firebaseConnect, isLoaded } from "react-redux-firebase";
+import { firebaseConnect } from "react-redux-firebase";
 import {
   getAssignmentsUIProps,
   getCourseProps,
@@ -67,17 +67,16 @@ const styles = theme => ({
 
 class Assignments extends React.Component {
   static propTypes = {
+    auth: PropTypes.object,
     dispatch: PropTypes.func,
     classes: PropTypes.any,
-    ui: PropTypes.object.isRequired,
-    currentUser: PropTypes.object.isRequired,
     course: courseInfo,
-    firebase: PropTypes.object,
-    auth: PropTypes.object,
+    currentUser: PropTypes.object.isRequired,
+    // Required only for password setting. Probably should be changed
+    firebase: PropTypes.any,
     match: PropTypes.object,
-    students: PropTypes.object,
-    courseMembers: PropTypes.array,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    ui: PropTypes.object.isRequired
   };
   state = {
     password: ""
@@ -221,7 +220,6 @@ class Assignments extends React.Component {
   render() {
     const {
       ui,
-      students,
       auth,
       dispatch,
       course,
@@ -229,14 +227,11 @@ class Assignments extends React.Component {
       readOnly
     } = this.props;
 
-    if (!auth.isLoaded) {
+    if (!course) {
       return <LinearProgress />;
     } else if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!isLoaded(students)) {
-      return <LinearProgress />;
     }
-
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
 
@@ -270,7 +265,7 @@ class Assignments extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            currentUser.isOwner && [
+            (currentUser.isOwner && [
               {
                 label: "Refresh",
                 handler: this.refreshSolutions
@@ -279,7 +274,8 @@ class Assignments extends React.Component {
                 label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
                 handler: this.toggleHiddenShow
               }
-            ]
+            ]) ||
+            null
           }
           paths={[
             {
@@ -393,8 +389,6 @@ const mapStateToProps = (state, ownProps) => ({
   currentUser: getCurrentUserProps(state, ownProps),
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
-  students: state.firebase.data.courseMembers,
-  courseMembers: state.assignments.courseMembers,
   assistants: state.assignments.assistants,
   readOnly: state.problem && state.problem.readOnly
 });
@@ -406,6 +400,10 @@ export default compose(
     const courseId = ownProps.match.params.courseId;
     const state = store.getState();
     const uid = state.firebase.auth.uid;
+
+    if (!uid) {
+      return [];
+    }
 
     return [
       "/users",

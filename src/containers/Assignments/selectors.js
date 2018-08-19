@@ -165,7 +165,10 @@ export const processTeamSolutions = (assignments, members) => {
     const assignment = assignments[key];
     let team;
 
-    if (assignment.useTeams) {
+    if (
+      assignment.useTeams ||
+      assignment.questionType === ASSIGNMENTS_TYPES.TeamText.id
+    ) {
       if (!assignment.teamFormation) {
         team = teamFormations[firstTeamFormation];
       } else {
@@ -387,6 +390,8 @@ export const getCourseProps = (state, ownProps) => {
         typeof aValue === "string" &&
         typeof bValue === "string"
       ) {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
         const aCountData = (aValue.match(/\(\d+\)$/) || [])[0];
         const bCountData = (bValue.match(/\(\d+\)$/) || [])[0];
         if (aCountData !== bCountData) {

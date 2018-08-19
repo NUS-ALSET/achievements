@@ -64,7 +64,7 @@ export const assignmentInfo = shape({
   name: string.isRequired,
   solutionVisible: bool.isRequired,
   deadline: string.isRequired,
-  details: string.isRequired,
+  details: string,
   open: string.isRequired,
   orderIndex: number.isRequired,
   visible: bool.isRequired,
