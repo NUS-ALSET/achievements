@@ -1,8 +1,8 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
+import { codeAnalysisService } from "./codeAnalysis";
 import { 
-  notificationShow,
   SOLUTION_PRIVATE_LINK,
   SOLUTION_MODIFIED_TESTS
 } from "../containers//Root/actions";
@@ -359,11 +359,25 @@ export class PathsService {
         .push().key;
     const ref = firebase.database().ref(`/activities/${key}`);
     if(problemInfo.type===ACTIVITY_TYPES.jupyterInline.id){
-      return this.analyseProblem(uid, pathId, problemInfo, ref, isNew,next,key);
+      const fileId = this.getFileId(problemInfo.problemURL) || '';
+      return new Promise((resolve,reject)=>{
+        this.fetchFile(fileId)
+        .then(solution => {
+          codeAnalysisService.analyseCode(uid, solution, problemInfo.frozen)
+          .then(givenSkills=>{
+            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills}, ref, isNew,next,key));
+          })
+          .catch(()=>{
+            resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
+          })
+        })
+        .catch(err=>{
+          resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
+        })
+      })
     }else{
       return this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key)
     }
-
   }
 
   saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key){
@@ -384,81 +398,6 @@ export class PathsService {
             .transaction(activities => ++activities)
       )
       .then(() => key);
-  }
-
-  analyseProblem(uid, pathId, problemInfo, ref, isNew,next,key){
-    return new Promise((resolve, reject) => {
-      const fileId= this.getFileId(problemInfo.problemURL);
-      if(fileId){
-        this.fetchFile(fileId)
-        .then(solution=>{
-        this.dispatch(notificationShow("analysing your code..."));
-        const editableBlockCode= solution.cells.slice(0,solution.cells.length - problemInfo.frozen).map(c=>c.cell_type==='code' ? c.source.join("") : "" ).join("");
-        let timer= null;
-        const taskKey=firebase
-          .ref(`/jupyterSolutionAnalysisQueue/tasks`)
-          .push().key;
-         
-          firebase
-          .database()
-          .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
-          .on("value", response => {
-            if (response.val() === null) {
-              return;
-            }
-            window.clearTimeout(timer);
-
-            firebase
-              .database()
-              .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
-              .off();
-
-              firebase
-              .database()
-              .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
-              .remove()
-              .then(
-                () =>{
-                  if(response.val()){
-                    this.dispatch(notificationShow("Analysis complete"));
-                    resolve(
-                      this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills : response.val().solution ||  {}}, ref, isNew,next,key)
-                    )
-                  }else{
-                  console.log('"Failing - Unable to analysis your editable block code');
-                  this.dispatch(notificationShow("Failing - Unable to analysis your Editable block code"));
-                  setTimeout(()=>{
-                    resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key));
-                  },1000)
-                  }
-                }
-              );
-
-          });
-          firebase
-          .ref(`/jupyterSolutionAnalysisQueue/tasks/${taskKey}`).set({
-            taskKey,
-            owner : uid,
-            solution : editableBlockCode || "",
-          });
-          timer=setTimeout(()=>{
-            firebase
-            .database()
-            .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
-            .off();
-            this.dispatch(notificationShow("Analysis timeout"));
-            setTimeout(()=>{
-              resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
-            },1000)
-          },4000);
-        })
-        .catch(err=>{
-          reject(err);
-        })
-      }else{
-        resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
-      }
-    });
   }
 
   /**
@@ -631,6 +570,7 @@ export class PathsService {
           .set(true)
       );
   }
+
 
   /**
    *
