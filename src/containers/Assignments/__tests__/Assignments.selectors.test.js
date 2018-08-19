@@ -416,15 +416,18 @@ describe("assignments selectors tests", () => {
         },
         textTeam1: {
           questionType: ASSIGNMENTS_TYPES.TeamText.id,
-          teamFormation: "teamFormation1"
+          teamFormation: "teamFormation1",
+          useTeams: true
         },
         textTeam2: {
           questionType: ASSIGNMENTS_TYPES.TeamText.id,
-          teamFormation: "teamFormation1"
+          teamFormation: "teamFormation1",
+          useTeams: true
         },
         textTeam3: {
           questionType: ASSIGNMENTS_TYPES.TeamText.id,
-          teamFormation: "teamFormation2"
+          teamFormation: "teamFormation2",
+          useTeams: true
         }
       },
       data
@@ -450,25 +453,25 @@ describe("assignments selectors tests", () => {
       {
         id: "textTeam1",
         data: [
-          { createdAt: 101, value: "three" },
-          { createdAt: 101, value: "three" },
+          { createdAt: 101, value: "one" },
+          { createdAt: 101, value: "one" },
           { createdAt: 101, value: "three" }
         ]
       },
       {
         id: "textTeam2",
         data: [
-          { createdAt: 101, value: "three" },
-          { createdAt: 101, value: "three" },
-          { createdAt: 101, value: "three" }
+          { createdAt: 101, value: "two" },
+          { createdAt: 101, value: "two" },
+          { createdAt: 102, value: "three" }
         ]
       },
       {
         id: "textTeam3",
         data: [
-          { createdAt: 101, value: "three" },
-          { createdAt: 101, value: "three" },
-          { createdAt: 101, value: "three" }
+          { createdAt: 102, value: "one" },
+          { createdAt: 103, value: "three" },
+          { createdAt: 103, value: "three" }
         ]
       }
     ];

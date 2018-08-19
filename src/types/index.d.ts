@@ -29,6 +29,8 @@ export interface ICourseAssignmentBase {
   open: string;
   orderIndex: number;
   visible: boolean;
+  useTeams: boolean;
+  teamFormation: string;
 }
 
 export interface ICourseAssignmentText extends ICourseAssignmentBase {

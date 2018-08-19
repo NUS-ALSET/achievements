@@ -143,7 +143,7 @@ export const processTeamSolutions = (assignments, members) => {
       firstTeamFormation = firstTeamFormation || key;
       teamFormations[key] = {
         teams: {},
-        tasks: {}
+        tasks: []
       };
       teamFormationKeys.push(key);
     }
@@ -155,78 +155,64 @@ export const processTeamSolutions = (assignments, members) => {
 
   // Distributive team tasks by team formations
   for (const key of Object.keys(assignments)) {
-    const a = assignments[key];
+    /** @type {ICourseAssignmentBase} */
+    const assignment = assignments[key];
+    let team;
+
+    if (assignment.useTeams) {
+      if (!assignment.teamFormation) {
+        team = teamFormations[firstTeamFormation];
+      } else {
+        team = teamFormations[assignment.teamFormation];
+      }
+      if (team) {
+        team.tasks.push(key);
+      }
+    }
   }
 
+  // Fill team members and last teams solutions
   for (const memberKey of Object.keys(members)) {
     for (const teamFormationKey of teamFormationKeys) {
+      const solutions = members[memberKey].solutions;
+      const teamFormation = teamFormations[teamFormationKey];
       const teamName =
-        members[memberKey].solutions &&
-        members[memberKey].solutions[teamFormationKey] &&
-        members[memberKey].solutions[teamFormationKey].value;
+        solutions &&
+        solutions[teamFormationKey] &&
+        solutions[teamFormationKey].value;
 
-      teamFormations[teamFormationKey].teams[teamName] = teamFormations[
-        teamFormationKey
-      ].teams[teamName] || {
-        members: [],
-        answers: {}
-      };
-      teamFormations[teamFormationKey].teams[teamName];
-    }
-  }
-
-  // Collect all team formations and
-  // last answers for team tasks (currently Text only)
-  for (const memberKey of Object.keys(members)) {
-    const member = members[memberKey];
-    if (!member.solutions) {
-      continue;
-    }
-    for (const teamFormation of teamFormations) {
-      const solution = member.solutions[teamFormation.key];
-      if (!(solution && teamFormation)) {
+      if (!(teamName && solutions)) {
         continue;
       }
-      teamFormation.teams[solution.value] = teamFormation.teams[
-        solution.value
-      ] || {
-        members: [],
-        last: {}
-      };
 
-      // Got team instance
-      const team = teamFormation.teams[solution.value];
-      team.members.push(member.id);
-      for (const teamTaskKey of teamTasks) {
-        // We need `createdAt` to get clean sorting but we doesn't need empty solution (with createdAt with 0)
-        team.last[teamTaskKey] = team.last[teamTaskKey] || { createdAt: 0 };
-
-        // Fetch last task solution for team
-        if (
-          member.solutions[teamTaskKey] &&
-          team.last[teamTaskKey].createdAt <
-            member.solutions[teamTaskKey].createdAt
-        ) {
-          team.last[teamTaskKey] = member.solutions[teamTaskKey];
+      let team = teamFormation.teams[teamName];
+      if (!team) {
+        team = { members: [], answers: {} };
+        teamFormation.teams[teamName] = team;
+      }
+      team.members.push(memberKey);
+      for (const taskKey of teamFormation.tasks) {
+        const taskSolution = solutions[taskKey] || { createdAt: 0 };
+        team.answers[taskKey] = team.answers[taskKey] || { createdAt: 0 };
+        if (team.answers[taskKey].createdAt < taskSolution.createdAt) {
+          team.answers[taskKey] = taskSolution;
         }
       }
     }
   }
 
   // Update solutions for team members
-  for (const teamFormation of teamFormations) {
+  for (const teamFormationKey of Object.keys(teamFormations)) {
+    const teamFormation = teamFormations[teamFormationKey];
     for (const teamName of Object.keys(teamFormation.teams)) {
       const team = teamFormation.teams[teamName];
       for (const memberKey of team.members) {
         const member = members[memberKey];
-        member.solutions[teamFormation.key].value = `${teamName} (${
+        member.solutions[teamFormationKey].value = `${teamName} (${
           team.members.length
         })`;
-        for (const lastKey of Object.keys(team.last)) {
-          // Not real solution if zero createdAt
-          if (team.last[lastKey].createdAt) {
-            member.solutions[lastKey] = team.last[lastKey];
-          }
+        for (const taskKey of Object.keys(team.answers)) {
+          member.solutions[taskKey] = team.answers[taskKey];
         }
       }
     }
