@@ -248,7 +248,7 @@ export class Path extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            pathStatus !== PATH_STATUS_OWNER && [
+            pathStatus !== PATH_STATUS_OWNER ? [
               allFinished && {
                 label: "Request more",
                 handler: this.requestMoreProblems.bind(this)
@@ -261,7 +261,7 @@ export class Path extends React.Component {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
               }
-            ]
+            ] : []
           }
           paths={[
             {

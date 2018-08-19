@@ -26,7 +26,7 @@ const COMMON_PROPS = {
           value: "test-user-1 (100)",
           validated: true,
           published: true,
-          solution: "test-user-1",
+          solution: "test-user-1"
         },
         defTestAssignmentId: {
           createdAt: 1001,
@@ -54,7 +54,7 @@ const COMMON_PROPS = {
           value: "test-user-2 (10)",
           validated: true,
           published: true,
-          solution: "test-user-2",
+          solution: "test-user-2"
         }
       }
     }

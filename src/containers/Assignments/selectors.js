@@ -59,8 +59,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             createdAt,
             value: solution,
             validated: true,
-            published,
-            solution
+            published
           };
           return true;
         case ASSIGNMENTS_TYPES.Profile.id:
@@ -71,8 +70,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             orderValue: userAchievements.totalAchievements,
             value: userAchievements.id
               ? `${userAchievements.id} (${userAchievements.totalAchievements})`
-              : "",
-            solution
+              : ""
           };
           return true;
         case ASSIGNMENTS_TYPES.CodeCombat.id:
@@ -82,7 +80,6 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             value: "Completed",
-            solution
           };
           return true;
         // Backward compatibility
@@ -93,8 +90,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: "Completed",
-            solution
+            value: ((result[assignmentId]) || {}).status || "COMPLETED"
           };
           return true;
         case ASSIGNMENTS_TYPES.PathProgress.id:
@@ -103,8 +99,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: solution,
-            solution
+            value: solution
           };
           return true;
         case ASSIGNMENTS_TYPES.TeamFormation.id:
@@ -113,8 +108,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: solution,
-            solution
+            value: solution
           };
           return true;
         default:

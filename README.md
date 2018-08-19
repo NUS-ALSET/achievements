@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://achievements-prod.firebaseapp.com/#/home" target="_blank" rel="noopener noreferrer">
+  <a href="https://achievements-dev.firebaseapp.com/#/home" target="_blank" rel="noopener noreferrer">
     <img width="530" src="https://github.com/FeynmanDNA/achievements/blob/WikiandReadME/src/assets/NUS_ALSET_Achievements_Logo.png">
   </a>
 </p>
@@ -13,7 +13,7 @@
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/NUS-ALSET/achievements.svg)](http://isitmaintained.com/project/NUS-ALSET/achievements "Percentage of issues still open")
 
 **An integrated web application for learning and teaching programming:computer:**
-@[https://achievements-prod.firebaseapp.com/](https://achievements-prod.firebaseapp.com/#/home)
+@[https://achievements-dev.firebaseapp.com/](https://achievements-dev.firebaseapp.com/#/home)
 
 ***
 

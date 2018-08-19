@@ -19,7 +19,8 @@ import {
   problemSolutionRefreshRequest,
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
-  problemSolutionSubmitSuccess
+  problemSolutionSubmitSuccess,
+  problemSolutionExecutionStatus
 } from "./actions";
 import { delay } from "redux-saga";
 
@@ -33,7 +34,11 @@ import {
   throttle
 } from "redux-saga/effects";
 import { pathsService, ACTIVITY_TYPES } from "../../services/paths";
-import { notificationShow } from "../Root/actions";
+import { 
+  notificationShow,
+  SOLUTION_PRIVATE_LINK,
+  SOLUTION_MODIFIED_TESTS
+} from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 import { pathFetchProblemsSolutionsSuccess } from "../Path/actions";
@@ -121,6 +126,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
   try {
     yield put(notificationShow("Fetching your solution"));
+    yield put(problemSolutionExecutionStatus({ status : 'CHECKING' }));
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
@@ -141,6 +147,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
+    yield put(problemSolutionExecutionStatus({ status : 'EXECUTING' }));
     yield put(notificationShow("Checking your solution"));
 
     const { solution, timedOut } = yield race({
@@ -167,6 +174,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
+        yield put(problemSolutionExecutionStatus( { status : 'FAILING' }))
         yield put(
           notificationShow(
             "Failing - Your solution did not pass the provided tests."
@@ -174,17 +182,37 @@ export function* problemSolutionRefreshRequestHandler(action) {
         );
       } else {
         yield put(notificationShow("Solution is valid"));
+        yield put(problemSolutionExecutionStatus( { status : 'COMPLETE' }))
       }
     }
     yield put(
-      problemSolutionRefreshSuccess(action.problemId, {
+      problemSolutionRefreshSuccess( {
         id: pathSolution.id,
-        json: solution
+        json: solution,
       })
     );
   } catch (err) {
+    let status = "";
+    let errMsg = "";
+    switch (err.message){
+      case  SOLUTION_PRIVATE_LINK  :{
+        status = "PRIVATE LINK";
+        errMsg = 'Failing - Your solution is not public.';
+        break;
+      }
+      case SOLUTION_MODIFIED_TESTS  : {
+        status = "MODIFIED TESTS";
+        errMsg = 'Failing - You have changed the last code block.';
+        break;
+      }
+      default : {
+        status = null;
+        errMsg = err.message;
+      }
+    }
+    yield put(problemSolutionExecutionStatus({ status }))
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
-    yield put(notificationShow(err.message));
+    yield put(notificationShow(errMsg));
   }
 }
 

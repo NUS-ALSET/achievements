@@ -143,8 +143,8 @@ class Courses extends React.Component {
           textColor="primary"
           value={currentTab}
         >
-          <Tab label="Joined courses" />
-          <Tab label="My courses" />
+          <Tab label="Enrolled In" />
+          <Tab label="Instructor For" />
           <Tab label="Public courses" />
         </Tabs>
         <CoursesTable

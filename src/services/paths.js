@@ -1,6 +1,11 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
+import { codeAnalysisService } from "./codeAnalysis";
+import { 
+  SOLUTION_PRIVATE_LINK,
+  SOLUTION_MODIFIED_TESTS
+} from "../containers//Root/actions";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -53,6 +58,9 @@ export const ACTIVITY_TYPES = {
   }
 };
 
+
+
+
 export class PathsService {
   auth() {
     return new Promise(resolve =>
@@ -70,6 +78,13 @@ export class PathsService {
           .then(resolve);
       })
     );
+  }
+  setStore(store) {
+    this.store = store;
+  }
+
+  dispatch(action) {
+    this.store.dispatch(action);
   }
 
   static getColabURL(fileId) {
@@ -204,7 +219,7 @@ export class PathsService {
     return new Promise((resolve, reject) =>
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
-          return reject(new Error("Failing - Your solution is not public."));
+          return reject(new Error(SOLUTION_PRIVATE_LINK));
         }
         resolve({
           ...data,
@@ -343,12 +358,34 @@ export class PathsService {
         .ref("/activities")
         .push().key;
     const ref = firebase.database().ref(`/activities/${key}`);
+    if(problemInfo.type===ACTIVITY_TYPES.jupyterInline.id){
+      const fileId = this.getFileId(problemInfo.problemURL) || '';
+      return new Promise((resolve,reject)=>{
+        this.fetchFile(fileId)
+        .then(solution => {
+          codeAnalysisService.analyseCode(uid, solution, problemInfo.frozen)
+          .then(givenSkills=>{
+            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills}, ref, isNew,next,key));
+          })
+          .catch(()=>{
+            resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
+          })
+        })
+        .catch(err=>{
+          resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
+        })
+      })
+    }else{
+      return this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key)
+    }
+  }
 
+  saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key){
     if (problemInfo.id) {
       delete problemInfo.id;
-      next = ref.update(problemInfo);
+      next = ref.update( problemInfo );
     } else {
-      next = ref.set(problemInfo);
+      next = ref.set( problemInfo );
     }
     return next
       .then(
@@ -416,7 +453,7 @@ export class PathsService {
                 cell.source.join("").trim() !== solution.source.join("").trim()
               ) {
                 throw new Error(
-                  "Failing - You have changed the last code block."
+                   SOLUTION_MODIFIED_TESTS
                 );
               }
               return true;
@@ -533,6 +570,7 @@ export class PathsService {
           .set(true)
       );
   }
+
 
   /**
    *
