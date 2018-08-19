@@ -14,6 +14,7 @@ import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
 import { pathsService } from "./services/paths";
 import { historyService } from "./services/history";
+import { codeAnalysisService } from './services/codeAnalysis'
 
 const history = createHashHistory();
 const store = configureStore(undefined, history);
@@ -34,6 +35,7 @@ const theme = createMuiTheme({
 coursesService.setStore(store);
 historyService.setStore(store);
 pathsService.setStore(store);
+codeAnalysisService.setStore(store);
 
 class App extends React.Component {
   render() {
