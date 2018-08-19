@@ -159,7 +159,10 @@ export const processTeamSolutions = (assignments, members) => {
     const assignment = assignments[key];
     let team;
 
-    if (assignment.useTeams) {
+    if (
+      assignment.useTeams ||
+      assignment.questionType === ASSIGNMENTS_TYPES.TeamText.id
+    ) {
       if (!assignment.teamFormation) {
         team = teamFormations[firstTeamFormation];
       } else {
@@ -377,8 +380,12 @@ export const getCourseProps = (state, ownProps) => {
       // Sorting TeamFormation for members count
       if (
         sortAssignment &&
-        sortAssignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id
+        sortAssignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id &&
+        typeof aValue === "string" &&
+        typeof bValue === "string"
       ) {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
         const aCountData = (aValue.match(/\(\d+\)$/) || [])[0];
         const bCountData = (bValue.match(/\(\d+\)$/) || [])[0];
         if (aCountData !== bCountData) {
@@ -397,6 +404,7 @@ export const getCourseProps = (state, ownProps) => {
 
   members.forEach(member => {
     sortedMembers[member.id] = member;
+    sortedMembers[member.id].name = sortedMembers[member.id].name || "";
     return true;
   });
 
