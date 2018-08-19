@@ -108,6 +108,23 @@ class AppFrame extends React.Component {
     userId: PropTypes.string
   };
 
+  shouldComponentUpdate(newProps) {
+    const fields = [
+      "anchorElId",
+      "mainDrawerOpen",
+      "isAdmin",
+      "userName",
+      "userId"
+    ];
+
+    for (const field of fields) {
+      if (this.props[field] !== newProps[field]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   handleDrawerClose = () => {
     this.props.dispatch(mainDrawerToggle(false));
   };

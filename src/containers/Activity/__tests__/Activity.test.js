@@ -16,12 +16,6 @@ describe("<Activity>", () => {
     shallow = createShallow();
   });
 
-  it("should check snapshot", () => {
-    const wrapper = shallow(<Activity match={{ params: {} }} />);
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it("should update internal state", () => {
     const wrapper = shallow(
       <Activity

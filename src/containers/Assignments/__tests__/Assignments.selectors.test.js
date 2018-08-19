@@ -1,7 +1,8 @@
 import cloneDeep from "lodash/cloneDeep";
-import { getCourseProps } from "../selectors";
+import { getCourseProps, processTeamSolutions } from "../selectors";
 import assert from "assert";
 import { getTestState } from "../../../../tests/fixtures/getState";
+import { ASSIGNMENTS_TYPES } from "../../../services/courses";
 
 const COMMON_PROPS = {
   id: "abcTestCourseId",
@@ -331,5 +332,152 @@ describe("assignments selectors tests", () => {
       "abcTestUser2",
       "abcTestUser1"
     ]);
+  });
+
+  it("should process team solutions", () => {
+    const data = [
+      {
+        id: "testStudent1",
+        solutions: {
+          teamFormation1: {
+            value: "test"
+          },
+          teamFormation2: {
+            value: "oops"
+          },
+          textTeam1: {
+            value: "one",
+            createdAt: 101
+          },
+          textTeam2: {
+            value: "one",
+            createdAt: 100
+          },
+          textTeam3: {
+            value: "one",
+            createdAt: 102
+          }
+        }
+      },
+      {
+        id: "testStudent2",
+        solutions: {
+          teamFormation1: {
+            value: "test"
+          },
+          teamFormation2: {
+            value: "test"
+          },
+          textTeam1: {
+            value: "two",
+            createdAt: 100
+          },
+          textTeam2: {
+            value: "two",
+            createdAt: 101
+          },
+          textTeam3: {
+            value: "two",
+            createdAt: 102
+          }
+        }
+      },
+      {
+        id: "testStudent3",
+        solutions: {
+          teamFormation1: {
+            value: "oops"
+          },
+          teamFormation2: {
+            value: "test"
+          },
+          textTeam1: {
+            value: "three",
+            createdAt: 101
+          },
+          textTeam2: {
+            value: "three",
+            createdAt: 102
+          },
+          textTeam3: {
+            value: "three",
+            createdAt: 103
+          }
+        }
+      }
+    ];
+    processTeamSolutions(
+      {
+        teamFormation1: {
+          questionType: ASSIGNMENTS_TYPES.TeamFormation.id
+        },
+        teamFormation2: {
+          questionType: ASSIGNMENTS_TYPES.TeamFormation.id
+        },
+        textTeam1: {
+          questionType: ASSIGNMENTS_TYPES.TeamText.id,
+          teamFormation: "teamFormation1"
+        },
+        textTeam2: {
+          questionType: ASSIGNMENTS_TYPES.TeamText.id,
+          teamFormation: "teamFormation1"
+        },
+        textTeam3: {
+          questionType: ASSIGNMENTS_TYPES.TeamText.id,
+          teamFormation: "teamFormation2"
+        }
+      },
+      data
+    );
+
+    const values = [
+      {
+        id: "teamFormation1",
+        data: [
+          { value: "test (2)" },
+          { value: "test (2)" },
+          { value: "oops (1)" }
+        ]
+      },
+      {
+        id: "teamFormation2",
+        data: [
+          { value: "oops (1)" },
+          { value: "test (2)" },
+          { value: "test (2)" }
+        ]
+      },
+      {
+        id: "textTeam1",
+        data: [
+          { createdAt: 101, value: "three" },
+          { createdAt: 101, value: "three" },
+          { createdAt: 101, value: "three" }
+        ]
+      },
+      {
+        id: "textTeam2",
+        data: [
+          { createdAt: 101, value: "three" },
+          { createdAt: 101, value: "three" },
+          { createdAt: 101, value: "three" }
+        ]
+      },
+      {
+        id: "textTeam3",
+        data: [
+          { createdAt: 101, value: "three" },
+          { createdAt: 101, value: "three" },
+          { createdAt: 101, value: "three" }
+        ]
+      }
+    ];
+
+    for (const value of values) {
+      value.data.forEach((solution, index) => {
+        expect(data[index].solutions[value.id]).toEqual(solution);
+        return true;
+      });
+    }
   });
 });

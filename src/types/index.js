@@ -1,4 +1,18 @@
-import { arrayOf, boolean, func, number, shape, string } from "prop-types";
+/**
+ * Shared PropTypes info
+ */
+
+import {
+  arrayOf,
+  bool,
+  func,
+  number,
+  object,
+  oneOf,
+  shape,
+  string
+} from "prop-types";
+import { ASSIGNMENTS_TYPES } from "../services/courses";
 
 // A problem could have other fields depending on its type
 export const activity = shape({
@@ -8,7 +22,7 @@ export const activity = shape({
   orderIndex: number,
   owner: string,
   path: string,
-  solved: boolean,
+  solved: bool,
   type: string
 });
 
@@ -30,4 +44,50 @@ export const breadcrumbAction = shape({
 export const breadcrumbPath = shape({
   label: string.isRequired,
   link: string
+});
+
+/**
+ * Common PropType for any thing with `id` and `name` fields
+ */
+export const entityInfo = shape({
+  id: string.isRequired,
+  name: string.isRequired
+});
+
+export const teamFormationInfo = shape({
+  assignmentId: string.isRequired,
+  name: string.isRequired
+});
+
+export const assignmentInfo = shape({
+  id: string.isRequired,
+  name: string.isRequired,
+  solutionVisible: bool.isRequired,
+  deadline: string.isRequired,
+  details: string.isRequired,
+  open: string.isRequired,
+  orderIndex: number.isRequired,
+  visible: bool.isRequired,
+  // Temporary solution to keep old PathProblem type
+  questionType: oneOf([...Object.keys(ASSIGNMENTS_TYPES), "PathProblem"]),
+
+  // CodeCombat only
+  level: string,
+
+  // CodeCombatNumber only
+  number: number,
+
+  // PathActivity related only
+  path: string,
+  problem: string
+});
+
+export const courseInfo = shape({
+  id: string.isRequired,
+  description: string,
+  name: string.isRequired,
+  owner: string.isRequired,
+  members: object.isRequired,
+  totalAssignments: number.isRequired,
+  assignments: arrayOf(assignmentInfo).isRequired
 });

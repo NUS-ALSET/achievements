@@ -122,12 +122,13 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
 
 /**
  *
- * @param {Object}assignments hash map with assignments
- * @param {Object} members hash map with members
+ * @param {ICourseAssignmentsMap}assignments hash map with assignments
+ * @param {ICourseMembersMap} members hash map with members
  */
-const processTeamSolutions = (assignments, members) => {
-  let needProcess = false;
-  let teamFormations = [];
+export const processTeamSolutions = (assignments, members) => {
+  const teamFormations = {};
+  let firstTeamFormation = "";
+  const teamFormationKeys = [];
 
   if (Array.isArray(members)) {
     members = Object.assign(
@@ -136,28 +137,44 @@ const processTeamSolutions = (assignments, members) => {
     );
   }
 
-  // FIXIT: move team tasks under team formations
-  let teamTasks = [];
-
+  // Collect team formations
   for (const key of Object.keys(assignments)) {
-    switch (assignments[key].questionType) {
-      case ASSIGNMENTS_TYPES.TeamFormation.id:
-        needProcess = true;
-        teamFormations.push({
-          key,
-          teams: {}
-        });
-        break;
-      case ASSIGNMENTS_TYPES.TeamText.id:
-        needProcess = true;
-        teamTasks.push(key);
-        break;
-      default:
+    if (assignments[key].questionType === ASSIGNMENTS_TYPES.TeamFormation.id) {
+      firstTeamFormation = firstTeamFormation || key;
+      teamFormations[key] = {
+        teams: {},
+        tasks: {}
+      };
+      teamFormationKeys.push(key);
     }
   }
-  if (!needProcess) {
-    return;
+
+  if (!firstTeamFormation) {
+    return Promise.resolve();
   }
+
+  // Distributive team tasks by team formations
+  for (const key of Object.keys(assignments)) {
+    const a = assignments[key];
+  }
+
+  for (const memberKey of Object.keys(members)) {
+    for (const teamFormationKey of teamFormationKeys) {
+      const teamName =
+        members[memberKey].solutions &&
+        members[memberKey].solutions[teamFormationKey] &&
+        members[memberKey].solutions[teamFormationKey].value;
+
+      teamFormations[teamFormationKey].teams[teamName] = teamFormations[
+        teamFormationKey
+      ].teams[teamName] || {
+        members: [],
+        answers: {}
+      };
+      teamFormations[teamFormationKey].teams[teamName];
+    }
+  }
+
   // Collect all team formations and
   // last answers for team tasks (currently Text only)
   for (const memberKey of Object.keys(members)) {
@@ -214,10 +231,6 @@ const processTeamSolutions = (assignments, members) => {
       }
     }
   }
-
-  // GC helper
-  teamFormations = null;
-  teamTasks = null;
 };
 
 /**
@@ -308,6 +321,11 @@ export const getCourseProps = (state, ownProps) => {
   const options = {
     showHiddenAssignments: state.assignments.showHiddenAssignments
   };
+  const courseData = getFrom(state.firebase.data, "courses")[courseId];
+
+  if (!courseData) {
+    return null;
+  }
 
   let members = state.assignments.courseMembers.map(courseMember => ({
     ...courseMember,
@@ -341,6 +359,7 @@ export const getCourseProps = (state, ownProps) => {
       }
     }))
     .sort((a, b) => {
+      const sortAssignment = assignments[state.assignments.sort.field];
       let aValue = a.name;
       let bValue = b.name;
       let result = 0;
@@ -369,6 +388,19 @@ export const getCourseProps = (state, ownProps) => {
       aValue = aValue || "";
       bValue = bValue || "";
 
+      // Sorting TeamFormation for members count
+      if (
+        sortAssignment &&
+        sortAssignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id
+      ) {
+        const aCountData = (aValue.match(/\(\d+\)$/) || [])[0];
+        const bCountData = (bValue.match(/\(\d+\)$/) || [])[0];
+        if (aCountData !== bCountData) {
+          aValue = aCountData;
+          bValue = bCountData;
+        }
+      }
+
       if (aValue > bValue) {
         result = 1;
       } else if (aValue < bValue) {
@@ -384,8 +416,8 @@ export const getCourseProps = (state, ownProps) => {
 
   return {
     id: courseId,
-    ...getFrom(state.firebase.data.courses, courseId),
-    members: members.length ? sortedMembers : false,
+    ...courseData,
+    members: sortedMembers,
     totalAssignments: Object.keys(assignments).filter(key =>
       checkVisibilitySolution(assignments, key, options)
     ).length,

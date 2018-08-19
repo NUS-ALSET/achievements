@@ -28,16 +28,17 @@ import {
   assignmentManualUpdateField,
   updateNewAssignmentField
 } from "../../containers/Assignments/actions";
+import { courseInfo, entityInfo } from "../../types";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
     uid: PropTypes.any,
-    courseId: PropTypes.any,
+    course: courseInfo,
     assignment: PropTypes.any,
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    paths: PropTypes.array.isRequired,
-    problems: PropTypes.array.isRequired
+    paths: PropTypes.arrayOf(entityInfo).isRequired,
+    activities: PropTypes.arrayOf(entityInfo).isRequired
   };
 
   manualChangeField = field => e =>
@@ -46,13 +47,13 @@ class AddAssignmentDialog extends React.PureComponent {
     this.props.dispatch(updateNewAssignmentField(field, e.target.value));
   onClose = () => this.props.dispatch(assignmentCloseDialog());
   onCommit = () => {
-    const { courseId, dispatch, assignment } = this.props;
+    const { course, dispatch, assignment } = this.props;
 
-    dispatch(assignmentAddRequest(courseId, assignment));
+    dispatch(assignmentAddRequest(course.id, assignment));
   };
 
   getAssignmentSpecificFields(assignment) {
-    let { paths, problems, uid } = this.props;
+    let { activities, course, paths, uid } = this.props;
 
     switch (assignment.questionType) {
       case ASSIGNMENTS_TYPES.CodeCombat.id:
@@ -116,9 +117,9 @@ class AddAssignmentDialog extends React.PureComponent {
               select
               value={assignment.problem || ""}
             >
-              {problems.map(problem => (
-                <MenuItem key={problem.id} value={problem.id}>
-                  {problem.name}
+              {activities.map(activity => (
+                <MenuItem key={activity.id} value={activity.id}>
+                  {activity.name}
                 </MenuItem>
               ))}
             </TextField>
@@ -157,6 +158,28 @@ class AddAssignmentDialog extends React.PureComponent {
             ))}
           </TextField>
         );
+      case ASSIGNMENTS_TYPES.TeamText.id:
+        return (
+          <TextField
+            fullWidth
+            label="Team Formation Assignment"
+            onChange={this.updateField("teamFormation")}
+            select
+            value={assignment.teamFormation || ""}
+          >
+            {course.assignments
+              .filter(
+                assignment =>
+                  assignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id
+              )
+              .map(assignment => (
+                <MenuItem key={assignment.id} value={assignment.id}>
+                  {assignment.name}
+                </MenuItem>
+              ))}
+          </TextField>
+        );
+
       default:
     }
   }

@@ -11,11 +11,6 @@ describe("<Breadcrumbs>", () => {
     mount = createMount();
   });
 
-  it("Should test Breadcrumbs component", () => {
-    const component = shallow(<Breadcrumbs paths={[]} />);
-    expect(component).toMatchSnapshot();
-  });
-
   it("Should render Button into Breadcrumbs component", () => {
     const component = mount(
       <Breadcrumbs action={{ handler: () => {}, label: "Test" }} paths={[]} />

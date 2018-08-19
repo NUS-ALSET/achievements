@@ -26,6 +26,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TextField from "@material-ui/core/TextField";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+import { assignmentInfo } from "../../types";
 
 const styles = () => ({
   actionCol: {
@@ -40,9 +41,34 @@ class AssignmentsEditorTable extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     match: PropTypes.object,
-    assignments: PropTypes.any.isRequired,
+    assignments: PropTypes.arrayOf(assignmentInfo).isRequired,
     dispatch: PropTypes.func.isRequired
   };
+
+  shouldComponentUpdate(nextProps) {
+    const { assignments } = this.props;
+    let result = false;
+
+    if (!(Array.isArray(assignments) && Array.isArray(nextProps.assignments))) {
+      return false;
+    }
+
+    assignments.forEach((assignment, index) => {
+      const newOne = nextProps.assignments[index];
+      for (const field of Object.keys(assignment)) {
+        if (
+          typeof assignment[field] !== "object" &&
+          assignment[field] !== newOne[field]
+        ) {
+          result = true;
+          return !result;
+        }
+      }
+      return !result;
+    });
+
+    return result;
+  }
 
   componentDidMount() {
     this.props.dispatch(
