@@ -57,7 +57,7 @@ class Admin extends React.PureComponent {
   }
 }
 
-// noinspection JSUnusedLocalSymbols
-const mapStateToProps = state => ({});
+// add state param when needed
+const mapStateToProps = () => ({});
 
 export default compose(withStyles(styles), connect(mapStateToProps))(Admin);

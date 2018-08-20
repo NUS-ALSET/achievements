@@ -17,16 +17,6 @@ describe("<JupyterColabActivity>", () => {
     shallow = createShallow();
   });
 
-  it("should check snapshot", () => {
-    const wrapper = shallow(
-      <JupyterColabActivity
-        dispatch={mockDispatch}
-        problem={{ pathId: "testPath", problemId: "testProblem" }}
-      />
-    );
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it("should initiate JupyterColabActivity w/o solution", () => {
     const wrapper = shallow(
       <JupyterColabActivity

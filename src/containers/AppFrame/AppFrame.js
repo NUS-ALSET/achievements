@@ -1,5 +1,5 @@
 import { APP_SETTING } from "../../achievementsApp/config";
-import { AppBarMenuItemsExport } from "../../components/AppDrawerElements";
+import AppBarMenuItems from "../../components/AppBarMenuItems";
 // import { Home } from "../../components/Home";
 import Home from "../Home/AltHome";
 import { Route } from "react-router-dom";
@@ -111,6 +111,23 @@ class AppFrame extends React.Component {
     userId: PropTypes.string
   };
 
+  shouldComponentUpdate(newProps) {
+    const fields = [
+      "anchorElId",
+      "mainDrawerOpen",
+      "isAdmin",
+      "userName",
+      "userId"
+    ];
+
+    for (const field of fields) {
+      if (this.props[field] !== newProps[field]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   handleDrawerClose = () => {
     this.props.dispatch(mainDrawerToggle(false));
   };
@@ -195,7 +212,7 @@ class AppFrame extends React.Component {
                       onClose={this.handleMenuClose}
                       open={!!anchorElId}
                     >
-                      <AppBarMenuItemsExport
+                      <AppBarMenuItems
                         isAuth={userId}
                         login={this.handleLogin}
                         logout={this.handleLogout}

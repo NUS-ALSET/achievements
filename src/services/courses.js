@@ -10,6 +10,8 @@ import {
 } from "../containers/Assignments/actions";
 import { notificationHide, notificationShow } from "../containers/Root/actions";
 // import { solutionsService } from "./solutions";
+import { codeAnalysisService } from "./codeAnalysis"
+
 import each from "lodash/each";
 import firebase from "firebase";
 
@@ -265,7 +267,7 @@ export class CoursesService {
                     return firebase
                       .ref(
                         "/visibleSolutions/" +
-                          `${courseId}/${studentId}/${assignmentId}`
+                        `${courseId}/${studentId}/${assignmentId}`
                       )
                       .set({
                         ...solutions[assignmentId],
@@ -356,7 +358,7 @@ export class CoursesService {
       });
   }
 
-  submitSolution(courseId, assignment, value, userId) {
+  submitSolution(courseId, assignment, value, userId,status=null) {
     userId = userId || this.getUser("uid");
 
     return Promise.resolve()
@@ -376,22 +378,31 @@ export class CoursesService {
           .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
           .set({
             createdAt: new Date().getTime(),
-            value
+            value,
+            status
           });
       })
-      .then((res) =>{
-          if(userId && assignment.path && assignment.problem){
-            firebase
+      .then((res) => {
+        if (((assignment || {}).problemJSON || {}).type === 'jupyterInline') {
+          codeAnalysisService.analyseCode(userId, value, assignment.problemJSON.frozen)
+            .then(response => {
+              firebase
+                .ref(`/solutions/${courseId}/${userId}/${assignment.id}/givenSkills`)
+                .set(response);
+            })
+        }
+        if (userId && assignment.path && assignment.problem) {
+          firebase
             .database()
             .ref(
               `/completedActivities/${userId}/${assignment.path}/${
-                assignment.problem
+              assignment.problem
               }`
             )
             .set(true)
-          }
-          return res;
         }
+        return res;
+      }
       );
   }
 
@@ -563,8 +574,8 @@ export class CoursesService {
 
         const unknownSolution =
           assignment.solutionVisible ||
-          members[i].id === userId ||
-          (instructorView && course.owner === userId)
+            members[i].id === userId ||
+            (instructorView && course.owner === userId)
             ? "Incomplete"
             : "Who knows";
 

@@ -1,6 +1,12 @@
+/**
+ * Path container tests
+ */
+
 import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
 import { Path } from "../Path";
+
+import Button from "@material-ui/core/Button";
 
 // noinspection RequiredAttributes
 describe("<Path>", () => {
@@ -12,7 +18,7 @@ describe("<Path>", () => {
     spy = jest.fn();
   });
 
-  it("should check snapshot", () => {
+  it("should generate Path container", () => {
     const wrapper = shallow(
       <Path
         match={{
@@ -40,6 +46,7 @@ describe("<Path>", () => {
       />
     );
 
-    expect(wrapper).toMatchSnapshot();
+    expect(wrapper.find(Button).length).toBe(0);
+
   });
 });

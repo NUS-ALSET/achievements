@@ -75,6 +75,7 @@
  * @property {String} id
  * @property {String} name
  * @property {String} type
+ * @property {Number} orderIndex
  */
 
 /**

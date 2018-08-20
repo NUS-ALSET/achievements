@@ -192,7 +192,7 @@ export const assignments = (
         ...state,
         dialog: {
           ...state.dialog,
-          problems: action.problems
+          activities: action.problems
         }
       };
     case ASSIGNMENT_PATH_PROBLEM_FETCH_SUCCESS:
