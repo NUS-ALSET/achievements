@@ -27,6 +27,8 @@ import Security from "@material-ui/icons/Security";
 // for Github icon
 import GithubIcon from "./icons/GithubIcon";
 
+import Typography from '@material-ui/core/Typography';
+
 
 const linkStyle = {
   textDecoration: "none"
@@ -142,18 +144,18 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
     </MenuList>
 
     <Divider />
-    
+
     <MenuList
       onClick={onRequestClose}
     >
       <MenuItem
         component={Link}
-        to="/homev2"
-        selected={"/homev2" === location.pathname}
+        to="/contribute"
+        selected={"/contribute" === location.pathname}
       >
         <ListItem>
           <ListItemIcon>
-          {("/homev2" === location.pathname)
+          {("/contribute" === location.pathname)
             ? <GithubIcon style={{fill: "red"}} />
             : <GithubIcon />}
           </ListItemIcon>
@@ -161,6 +163,21 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
         </ListItem>
       </MenuItem>
     </MenuList>
+    <div
+      style={{
+        position:"fixed",
+        bottom: 0,
+        width: 230,
+      }}
+    >
+      <Typography
+        variant="caption"
+        gutterBottom
+        align="center"
+      >
+        &#169; 2018 NUS-ALSET
+      </Typography>
+    </div>
   </Fragment>
 );
 

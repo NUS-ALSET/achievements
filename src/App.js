@@ -38,9 +38,12 @@ pathsService.setStore(store);
 codeAnalysisService.setStore(store);
 
 class App extends React.Component {
+  // MuiThemeProvider makes the theme available down the React tree
+  // thanks to React context.
   render() {
     return (
       <MuiThemeProvider theme={theme}>
+        {/* CssBaseline normalize a consistent CSS baseline across browsers. */}
         <CssBaseline />
         <Provider store={store}>
           <Root>
