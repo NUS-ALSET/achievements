@@ -5,6 +5,27 @@ const Queue = require("firebase-queue");
 const jupyterAnalysisLambdaProcessor =
   "https://ltp7y8q1ak.execute-api.ap-southeast-1.amazonaws.com/default/code_analysis";
 
+  const getNewFormat=(obj)=>{
+    if(typeof obj==='object'){
+      let newObj={};
+      for(let key in obj){
+        const value = obj[key];
+        const newValue= getNewFormat(value);
+        if(key==='problemAA' || key==='userBB'){
+          if(newValue===true){
+            return true;
+          }else{
+          newObj={...newObj, ...newValue} 
+          }
+        }else{
+          newObj[key]=newValue;
+        }
+      }
+      return newObj;
+    }
+    return obj;
+  }
+
 const analyseJupyterSolution = (data, taskKey, owner) => {
   return admin
     .database()
@@ -22,15 +43,16 @@ const analyseJupyterSolution = (data, taskKey, owner) => {
         }
       })
     )
-    .then(response =>
-      admin
+    .then(response =>{
+      const formattedRes = getNewFormat(response.data.userSkills)
+      return  admin
         .database()
         .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
         .set({
           owner: owner,
-          solution:response.data,
-          d : data.solution
+          userSkills:formattedRes,
         })
+      }
     )
     .catch(err => {
       return (

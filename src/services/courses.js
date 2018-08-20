@@ -13,6 +13,7 @@ import { notificationHide, notificationShow } from "../containers/Root/actions";
 import { codeAnalysisService } from "./codeAnalysis"
 
 import each from "lodash/each";
+import cloneDeep from "lodash/cloneDeep";
 import firebase from "firebase";
 
 const ERROR_TIMEOUT = 6000;
@@ -386,9 +387,24 @@ export class CoursesService {
         if (((assignment || {}).problemJSON || {}).type === 'jupyterInline') {
           codeAnalysisService.analyseCode(userId, value, assignment.problemJSON.frozen)
             .then(response => {
+              const givenSkills = assignment.problemJSON.givenSkills;
+              let skillsDifference=cloneDeep(response);
+              if(givenSkills){
+                Object.keys(givenSkills).forEach(key=>{
+                  Object.keys(givenSkills[key]).forEach(subKey=>{
+                    delete (skillsDifference[key] || {})[subKey];
+                    if(Object.keys(skillsDifference[key] || {}).length===0){
+                      delete skillsDifference[key];
+                    }
+                  })
+                })
+              }
               firebase
-                .ref(`/solutions/${courseId}/${userId}/${assignment.id}/givenSkills`)
-                .set(response);
+                .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
+                .update({
+                  userSkills : response,
+                  skillsDifference
+                });
             })
         }
         if (userId && assignment.path && assignment.problem) {

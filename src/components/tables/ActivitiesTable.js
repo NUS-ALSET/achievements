@@ -17,15 +17,9 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
-
 import DoneIcon from "@material-ui/icons/Done";
-
 import withStyles from "@material-ui/core/styles/withStyles";
+import AnalysisDialog from "../dialogs/AnalysisDialog";
 
 const COLUMN_ACTIONS_WIDTH = 240;
 
@@ -57,7 +51,7 @@ class ActivitiesTable extends React.PureComponent {
     }
   };
 
-  openAnalysisDialog = givenSkills => this.setState({ analysisDialog : { open : true, data : givenSkills}});
+  openAnalysisDialog = givenSkills => this.setState({ analysisDialog : { open : true, data : {givenSkills}}});
   
   handleCloseAnalysisDialog = () => this.setState({ analysisDialog : { open : false, data : {}}});
 
@@ -184,7 +178,7 @@ class ActivitiesTable extends React.PureComponent {
           </MenuItem>
         }
         </Menu>
-        <AnalysisDialog   open={this.state.analysisDialog.open} handleClose={this.handleCloseAnalysisDialog} givenSkills={this.state.analysisDialog.data} />
+        <AnalysisDialog   open={this.state.analysisDialog.open} handleClose={this.handleCloseAnalysisDialog} skills={this.state.analysisDialog.data} />
       </Fragment>
     );
   }
@@ -192,27 +186,3 @@ class ActivitiesTable extends React.PureComponent {
 
 export default withStyles(styles)(ActivitiesTable);
 
-const AnalysisDialog=(props)=>{
-  return (
-    <Dialog
-          open={props.open}
-          onClose={props.handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Jupter Inline Problem Analysis"}</DialogTitle>
-          <DialogContent>
-          
-              <pre style={{ color: 'black', lineHeight: '1.5', padding : '0px 20px'}}>
-                {JSON.stringify(props.givenSkills, null, '  ')}
-              </pre>
-          
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={props.handleClose} color="primary" autoFocus>
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
-  )
-}
