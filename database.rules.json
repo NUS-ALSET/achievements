@@ -29,7 +29,8 @@
       "$courseKey": {
         ".read": "auth != null && root.child('courses/' + $courseKey).exists() &&
           (root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
-           root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists())",
+           root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists() ||
+           root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists()))",
         ".write": "auth != null && root.child('courses/' + $courseKey).exists() &&
           (root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
           root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists())"
@@ -332,7 +333,8 @@
       "$courseKey": {
         ".read": "auth != null  &&
           (root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists() ||
-          root.child('courses/' + $courseKey + '/owner').val() == auth.uid )
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
+          root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists() )
         ",
         ".write": "
           auth != null && (
