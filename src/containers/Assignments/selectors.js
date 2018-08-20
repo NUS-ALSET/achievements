@@ -386,8 +386,8 @@ export const getCourseProps = (state, ownProps) => {
       ) {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
-        const aCountData = (aValue.match(/\(\d+\)$/) || [])[0];
-        const bCountData = (bValue.match(/\(\d+\)$/) || [])[0];
+        const aCountData = (aValue.match(/\(\d+\)$/) || [])[0] || "";
+        const bCountData = (bValue.match(/\(\d+\)$/) || [])[0] || "";
         if (aCountData !== bCountData) {
           aValue = aCountData;
           bValue = bCountData;
