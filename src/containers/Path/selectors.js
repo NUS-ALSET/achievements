@@ -2,6 +2,7 @@ import { createSelector } from "reselect";
 import { ACTIVITY_TYPES } from "../../services/paths";
 
 export const PATH_STATUS_OWNER = "owner";
+export const PATH_STATUS_COLLABORATOR = "collaborator";
 export const PATH_STATUS_JOINED = "joined";
 export const PATH_STATUS_NOT_JOINED = "not_joined";
 
@@ -25,6 +26,11 @@ const getPath = (state, ownProps) =>
         name: "Default"
       };
 
+const getPathAssistants = (state, ownProps) =>
+  (state.firebase.data.pathAssistants &&
+    state.firebase.data.pathAssistants[ownProps.match.params.pathId]) ||
+  {};
+
 const getJoinedPaths = state => state.paths.joinedPaths || {};
 
 const getActivities = (state, ownProps) => {
@@ -41,9 +47,13 @@ export const pathStatusSelector = createSelector(
   getUserId,
   getJoinedPaths,
   getPath,
-  (userId, joinedPaths, path) => {
+  getPathAssistants,
+  (userId, joinedPaths, path, pathAssistants) => {
     if (!path || path.owner === userId) {
       return PATH_STATUS_OWNER;
+    }
+    if (pathAssistants[userId]) {
+      return PATH_STATUS_COLLABORATOR;
     }
     if (joinedPaths[path.id]) {
       return PATH_STATUS_JOINED;
@@ -93,7 +103,9 @@ export const pathActivitiesSelector = createSelector(
         (a, b) =>
           a.orderIndex === b.orderIndex
             ? 0
-            : a.orderIndex < b.orderIndex ? -1 : 1
+            : a.orderIndex < b.orderIndex
+              ? -1
+              : 1
       )
   })
 );

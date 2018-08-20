@@ -29,7 +29,8 @@ import {
   PATH_STATUS_JOINED,
   PATH_STATUS_OWNER,
   PATH_STATUS_NOT_JOINED,
-  codeCombatProfileSelector
+  codeCombatProfileSelector,
+  PATH_STATUS_COLLABORATOR
 } from "./selectors";
 import {
   pathAddCollaboratorRequest,
@@ -226,7 +227,9 @@ export class Path extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            pathStatus !== PATH_STATUS_OWNER && [
+            ![PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(
+              pathStatus
+            ) && [
               allFinished && {
                 label: "Request more",
                 handler: this.requestMoreProblems.bind(this)
@@ -251,7 +254,7 @@ export class Path extends React.Component {
             }
           ]}
         />
-        {pathStatus === PATH_STATUS_OWNER &&
+        {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
           (!APP_SETTING.isSuggesting ? (
             <Toolbar>
               <Button
@@ -261,13 +264,17 @@ export class Path extends React.Component {
               >
                 Add Activity
               </Button>
-              <Button
-                className={classes.toolbarButton}
-                onClick={() => onShowCollaboratorsClick(pathActivities.path.id)}
-                variant="raised"
-              >
-                Collaborators
-              </Button>
+              {pathStatus === PATH_STATUS_OWNER && (
+                <Button
+                  className={classes.toolbarButton}
+                  onClick={() =>
+                    onShowCollaboratorsClick(pathActivities.path.id)
+                  }
+                  variant="raised"
+                >
+                  Collaborators
+                </Button>
+              )}
             </Toolbar>
           ) : (
             <Button
@@ -309,7 +316,7 @@ export class Path extends React.Component {
           onEditProblem={onProblemDialogShow}
           onMoveProblem={this.onMoveProblem}
           onOpenProblem={this.onOpenProblem}
-          pathOwnerId={pathActivities.path && pathActivities.path.owner}
+          pathStatus={pathStatus}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
         <ActivityDialog
@@ -380,6 +387,7 @@ export default compose(
     return [
       `/completedActivities/${uid}/${pathId}`,
       `/paths/${pathId}`,
+      `/pathAssistants/${pathId}`,
       {
         path: "/activities",
         queryParams: ["orderByChild=path", `equalTo=${pathId}`]
@@ -388,5 +396,8 @@ export default compose(
       `userAchievements/${uid}/CodeCombat`
     ];
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Path);

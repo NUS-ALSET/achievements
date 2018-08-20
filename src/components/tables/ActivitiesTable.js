@@ -20,6 +20,10 @@ import TableRow from "@material-ui/core/TableRow";
 import DoneIcon from "@material-ui/icons/Done";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+import {
+  PATH_STATUS_COLLABORATOR,
+  PATH_STATUS_OWNER
+} from "../../containers/Path/selectors";
 
 const COLUMN_ACTIONS_WIDTH = 240;
 
@@ -40,7 +44,7 @@ class ActivitiesTable extends React.PureComponent {
     onEditProblem: PropTypes.func.isRequired,
     onOpenProblem: PropTypes.func.isRequired,
     onMoveProblem: PropTypes.func.isRequired,
-    pathOwnerId: PropTypes.any
+    pathStatus: PropTypes.string
   };
 
   state = {
@@ -53,12 +57,15 @@ class ActivitiesTable extends React.PureComponent {
     const {
       activities,
       classes,
-      currentUserId,
       onEditProblem,
       onMoveProblem,
       onOpenProblem,
-      pathOwnerId
+      pathStatus
     } = this.props;
+
+    const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
+      pathStatus
+    );
 
     return (
       <Fragment>
@@ -67,7 +74,7 @@ class ActivitiesTable extends React.PureComponent {
             <TableRow>
               <TableCell>Activity name</TableCell>
               <TableCell>Description</TableCell>
-              {currentUserId !== pathOwnerId && <TableCell>Status</TableCell>}
+              {!canChange && <TableCell>Status</TableCell>}
               <TableCell style={{ width: COLUMN_ACTIONS_WIDTH }}>
                 Actions
               </TableCell>
@@ -78,7 +85,7 @@ class ActivitiesTable extends React.PureComponent {
               <TableRow key={activity.id}>
                 <TableCell>{activity.name}</TableCell>
                 <TableCell>{activity.description}</TableCell>
-                {currentUserId !== pathOwnerId && (
+                {!canChange && (
                   <TableCell>
                     {activity.solved && (
                       <Icon>
@@ -94,7 +101,7 @@ class ActivitiesTable extends React.PureComponent {
                   >
                     Solve
                   </Button>
-                  {pathOwnerId === currentUserId && (
+                  {canChange && (
                     <Button
                       className={classes.button}
                       id={activity.id}

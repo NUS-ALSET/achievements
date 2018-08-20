@@ -177,11 +177,11 @@
       ".indexOn": ["owner", "isPublic"],
       "$pathKey": {
         ".write": "auth != null && (
-        !data.exists() && newData.child('owner').val() == auth.uid ||
-        data.exists() && (
-        data.child('owner').val() == auth.uid ||
-        data.child('assistants/').exists() && data.child('assistants/' + auth.uid).val() == true
-        )
+          !data.exists() && newData.child('owner').val() == auth.uid ||
+          data.exists() && (
+            data.child('owner').val() == auth.uid ||
+            root.child('pathAssistants/' + $pathKey + '/' + auth.uid).exists()
+          )
         )"
       }
     },
