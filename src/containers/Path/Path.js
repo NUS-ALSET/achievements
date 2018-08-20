@@ -249,7 +249,7 @@ export class Path extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            ![PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(
+            (![PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(
               pathStatus
             ) && [
               allFinished && {
@@ -264,7 +264,8 @@ export class Path extends React.Component {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
               }
-            ] || []
+            ]) ||
+            []
           }
           paths={[
             {

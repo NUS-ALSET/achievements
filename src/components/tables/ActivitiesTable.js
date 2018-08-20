@@ -17,11 +17,10 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
 import DoneIcon from "@material-ui/icons/Done";
 
@@ -55,15 +54,17 @@ class ActivitiesTable extends React.PureComponent {
 
   state = {
     activity: null,
-    analysisDialog : {
-      open : false,
-      data : {}
+    analysisDialog: {
+      open: false,
+      data: {}
     }
   };
 
-  openAnalysisDialog = givenSkills => this.setState({ analysisDialog : { open : true, data : givenSkills}});
+  openAnalysisDialog = givenSkills =>
+    this.setState({ analysisDialog: { open: true, data: givenSkills } });
 
-  handleCloseAnalysisDialog = () => this.setState({ analysisDialog : { open : false, data : {}}});
+  handleCloseAnalysisDialog = () =>
+    this.setState({ analysisDialog: { open: false, data: {} } });
 
   selectActivity = activity => this.setState({ activity });
 
@@ -77,17 +78,17 @@ class ActivitiesTable extends React.PureComponent {
       pathStatus
     } = this.props;
 
-  let minOrderIndex = Infinity;
-  let maxOrderIndex = -Infinity;
+    let minOrderIndex = Infinity;
+    let maxOrderIndex = -Infinity;
 
-  (activities || []).forEach(activity=>{
-    if(activity.orderIndex < minOrderIndex){
-      minOrderIndex = activity.orderIndex;
-    }
-    if(activity.orderIndex > maxOrderIndex){
-      maxOrderIndex = activity.orderIndex;
-    }
-  })
+    (activities || []).forEach(activity => {
+      if (activity.orderIndex < minOrderIndex) {
+        minOrderIndex = activity.orderIndex;
+      }
+      if (activity.orderIndex > maxOrderIndex) {
+        maxOrderIndex = activity.orderIndex;
+      }
+    });
 
     const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
       pathStatus
@@ -137,14 +138,16 @@ class ActivitiesTable extends React.PureComponent {
                       More
                     </Button>
                   )}
-                  { activity.givenSkills &&
+                  {activity.givenSkills && (
                     <Button
-                      onClick={() => this.openAnalysisDialog(activity.givenSkills)}
+                      onClick={() =>
+                        this.openAnalysisDialog(activity.givenSkills)
+                      }
                       variant="raised"
                     >
                       View Analysis
                     </Button>
-                    }
+                  )}
                 </TableCell>
               </TableRow>
             ))}
@@ -166,32 +169,38 @@ class ActivitiesTable extends React.PureComponent {
           >
             Edit
           </MenuItem>
-          {this.state.activity && this.state.activity.orderIndex!==minOrderIndex &&
-          <MenuItem
-            className={classes.button}
-            onClick={() =>
-              this.selectActivity() || onMoveProblem(this.state.activity, "up")
-            }
-            variant="raised"
-          >
-            Move Up
-          </MenuItem>
-        }
-        {
-          this.state.activity && this.state.activity.orderIndex!==maxOrderIndex &&
-          <MenuItem
-            className={classes.button}
-            onClick={() =>
-              this.selectActivity() ||
-              onMoveProblem(this.state.activity, "down")
-            }
-            variant="raised"
-          >
-            Move Down
-          </MenuItem>
-        }
+          {this.state.activity &&
+            this.state.activity.orderIndex !== minOrderIndex && (
+              <MenuItem
+                className={classes.button}
+                onClick={() =>
+                  this.selectActivity() ||
+                  onMoveProblem(this.state.activity, "up")
+                }
+                variant="raised"
+              >
+                Move Up
+              </MenuItem>
+            )}
+          {this.state.activity &&
+            this.state.activity.orderIndex !== maxOrderIndex && (
+              <MenuItem
+                className={classes.button}
+                onClick={() =>
+                  this.selectActivity() ||
+                  onMoveProblem(this.state.activity, "down")
+                }
+                variant="raised"
+              >
+                Move Down
+              </MenuItem>
+            )}
         </Menu>
-        <AnalysisDialog   open={this.state.analysisDialog.open} handleClose={this.handleCloseAnalysisDialog} givenSkills={this.state.analysisDialog.data} />
+        <AnalysisDialog
+          givenSkills={this.state.analysisDialog.data}
+          handleClose={this.handleCloseAnalysisDialog}
+          open={this.state.analysisDialog.open}
+        />
       </Fragment>
     );
   }
@@ -199,27 +208,29 @@ class ActivitiesTable extends React.PureComponent {
 
 export default withStyles(styles)(ActivitiesTable);
 
-const AnalysisDialog=(props)=>{
+/* eslint-disable */
+const AnalysisDialog = props => {
   return (
     <Dialog
-          open={props.open}
-          onClose={props.handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{"Jupter Inline Problem Analysis"}</DialogTitle>
-          <DialogContent>
-
-              <pre style={{ color: 'black', lineHeight: '1.5', padding : '0px 20px'}}>
-                {JSON.stringify(props.givenSkills, null, '  ')}
-              </pre>
-
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={props.handleClose} color="primary" autoFocus>
-              Close
-            </Button>
-          </DialogActions>
-        </Dialog>
-  )
-}
+      aria-describedby="alert-dialog-description"
+      aria-labelledby="alert-dialog-title"
+      onClose={props.handleClose}
+      open={props.open}
+    >
+      <DialogTitle id="alert-dialog-title">
+        {"Jupter Inline Problem Analysis"}
+      </DialogTitle>
+      <DialogContent>
+        <pre style={{ color: "black", lineHeight: "1.5", padding: "0px 20px" }}>
+          {JSON.stringify(props.givenSkills, null, "  ")}
+        </pre>
+      </DialogContent>
+      <DialogActions>
+        <Button autoFocus color="primary" onClick={props.handleClose}>
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+/* eslint-enable */
