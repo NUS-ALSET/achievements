@@ -10,12 +10,6 @@ describe("<PathCard />", () => {
     shallow = createShallow();
   });
 
-  it("Should test PathCard component", () => {
-    const component = shallow(
-      <PathCard title={""} />
-    );
-    expect(component).toMatchSnapshot();
-  });
   it("Should test Typography into PathCard component", () => {
     const component = shallow(
       <PathCard title={"test"} />

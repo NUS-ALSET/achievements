@@ -10,14 +10,6 @@ describe("<ActivityQuestion>", () => {
     shallow = createShallow();
   });
 
-  it("should check snapshot", () => {
-    const wrapper = shallow(
-      <ActivityQuestion question="test" setAnswer={() => {}} />
-    );
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it("should set label for problem question", () => {
     const wrapper = shallow(
       <ActivityQuestion

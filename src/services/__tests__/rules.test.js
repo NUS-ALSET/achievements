@@ -17,7 +17,7 @@ describe("security rules tests", () => {
   it("should disallow write blacklistActions", () => {
     const { permitted } = database.write("/blacklistActions", true);
 
-    assert.equal(permitted, false);
+    assert.strictEqual(permitted, false);
   });
 
   describe("courses rules", () => {
@@ -28,7 +28,7 @@ describe("security rules tests", () => {
           owner: "abcTestUser1"
         });
 
-      assert.equal(permitted, true);
+      assert.strictEqual(permitted, true);
     });
 
     it("should disallow public write", () => {
@@ -39,7 +39,7 @@ describe("security rules tests", () => {
           isPublic: true
         });
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should allow studentCoursePassword write", () => {
@@ -50,7 +50,7 @@ describe("security rules tests", () => {
           "abcTestCoursePassword"
         );
 
-      assert.equal(permitted, true);
+      assert.strictEqual(permitted, true);
     });
   });
 
@@ -61,7 +61,7 @@ describe("security rules tests", () => {
         "bar"
       );
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should disallow non-student write", () => {
@@ -70,7 +70,7 @@ describe("security rules tests", () => {
 
         .write("/userAchievements/abcTestUser1/foo", "bar");
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should allow student write", () => {
@@ -78,7 +78,7 @@ describe("security rules tests", () => {
         .as({ uid: "abcTestUser1" })
         .write("/userAchievements/abcTestUser1/foo", "bar");
 
-      assert.equal(permitted, true);
+      assert.strictEqual(permitted, true);
     });
 
     it("should disallow student write achievements", () => {
@@ -89,8 +89,8 @@ describe("security rules tests", () => {
           "bar"
         );
 
-      assert.equal(permitted, true, "permitted");
-      assert.equal(validated, false, "validated");
+      assert.strictEqual(permitted, true, "permitted");
+      assert.strictEqual(validated, false, "validated");
     });
   });
 
@@ -101,7 +101,7 @@ describe("security rules tests", () => {
         { foo: "bar" }
       );
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should disallow non-instructor write to assignments", () => {
@@ -109,7 +109,7 @@ describe("security rules tests", () => {
         .as({ uid: "SomeUID" })
         .write("/assignments/abcTestCourseId/newAssignmentId", { foo: "bar" });
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should allow instructor write to assignments", () => {
@@ -117,7 +117,7 @@ describe("security rules tests", () => {
         .as({ uid: "abcTestUserOwner" })
         .write("/assignments/abcTestCourseId/newAssignmentId", { foo: "bar" });
 
-      assert.equal(permitted, true);
+      assert.strictEqual(permitted, true);
     });
 
     it("should allow assistant write to assignments", () => {
@@ -125,7 +125,7 @@ describe("security rules tests", () => {
         .as({ uid: "abcTestAssistant1" })
         .write("/assignments/abcTestCourseId/newAssignmentId", { foo: "bar" });
 
-      assert.equal(permitted, true);
+      assert.strictEqual(permitted, true);
     });
   });
 
@@ -136,7 +136,7 @@ describe("security rules tests", () => {
         { foo: "bar" }
       );
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should disallow non-student write", () => {
@@ -146,7 +146,7 @@ describe("security rules tests", () => {
           foo: "bar"
         });
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should disallow non-course-member student write", () => {
@@ -156,7 +156,7 @@ describe("security rules tests", () => {
           foo: "bar"
         });
 
-      assert.equal(permitted, false);
+      assert.strictEqual(permitted, false);
     });
 
     it("should allow student write", () => {
@@ -166,7 +166,7 @@ describe("security rules tests", () => {
           foo: "bar"
         });
 
-      assert.equal(permitted, true);
+      assert.strictEqual(permitted, true);
     });
   });
 
@@ -178,7 +178,7 @@ describe("security rules tests", () => {
           path: "abcTestPathId"
         });
 
-      assert.equal(permitted, true);
+      assert.strictEqual(permitted, true);
     });
   });
 });

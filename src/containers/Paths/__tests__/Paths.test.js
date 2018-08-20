@@ -2,6 +2,8 @@ import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
 import sinon from "sinon";
 
+import Button from "@material-ui/core/Button";
+
 import { Paths } from "../Paths";
 
 describe("<Paths.test.js>", () => {
@@ -27,6 +29,6 @@ describe("<Paths.test.js>", () => {
       />
     );
 
-    expect(wrapper).toMatchSnapshot();
+    expect(wrapper.find(Button).length).toBe(0);
   });
 });

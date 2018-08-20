@@ -1,3 +1,8 @@
+/**
+ * This file currently used only for code-completion but someday it should
+ * help to use Typescript
+ */
+
 export const ASSIGNMENT_TEXT = "Text";
 export type ASSIGNMENT_TEXT = typeof ASSIGNMENT_TEXT;
 export const ASSIGNMENT_PROFILE = "Profile";
@@ -24,6 +29,8 @@ export interface ICourseAssignmentBase {
   open: string;
   orderIndex: number;
   visible: boolean;
+  useTeams: boolean;
+  teamFormation: string;
 }
 
 export interface ICourseAssignmentText extends ICourseAssignmentBase {
@@ -87,6 +94,14 @@ export interface ICourseMember {
       originalSolution?: any;
     };
   };
+}
+
+export interface ICourseAssignmentsMap {
+  [id: string]: ICourseAssignment;
+}
+
+export interface ICourseMembersMap {
+  [id: string]: ICourseMember;
 }
 
 export interface ICourse {
@@ -212,14 +227,19 @@ export interface IPathActivityGame extends IPathActivityBase {
 }
 
 export type PathActivity = IPathActivityText |
-IPathActivityProfile |
-IPathActivityCodeCombat |
-IPathActivityCodeCombatNumber |
-IPathActivityJupyter |
-IPathActivityJupyterInline |
-IPathActivityYoutube;
+  IPathActivityProfile |
+  IPathActivityCodeCombat |
+  IPathActivityCodeCombatNumber |
+  IPathActivityJupyter |
+  IPathActivityJupyterInline |
+  IPathActivityYoutube;
 
 export interface IPathActivities {
   path: IPathInfo;
   activities: PathActivity[]
+}
+
+export interface ITeamFormationInfo {
+  assignmentId: string;
+  name: string;
 }

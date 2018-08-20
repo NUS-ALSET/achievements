@@ -14,19 +14,6 @@ describe("<JupyterInlineActivity>", () => {
     shallow = createShallow();
   });
 
-  it("should check snapshot", () => {
-    const wrapper = shallow(
-      <JupyterInlineActivity
-        dispatch={mockDispatch}
-        problem={{
-          problemJSON: "test"
-        }}
-      />
-    );
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   it("is just mock test", () => {
     const wrapper = shallow(
       <JupyterInlineActivity
