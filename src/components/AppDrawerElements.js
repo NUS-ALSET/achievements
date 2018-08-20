@@ -1,17 +1,15 @@
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-// for highlight the selected tab in drawer menu in the future
-// import MenuList from '@material-ui/core/MenuList';
-// import MenuItem from "@material-ui/core/MenuItem";
-
 import Divider from "@material-ui/core/Divider";
-import List from "@material-ui/core/List";
+// for highlight the selected tab in drawer with Menu
+import MenuList from '@material-ui/core/MenuList';
+import MenuItem from "@material-ui/core/MenuItem";
+// list does not support selected link natively...
 import ListSubheader from '@material-ui/core/ListSubheader';
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-
-import React, { Fragment } from "react";
 
 // material-ui icons in front of the drawer tabs
 // Home
@@ -24,76 +22,115 @@ import Group from "@material-ui/icons/Group";
 import Domain from "@material-ui/icons/Domain";
 // Profile
 import Mood from "@material-ui/icons/Mood";
-// isAdmin might not be serving any function anymore
+// TODO: isAdmin might not be serving any function anymore
 import Security from "@material-ui/icons/Security";
 // for Github icon
 import GithubIcon from "./icons/GithubIcon";
+
+import Typography from '@material-ui/core/Typography';
 
 
 const linkStyle = {
   textDecoration: "none"
 };
 
-const AppDrawerElements = (onRequestClose, userId, isAdmin) => (
+const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) => (
   <Fragment>
-    <List
-      component="nav"
-      subheader={<ListSubheader component="div">Explore Path Activities</ListSubheader>}
+    <MenuList
+      subheader={
+        <ListSubheader component="div">
+          Explore Path Activities
+        </ListSubheader>}
       onClick={onRequestClose}
     >
-      <Link style={linkStyle} to={"/home"}>
-        <ListItem button>
+      <MenuItem
+        component={Link}
+        to="/"
+        selected={"/" === location.pathname}
+      >
+        <ListItem>
           <ListItemIcon>
-            <Whatshot />
+            {("/" === location.pathname)
+            ? <Whatshot style={{fill: "red"}} />
+            : <Whatshot />}
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
-      </Link>
-      <Link style={linkStyle} to={"/paths"}>
-        <ListItem button>
+      </MenuItem>
+      <MenuItem
+        component={Link}
+        to="/paths"
+        selected={"/paths" === location.pathname}
+      >
+        <ListItem>
           <ListItemIcon>
-            <Explore />
+          {("/paths" === location.pathname)
+            ? <Explore style={{fill: "red"}} />
+            : <Explore />}
           </ListItemIcon>
           <ListItemText primary="Paths" />
         </ListItem>
-      </Link>
-    </List>
+      </MenuItem>
+    </MenuList>
+
     <Divider />
-    <List
-      component="nav"
-      subheader={<ListSubheader component="div">Education in Classes</ListSubheader>}
+
+    <MenuList
+      subheader={
+        <ListSubheader component="div">
+          Education in Classes
+        </ListSubheader>}
       onClick={onRequestClose}
     >
-      <Link style={linkStyle} to={"/courses"}>
-        <ListItem button>
+      <MenuItem
+        component={Link}
+        to="/courses"
+        selected={"/courses" === location.pathname}
+      >
+        <ListItem>
           <ListItemIcon>
-            <Group />
+          {("/courses" === location.pathname)
+            ? <Group style={{fill: "red"}} />
+            : <Group />}
           </ListItemIcon>
           <ListItemText primary="Courses" />
         </ListItem>
-      </Link>
-      <Link style={linkStyle} to={"/cohorts"}>
-        <ListItem button>
+      </MenuItem>
+      <MenuItem
+        component={Link}
+        to="/cohorts"
+        selected={"/cohorts" === location.pathname}
+      >
+        <ListItem>
           <ListItemIcon>
-            <Domain />
+          {("/cohorts" === location.pathname)
+            ? <Domain style={{fill: "red"}} />
+            : <Domain />}
           </ListItemIcon>
           <ListItemText primary="Cohorts" />
         </ListItem>
-      </Link>
-    </List>
+      </MenuItem>
+    </MenuList>
+
     <Divider />
-    <List
-      component="nav"
-      onClick={onRequestClose}
-    >
-      <Link style={linkStyle} to={`/profile/${userId || "non-logged"}`}>
-        <ListItem button>
+
+    <MenuList onClick={onRequestClose}>
+      <MenuItem
+        component={Link}
+        to={`/profile/${userId || "non-logged"}`}
+        selected={
+          `/profile/${userId || "non-logged"}` === location.pathname
+        }
+      >
+        <ListItem>
           <ListItemIcon>
-            <Mood />
+          {(`/profile/${userId || "non-logged"}` === location.pathname)
+            ? <Mood style={{fill: "red"}} />
+            : <Mood />}
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItem>
-      </Link>
+      </MenuItem>
       {isAdmin && (
         <Link style={linkStyle} to={"/admin"}>
           <ListItem button>
@@ -104,18 +141,43 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin) => (
           </ListItem>
         </Link>
       )}
-    </List>
+    </MenuList>
+
     <Divider />
-    <List onClick={onRequestClose}>
-      <Link style={linkStyle} to={"/"}>
-        <ListItem button>
+
+    <MenuList
+      onClick={onRequestClose}
+    >
+      <MenuItem
+        component={Link}
+        to="/contribute"
+        selected={"/contribute" === location.pathname}
+      >
+        <ListItem>
           <ListItemIcon>
-            <GithubIcon />
+          {("/contribute" === location.pathname)
+            ? <GithubIcon style={{fill: "red"}} />
+            : <GithubIcon />}
           </ListItemIcon>
           <ListItemText primary="Contribute" />
         </ListItem>
-      </Link>
-    </List>
+      </MenuItem>
+    </MenuList>
+    <div
+      style={{
+        position:"fixed",
+        bottom: 0,
+        width: 230,
+      }}
+    >
+      <Typography
+        variant="caption"
+        gutterBottom
+        align="center"
+      >
+        &#169; 2018 NUS-ALSET
+      </Typography>
+    </div>
   </Fragment>
 );
 

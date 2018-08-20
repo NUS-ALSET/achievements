@@ -16,7 +16,7 @@ const AppBarMenuItems = ({ onClick, logout, login, isAuth }) => (
   <Fragment>
     {isAuth ? (
       <Fragment>
-        <Link style={linkStyle} to={`/account/${isAuth}`}>
+        <Link style={linkStyle} to={`/profile/${isAuth}`}>
           <MenuItem
             onClick={() => {
               onClick();
