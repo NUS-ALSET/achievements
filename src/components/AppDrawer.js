@@ -1,21 +1,22 @@
-import { APP_SETTING } from "../achievementsApp/config";
-import AppDrawerElements from "./AppDrawerElements";
-
+import React from "react";
+import PropTypes from "prop-types";
+// since AppDrawer and AppBar is outside the Routes in AppFrame
+// need a withRouter to pass location.pathname to detect URL
+import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 
-import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-
+import { APP_SETTING } from "../achievementsApp/config";
+import AppDrawerElements from "./AppDrawerElements";
 // import the NUS ALSET Achievements Logo background image
 import AppLogo from "../assets/NUS_ALSET_Achievements_Logo.png";
 
+// from material-ui
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import Drawer from "@material-ui/core/Drawer";
+import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
-import PropTypes from "prop-types";
-
-import React from "react";
-
 import withStyles from "@material-ui/core/styles/withStyles";
+
 
 const styles = theme => ({
   someClass: {
@@ -36,7 +37,7 @@ const styles = theme => ({
     backgroundRepeat: "no-repeat",
     backgroundPosition: "50% 50%",
     ...theme.mixins.toolbar
-  }
+  },
 });
 
 class AppDrawer extends React.PureComponent {
@@ -47,7 +48,8 @@ class AppDrawer extends React.PureComponent {
       isAdmin,
       userId,
       mobileDrawerOpen,
-      onRequestClose
+      onRequestClose,
+      location,
     } = this.props;
 
     const drawer = (
@@ -59,7 +61,7 @@ class AppDrawer extends React.PureComponent {
             </IconButton>
           </Hidden>
         </div>
-        {AppDrawerElements(onRequestClose, userId, isAdmin)}
+        {AppDrawerElements(onRequestClose, userId, isAdmin, location)}
       </div>
     );
 
@@ -107,4 +109,7 @@ AppDrawer.propTypes = {
   onRequestClose: PropTypes.func.isRequired
 };
 
-export default compose(withStyles(styles))(AppDrawer);
+export default compose(
+  withRouter,
+  withStyles(styles)
+)(AppDrawer);

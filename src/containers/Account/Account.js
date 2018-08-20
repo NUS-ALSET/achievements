@@ -127,6 +127,7 @@ class Account extends React.PureComponent {
 
   render() {
     const {
+      auth,
       classes,
       userAchievements,
       externalProfiles,
@@ -138,17 +139,18 @@ class Account extends React.PureComponent {
       achievementsRefreshingInProgress
     } = this.props;
 
+    // taken from Courses.js, display if not logged in
+    if (auth.isEmpty) {
+      return <div>You do not seem to have a profile registered. Login required to display this page</div>;
+    }
+
     return (
       <Fragment>
         <Grid container>
           <Grid item xs={3}>
             <Card className={classes.card}>
               <CardMedia
-                image={
-                  (user && user.photoURL) ||
-                  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQ" +
-                    "AAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-                }
+                image={user && user.photoURL}
                 style={{ height: 240 }}
                 title={this.props.userName}
               />
