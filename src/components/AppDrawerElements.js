@@ -150,12 +150,12 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
     >
       <MenuItem
         component={Link}
-        to="/home"
-        selected={"/home" === location.pathname}
+        to="/contribute"
+        selected={"/contribute" === location.pathname}
       >
         <ListItem>
           <ListItemIcon>
-          {("/home" === location.pathname)
+          {("/contribute" === location.pathname)
             ? <GithubIcon style={{fill: "red"}} />
             : <GithubIcon />}
           </ListItemIcon>
@@ -167,7 +167,7 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
       style={{
         position:"fixed",
         bottom: 0,
-        width: 240,
+        width: 230,
       }}
     >
       <Typography

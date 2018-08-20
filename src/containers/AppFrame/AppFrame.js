@@ -26,6 +26,7 @@ import Assignments from "../Assignments/Assignments";
 import Courses from "../Courses/Courses";
 import Path from "../Path/Path";
 import Paths from "../Paths/Paths";
+import Contribute from "../Contribute/Contribute";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeView/HomeV2";
 
@@ -248,6 +249,7 @@ class AppFrame extends React.Component {
                 path="/(account|profile)/:accountId"
                 render={() => <Account userName={userName} />}
               />
+              <Route component={Contribute} exact path="/contribute" />
             </main>
           </div>
         </div>
