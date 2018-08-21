@@ -13,7 +13,7 @@
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/NUS-ALSET/achievements.svg)](http://isitmaintained.com/project/NUS-ALSET/achievements "Percentage of issues still open")
 
 **An integrated web application for learning and teaching programming:computer:**
-@[https://achievements-dev.firebaseapp.com/](https://achievements-dev.firebaseapp.com/#/home)
+@[https://achievements-dev.firebaseapp.com/](https://achievements-dev.firebaseapp.com/#/)
 
 ***
 
