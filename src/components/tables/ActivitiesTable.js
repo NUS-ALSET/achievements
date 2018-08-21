@@ -17,14 +17,9 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-
 import DoneIcon from "@material-ui/icons/Done";
-
 import withStyles from "@material-ui/core/styles/withStyles";
+import AnalysisDialog from "../dialogs/AnalysisDialog";
 import {
   PATH_STATUS_COLLABORATOR,
   PATH_STATUS_OWNER
@@ -60,11 +55,11 @@ class ActivitiesTable extends React.PureComponent {
     }
   };
 
-  openAnalysisDialog = givenSkills =>
-    this.setState({ analysisDialog: { open: true, data: givenSkills } });
-
-  handleCloseAnalysisDialog = () =>
-    this.setState({ analysisDialog: { open: false, data: {} } });
+  openAnalysisDialog = givenSkills => 
+    this.setState({ analysisDialog : { open : true, data : {givenSkills}}});
+  
+  handleCloseAnalysisDialog = () => 
+    this.setState({ analysisDialog : { open : false, data : {}}});
 
   selectActivity = activity => this.setState({ activity });
 
@@ -196,11 +191,11 @@ class ActivitiesTable extends React.PureComponent {
               </MenuItem>
             )}
         </Menu>
-        <AnalysisDialog
-          givenSkills={this.state.analysisDialog.data}
-          handleClose={this.handleCloseAnalysisDialog}
-          open={this.state.analysisDialog.open}
-        />
+        <AnalysisDialog   
+          open={this.state.analysisDialog.open} 
+          handleClose={this.handleCloseAnalysisDialog} 
+          skills={this.state.analysisDialog.data} 
+          />
       </Fragment>
     );
   }
@@ -208,29 +203,3 @@ class ActivitiesTable extends React.PureComponent {
 
 export default withStyles(styles)(ActivitiesTable);
 
-/* eslint-disable */
-const AnalysisDialog = props => {
-  return (
-    <Dialog
-      aria-describedby="alert-dialog-description"
-      aria-labelledby="alert-dialog-title"
-      onClose={props.handleClose}
-      open={props.open}
-    >
-      <DialogTitle id="alert-dialog-title">
-        {"Jupter Inline Problem Analysis"}
-      </DialogTitle>
-      <DialogContent>
-        <pre style={{ color: "black", lineHeight: "1.5", padding: "0px 20px" }}>
-          {JSON.stringify(props.givenSkills, null, "  ")}
-        </pre>
-      </DialogContent>
-      <DialogActions>
-        <Button autoFocus color="primary" onClick={props.handleClose}>
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-/* eslint-enable */
