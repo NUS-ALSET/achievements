@@ -43,14 +43,19 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
         </ListSubheader>}
       onClick={onRequestClose}
     >
+      {/* enable Home highlight for homev2 homev3 */}
       <MenuItem
         component={Link}
         to="/"
-        selected={"/" === location.pathname}
+        selected={"/" === location.pathname
+          || location.pathname.match(/\/home/)
+        }
       >
         <ListItem>
           <ListItemIcon>
-            {("/" === location.pathname || "/home" === location.pathname)
+            {("/" === location.pathname
+              || location.pathname.match(/\/home/)
+             )
             ? <Whatshot style={{fill: "red"}} />
             : <Whatshot />}
           </ListItemIcon>

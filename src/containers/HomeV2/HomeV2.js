@@ -15,11 +15,6 @@ class HomeV2 extends React.PureComponent {
         />
         <br />
         <RecommendationListCard
-          RecomType="python"
-          dummyData={DummyReduxState.pythonSmallList}
-        />
-        <br />
-        <RecommendationListCard
           RecomType="youtube"
           dummyData={DummyReduxState.YouTubeList}
         />

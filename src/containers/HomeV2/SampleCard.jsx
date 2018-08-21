@@ -131,7 +131,7 @@ class SampleCard extends React.PureComponent {
         </CardContent>
         <CardActions>
           <Link
-            to={`/paths/${path}/problems/${problem}`}
+            to={`/paths/${path}/activities/${problem}`}
             style={{ textDecoration: 'none' }}
           >
             <Button size="small" color="primary">
