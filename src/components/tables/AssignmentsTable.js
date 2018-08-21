@@ -37,6 +37,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
+import Timeline from "@material-ui/icons/Timeline";
 import SendIcon from "@material-ui/icons/Send";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
 
@@ -44,6 +45,7 @@ import { AccountService } from "../../services/account";
 import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import { APP_SETTING } from "../../achievementsApp/config";
+import AnalysisDialog from "../dialogs/AnalysisDialog";
 
 const MAX_TEXT_LENGTH = 40;
 const MAX_NAME_LENGTH = 15;
@@ -75,8 +77,23 @@ class AssignmentsTable extends React.PureComponent {
 
   state = {
     menuAnchor: null,
-    currentStudent: null
+    currentStudent: null,
+    analysisDialog : {
+      open : false,
+      data : {}
+    }
   };
+  openAnalysisDialog = solution => this.setState({ 
+    analysisDialog : { 
+      open : true,
+      data : {
+          userSkills : solution.userSkills || {},
+          skillsDifference : solution.skillsDifference || {} 
+        }
+      }
+    });
+  
+  handleCloseAnalysisDialog = () => this.setState({ analysisDialog : { open : false, data : {}}});
 
   getTooltip(assignment, solution) {
     if (
@@ -479,16 +496,31 @@ class AssignmentsTable extends React.PureComponent {
                           ["PathActivity", "PathProblem"].includes(
                             assignment.questionType
                           ) && (
-                            <IconButton
-                              onClick={() =>
-                                this.openSolution(
-                                  assignment,
-                                  studentInfo.solutions[assignment.id]
-                                )
+                            <Fragment>
+                              <IconButton
+                                onClick={() =>
+                                  this.openSolution(
+                                    assignment,
+                                    studentInfo.solutions[assignment.id]
+                                  )
+                                }
+                              >
+                              <Tooltip title={'View Solution'}>
+                                <RemoveRedEye />
+                              </Tooltip>
+                              </IconButton>
+                              {
+                                ((studentInfo.solutions[assignment.id] || {}).originalSolution || {}).userSkills && 
+                                <IconButton
+                                  onClick={() => this.openAnalysisDialog(studentInfo.solutions[assignment.id].originalSolution)
+                                  }
+                                >
+                                  <Tooltip title={'View Analysis'}>
+                                    <Timeline />
+                                  </Tooltip>
+                                </IconButton>
                               }
-                            >
-                              <RemoveRedEye />
-                            </IconButton>
+                          </Fragment>
                           )}
 
                         {studentInfo.id === currentUser.id &&
@@ -562,6 +594,7 @@ class AssignmentsTable extends React.PureComponent {
             </Paper>
           </Popper>
         )}
+        <AnalysisDialog  handleClose={this.handleCloseAnalysisDialog}   open={this.state.analysisDialog.open} skills={this.state.analysisDialog.data} />
       </Fragment>
     );
   }
