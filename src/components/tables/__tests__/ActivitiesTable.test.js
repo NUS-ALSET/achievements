@@ -33,7 +33,7 @@ describe("<ActivitiesTable>", () => {
         onEditProblem={mockDispatch}
         onMoveProblem={mockDispatch}
         onOpenProblem={mockDispatch}
-        pathOwnerId="abcd"
+        pathStatus="owner"
       />
     );
 
@@ -92,7 +92,7 @@ describe("<ActivitiesTable>", () => {
         onEditProblem={mockDispatch}
         onMoveProblem={mockDispatch}
         onOpenProblem={mockDispatch}
-        pathOwnerId="efgh"
+        pathStatus="nonOwner"
       />
     );
 
