@@ -10,6 +10,7 @@ import {
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_SUBMIT_REQUEST,
   PROBLEM_SOLVE_UPDATE,
+  FETCH_PUBLIC_PATH_ACTIVITIES,
   problemCheckSolutionFail,
   problemInitFail,
   problemInitSuccess,
@@ -287,6 +288,26 @@ export function* problemSolutionSubmitRequestHandler(action) {
   }
 }
 
+export function* fetchPublicPathActiviesHandler(){
+  let data;
+  try {
+    data = yield select(state => ({
+      uid: state.firebase.auth.uid,
+      completedActivities : state.firebase.ordered.completedActivities,
+      publicPaths : state.firebase.ordered.publicPaths,
+    }));
+    yield call(
+      [pathsService, pathsService.fetchPublicPathActivies],
+      data.uid,
+      data.publicPaths,
+      data.completedActivities
+    );
+    // yield put(notificationShow("All Public Activities fetched"));
+  } catch (err) {
+    // handle error
+  }
+}
+
 export default [
   function* watchProblemInitRequest() {
     yield takeLatest(PROBLEM_INIT_REQUEST, problemInitRequestHandler);
@@ -315,5 +336,11 @@ export default [
       PROBLEM_SOLUTION_SUBMIT_REQUEST,
       problemSolutionSubmitRequestHandler
     );
+  },
+  function* watchfetchPublicPathActiviesHandler() {
+    yield takeLatest(
+      FETCH_PUBLIC_PATH_ACTIVITIES,
+      fetchPublicPathActiviesHandler
+    )
   }
 ];

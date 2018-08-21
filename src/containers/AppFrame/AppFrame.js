@@ -29,6 +29,7 @@ import Paths from "../Paths/Paths";
 import Contribute from "../Contribute/Contribute";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeView/HomeV2";
+import HomeV3 from "../HomeV3/HomeV3";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -249,6 +250,7 @@ class AppFrame extends React.Component {
             <main className={classes.content}>
               <Route component={Home} exact path="(/|/home)" />
               <Route component={HomeV2} exact path="(/homev2)" />
+              <Route component={HomeV3} exact path="(/homev3)" />
               <Route component={Admin} exact path="/admin" />
               <Route component={Courses} exact path="/courses" />
               <Route component={Assignments} exact path="/courses/:courseId" />
