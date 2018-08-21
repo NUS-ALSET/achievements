@@ -95,7 +95,7 @@ class CodeAnalysisService {
                 if (response.val()) {
                   this.dispatch(notificationShow("Analysis complete"));
                   resolve(
-                    response.val().solution || {}
+                    response.val().userSkills || {}
                   )
                 } else {
                   this.dispatch(notificationShow("Failing - Unable to analysis your Editable block code"));
