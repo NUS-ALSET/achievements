@@ -31,7 +31,7 @@ import Path from "../Path/Path";
 import Paths from "../Paths/Paths";
 import Contribute from "../Contribute/Contribute";
 // HomeV2 to test the kyGUI for Home Recommendation
-import HomeV2 from "../HomeView/HomeV2";
+import HomeV2 from "../HomeV2/HomeV2";
 import HomeV3 from "../HomeV3/HomeV3";
 
 // from Material-UI
