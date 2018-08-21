@@ -4,6 +4,9 @@ import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import { ConnectedRouter as Router } from "connected-react-router";
 
+// react-ga for GoogleAnalytics tracking
+import withTracker from "../../withTracker";
+
 import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
 
@@ -247,17 +250,17 @@ class AppFrame extends React.Component {
               userId={userId}
             />
             <main className={classes.content}>
-              <Route component={Home} exact path="(/|/home)" />
-              <Route component={HomeV2} exact path="(/homev2)" />
-              <Route component={Admin} exact path="/admin" />
-              <Route component={Courses} exact path="/courses" />
-              <Route component={Assignments} exact path="/courses/:courseId" />
-              <Route component={Cohorts} exact path="/cohorts" />
-              <Route component={Cohort} exact path="/cohorts/:cohortId" />
-              <Route component={Paths} exact path="/paths" />
-              <Route component={Path} exact path="/paths/:pathId" />
+              <Route component={withTracker(Home)} exact path="(/|/home)" />
+              <Route component={withTracker(HomeV2)} exact path="/homev2" />
+              <Route component={withTracker(Admin)} exact path="/admin" />
+              <Route component={withTracker(Courses)} exact path="/courses" />
+              <Route component={withTracker(Assignments)} exact path="/courses/:courseId" />
+              <Route component={withTracker(Cohorts)} exact path="/cohorts" />
+              <Route component={withTracker(Cohort)} exact path="/cohorts/:cohortId" />
+              <Route component={withTracker(Paths)} exact path="/paths" />
+              <Route component={withTracker(Path)} exact path="/paths/:pathId" />
               <Route
-                component={Activity}
+                component={withTracker(Activity)}
                 exact
                 path="/paths/:pathId/activities/:problemId"
               />
@@ -266,7 +269,7 @@ class AppFrame extends React.Component {
                 path="/(account|profile)/:accountId"
                 render={() => <Account userName={userName} />}
               />
-              <Route component={Contribute} exact path="/contribute" />
+              <Route component={withTracker(Contribute)} exact path="/contribute" />
             </main>
           </div>
         </div>
