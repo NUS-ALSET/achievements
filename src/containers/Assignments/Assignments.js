@@ -218,19 +218,12 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const {
-      ui,
-      auth,
-      dispatch,
-      course,
-      currentUser,
-      readOnly
-    } = this.props;
+    const { ui, auth, dispatch, course, currentUser, readOnly } = this.props;
 
-    if (!course) {
-      return <LinearProgress />;
-    } else if (auth.isEmpty) {
+    if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
+    } else if (!course) {
+      return <LinearProgress />;
     }
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
