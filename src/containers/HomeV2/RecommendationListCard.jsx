@@ -1,19 +1,19 @@
 import React, { Fragment } from "react";
-import PropTypes from 'prop-types';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import Avatar from '@material-ui/core/Avatar';
+import PropTypes from "prop-types";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+import Avatar from "@material-ui/core/Avatar";
 
 // TODO: types of Activities:
 // YouTube, Jupyter, Jest, Colab, Code Combat, Game
 // Avatar with icons for certain Activity types
-import PlayArrow from '@material-ui/icons/PlayArrow'; // YouTube
+import PlayArrow from "@material-ui/icons/PlayArrow"; // YouTube
 // import Adb from '@material-ui/icons/Adb'; // Game
 
 // TODO: amber color python (Jupyter and Colab), red for youtube
-import amber from '@material-ui/core/colors/amber';
-import red from '@material-ui/core/colors/red';
+import amber from "@material-ui/core/colors/amber";
+import red from "@material-ui/core/colors/red";
 // Jest:
 // import blue from '@material-ui/core/colors/blue';
 // CodeCombat:
@@ -21,38 +21,40 @@ import red from '@material-ui/core/colors/red';
 // Game:
 // import indigo from '@material-ui/core/colors/indigo';
 
-import SampleCarousel from './SampleCarousel';
+import SampleCarousel from "./SampleCarousel";
 
-
+/* eslint-disable */
 const styles = {
   card: {
-    Width: "90%",
+    Width: "90%"
   },
   media: {
     height: 0,
-    paddingTop: '56.25%', // 16:9
+    paddingTop: "56.25%" // 16:9
   },
   actions: {
-    display: 'flex',
+    display: "flex"
   },
   avatarPy: {
-    backgroundColor: amber[500],
+    backgroundColor: amber[500]
   },
   avatarYo: {
-    backgroundColor: red[500],
-  },
+    backgroundColor: red[500]
+  }
 };
+/* eslint-enable */
 
 class RecommendationListCard extends React.PureComponent {
   static propTypes = {
     RecomType: PropTypes.string.isRequired,
     dummyData: PropTypes.array,
+    title: PropTypes.string
   };
 
   render() {
     // the Firebase data in Redux is nested JSON
     // here temporarily use a dummy JSON with 2 pythonlists and 1 youtubelist
-    const { dummyData } = this.props;
+    const { dummyData, title } = this.props;
 
     // TODO: three major categories for Avatar icons
     // YouTube Activities use PlayArrow for Avatar Icon,
@@ -60,7 +62,7 @@ class RecommendationListCard extends React.PureComponent {
     // Jupyter/Jest/Codelab use '</>'
 
     return (
-      <div style={{marginBottom : '24px'}}>
+      <div style={{marginBottom : "24px"}}>
       {/* either use marginBottom here or put a <br /> at parent */}
         <Card style={styles.card}>
           {(this.props.RecomType === "python") &&
@@ -71,13 +73,13 @@ class RecommendationListCard extends React.PureComponent {
                     {"</>"}
                   </Avatar>
                 }
-                title="Jupyter Notebook Activities"
                 subheader="Recommended for you"
+                title={title|| "Jupyter Notebook Activities"}
               />
               <CardContent>
                 <SampleCarousel
-                  youtubeRecom={false}
                   dataList={dummyData}
+                  youtubeRecom={false}
                 />
               </CardContent>
             </Fragment>
@@ -90,13 +92,13 @@ class RecommendationListCard extends React.PureComponent {
                     <PlayArrow />
                   </Avatar>
                 }
-                title="YouTube Video Activities"
                 subheader="Recommended for you"
+                title={title|| "Jupyter Notebook Activities"}
               />
               <CardContent>
                 <SampleCarousel
-                  youtubeRecom={true}
                   dataList={dummyData}
+                  youtubeRecom={true}
                 />
               </CardContent>
             </Fragment>
