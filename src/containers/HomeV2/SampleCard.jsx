@@ -10,8 +10,15 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-// python logo
+// TODO: 4 different logos for CodeCombat, Python, JavaScript activities
+// python logo for Jupyter, Colab
 import pythonlogo from '../../assets/python-logo-master-v3-TM-flattened.png';
+// codecombat logo for cobecombat activities
+// import coodecombatlogo from '../../assets/CodeCombat-logo-min.png';
+// JS logo for Jest and Game (for now only React based games i think)
+// import JSlogo from '../../assets/JSlogo.png';
+// Game logo for game activities
+// import Gamelogo from '../../assets/Gamelogo.png';
 
 /*
  * the data code design is modeled after
@@ -56,7 +63,6 @@ const styles = {
 
 class SampleCard extends React.PureComponent {
   static propTypes = {
-    // key is not a prop
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
     path: PropTypes.string,
@@ -82,8 +88,6 @@ class SampleCard extends React.PureComponent {
     // props.problem is the key value of the owner
     const { title, description, path, problem, video } = this.props;
     const videoID = this.getVideoID(video);
-
-    // TODO: video && media style
 
     return (
       <Card style={styles.card}>
