@@ -8,6 +8,7 @@ import {
   PATH_REMOVE_COLLABORATOR_REQUEST,
   PATH_SHOW_COLLABORATORS_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
+  FETCH_GITHUB_FILES,
   pathAddCollaboratorFail,
   pathAddCollaboratorSuccess,
   pathCollaboratorsFetchSuccess,
@@ -19,7 +20,9 @@ import {
   pathRemoveCollaboratorSuccess,
   pathToggleJoinStatusFail,
   pathToggleJoinStatusRequest,
-  pathToggleJoinStatusSuccess
+  pathToggleJoinStatusSuccess,
+  fetchGithubFilesLoading,
+  fetchGithubFilesError
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import {
@@ -224,6 +227,24 @@ export function* pathRefreshSolutionsRequestHandler(action) {
   }
 }
 
+export function* fetchGithubFilesHandler(action){
+  let data;
+  try{
+    yield put(fetchGithubFilesLoading())
+    data = yield select(state => ({
+      uid: state.firebase.auth.uid
+    }));
+    yield call(
+      [pathsService, pathsService.fetchGithubFiles],
+        data.uid,
+        action.githubURL
+    )
+
+  }catch(err){
+    yield put(fetchGithubFilesError());
+  }
+}
+
 export default [
   function* watchPathOpenRequest() {
     yield takeLatest(PATH_OPEN, pathOpenHandler);
@@ -273,5 +294,11 @@ export default [
       PATH_REFRESH_SOLUTIONS_REQUEST,
       pathRefreshSolutionsRequestHandler
     );
+  },
+  function* watchFetchGithubFilesHandler() {
+    yield takeLatest(
+      FETCH_GITHUB_FILES,
+      fetchGithubFilesHandler
+    )
   }
 ];

@@ -14,7 +14,8 @@ import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
 import { pathsService } from "./services/paths";
 import { historyService } from "./services/history";
-import { codeAnalysisService } from './services/codeAnalysis'
+import { codeAnalysisService } from './services/codeAnalysis';
+import { firebaseService } from './services/firebaseService'
 
 const history = createHashHistory();
 const store = configureStore(undefined, history);
@@ -36,6 +37,7 @@ coursesService.setStore(store);
 historyService.setStore(store);
 pathsService.setStore(store);
 codeAnalysisService.setStore(store);
+firebaseService.setStore(store);
 
 class App extends React.Component {
   // MuiThemeProvider makes the theme available down the React tree
