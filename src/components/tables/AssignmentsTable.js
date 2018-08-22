@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+import Link from "react-router-dom/Link";
 
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -37,6 +38,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import SendIcon from "@material-ui/icons/Send";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import TagFacesIcon from "@material-ui/icons/TagFaces";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import { AccountService } from "../../services/account";
@@ -54,6 +56,10 @@ const styles = theme => ({
   noWrapTooltip: {
     maxWidth: "none",
     minWidth: "none"
+  },
+  link: {
+    color: "unset",
+    textDecoration: "none"
   }
 });
 
@@ -517,6 +523,19 @@ class AssignmentsTable extends React.PureComponent {
                       <DeleteIcon />
                     </ListItemIcon>
                     <ListItemText>Remove student from course</ListItemText>
+                  </MenuItem>
+                  <MenuItem>
+                    <ListItemIcon>
+                      <TagFacesIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Link
+                        className={classes.link}
+                        to={`/profile/${currentStudent.id}`}
+                      >
+                        Open profile link
+                      </Link>
+                    </ListItemText>
                   </MenuItem>
                 </MenuList>
               </ClickAwayListener>
