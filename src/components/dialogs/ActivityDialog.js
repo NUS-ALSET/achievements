@@ -52,7 +52,7 @@ class ActivityDialog extends React.PureComponent {
             label="Question"
             margin="normal"
             onChange={e => this.onFieldChange("question", e.target.value)}
-            value={activity.question}
+            value={activity.question || ""}
           />
         );
       case ACTIVITY_TYPES.codeCombat.id:
@@ -268,7 +268,7 @@ class ActivityDialog extends React.PureComponent {
     return (
       <Dialog fullWidth onClose={onClose} open={open}>
         <DialogTitle>
-          {activity && activity.id ? "Edit Problem" : "Add New Problem"}
+          {activity && activity.id ? "Edit Activity" : "Add New Activity"}
         </DialogTitle>
         <DialogContent
           style={{

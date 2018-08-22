@@ -30,10 +30,11 @@ describe("<ActivitiesTable>", () => {
           }
         ]}
         currentUserId="abcd"
-        onEditProblem={mockDispatch}
-        onMoveProblem={mockDispatch}
-        onOpenProblem={mockDispatch}
-        pathOwnerId="abcd"
+        onDeleteActivity={mockDispatch}
+        onEditActivity={mockDispatch}
+        onMoveActivity={mockDispatch}
+        onOpenActivity={mockDispatch}
+        pathStatus="owner"
       />
     );
 
@@ -89,10 +90,11 @@ describe("<ActivitiesTable>", () => {
           }
         ]}
         currentUserId="abcd"
-        onEditProblem={mockDispatch}
-        onMoveProblem={mockDispatch}
-        onOpenProblem={mockDispatch}
-        pathOwnerId="efgh"
+        onDeleteActivity={mockDispatch}
+        onEditActivity={mockDispatch}
+        onMoveActivity={mockDispatch}
+        onOpenActivity={mockDispatch}
+        pathStatus="joined"
       />
     );
 

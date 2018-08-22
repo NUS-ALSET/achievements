@@ -1,11 +1,11 @@
 import { call, select, take, takeLatest, put } from "redux-saga/effects";
 import {
   PATH_CHANGE_REQUEST,
-  PATH_PROBLEM_CHANGE_REQUEST,
+  PATH_ACTIVITY_CHANGE_REQUEST,
   pathChangeSuccess,
   pathDialogHide,
   pathGAPIAuthorized,
-  pathProblemChangeFail,
+  pathActivityChangeFail,
   pathProblemChangeSuccess,
   PATHS_OPEN,
   pathsJoinedFetchSuccess
@@ -54,25 +54,27 @@ export function* pathChangeRequestHandler(action) {
   }
 }
 
-export function* pathProblemChangeRequestHandler(action) {
+export function* pathActivityChangeRequestHandler(action) {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
     yield call(
       [pathsService, pathsService.validateProblem],
-      action.problemInfo
+      action.activityInfo
     );
     yield put(pathDialogHide());
     const key = yield call(
       [pathsService, pathsService.problemChange],
       uid,
       action.pathId || "",
-      action.problemInfo
+      action.activityInfo
     );
-    yield put(pathProblemChangeSuccess(action.pathId, action.problemInfo, key));
+    yield put(
+      pathProblemChangeSuccess(action.pathId, action.activityInfo, key)
+    );
     yield put(pathCloseDialog());
   } catch (err) {
     yield put(
-      pathProblemChangeFail(action.pathId, action.problemInfo, err.message)
+      pathActivityChangeFail(action.pathId, action.activityInfo, err.message)
     );
     yield put(notificationShow(err.message));
   }
@@ -88,10 +90,10 @@ export default [
   function* watchPathChangeRequest() {
     yield takeLatest(PATH_CHANGE_REQUEST, pathChangeRequestHandler);
   },
-  function* watchPathProblemChangeRequest() {
+  function* watchPathActivityChangeRequest() {
     yield takeLatest(
-      PATH_PROBLEM_CHANGE_REQUEST,
-      pathProblemChangeRequestHandler
+      PATH_ACTIVITY_CHANGE_REQUEST,
+      pathActivityChangeRequestHandler
     );
   }
 ];

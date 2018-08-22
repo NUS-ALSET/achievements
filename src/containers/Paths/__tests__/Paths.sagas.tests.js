@@ -2,7 +2,7 @@
 import { runSaga } from "redux-saga";
 import sinon from "sinon";
 
-import { pathProblemChangeRequestHandler } from "../sagas";
+import { pathActivityChangeRequestHandler } from "../sagas";
 import { pathsService } from "../../../services/paths";
 
 describe("Paths sagas", () => {
@@ -28,11 +28,11 @@ describe("Paths sagas", () => {
           firebase: { auth: { uid: "deadbeef" } }
         })
       },
-      pathProblemChangeRequestHandler,
+      pathActivityChangeRequestHandler,
       {
-        type: "PATH_PROBLEM_CHANGE_REQUEST",
+        type: "PATH_ACTIVITY_CHANGE_REQUEST",
         pathId: "testPath",
-        problemInfo: {
+        activityInfo: {
           type: "codeCombat",
           level: "test-level",
           name: "test"
@@ -44,9 +44,9 @@ describe("Paths sagas", () => {
       { type: "PATH_DIALOG_HIDE" },
       {
         pathId: "testPath",
-        problemInfo: { level: "test-level", name: "test", type: "codeCombat" },
+        activityInfo: { level: "test-level", name: "test", type: "codeCombat" },
         problemKey: "testKey",
-        type: "PATH_PROBLEM_CHANGE_SUCCESS"
+        type: "PATH_ACTIVITY_CHANGE_SUCCESS"
       },
       { type: "PATH_CLOSE_DIALOG" }
     ]);
@@ -62,11 +62,11 @@ describe("Paths sagas", () => {
           firebase: { auth: { uid: "deadbeef" } }
         })
       },
-      pathProblemChangeRequestHandler,
+      pathActivityChangeRequestHandler,
       {
-        type: "PATH_PROBLEM_CHANGE_REQUEST",
+        type: "PATH_ACTIVITY_CHANGE_REQUEST",
         pathId: "testPath",
-        problemInfo: {
+        activityInfo: {
           type: "codeCombat",
           level: "test-level",
           name: "test"
@@ -77,9 +77,9 @@ describe("Paths sagas", () => {
     expect(dispatched).toEqual([
       {
         pathId: "testPath",
-        problemInfo: { level: "test-level", name: "test", type: "codeCombat" },
+        activityInfo: { level: "test-level", name: "test", type: "codeCombat" },
         reason: "Test Error",
-        type: "PATH_PROBLEM_CHANGE_FAIL"
+        type: "PATH_ACTIVITY_CHANGE_FAIL"
       },
       { message: "Test Error", type: "NOTIFICATION_SHOW" }
     ]);

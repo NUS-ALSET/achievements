@@ -4,13 +4,14 @@
       ".read": "auth != null",
       "$activityKey": {
         ".write": "auth != null &&
-          newData.child('path').exists() &&
-          root.child('paths/' + newData.child('path').val()).exists() && (
-            root.child('paths/' + newData.child('path').val() +
-              '/owner').val() == auth.uid ||
-            root.child('pathAssistants/' + newData.child('path').val() +
-              '/' + auth.uid).exists()
-
+          !newData.exists() || (
+            newData.child('path').exists() &&
+            root.child('paths/' + newData.child('path').val()).exists() && (
+              root.child('paths/' + newData.child('path').val() +
+                '/owner').val() == auth.uid ||
+              root.child('pathAssistants/' + newData.child('path').val() +
+                '/' + auth.uid).exists()
+            )
           )
         "
       }
