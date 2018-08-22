@@ -198,8 +198,8 @@ export class Path extends React.Component {
     });
   };
 
-  onProblemChangeRequest = (id, data) => {
-    const { pathActivities = {}, onProblemChangeRequest } = this.props;
+  onActivityChangeRequest = (id, data) => {
+    const { pathActivities = {}, onActivityChangeRequest } = this.props;
     const activities = pathActivities.activities || [];
     let additionalData = {};
     if (!data.id) {
@@ -215,7 +215,7 @@ export class Path extends React.Component {
         orderIndex: maxOrderIndex
       };
     }
-    onProblemChangeRequest(id, {
+    onActivityChangeRequest(id, {
       ...data,
       ...additionalData
     });
@@ -228,7 +228,6 @@ export class Path extends React.Component {
       onAddAssistant,
       onAssistantKeyChange,
       onCloseDialog,
-      onActivityChangeRequest,
       onActivityDeleteRequest,
       onActivityDialogShow,
       onShowCollaboratorsClick,
@@ -367,7 +366,7 @@ export class Path extends React.Component {
         <ActivityDialog
           activity={ui.dialog.value}
           onClose={onCloseDialog}
-          onCommit={this.onProblemChangeRequest}
+          onCommit={this.onActivityChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathActivities.path && pathActivities.path.id) || ""}
           uid={uid || "Anonymous"}

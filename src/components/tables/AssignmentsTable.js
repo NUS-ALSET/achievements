@@ -37,7 +37,10 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
+import SendIcon from "@material-ui/icons/Send";
 import TagFacesIcon from "@material-ui/icons/TagFaces";
+import Timeline from "@material-ui/icons/Timeline";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import { AccountService } from "../../services/account";
@@ -57,8 +60,8 @@ const styles = theme => ({
     maxWidth: "none",
     minWidth: "none"
   },
-  nowrap : {
-    whiteSpace : 'nowrap'
+  nowrap: {
+    whiteSpace: "nowrap"
   },
   link: {
     color: "unset",
@@ -81,22 +84,24 @@ class AssignmentsTable extends React.PureComponent {
   state = {
     menuAnchor: null,
     currentStudent: null,
-    analysisDialog : {
-      open : false,
-      data : {}
+    analysisDialog: {
+      open: false,
+      data: {}
     }
   };
-  openAnalysisDialog = solution => this.setState({
-    analysisDialog : {
-      open : true,
-      data : {
-          userSkills : solution.userSkills || {},
-          skillsDifference : solution.skillsDifference || {}
+  openAnalysisDialog = solution =>
+    this.setState({
+      analysisDialog: {
+        open: true,
+        data: {
+          userSkills: solution.userSkills || {},
+          skillsDifference: solution.skillsDifference || {}
         }
       }
     });
 
-  handleCloseAnalysisDialog = () => this.setState({ analysisDialog : { open : false, data : {}}});
+  handleCloseAnalysisDialog = () =>
+    this.setState({ analysisDialog: { open: false, data: {} } });
 
   getTooltip(assignment, solution) {
     if (
@@ -412,10 +417,10 @@ class AssignmentsTable extends React.PureComponent {
               </TableCell>
               {course.assignments.map(assignment => (
                 <TableCell
-                  className={classes.nowrap}
                   classes={{
                     root: classes.narrowCell
                   }}
+                  className={classes.nowrap}
                   key={assignment.id}
                   style={{
                     whiteSpace: "normal",
@@ -454,7 +459,7 @@ class AssignmentsTable extends React.PureComponent {
                 </TableCell>
               ))}
               {isInstructor && (
-                <TableCell className={classes.nowrap} >
+                <TableCell className={classes.nowrap}>
                   <TableSortLabel
                     active={sortState.field === "progress"}
                     direction={sortState.direction}
@@ -471,8 +476,7 @@ class AssignmentsTable extends React.PureComponent {
               const studentInfo = course.members[id];
               return (
                 <TableRow key={studentInfo.id}>
-                  <TableCell
-                    className={classes.nowrap}>
+                  <TableCell className={classes.nowrap}>
                     {isInstructor &&
                       course.owner === currentUser.id && (
                         <IconButton
@@ -485,8 +489,7 @@ class AssignmentsTable extends React.PureComponent {
                       (studentInfo.name.length > MAX_NAME_LENGTH ? "..." : "")}
                   </TableCell>
                   {course.assignments.map(assignment => (
-                    <TableCell
-                      className={classes.nowrap} key={assignment.id}>
+                    <TableCell className={classes.nowrap} key={assignment.id}>
                       <Fragment>
                         {this.getSolution(
                           assignment,
@@ -508,22 +511,28 @@ class AssignmentsTable extends React.PureComponent {
                                   )
                                 }
                               >
-                              <Tooltip title={'View Solution'}>
-                                <RemoveRedEye />
-                              </Tooltip>
+                                <Tooltip title={"View Solution"}>
+                                  <RemoveRedEye />
+                                </Tooltip>
                               </IconButton>
-                              {
-                                ((studentInfo.solutions[assignment.id] || {}).originalSolution || {}).userSkills &&
+                              {(
+                                (studentInfo.solutions[assignment.id] || {})
+                                  .originalSolution || {}
+                              ).userSkills && (
                                 <IconButton
-                                  onClick={() => this.openAnalysisDialog(studentInfo.solutions[assignment.id].originalSolution)
+                                  onClick={() =>
+                                    this.openAnalysisDialog(
+                                      studentInfo.solutions[assignment.id]
+                                        .originalSolution
+                                    )
                                   }
                                 >
-                                  <Tooltip title={'View Analysis'}>
+                                  <Tooltip title={"View Analysis"}>
                                     <Timeline />
                                   </Tooltip>
                                 </IconButton>
-                              }
-                          </Fragment>
+                              )}
+                            </Fragment>
                           )}
 
                         {studentInfo.id === currentUser.id &&
@@ -549,8 +558,7 @@ class AssignmentsTable extends React.PureComponent {
                     </TableCell>
                   ))}
                   {isInstructor && (
-                    <TableCell
-                      className={classes.nowrap}>
+                    <TableCell className={classes.nowrap}>
                       {`${studentInfo.progress.totalSolutions} / ${
                         course.totalAssignments
                       } ${
@@ -610,7 +618,11 @@ class AssignmentsTable extends React.PureComponent {
             </Paper>
           </Popper>
         )}
-        <AnalysisDialog  handleClose={this.handleCloseAnalysisDialog}   open={this.state.analysisDialog.open} skills={this.state.analysisDialog.data} />
+        <AnalysisDialog
+          handleClose={this.handleCloseAnalysisDialog}
+          open={this.state.analysisDialog.open}
+          skills={this.state.analysisDialog.data}
+        />
       </Fragment>
     );
   }

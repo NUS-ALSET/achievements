@@ -64,10 +64,10 @@ class ActivitiesTable extends React.PureComponent {
   };
 
   openAnalysisDialog = givenSkills =>
-    this.setState({ analysisDialog : { open : true, data : {givenSkills}}});
+    this.setState({ analysisDialog: { open: true, data: { givenSkills } } });
 
   handleCloseAnalysisDialog = () =>
-    this.setState({ analysisDialog : { open : false, data : {}}});
+    this.setState({ analysisDialog: { open: false, data: {} } });
 
   selectActivity = activity => this.setState({ activity });
 
@@ -157,58 +157,69 @@ class ActivitiesTable extends React.PureComponent {
             ))}
           </TableBody>
         </Table>
-        {canChange && <Menu
-          anchorEl={document.getElementById(
-            this.state.activity && this.state.activity.id
-          )}
-          onClose={() => this.selectActivity()}
-          open={!!this.state.activity}
-        >
-          <MenuItem
-            className={classes.button}
-            onClick={() =>
-              this.selectActivity() || onEditProblem(this.state.activity)
-            }
-            variant="raised"
+        {canChange && (
+          <Menu
+            anchorEl={document.getElementById(
+              this.state.activity && this.state.activity.id
+            )}
+            onClose={() => this.selectActivity()}
+            open={!!this.state.activity}
           >
-            Edit
-          </MenuItem>
-          {this.state.activity &&
-          this.state.activity.orderIndex !== minOrderIndex && (
+            <MenuItem
+              className={classes.button}
+              onClick={() =>
+                this.selectActivity() || onEditActivity(this.state.activity)
+              }
+              variant="raised"
+            >
+              Edit
+            </MenuItem>
             <MenuItem
               className={classes.button}
               onClick={() =>
                 this.selectActivity() ||
-                onMoveProblem(this.state.activity, "up")
+                onDeleteActivity(this.state.activity.id)
               }
               variant="raised"
             >
-              Move Up
+              Delete
             </MenuItem>
-          )}
-          {this.state.activity &&
-          this.state.activity.orderIndex !== maxOrderIndex && (
-            <MenuItem
-              className={classes.button}
-              onClick={() =>
-                this.selectActivity() ||
-                onMoveProblem(this.state.activity, "down")
-              }
-              variant="raised"
-            >
-              Move Down
-            </MenuItem>
-          )}
-        </Menu> }
+            {this.state.activity &&
+              this.state.activity.orderIndex !== minOrderIndex && (
+                <MenuItem
+                  className={classes.button}
+                  onClick={() =>
+                    this.selectActivity() ||
+                    onMoveActivity(this.state.activity, "up")
+                  }
+                  variant="raised"
+                >
+                  Move Up
+                </MenuItem>
+              )}
+            {this.state.activity &&
+              this.state.activity.orderIndex !== maxOrderIndex && (
+                <MenuItem
+                  className={classes.button}
+                  onClick={() =>
+                    this.selectActivity() ||
+                    onMoveActivity(this.state.activity, "down")
+                  }
+                  variant="raised"
+                >
+                  Move Down
+                </MenuItem>
+              )}
+          </Menu>
+        )}
         <AnalysisDialog
-          open={this.state.analysisDialog.open}
           handleClose={this.handleCloseAnalysisDialog}
+          open={this.state.analysisDialog.open}
           skills={this.state.analysisDialog.data}
-          />
+        />
       </Fragment>
     );
   }
 }
 
 export default withStyles(styles)(ActivitiesTable);
-
