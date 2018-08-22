@@ -12,6 +12,7 @@ const jupyterTrigger = require("./src/executeJupyterSolution");
 const downloadEvents = require("./src/downloadEvents");
 const solutionTriggers = require("./src/updateSolutionVisibility");
 const migrateActivities = require("./src/migrateActivities");
+const updateUserRecommendations = require("./src/updateUserRecommendations");
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -94,3 +95,10 @@ exports.migrateActivities = functions.https.onRequest((req, res) => {
     .then(() => res.send("Done"))
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });
+
+exports.checkUserRecommendations = functions.https.onRequest((req, res) =>
+  updateUserRecommendations
+    .handler(req.query.userId)
+    .then(data => res.send(data))
+    .catch(err => res.status(err.code || ERROR_500).send(err.message))
+);
