@@ -43,28 +43,34 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
         </ListSubheader>}
       onClick={onRequestClose}
     >
+      {/* enable Home highlight for homev2 homev3 */}
       <MenuItem
         component={Link}
         to="/"
-        selected={"/" === location.pathname}
+        selected={"/" === location.pathname
+          || location.pathname.match(/\/home/)
+        }
       >
         <ListItem>
           <ListItemIcon>
-            {("/" === location.pathname)
+            {("/" === location.pathname
+              || location.pathname.match(/\/home/)
+             )
             ? <Whatshot style={{fill: "red"}} />
             : <Whatshot />}
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
       </MenuItem>
+      {/* the Paths tab will be highlighted if URL starts with "/paths" */}
       <MenuItem
         component={Link}
         to="/paths"
-        selected={"/paths" === location.pathname}
+        selected={location.pathname.match(/\/paths/)}
       >
         <ListItem>
           <ListItemIcon>
-          {("/paths" === location.pathname)
+          {location.pathname.match(/\/paths/)
             ? <Explore style={{fill: "red"}} />
             : <Explore />}
           </ListItemIcon>
@@ -82,28 +88,30 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
         </ListSubheader>}
       onClick={onRequestClose}
     >
+      {/* the Courses tab will be highlighted if URL starts with "/courses" */}
       <MenuItem
         component={Link}
         to="/courses"
-        selected={"/courses" === location.pathname}
+        selected={location.pathname.match(/\/courses/)}
       >
         <ListItem>
           <ListItemIcon>
-          {("/courses" === location.pathname)
+          {location.pathname.match(/\/courses/)
             ? <Group style={{fill: "red"}} />
             : <Group />}
           </ListItemIcon>
           <ListItemText primary="Courses" />
         </ListItem>
       </MenuItem>
+      {/* the Cohorts tab will be highlighted if URL starts with "/cohorts" */}
       <MenuItem
         component={Link}
         to="/cohorts"
-        selected={"/cohorts" === location.pathname}
+        selected={location.pathname.match(/\/cohorts/)}
       >
         <ListItem>
           <ListItemIcon>
-          {("/cohorts" === location.pathname)
+          {location.pathname.match(/\/cohorts/)
             ? <Domain style={{fill: "red"}} />
             : <Domain />}
           </ListItemIcon>
@@ -115,16 +123,15 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
     <Divider />
 
     <MenuList onClick={onRequestClose}>
+      {/* the Profile tab will be highlighted if URL starts with "/profile" */}
       <MenuItem
         component={Link}
         to={`/profile/${userId || "non-logged"}`}
-        selected={
-          `/profile/${userId || "non-logged"}` === location.pathname
-        }
+        selected={location.pathname.match(/\/profile/)}
       >
         <ListItem>
           <ListItemIcon>
-          {(`/profile/${userId || "non-logged"}` === location.pathname)
+          {location.pathname.match(/\/profile/)
             ? <Mood style={{fill: "red"}} />
             : <Mood />}
           </ListItemIcon>

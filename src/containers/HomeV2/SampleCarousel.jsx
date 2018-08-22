@@ -4,6 +4,9 @@ import PropTypes from "prop-types";
 import Button from '@material-ui/core/Button';
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
+// withWidth() higher-order component to change React DOM based on breakpoint
+// here change Nuka-carousel's slidesToShow dynamically with width
+import withWidth from "@material-ui/core/withWidth";
 
 import './NukaCarouselStyle.css';
 /* the Carousel is from nuka-carousel
@@ -26,16 +29,39 @@ class SampleCarousel extends React.PureComponent {
   static propTypes = {
     dataList: PropTypes.array,
     youtubeRecom: PropTypes.bool,
+    // for slidesToShow
+    width: PropTypes.string,
   };
 
   render() {
     // retrieve the dummyData
-    const { youtubeRecom, dataList } = this.props;
-    console.log("??????", dataList);
+    const { youtubeRecom, dataList, width } = this.props;
+    console.log("dataList from dummyData is: ", dataList);
+    // width is a string, detect media query via MUI
+    let NumToShow;
+    switch(width) {
+      case "xs":
+        NumToShow = 1;
+        break;
+      case "sm":
+        NumToShow = 2;
+        break;
+      case "md":
+        NumToShow = 3;
+        break;
+      case "lg":
+        NumToShow = 4;
+        break;
+      case "xl":
+        NumToShow = 5;
+        break;
+      default:
+        NumToShow = 4;
+    };
 
     return (
       <Carousel
-        slidesToShow={4}
+        slidesToShow={NumToShow}
         cellSpacing={10}
         className="customizeCarousel"
         renderCenterLeftControls={({ previousSlide, currentSlide }) => (
@@ -87,4 +113,4 @@ class SampleCarousel extends React.PureComponent {
   }
 }
 
-export default SampleCarousel;
+export default withWidth()(SampleCarousel);

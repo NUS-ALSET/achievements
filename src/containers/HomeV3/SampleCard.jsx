@@ -12,6 +12,8 @@ import Typography from '@material-ui/core/Typography';
 
 // python logo
 import pythonlogo from '../../assets/python-logo-master-v3-TM-flattened.png';
+// codecombat logo
+// import coodecombatlogo from '../../assets/CodeCombat-logo-min.png';
 
 /*
  * the data code design is modeled after
@@ -28,11 +30,7 @@ const styles = {
     width: 90,
   },
   mediaYouTube: {
-    //maxHeight: 160,
-    //height: "100%",
-    //maxHeight: 150,
-    //width: "100%",
-    //paddingTop: '56.25%', // 16:9
+
   },
   contentPython: {
     height: 130,
@@ -40,11 +38,8 @@ const styles = {
     overflow: "hidden",
   },
   contentYouTube: {
-    //display: "flex",
-    //alignSelf: "flex-end",
     margin: 0,
     padding:0,
-    //border: "2px red solid",
     height: 160,
     width: "100%",
     overflow: "hidden",
@@ -56,7 +51,6 @@ const styles = {
 
 class SampleCard extends React.PureComponent {
   static propTypes = {
-    // key is not a prop
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
     path: PropTypes.string,
@@ -77,27 +71,27 @@ class SampleCard extends React.PureComponent {
   }
 
   render() {
-    // get the data from the dummy Redux State
-    // props.path is the owner value
-    // props.problem is the key value of the owner
+
     const { title, description, path, problem, video } = this.props;
     const videoID = this.getVideoID(video);
 
     // TODO: video && media style
 
+    // for now, we try to have Jupyter and YouTube ready
+
     return (
       <Card style={styles.card}>
-        <CardMedia
-          style={video
-            ? styles.mediaYouTube
-            : styles.mediaPython}
+         <CardMedia
+           style={video
+             ? styles.mediaYouTube
+             : styles.mediaPython}
           image={video
             ? ''
             : pythonlogo}
-          title={video
-            ? "YouTube Video"
-            : "Python Exercise"}
-        />
+           title={video
+             ? "YouTube Video"
+             : "Python Exercise"}
+          />
         <CardContent
           style={video
             ? {
@@ -131,7 +125,7 @@ class SampleCard extends React.PureComponent {
         </CardContent>
         <CardActions>
           <Link
-            to={`/paths/${path}/problems/${problem}`}
+            to={`/paths/${path}/activities/${problem}`}
             style={{ textDecoration: 'none' }}
           >
             <Button size="small" color="primary">
