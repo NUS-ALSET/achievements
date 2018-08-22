@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+import Link from "react-router-dom/Link";
 
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
@@ -36,9 +37,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
-import Timeline from "@material-ui/icons/Timeline";
-import SendIcon from "@material-ui/icons/Send";
+import TagFacesIcon from "@material-ui/icons/TagFaces";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
 
 import { AccountService } from "../../services/account";
@@ -60,6 +59,10 @@ const styles = theme => ({
   },
   nowrap : {
     whiteSpace : 'nowrap'
+  },
+  link: {
+    color: "unset",
+    textDecoration: "none"
   }
 });
 
@@ -83,16 +86,16 @@ class AssignmentsTable extends React.PureComponent {
       data : {}
     }
   };
-  openAnalysisDialog = solution => this.setState({ 
-    analysisDialog : { 
+  openAnalysisDialog = solution => this.setState({
+    analysisDialog : {
       open : true,
       data : {
           userSkills : solution.userSkills || {},
-          skillsDifference : solution.skillsDifference || {} 
+          skillsDifference : solution.skillsDifference || {}
         }
       }
     });
-  
+
   handleCloseAnalysisDialog = () => this.setState({ analysisDialog : { open : false, data : {}}});
 
   getTooltip(assignment, solution) {
@@ -408,7 +411,7 @@ class AssignmentsTable extends React.PureComponent {
                 </TableSortLabel>
               </TableCell>
               {course.assignments.map(assignment => (
-                <TableCell 
+                <TableCell
                   className={classes.nowrap}
                   classes={{
                     root: classes.narrowCell
@@ -468,7 +471,7 @@ class AssignmentsTable extends React.PureComponent {
               const studentInfo = course.members[id];
               return (
                 <TableRow key={studentInfo.id}>
-                  <TableCell 
+                  <TableCell
                     className={classes.nowrap}>
                     {isInstructor &&
                       course.owner === currentUser.id && (
@@ -482,7 +485,7 @@ class AssignmentsTable extends React.PureComponent {
                       (studentInfo.name.length > MAX_NAME_LENGTH ? "..." : "")}
                   </TableCell>
                   {course.assignments.map(assignment => (
-                    <TableCell 
+                    <TableCell
                       className={classes.nowrap} key={assignment.id}>
                       <Fragment>
                         {this.getSolution(
@@ -510,7 +513,7 @@ class AssignmentsTable extends React.PureComponent {
                               </Tooltip>
                               </IconButton>
                               {
-                                ((studentInfo.solutions[assignment.id] || {}).originalSolution || {}).userSkills && 
+                                ((studentInfo.solutions[assignment.id] || {}).originalSolution || {}).userSkills &&
                                 <IconButton
                                   onClick={() => this.openAnalysisDialog(studentInfo.solutions[assignment.id].originalSolution)
                                   }
@@ -546,7 +549,7 @@ class AssignmentsTable extends React.PureComponent {
                     </TableCell>
                   ))}
                   {isInstructor && (
-                    <TableCell 
+                    <TableCell
                       className={classes.nowrap}>
                       {`${studentInfo.progress.totalSolutions} / ${
                         course.totalAssignments
@@ -588,6 +591,19 @@ class AssignmentsTable extends React.PureComponent {
                       <DeleteIcon />
                     </ListItemIcon>
                     <ListItemText>Remove student from course</ListItemText>
+                  </MenuItem>
+                  <MenuItem>
+                    <ListItemIcon>
+                      <TagFacesIcon />
+                    </ListItemIcon>
+                    <ListItemText>
+                      <Link
+                        className={classes.link}
+                        to={`/profile/${currentStudent.id}`}
+                      >
+                        Open profile link
+                      </Link>
+                    </ListItemText>
                   </MenuItem>
                 </MenuList>
               </ClickAwayListener>

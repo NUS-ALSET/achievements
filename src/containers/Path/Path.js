@@ -44,8 +44,9 @@ import {
   pathToggleJoinStatusRequest
 } from "./actions";
 import {
-  pathProblemChangeRequest,
-  pathProblemDialogShow,
+  pathActivityChangeRequest,
+  pathActivityDeleteRequest,
+  pathActivityDialogShow,
   pathActivityMoveRequest
 } from "../Paths/actions";
 import ActivityDialog from "../../components/dialogs/ActivityDialog";
@@ -63,6 +64,7 @@ import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
+import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
 
 const styles = theme => ({
   toolbarButton: {
@@ -81,10 +83,11 @@ export class Path extends React.Component {
     onNotification: PropTypes.func,
     onOpen: PropTypes.func,
     onOpenSolution: PropTypes.func,
-    onProblemChangeRequest: PropTypes.func,
-    onProblemDialogShow: PropTypes.func,
-    onProblemMoveRequest: PropTypes.func,
-    onProblemSolutionSubmit: PropTypes.func,
+    onActivityChangeRequest: PropTypes.func,
+    onActivityDeleteRequest: PropTypes.func,
+    onActivityDialogShow: PropTypes.func,
+    onActivityMoveRequest: PropTypes.func,
+    onActivitySolutionSubmit: PropTypes.func,
     onProfileUpdate: PropTypes.func,
     onPushPath: PropTypes.func,
     onRefreshSolutions: PropTypes.func,
@@ -98,27 +101,31 @@ export class Path extends React.Component {
     uid: PropTypes.string
   };
 
+  state = {
+    selectedActivityId: ""
+  };
+
   componentDidMount() {
     this.props.onOpen(this.props.match.params.pathId);
   }
 
   onMoveProblem = (problem, direction) => {
-    const { pathActivities, onProblemMoveRequest } = this.props;
+    const { pathActivities, onActivityMoveRequest } = this.props;
 
-    onProblemMoveRequest(pathActivities.path.id, problem.id, direction);
+    onActivityMoveRequest(pathActivities.path.id, problem.id, direction);
   };
 
   onOpenProblem = problem => {
     const {
       onOpenSolution,
-      onProblemSolutionSubmit,
+      onActivitySolutionSubmit,
       onPushPath,
       pathActivities
     } = this.props;
     switch (problem.type) {
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:
-        onProblemSolutionSubmit(
+        onActivitySolutionSubmit(
           pathActivities.path.id,
           { problemId: problem.id, ...problem },
           "Completed"
@@ -151,18 +158,18 @@ export class Path extends React.Component {
       this.props.pathStatus === PATH_STATUS_NOT_JOINED
     );
 
-  onAddActivityClick = () => this.props.onProblemDialogShow();
+  onAddActivityClick = () => this.props.onActivityDialogShow();
   onTextSolutionSubmit = (solution, activityId) => {
     const {
       onCloseDialog,
-      onProblemSolutionSubmit,
+      onActivitySolutionSubmit,
       pathActivities
     } = this.props;
     const activity = pathActivities.activities.find(
       activity => activity.id === activityId
     );
 
-    onProblemSolutionSubmit(
+    onActivitySolutionSubmit(
       pathActivities.path.id,
       { ...activity, problemId: activity.id },
       solution
@@ -172,18 +179,23 @@ export class Path extends React.Component {
   onProfileUpdate = profile => {
     const {
       onCloseDialog,
-      onProblemSolutionSubmit,
+      onActivitySolutionSubmit,
       onProfileUpdate,
       ui
     } = this.props;
 
     onProfileUpdate(profile, "CodeCombat");
-    onProblemSolutionSubmit(
+    onActivitySolutionSubmit(
       ui.dialog.value.path,
       { ...ui.dialog.value, problemId: ui.dialog.value.id },
       profile
     );
     onCloseDialog();
+  };
+  onActivityDeleteRequest = activityId => {
+    this.setState({
+      selectedActivityId: activityId
+    });
   };
 
   onProblemChangeRequest = (id, data) => {
@@ -216,7 +228,9 @@ export class Path extends React.Component {
       onAddAssistant,
       onAssistantKeyChange,
       onCloseDialog,
-      onProblemDialogShow,
+      onActivityChangeRequest,
+      onActivityDeleteRequest,
+      onActivityDialogShow,
       onShowCollaboratorsClick,
       onRemoveAssistant,
       pathActivities,
@@ -343,9 +357,10 @@ export class Path extends React.Component {
         <ActivitiesTable
           activities={pathActivities.activities || []}
           currentUserId={uid || "Anonymous"}
-          onEditProblem={onProblemDialogShow}
-          onMoveProblem={this.onMoveProblem}
-          onOpenProblem={this.onOpenProblem}
+          onDeleteActivity={this.onActivityDeleteRequest}
+          onEditActivity={onActivityDialogShow}
+          onMoveActivity={this.onMoveProblem}
+          onOpenActivity={this.onOpenProblem}
           pathStatus={pathStatus}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
@@ -356,6 +371,15 @@ export class Path extends React.Component {
           open={ui.dialog.type === "ProblemChange"}
           pathId={(pathActivities.path && pathActivities.path.id) || ""}
           uid={uid || "Anonymous"}
+        />
+        <DeleteConfirmationDialog
+          message="This will remove activity"
+          onClose={() => this.setState({ selectedActivityId: "" })}
+          onCommit={() => {
+            onActivityDeleteRequest(this.state.selectedActivityId);
+            this.setState({ selectedActivityId: "" });
+          }}
+          open={!!this.state.selectedActivityId}
         />
         <ControlAssistantsDialog
           assistants={ui.dialog && ui.dialog.assistants}
@@ -391,10 +415,11 @@ const mapDispatchToProps = {
   onShowCollaboratorsClick: pathShowCollaboratorsDialog,
   onProfileUpdate: externalProfileUpdateRequest,
   onOpenSolution: pathOpenSolutionDialog,
-  onProblemChangeRequest: pathProblemChangeRequest,
-  onProblemDialogShow: pathProblemDialogShow,
-  onProblemMoveRequest: pathActivityMoveRequest,
-  onProblemSolutionSubmit: problemSolutionSubmitRequest,
+  onActivityChangeRequest: pathActivityChangeRequest,
+  onActivityDeleteRequest: pathActivityDeleteRequest,
+  onActivityDialogShow: pathActivityDialogShow,
+  onActivityMoveRequest: pathActivityMoveRequest,
+  onActivitySolutionSubmit: problemSolutionSubmitRequest,
   onPushPath: push,
   onRefreshSolutions: pathRefreshSolutionsRequest,
   onRemoveAssistant: pathRemoveCollaboratorRequest,
