@@ -44,6 +44,7 @@ class AddTextSolutionDialog extends React.PureComponent {
     // or has only empty spaces =>
     // disable the commit button
     // Regex from Olafs Vandans
+    /* eslint-disable no-useless-escape */
     if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
       .test(event.target.value)
     ) {
@@ -75,7 +76,7 @@ class AddTextSolutionDialog extends React.PureComponent {
             defaultValue={(solution && solution.value) || ""}
             helperText={this.state.isCorrectInput
               ? ""
-              : "input cannot be empty and should has only valid characters"}
+              : "input should not be empty or have invalid characters"}
             fullWidth
             label="Solution"
             onChange={this.onChangeSolution}
