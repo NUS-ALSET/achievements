@@ -14,6 +14,13 @@ import PropTypes from "prop-types";
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 
+/* AddTextSolutionDialog is currently used for:
+ * ASSIGNMENTS_TYPES.TeamFormation.id,
+ * ASSIGNMENTS_TYPES.TeamText.id,
+ * ASSIGNMENTS_TYPES.Text.id
+ * so only allow for printable characters as input
+ */
+
 class AddTextSolutionDialog extends React.PureComponent {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
@@ -25,13 +32,30 @@ class AddTextSolutionDialog extends React.PureComponent {
   };
 
   state = {
-    solution: ""
+    solution: "",
+    // detect if text input is only printable characters,
+    // if so CorrentInput
+    isCorrectInput: true,
   };
 
   onChangeSolution = event => {
-    this.setState({
-      solution: event.target.value
-    });
+    // if text input has non-keyboard characters,
+    // or start with empty space,
+    // or has only empty spaces =>
+    // disable the commit button
+    // Regex from Olafs Vandans
+    if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
+      .test(event.target.value)
+    ) {
+      this.setState({
+        isCorrectInput: true,
+        solution: event.target.value,
+      });
+    } else {
+      this.setState({
+        isCorrectInput: false
+      });
+    }
   };
 
   catchReturn = event =>
@@ -47,7 +71,11 @@ class AddTextSolutionDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
+            error={!this.state.isCorrectInput}
             defaultValue={(solution && solution.value) || ""}
+            helperText={this.state.isCorrectInput
+              ? ""
+              : "input cannot be empty and should has only valid characters"}
             fullWidth
             label="Solution"
             onChange={this.onChangeSolution}
@@ -63,6 +91,7 @@ class AddTextSolutionDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
+            disabled={!this.state.isCorrectInput}
             onClick={() => onCommit((this.state.solution || "").trim(), taskId)}
             variant="raised"
           >
