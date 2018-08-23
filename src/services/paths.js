@@ -795,6 +795,13 @@ export class PathsService {
     });
   }
 
+  deleteActivity(activityId) {
+    return firebase
+      .database()
+      .ref(`/activities/${activityId}`)
+      .remove();
+  }
+
   /**
    *
    * @param {String} pathId

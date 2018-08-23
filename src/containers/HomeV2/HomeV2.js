@@ -1,26 +1,74 @@
-import React from "react";
+import React, { Fragment } from "react";
+import PropTypes from "prop-types";
+
+import { compose } from "redux";
+import { firebaseConnect } from "react-redux-firebase";
+import { connect } from "react-redux";
+
 import RecommendationListCard from "./RecommendationListCard";
 
-import DummyReduxState from './DummyDataFirebase';
+const temporaryRecommendationsKinds = [
+  "codeCombat",
+  "jupyter",
+  "jupyterInline",
+  "youtube",
+  "game"
+];
 
-class HomeV2 extends React.PureComponent {
+export class HomeV2 extends React.Component {
+  static propTypes = {
+    userRecommendations: PropTypes.any,
+    uid: PropTypes.string
+  };
+
+  reformatRecommendation = recommendations => {
+    return Object.keys(recommendations)
+      .filter(key => key !== "title")
+      .map(key => ({ ...recommendations[key], actualProblem: key }));
+  };
+
   render() {
-    // three dummy RecommendationListCard
-    // two for python problems, one for YouTube videos
+    const { userRecommendations } = this.props;
     return (
-      <div>
-        <RecommendationListCard
-          RecomType="python"
-          dummyData={DummyReduxState.pythonBigList}
-        />
-        <br />
-        <RecommendationListCard
-          RecomType="youtube"
-          dummyData={DummyReduxState.YouTubeList}
-        />
-      </div>
+      <Fragment>
+        {Object.keys(userRecommendations || {})
+          .filter(key => temporaryRecommendationsKinds.includes(key))
+          .map(recommendationKey => (
+            <Fragment key={recommendationKey}>
+              <RecommendationListCard
+                dummyData={this.reformatRecommendation(
+                  userRecommendations[recommendationKey]
+                )}
+                RecomType={
+                  recommendationKey === "youtube" ? "youtube" : "python"
+                }
+                title={userRecommendations[recommendationKey].title}
+              />
+              <br />
+            </Fragment>
+          ))}
+      </Fragment>
     );
   }
 }
 
-export default HomeV2;
+const mapStateToProps = state => ({
+  uid: state.firebase.auth.uid,
+  userRecommendations:
+    state.firebase.data.userRecommendations &&
+    state.firebase.data.userRecommendations[state.firebase.auth.uid]
+});
+
+export default compose(
+  firebaseConnect((ownProps, store) => {
+    const state = store.getState();
+    const uid = state.firebase.auth.uid;
+
+    if (!uid) {
+      return [];
+    }
+
+    return [`/userRecommendations/${uid}`];
+  }),
+  connect(mapStateToProps)
+)(HomeV2);
