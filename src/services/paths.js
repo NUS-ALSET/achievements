@@ -366,42 +366,6 @@ export class PathsService {
         .ref("/activities")
         .push().key;
     const ref = firebase.database().ref(`/activities/${key}`);
-    if(problemInfo.type===ACTIVITY_TYPES.jupyterInline.id){
-      const fileId = this.getFileId(problemInfo.problemURL) || '';
-      return new Promise((resolve,reject)=>{
-        this.fetchFile(fileId)
-        .then(solution => {
-          const editableBlockCode = 
-          solution.cells
-            .slice(0, solution.cells.length - problemInfo.frozen)
-            .map(c => c.cell_type === 'code' ? c.source.join("") : "")
-            .join("");
-          const data={
-            owner: uid,
-            solution: editableBlockCode || "",
-          }
-          firebaseService.startProcess(
-            data,
-            "jupyterSolutionAnalysisQueue",
-            "Code Analysis"
-          )
-          .then(res=>{
-            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills : res.userSkills || {}}, ref, isNew,next,key));
-          })
-          .catch(()=>{
-            resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
-          })
-        })
-        .catch(err=>{
-          resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
-        })
-      })
-    }else{
-      return this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key)
-    }
-  }
-
-  saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key){
     if (problemInfo.id) {
       delete problemInfo.id;
       next = ref.update( problemInfo );
@@ -474,7 +438,7 @@ export class PathsService {
                 cell.source.join("").trim() !== solution.source.join("").trim()
               ) {
                 throw new Error(
-                   SOLUTION_MODIFIED_TESTS
+                  SOLUTION_MODIFIED_TESTS
                 );
               }
               return true;
@@ -557,7 +521,6 @@ export class PathsService {
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set("Completed");
           case ACTIVITY_TYPES.text.id:
-          case ACTIVITY_TYPES.jupyterInline.id:
           case ACTIVITY_TYPES.jest.id:
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
@@ -567,8 +530,10 @@ export class PathsService {
               .set(solution);
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
-              .then(json =>
-                this.validateSolution(uid, pathProblem, solution, json)
+              .then(json =>{
+                this.saveGivenSkillInProblem(json ,pathProblem.problemId,uid,pathProblem.frozen);
+                return this.validateSolution(uid, pathProblem, solution, json);
+              }
               )
               .then(() =>
                 firebase
@@ -576,6 +541,13 @@ export class PathsService {
                   .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
                   .set(solution)
               );
+          case ACTIVITY_TYPES.jupyterInline.id: {
+            this.saveGivenSkillInProblem(solution,pathProblem.problemId,uid,pathProblem.frozen);
+            return firebase
+                  .database()
+                  .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+                  .set(solution)
+          }
           default:
             break;
         }
@@ -592,6 +564,28 @@ export class PathsService {
       );
   }
 
+
+  saveGivenSkillInProblem(solution, problemId, uid, frozenBlocks) {
+    const editableBlockCode =
+      solution.cells
+        .slice(0, solution.cells.length - frozenBlocks)
+        .map(c => c.cell_type === 'code' ? c.source.join("") : "")
+        .join("");
+    const data = {
+      owner: uid,
+      solution: editableBlockCode || "",
+    }
+    console.log(data);
+    firebaseService.startProcess(
+      data,
+      "jupyterSolutionAnalysisQueue",
+      "Code Analysis"
+    ).then((res) => {
+      firebase.database().ref(`/activities/${problemId}`).update({
+        givenSkills: res.userSkills || {}
+      })
+    })
+  }
 
   /**
    *
