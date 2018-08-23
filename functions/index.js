@@ -15,6 +15,7 @@ const solutionTriggers = require("./src/updateSolutionVisibility");
 const httpUtil = require("./src/utils/http").httpUtil;
 const migrateActivities = require("./src/migrateActivities");
 const updateUserRecommendations = require("./src/updateUserRecommendations");
+const updateUserPySkills = require("./src/updateUserPySkills.js")
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -54,7 +55,7 @@ exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
   .onWrite((change, context) => {
     const { courseId, studentId, assignmentId } = context.params;
-
+    
     solutionTriggers.handler(
       change.after.val(),
       courseId,
@@ -62,6 +63,18 @@ exports.handleNewSolution = functions.database
       assignmentId
     );
   });
+
+
+exports.handleUserSkills = functions.database
+.ref("/solutions/{courseId}/{studentId}/{assignmentId}")
+.onWrite((change, context) => {
+  const {  studentId } = context.params;
+  return updateUserPySkills.handler(
+    change.before.exists() ? change.before.val() : {},
+    change.after.val(),
+    studentId
+  )
+});
 
 exports.handleProfileRefreshRequest =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
