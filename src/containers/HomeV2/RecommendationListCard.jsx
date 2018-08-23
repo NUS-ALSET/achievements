@@ -9,7 +9,7 @@ import Avatar from "@material-ui/core/Avatar";
 // YouTube, Jupyter, Jest, Colab, Code Combat, Game
 // Avatar with icons for certain Activity types
 import PlayArrow from "@material-ui/icons/PlayArrow"; // YouTube
-// import Adb from '@material-ui/icons/Adb'; // Game
+import Adb from '@material-ui/icons/Adb'; // Game
 
 // TODO: amber color python (Jupyter and Colab), red for youtube
 import amber from "@material-ui/core/colors/amber";
@@ -17,7 +17,7 @@ import red from "@material-ui/core/colors/red";
 // Jest:
 // import blue from '@material-ui/core/colors/blue';
 // CodeCombat:
-// import lime from '@material-ui/core/colors/lime';
+import lime from '@material-ui/core/colors/lime';
 // Game:
 // import indigo from '@material-ui/core/colors/indigo';
 
@@ -38,7 +38,10 @@ const styles = {
   avatarPy: {
     backgroundColor: amber[500]
   },
-  avatarYo: {
+  avatarCC: {
+    backgroundColor: lime[500]
+  },
+  avatarYT: {
     backgroundColor: red[500]
   }
 };
@@ -54,23 +57,35 @@ class RecommendationListCard extends React.PureComponent {
   render() {
     // the Firebase data in Redux is nested JSON
     // here temporarily use a dummy JSON with 2 pythonlists and 1 youtubelist
-    const { dummyData, title } = this.props;
+    const { dummyData, title, RecomType } = this.props;
 
     // TODO: three major categories for Avatar icons
     // YouTube Activities use PlayArrow for Avatar Icon,
     // Game/CodeCombat use Adb icon,
     // Jupyter/Jest/Codelab use '</>'
 
+    // temporary detection for CodeCombat Activities,
+    // to change the avatar, logo, and color
+    const isCodeCombat = (title==="CodeCombat Activities")
+      ? true
+      : false;
+
     return (
       <div style={{marginBottom : "24px"}}>
       {/* either use marginBottom here or put a <br /> at parent */}
         <Card style={styles.card}>
-          {(this.props.RecomType === "python") &&
+          {(RecomType === "python") &&
             <Fragment>
+              {/* this is temporarily testing the GUI with CodeCombat type
+                  feel free to refactor it to a proper solution */}
               <CardHeader
                 avatar={
-                  <Avatar aria-label="Recommendation" style={styles.avatarPy}>
-                    {"</>"}
+                  <Avatar aria-label="Recommendation"
+                    style={isCodeCombat
+                      ? styles.avatarCC
+                      : styles.avatarPy}
+                  >
+                    {isCodeCombat ? <Adb /> : "</>"}
                   </Avatar>
                 }
                 subheader="Recommended for you"
@@ -80,15 +95,16 @@ class RecommendationListCard extends React.PureComponent {
                 <SampleCarousel
                   dataList={dummyData}
                   youtubeRecom={false}
+                  isCodeCombat={isCodeCombat}
                 />
               </CardContent>
             </Fragment>
           }
-          {(this.props.RecomType === "youtube") &&
+          {(RecomType === "youtube") &&
             <Fragment>
               <CardHeader
                 avatar={
-                  <Avatar aria-label="Recommendation" style={styles.avatarYo}>
+                  <Avatar aria-label="Recommendation" style={styles.avatarYT}>
                     <PlayArrow />
                   </Avatar>
                 }
