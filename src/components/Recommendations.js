@@ -19,7 +19,7 @@ class Recommendations extends React.PureComponent {
     title: PropTypes.string.isRequired
   };
 
-  getRecTitle = rec => `Use the ${rec.feature} ${rec.featureType}`;
+  getRecTitle = rec => rec.name || `Use the ${rec.feature} ${rec.featureType}`;
 
   render() {
     const { recs, title } = this.props;
@@ -39,7 +39,7 @@ class Recommendations extends React.PureComponent {
             marginBottom: 24
           }}
         >
-          <Grid container spacing={4}>
+          <Grid container spacing={8}>
             <Grid item sm={4} xs={12}>
               <PathCard
                 featured={true}

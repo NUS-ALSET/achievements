@@ -10,7 +10,7 @@ import {
   FETCH_GITHUB_FILES_ERROR,
   FETCH_GITHUB_FILES_SUCCESS
 } from "./actions";
-import { PATH_PROBLEM_DIALOG_SHOW } from "../Paths/actions";
+import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
 
 export const path = (
@@ -45,14 +45,14 @@ export const path = (
           }
         }
       };
-    case PATH_PROBLEM_DIALOG_SHOW:
+    case PATH_ACTIVITY_DIALOG_SHOW:
       return {
         ...state,
         ui: {
           ...state.ui,
           dialog: {
             type: "ProblemChange",
-            value: action.problemInfo
+            value: action.activityInfo
           },
           fetchGithubFilesStatus : ''
         }

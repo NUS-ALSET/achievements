@@ -2,15 +2,17 @@
   "rules": {
     "activities": {
       ".read": "auth != null",
+      ".indexOn": ["path"],
       "$activityKey": {
         ".write": "auth != null &&
-          newData.child('path').exists() &&
-          root.child('paths/' + newData.child('path').val()).exists() && (
-            root.child('paths/' + newData.child('path').val() +
-              '/owner').val() == auth.uid ||
-            root.child('pathAssistants/' + newData.child('path').val() +
-              '/' + auth.uid).exists()
-
+          !newData.exists() || (
+            newData.child('path').exists() &&
+            root.child('paths/' + newData.child('path').val()).exists() && (
+              root.child('paths/' + newData.child('path').val() +
+                '/owner').val() == auth.uid ||
+              root.child('pathAssistants/' + newData.child('path').val() +
+                '/' + auth.uid).exists()
+            )
           )
         "
       }
@@ -181,13 +183,18 @@
     "logged_events": {
       ".read": "auth != null",
       ".write": "auth != null",
-      ".indexOn": "createdAt"
+      ".indexOn": ["createdAt"]
     },
     "moreProblemsRequests": {
       "$requestKey": {
         ".write": "auth != null &&
           newData.child('sender').exists() &&
           auth.uid == newData.child('sender').val()"
+      }
+    },
+    "outgoingRequestsQueue": {
+      "tasks": {
+        ".indexOn": ["_state"]
       }
     },
     "pathAssistants": {

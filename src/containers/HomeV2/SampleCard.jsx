@@ -10,8 +10,15 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
-// python logo
+// TODO: 4 different logos for CodeCombat, Python, JavaScript activities
+// python logo for Jupyter, Colab
 import pythonlogo from '../../assets/python-logo-master-v3-TM-flattened.png';
+// codecombat logo for cobecombat activities
+import Codecombatlogo from '../../assets/CodeCombat-logo-min.png';
+// JS logo for Jest and Game (for now only React based games i think)
+// import JSlogo from '../../assets/JSlogoV2.png';
+// Game logo for game activities
+// import Gamelogo from '../../assets/Gamelogo.png';
 
 /*
  * the data code design is modeled after
@@ -56,12 +63,13 @@ const styles = {
 
 class SampleCard extends React.PureComponent {
   static propTypes = {
-    // key is not a prop
-    title: PropTypes.string.isRequired,
+    activityTitle: PropTypes.string.isRequired,
     description: PropTypes.string,
     path: PropTypes.string,
     problem: PropTypes.string,
     video: PropTypes.string,
+    // temporary logo detection for CodeCombat
+    isCodeCombat: PropTypes.bool,
   };
 
   /*
@@ -80,10 +88,10 @@ class SampleCard extends React.PureComponent {
     // get the data from the dummy Redux State
     // props.path is the owner value
     // props.problem is the key value of the owner
-    const { title, description, path, problem, video } = this.props;
+    const { activityTitle, description, path, problem, video, isCodeCombat } = this.props;
     const videoID = this.getVideoID(video);
 
-    // TODO: video && media style
+    // temporary solution for logo for different Activities
 
     return (
       <Card style={styles.card}>
@@ -91,8 +99,8 @@ class SampleCard extends React.PureComponent {
           style={video
             ? styles.mediaYouTube
             : styles.mediaPython}
-          image={video
-            ? ''
+          image={isCodeCombat
+            ? Codecombatlogo
             : pythonlogo}
           title={video
             ? "YouTube Video"
@@ -123,7 +131,7 @@ class SampleCard extends React.PureComponent {
               : {}
             }
           >
-            {title}
+            {activityTitle}
           </Typography>
           <Typography component="p">
             {description}

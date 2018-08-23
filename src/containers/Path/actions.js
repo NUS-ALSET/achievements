@@ -140,9 +140,9 @@ export const pathToggleJoinStatusFail = (pathId, status, reason) => ({
   reason
 });
 
-export const PATH_PROBLEM_OPEN = "PATH_PROBLEM_OPEN";
-export const pathProblemOpen = (pathId, problemId) => ({
-  type: PATH_PROBLEM_OPEN,
+export const PATH_ACTIVITY_OPEN = "PATH_ACTIVITY_OPEN";
+export const pathActivityOpen = (pathId, problemId) => ({
+  type: PATH_ACTIVITY_OPEN,
   pathId,
   problemId
 });

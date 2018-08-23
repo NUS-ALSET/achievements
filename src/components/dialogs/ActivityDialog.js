@@ -444,7 +444,7 @@ class ActivityDialog extends React.PureComponent {
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
-          {activity && activity.id ? "Edit Problem" : "Add New Activity"}
+          {activity && activity.id ? "Edit Problem" : "Add New Problem"}
         </DialogTitle>
         <DialogContent
           style={{

@@ -22,6 +22,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import AnalysisDialog from "../dialogs/AnalysisDialog";
 import {
   PATH_STATUS_COLLABORATOR,
+  PATH_STATUS_JOINED,
+  PATH_STATUS_NOT_JOINED,
   PATH_STATUS_OWNER
 } from "../../containers/Path/selectors";
 
@@ -41,10 +43,16 @@ class ActivitiesTable extends React.PureComponent {
     activities: PropTypes.array.isRequired,
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
-    onEditProblem: PropTypes.func.isRequired,
-    onOpenProblem: PropTypes.func.isRequired,
-    onMoveProblem: PropTypes.func.isRequired,
-    pathStatus: PropTypes.string
+    onDeleteActivity: PropTypes.func.isRequired,
+    onEditActivity: PropTypes.func.isRequired,
+    onMoveActivity: PropTypes.func.isRequired,
+    onOpenActivity: PropTypes.func.isRequired,
+    pathStatus: PropTypes.oneOf([
+      PATH_STATUS_OWNER,
+      PATH_STATUS_COLLABORATOR,
+      PATH_STATUS_JOINED,
+      PATH_STATUS_NOT_JOINED
+    ])
   };
 
   state = {
@@ -55,11 +63,11 @@ class ActivitiesTable extends React.PureComponent {
     }
   };
 
-  openAnalysisDialog = givenSkills => 
-    this.setState({ analysisDialog : { open : true, data : {givenSkills}}});
-  
-  handleCloseAnalysisDialog = () => 
-    this.setState({ analysisDialog : { open : false, data : {}}});
+  openAnalysisDialog = givenSkills =>
+    this.setState({ analysisDialog: { open: true, data: { givenSkills } } });
+
+  handleCloseAnalysisDialog = () =>
+    this.setState({ analysisDialog: { open: false, data: {} } });
 
   selectActivity = activity => this.setState({ activity });
 
@@ -67,9 +75,10 @@ class ActivitiesTable extends React.PureComponent {
     const {
       activities,
       classes,
-      onEditProblem,
-      onMoveProblem,
-      onOpenProblem,
+      onDeleteActivity,
+      onEditActivity,
+      onMoveActivity,
+      onOpenActivity,
       pathStatus
     } = this.props;
 
@@ -118,7 +127,7 @@ class ActivitiesTable extends React.PureComponent {
                 )}
                 <TableCell>
                   <Button
-                    onClick={() => onOpenProblem(activity)}
+                    onClick={() => onOpenActivity(activity)}
                     variant="raised"
                   >
                     Solve
@@ -148,58 +157,69 @@ class ActivitiesTable extends React.PureComponent {
             ))}
           </TableBody>
         </Table>
-        <Menu
-          anchorEl={document.getElementById(
-            this.state.activity && this.state.activity.id
-          )}
-          onClose={() => this.selectActivity()}
-          open={!!this.state.activity}
-        >
-          <MenuItem
-            className={classes.button}
-            onClick={() =>
-              this.selectActivity() || onEditProblem(this.state.activity)
-            }
-            variant="raised"
+        {canChange && (
+          <Menu
+            anchorEl={document.getElementById(
+              this.state.activity && this.state.activity.id
+            )}
+            onClose={() => this.selectActivity()}
+            open={!!this.state.activity}
           >
-            Edit
-          </MenuItem>
-          {this.state.activity &&
-            this.state.activity.orderIndex !== minOrderIndex && (
-              <MenuItem
-                className={classes.button}
-                onClick={() =>
-                  this.selectActivity() ||
-                  onMoveProblem(this.state.activity, "up")
-                }
-                variant="raised"
-              >
-                Move Up
-              </MenuItem>
-            )}
-          {this.state.activity &&
-            this.state.activity.orderIndex !== maxOrderIndex && (
-              <MenuItem
-                className={classes.button}
-                onClick={() =>
-                  this.selectActivity() ||
-                  onMoveProblem(this.state.activity, "down")
-                }
-                variant="raised"
-              >
-                Move Down
-              </MenuItem>
-            )}
-        </Menu>
-        <AnalysisDialog   
-          open={this.state.analysisDialog.open} 
-          handleClose={this.handleCloseAnalysisDialog} 
-          skills={this.state.analysisDialog.data} 
-          />
+            <MenuItem
+              className={classes.button}
+              onClick={() =>
+                this.selectActivity() || onEditActivity(this.state.activity)
+              }
+              variant="raised"
+            >
+              Edit
+            </MenuItem>
+            <MenuItem
+              className={classes.button}
+              onClick={() =>
+                this.selectActivity() ||
+                onDeleteActivity(this.state.activity.id)
+              }
+              variant="raised"
+            >
+              Delete
+            </MenuItem>
+            {this.state.activity &&
+              this.state.activity.orderIndex !== minOrderIndex && (
+                <MenuItem
+                  className={classes.button}
+                  onClick={() =>
+                    this.selectActivity() ||
+                    onMoveActivity(this.state.activity, "up")
+                  }
+                  variant="raised"
+                >
+                  Move Up
+                </MenuItem>
+              )}
+            {this.state.activity &&
+              this.state.activity.orderIndex !== maxOrderIndex && (
+                <MenuItem
+                  className={classes.button}
+                  onClick={() =>
+                    this.selectActivity() ||
+                    onMoveActivity(this.state.activity, "down")
+                  }
+                  variant="raised"
+                >
+                  Move Down
+                </MenuItem>
+              )}
+          </Menu>
+        )}
+        <AnalysisDialog
+          handleClose={this.handleCloseAnalysisDialog}
+          open={this.state.analysisDialog.open}
+          skills={this.state.analysisDialog.data}
+        />
       </Fragment>
     );
   }
 }
 
 export default withStyles(styles)(ActivitiesTable);
-

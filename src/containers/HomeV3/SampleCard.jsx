@@ -81,17 +81,17 @@ class SampleCard extends React.PureComponent {
 
     return (
       <Card style={styles.card}>
-         <CardMedia
-           style={video
-             ? styles.mediaYouTube
-             : styles.mediaPython}
+        <CardMedia
+          style={video
+            ? styles.mediaYouTube
+            : styles.mediaPython}
           image={video
             ? ''
             : pythonlogo}
-           title={video
-             ? "YouTube Video"
-             : "Python Exercise"}
-          />
+          title={video
+            ? "YouTube Video"
+            : "Python Exercise"}
+        />
         <CardContent
           style={video
             ? {

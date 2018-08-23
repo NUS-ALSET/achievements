@@ -2,7 +2,7 @@ import {
   PATH_DIALOG_HIDE,
   PATH_DIALOG_SHOW,
   PATH_GAPI_AUTHORIZED,
-  PATH_PROBLEM_DIALOG_SHOW,
+  PATH_ACTIVITY_DIALOG_SHOW,
   PATH_SELECT,
   PATHS_JOINED_FETCH_SUCCESS
 } from "./actions";
@@ -85,7 +85,7 @@ export const paths = (
           loading: false
         }
       };
-    case PATH_PROBLEM_DIALOG_SHOW:
+    case PATH_ACTIVITY_DIALOG_SHOW:
       return {
         ...state,
         ui: {
