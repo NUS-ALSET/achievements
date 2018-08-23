@@ -1,7 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
-import { codeAnalysisService } from "./codeAnalysis";
 import { firebaseService } from "./firebaseService";
 import { 
   SOLUTION_PRIVATE_LINK,
@@ -372,9 +371,22 @@ export class PathsService {
       return new Promise((resolve,reject)=>{
         this.fetchFile(fileId)
         .then(solution => {
-          codeAnalysisService.analyseCode(uid, solution, problemInfo.frozen)
-          .then(givenSkills=>{
-            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills}, ref, isNew,next,key));
+          const editableBlockCode = 
+          solution.cells
+            .slice(0, solution.cells.length - problemInfo.frozen)
+            .map(c => c.cell_type === 'code' ? c.source.join("") : "")
+            .join("");
+          const data={
+            owner: uid,
+            solution: editableBlockCode || "",
+          }
+          firebaseService.startProcess(
+            data,
+            "jupyterSolutionAnalysisQueue",
+            "Code Analysis"
+          )
+          .then(res=>{
+            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills : res.userSkills || {}}, ref, isNew,next,key));
           })
           .catch(()=>{
             resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))

@@ -72,6 +72,7 @@ class FirebaseService {
 
   showNotification(message){
     if(this.processName && this.processName.length>0){
+      this.dispatch(notificationHide());
       this.dispatch(
         notificationShow(`${this.processName} : ${message}`)
       )
