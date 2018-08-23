@@ -165,3 +165,25 @@ export const pathRefreshSolutionsFail = (pathId, reason) => ({
   pathId,
   reason
 });
+
+export const FETCH_GITHUB_FILES = 'FETCH_GITHUB_FILES';
+export const fetchGithubFiles = (
+  githubURL
+)=>({
+  type : FETCH_GITHUB_FILES,
+  githubURL
+})
+
+export const FETCH_GITHUB_FILES_LOADING = 'FETCH_GITHUB_FILES_LOADING';
+export const fetchGithubFilesLoading = () =>({
+  type : FETCH_GITHUB_FILES_LOADING
+})
+export const FETCH_GITHUB_FILES_SUCCESS = 'FETCH_GITHUB_FILES_SUCCESS';
+export const fetchGithubFilesSuccess = (data) =>({
+  type : FETCH_GITHUB_FILES_SUCCESS,
+  data
+})
+export const FETCH_GITHUB_FILES_ERROR = 'FETCH_GITHUB_FILES_ERROR';
+export const fetchGithubFilesError = () =>({
+  type : FETCH_GITHUB_FILES_ERROR
+})

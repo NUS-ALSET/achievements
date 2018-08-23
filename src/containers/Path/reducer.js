@@ -5,7 +5,10 @@ import {
   PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS,
   PATH_OPEN_SOLUTION_DIALOG,
   PATH_REMOVE_COLLABORATOR_SUCCESS,
-  PATH_SHOW_COLLABORATORS_DIALOG
+  PATH_SHOW_COLLABORATORS_DIALOG,
+  FETCH_GITHUB_FILES_LOADING,
+  FETCH_GITHUB_FILES_ERROR,
+  FETCH_GITHUB_FILES_SUCCESS
 } from "./actions";
 import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
@@ -16,8 +19,9 @@ export const path = (
     ui: {
       dialog: {
         type: ""
-      }
-    }
+      },
+      fetchGithubFilesStatus : ''
+    },
   },
   action
 ) => {
@@ -49,7 +53,8 @@ export const path = (
           dialog: {
             type: "ProblemChange",
             value: action.activityInfo
-          }
+          },
+          fetchGithubFilesStatus : ''
         }
       };
     case PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS:
@@ -119,6 +124,50 @@ export const path = (
           }
         }
       };
+    case FETCH_GITHUB_FILES_LOADING:{
+      let  dialog = state.ui.dialog || {};
+      dialog={
+        ...dialog,
+        value : {
+          ...(dialog.value || {}),
+          files : []
+        }
+      }
+      return {
+        ...state,
+        ui : {
+          ...state.ui,
+          dialog,
+          fetchGithubFilesStatus : 'LOADING'
+        }
+      }
+    }
+    case FETCH_GITHUB_FILES_SUCCESS:{
+      let  dialog = state.ui.dialog || {};
+      dialog={
+        ...dialog,
+        value : {
+          ...(dialog.value || {}),
+          files : action.data.files
+        }
+      }
+      return {
+        ...state,
+        ui : {
+          ...state.ui,
+          dialog,
+          fetchGithubFilesStatus : 'SUCCESS'
+        }
+      }
+    }
+    case FETCH_GITHUB_FILES_ERROR:
+      return {
+        ...state,
+        ui : {
+          ...state.ui,
+          fetchGithubFilesStatus : 'ERROR'
+        }
+      }
     default:
       return state;
   }

@@ -36,12 +36,6 @@ import Typography from "@material-ui/core/Typography";
 import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
-const fetchDirectoryStructureFromGitub = (url, branch = "master") => {
-  return fetch(
-    `${url}?access_token=${APP_SETTING.GITHUB_ACCESS_TOKEN}&&ref=${branch}`
-  ).then(response => response.json());
-};
-
 class ActivityDialog extends React.PureComponent {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
@@ -50,7 +44,9 @@ class ActivityDialog extends React.PureComponent {
     pathId: PropTypes.string.isRequired,
     paths: PropTypes.array,
     activity: PropTypes.object,
-    uid: PropTypes.string.isRequired
+    uid: PropTypes.string.isRequired,
+    fetchGithubFiles: PropTypes.func.isRequired,
+    fetchGithubFilesStatus : PropTypes.string
   };
 
   state = {
@@ -58,6 +54,10 @@ class ActivityDialog extends React.PureComponent {
   };
   fetchedGithubURL = "";
   componentWillReceiveProps(nextProps) {
+    if((nextProps.fetchGithubFilesStatus || '').length>0){
+      this.handelfetchGithubFilesStatus(nextProps.fetchGithubFilesStatus,nextProps.activity);
+      return;
+    }
     this.resetState();
     if (nextProps.activity) {
       let state = {};
@@ -75,10 +75,29 @@ class ActivityDialog extends React.PureComponent {
       }
       this.setState({
         ...nextProps.activity,
-        type: nextProps.activity.type || "text",
-        name: nextProps.activity.name || "",
         ...state
       });
+    }
+  }
+  handelfetchGithubFilesStatus=(fetchGithubFilesStatus,activity)=>{
+    switch(fetchGithubFilesStatus){
+      case "SUCCESS":{
+        this.fetchedGithubURL = this.state.githubURL;
+        this.setState({ files : activity.files || []})
+        this.hideLoading();
+        break;
+      }
+      case "LOADING":{
+        this.showLoading();
+        break;
+      }
+      case "ERROR":{
+        this.hideLoading();
+        break;
+      }
+      default : {
+        break;
+      }
     }
   }
   getTypeSpecificElements() {
@@ -366,167 +385,11 @@ class ActivityDialog extends React.PureComponent {
   };
   handleGithubURLSubmit = () => {
     if (this.state.loading) return;
-    const { githubURL } = this.state;
     this.fetchedGithubURL = "";
     this.setState({ files: [] });
-    if (!githubURL.includes(APP_SETTING.GITHUB_BASE_URL)) {
-      this.handleError("Not a Valid Github URL");
-      return;
-    }
-    this.showLoading();
-
-    const params = githubURL
-      .replace(APP_SETTING.GITHUB_BASE_URL, "")
-      .split("/");
-    let repoOwner = params[0];
-    let repoName = params[1];
-    let branch = params[3] || "master";
-    let subPath = "";
-    if (params.length > 4) {
-      for (let i = 4; i < params.length; i++) {
-        subPath = `${subPath}/${params[i]}`;
-      }
-    }
-    fetchDirectoryStructureFromGitub(
-      `${
-        APP_SETTING.GITHUB_SERVER_URL
-      }/repos/${repoOwner}/${repoName}/contents${subPath}`,
-      branch
-    )
-      .then(files => {
-        if (files && files.length) {
-          // this.hideOutput();
-          this.fetchedGithubURL = githubURL;
-          this.setState({
-            repoDetails: {
-              owner: repoOwner,
-              name: repoName,
-              folderPath: subPath,
-              branch
-            },
-            githubURL,
-            files: files.map(f => ({
-              path: f.path,
-              readOnly: true,
-              type: f.type
-            })),
-            selectedFile: null
-          });
-          this.fetchWholeTree(-1);
-        } else {
-          // eslint-disable-next-line no-console
-          console.log(files);
-          this.handleError(files);
-        }
-      })
-      .catch(err => {
-        this.handleError(err);
-      });
-  };
-  fetchWholeTree = (fileIndex = -1) => {
-    let folderToFetch = null;
-    let index = 0;
-    for (index = fileIndex + 1; index < this.state.files.length; index++) {
-      const file = this.state.files[index];
-      if (file.type === "dir") {
-        folderToFetch = file;
-        break;
-      }
-    }
-    if (folderToFetch) {
-      fetchDirectoryStructureFromGitub(
-        `${APP_SETTING.GITHUB_SERVER_URL}/repos/${
-          this.state.repoDetails.owner
-        }/${this.state.repoDetails.name}/contents${folderToFetch.path}`,
-        this.state.repoDetails.branch
-      )
-        .then(tree => {
-          if (tree && tree.length) {
-            this.setState({
-              files: [
-                ...this.state.files,
-                ...tree.map(f => ({
-                  path: f.path,
-                  readOnly: true,
-                  type: f.type
-                }))
-              ]
-            });
-            this.fetchWholeTree(index);
-          } else {
-            this.handleError();
-          }
-        })
-        .catch(err => {
-          this.handleError(err);
-        });
-    } else {
-      this.hideLoading();
-      this.fetchWholeCode();
-    }
+    this.props.fetchGithubFiles(this.state.githubURL);
   };
 
-  fetchWholeCode = (fileIndex = -1) => {
-    let fileToFetch = null;
-
-    // eslint-disable-next-line guard-for-in
-    for (let index in this.state.files) {
-      const file = this.state.files[index];
-      if (
-        file.type === "file" &&
-        parseInt(index, 10) > parseInt(fileIndex, 10)
-      ) {
-        fileToFetch = { ...file, index };
-        break;
-      }
-    }
-    if (fileToFetch) {
-      fetch(
-        `${APP_SETTING.RAW_GIT_URL}/${this.state.repoDetails.owner}/${
-          this.state.repoDetails.name
-        }/${this.state.repoDetails.branch}/${fileToFetch.path}`
-      )
-        .then(response => response.text())
-        .then(code => {
-          this.setState({
-            files: this.state.files.map(
-              (f, i) =>
-                parseInt(i, 10) === parseInt(fileToFetch.index, 10)
-                  ? { ...f, code }
-                  : f
-            )
-          });
-          this.fetchWholeCode(fileToFetch.index);
-        })
-        .catch(err => {
-          this.handleError(err);
-        });
-    } else {
-      this.setState({
-        files: this.state.files
-          .map(f => ({
-            path: f.path.replace(
-              `${this.state.repoDetails.folderPath.slice(1)}/`,
-              ""
-            ),
-            readOnly: true,
-            type: f.type,
-            code: f.code
-          }))
-          .filter(f => f.type === "file")
-      });
-    }
-  };
-  handleError = (err = "Error occurs.") => {
-    this.hideLoading();
-    if (typeof err === "string") {
-      alert(err);
-    } else if (err.message) {
-      alert(err.message);
-    } else {
-      alert("Error occurs");
-    }
-  };
   onFieldChange = (field, value) => {
     let state = {};
     if (field === "type" && value === ACTIVITY_TYPES.jupyterInline.id) {

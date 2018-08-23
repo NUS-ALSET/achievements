@@ -41,7 +41,8 @@ import {
   pathRefreshSolutionsRequest,
   pathRemoveCollaboratorRequest,
   pathShowCollaboratorsDialog,
-  pathToggleJoinStatusRequest
+  pathToggleJoinStatusRequest,
+  fetchGithubFiles
 } from "./actions";
 import {
   pathActivityChangeRequest,
@@ -95,6 +96,7 @@ export class Path extends React.Component {
     onRequestMoreProblems: PropTypes.func,
     onShowCollaboratorsClick: PropTypes.func,
     onToggleJoinStatus: PropTypes.func,
+    fetchGithubFiles : PropTypes.func,
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
     ui: PropTypes.any,
@@ -235,9 +237,9 @@ export class Path extends React.Component {
       pathActivities,
       pathStatus,
       ui,
-      uid
+      uid,
+      fetchGithubFiles
     } = this.props;
-
     if (!uid) {
       return <div>Login required to display this page</div>;
     }
@@ -364,6 +366,8 @@ export class Path extends React.Component {
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
         <ActivityDialog
+          fetchGithubFiles={fetchGithubFiles}
+          fetchGithubFilesStatus={ui.fetchGithubFilesStatus}
           activity={ui.dialog.value}
           onClose={onCloseDialog}
           onCommit={this.onActivityChangeRequest}
@@ -423,7 +427,8 @@ const mapDispatchToProps = {
   onRefreshSolutions: pathRefreshSolutionsRequest,
   onRemoveAssistant: pathRemoveCollaboratorRequest,
   onRequestMoreProblems: pathMoreProblemsRequest,
-  onToggleJoinStatus: pathToggleJoinStatusRequest
+  onToggleJoinStatus: pathToggleJoinStatusRequest,
+  fetchGithubFiles : fetchGithubFiles
 };
 
 export default compose(
