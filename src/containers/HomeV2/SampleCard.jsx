@@ -14,9 +14,9 @@ import Typography from '@material-ui/core/Typography';
 // python logo for Jupyter, Colab
 import pythonlogo from '../../assets/python-logo-master-v3-TM-flattened.png';
 // codecombat logo for cobecombat activities
-// import coodecombatlogo from '../../assets/CodeCombat-logo-min.png';
+// import Codecombatlogo from '../../assets/CodeCombat-logo-min.png';
 // JS logo for Jest and Game (for now only React based games i think)
-// import JSlogo from '../../assets/JSlogo.png';
+// import JSlogo from '../../assets/JSlogoV2.png';
 // Game logo for game activities
 // import Gamelogo from '../../assets/Gamelogo.png';
 
