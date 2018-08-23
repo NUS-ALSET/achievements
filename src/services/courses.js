@@ -10,7 +10,7 @@ import {
 } from "../containers/Assignments/actions";
 import { notificationHide, notificationShow } from "../containers/Root/actions";
 // import { solutionsService } from "./solutions";
-import { codeAnalysisService } from "./codeAnalysis"
+import { firebaseService } from "./firebaseService";
 
 import each from "lodash/each";
 import cloneDeep from "lodash/cloneDeep";
@@ -385,8 +385,22 @@ export class CoursesService {
       })
       .then((res) => {
         if (((assignment || {}).problemJSON || {}).type === 'jupyterInline') {
-          codeAnalysisService.analyseCode(userId, value, assignment.problemJSON.frozen)
-            .then(response => {
+            const editableBlockCode = 
+              value.cells
+                .slice(0, value.cells.length - assignment.problemJSON.frozen)
+                .map(c => c.cell_type === 'code' ? c.source.join("") : "")
+                .join("");
+            const data={
+              owner: userId,
+              solution: editableBlockCode || "",
+            }
+            firebaseService.startProcess(
+              data,
+              "jupyterSolutionAnalysisQueue",
+              "Code Analysis"
+            )
+            .then(res => {
+              const response=res.userSkills || {};
               const givenSkills = assignment.problemJSON.givenSkills;
               let skillsDifference=cloneDeep(response);
               if(givenSkills){

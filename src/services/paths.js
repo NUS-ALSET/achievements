@@ -1,15 +1,19 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
-import { codeAnalysisService } from "./codeAnalysis";
+import { firebaseService } from "./firebaseService";
 import { 
   SOLUTION_PRIVATE_LINK,
-  SOLUTION_MODIFIED_TESTS
+  SOLUTION_MODIFIED_TESTS,
+  notificationShow
 } from "../containers//Root/actions";
 
 import { 
   fetchPublicPathActiviesSuccess
 } from '../containers/Activity/actions';
+import {
+  fetchGithubFilesSuccess
+} from "../containers/Path/actions"
 
 const NOT_FOUND_ERROR = 404;
 
@@ -367,9 +371,22 @@ export class PathsService {
       return new Promise((resolve,reject)=>{
         this.fetchFile(fileId)
         .then(solution => {
-          codeAnalysisService.analyseCode(uid, solution, problemInfo.frozen)
-          .then(givenSkills=>{
-            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills}, ref, isNew,next,key));
+          const editableBlockCode = 
+          solution.cells
+            .slice(0, solution.cells.length - problemInfo.frozen)
+            .map(c => c.cell_type === 'code' ? c.source.join("") : "")
+            .join("");
+          const data={
+            owner: uid,
+            solution: editableBlockCode || "",
+          }
+          firebaseService.startProcess(
+            data,
+            "jupyterSolutionAnalysisQueue",
+            "Code Analysis"
+          )
+          .then(res=>{
+            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills : res.userSkills || {}}, ref, isNew,next,key));
           })
           .catch(()=>{
             resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
@@ -878,7 +895,6 @@ export class PathsService {
     return Promise.all(actions);
   }
 
-
   fetchPublicPathActivies(uid, publicPaths, completedActivities){
     return new Promise((resolve,reject)=>{
       const completedActivitiesIds = [];
@@ -905,6 +921,29 @@ export class PathsService {
       this.dispatch(fetchPublicPathActiviesSuccess({ unsolvedPublicActivities }))
       resolve();
       })
+    })
+  }
+
+  fetchGithubFiles(uid,githubURL){
+    return new Promise((resolve,reject)=>{
+      const githubBaseURL = 'https://github.com/';
+      if (githubURL.includes(githubBaseURL)) {
+        const promise=firebaseService.startProcess(
+          {
+            owner : uid,
+            githubURL
+          },
+          'fetchGithubFilesQueue',
+          'Fetch files from github'
+        )
+        .then(data=>{
+          this.dispatch(fetchGithubFilesSuccess(data.githubData));
+        })
+        resolve(promise);
+      }else{
+        this.dispatch(notificationShow("Not a Valid Github URL"));
+        reject();
+      }
     })
   }
 }

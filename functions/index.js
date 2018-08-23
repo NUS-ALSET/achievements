@@ -9,6 +9,7 @@ const api = require("./src/api");
 const ltiLogin = require("./src/ltiLogin");
 const profileTriggers = require("./src/updateProfile");
 const jupyterTrigger = require("./src/executeJupyterSolution");
+const githubTrigger = require("./src/fetchGithubFiles");
 const downloadEvents = require("./src/downloadEvents");
 const solutionTriggers = require("./src/updateSolutionVisibility");
 const httpUtil = require("./src/utils/http").httpUtil;
@@ -31,6 +32,14 @@ exports.handleNewProblemSolution =
       const data = change.after.val();
       return jupyterTrigger.handler(data, data.taskKey, data.owner);
     });
+
+exports.handleGithubFilesFetchRequest =
+  functions.database
+    .ref("/fetchGithubFilesQueue/tasks/{requestId}")
+    .onWrite(change => {
+      const data = change.after.val();
+      return githubTrigger.handler(data, data.taskKey, data.owner);
+  });
 
 exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
   return checkToken(req)

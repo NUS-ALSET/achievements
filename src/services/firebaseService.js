@@ -4,13 +4,15 @@ import {
   notificationHide
 } from "../containers//Root/actions";
 
-class CodeAnalysisService {
+class FirebaseService {
   constructor() {
-    this.stopAfter = 5000;
+    this.stopAfter = 10;//in sec
     this.timer = null;
     this.store = null;
-    this.collectionName='jupyterSolutionAnalysisQueue';
+    this.collectionName = '';
+    this.processName = ''
   }
+
   setStore(store) {
     this.store = store;
   }
@@ -19,7 +21,7 @@ class CodeAnalysisService {
     this.store.dispatch(action);
   }
 
-  stopAnalysisAfterTimeOut(taskKey, cb) {
+  stopProcessAfterTimeOut(taskKey, cb) {
     this.timer = setTimeout(
       () => {
         firebase
@@ -27,11 +29,11 @@ class CodeAnalysisService {
           .ref(`/${this.collectionName}/responses/${taskKey}`)
           .remove()
         this.offFirebaseChangeListen(taskKey);
-        this.dispatch(notificationShow("Analysis timeout"));
+        this.dispatch(notificationShow(`${this.processName} timeout`));
         setTimeout(() => {
           cb();
         }, 1000)
-      }, this.stopAfter);
+      }, this.stopAfter*1000);
   }
 
   clearTimer() {
@@ -60,23 +62,29 @@ class CodeAnalysisService {
       .remove()
   }
 
-  addTask(taskKey, uid, editableBlockCode) {
+  addTask(taskKey,data) {
     return firebase
       .ref(`/${this.collectionName}/tasks/${taskKey}`).set({
         taskKey,
-        owner: uid,
-        solution: editableBlockCode || "",
+        ...data
       });
   }
-  analyseCode(uid, solution, frozenBlockNum) {
-    return new Promise((resolve, reject) => {
+
+  showNotification(message){
+    if(this.processName && this.processName.length>0){
       this.dispatch(notificationHide());
-      this.dispatch(notificationShow("Analysing your code..."));
-      const editableBlockCode = 
-      solution.cells
-        .slice(0, solution.cells.length - frozenBlockNum)
-        .map(c => c.cell_type === 'code' ? c.source.join("") : "")
-        .join("");
+      this.dispatch(
+        notificationShow(`${this.processName} : ${message}`)
+      )
+    }
+  }
+
+  startProcess( data, collection, process='') {
+    this.collectionName = collection;
+    this.processName = process;
+    this.dispatch(notificationHide());
+    return new Promise((resolve, reject) => {
+      this.showNotification('Start');
       const taskKey = firebase
         .ref(`/${this.collectionName}/tasks`)
         .push().key;
@@ -93,12 +101,12 @@ class CodeAnalysisService {
             .then(
               () => {
                 if (response.val()) {
-                  this.dispatch(notificationShow("Analysis complete"));
-                  resolve(
-                    response.val().userSkills || {}
+                  this.showNotification('Completed');
+                  resolve( 
+                    response.val()
                   )
                 } else {
-                  this.dispatch(notificationShow("Failing - Unable to analysis your Editable block code"));
+                  this.showNotification('Failed');
                   setTimeout(() => {
                     this.deleteTask(taskKey);
                     reject();
@@ -107,10 +115,10 @@ class CodeAnalysisService {
               }
             );
         });
-      this.addTask(taskKey, uid, editableBlockCode);
-      this.stopAnalysisAfterTimeOut(taskKey, () => reject());
+      this.addTask(taskKey, data);
+      this.stopProcessAfterTimeOut(taskKey, () => reject());
     });
   }
 }
 
-export const codeAnalysisService = new CodeAnalysisService();
+export const firebaseService = new FirebaseService();
