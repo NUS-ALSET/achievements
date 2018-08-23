@@ -15,6 +15,18 @@ const temporaryRecommendationsKinds = [
   "game"
 ];
 
+
+// TODO:
+/* from HomeV3, a loading indicator while fetching data, good to have
+    if (!publicActivitiesFetched) {
+      return (
+        <div className={classes.loader}>
+          <CircularProgress className={classes.progress} size={50} />
+        </div>
+      );
+    }
+*/
+
 export class HomeV2 extends React.Component {
   static propTypes = {
     userRecommendations: PropTypes.any,
@@ -44,7 +56,6 @@ export class HomeV2 extends React.Component {
                 }
                 title={userRecommendations[recommendationKey].title}
               />
-              <br />
             </Fragment>
           ))}
       </Fragment>

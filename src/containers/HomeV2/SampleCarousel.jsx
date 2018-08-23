@@ -31,11 +31,13 @@ class SampleCarousel extends React.PureComponent {
     youtubeRecom: PropTypes.bool,
     // for slidesToShow
     width: PropTypes.string,
+    // temporary logo detection for CodeCombat
+    isCodeCombat: PropTypes.bool,
   };
 
   render() {
     // retrieve the dummyData
-    const { youtubeRecom, dataList, width } = this.props;
+    const { youtubeRecom, dataList, width, isCodeCombat } = this.props;
     console.log("dataList from dummyData is: ", dataList);
     // width is a string, detect media query via MUI
     let itemPerSlide;
@@ -110,15 +112,16 @@ class SampleCarousel extends React.PureComponent {
         {dataList.map( (item, index) => (
             <SampleCard
               key={index}
-              title={item.name}
+              activityTitle={item.name}
               description={youtubeRecom
                 ? ""
-                : `${item.type} Python problem`}
+                : `${item.type} Activity`}
               path={item.owner}
               problem={item.actualProblem}
               video={youtubeRecom
                 ? item.youtubeURL
                 : ""}
+              isCodeCombat={isCodeCombat}
             />
         ))}
       </Carousel>
