@@ -9,10 +9,7 @@ class GithubCodeHandler {
     this.config = config;
   }
   setState(updatedData) {
-    this.state = {
-      ...this.state,
-      ...updatedData
-    }
+    this.state=Object.assign(this.state,updatedData);
   }
 
   fetchCode(githubURL, successCallback, errorCallback) {
@@ -98,15 +95,15 @@ class GithubCodeHandler {
         .then(tree => {
           if (tree && tree.length) {
             this.setState({
-              files: [
-                ...this.state.files,
-                ...tree.map(f => ({
-                  path: f.path,
-                  readOnly: true,
-                  type: f.type
-                }))
-              ]
-            });
+              files: 
+                this.state.files.concat(
+                  tree.map(f => ({
+                    path: f.path,
+                    readOnly: true,
+                    type: f.type
+                  })
+                ))
+              })
             this.fetchWholeTree(index);
           } else {
             this.handleError();
@@ -130,7 +127,7 @@ class GithubCodeHandler {
         file.type === "file" &&
         parseInt(index, 10) > parseInt(fileIndex, 10)
       ) {
-        fileToFetch = { ...file, index };
+        fileToFetch = Object.assign(file, { index });
         break;
       }
     }
@@ -148,7 +145,7 @@ class GithubCodeHandler {
             files: this.state.files.map(
               (f, i) =>
                 parseInt(i, 10) === parseInt(fileToFetch.index, 10)
-                  ? { ...f, code }
+                  ? Object.assign(f, { code })
                   : f
             )
           });
