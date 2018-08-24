@@ -68,11 +68,11 @@ exports.handleNewSolution = functions.database
 exports.handleUserSkills = functions.database
 .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
 .onWrite((change, context) => {
-  const {  studentId } = context.params;
+  const {  studentId , assignmentId} = context.params;
   return updateUserPySkills.handler(
-    change.before.exists() ? change.before.val() : {},
     change.after.val(),
-    studentId
+    studentId,
+    assignmentId
   )
 });
 

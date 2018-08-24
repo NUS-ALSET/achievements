@@ -1,56 +1,54 @@
 const admin = require("firebase-admin");
 
-function saveUserSkills(oldSolution, newSolution, studentId, pySkills) {
-
-  // // delete user old solution skill from 
-  // if (oldSolution.userSkills) {
-  //   Object.keys((oldSolution.userSkills || {})).forEach(key => {
-  //     Object.keys((oldSolution.userSkills || {})[key]).forEach(subKey => {
-  //       delete ((pySkills || {})[key] || {})[subKey];
-  //       if (Object.keys((pySkills || {})[key]).length === 0) {
-  //         delete (pySkills || {})[key]
-  //       }
-  //     })
-  //   })
-  // }
-
-  // add new Skills
-  if (newSolution.userSkills) {
-    Object.keys((newSolution.userSkills || {})).forEach(key => {
-      Object.keys((newSolution.userSkills || {})[key]).forEach(subKey => {
-        if (!pySkills[key]) {
-          pySkills[key] = {}
-        }
-        pySkills[key][subKey] = true;
-      })
-    })
-  }
-  // update user python skill
-  return admin
-    .database()
-    .ref(`/userCodingSkills/${studentId}/python`)
-    .set(pySkills)
-}
-
-
-exports.handler = (oldSolution, newSolution, studentId) => {
+exports.handler = (newSolution, studentId, assignmentId) => {
   return new Promise((resolve) => {
-    if (newSolution.userSkills || oldSolution.userSkills) {
-      admin
-        .database()
-        .ref(`/userCodingSkills/${studentId}/python`)
-        .once("value")
-        .then(pythonSkills => {
-          const pySkills = pythonSkill.exists() ? pythonSkills.val() : {};
-          resolve(
-            saveUserSkills(oldSolution, newSolution, studentId, pySkills)
-          )
+    if (typeof newSolution.userSkills === 'object') {
+      Promise.all([
+        admin
+          .database()
+          .ref(`/userCodingSkills/${studentId}`)
+          .once("value"),
+        admin
+          .database()
+          .ref(`/problemCodingSkills/${assignmentId}`)
+          .once("value"),
+      ]).then(data => {
+        const pySkills = data[0].exists() ? data[0].val() : {};
+        const problemSkills = data[1].exists() ? data[1].val() : {};
+
+        // add new Skills
+        Object.keys((newSolution.userSkills || {})).forEach(key => {
+          Object.keys((newSolution.userSkills || {})[key]).forEach(subKey => {
+            if (!pySkills[key]) {
+              pySkills[key] = {}
+            }
+            if (!pySkills[key][subKey]) {
+              pySkills[key][subKey] = {};
+            }
+            pySkills[key][subKey][assignmentId] = true;
+
+            if (!problemSkills[key]) {
+              problemSkills[key] = {}
+            }
+            if (!problemSkills[key][subKey]) {
+              problemSkills[key][subKey] = {};
+            }
+            problemSkills[key][subKey][studentId] = true;
+          })
         })
-        .catch(() => {
-          resolve(
-            saveUserSkills(oldSolution, newSolution, studentId, {})
-          )
-        })
+
+        // update user & problem python skill
+        return Promise.all([
+          admin
+            .database()
+            .ref(`/userCodingSkills/${studentId}`)
+            .set(pySkills),
+          admin
+            .database()
+            .ref(`/problemCodingSkills/${assignmentId}`)
+            .set(problemSkills),
+        ])
+      })
     } else {
       resolve();
     }
