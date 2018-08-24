@@ -61,6 +61,13 @@ const styles = theme => ({
     // so tooltip does not have overflow hidden
     overflowWrap: "break-word"
   },
+  noWrapTooltipForCode: {
+    maxWidth: "350px",
+    // so tooltip does not have overflow hidden
+    // and keep code formating
+    wordWrap: "break-word",
+    whiteSpace: "pre-wrap"
+  },
   nowrap: {
     whiteSpace: "nowrap"
   },
@@ -165,7 +172,10 @@ class AssignmentsTable extends React.PureComponent {
 
     if (result.length > MAX_TEXT_LENGTH) {
       return (
-        <Tooltip classes={{ tooltip: classes.noWrapTooltip }} title={result}>
+        <Tooltip
+          classes={{ tooltip: classes.noWrapTooltip }}
+          title={result}
+        >
           <span>{result.slice(1, MAX_TEXT_LENGTH) + "..."}</span>
         </Tooltip>
       );
@@ -220,8 +230,8 @@ class AssignmentsTable extends React.PureComponent {
       case ASSIGNMENTS_TYPES.PathActivity.id:
         return solution ? (
           <Tooltip
-            classes={{ tooltip: classes.noWrapTooltip }}
-            title={<pre>{this.getTooltip(assignment, solution)}</pre>}
+            classes={{ tooltip: classes.noWrapTooltipForCode }}
+            title={this.getTooltip(assignment, solution)}
           >
             <span>
               {/http[s]?:\/\//.test(
@@ -481,13 +491,26 @@ class AssignmentsTable extends React.PureComponent {
                     {isInstructor &&
                       course.owner === currentUser.id && (
                         <IconButton
-                          onClick={e => this.onShowStudentMenu(studentInfo, e)}
+                          onClick={
+                            e => this.onShowStudentMenu(studentInfo, e)
+                          }
                         >
                           <MoreVertIcon />
                         </IconButton>
-                      )}
-                    {studentInfo.name.slice(0, MAX_NAME_LENGTH) +
-                      (studentInfo.name.length > MAX_NAME_LENGTH ? "..." : "")}
+                    )}
+                    <Tooltip
+                      classes={{ tooltip: classes.noWrapTooltip }}
+                      title={studentInfo.name}
+                    >
+                      <span>
+                        {studentInfo.name.slice(0, MAX_NAME_LENGTH)
+                          +
+                        (studentInfo.name.length > MAX_NAME_LENGTH
+                          ? "..."
+                          : ""
+                        )}
+                      </span>
+                    </Tooltip>
                   </TableCell>
                   {course.assignments.map(assignment => (
                     <TableCell className={classes.nowrap} key={assignment.id}>
