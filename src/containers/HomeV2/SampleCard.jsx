@@ -88,7 +88,7 @@ class SampleCard extends React.PureComponent {
     // get the data from the dummy Redux State
     // props.path is the owner value
     // props.problem is the key value of the owner
-    const { activityTitle, description, path, problem, video, isCodeCombat } = this.props;
+    const { activityTitle, description, path, problem, video, isCodeCombat, subHeading } = this.props;
     const videoID = this.getVideoID(video);
 
     // temporary solution for logo for different Activities
@@ -134,7 +134,7 @@ class SampleCard extends React.PureComponent {
             {activityTitle}
           </Typography>
           <Typography component="p">
-            {description}
+            {subHeading || description}
           </Typography>
         </CardContent>
         <CardActions>

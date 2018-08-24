@@ -96,7 +96,7 @@ function updateRecommendation(userKey, userSkills) {
         Object.keys(activities).forEach(key => {
           const activity = activities[key];
           if (["jupyter", "jupyterInline"].includes(activity.type)
-            && typeof activity.givenSkills == 'object') {
+            && typeof activity.givenSkills == 'object' && !solutions[key]) {
             const problemSkills = activity.givenSkills;
 
             Object.keys(problemSkills).forEach(feature => {
@@ -111,7 +111,7 @@ function updateRecommendation(userKey, userSkills) {
                     problemOwner: activity.owner,
                     name: activity.name,
                     description: activity.description,
-                    type: activity.type
+                    type: activity.type,
                   }
                 }
               })
@@ -119,6 +119,7 @@ function updateRecommendation(userKey, userSkills) {
           }
         })
       }
+      result['title']="Jupyter Activities With New Skills";
 
       return admin
         .database()

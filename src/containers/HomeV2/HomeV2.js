@@ -2,8 +2,10 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import { compose } from "redux";
-import { firebaseConnect } from "react-redux-firebase";
+import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import { connect } from "react-redux";
+import { withStyles } from '@material-ui/core/styles';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 import RecommendationListCard from "./RecommendationListCard";
 
@@ -12,20 +14,26 @@ const temporaryRecommendationsKinds = [
   "jupyter",
   "jupyterInline",
   "youtube",
-  "game"
+  "game",
+  "newPythonSkills",
 ];
 
+const styles = theme => ({
+  progress: {
+    margin: theme.spacing.unit * 2,
+  },
+  loader : {
+    display : 'flex',
+    flexDirection  : 'column',
+    width : '50px',
+    height : 'calc(100vh - 200px)',
+    justifyContent : 'center',
+    margin : '0 auto'
+  }
 
-// TODO:
-/* from HomeV3, a loading indicator while fetching data, good to have
-    if (!publicActivitiesFetched) {
-      return (
-        <div className={classes.loader}>
-          <CircularProgress className={classes.progress} size={50} />
-        </div>
-      );
-    }
-*/
+});
+
+
 
 export class HomeV2 extends React.Component {
   static propTypes = {
@@ -33,14 +41,21 @@ export class HomeV2 extends React.Component {
     uid: PropTypes.string
   };
 
-  reformatRecommendation = recommendations => {
+  reformatRecommendation = (recommendations, recommendationKey='') => {
     return Object.keys(recommendations)
       .filter(key => key !== "title")
-      .map(key => ({ ...recommendations[key], actualProblem: key }));
+      .map(key => ({ ...recommendations[key], actualProblem: key, subHeading : recommendationKey==='newPythonSkills' ? `Complete this activity to use the ${recommendations[key].feature} ${recommendations[key].featureType}` : '' }));
   };
 
   render() {
-    const { userRecommendations } = this.props;
+    const { userRecommendations, classes } = this.props;
+    if (!isLoaded(userRecommendations)) {
+      return (
+        <div className={classes.loader}>
+          <CircularProgress className={classes.progress} size={50} />
+        </div>
+      );
+    }
     return (
       <Fragment>
         {Object.keys(userRecommendations || {})
@@ -49,7 +64,7 @@ export class HomeV2 extends React.Component {
             <Fragment key={recommendationKey}>
               <RecommendationListCard
                 dummyData={this.reformatRecommendation(
-                  userRecommendations[recommendationKey]
+                  userRecommendations[recommendationKey] , recommendationKey
                 )}
                 RecomType={
                   recommendationKey === "youtube" ? "youtube" : "python"
@@ -71,6 +86,7 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
+  withStyles(styles),
   firebaseConnect((ownProps, store) => {
     const state = store.getState();
     const uid = state.firebase.auth.uid;
