@@ -57,8 +57,9 @@ const styles = theme => ({
     padding: theme.spacing.unit
   },
   noWrapTooltip: {
-    maxWidth: "none",
-    minWidth: "none"
+    maxWidth: "350px",
+    // so tooltip does not have overflow hidden
+    overflowWrap: "break-word"
   },
   nowrap: {
     whiteSpace: "nowrap"
@@ -165,7 +166,7 @@ class AssignmentsTable extends React.PureComponent {
     if (result.length > MAX_TEXT_LENGTH) {
       return (
         <Tooltip classes={{ tooltip: classes.noWrapTooltip }} title={result}>
-          <span>{result.slice(1, MAX_TEXT_LENGTH)}</span>
+          <span>{result.slice(1, MAX_TEXT_LENGTH) + "..."}</span>
         </Tooltip>
       );
     }
