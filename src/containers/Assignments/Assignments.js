@@ -399,10 +399,7 @@ export default compose(
     }
 
     return [
-      "/users",
-      "/userAchievements",
       `/courses/${courseId}`,
-      `/courseMembers/${courseId}`,
       `/courseAssistants/${courseId}`,
       `/solutions/${courseId}`,
       `/solutions/${courseId}/${uid}`,
