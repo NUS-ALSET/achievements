@@ -71,7 +71,7 @@ export function* pathActivityChangeRequestHandler(action) {
     yield put(
       pathProblemChangeSuccess(action.pathId, action.activityInfo, key)
     );
-    yield put(notificationShow('Problem Saved'));
+    yield put(notificationShow("Problem Saved"));
     yield put(pathCloseDialog());
   } catch (err) {
     yield put(
