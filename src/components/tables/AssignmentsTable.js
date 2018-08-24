@@ -49,7 +49,7 @@ import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import { APP_SETTING } from "../../achievementsApp/config";
 import AnalysisDialog from "../dialogs/AnalysisDialog";
 
-const MAX_TEXT_LENGTH = 40;
+const MAX_TEXT_LENGTH = 39;
 const MAX_NAME_LENGTH = 15;
 
 const styles = theme => ({
@@ -59,13 +59,8 @@ const styles = theme => ({
   noWrapTooltip: {
     maxWidth: "350px",
     // so tooltip does not have overflow hidden
-    overflowWrap: "break-word"
-  },
-  noWrapTooltipForCode: {
-    maxWidth: "350px",
-    // so tooltip does not have overflow hidden
+    overflowWrap: "break-word",
     // and keep code formating
-    wordWrap: "break-word",
     whiteSpace: "pre-wrap"
   },
   nowrap: {
@@ -76,6 +71,12 @@ const styles = theme => ({
     textDecoration: "none"
   }
 });
+
+// Tooltip sometimes flickers on GUI, related to this issue:
+// [Tooltip] Flickers when overlaped with element it is attached to #10735
+// https://github.com/mui-org/material-ui/issues/10735
+// suggested solution from the thread is:
+// <Tooltip PopperProps={{ style: { pointerEvents: 'none' } }}>
 
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
@@ -175,8 +176,9 @@ class AssignmentsTable extends React.PureComponent {
         <Tooltip
           classes={{ tooltip: classes.noWrapTooltip }}
           title={result}
+          PopperProps={{ style: { pointerEvents: 'none' } }}
         >
-          <span>{result.slice(1, MAX_TEXT_LENGTH) + "..."}</span>
+          <span>{result.slice(0, MAX_TEXT_LENGTH) + "..."}</span>
         </Tooltip>
       );
     }
@@ -230,8 +232,9 @@ class AssignmentsTable extends React.PureComponent {
       case ASSIGNMENTS_TYPES.PathActivity.id:
         return solution ? (
           <Tooltip
-            classes={{ tooltip: classes.noWrapTooltipForCode }}
+            classes={{ tooltip: classes.noWrapTooltip }}
             title={this.getTooltip(assignment, solution)}
+            PopperProps={{ style: { pointerEvents: 'none' } }}
           >
             <span>
               {/http[s]?:\/\//.test(
@@ -501,6 +504,7 @@ class AssignmentsTable extends React.PureComponent {
                     <Tooltip
                       classes={{ tooltip: classes.noWrapTooltip }}
                       title={studentInfo.name}
+                      PopperProps={{ style: { pointerEvents: 'none' } }}
                     >
                       <span>
                         {studentInfo.name.slice(0, MAX_NAME_LENGTH)
@@ -535,7 +539,14 @@ class AssignmentsTable extends React.PureComponent {
                                   )
                                 }
                               >
-                                <Tooltip title={"View Solution"}>
+                                <Tooltip
+                                  title={"View Solution"}
+                                  PopperProps={
+                                    {style: {
+                                      pointerEvents: 'none'
+                                    }}
+                                  }
+                                >
                                   <RemoveRedEye />
                                 </Tooltip>
                               </IconButton>
@@ -551,7 +562,14 @@ class AssignmentsTable extends React.PureComponent {
                                     )
                                   }
                                 >
-                                  <Tooltip title={"View Analysis"}>
+                                  <Tooltip
+                                    title={"View Analysis"}
+                                    PopperProps={
+                                      {style: {
+                                        pointerEvents: 'none'
+                                      }}
+                                    }
+                                  >
                                     <Timeline />
                                   </Tooltip>
                                 </IconButton>
