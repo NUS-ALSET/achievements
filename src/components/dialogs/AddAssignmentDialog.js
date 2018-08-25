@@ -41,14 +41,38 @@ class AddAssignmentDialog extends React.PureComponent {
     activities: PropTypes.arrayOf(entityInfo).isRequired
   };
 
+  state = {
+    // Name of Assignment cannot be nonsense or empty spaces
+    isCorrectInput_Name: false,
+  };
+
   manualChangeField = field => e =>
     this.props.dispatch(assignmentManualUpdateField(field, e.target.value));
-  updateField = field => e =>
-    this.props.dispatch(updateNewAssignmentField(field, e.target.value));
+
+  updateField = field => e => {
+    if (field === "name") {
+      /* eslint-disable no-useless-escape */
+      if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
+        .test(e.target.value)
+      ) {
+        this.setState({
+          isCorrectInput_Name: true
+        });
+      } else {
+        this.setState({
+          isCorrectInput_Name: false
+        });
+      }
+    }
+    this.props.dispatch(
+      updateNewAssignmentField(field, e.target.value)
+    );
+  };
+
   onClose = () => this.props.dispatch(assignmentCloseDialog());
+
   onCommit = () => {
     const { course, dispatch, assignment } = this.props;
-
     dispatch(assignmentAddRequest(course.id, assignment));
   };
 
@@ -199,6 +223,10 @@ class AddAssignmentDialog extends React.PureComponent {
             ))}
           </TextField>
           <TextField
+            error={!this.state.isCorrectInput_Name}
+            helperText={this.state.isCorrectInput_Name
+              ? ""
+              : "Name cannot be empty or have invalid characters"}
             fullWidth
             label="Name"
             margin="normal"
@@ -273,7 +301,14 @@ class AddAssignmentDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised">
+          <Button
+            color="primary"
+            disabled={
+              !this.state.isCorrectInput_Name
+            }
+            onClick={this.onCommit}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>

@@ -45,7 +45,8 @@ class ActivityDialog extends React.PureComponent {
     paths: PropTypes.array,
     activity: PropTypes.object,
     uid: PropTypes.string.isRequired,
-    fetchGithubFiles: PropTypes.func.isRequired,
+    // temporary remove isRequired for fetchGithubFiles
+    fetchGithubFiles: PropTypes.func,
     fetchGithubFilesStatus : PropTypes.string
   };
 

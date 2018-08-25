@@ -48,13 +48,13 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
         component={Link}
         to="/"
         selected={"/" === location.pathname
-          || location.pathname.match(/\/home/)
+          || (/^\/home/).test(location.pathname)
         }
       >
         <ListItem>
           <ListItemIcon>
             {("/" === location.pathname
-              || location.pathname.match(/\/home/)
+              || (/^\/home/).test(location.pathname)
              )
             ? <Whatshot style={{fill: "red"}} />
             : <Whatshot />}
@@ -66,11 +66,11 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
       <MenuItem
         component={Link}
         to="/paths"
-        selected={location.pathname.match(/\/paths/)}
+        selected={(/^\/paths/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {location.pathname.match(/\/paths/)
+          {(/^\/paths/).test(location.pathname)
             ? <Explore style={{fill: "red"}} />
             : <Explore />}
           </ListItemIcon>
@@ -92,11 +92,11 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
       <MenuItem
         component={Link}
         to="/courses"
-        selected={location.pathname.match(/\/courses/)}
+        selected={(/^\/courses/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {location.pathname.match(/\/courses/)
+          {(/^\/courses/).test(location.pathname)
             ? <Group style={{fill: "red"}} />
             : <Group />}
           </ListItemIcon>
@@ -107,11 +107,11 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
       <MenuItem
         component={Link}
         to="/cohorts"
-        selected={location.pathname.match(/\/cohorts/)}
+        selected={(/^\/cohorts/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {location.pathname.match(/\/cohorts/)
+          {(/^\/cohorts/).test(location.pathname)
             ? <Domain style={{fill: "red"}} />
             : <Domain />}
           </ListItemIcon>
@@ -127,11 +127,11 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) =
       <MenuItem
         component={Link}
         to={`/profile/${userId || "non-logged"}`}
-        selected={location.pathname.match(/\/profile/)}
+        selected={(/^\/profile/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {location.pathname.match(/\/profile/)
+          {(/^\/profile/).test(location.pathname)
             ? <Mood style={{fill: "red"}} />
             : <Mood />}
           </ListItemIcon>
