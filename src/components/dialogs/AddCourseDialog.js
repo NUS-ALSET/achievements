@@ -25,7 +25,7 @@ export class AddCourseDialog extends React.Component {
     // Course Name cannot be nonsense or empty spaces
     isCorrectInput_Name: false,
     // Course pwd cannot have white spaces anywhere
-    isCorrectInput_Psw: true
+    isCorrectInput_Psw: false
   };
 
   removeEmpty = value =>
@@ -42,7 +42,7 @@ export class AddCourseDialog extends React.Component {
       password: "",
       description: "",
       isCorrectInput_Name: false,
-      isCorrectInput_Psw: true
+      isCorrectInput_Psw: false
     }) || this.props.dispatch(courseHideDialog());
 
   // validate input first
@@ -54,7 +54,7 @@ export class AddCourseDialog extends React.Component {
       ) {
         this.setState({
           isCorrectInput_Name: true,
-          ["name"]: value.trim()
+          [field]: value.trim()
         });
       } else {
         this.setState({
@@ -70,7 +70,7 @@ export class AddCourseDialog extends React.Component {
       ) {
         this.setState({
           isCorrectInput_Psw: true,
-          ["password"]: value.trim()
+          [field]: value.trim()
         });
       } else {
         this.setState({
