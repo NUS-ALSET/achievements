@@ -43,8 +43,6 @@ class PathDialog extends React.PureComponent {
         .map(key => ({ [key]: value[key] }))
     );
 
-  catchReturn = event => event.key === "Enter" && this.onCommit();
-
   // validate Path name input first
   onFieldChange = (field, value) => {
     /* eslint-disable no-useless-escape */
@@ -95,7 +93,6 @@ class PathDialog extends React.PureComponent {
             label="Path name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            onKeyPress={this.catchReturn}
             style={{
               width: 320
             }}

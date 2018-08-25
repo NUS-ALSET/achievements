@@ -62,10 +62,6 @@ class AddTextSolutionDialog extends React.PureComponent {
     }
   };
 
-  catchReturn = event =>
-    event.key === "Enter" &&
-    this.props.onCommit(this.state.solution, this.props.taskId);
-
   render() {
     const { onClose, onCommit, open, solution, taskId } = this.props;
 
@@ -83,7 +79,6 @@ class AddTextSolutionDialog extends React.PureComponent {
             fullWidth
             label="Solution"
             onChange={this.onChangeSolution}
-            onKeyPress={this.catchReturn}
             style={{
               width: 320
             }}

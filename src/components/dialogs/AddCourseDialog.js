@@ -23,7 +23,7 @@ export class AddCourseDialog extends React.Component {
     password: "",
     description: "",
     // Course Name cannot be nonsense or empty spaces
-    isCorrectInput_Name: true,
+    isCorrectInput_Name: false,
     // Course pwd cannot have white spaces anywhere
     isCorrectInput_Psw: true
   };
@@ -41,11 +41,9 @@ export class AddCourseDialog extends React.Component {
       name: "",
       password: "",
       description: "",
-      isCorrectInput_Name: true,
+      isCorrectInput_Name: false,
       isCorrectInput_Psw: true
     }) || this.props.dispatch(courseHideDialog());
-
-  catchReturn = event => event.key === "Enter" && this.onCommit();
 
   // validate input first
   onFieldChange = (field, value) => {
@@ -128,7 +126,6 @@ export class AddCourseDialog extends React.Component {
             label="Course name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            onKeyPress={this.catchReturn}
             required
           />
           <TextField
@@ -139,7 +136,6 @@ export class AddCourseDialog extends React.Component {
             label="Password"
             margin="dense"
             onChange={e => this.onFieldChange("password", e.target.value)}
-            onKeyPress={this.catchReturn}
             required
             type="password"
           />
@@ -149,7 +145,6 @@ export class AddCourseDialog extends React.Component {
             label="Description"
             margin="dense"
             onChange={e => this.onFieldChange("description", e.target.value)}
-            onKeyPress={this.catchReturn}
           />
         </DialogContent>
         <DialogActions>
