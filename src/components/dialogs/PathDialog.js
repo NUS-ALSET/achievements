@@ -19,6 +19,7 @@ import {
   pathDialogHide
 } from "../../containers/Paths/actions";
 
+// this component is when click "Add Path" or "Edit Path"
 class PathDialog extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
