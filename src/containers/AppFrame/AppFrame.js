@@ -17,7 +17,7 @@ import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
 
 // for Routes
-import Home from "../Home/AltHome";
+// import Home from "../Home/AltHome";
 // TODO: both account/ and profile/ point to this Account component
 // need to figure out why need both?
 import Account from "../../containers/Account/Account";
@@ -251,7 +251,7 @@ class AppFrame extends React.Component {
               userId={userId}
             />
             <main className={classes.content}>
-              <Route component={withTracker(Home)} exact path="(/|/home)" />
+              <Route component={withTracker(HomeV2)} exact path="(/|/home)" />
               <Route component={withTracker(HomeV2)} exact path="/homev2" />
               <Route component={withTracker(HomeV3)} exact path="/homev3" />
               <Route component={withTracker(Admin)} exact path="/admin" />

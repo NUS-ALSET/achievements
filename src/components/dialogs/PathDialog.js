@@ -19,6 +19,7 @@ import {
   pathDialogHide
 } from "../../containers/Paths/actions";
 
+// this component is when click "Add Path" or "Edit Path"
 class PathDialog extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
@@ -27,7 +28,11 @@ class PathDialog extends React.PureComponent {
   };
 
   state = {
-    name: ""
+    name: "",
+    // detect if text input is only printable characters
+    // and does not start or only have spaces
+    // if so CorrentInput
+    isCorrectInput: true,
   };
 
   removeEmpty = value =>
@@ -37,12 +42,29 @@ class PathDialog extends React.PureComponent {
         .filter(key => value[key])
         .map(key => ({ [key]: value[key] }))
     );
-  catchReturn = event => event.key === "Enter" && this.onCommit();
-  onFieldChange = (field, value) => this.setState({ [field]: value });
+
+  // validate Path name input first
+  onFieldChange = (field, value) => {
+    /* eslint-disable no-useless-escape */
+    if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
+      .test(value)
+    ) {
+      this.setState({
+        isCorrectInput: true,
+        [field]: value.trim()
+      });
+    } else {
+      this.setState({
+        isCorrectInput: false
+      });
+    }
+  };
+
   onClose = () => {
     this.setState({ name: "" });
     this.props.dispatch(pathDialogHide());
   };
+
   onCommit = () => {
     this.props.dispatch(
       pathChangeRequest(
@@ -62,12 +84,18 @@ class PathDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
+            error={!this.state.isCorrectInput}
             defaultValue={path && path.name}
+            helperText={this.state.isCorrectInput
+              ? ""
+              : "input should not be empty or have invalid characters"}
             fullWidth
             label="Path name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            onKeyPress={this.catchReturn}
+            style={{
+              width: 320
+            }}
             required
           />
         </DialogContent>
@@ -75,7 +103,12 @@ class PathDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised">
+          <Button
+            disabled={!this.state.isCorrectInput}
+            color="primary"
+            onClick={this.onCommit}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>

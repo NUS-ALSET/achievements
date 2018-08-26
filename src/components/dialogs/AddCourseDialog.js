@@ -21,7 +21,11 @@ export class AddCourseDialog extends React.Component {
   state = {
     name: "",
     password: "",
-    description: ""
+    description: "",
+    // Course Name cannot be nonsense or empty spaces
+    isCorrectInput_Name: false,
+    // Course pwd cannot have white spaces anywhere
+    isCorrectInput_Psw: false
   };
 
   removeEmpty = value =>
@@ -31,14 +35,51 @@ export class AddCourseDialog extends React.Component {
         .filter(key => value[key])
         .map(key => ({ [key]: value[key] }))
     );
+
   onClose = () =>
     this.setState({
       name: "",
       password: "",
-      description: ""
+      description: "",
+      isCorrectInput_Name: false,
+      isCorrectInput_Psw: false
     }) || this.props.dispatch(courseHideDialog());
-  catchReturn = event => event.key === "Enter" && this.onCommit();
-  onFieldChange = (field, value) => this.setState({ [field]: value });
+
+  // validate input first
+  onFieldChange = (field, value) => {
+    if (field === "name") {
+      /* eslint-disable no-useless-escape */
+      if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
+        .test(value)
+      ) {
+        this.setState({
+          isCorrectInput_Name: true,
+          [field]: value.trim()
+        });
+      } else {
+        this.setState({
+          isCorrectInput_Name: false
+        });
+      }
+    }
+    // password does not allow spaces anywhere
+    if (field === "password") {
+      /* eslint-disable no-useless-escape */
+      if (/^[^\s][a-zA-Z0-9\t\n./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
+        .test(value)
+      ) {
+        this.setState({
+          isCorrectInput_Psw: true,
+          [field]: value.trim()
+        });
+      } else {
+        this.setState({
+          isCorrectInput_Psw: false
+        });
+      }
+    }
+  };
+
   onCommit = () => {
     // Prevent changing real course data
     let course = Object.assign({}, this.props.course, this.state);
@@ -51,6 +92,23 @@ export class AddCourseDialog extends React.Component {
   render() {
     const { course, open } = this.props;
 
+    let helperTextPsw;
+
+    // helperText for password input
+    if (course && course.id) {
+      if (this.state.isCorrectInput_Psw) {
+        helperTextPsw = "Leave it blank to keep existing password";
+      } else {
+        helperTextPsw = "Password cannot be empty, have spaces or invalid characters";
+      }
+    } else {
+      if (this.state.isCorrectInput_Psw) {
+        helperTextPsw = "";
+      } else {
+        helperTextPsw = "Password cannot be empty, have spaces or invalid characters";
+      }
+    }
+
     return (
       <Dialog onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -59,26 +117,25 @@ export class AddCourseDialog extends React.Component {
         <DialogContent>
           <TextField
             autoFocus
+            error={!this.state.isCorrectInput_Name}
+            helperText={this.state.isCorrectInput_Name
+              ? ""
+              : "name cannot be empty or have invalid characters"}
             defaultValue={course && course.name}
             fullWidth
             label="Course name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            onKeyPress={this.catchReturn}
             required
           />
           <TextField
+            error={!this.state.isCorrectInput_Psw}
+            helperText={helperTextPsw}
             defaultValue={course && course.password}
             fullWidth
-            helperText={
-              course && course.id
-                ? "Leave it blank to keep existing password"
-                : ""
-            }
             label="Password"
             margin="dense"
             onChange={e => this.onFieldChange("password", e.target.value)}
-            onKeyPress={this.catchReturn}
             required
             type="password"
           />
@@ -88,14 +145,21 @@ export class AddCourseDialog extends React.Component {
             label="Description"
             margin="dense"
             onChange={e => this.onFieldChange("description", e.target.value)}
-            onKeyPress={this.catchReturn}
           />
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised">
+          <Button
+            disabled={
+              !this.state.isCorrectInput_Name ||
+              !this.state.isCorrectInput_Psw
+            }
+            color="primary"
+            onClick={this.onCommit}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>

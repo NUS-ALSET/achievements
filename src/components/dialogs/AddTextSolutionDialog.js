@@ -33,7 +33,10 @@ class AddTextSolutionDialog extends React.PureComponent {
 
   state = {
     solution: "",
-    // detect if text input is only printable characters,
+    // detect if text input is:
+    // 1. only printable characters,
+    // 2. doest not start with space
+    // 3. only have empty spaces
     // if so CorrentInput
     isCorrectInput: true,
   };
@@ -50,7 +53,7 @@ class AddTextSolutionDialog extends React.PureComponent {
     ) {
       this.setState({
         isCorrectInput: true,
-        solution: event.target.value,
+        solution: event.target.value.trim(),
       });
     } else {
       this.setState({
@@ -58,10 +61,6 @@ class AddTextSolutionDialog extends React.PureComponent {
       });
     }
   };
-
-  catchReturn = event =>
-    event.key === "Enter" &&
-    this.props.onCommit(this.state.solution, this.props.taskId);
 
   render() {
     const { onClose, onCommit, open, solution, taskId } = this.props;
@@ -80,7 +79,6 @@ class AddTextSolutionDialog extends React.PureComponent {
             fullWidth
             label="Solution"
             onChange={this.onChangeSolution}
-            onKeyPress={this.catchReturn}
             style={{
               width: 320
             }}

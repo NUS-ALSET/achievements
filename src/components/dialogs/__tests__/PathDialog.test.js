@@ -34,7 +34,7 @@ describe("<PathDialog>", () => {
 
     commitButton.simulate("click");
     expect(mockSnapshot.mock.calls[0][0]).toEqual({
-      pathInfo: {},
+      pathInfo: {isCorrectInput: true},
       type: "PATH_CHANGE_REQUEST"
     });
 
@@ -43,7 +43,10 @@ describe("<PathDialog>", () => {
     });
     commitButton.simulate("click");
     expect(mockSnapshot.mock.calls[1][0]).toEqual({
-      pathInfo: { name: "test" },
+      pathInfo: {
+        isCorrectInput: true,
+        name: "test"
+      },
       type: "PATH_CHANGE_REQUEST"
     });
   });
@@ -62,7 +65,11 @@ describe("<PathDialog>", () => {
     const commitButton = wrapper.find(Button).at(1);
     commitButton.simulate("click");
     expect(mockSnapshot.mock.calls[0][0]).toEqual({
-      pathInfo: { id: "deadbeef", name: "foobar" },
+      pathInfo: {
+        id: "deadbeef",
+        name: "foobar",
+        isCorrectInput: true
+      },
       type: "PATH_CHANGE_REQUEST"
     });
 
@@ -72,7 +79,11 @@ describe("<PathDialog>", () => {
     commitButton.simulate("click");
 
     expect(mockSnapshot.mock.calls[1][0]).toEqual({
-      pathInfo: { id: "deadbeef", name: "test" },
+      pathInfo: {
+        id: "deadbeef",
+        name: "test",
+        isCorrectInput: true
+      },
       type: "PATH_CHANGE_REQUEST"
     });
   });
