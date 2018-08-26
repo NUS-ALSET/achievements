@@ -485,7 +485,7 @@ export class PathsService {
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
-          case "jupyter":
+          case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
               .then(json =>
                 this.validateSolution(uid, pathProblem, solution, json)
