@@ -18,7 +18,7 @@ describe("Paths sagas", () => {
     pathsService.problemChange.restore();
   });
 
-  it("should create new problem", async () => {
+  it("should create new activity", async () => {
     pathsService.problemChange.returns("testKey");
 
     await runSaga(
@@ -47,6 +47,10 @@ describe("Paths sagas", () => {
         activityInfo: { level: "test-level", name: "test", type: "codeCombat" },
         problemKey: "testKey",
         type: "PATH_ACTIVITY_CHANGE_SUCCESS"
+      },
+      {
+        message: "Problem Saved",
+        type: "NOTIFICATION_SHOW"
       },
       { type: "PATH_CLOSE_DIALOG" }
     ]);
