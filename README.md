@@ -31,7 +31,7 @@ Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achi
 <h1>Passenger pickup game</h1>
 <p align="center">
   <a href="https://codesandbox.io/s/github/MKoth/simulation-game/tree/master/src/passengerPickup" target="_blank" rel="noopener noreferrer">
-    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/wiki_images/GamesScreens/car-game-screen.png">
+    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/master/wiki_images/GamesScreens/car-game-screen.png">
   </a>
 </p>
 <h3>
@@ -48,7 +48,7 @@ Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achi
 <h1>Pizza delivery game</h1>
 <p align="center">
   <a href="#" target="_blank" rel="noopener noreferrer">
-    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/wiki_images/GamesScreens/pizza-game-screen.png">
+    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/master/wiki_images/GamesScreens/pizza-game-screen.png">
   </a>
 </p>
 <ol>
@@ -62,7 +62,7 @@ Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achi
 <h1>Protect the borders</h1>
 <p align="center">
   <a href="#" target="_blank" rel="noopener noreferrer">
-    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/wiki_images/GamesScreens/borders-game-screen.png">
+    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/master/wiki_images/GamesScreens/borders-game-screen.png">
   </a>
 </p>
 <ol>
@@ -78,7 +78,7 @@ Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achi
 <h1>Protect the skies</h1>
 <p align="center">
   <a href="#" target="_blank" rel="noopener noreferrer">
-    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/wiki_images/GamesScreens/sky-borders-game-screen.png">
+    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/master/wiki_images/GamesScreens/sky-borders-game-screen.png">
   </a>
 </p>
 <ol>
@@ -96,7 +96,7 @@ Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achi
 <h1>Repair the kiosks</h1>
 <p align="center">
   <a href="#" target="_blank" rel="noopener noreferrer">
-    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/wiki_images/GamesScreens/kiosk-game-screen.png">
+    <img width="530" src="https://raw.githubusercontent.com/MKoth/achievements/master/wiki_images/GamesScreens/kiosk-game-screen.png">
   </a>
 </p>
 <ol>
