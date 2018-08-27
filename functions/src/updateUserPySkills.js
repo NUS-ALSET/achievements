@@ -88,10 +88,14 @@ function updateRecommendation(userKey, userSkills) {
       )
     )
     .then(pathActivitiesData => {
-      const result = {};
+      let problemWithUnsolvedSkills = {
+        title : "Jupyter Activities With New Skills"
+      };
+      let problemWithSolvedSkills = {
+        title : "Jupyter Activities With Solved Skills"
+      };
       for (const data of pathActivitiesData) {
-        const activities = data[0] || {};
-        const solutions = data[1] || {};
+        const [ activities = {}, solutions= {} ] = data;
 
         Object.keys(activities).forEach(key => {
           const activity = activities[key];
@@ -101,30 +105,35 @@ function updateRecommendation(userKey, userSkills) {
 
             Object.keys(problemSkills).forEach(feature => {
               Object.keys((problemSkills[feature] || {})).forEach(featureType => {
-
-                if (!(userSkills[feature] || {})[featureType]) {
-                  result[`${feature}_${featureType}`] = {
+                // set object reference
+                let skillsCollection = (userSkills[feature] || {})[featureType] ? problemWithSolvedSkills : problemWithUnsolvedSkills;
+                // add problem to reference
+                  skillsCollection[`${feature}_${featureType}`] = {
                     feature,
                     featureType,
                     path: activity.path,
                     problem: key,
                     problemOwner: activity.owner,
                     name: activity.name,
-                    description: activity.description,
+                    description: activity.description || '',
                     type: activity.type,
                   }
-                }
               })
             })
           }
         })
       }
-      result['title']="Jupyter Activities With New Skills";
 
-      return admin
+      return Promise.all[
+        admin
         .database()
-        .ref(`/userRecommendations/${userKey}/newPythonSkills`)
-        .set(result)
+        .ref(`/userRecommendations/${userKey}/solvedPySkills`)
+        .set(problemWithSolvedSkills),
+        admin
+        .database()
+        .ref(`/userRecommendations/${userKey}/unSolvedPySkills`)
+        .set(problemWithUnsolvedSkills)
+      ]
     })
     .catch(err => {
       console.error(err.message, err.stack);

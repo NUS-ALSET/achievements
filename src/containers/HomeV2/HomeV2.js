@@ -15,7 +15,8 @@ const temporaryRecommendationsKinds = [
   "jupyterInline",
   "youtube",
   "game",
-  "newPythonSkills",
+  "unSolvedPySkills",
+  "solvedPySkills"
 ];
 
 const styles = theme => ({
@@ -44,7 +45,13 @@ export class HomeV2 extends React.Component {
   reformatRecommendation = (recommendations, recommendationKey='') => {
     return Object.keys(recommendations)
       .filter(key => key !== "title")
-      .map(key => ({ ...recommendations[key], actualProblem: key, subHeading : recommendationKey==='newPythonSkills' ? `Complete this activity to use the ${recommendations[key].feature} ${recommendations[key].featureType}` : '' }));
+      .map(key => ({ 
+        ...recommendations[key],
+        actualProblem: key,
+        subHeading : ["unSolvedPySkills", "solvedPySkills"].includes(recommendationKey) 
+        ? `Complete this activity to use the ${recommendations[key].feature} ${recommendations[key].featureType}` 
+        : '' })
+      );
   };
 
   render() {
@@ -60,19 +67,23 @@ export class HomeV2 extends React.Component {
       <Fragment>
         {Object.keys(userRecommendations || {})
           .filter(key => temporaryRecommendationsKinds.includes(key))
-          .map(recommendationKey => (
-            <Fragment key={recommendationKey}>
+          .map(recommendationKey => {
+            const recommendedData = this.reformatRecommendation(
+              userRecommendations[recommendationKey] , recommendationKey
+            );
+            return recommendedData.length>0 ? (
               <RecommendationListCard
-                dummyData={this.reformatRecommendation(
-                  userRecommendations[recommendationKey] , recommendationKey
-                )}
+                key={recommendationKey}
+                dummyData={ recommendedData }
                 RecomType={
                   recommendationKey === "youtube" ? "youtube" : "python"
                 }
                 title={userRecommendations[recommendationKey].title}
               />
-            </Fragment>
-          ))}
+            ) : 
+            ''
+          }
+          )}
       </Fragment>
     );
   }
