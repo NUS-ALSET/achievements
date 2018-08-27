@@ -28,6 +28,7 @@ export function* signInHandler() {
   try {
     if (uid) {
       const adminStatus = yield call(accountService.checkAdminStatus, uid);
+      yield call(accountService.authTimeUpdate, uid);
       yield put(accountChangeAdminStatus(adminStatus));
     } else {
       yield put(accountChangeAdminStatus(false));

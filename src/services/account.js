@@ -172,6 +172,18 @@ export class AccountService {
       } */
     };
   }
+
+  /**
+   * This method updates `authTime` data to current. Used mostly for invoking
+   * `generateUserRecommendations`
+   * @param uid
+   */
+  authTimeUpdate(uid) {
+    return firebase
+      .database()
+      .ref(`/users/${uid}/lastAuthTime`)
+      .set({ ".sv": "timestamp" });
+  }
 }
 
 /**
