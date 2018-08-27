@@ -100,23 +100,23 @@ class JupyterInlineActivity extends React.PureComponent {
       solution,
       readOnly
     } = this.props;
-    
+
     return (
       <Fragment>
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={this.getSolutionCode(solution, problem)}
           persistent={true}
+          readOnly={readOnly}
           richEditor={true}
           solution={false}
-          readOnly={readOnly}
           title={readOnly ? "Submitted Code" : "Edit code"}
         />
         {solution &&
           (solution.json || solution.loading) && (
             <JupyterNotebook
-              solution={solution}
               readOnly={readOnly}
+              solution={solution}
               title={
                 <Fragment>
                   Calculated Solution
