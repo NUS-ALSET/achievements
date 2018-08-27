@@ -95,13 +95,15 @@ class AssignmentsTable extends React.PureComponent {
     currentStudent: null,
     analysisDialog: {
       open: false,
+      name: '',
       data: {}
     }
   };
-  openAnalysisDialog = solution =>
+  openAnalysisDialog = (solution, name) =>
     this.setState({
       analysisDialog: {
         open: true,
+        name,
         data: {
           userSkills: solution.userSkills || {},
           skillsDifference: solution.skillsDifference || {}
@@ -548,7 +550,8 @@ class AssignmentsTable extends React.PureComponent {
                                   onClick={() =>
                                     this.openAnalysisDialog(
                                       studentInfo.solutions[assignment.id]
-                                        .originalSolution
+                                        .originalSolution,
+                                        assignment.name
                                     )
                                   }
                                 >
@@ -653,6 +656,7 @@ class AssignmentsTable extends React.PureComponent {
         <AnalysisDialog
           handleClose={this.handleCloseAnalysisDialog}
           open={this.state.analysisDialog.open}
+          name={this.state.analysisDialog.name}
           skills={this.state.analysisDialog.data}
         />
       </Fragment>
