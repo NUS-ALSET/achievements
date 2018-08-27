@@ -36,7 +36,7 @@ import Typography from "@material-ui/core/Typography";
 import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
-class ActivityDialog extends React.PureComponent {
+class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
@@ -497,4 +497,4 @@ class ActivityDialog extends React.PureComponent {
   }
 }
 
-export default ActivityDialog;
+export default AddActivityDialog;

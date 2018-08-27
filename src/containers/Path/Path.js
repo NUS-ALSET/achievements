@@ -50,7 +50,7 @@ import {
   pathActivityDialogShow,
   pathActivityMoveRequest
 } from "../Paths/actions";
-import ActivityDialog from "../../components/dialogs/ActivityDialog";
+import AddActivityDialog from "../../components/dialogs/AddActivityDialog";
 
 import AddIcon from "@material-ui/icons/Add";
 import { sagaInjector } from "../../services/saga";
@@ -365,7 +365,7 @@ export class Path extends React.Component {
           pathStatus={pathStatus}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
-        <ActivityDialog
+        <AddActivityDialog
           fetchGithubFiles={fetchGithubFiles}
           fetchGithubFilesStatus={ui.fetchGithubFilesStatus}
           activity={ui.dialog.value}
