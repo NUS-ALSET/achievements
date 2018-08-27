@@ -122,6 +122,7 @@ class SampleCarousel extends React.PureComponent {
                 ? item.youtubeURL
                 : ""}
               isCodeCombat={isCodeCombat}
+              subHeading ={item.subHeading || ""}
             />
         ))}
       </Carousel>
