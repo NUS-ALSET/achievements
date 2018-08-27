@@ -237,7 +237,7 @@ class AssignmentsTable extends React.PureComponent {
             PopperProps={{ style: { pointerEvents: 'none' } }}
           >
             <span>
-              {/http[s]?:\/\//.test(
+              {/^http[s]?:\/\//.test(
                 solution.originalSolution && solution.originalSolution.value
               ) ? (
                 <a
@@ -278,17 +278,7 @@ class AssignmentsTable extends React.PureComponent {
 
       case ASSIGNMENTS_TYPES.Text.id:
       case ASSIGNMENTS_TYPES.TeamText.id:
-        return /http[s]?:\/\//.test(result) ? (
-          <a href={result} rel="noopener noreferrer" target="_blank">
-            {APP_SETTING.isSuggesting ? (
-              <IconButton>
-                <DoneIcon />
-              </IconButton>
-            ) : (
-              "Completed"
-            )}
-          </a>
-        ) : APP_SETTING.isSuggesting ? (
+        return APP_SETTING.isSuggesting ? (
           <IconButton
             onClick={() =>
               this.onSubmitClick(assignment, solutions[assignment.id])
