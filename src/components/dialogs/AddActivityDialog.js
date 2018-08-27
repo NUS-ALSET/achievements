@@ -407,7 +407,8 @@ class AddActivityDialog extends React.PureComponent {
     }
     if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
       state={
-        name : APP_SETTING.levels[value].name
+        name : APP_SETTING.levels[value].name,
+        isCorrectInput: true
       }
     }
     // validate name input
