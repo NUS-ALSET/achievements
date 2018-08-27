@@ -68,9 +68,28 @@ export class HomeV2 extends React.Component {
         {Object.keys(userRecommendations || {})
           .filter(key => temporaryRecommendationsKinds.includes(key))
           .map(recommendationKey => {
-            const recommendedData = this.reformatRecommendation(
+            let recommendedData = this.reformatRecommendation(
               userRecommendations[recommendationKey] , recommendationKey
             );
+            if(["unSolvedPySkills", "solvedPySkills"].includes(recommendationKey)){
+              let uniqueProblems = {};
+              recommendedData.forEach(data=>{
+                if(uniqueProblems[data.actualProblem]){
+                  uniqueProblems[data.actualProblem].push(`${data.feature} ${ data.featureType}`);
+                }else{
+                  uniqueProblems[data.actualProblem] = [`${data.feature} ${ data.featureType}`];
+                  uniqueProblems[data.actualProblem].data = {...data};
+                }
+              })
+            console.log('uniqueProblems',uniqueProblems)
+            recommendedData=Object.keys(uniqueProblems).map(key=>{
+              return {
+                ...uniqueProblems[key].data,
+                subHeading : `Complete this activity to use the ${uniqueProblems[key].join(', ')}`
+              }
+            })
+            }
+
             return recommendedData.length>0 ? (
               <RecommendationListCard
                 key={recommendationKey}
