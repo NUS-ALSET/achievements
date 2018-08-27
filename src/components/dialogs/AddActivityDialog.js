@@ -398,6 +398,13 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   onFieldChange = (field, value) => {
+    const { activity } = this.props;
+    // when edit/update
+    if (activity && activity.id) {
+      this.setState({
+        isCorrectInput: true
+      });
+    }
     let state = {};
     if (field === "type" && value === ACTIVITY_TYPES.jupyterInline.id) {
       state = {
