@@ -53,7 +53,9 @@ class ActivityDialog extends React.PureComponent {
   state = {
     type: "text"
   };
+
   fetchedGithubURL = "";
+
   componentWillReceiveProps(nextProps) {
     if((nextProps.fetchGithubFilesStatus || '').length>0){
       this.handelfetchGithubFilesStatus(nextProps.fetchGithubFilesStatus,nextProps.activity);
@@ -80,27 +82,25 @@ class ActivityDialog extends React.PureComponent {
       });
     }
   }
-  handelfetchGithubFilesStatus=(fetchGithubFilesStatus,activity)=>{
-    switch(fetchGithubFilesStatus){
-      case "SUCCESS":{
+
+  handelfetchGithubFilesStatus = (fetchGithubFilesStatus,activity) => {
+    switch (fetchGithubFilesStatus) {
+      case "SUCCESS":
         this.fetchedGithubURL = this.state.githubURL;
         this.setState({ files : activity.files || []})
         this.hideLoading();
         break;
-      }
-      case "LOADING":{
+      case "LOADING":
         this.showLoading();
         break;
-      }
-      case "ERROR":{
+      case "ERROR":
         this.hideLoading();
         break;
-      }
-      default : {
-        break;
-      }
+      default:
+        this.hideLoading();
     }
   }
+
   getTypeSpecificElements() {
     let { activity } = this.props;
 
@@ -163,7 +163,6 @@ class ActivityDialog extends React.PureComponent {
               label="Problem Notebook URL"
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
-              onKeyPress={this.catchReturn}
             />
             <TextField
               defaultValue={activity && activity.solutionURL}
@@ -171,7 +170,6 @@ class ActivityDialog extends React.PureComponent {
               label="Solution Notebook URL"
               margin="dense"
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-              onKeyPress={this.catchReturn}
             />
             <TextField
               defaultValue={activity && String(activity.frozen || "1")}
@@ -181,7 +179,6 @@ class ActivityDialog extends React.PureComponent {
               onChange={e =>
                 this.onFieldChange("frozen", Number(e.target.value))
               }
-              onKeyPress={this.catchReturn}
               type="number"
             />
           </Fragment>
@@ -195,7 +192,6 @@ class ActivityDialog extends React.PureComponent {
               label="Problem Notebook URL"
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
-              onKeyPress={this.catchReturn}
             />
             <TextField
               defaultValue={activity && activity.solutionURL}
@@ -203,7 +199,6 @@ class ActivityDialog extends React.PureComponent {
               label="Solution Notebook URL"
               margin="dense"
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-              onKeyPress={this.catchReturn}
             />
             <TextField
               defaultValue={activity && String(activity.code || "1")}
@@ -211,7 +206,6 @@ class ActivityDialog extends React.PureComponent {
               label="Default code block"
               margin="dense"
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
-              onKeyPress={this.catchReturn}
               type="number"
             />
             <TextField
@@ -222,7 +216,6 @@ class ActivityDialog extends React.PureComponent {
               onChange={e =>
                 this.onFieldChange("frozen", Number(e.target.value))
               }
-              onKeyPress={this.catchReturn}
               type="number"
             />
           </Fragment>
@@ -236,7 +229,6 @@ class ActivityDialog extends React.PureComponent {
               label="YouTube URL"
               margin="dense"
               onChange={e => this.onFieldChange("youtubeURL", e.target.value)}
-              onKeyPress={this.catchReturn}
             />
             <FormControl
               component="fieldset"
@@ -294,7 +286,6 @@ class ActivityDialog extends React.PureComponent {
             label="Game Variant"
             margin="dense"
             onChange={e => this.onFieldChange("game", e.target.value)}
-            onKeyPress={this.catchReturn}
           >
             <MenuItem value="GemCollector">Gem Collector</MenuItem>
             <MenuItem value="Squad">Squad</MenuItem>
@@ -302,7 +293,7 @@ class ActivityDialog extends React.PureComponent {
         );
       case ACTIVITY_TYPES.jest.id:
         return (
-          <div>
+          <Fragment>
             <FormControl style={{ width: "100%" }}>
               <InputLabel htmlFor="githubURL">Github URL</InputLabel>
               <Input
@@ -327,55 +318,57 @@ class ActivityDialog extends React.PureComponent {
               />
             </FormControl>
             {this.state.files &&
-              this.state.files.length > 0 && (
-                <div>
-                  <Typography
-                    gutterBottom
-                    style={{ margin: "12px 0px" }}
-                    variant="body2"
-                  >
-                    <CheckBoxIcon style={{ float: "left" }} /> Check files to
-                    allow write access for users.
-                  </Typography>
-                  <Typography gutterBottom variant="body2">
-                    {this.fetchedGithubURL && (
-                      <LinkIcon style={{ float: "left" }} />
-                    )}{" "}
-                    {this.fetchedGithubURL}
-                  </Typography>
-                  {this.state.files.map(
-                    file =>
-                      file.type === "file" && (
-                        <ListItem
-                          button
-                          dense
-                          key={file.path}
-                          role={undefined}
-                          style={{ padding: "0px 25px" }}
-                        >
-                          <Checkbox
-                            checked={!file.readOnly}
-                            disableRipple
-                            onChange={() => this.handleReadOnlyFiles(file.path)}
-                            tabIndex={-1}
-                          />
-                          <ListItemText primary={file.path} />
-                        </ListItem>
-                      )
+             this.state.files.length > 0 && (
+              <Fragment>
+                <Typography
+                  gutterBottom
+                  style={{ margin: "12px 0px" }}
+                  variant="body2"
+                >
+                  <CheckBoxIcon style={{ float: "left" }} />
+                  Check files to allow write access for users.
+                </Typography>
+                <Typography gutterBottom variant="body2">
+                  {this.fetchedGithubURL && (
+                    <LinkIcon style={{ float: "left" }} />
                   )}
-                </div>
+                  &nbsp;
+                  {this.fetchedGithubURL}
+                </Typography>
+                {this.state.files.map(file =>
+                  file.type === "file" && (
+                    <ListItem
+                      button
+                      dense
+                      key={file.path}
+                      role={undefined}
+                      style={{ padding: "0px 25px" }}
+                    >
+                      <Checkbox
+                        checked={!file.readOnly}
+                        disableRipple
+                        onChange={() => this.handleReadOnlyFiles(file.path)}
+                        tabIndex={-1}
+                      />
+                      <ListItemText primary={file.path} />
+                    </ListItem>
+                ))}
+              </Fragment>
               )}
-          </div>
+          </Fragment>
         );
       default:
     }
   }
+
   showLoading = () => {
     this.setState(() => ({ loading: true }));
   };
+
   hideLoading = () => {
     this.setState(() => ({ loading: false }));
   };
+
   handleReadOnlyFiles = filePath => {
     this.setState(() => ({
       files: this.state.files.map(
@@ -384,6 +377,7 @@ class ActivityDialog extends React.PureComponent {
       )
     }));
   };
+
   handleGithubURLSubmit = () => {
     if (this.state.loading) return;
     this.fetchedGithubURL = "";
@@ -406,6 +400,7 @@ class ActivityDialog extends React.PureComponent {
     }
     this.setState({ [field]: value, ...state });
   };
+
   onCommit = () => {
     const activity = { ...this.props.activity };
     if (this.state.type === ACTIVITY_TYPES.jest.id) {
@@ -432,6 +427,7 @@ class ActivityDialog extends React.PureComponent {
     this.resetState();
     this.props.onClose();
   };
+
   resetState = () => {
     // Clear state. Render will be invoked 1 time only
     Object.keys(this.state).forEach(
@@ -445,7 +441,7 @@ class ActivityDialog extends React.PureComponent {
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
-          {activity && activity.id ? "Edit Problem" : "Add New Problem"}
+          {activity && activity.id ? "Edit Activity" : "Add New Activity"}
         </DialogTitle>
         <DialogContent
           style={{
@@ -458,7 +454,6 @@ class ActivityDialog extends React.PureComponent {
             label="Name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            onKeyPress={this.catchReturn}
             required
             value={this.state.name || ""}
           />
