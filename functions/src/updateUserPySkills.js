@@ -95,13 +95,16 @@ function updateRecommendation(userKey, userSkills) {
         title : "Jupyter Activities With Solved Skills"
       };
       for (const data of pathActivitiesData) {
-        const [ activities = {}, solutions= {} ] = data;
+        const [ activities = {}, completedActivities = {} ] = data;
 
         Object.keys(activities).forEach(key => {
           const activity = activities[key];
-          if (["jupyter", "jupyterInline"].includes(activity.type)
-            && typeof activity.givenSkills == 'object' && !solutions[key]) {
-            const problemSkills = activity.givenSkills;
+          if (
+            ["jupyter", "jupyterInline"].includes(activity.type)
+            && typeof activity.defaultSolutionSkills == 'object' 
+            && !completedActivities[key]
+          ) {
+            const problemSkills = activity.defaultSolutionSkills;
 
             Object.keys(problemSkills).forEach(feature => {
               Object.keys((problemSkills[feature] || {})).forEach(featureType => {

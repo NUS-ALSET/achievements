@@ -63,8 +63,8 @@ class ActivitiesTable extends React.PureComponent {
     }
   };
 
-  openAnalysisDialog = givenSkills =>
-    this.setState({ analysisDialog: { open: true, data: { givenSkills } } });
+  openAnalysisDialog = defaultSolutionSkills =>
+    this.setState({ analysisDialog: { open: true, data: { defaultSolutionSkills } } });
 
   handleCloseAnalysisDialog = () =>
     this.setState({ analysisDialog: { open: false, data: {} } });
@@ -142,10 +142,10 @@ class ActivitiesTable extends React.PureComponent {
                       More
                     </Button>
                   )}
-                  {activity.givenSkills && (
+                  {activity.defaultSolutionSkills && (
                     <Button
                       onClick={() =>
-                        this.openAnalysisDialog(activity.givenSkills)
+                        this.openAnalysisDialog(activity.defaultSolutionSkills)
                       }
                       variant="raised"
                     >
