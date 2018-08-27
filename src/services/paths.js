@@ -375,7 +375,20 @@ export class PathsService {
             .ref(`/paths/${pathId}/totalActivities`)
             .transaction(activities => ++activities)
       )
-      .then(() => key);
+      .then(() =>{
+        if(problemInfo.solutionURL && 
+          [ACTIVITY_TYPES.jupyter.id,ACTIVITY_TYPES.jupyterInline.id ].includes(problemInfo.type)){
+            this.fetchFile(this.getFileId(problemInfo.solutionURL))
+              .then(json => {
+                this.saveGivenSkillInProblem(
+                  json,
+                  key,
+                  uid
+                );
+              })
+          }
+        return key
+      });
   }
 
   /**
@@ -525,8 +538,7 @@ export class PathsService {
                 this.saveGivenSkillInProblem(
                   json,
                   pathProblem.problemId,
-                  uid,
-                  pathProblem.frozen
+                  uid
                 );
                 return this.validateSolution(uid, pathProblem, solution, json);
               })
@@ -540,8 +552,7 @@ export class PathsService {
             this.saveGivenSkillInProblem(
               solution,
               pathProblem.problemId,
-              uid,
-              pathProblem.frozen
+              uid
             );
             return firebase
               .database()
@@ -564,9 +575,8 @@ export class PathsService {
       );
   }
 
-  saveGivenSkillInProblem(solution, problemId, uid, frozenBlocks) {
+  saveGivenSkillInProblem(solution, problemId, uid ) {
     const editableBlockCode = solution.cells
-      .slice(0, solution.cells.length - frozenBlocks)
       .map(c => (c.cell_type === "code" ? c.source.join("") : ""))
       .join("");
     const data = {
@@ -581,7 +591,7 @@ export class PathsService {
           .database()
           .ref(`/activities/${problemId}`)
           .update({
-            givenSkills: res.userSkills || {}
+            defaultSolutionSkills: res.skills || {}
           });
       });
   }
@@ -954,3 +964,4 @@ export class PathsService {
 
 /** @type PathsService */
 export const pathsService = new PathsService();
+
