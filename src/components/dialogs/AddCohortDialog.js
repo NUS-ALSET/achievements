@@ -17,6 +17,12 @@ import {
   addCohortRequest
 } from "../../containers/Cohorts/actions";
 
+// RegExp rules
+import {
+  AddName,
+  NoStartWhiteSpace
+} from "../regexp-rules/RegExpRules";
+
 class AddCohortDialog extends React.PureComponent {
   static propTypes = {
     cohort: PropTypes.object,
@@ -32,9 +38,9 @@ class AddCohortDialog extends React.PureComponent {
   };
 
   onNameChange = e => {
-    /* eslint-disable no-useless-escape */
-    if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
-      .test(e.target.value)
+    if (
+      AddName.test(e.target.value) &&
+      NoStartWhiteSpace.test(e.target.value)
     ) {
       this.setState({
         isCorrectInput: true,
@@ -50,12 +56,16 @@ class AddCohortDialog extends React.PureComponent {
   onDescriptionChange = e =>
     this.setState({ cohortDescription: e.target.value });
 
-  onClose = () => {
+  resetState = () => {
     this.setState({
       cohortName: "",
       cohortDescription: "",
       isCorrectInput: false
     });
+  };
+
+  onClose = () => {
+    this.resetState();
     this.props.dispatch(addCohortDialogHide());
   }
 
@@ -68,11 +78,7 @@ class AddCohortDialog extends React.PureComponent {
       })
     );
     // reset the disable of commit button
-    this.setState({
-      cohortName: "",
-      cohortDescription: "",
-      isCorrectInput: false
-    });
+    this.resetState();
   };
 
   render() {
@@ -90,7 +96,7 @@ class AddCohortDialog extends React.PureComponent {
             error={!this.state.isCorrectInput}
             helperText={this.state.isCorrectInput
               ? ""
-              : "input should not be empty or have invalid characters"}
+              : "Name should not be empty or too long or have invalid characters"}
             defaultValue={cohort && cohort.name}
             label="Name"
             margin="dense"

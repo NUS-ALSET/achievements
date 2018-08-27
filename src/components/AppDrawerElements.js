@@ -34,7 +34,7 @@ const linkStyle = {
   textDecoration: "none"
 };
 
-const AppDrawerElements = (onRequestClose, userId, isAdmin, location, classes) => (
+const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
   <Fragment>
     <MenuList
       subheader={

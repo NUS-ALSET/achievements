@@ -11,6 +11,13 @@ import {
   courseNewRequest
 } from "../../containers/Courses/actions";
 
+// RegExp rules
+import {
+  AddName,
+  NoStartWhiteSpace,
+  CoursePswRule
+} from "../regexp-rules/RegExpRules";
+
 export class AddCourseDialog extends React.Component {
   static propTypes = {
     open: PropTypes.bool.isRequired,
@@ -24,7 +31,7 @@ export class AddCourseDialog extends React.Component {
     description: "",
     // Course Name cannot be nonsense or empty spaces
     isCorrectInput_Name: false,
-    // Course pwd cannot have white spaces anywhere
+    // Course pwd should follow the RegExpRules
     isCorrectInput_Psw: false
   };
 
@@ -48,9 +55,9 @@ export class AddCourseDialog extends React.Component {
   // validate input first
   onFieldChange = (field, value) => {
     if (field === "name") {
-      /* eslint-disable no-useless-escape */
-      if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
-        .test(value)
+      if (
+        AddName.test(value) &&
+        NoStartWhiteSpace.test(value)
       ) {
         this.setState({
           isCorrectInput_Name: true,
@@ -64,9 +71,9 @@ export class AddCourseDialog extends React.Component {
     }
     // password does not allow spaces anywhere
     if (field === "password") {
-      /* eslint-disable no-useless-escape */
-      if (/^[^\s][a-zA-Z0-9\t\n./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
-        .test(value)
+      if (
+        CoursePswRule.test(value) &&
+        NoStartWhiteSpace.test(value)
       ) {
         this.setState({
           isCorrectInput_Psw: true,
@@ -99,13 +106,13 @@ export class AddCourseDialog extends React.Component {
       if (this.state.isCorrectInput_Psw) {
         helperTextPsw = "Leave it blank to keep existing password";
       } else {
-        helperTextPsw = "Password cannot be empty, have spaces or invalid characters";
+        helperTextPsw = "Password (2-16 length) should not have spaces or invalid characters";
       }
     } else {
       if (this.state.isCorrectInput_Psw) {
         helperTextPsw = "";
       } else {
-        helperTextPsw = "Password cannot be empty, have spaces or invalid characters";
+        helperTextPsw = "Password (2-16 length) should not have spaces or invalid characters";
       }
     }
 
@@ -120,7 +127,7 @@ export class AddCourseDialog extends React.Component {
             error={!this.state.isCorrectInput_Name}
             helperText={this.state.isCorrectInput_Name
               ? ""
-              : "name cannot be empty or have invalid characters"}
+              : "Name cannot be empty or too long or have invalid characters"}
             defaultValue={course && course.name}
             fullWidth
             label="Course name"

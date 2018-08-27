@@ -14,7 +14,7 @@ import { firebaseConnect } from "react-redux-firebase";
 // import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 
-import PathDialog from "../../components/dialogs/PathDialog";
+import AddPathDialog from "../../components/dialogs/AddPathDialog";
 
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
@@ -58,7 +58,7 @@ export class Paths extends React.PureComponent {
           myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
           publicPaths={publicPaths}
         />
-        <PathDialog
+        <AddPathDialog
           dispatch={dispatch}
           open={ui.dialog.type === "PathChange"}
           path={ui.dialog.value}

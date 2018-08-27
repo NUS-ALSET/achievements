@@ -2,6 +2,7 @@
  * @file PathDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 01.03.18
+ * @renamed AddPathDialog 28.08.18 (kyy)
  */
 
 import React from "react";
@@ -19,8 +20,15 @@ import {
   pathDialogHide
 } from "../../containers/Paths/actions";
 
+// RegExp rules
+import {
+  AddName,
+  NoStartWhiteSpace
+} from "../regexp-rules/RegExpRules";
+
+
 // this component is when click "Add Path" or "Edit Path"
-class PathDialog extends React.PureComponent {
+class AddPathDialog extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
@@ -29,10 +37,8 @@ class PathDialog extends React.PureComponent {
 
   state = {
     name: "",
-    // detect if text input is only printable characters
-    // and does not start or only have spaces
-    // if so CorrentInput
-    isCorrectInput: true,
+    // validate inputs
+    isCorrectInput: false,
   };
 
   removeEmpty = value =>
@@ -45,9 +51,9 @@ class PathDialog extends React.PureComponent {
 
   // validate Path name input first
   onFieldChange = (field, value) => {
-    /* eslint-disable no-useless-escape */
-    if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
-      .test(value)
+    if (
+      AddName.test(value) &&
+      NoStartWhiteSpace.test(value)
     ) {
       this.setState({
         isCorrectInput: true,
@@ -60,8 +66,15 @@ class PathDialog extends React.PureComponent {
     }
   };
 
+  resetState = () => {
+    this.setState({
+      name: "",
+      isCorrectInput: false
+    });
+  };
+
   onClose = () => {
-    this.setState({ name: "" });
+    this.resetState();
     this.props.dispatch(pathDialogHide());
   };
 
@@ -71,7 +84,7 @@ class PathDialog extends React.PureComponent {
         Object.assign(this.props.path || {}, this.removeEmpty(this.state))
       )
     );
-    this.setState({ name: "" });
+    this.resetState();
   };
 
   render() {
@@ -117,4 +130,4 @@ class PathDialog extends React.PureComponent {
   }
 }
 
-export default PathDialog;
+export default AddPathDialog;

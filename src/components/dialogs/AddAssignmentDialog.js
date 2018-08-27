@@ -30,6 +30,9 @@ import {
 } from "../../containers/Assignments/actions";
 import { courseInfo, entityInfo } from "../../types/index";
 
+// RegExp rules
+import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
+
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
     uid: PropTypes.any,
@@ -51,9 +54,9 @@ class AddAssignmentDialog extends React.PureComponent {
 
   updateField = field => e => {
     if (field === "name") {
-      /* eslint-disable no-useless-escape */
-      if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
-        .test(e.target.value)
+      if (
+        AddName.test(e.target.value) &&
+        NoStartWhiteSpace.test(e.target.value)
       ) {
         this.setState({
           isCorrectInput_Name: true
@@ -74,6 +77,9 @@ class AddAssignmentDialog extends React.PureComponent {
   onCommit = () => {
     const { course, dispatch, assignment } = this.props;
     dispatch(assignmentAddRequest(course.id, assignment));
+    this.setState({
+      isCorrectInput_Name: false
+    });
   };
 
   componentWillReceiveProps(nextProps){
@@ -226,7 +232,7 @@ class AddAssignmentDialog extends React.PureComponent {
             error={!this.state.isCorrectInput_Name}
             helperText={this.state.isCorrectInput_Name
               ? ""
-              : "Name cannot be empty or have invalid characters"}
+              : "Name cannot be empty or too long or have invalid characters"}
             fullWidth
             label="Name"
             margin="normal"
