@@ -47,7 +47,7 @@ export class HomeV2 extends React.Component {
       .filter(key => key !== "title")
       .map(key => ({ 
         ...recommendations[key],
-        actualProblem: key,
+        actualProblem: ["unSolvedPySkills", "solvedPySkills"].includes(recommendationKey) ? recommendations[key].problem : key,
         subHeading : ["unSolvedPySkills", "solvedPySkills"].includes(recommendationKey) 
         ? `Complete this activity to use the ${recommendations[key].feature} ${recommendations[key].featureType}` 
         : '' })
