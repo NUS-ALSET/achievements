@@ -34,7 +34,7 @@ describe("<AddPathDialog>", () => {
 
     commitButton.simulate("click");
     expect(mockSnapshot.mock.calls[0][0]).toEqual({
-      pathInfo: {isCorrectInput: true},
+      pathInfo: {},
       type: "PATH_CHANGE_REQUEST"
     });
 
@@ -44,7 +44,6 @@ describe("<AddPathDialog>", () => {
     commitButton.simulate("click");
     expect(mockSnapshot.mock.calls[1][0]).toEqual({
       pathInfo: {
-        isCorrectInput: true,
         name: "test"
       },
       type: "PATH_CHANGE_REQUEST"
@@ -67,8 +66,7 @@ describe("<AddPathDialog>", () => {
     expect(mockSnapshot.mock.calls[0][0]).toEqual({
       pathInfo: {
         id: "deadbeef",
-        name: "foobar",
-        isCorrectInput: true
+        name: "foobar"
       },
       type: "PATH_CHANGE_REQUEST"
     });
@@ -81,8 +79,7 @@ describe("<AddPathDialog>", () => {
     expect(mockSnapshot.mock.calls[1][0]).toEqual({
       pathInfo: {
         id: "deadbeef",
-        name: "test",
-        isCorrectInput: true
+        name: "test"
       },
       type: "PATH_CHANGE_REQUEST"
     });
