@@ -2,6 +2,7 @@
  * @file PathDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 01.03.18
+ * @renamed AddPathDialog 28.08.18 (kyy)
  */
 
 import React from "react";
@@ -19,7 +20,15 @@ import {
   pathDialogHide
 } from "../../containers/Paths/actions";
 
-class PathDialog extends React.PureComponent {
+// RegExp rules
+import {
+  AddName,
+  NoStartWhiteSpace
+} from "../regexp-rules/RegExpRules";
+
+
+// this component is when click "Add Path" or "Edit Path"
+class AddPathDialog extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
@@ -27,7 +36,9 @@ class PathDialog extends React.PureComponent {
   };
 
   state = {
-    name: ""
+    name: "",
+    // validate inputs
+    isCorrectInput: false,
   };
 
   removeEmpty = value =>
@@ -37,19 +48,43 @@ class PathDialog extends React.PureComponent {
         .filter(key => value[key])
         .map(key => ({ [key]: value[key] }))
     );
-  catchReturn = event => event.key === "Enter" && this.onCommit();
-  onFieldChange = (field, value) => this.setState({ [field]: value });
+
+  // validate Path name input first
+  onFieldChange = (field, value) => {
+    if (
+      AddName.test(value) &&
+      NoStartWhiteSpace.test(value)
+    ) {
+      this.setState({
+        isCorrectInput: true,
+        [field]: value.trim()
+      });
+    } else {
+      this.setState({
+        isCorrectInput: false
+      });
+    }
+  };
+
+  resetState = () => {
+    this.setState({
+      name: "",
+      isCorrectInput: false
+    });
+  };
+
   onClose = () => {
-    this.setState({ name: "" });
+    this.resetState();
     this.props.dispatch(pathDialogHide());
   };
+
   onCommit = () => {
     this.props.dispatch(
       pathChangeRequest(
         Object.assign(this.props.path || {}, this.removeEmpty(this.state))
       )
     );
-    this.setState({ name: "" });
+    this.resetState();
   };
 
   render() {
@@ -62,12 +97,18 @@ class PathDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
+            error={!this.state.isCorrectInput}
             defaultValue={path && path.name}
+            helperText={this.state.isCorrectInput
+              ? ""
+              : "input should not be empty or have invalid characters"}
             fullWidth
             label="Path name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            onKeyPress={this.catchReturn}
+            style={{
+              width: 320
+            }}
             required
           />
         </DialogContent>
@@ -75,7 +116,12 @@ class PathDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised">
+          <Button
+            disabled={!this.state.isCorrectInput}
+            color="primary"
+            onClick={this.onCommit}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>
@@ -84,4 +130,4 @@ class PathDialog extends React.PureComponent {
   }
 }
 
-export default PathDialog;
+export default AddPathDialog;

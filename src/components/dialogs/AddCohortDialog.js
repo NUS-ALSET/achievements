@@ -17,22 +17,59 @@ import {
   addCohortRequest
 } from "../../containers/Cohorts/actions";
 
+// RegExp rules
+import {
+  AddName,
+  NoStartWhiteSpace
+} from "../regexp-rules/RegExpRules";
+
 class AddCohortDialog extends React.PureComponent {
   static propTypes = {
     cohort: PropTypes.object,
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired
   };
+
   state = {
     cohortName: "",
-    cohortDescription: ""
+    cohortDescription: "",
+    // cohort name cannot be nonsense or empty spaces
+    isCorrectInput: false
   };
 
-  onNameChange = e => this.setState({ cohortName: e.currentTarget.value });
+  onNameChange = e => {
+    if (
+      AddName.test(e.target.value) &&
+      NoStartWhiteSpace.test(e.target.value)
+    ) {
+      this.setState({
+        isCorrectInput: true,
+        cohortName: e.target.value.trim()
+      });
+    } else {
+      this.setState({
+        isCorrectInput: false
+      });
+    }
+  };
+
   onDescriptionChange = e =>
-    this.setState({ cohortDescription: e.currentTarget.value });
-  onClose = () => this.props.dispatch(addCohortDialogHide());
-  onCommit = () =>
+    this.setState({ cohortDescription: e.target.value });
+
+  resetState = () => {
+    this.setState({
+      cohortName: "",
+      cohortDescription: "",
+      isCorrectInput: false
+    });
+  };
+
+  onClose = () => {
+    this.resetState();
+    this.props.dispatch(addCohortDialogHide());
+  }
+
+  onCommit = () => {
     this.props.dispatch(
       addCohortRequest({
         ...this.props.cohort,
@@ -40,7 +77,9 @@ class AddCohortDialog extends React.PureComponent {
         description: this.state.cohortDescription
       })
     );
-  catchReturn = event => event.key === "Enter" && this.onCommit();
+    // reset the disable of commit button
+    this.resetState();
+  };
 
   render() {
     const { open, cohort } = this.props;
@@ -53,28 +92,37 @@ class AddCohortDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
-            defaultValue={cohort && cohort.name}
             fullWidth
+            error={!this.state.isCorrectInput}
+            helperText={this.state.isCorrectInput
+              ? ""
+              : "Name should not be empty or too long or have invalid characters"}
+            defaultValue={cohort && cohort.name}
             label="Name"
             margin="dense"
             onChange={this.onNameChange}
-            onKeyPress={this.catchReturn}
             required
           />
           <TextField
-            defaultValue={cohort && cohort.description}
             fullWidth
+            defaultValue={cohort && cohort.description}
             label="Description"
             margin="dense"
             onChange={this.onDescriptionChange}
-            onKeyPress={this.catchReturn}
           />
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised">
+          <Button
+            disabled={
+              !this.state.isCorrectInput
+            }
+            color="primary"
+            onClick={this.onCommit}
+            variant="raised"
+          >
             Commit
           </Button>
         </DialogActions>

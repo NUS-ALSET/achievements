@@ -14,6 +14,12 @@ import PropTypes from "prop-types";
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 
+// RegExp rules
+import {
+  NoStartWhiteSpace,
+  KeyboardInputs
+} from "../regexp-rules/RegExpRules";
+
 /* AddTextSolutionDialog is currently used for:
  * ASSIGNMENTS_TYPES.TeamFormation.id,
  * ASSIGNMENTS_TYPES.TeamText.id,
@@ -27,30 +33,24 @@ class AddTextSolutionDialog extends React.PureComponent {
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     solution: PropTypes.any,
-
     taskId: PropTypes.string
   };
 
   state = {
     solution: "",
-    // detect if text input is only printable characters,
-    // if so CorrentInput
-    isCorrectInput: true,
+    // validate inputs
+    isCorrectInput: false,
   };
 
   onChangeSolution = event => {
-    // if text input has non-keyboard characters,
-    // or start with empty space,
-    // or has only empty spaces =>
-    // disable the commit button
-    // Regex from Olafs Vandans
-    /* eslint-disable no-useless-escape */
-    if (/^[^\s][a-zA-Z0-9\t\n ./<>?;:"'`!@#$%^&*()\[\]{}_+=|\\-]*$/
-      .test(event.target.value)
+    // validate inputs
+    if (
+      KeyboardInputs.test(event.target.value) &&
+      NoStartWhiteSpace.test(event.target.value)
     ) {
       this.setState({
         isCorrectInput: true,
-        solution: event.target.value,
+        solution: event.target.value.trim(),
       });
     } else {
       this.setState({
@@ -58,10 +58,6 @@ class AddTextSolutionDialog extends React.PureComponent {
       });
     }
   };
-
-  catchReturn = event =>
-    event.key === "Enter" &&
-    this.props.onCommit(this.state.solution, this.props.taskId);
 
   render() {
     const { onClose, onCommit, open, solution, taskId } = this.props;
@@ -80,7 +76,6 @@ class AddTextSolutionDialog extends React.PureComponent {
             fullWidth
             label="Solution"
             onChange={this.onChangeSolution}
-            onKeyPress={this.catchReturn}
             style={{
               width: 320
             }}
@@ -93,7 +88,12 @@ class AddTextSolutionDialog extends React.PureComponent {
           <Button
             color="primary"
             disabled={!this.state.isCorrectInput}
-            onClick={() => onCommit((this.state.solution || "").trim(), taskId)}
+            onClick={() => {
+              onCommit((this.state.solution || "").trim(), taskId);
+              this.setState({
+                isCorrectInput: false
+              });
+            }}
             variant="raised"
           >
             Commit

@@ -75,11 +75,14 @@ exports.handler = userKey =>
         }
       }
 
-      return admin
-        .database()
-        .ref(`/userRecommendations/${userKey}`)
-        .update(result)
-        .then(() => result);
+      return Promise.all(
+        Object.keys(result).map(key =>
+          admin
+            .database()
+            .ref(`/userRecommendations/${userKey}/${key}`)
+            .set(result[key])
+        )
+      ).then(() => result);
     })
     .catch(err => {
       console.error(err.message, err.stack);

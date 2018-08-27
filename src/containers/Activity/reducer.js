@@ -14,8 +14,8 @@ export const problem = (
   state = {
     problemJSON: false,
     solution: null,
-    unsolvedPublicActivities : [],
-    publicActivitiesFetched : false
+    unsolvedPublicActivities: [],
+    publicActivitiesFetched: false
   },
   action
 ) => {
@@ -24,7 +24,7 @@ export const problem = (
       return {
         ...state,
         pathProblem: action.payload,
-        readOnly : action.readOnly
+        readOnly: action.readOnly
       };
     case PROBLEM_FINALIZE:
       return {
@@ -60,14 +60,14 @@ export const problem = (
           loading: false
         }
       };
-    case PROBLEM_SOLUTION_EXECUTION_STATUS : {
+    case PROBLEM_SOLUTION_EXECUTION_STATUS: {
       return {
         ...state,
         solution: {
           ...(state.solution || {}),
-          ...action.payload,
+          ...action.payload
         }
-      }
+      };
     }
     case PROBLEM_SOLUTION_CALCULATED_WRONG:
     case PROBLEM_SOLUTION_REFRESH_FAIL:
@@ -83,9 +83,9 @@ export const problem = (
     case FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS:
       return {
         ...state,
-        unsolvedPublicActivities : action.payload.unsolvedPublicActivities || [],
-        publicActivitiesFetched : true
-      }
+        unsolvedPublicActivities: action.payload.unsolvedPublicActivities || [],
+        publicActivitiesFetched: true
+      };
     default:
       return state;
   }
