@@ -59,12 +59,13 @@ class ActivitiesTable extends React.PureComponent {
     activity: null,
     analysisDialog: {
       open: false,
+      name : '',
       data: {}
     }
   };
 
-  openAnalysisDialog = defaultSolutionSkills =>
-    this.setState({ analysisDialog: { open: true, data: { defaultSolutionSkills } } });
+  openAnalysisDialog = (defaultSolutionSkills, name) =>
+    this.setState({ analysisDialog: { open: true, name, data: { defaultSolutionSkills } } });
 
   handleCloseAnalysisDialog = () =>
     this.setState({ analysisDialog: { open: false, data: {} } });
@@ -145,7 +146,7 @@ class ActivitiesTable extends React.PureComponent {
                   {activity.defaultSolutionSkills && (
                     <Button
                       onClick={() =>
-                        this.openAnalysisDialog(activity.defaultSolutionSkills)
+                        this.openAnalysisDialog(activity.defaultSolutionSkills,activity.name)
                       }
                       variant="raised"
                     >
@@ -215,6 +216,7 @@ class ActivitiesTable extends React.PureComponent {
         <AnalysisDialog
           handleClose={this.handleCloseAnalysisDialog}
           open={this.state.analysisDialog.open}
+          name={this.state.analysisDialog.name}
           skills={this.state.analysisDialog.data}
         />
       </Fragment>
