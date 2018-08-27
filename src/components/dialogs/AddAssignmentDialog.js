@@ -25,7 +25,6 @@ import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import {
   assignmentAddRequest,
   assignmentCloseDialog,
-  assignmentManualUpdateField,
   updateNewAssignmentField
 } from "../../containers/Assignments/actions";
 import { courseInfo, entityInfo } from "../../types/index";
@@ -48,9 +47,6 @@ class AddAssignmentDialog extends React.PureComponent {
     // Name of Assignment cannot be nonsense or empty spaces
     isCorrectInput_Name: false,
   };
-
-  manualChangeField = field => e =>
-    this.props.dispatch(assignmentManualUpdateField(field, e.target.value));
 
   updateField = field => e => {
     if (field === "name") {
@@ -237,7 +233,6 @@ class AddAssignmentDialog extends React.PureComponent {
             label="Name"
             margin="normal"
             onChange={this.updateField("name")}
-            onKeyPress={this.manualChangeField("name")}
             value={assignment.name || ""}
           />
           <TextField
@@ -245,7 +240,6 @@ class AddAssignmentDialog extends React.PureComponent {
             label="Details/Links"
             margin="normal"
             onChange={this.updateField("details")}
-            onKeyPress={this.manualChangeField("details")}
             value={assignment.details || ""}
           />
           <FormControlLabel
