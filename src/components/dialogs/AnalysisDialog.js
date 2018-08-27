@@ -1,5 +1,3 @@
-
-
 import React, { Fragment } from "react";
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
@@ -45,7 +43,6 @@ const styles = theme => ({
     marginLeft : '10px'
   }
 });
-
 
 
 function InteractiveList(props) {
@@ -122,7 +119,6 @@ const AnalysisDialog = (props) => {
 }
 
 
-
 AnalysisDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
@@ -132,5 +128,3 @@ AnalysisDialog.propTypes = {
 };
 
 export default withStyles(styles)(AnalysisDialog);
-
-
