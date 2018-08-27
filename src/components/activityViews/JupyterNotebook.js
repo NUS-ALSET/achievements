@@ -148,13 +148,14 @@ class JupyterNotebook extends React.PureComponent {
               mode="python"
               onChange={this.onChange}
               onLoad={editor => editor.focus()}
+              readOnly={readOnly}
               theme="github"
               value={this.state.solution || defaultValue || ""}
-              readOnly={readOnly}
             />
           ) : (
             <TextField
               defaultValue={this.state.solution || defaultValue || ""}
+              disabled={readOnly}
               fullWidth
               InputLabelProps={{
                 style: {
@@ -186,7 +187,6 @@ class JupyterNotebook extends React.PureComponent {
               label="Enter the url to your public solution on Colab"
               onChange={this.onChange}
               style={{ padding: 24, position: "relative" }}
-              disabled={readOnly}
             />
           ))}
         {solution &&

@@ -2,18 +2,14 @@ import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
 import { firebaseService } from "./firebaseService";
-import { 
+import {
   SOLUTION_PRIVATE_LINK,
   SOLUTION_MODIFIED_TESTS,
   notificationShow
-} from "../containers//Root/actions";
+} from "../containers/Root/actions";
 
-import { 
-  fetchPublicPathActiviesSuccess
-} from '../containers/Activity/actions';
-import {
-  fetchGithubFilesSuccess
-} from "../containers/Path/actions"
+import { fetchPublicPathActiviesSuccess } from "../containers/Activity/actions";
+import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -65,9 +61,6 @@ export const ACTIVITY_TYPES = {
     caption: "Jest"
   }
 };
-
-
-
 
 export class PathsService {
   auth() {
@@ -368,9 +361,9 @@ export class PathsService {
     const ref = firebase.database().ref(`/activities/${key}`);
     if (problemInfo.id) {
       delete problemInfo.id;
-      next = ref.update( problemInfo );
+      next = ref.update(problemInfo);
     } else {
-      next = ref.set( problemInfo );
+      next = ref.set(problemInfo);
     }
     return next
       .then(
@@ -437,9 +430,7 @@ export class PathsService {
                 !solution ||
                 cell.source.join("").trim() !== solution.source.join("").trim()
               ) {
-                throw new Error(
-                  SOLUTION_MODIFIED_TESTS
-                );
+                throw new Error(SOLUTION_MODIFIED_TESTS);
               }
               return true;
             });
@@ -530,11 +521,15 @@ export class PathsService {
               .set(solution);
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
-              .then(json =>{
-                this.saveGivenSkillInProblem(json ,pathProblem.problemId,uid,pathProblem.frozen);
+              .then(json => {
+                this.saveGivenSkillInProblem(
+                  json,
+                  pathProblem.problemId,
+                  uid,
+                  pathProblem.frozen
+                );
                 return this.validateSolution(uid, pathProblem, solution, json);
-              }
-              )
+              })
               .then(() =>
                 firebase
                   .database()
@@ -542,11 +537,16 @@ export class PathsService {
                   .set(solution)
               );
           case ACTIVITY_TYPES.jupyterInline.id: {
-            this.saveGivenSkillInProblem(solution,pathProblem.problemId,uid,pathProblem.frozen);
+            this.saveGivenSkillInProblem(
+              solution,
+              pathProblem.problemId,
+              uid,
+              pathProblem.frozen
+            );
             return firebase
-                  .database()
-                  .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-                  .set(solution)
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution);
           }
           default:
             break;
@@ -564,27 +564,26 @@ export class PathsService {
       );
   }
 
-
   saveGivenSkillInProblem(solution, problemId, uid, frozenBlocks) {
-    const editableBlockCode =
-      solution.cells
-        .slice(0, solution.cells.length - frozenBlocks)
-        .map(c => c.cell_type === 'code' ? c.source.join("") : "")
-        .join("");
+    const editableBlockCode = solution.cells
+      .slice(0, solution.cells.length - frozenBlocks)
+      .map(c => (c.cell_type === "code" ? c.source.join("") : ""))
+      .join("");
     const data = {
       owner: uid,
-      solution: editableBlockCode || "",
-    }
-    console.log(data);
-    firebaseService.startProcess(
-      data,
-      "jupyterSolutionAnalysisQueue",
-      "Code Analysis"
-    ).then((res) => {
-      firebase.database().ref(`/activities/${problemId}`).update({
-        givenSkills: res.userSkills || {}
-      })
-    })
+      solution: editableBlockCode || ""
+    };
+
+    firebaseService
+      .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
+      .then(res => {
+        firebase
+          .database()
+          .ref(`/activities/${problemId}`)
+          .update({
+            givenSkills: res.userSkills || {}
+          });
+      });
   }
 
   /**
@@ -889,56 +888,67 @@ export class PathsService {
     return Promise.all(actions);
   }
 
-  fetchPublicPathActivies(uid, publicPaths, completedActivities){
-    return new Promise((resolve,reject)=>{
+  fetchPublicPathActivies(uid, publicPaths, completedActivities) {
+    return new Promise(resolve => {
       const completedActivitiesIds = [];
-      (completedActivities[uid] || []).forEach(path=>{
-        Object.keys(path.value).forEach(key=>{
+      (completedActivities[uid] || []).forEach(path => {
+        Object.keys(path.value).forEach(key => {
           completedActivitiesIds.push(key);
-        })
-      })
-      const publicPathActivities=[];
-      const promises = publicPaths.filter(path=>path.value.owner!==uid).map(path=>(
-        firebase.database().ref("activities").orderByChild("path").equalTo(path.key).once("value")
-      ))
-      Promise.all(promises)
-      .then(data=>{
-        data.forEach(snapshots=>{
-          snapshots.forEach(snap=>{
+        });
+      });
+      const publicPathActivities = [];
+      const promises = publicPaths
+        .filter(path => path.value.owner !== uid)
+        .map(path =>
+          firebase
+            .database()
+            .ref("activities")
+            .orderByChild("path")
+            .equalTo(path.key)
+            .once("value")
+        );
+      Promise.all(promises).then(data => {
+        data.forEach(snapshots => {
+          snapshots.forEach(snap => {
             publicPathActivities.push({
-              key : snap.key,
-              value : snap.val()
-            })
-          })
-        })
-      const unsolvedPublicActivities=publicPathActivities.filter(activity=>!completedActivitiesIds.includes(activity.key));
-      this.dispatch(fetchPublicPathActiviesSuccess({ unsolvedPublicActivities }))
-      resolve();
-      })
-    })
+              key: snap.key,
+              value: snap.val()
+            });
+          });
+        });
+        const unsolvedPublicActivities = publicPathActivities.filter(
+          activity => !completedActivitiesIds.includes(activity.key)
+        );
+        this.dispatch(
+          fetchPublicPathActiviesSuccess({ unsolvedPublicActivities })
+        );
+        resolve();
+      });
+    });
   }
 
-  fetchGithubFiles(uid,githubURL){
-    return new Promise((resolve,reject)=>{
-      const githubBaseURL = 'https://github.com/';
+  fetchGithubFiles(uid, githubURL) {
+    return new Promise((resolve, reject) => {
+      const githubBaseURL = "https://github.com/";
       if (githubURL.includes(githubBaseURL)) {
-        const promise=firebaseService.startProcess(
-          {
-            owner : uid,
-            githubURL
-          },
-          'fetchGithubFilesQueue',
-          'Fetch files from github'
-        )
-        .then(data=>{
-          this.dispatch(fetchGithubFilesSuccess(data.githubData));
-        })
+        const promise = firebaseService
+          .startProcess(
+            {
+              owner: uid,
+              githubURL
+            },
+            "fetchGithubFilesQueue",
+            "Fetch files from github"
+          )
+          .then(data => {
+            this.dispatch(fetchGithubFilesSuccess(data.githubData));
+          });
         resolve(promise);
-      }else{
+      } else {
         this.dispatch(notificationShow("Not a Valid Github URL"));
         reject();
       }
-    })
+    });
   }
 }
 

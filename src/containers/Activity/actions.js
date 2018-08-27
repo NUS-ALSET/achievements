@@ -1,5 +1,10 @@
 export const PROBLEM_INIT_REQUEST = "PROBLEM_INIT_REQUEST";
-export const problemInitRequest = (pathId, problemId, solution,readOnly=false) => ({
+export const problemInitRequest = (
+  pathId,
+  problemId,
+  solution,
+  readOnly = false
+) => ({
   type: PROBLEM_INIT_REQUEST,
   problemId,
   pathId,
@@ -8,7 +13,12 @@ export const problemInitRequest = (pathId, problemId, solution,readOnly=false) =
 });
 
 export const PROBLEM_INIT_SUCCESS = "PROBLEM_INIT_SUCCESS";
-export const problemInitSuccess = (pathId, problemId, payload, readOnly=false) => ({
+export const problemInitSuccess = (
+  pathId,
+  problemId,
+  payload,
+  readOnly = false
+) => ({
   type: PROBLEM_INIT_SUCCESS,
   problemId,
   pathId,
@@ -60,12 +70,12 @@ export const problemSolutionRefreshSuccess = (problemId, payload) => ({
   payload
 });
 
-export const PROBLEM_SOLUTION_EXECUTION_STATUS = 
+export const PROBLEM_SOLUTION_EXECUTION_STATUS =
   "PROBLEM_SOLUTION_EXECUTION_STATUS";
-export const problemSolutionExecutionStatus = (payload) => ({
-  type :PROBLEM_SOLUTION_EXECUTION_STATUS,
+export const problemSolutionExecutionStatus = payload => ({
+  type: PROBLEM_SOLUTION_EXECUTION_STATUS,
   payload
-})
+});
 
 export const PROBLEM_SOLUTION_CALCULATED_WRONG =
   "PROBLEM_SOLUTION_CALCULATED_WRONG";
@@ -150,16 +160,16 @@ export const problemSolutionSubmitFail = (
   reason
 });
 
-
 // actions for homeV3 page
 
 export const FETCH_PUBLIC_PATH_ACTIVITIES = "FETCH_PUBLIC_PATH_ACTIVITIES";
 export const fetchPublicPathActivies = () => ({
-  type: FETCH_PUBLIC_PATH_ACTIVITIES,
+  type: FETCH_PUBLIC_PATH_ACTIVITIES
 });
 
-export const FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS = "FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS";
-export const fetchPublicPathActiviesSuccess = (payload) =>({
-  type : FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS,
+export const FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS =
+  "FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS";
+export const fetchPublicPathActiviesSuccess = payload => ({
+  type: FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS,
   payload
-})
+});

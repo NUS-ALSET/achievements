@@ -178,7 +178,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       solution.cells.slice(-data.pathProblem.frozen).forEach(cell => {
         solutionFailed =
-          solutionFailed || (!!cell.outputs && cell.outputs.join().trim());
+          solutionFailed || (!!cell.outputs && cell.outputs.join("").trim());
         return true;
       });
 
@@ -195,9 +195,11 @@ export function* problemSolutionRefreshRequestHandler(action) {
         yield put(problemSolutionExecutionStatus({ status: "COMPLETE" }));
       }
     }
+
+    // Removed `id` field from payload. It looks like we never use
+    // `solution.id` anywhere. So, it just clogs `logged_events` firebase node
     yield put(
-      problemSolutionRefreshSuccess({
-        id: pathSolution.id,
+      problemSolutionRefreshSuccess(action.problemId, {
         json: solution
       })
     );
@@ -206,6 +208,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
     let errMsg = "";
     switch (err.message) {
       case SOLUTION_PRIVATE_LINK: {
+        // Is if ok that status non-matching with contstants?
         status = "PRIVATE LINK";
         errMsg = "Failing - Your solution is not public.";
         break;
@@ -215,10 +218,13 @@ export function* problemSolutionRefreshRequestHandler(action) {
         errMsg = "Failing - You have changed the last code block.";
         break;
       }
-      default: {
+      default:
+        // I commented that cause it leads to snatching unexpected errors.
+        status = "UNEXPECTED ERROR";
+      /*
         status = null;
         errMsg = err.message;
-      }
+        */
     }
     yield put(problemSolutionExecutionStatus({ status }));
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
