@@ -36,6 +36,13 @@ import Typography from "@material-ui/core/Typography";
 import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
+// RegExp rules
+import {
+  AddName,
+  NoStartWhiteSpace
+} from "../regexp-rules/RegExpRules";
+
+
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
@@ -51,7 +58,8 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   state = {
-    type: "text"
+    type: "text",
+    isCorrectInput: false
   };
 
   fetchedGithubURL = "";
@@ -101,7 +109,7 @@ class AddActivityDialog extends React.PureComponent {
     }
   }
 
-  getTypeSpecificElements() {
+  getTypeSpecificElements = () => {
     let { activity } = this.props;
 
     activity = Object.assign(activity || {}, this.state);
@@ -112,7 +120,11 @@ class AddActivityDialog extends React.PureComponent {
             fullWidth
             label="Question"
             margin="normal"
-            onChange={e => this.onFieldChange("question", e.target.value)}
+            onChange={e => {
+              this.onFieldChange(
+                "question", e.target.value
+              )
+            }}
             value={activity.question || ""}
           />
         );
@@ -235,12 +247,12 @@ class AddActivityDialog extends React.PureComponent {
               style={{
                 marginTop: 24
               }}
+              required
             >
               <FormLabel component="legend">Follow Up Questions</FormLabel>
               <FormHelperText>
                 Select one or more of the questions below
               </FormHelperText>
-
               <FormGroup>
                 {Object.keys(YOUTUBE_QUESTIONS).map(questionType => (
                   <FormControlLabel
@@ -354,12 +366,12 @@ class AddActivityDialog extends React.PureComponent {
                     </ListItem>
                 ))}
               </Fragment>
-              )}
+            )}
           </Fragment>
         );
       default:
     }
-  }
+  };
 
   showLoading = () => {
     this.setState(() => ({ loading: true }));
@@ -398,8 +410,26 @@ class AddActivityDialog extends React.PureComponent {
         name : APP_SETTING.levels[value].name
       }
     }
+    // validate name input
+    if (field === "name") {
+      if (
+        AddName.test(value) &&
+        NoStartWhiteSpace.test(value)
+      ) {
+        this.setState({
+          isCorrectInput: true
+        });
+      } else {
+        this.setState({
+          isCorrectInput: false,
+        });
+      }
+    }
     this.setState({ [field]: value, ...state });
   };
+
+  // TODO: validate required inputs at client-side for
+  // other types of activities
 
   onCommit = () => {
     const activity = { ...this.props.activity };
@@ -433,7 +463,10 @@ class AddActivityDialog extends React.PureComponent {
     Object.keys(this.state).forEach(
       key => this.setState({ [key]: undefined }) || true
     );
-    this.setState({ type: "text" });
+    this.setState({
+      type: "text",
+      isCorrectInput: false
+    });
   };
 
   render() {
@@ -451,6 +484,10 @@ class AddActivityDialog extends React.PureComponent {
           <TextField
             autoFocus
             fullWidth
+            error={!this.state.isCorrectInput}
+            helperText={this.state.isCorrectInput
+              ? ""
+              : "Name should not be empty or too long or have invalid characters"}
             label="Name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
@@ -481,7 +518,7 @@ class AddActivityDialog extends React.PureComponent {
             color="primary"
             disabled={
               this.state.loading ||
-              !this.state.name ||
+              !this.state.isCorrectInput ||
               !this.state.type ||
               (this.state.type === ACTIVITY_TYPES.jest.id &&
                 !(this.state.files && this.state.files.length > 0))
