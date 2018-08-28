@@ -1,6 +1,11 @@
 
 
 import React, { Fragment } from "react";
+
+import { firebaseConnect,isLoaded } from "react-redux-firebase";
+import { compose } from "redux";
+import { connect } from "react-redux";
+
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
@@ -28,7 +33,6 @@ const skillsLabels = {
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    maxWidth: 752,
   },
   demo: {
     backgroundColor: theme.palette.background.paper,
@@ -41,8 +45,9 @@ const styles = theme => ({
     margin: `${theme.spacing.unit}px 0 ${theme.spacing.unit}px`, 
     fontSize : '17px'
   },
-  skills : {
-    marginLeft : '10px'
+  message : {
+    margin : '10px auto',
+    width : '100%'
   }
 });
 
@@ -53,7 +58,7 @@ function InteractiveList(props) {
   const dense = true;
   const secondary = false;
   return (
-    <Grid item xs={8} md={4} className={classes.skills}>
+    <Grid>
       <Typography variant="title" className={classes.heading}>
         {name}
       </Typography>
@@ -76,7 +81,8 @@ function InteractiveList(props) {
 
 
 const AnalysisDialog = (props) => {
-  const { classes, skills, open, handleClose, name } = props;
+  const { classes, skills, open, handleClose, name, activityId, loadedSkills, solutionURL } = props;
+  const finalSkills = (activityId ? {defaultSolutionSkills : loadedSkills} : skills) || {};
   const title = "Jupter Problem Analysis "  + (name ? `for ${name}` : '');
   return (
     <Dialog
@@ -89,9 +95,23 @@ const AnalysisDialog = (props) => {
       <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <Divider />
       <DialogContent>
+        {
+          activityId 
+          && isLoaded(loadedSkills) 
+          && Object.keys(loadedSkills).length===0 
+          && <Typography variant="subheading" className={classes.message}>
+              Not Analysied yet!
+            </Typography>
+        }
+        {
+          solutionURL
+          && <Typography variant="subheading" >
+              Solution URL : <a href={solutionURL} target="__blank">{ solutionURL }</a>
+            </Typography>
+        }
         <div className={classes.root}>
-          {Object.keys(skills).map(key =>{
-            if(Object.keys(skills[key]).length===0){
+          {Object.keys(finalSkills).map(key =>{
+            if(Object.keys(finalSkills[key]).length===0){
               return ''
             }
             return (
@@ -99,10 +119,10 @@ const AnalysisDialog = (props) => {
               <Typography variant="title" className={classes.title}>
                 {skillsLabels[key] || key}
               </Typography>
-              <Grid container spacing={16}>
+              <Grid container spacing={8}  justify="space-between">
                 {
-                  Object.keys(skills[key]).map(subKey =>
-                    <InteractiveList key={`${key}_${subKey}`} name={subKey} data={skills[key][subKey]} classes={classes} />
+                  Object.keys(finalSkills[key]).map(subKey =>
+                    <InteractiveList key={`${key}_${subKey}`} name={subKey} data={finalSkills[key][subKey]} classes={classes} />
                   )
                 }
               </Grid>
@@ -127,10 +147,30 @@ AnalysisDialog.propTypes = {
   classes: PropTypes.object.isRequired,
   handleClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  skills: PropTypes.object.isRequired,
-  name: PropTypes.string
+  skills: PropTypes.object,
+  name: PropTypes.string,
+  solutionURL : PropTypes.string
 };
 
-export default withStyles(styles)(AnalysisDialog);
+const mapStateToProps = (state, ownProps) => {
+  const activityExampleSolutions = (state.firebase.data.activityExampleSolutions || {})[ownProps.activityId] || {};
+  return {
+    loadedSkills : activityExampleSolutions.skills || {},
+    solutionURL :  activityExampleSolutions.solutionURL || null
+  }
+};
 
-
+export default compose(
+  withStyles(styles),
+  firebaseConnect((ownProps, store) => {
+    if(!ownProps.activityId){
+      return false; 
+    }
+    return [
+      `/activityExampleSolutions/${ownProps.activityId}`,
+    ];
+  }),
+  connect(
+    mapStateToProps,
+  )
+)(AnalysisDialog);

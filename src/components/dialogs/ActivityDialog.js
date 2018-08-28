@@ -59,7 +59,9 @@ class ActivityDialog extends React.PureComponent {
       this.handelfetchGithubFilesStatus(nextProps.fetchGithubFilesStatus,nextProps.activity);
       return;
     }
-    this.resetState();
+    if((this.props || {}).open !== nextProps.open){
+      this.resetState();
+    }
     if (nextProps.activity) {
       let state = {};
       if (nextProps.activity.type === ACTIVITY_TYPES.jupyterInline.id) {
@@ -425,7 +427,6 @@ class ActivityDialog extends React.PureComponent {
         })
       );
     }
-    this.onClose();
   };
 
   onClose = () => {

@@ -11,6 +11,7 @@ import {
 import { notificationHide, notificationShow } from "../containers/Root/actions";
 // import { solutionsService } from "./solutions";
 import { firebaseService } from "./firebaseService";
+import { pathsService } from "./paths";
 
 import each from "lodash/each";
 import cloneDeep from "lodash/cloneDeep";
@@ -384,40 +385,39 @@ export class CoursesService {
           });
       })
       .then((res) => {
-        if (((assignment || {}).problemJSON || {}).type === 'jupyterInline') {
-            const editableBlockCode = 
-              value.cells
-                .map(c => c.cell_type === 'code' ? c.source.join("") : "")
-                .join("");
-            const data={
-              owner: userId,
-              solution: editableBlockCode || "",
-            }
-            firebaseService.startProcess(
-              data,
-              "jupyterSolutionAnalysisQueue",
-              "Code Analysis"
-            )
-            .then(res => {
-              const response=res.skills || {};
-              const defaultSolutionSkills = assignment.problemJSON.defaultSolutionSkills;
-              let skillsDifference=cloneDeep(response);
-              if(defaultSolutionSkills){
-                Object.keys(defaultSolutionSkills).forEach(key=>{
-                  Object.keys(defaultSolutionSkills[key]).forEach(subKey=>{
-                    delete (skillsDifference[key] || {})[subKey];
-                    if(Object.keys(skillsDifference[key] || {}).length===0){
-                      delete skillsDifference[key];
-                    }
-                  })
+        if (['jupyterInline', 'jupyter'].includes(((assignment || {}).problemJSON || {}).type)) {
+          new Promise((resolve, reject) => {
+            if (assignment.problemJSON.type === 'jupyterInline') {
+              resolve(value)
+            } else {
+              pathsService.fetchFile(pathsService.getFileId(value))
+                .then(json => {
+                  resolve(json);
                 })
+            }
+          })
+            .then(jsonValue => {
+              const editableBlockCode =
+                jsonValue.cells
+                  .map(c => c.cell_type === 'code' ? c.source.map(line => line[0] === '!' ? `#${line}` : line).join("") : "")
+                  .join("");
+              const data = {
+                owner: userId,
+                solution: editableBlockCode || "",
               }
-              firebase
-                .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
-                .update({
-                  userSkills : response,
-                  skillsDifference
-                });
+              firebaseService.startProcess(
+                data,
+                "jupyterSolutionAnalysisQueue",
+                "Code Analysis"
+              )
+                .then(res => {
+                  const response = res.skills || {};
+                  firebase
+                    .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
+                    .update({
+                      userSkills: response,
+                    });
+                })
             })
         }
         if (userId && assignment.path && assignment.problem) {
