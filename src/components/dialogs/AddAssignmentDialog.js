@@ -49,6 +49,12 @@ class AddAssignmentDialog extends React.PureComponent {
   };
 
   updateField = field => e => {
+    // when update assignment
+    if (this.props.assignment.id) {
+      this.setState({
+        isCorrectInput_Name: true
+      });
+    }
     if (field === "name") {
       if (
         AddName.test(e.target.value) &&
@@ -234,6 +240,7 @@ class AddAssignmentDialog extends React.PureComponent {
             margin="normal"
             onChange={this.updateField("name")}
             value={assignment.name || ""}
+            required
           />
           <TextField
             fullWidth
