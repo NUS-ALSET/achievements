@@ -109,7 +109,7 @@ class AddActivityDialog extends React.PureComponent {
     }
   }
 
-  getTypeSpecificElements = () => {
+  getTypeSpecificElements() {
     let { activity } = this.props;
 
     activity = Object.assign(activity || {}, this.state);
@@ -370,8 +370,9 @@ class AddActivityDialog extends React.PureComponent {
           </Fragment>
         );
       default:
+        return;
     }
-  };
+  }
 
   showLoading = () => {
     this.setState(() => ({ loading: true }));

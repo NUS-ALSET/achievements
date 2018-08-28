@@ -53,8 +53,15 @@ class AddCohortDialog extends React.PureComponent {
     }
   };
 
-  onDescriptionChange = e =>
+  onDescriptionChange = e => {
+    const { cohort } = this.props;
+    if (cohort && cohort.id) {
+      this.setState({
+        isCorrectInput: true
+      });
+    }
     this.setState({ cohortDescription: e.target.value });
+  };
 
   resetState = () => {
     this.setState({

@@ -101,7 +101,7 @@ class AddPathDialog extends React.PureComponent {
             defaultValue={path && path.name}
             helperText={this.state.isCorrectInput
               ? ""
-              : "input should not be empty or have invalid characters"}
+              : "input should not be empty, too long or have invalid characters"}
             fullWidth
             label="Path name"
             margin="dense"

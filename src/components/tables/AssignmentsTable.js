@@ -471,7 +471,7 @@ class AssignmentsTable extends React.PureComponent {
                     direction={sortState.direction}
                     onClick={() => this.onSortClick("progress")}
                   >
-                    Progress
+                    Progress (last submitted time)
                   </TableSortLabel>
                 </TableCell>
               )}
@@ -596,13 +596,13 @@ class AssignmentsTable extends React.PureComponent {
                     <TableCell className={classes.nowrap}>
                       {`${studentInfo.progress.totalSolutions} / ${
                         course.totalAssignments
-                      } ${
+                      } (${
                         studentInfo.progress.lastSolutionTime
                           ? new Date(
                               studentInfo.progress.lastSolutionTime
                             ).toLocaleTimeString()
                           : ""
-                      }`}
+                      })`}
                     </TableCell>
                   )}
                 </TableRow>
