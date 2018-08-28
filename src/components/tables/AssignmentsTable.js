@@ -447,7 +447,7 @@ class AssignmentsTable extends React.PureComponent {
                         rel="noopener noreferrer"
                         target="_blank"
                       >
-                        details
+                        link
                       </a>
                     )}
                     {(assignment.details ? " " : "") + assignment.progress ||
@@ -471,7 +471,8 @@ class AssignmentsTable extends React.PureComponent {
                     direction={sortState.direction}
                     onClick={() => this.onSortClick("progress")}
                   >
-                    Progress (last submitted time)
+                    Progress <br />
+                    (last submitted time)
                   </TableSortLabel>
                 </TableCell>
               )}
@@ -598,10 +599,23 @@ class AssignmentsTable extends React.PureComponent {
                         course.totalAssignments
                       } (${
                         studentInfo.progress.lastSolutionTime
-                          ? new Date(
+                          ? (
+                            new Date(
                               studentInfo.progress.lastSolutionTime
-                            ).toLocaleTimeString()
-                          : ""
+                            ).toLocaleString(
+                              'en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true,
+                                timeZone: 'Asia/Singapore'
+                              }
+                            )
+                          )
+                          : "no submissions yet"
                       })`}
                     </TableCell>
                   )}
