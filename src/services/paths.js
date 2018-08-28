@@ -12,7 +12,7 @@ import { fetchPublicPathActiviesSuccess } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 const NOT_FOUND_ERROR = 404;
-const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com/drive/";
+const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
 export const YOUTUBE_QUESTIONS = {
   topics:
     "What topics were covered in this video? Put each topic on a new line",

@@ -152,9 +152,6 @@ describe("Paths service tests", () => {
           problemURL:
             "https://drive.google.com/file/d/" +
             "1kW5Zfe79S8mowBZOa2rDAxRxOsDP2wjF/view",
-          solutionURL:
-            "https://drive.google.com/file/d/" +
-            "1xVSKXrVqY2lgNkCfSA7KPWU9B9vaj0_i/view",
           type: "jupyter"
         })
     });
@@ -179,16 +176,6 @@ describe("Paths service tests", () => {
           problemURL:
             "https://drive.google.com/file/d/" +
             "1kW5Zfe79S8mowBZOa2rDAxRxOsDP2wjF/view",
-          solutionFileId: "1xVSKXrVqY2lgNkCfSA7KPWU9B9vaj0_i",
-          solutionColabURL:
-            "https://colab.research.google.com/" +
-            "notebook#fileId=1xVSKXrVqY2lgNkCfSA7KPWU9B9vaj0_i",
-          solutionJSON: {
-            foo: "bar"
-          },
-          solutionURL:
-            "https://drive.google.com/file/d/" +
-            "1xVSKXrVqY2lgNkCfSA7KPWU9B9vaj0_i/view",
           type: "jupyter"
         })
       );
