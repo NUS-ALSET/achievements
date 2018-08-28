@@ -14,7 +14,6 @@ import { firebaseService } from "./firebaseService";
 import { pathsService } from "./paths";
 
 import each from "lodash/each";
-import cloneDeep from "lodash/cloneDeep";
 import firebase from "firebase";
 
 const ERROR_TIMEOUT = 6000;
