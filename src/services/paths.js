@@ -1,15 +1,15 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase";
 import { coursesService } from "./courses";
-import { codeAnalysisService } from "./codeAnalysis";
-import { 
+import { firebaseService } from "./firebaseService";
+import {
   SOLUTION_PRIVATE_LINK,
-  SOLUTION_MODIFIED_TESTS
-} from "../containers//Root/actions";
+  SOLUTION_MODIFIED_TESTS,
+  notificationShow
+} from "../containers/Root/actions";
 
-import { 
-  fetchPublicPathActiviesSuccess
-} from '../containers/Activity/actions';
+import { fetchPublicPathActiviesSuccess } from "../containers/Activity/actions";
+import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -61,9 +61,6 @@ export const ACTIVITY_TYPES = {
     caption: "Jest"
   }
 };
-
-
-
 
 export class PathsService {
   auth() {
@@ -362,34 +359,11 @@ export class PathsService {
         .ref("/activities")
         .push().key;
     const ref = firebase.database().ref(`/activities/${key}`);
-    if(problemInfo.type===ACTIVITY_TYPES.jupyterInline.id){
-      const fileId = this.getFileId(problemInfo.problemURL) || '';
-      return new Promise((resolve,reject)=>{
-        this.fetchFile(fileId)
-        .then(solution => {
-          codeAnalysisService.analyseCode(uid, solution, problemInfo.frozen)
-          .then(givenSkills=>{
-            resolve(this.saveProblemChanges(uid, pathId, {...problemInfo, givenSkills}, ref, isNew,next,key));
-          })
-          .catch(()=>{
-            resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
-          })
-        })
-        .catch(err=>{
-          resolve(this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key))
-        })
-      })
-    }else{
-      return this.saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key)
-    }
-  }
-
-  saveProblemChanges(uid, pathId, problemInfo, ref, isNew,next,key){
     if (problemInfo.id) {
       delete problemInfo.id;
-      next = ref.update( problemInfo );
+      next = ref.update(problemInfo);
     } else {
-      next = ref.set( problemInfo );
+      next = ref.set(problemInfo);
     }
     return next
       .then(
@@ -401,7 +375,20 @@ export class PathsService {
             .ref(`/paths/${pathId}/totalActivities`)
             .transaction(activities => ++activities)
       )
-      .then(() => key);
+      .then(() =>{
+        if(problemInfo.solutionURL && 
+          [ACTIVITY_TYPES.jupyter.id,ACTIVITY_TYPES.jupyterInline.id ].includes(problemInfo.type)){
+            this.fetchFile(this.getFileId(problemInfo.solutionURL))
+              .then(json => {
+                this.saveGivenSkillInProblem(
+                  json,
+                  key,
+                  uid
+                );
+              })
+          }
+        return key
+      });
   }
 
   /**
@@ -456,9 +443,7 @@ export class PathsService {
                 !solution ||
                 cell.source.join("").trim() !== solution.source.join("").trim()
               ) {
-                throw new Error(
-                   SOLUTION_MODIFIED_TESTS
-                );
+                throw new Error(SOLUTION_MODIFIED_TESTS);
               }
               return true;
             });
@@ -540,7 +525,6 @@ export class PathsService {
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set("Completed");
           case ACTIVITY_TYPES.text.id:
-          case ACTIVITY_TYPES.jupyterInline.id:
           case ACTIVITY_TYPES.jest.id:
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
@@ -550,15 +534,31 @@ export class PathsService {
               .set(solution);
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
-              .then(json =>
-                this.validateSolution(uid, pathProblem, solution, json)
-              )
+              .then(json => {
+                this.saveGivenSkillInProblem(
+                  json,
+                  pathProblem.problemId,
+                  uid
+                );
+                return this.validateSolution(uid, pathProblem, solution, json);
+              })
               .then(() =>
                 firebase
                   .database()
                   .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
                   .set(solution)
               );
+          case ACTIVITY_TYPES.jupyterInline.id: {
+            this.saveGivenSkillInProblem(
+              solution,
+              pathProblem.problemId,
+              uid
+            );
+            return firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution);
+          }
           default:
             break;
         }
@@ -575,6 +575,26 @@ export class PathsService {
       );
   }
 
+  saveGivenSkillInProblem(solution, problemId, uid ) {
+    const editableBlockCode = solution.cells
+      .map(c => (c.cell_type === "code" ? c.source.join("") : ""))
+      .join("");
+    const data = {
+      owner: uid,
+      solution: editableBlockCode || ""
+    };
+
+    firebaseService
+      .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
+      .then(res => {
+        firebase
+          .database()
+          .ref(`/activities/${problemId}`)
+          .update({
+            defaultSolutionSkills: res.skills || {}
+          });
+      });
+  }
 
   /**
    *
@@ -795,6 +815,13 @@ export class PathsService {
     });
   }
 
+  deleteActivity(activityId) {
+    return firebase
+      .database()
+      .ref(`/activities/${activityId}`)
+      .remove();
+  }
+
   /**
    *
    * @param {String} pathId
@@ -871,36 +898,70 @@ export class PathsService {
     return Promise.all(actions);
   }
 
-
-  fetchPublicPathActivies(uid, publicPaths, completedActivities){
-    return new Promise((resolve,reject)=>{
+  fetchPublicPathActivies(uid, publicPaths, completedActivities) {
+    return new Promise(resolve => {
       const completedActivitiesIds = [];
-      (completedActivities[uid] || []).forEach(path=>{
-        Object.keys(path.value).forEach(key=>{
+      (completedActivities[uid] || []).forEach(path => {
+        Object.keys(path.value).forEach(key => {
           completedActivitiesIds.push(key);
-        })
-      })
-      const publicPathActivities=[];
-      const promises = publicPaths.filter(path=>path.value.owner!==uid).map(path=>(
-        firebase.database().ref("activities").orderByChild("path").equalTo(path.key).once("value")
-      ))
-      Promise.all(promises)
-      .then(data=>{
-        data.forEach(snapshots=>{
-          snapshots.forEach(snap=>{
+        });
+      });
+      const publicPathActivities = [];
+      const promises = publicPaths
+        .filter(path => path.value.owner !== uid)
+        .map(path =>
+          firebase
+            .database()
+            .ref("activities")
+            .orderByChild("path")
+            .equalTo(path.key)
+            .once("value")
+        );
+      Promise.all(promises).then(data => {
+        data.forEach(snapshots => {
+          snapshots.forEach(snap => {
             publicPathActivities.push({
-              key : snap.key,
-              value : snap.val()
-            })
-          })
-        })
-      const unsolvedPublicActivities=publicPathActivities.filter(activity=>!completedActivitiesIds.includes(activity.key));
-      this.dispatch(fetchPublicPathActiviesSuccess({ unsolvedPublicActivities }))
-      resolve();
-      })
-    })
+              key: snap.key,
+              value: snap.val()
+            });
+          });
+        });
+        const unsolvedPublicActivities = publicPathActivities.filter(
+          activity => !completedActivitiesIds.includes(activity.key)
+        );
+        this.dispatch(
+          fetchPublicPathActiviesSuccess({ unsolvedPublicActivities })
+        );
+        resolve();
+      });
+    });
+  }
+
+  fetchGithubFiles(uid, githubURL) {
+    return new Promise((resolve, reject) => {
+      const githubBaseURL = "https://github.com/";
+      if (githubURL.includes(githubBaseURL)) {
+        const promise = firebaseService
+          .startProcess(
+            {
+              owner: uid,
+              githubURL
+            },
+            "fetchGithubFilesQueue",
+            "Fetch files from github"
+          )
+          .then(data => {
+            this.dispatch(fetchGithubFilesSuccess(data.githubData));
+          });
+        resolve(promise);
+      } else {
+        this.dispatch(notificationShow("Not a Valid Github URL"));
+        reject();
+      }
+    });
   }
 }
 
 /** @type PathsService */
 export const pathsService = new PathsService();
+

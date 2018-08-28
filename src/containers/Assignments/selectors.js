@@ -221,7 +221,9 @@ export const processTeamSolutions = (assignments, members) => {
           team.members.length
         })`;
         for (const taskKey of Object.keys(team.answers)) {
-          member.solutions[taskKey] = team.answers[taskKey];
+          if (team.answers[taskKey] && team.answers[taskKey].createdAt) {
+            member.solutions[taskKey] = team.answers[taskKey];
+          }
         }
       }
     }

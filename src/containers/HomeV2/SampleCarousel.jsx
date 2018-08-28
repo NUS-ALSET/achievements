@@ -31,81 +31,98 @@ class SampleCarousel extends React.PureComponent {
     youtubeRecom: PropTypes.bool,
     // for slidesToShow
     width: PropTypes.string,
+    // temporary logo detection for CodeCombat
+    isCodeCombat: PropTypes.bool,
   };
 
   render() {
     // retrieve the dummyData
-    const { youtubeRecom, dataList, width } = this.props;
+    const { youtubeRecom, dataList, width, isCodeCombat } = this.props;
     console.log("dataList from dummyData is: ", dataList);
     // width is a string, detect media query via MUI
-    let NumToShow;
+    let itemPerSlide;
     switch(width) {
       case "xs":
-        NumToShow = 1;
+        itemPerSlide = 1;
         break;
       case "sm":
-        NumToShow = 2;
+        itemPerSlide = 2;
         break;
       case "md":
-        NumToShow = 3;
+        itemPerSlide = 3;
         break;
       case "lg":
-        NumToShow = 4;
+        itemPerSlide = 4;
         break;
       case "xl":
-        NumToShow = 5;
+        itemPerSlide = 5;
         break;
       default:
-        NumToShow = 4;
+        itemPerSlide = 4;
     };
 
     return (
       <Carousel
-        slidesToShow={NumToShow}
+        slidesToShow={itemPerSlide}
         cellSpacing={10}
+        speed={1000}
         className="customizeCarousel"
-        renderCenterLeftControls={({ previousSlide, currentSlide }) => (
-          <Button
-            variant="fab"
-            mini
-            aria-label="prevSlide"
-            style={(currentSlide !== 0)
-              ? {visibility: "visible", left: "-22px"}
-              : {visibility: "hidden"}
-            }
-            onClick={previousSlide}
-          >
-            <KeyboardArrowLeftIcon />
-          </Button>
-        )}
-        renderCenterRightControls={({ nextSlide, currentSlide }) => (
-          <Button
-            variant="fab"
-            mini
-            aria-label="nexSlide"
-            style={(dataList.length < 4
-              || currentSlide === (dataList.length-4))
-              ? {visibility: "hidden"}
-              : {visibility: "visible", right: "-20px"}
-            }
-            onClick={nextSlide}
-          >
-            <KeyboardArrowRightIcon />
-          </Button>
-        )}
+        renderCenterLeftControls={({ currentSlide, goToSlide }) => {
+          const previousSlideIndex = Math.max(
+            currentSlide - itemPerSlide,  0
+          );
+          return (
+            <Button
+              variant="fab"
+              mini
+              aria-label="prevSlide"
+              style={(currentSlide !== 0)
+                ? {visibility: "visible", left: "-22px"}
+                : {visibility: "hidden"}
+              }
+              onClick={()=>goToSlide(previousSlideIndex)}
+            >
+              <KeyboardArrowLeftIcon />
+            </Button>
+          );
+        }}
+        renderCenterRightControls={({ currentSlide, goToSlide }) => {
+          const nextSlideIndex = (
+            (currentSlide + itemPerSlide) <= dataList.length
+            ? (currentSlide + itemPerSlide)
+            : dataList.length
+          );
+          return (
+            <Button
+              variant="fab"
+              mini
+              aria-label="nexSlide"
+              style={(dataList.length < itemPerSlide
+                || currentSlide >= (dataList.length-itemPerSlide))
+                ? {visibility: "hidden"}
+                : {visibility: "visible", right: "-20px"}
+              }
+              onClick={()=>goToSlide(nextSlideIndex)}
+            >
+              <KeyboardArrowRightIcon />
+            </Button>
+          );
+        }}
       >
         {dataList.map( (item, index) => (
             <SampleCard
               key={index}
-              title={item.name}
+              activityTitle={item.name}
               description={youtubeRecom
                 ? ""
-                : `${item.type} Python problem`}
+                : `${item.type} Activity`}
               path={item.owner}
               problem={item.actualProblem}
               video={youtubeRecom
                 ? item.youtubeURL
                 : ""}
+              isCodeCombat={isCodeCombat}
+              subHeading ={item.subHeading || ""}
             />
         ))}
       </Carousel>

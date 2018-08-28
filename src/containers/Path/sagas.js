@@ -3,11 +3,12 @@ import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
   PATH_OPEN,
-  PATH_PROBLEM_OPEN,
+  PATH_ACTIVITY_OPEN,
   PATH_REFRESH_SOLUTIONS_REQUEST,
   PATH_REMOVE_COLLABORATOR_REQUEST,
   PATH_SHOW_COLLABORATORS_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
+  FETCH_GITHUB_FILES,
   pathAddCollaboratorFail,
   pathAddCollaboratorSuccess,
   pathCollaboratorsFetchSuccess,
@@ -19,18 +20,23 @@ import {
   pathRemoveCollaboratorSuccess,
   pathToggleJoinStatusFail,
   pathToggleJoinStatusRequest,
-  pathToggleJoinStatusSuccess
+  pathToggleJoinStatusSuccess,
+  fetchGithubFilesLoading,
+  fetchGithubFilesError
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import {
+  PATH_ACTIVITY_DELETE_REQUEST,
   PATH_ACTIVITY_MOVE_REQUEST,
+  pathActivityDeleteFail,
+  pathActivityDeleteSuccess,
   pathActivityMoveFail,
   PATHS_JOINED_FETCH_SUCCESS
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
 import { codeCombatProfileSelector, pathActivitiesSelector } from "./selectors";
 
-export function* pathProblemOpenHandler(action) {
+export function* pathActivityOpenHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
     joinedPaths: state.paths.joinedPaths
@@ -112,6 +118,16 @@ export function* pathActivityMoveRequestHandler(action) {
         err.message
       )
     );
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* pathActivityDeleteRequestHandler(action) {
+  try {
+    yield call(pathsService.deleteActivity, action.activityId);
+    yield put(pathActivityDeleteSuccess(action.activityId));
+  } catch (err) {
+    yield put(pathActivityDeleteFail(action.activityId, err.message));
     yield put(notificationShow(err.message));
   }
 }
@@ -224,12 +240,30 @@ export function* pathRefreshSolutionsRequestHandler(action) {
   }
 }
 
+export function* fetchGithubFilesHandler(action){
+  let data;
+  try{
+    yield put(fetchGithubFilesLoading())
+    data = yield select(state => ({
+      uid: state.firebase.auth.uid
+    }));
+    yield call(
+      [pathsService, pathsService.fetchGithubFiles],
+        data.uid,
+        action.githubURL
+    )
+
+  }catch(err){
+    yield put(fetchGithubFilesError());
+  }
+}
+
 export default [
   function* watchPathOpenRequest() {
     yield takeLatest(PATH_OPEN, pathOpenHandler);
   },
   function* watchPathProblemOpen() {
-    yield takeLatest(PATH_PROBLEM_OPEN, pathProblemOpenHandler);
+    yield takeLatest(PATH_ACTIVITY_OPEN, pathActivityOpenHandler);
   },
   function* watchPathToggleJoinStatusRequest() {
     yield takeLatest(
@@ -241,6 +275,12 @@ export default [
     yield takeLatest(
       PATH_ACTIVITY_MOVE_REQUEST,
       pathActivityMoveRequestHandler
+    );
+  },
+  function* watchPathActivityDeleteRequest() {
+    yield takeLatest(
+      PATH_ACTIVITY_DELETE_REQUEST,
+      pathActivityDeleteRequestHandler
     );
   },
   function* watchPathMoreProblemsRequest() {
@@ -273,5 +313,11 @@ export default [
       PATH_REFRESH_SOLUTIONS_REQUEST,
       pathRefreshSolutionsRequestHandler
     );
+  },
+  function* watchFetchGithubFilesHandler() {
+    yield takeLatest(
+      FETCH_GITHUB_FILES,
+      fetchGithubFilesHandler
+    )
   }
 ];

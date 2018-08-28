@@ -15,10 +15,10 @@ export const pathDialogShow = pathInfo => ({
   pathInfo
 });
 
-export const PATH_PROBLEM_DIALOG_SHOW = "PATH_PROBLEM_DIALOG_SHOW";
-export const pathProblemDialogShow = problemInfo => ({
-  type: PATH_PROBLEM_DIALOG_SHOW,
-  problemInfo
+export const PATH_ACTIVITY_DIALOG_SHOW = "PATH_ACTIVITY_DIALOG_SHOW";
+export const pathActivityDialogShow = activityInfo => ({
+  type: PATH_ACTIVITY_DIALOG_SHOW,
+  activityInfo
 });
 
 export const PATHS_JOINED_FETCH_SUCCESS = "PATHS_JOINED_FETCH_SUCCESS";
@@ -81,25 +81,44 @@ export const pathActivityMoveFail = (
   reason
 });
 
-export const PATH_PROBLEM_CHANGE_REQUEST = "PATH_PROBLEM_CHANGE_REQUEST";
-export const pathProblemChangeRequest = (pathId, problemInfo) => ({
-  type: PATH_PROBLEM_CHANGE_REQUEST,
+export const PATH_ACTIVITY_CHANGE_REQUEST = "PATH_ACTIVITY_CHANGE_REQUEST";
+export const pathActivityChangeRequest = (pathId, activityInfo) => ({
+  type: PATH_ACTIVITY_CHANGE_REQUEST,
   pathId,
-  problemInfo
+  activityInfo
 });
 
-export const PATH_PROBLEM_CHANGE_SUCCESS = "PATH_PROBLEM_CHANGE_SUCCESS";
-export const pathProblemChangeSuccess = (pathId, problemInfo, problemKey) => ({
-  type: PATH_PROBLEM_CHANGE_SUCCESS,
+export const PATH_ACTIVITY_CHANGE_SUCCESS = "PATH_ACTIVITY_CHANGE_SUCCESS";
+export const pathProblemChangeSuccess = (pathId, activityInfo, problemKey) => ({
+  type: PATH_ACTIVITY_CHANGE_SUCCESS,
   pathId,
-  problemInfo,
+  activityInfo,
   problemKey
 });
 
-export const PATH_PROBLEM_CHANGE_FAIL = "PATH_PROBLEM_CHANGE_FAIL";
-export const pathProblemChangeFail = (pathId, problemInfo, reason) => ({
-  type: PATH_PROBLEM_CHANGE_FAIL,
+export const PATH_ACTIVITY_CHANGE_FAIL = "PATH_ACTIVITY_CHANGE_FAIL";
+export const pathActivityChangeFail = (pathId, activityInfo, reason) => ({
+  type: PATH_ACTIVITY_CHANGE_FAIL,
   pathId,
-  problemInfo,
+  activityInfo,
+  reason
+});
+
+export const PATH_ACTIVITY_DELETE_REQUEST = "PATH_ACTIVITY_DELETE_REQUEST";
+export const pathActivityDeleteRequest = activityId => ({
+  type: PATH_ACTIVITY_DELETE_REQUEST,
+  activityId
+});
+
+export const PATH_ACTIVITY_DELETE_SUCCESS = "PATH_ACTIVITY_DELETE_SUCCESS";
+export const pathActivityDeleteSuccess = activityId => ({
+  type: PATH_ACTIVITY_DELETE_SUCCESS,
+  activityId
+});
+
+export const PATH_ACTIVITY_DELETE_FAIL = "PATH_ACTIVITY_DELETE_FAIL";
+export const pathActivityDeleteFail = (activityId, reason) => ({
+  type: PATH_ACTIVITY_DELETE_FAIL,
+  activityId,
   reason
 });

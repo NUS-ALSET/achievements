@@ -63,7 +63,6 @@ export const routeChange = (pathname, method) => ({
   method
 });
 
-
-// constants 
+// constants
 export const SOLUTION_PRIVATE_LINK = "PRIVATE_LINK";
 export const SOLUTION_MODIFIED_TESTS = "MODIFIED_TESTS";

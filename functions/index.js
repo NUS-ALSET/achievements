@@ -9,10 +9,13 @@ const api = require("./src/api");
 const ltiLogin = require("./src/ltiLogin");
 const profileTriggers = require("./src/updateProfile");
 const jupyterTrigger = require("./src/executeJupyterSolution");
+const githubTrigger = require("./src/fetchGithubFiles");
 const downloadEvents = require("./src/downloadEvents");
 const solutionTriggers = require("./src/updateSolutionVisibility");
 const httpUtil = require("./src/utils/http").httpUtil;
 const migrateActivities = require("./src/migrateActivities");
+const updateUserRecommendations = require("./src/updateUserRecommendations");
+const updateUserPySkills = require("./src/updateUserPySkills.js")
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -31,6 +34,14 @@ exports.handleNewProblemSolution =
       return jupyterTrigger.handler(data, data.taskKey, data.owner);
     });
 
+exports.handleGithubFilesFetchRequest =
+  functions.database
+    .ref("/fetchGithubFilesQueue/tasks/{requestId}")
+    .onWrite(change => {
+      const data = change.after.val();
+      return githubTrigger.handler(data, data.taskKey, data.owner);
+  });
+
 exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
   return checkToken(req)
     .then(() => {
@@ -44,7 +55,7 @@ exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
   .onWrite((change, context) => {
     const { courseId, studentId, assignmentId } = context.params;
-
+    
     solutionTriggers.handler(
       change.after.val(),
       courseId,
@@ -52,6 +63,18 @@ exports.handleNewSolution = functions.database
       assignmentId
     );
   });
+
+
+exports.handleUserSkills = functions.database
+.ref("/solutions/{courseId}/{studentId}/{assignmentId}")
+.onWrite((change, context) => {
+  const {  studentId , assignmentId} = context.params;
+  return updateUserPySkills.handler(
+    change.after.val(),
+    studentId,
+    assignmentId
+  )
+});
 
 exports.handleProfileRefreshRequest =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
@@ -113,3 +136,10 @@ exports.migrateActivities = functions.https.onRequest((req, res) => {
     .then(() => res.send("Done"))
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });
+
+exports.checkUserRecommendations = functions.https.onRequest((req, res) =>
+  updateUserRecommendations
+    .handler(req.query.userId)
+    .then(data => res.send(data))
+    .catch(err => res.status(err.code || ERROR_500).send(err.message))
+);

@@ -35,7 +35,7 @@ import {
   throttle
 } from "redux-saga/effects";
 import { pathsService, ACTIVITY_TYPES } from "../../services/paths";
-import { 
+import {
   notificationShow,
   SOLUTION_PRIVATE_LINK,
   SOLUTION_MODIFIED_TESTS
@@ -59,7 +59,9 @@ export function* problemInitRequestHandler(action) {
       uid = yield select(state => state.firebase.auth.uid);
     }
 
-    yield put(problemInitSuccess(action.pathId, action.problemId, null, action.readOnly));
+    yield put(
+      problemInitSuccess(action.pathId, action.problemId, null, action.readOnly)
+    );
 
     const gapiAuthrozied = yield select(state => state.paths.gapiAuthorized);
 
@@ -77,7 +79,14 @@ export function* problemInitRequestHandler(action) {
       throw new Error("Missing path activity");
     }
 
-    yield put(problemInitSuccess(action.pathId, action.problemId, pathProblem, action.readOnly));
+    yield put(
+      problemInitSuccess(
+        action.pathId,
+        action.problemId,
+        pathProblem,
+        action.readOnly
+      )
+    );
 
     const solution = yield action.solution &&
     action.solution.originalSolution &&
@@ -127,7 +136,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
   try {
     yield put(notificationShow("Fetching your solution"));
-    yield put(problemSolutionExecutionStatus({ status : 'CHECKING' }));
+    yield put(problemSolutionExecutionStatus({ status: "CHECKING" }));
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
@@ -148,7 +157,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
-    yield put(problemSolutionExecutionStatus({ status : 'EXECUTING' }));
+    yield put(problemSolutionExecutionStatus({ status: "EXECUTING" }));
     yield put(notificationShow("Checking your solution"));
 
     const { solution, timedOut } = yield race({
@@ -169,13 +178,13 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       solution.cells.slice(-data.pathProblem.frozen).forEach(cell => {
         solutionFailed =
-          solutionFailed || (!!cell.outputs && cell.outputs.join().trim());
+          solutionFailed || (!!cell.outputs && cell.outputs.join("").trim());
         return true;
       });
 
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
-        yield put(problemSolutionExecutionStatus( { status : 'FAILING' }))
+        yield put(problemSolutionExecutionStatus({ status: "FAILING" }));
         yield put(
           notificationShow(
             "Failing - Your solution did not pass the provided tests."
@@ -183,35 +192,41 @@ export function* problemSolutionRefreshRequestHandler(action) {
         );
       } else {
         yield put(notificationShow("Solution is valid"));
-        yield put(problemSolutionExecutionStatus( { status : 'COMPLETE' }))
+        yield put(problemSolutionExecutionStatus({ status: "COMPLETE" }));
       }
     }
+
+    // Removed `id` field from payload. It looks like we never use
+    // `solution.id` anywhere. So, it just clogs `logged_events` firebase node
     yield put(
-      problemSolutionRefreshSuccess( {
-        id: pathSolution.id,
-        json: solution,
+      problemSolutionRefreshSuccess(action.problemId, {
+        json: solution
       })
     );
   } catch (err) {
     let status = "";
     let errMsg = "";
-    switch (err.message){
-      case  SOLUTION_PRIVATE_LINK  :{
+    switch (err.message) {
+      case SOLUTION_PRIVATE_LINK: {
+        // Is if ok that status non-matching with contstants?
         status = "PRIVATE LINK";
-        errMsg = 'Failing - Your solution is not public.';
+        errMsg = "Failing - Your solution is not public.";
         break;
       }
-      case SOLUTION_MODIFIED_TESTS  : {
+      case SOLUTION_MODIFIED_TESTS: {
         status = "MODIFIED TESTS";
-        errMsg = 'Failing - You have changed the last code block.';
+        errMsg = "Failing - You have changed the last code block.";
         break;
       }
-      default : {
+      default:
+        // I commented that cause it leads to snatching unexpected errors.
+        status = "UNEXPECTED ERROR";
+      /*
         status = null;
         errMsg = err.message;
-      }
+        */
     }
-    yield put(problemSolutionExecutionStatus({ status }))
+    yield put(problemSolutionExecutionStatus({ status }));
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
     yield put(notificationShow(errMsg));
   }
@@ -288,13 +303,13 @@ export function* problemSolutionSubmitRequestHandler(action) {
   }
 }
 
-export function* fetchPublicPathActiviesHandler(){
+export function* fetchPublicPathActiviesHandler() {
   let data;
   try {
     data = yield select(state => ({
       uid: state.firebase.auth.uid,
-      completedActivities : state.firebase.ordered.completedActivities,
-      publicPaths : state.firebase.ordered.publicPaths,
+      completedActivities: state.firebase.ordered.completedActivities,
+      publicPaths: state.firebase.ordered.publicPaths
     }));
     yield call(
       [pathsService, pathsService.fetchPublicPathActivies],
@@ -341,6 +356,6 @@ export default [
     yield takeLatest(
       FETCH_PUBLIC_PATH_ACTIVITIES,
       fetchPublicPathActiviesHandler
-    )
+    );
   }
 ];

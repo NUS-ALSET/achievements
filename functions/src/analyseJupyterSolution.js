@@ -44,13 +44,13 @@ const analyseJupyterSolution = (data, taskKey, owner) => {
       })
     )
     .then(response =>{
-      const formattedRes = getNewFormat(response.data.userSkills)
+      const formattedRes = getNewFormat(response.data.problemSkills)
       return  admin
         .database()
         .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
         .set({
           owner: owner,
-          userSkills:formattedRes,
+          skills:formattedRes,
         })
       }
     )

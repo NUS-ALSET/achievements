@@ -3,7 +3,7 @@ import { runSaga } from "redux-saga";
 import sinon from "sinon";
 
 import {
-  pathProblemOpenHandler,
+  pathActivityOpenHandler,
   pathToggleJoinStatusRequestHandler
 } from "../sagas";
 import {
@@ -31,7 +31,7 @@ describe("Path sagas", () => {
           }
         })
       },
-      pathProblemOpenHandler,
+      pathActivityOpenHandler,
       {
         pathId: "testPath",
         problemId: "testProblem"
