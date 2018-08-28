@@ -21,8 +21,6 @@ const skillsLabels = {
   'defaultSolutionSkills' : 'Default Solution Skills' 
 }
 
-
-
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -74,7 +72,7 @@ function InteractiveList(props) {
 
 const AnalysisDialog = (props) => {
   const { classes, skills, open, handleClose, name } = props;
-  const title = "Jupter Problem Analysis "  + (name ? `for ${name}` : '');
+  const title = "Jupyter Activity Analysis "  + (name ? `for ${name}` : '');
   return (
     <Dialog
       open={open}
@@ -89,7 +87,7 @@ const AnalysisDialog = (props) => {
         <div className={classes.root}>
           {Object.keys(skills).map(key =>{
             if(Object.keys(skills[key]).length===0){
-              return ''
+              return '';
             }
             return (
               <Fragment key={key}>
@@ -99,7 +97,12 @@ const AnalysisDialog = (props) => {
               <Grid container spacing={16}>
                 {
                   Object.keys(skills[key]).map(subKey =>
-                    <InteractiveList key={`${key}_${subKey}`} name={subKey} data={skills[key][subKey]} classes={classes} />
+                    <InteractiveList
+                      key={`${key}_${subKey}`}
+                      name={subKey}
+                      data={skills[key][subKey]}
+                      classes={classes}
+                    />
                   )
                 }
               </Grid>
@@ -112,11 +115,11 @@ const AnalysisDialog = (props) => {
       <DialogActions>
         <Button onClick={handleClose} color="primary" autoFocus>
           Close
-            </Button>
+        </Button>
       </DialogActions>
     </Dialog>
-  )
-}
+  );
+};
 
 
 AnalysisDialog.propTypes = {
