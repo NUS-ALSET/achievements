@@ -25,7 +25,6 @@ import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import {
   assignmentAddRequest,
   assignmentCloseDialog,
-  assignmentManualUpdateField,
   updateNewAssignmentField
 } from "../../containers/Assignments/actions";
 import { courseInfo, entityInfo } from "../../types/index";
@@ -49,10 +48,13 @@ class AddAssignmentDialog extends React.PureComponent {
     isCorrectInput_Name: false,
   };
 
-  manualChangeField = field => e =>
-    this.props.dispatch(assignmentManualUpdateField(field, e.target.value));
-
   updateField = field => e => {
+    // when update assignment
+    if (this.props.assignment.id) {
+      this.setState({
+        isCorrectInput_Name: true
+      });
+    }
     if (field === "name") {
       if (
         AddName.test(e.target.value) &&
@@ -237,15 +239,14 @@ class AddAssignmentDialog extends React.PureComponent {
             label="Name"
             margin="normal"
             onChange={this.updateField("name")}
-            onKeyPress={this.manualChangeField("name")}
             value={assignment.name || ""}
+            required
           />
           <TextField
             fullWidth
             label="Details/Links"
             margin="normal"
             onChange={this.updateField("details")}
-            onKeyPress={this.manualChangeField("details")}
             value={assignment.details || ""}
           />
           <FormControlLabel

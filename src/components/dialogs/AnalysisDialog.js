@@ -1,5 +1,3 @@
-
-
 import React, { Fragment } from "react";
 
 import { firebaseConnect,isLoaded } from "react-redux-firebase";
@@ -50,7 +48,6 @@ const styles = theme => ({
     width : '100%'
   }
 });
-
 
 
 function InteractiveList(props) {
@@ -140,7 +137,6 @@ const AnalysisDialog = (props) => {
     </Dialog>
   )
 }
-
 
 
 AnalysisDialog.propTypes = {
