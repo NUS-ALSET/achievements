@@ -1,7 +1,5 @@
 /* eslint-disable no-magic-numbers */
 
-import { userRecommendationsSelector } from "../src/containers/Home/selectors";
-
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
@@ -108,5 +106,5 @@ exports.checkUserRecommendations = functions.https.onRequest((req, res) =>
 exports.handleUserAuth = functions.database
   .ref("/users/{userKey}/lastAuthTime")
   .onWrite((snap, context) =>
-    userRecommendationsSelector.handler(context.params.userKey)
+    updateUserRecommendations.handler(context.params.userKey)
   );
