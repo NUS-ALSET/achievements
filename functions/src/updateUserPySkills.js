@@ -87,7 +87,19 @@ function updateRecommendation(userKey, userSkills) {
         )
       )
     )
-    .then(pathActivitiesData => {
+    .then(pathActivitiesData=>
+      admin
+        .database()
+        .ref("/activityExampleSolutions")
+        .once("value")
+        .then(snapshot => snapshot.val())
+        .then(activityExampleSolutions=>({
+            pathActivitiesData,
+            activityExampleSolutions
+          })
+        )
+    )
+    .then(({ pathActivitiesData, activityExampleSolutions={} }) => {
       let problemWithUnsolvedSkills = {
         title : "Jupyter Activities With New Skills"
       };
@@ -101,10 +113,10 @@ function updateRecommendation(userKey, userSkills) {
           const activity = activities[key];
           if (
             ["jupyter", "jupyterInline"].includes(activity.type)
-            && typeof activity.defaultSolutionSkills == 'object' 
+            && (activityExampleSolutions[key] || {}).skills 
             && !completedActivities[key]
           ) {
-            const problemSkills = activity.defaultSolutionSkills;
+            const problemSkills = activityExampleSolutions[key].skills;
 
             Object.keys(problemSkills).forEach(feature => {
               Object.keys((problemSkills[feature] || {})).forEach(featureType => {
