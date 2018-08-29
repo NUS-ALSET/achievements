@@ -57,7 +57,8 @@ const styles = {
     overflow: "hidden",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
-    backgroundSize: "100% 100%",
+    backgroundSize: "auto 180px",
+    backgroundColor: "black"
   },
 };
 
