@@ -52,6 +52,7 @@ exports.handler = userKey =>
         for (const activityKey of Object.keys(activities)) {
           const activity = activities[activityKey];
           if (
+            activity.type !== "codeCombat" &&
             ACTIVITY_TYPES[activity.type] &&
             !solutions[activityKey] &&
             (!updated[activity.type] ||

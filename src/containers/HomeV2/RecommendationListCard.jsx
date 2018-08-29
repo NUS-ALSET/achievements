@@ -9,7 +9,7 @@ import Avatar from "@material-ui/core/Avatar";
 // YouTube, Jupyter, Jest, Colab, Code Combat, Game
 // Avatar with icons for certain Activity types
 import PlayArrow from "@material-ui/icons/PlayArrow"; // YouTube
-import Adb from '@material-ui/icons/Adb'; // Game
+import Adb from "@material-ui/icons/Adb"; // Game
 
 // TODO: amber color python (Jupyter and Colab), red for youtube
 import amber from "@material-ui/core/colors/amber";
@@ -17,7 +17,7 @@ import red from "@material-ui/core/colors/red";
 // Jest:
 // import blue from '@material-ui/core/colors/blue';
 // CodeCombat:
-import lime from '@material-ui/core/colors/lime';
+import lime from "@material-ui/core/colors/lime";
 // Game:
 // import indigo from '@material-ui/core/colors/indigo';
 
@@ -66,41 +66,38 @@ class RecommendationListCard extends React.PureComponent {
 
     // temporary detection for CodeCombat Activities,
     // to change the avatar, logo, and color
-    const isCodeCombat = (title==="CodeCombat Activities")
-      ? true
-      : false;
+    const isCodeCombat = title === "CodeCombat Activities";
 
     return (
-      <div style={{marginBottom : "24px"}}>
-      {/* either use marginBottom here or put a <br /> at parent */}
+      <div style={{ marginBottom: "24px" }}>
+        {/* either use marginBottom here or put a <br /> at parent */}
         <Card style={styles.card}>
-          {(RecomType === "python") &&
+          {RecomType === "python" && (
             <Fragment>
               {/* this is temporarily testing the GUI with CodeCombat type
                   feel free to refactor it to a proper solution */}
               <CardHeader
                 avatar={
-                  <Avatar aria-label="Recommendation"
-                    style={isCodeCombat
-                      ? styles.avatarCC
-                      : styles.avatarPy}
+                  <Avatar
+                    aria-label="Recommendation"
+                    style={isCodeCombat ? styles.avatarCC : styles.avatarPy}
                   >
                     {isCodeCombat ? <Adb /> : "</>"}
                   </Avatar>
                 }
                 subheader="Recommended for you"
-                title={title|| "Jupyter Notebook Activities"}
+                title={title || "Jupyter Notebook Activities"}
               />
               <CardContent>
                 <SampleCarousel
                   dataList={dummyData}
-                  youtubeRecom={false}
                   isCodeCombat={isCodeCombat}
+                  youtubeRecom={false}
                 />
               </CardContent>
             </Fragment>
-          }
-          {(RecomType === "youtube") &&
+          )}
+          {RecomType === "youtube" && (
             <Fragment>
               <CardHeader
                 avatar={
@@ -109,16 +106,13 @@ class RecommendationListCard extends React.PureComponent {
                   </Avatar>
                 }
                 subheader="Recommended for you"
-                title={title|| "Jupyter Notebook Activities"}
+                title={title || "Jupyter Notebook Activities"}
               />
               <CardContent>
-                <SampleCarousel
-                  dataList={dummyData}
-                  youtubeRecom={true}
-                />
+                <SampleCarousel dataList={dummyData} youtubeRecom={true} />
               </CardContent>
             </Fragment>
-          }
+          )}
           {/* other types of Activities with different RecomType etc */}
         </Card>
       </div>

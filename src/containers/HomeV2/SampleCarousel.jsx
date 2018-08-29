@@ -1,26 +1,26 @@
-import React from 'react';
+/* eslint-disable no-magic-numbers */
+import React from "react";
 import PropTypes from "prop-types";
 
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import KeyboardArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@material-ui/icons/KeyboardArrowLeft";
 // withWidth() higher-order component to change React DOM based on breakpoint
 // here change Nuka-carousel's slidesToShow dynamically with width
 import withWidth from "@material-ui/core/withWidth";
 
-import './NukaCarouselStyle.css';
+import "./NukaCarouselStyle.css";
 /* the Carousel is from nuka-carousel
  * by Ken Wheeler
  * more @ https://github.com/FormidableLabs/nuka-carousel
  */
-import Carousel from 'nuka-carousel';
+import Carousel from "nuka-carousel";
 
 /*
  * the data code design is modeled after
  * Theodor Shaytanov's PathCard container module
  */
-import SampleCard from './SampleCard';
-
+import SampleCard from "./SampleCard";
 
 // TODO: SampleCarousel and SampleCard will be stateless PureComponents
 // TODO: incorporate this into the Firebase userRecommendations
@@ -32,16 +32,15 @@ class SampleCarousel extends React.PureComponent {
     // for slidesToShow
     width: PropTypes.string,
     // temporary logo detection for CodeCombat
-    isCodeCombat: PropTypes.bool,
+    isCodeCombat: PropTypes.bool
   };
 
   render() {
     // retrieve the dummyData
     const { youtubeRecom, dataList, width, isCodeCombat } = this.props;
-    console.log("dataList from dummyData is: ", dataList);
     // width is a string, detect media query via MUI
     let itemPerSlide;
-    switch(width) {
+    switch (width) {
       case "xs":
         itemPerSlide = 1;
         break;
@@ -59,71 +58,66 @@ class SampleCarousel extends React.PureComponent {
         break;
       default:
         itemPerSlide = 4;
-    };
+    }
 
     return (
       <Carousel
-        slidesToShow={itemPerSlide}
         cellSpacing={10}
-        speed={1000}
         className="customizeCarousel"
         renderCenterLeftControls={({ currentSlide, goToSlide }) => {
-          const previousSlideIndex = Math.max(
-            currentSlide - itemPerSlide,  0
-          );
+          const previousSlideIndex = Math.max(currentSlide - itemPerSlide, 0);
           return (
             <Button
-              variant="fab"
-              mini
               aria-label="prevSlide"
-              style={(currentSlide !== 0)
-                ? {visibility: "visible", left: "-22px"}
-                : {visibility: "hidden"}
+              mini
+              onClick={() => goToSlide(previousSlideIndex)}
+              style={
+                currentSlide !== 0
+                  ? { visibility: "visible", left: "-22px" }
+                  : { visibility: "hidden" }
               }
-              onClick={()=>goToSlide(previousSlideIndex)}
+              variant="fab"
             >
               <KeyboardArrowLeftIcon />
             </Button>
           );
         }}
         renderCenterRightControls={({ currentSlide, goToSlide }) => {
-          const nextSlideIndex = (
-            (currentSlide + itemPerSlide) <= dataList.length
-            ? (currentSlide + itemPerSlide)
-            : dataList.length
-          );
+          const nextSlideIndex =
+            currentSlide + itemPerSlide <= dataList.length
+              ? currentSlide + itemPerSlide
+              : dataList.length;
           return (
             <Button
-              variant="fab"
-              mini
               aria-label="nexSlide"
-              style={(dataList.length < itemPerSlide
-                || currentSlide >= (dataList.length-itemPerSlide))
-                ? {visibility: "hidden"}
-                : {visibility: "visible", right: "-20px"}
+              mini
+              onClick={() => goToSlide(nextSlideIndex)}
+              style={
+                dataList.length < itemPerSlide ||
+                currentSlide >= dataList.length - itemPerSlide
+                  ? { visibility: "hidden" }
+                  : { visibility: "visible", right: "-20px" }
               }
-              onClick={()=>goToSlide(nextSlideIndex)}
+              variant="fab"
             >
               <KeyboardArrowRightIcon />
             </Button>
           );
         }}
+        slidesToShow={itemPerSlide}
+        speed={1000}
       >
-        {dataList.map( (item, index) => (
-            <SampleCard
-              key={index}
-              activityTitle={item.name}
-              description={youtubeRecom
-                ? ""
-                : `${item.type} Activity`}
-              path={item.owner}
-              problem={item.actualProblem}
-              video={youtubeRecom
-                ? item.youtubeURL
-                : ""}
-              isCodeCombat={isCodeCombat}
-              subHeading ={item.subHeading || ""}
-            />
+        {dataList.map((item, index) => (
+          <SampleCard
+            activityTitle={item.name}
+            description={youtubeRecom ? "" : `${item.type} Activity`}
+            isCodeCombat={isCodeCombat}
+            key={index}
+            path={item.path || item.owner}
+            problem={item.actualProblem}
+            subHeading={item.subHeading || ""}
+            video={youtubeRecom ? item.youtubeURL : ""}
+          />
         ))}
       </Carousel>
     );

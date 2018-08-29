@@ -27,13 +27,20 @@ import isEqual from "lodash/isEqual";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
+    children: PropTypes.any,
     dispatch: PropTypes.func,
+    embedded: PropTypes.bool,
     match: PropTypes.object,
+    onCommit: PropTypes.func,
     onProblemChange: PropTypes.func,
+    pathName: PropTypes.string,
     pathProblem: PropTypes.any,
     solution: PropTypes.any,
-    embedded: PropTypes.bool,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
+  };
+
+  static defaultProps = {
+    pathName: "Default"
   };
 
   state = {
@@ -50,11 +57,9 @@ export class Activity extends React.PureComponent {
       );
     }
   }
-  componentWillReceiveProps(nextProps){
-    if(
-      !isEqual(nextProps.pathProblem, this.props.pathProblem)
-    ){
-    this.onProblemChange({});
+  componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
+      this.onProblemChange({});
     }
   }
   componentWillUnmount() {
@@ -83,8 +88,8 @@ export class Activity extends React.PureComponent {
   };
 
   propsCommit = data => {
-    if(this.props.readOnly){
-      return ;
+    if (this.props.readOnly) {
+      return;
     }
     if (
       this.props.pathProblem.type === "profile" &&
@@ -102,7 +107,14 @@ export class Activity extends React.PureComponent {
   };
 
   render() {
-    const { embedded, dispatch, pathProblem, solution, readOnly } = this.props;
+    const {
+      embedded,
+      dispatch,
+      pathName,
+      pathProblem,
+      solution,
+      readOnly
+    } = this.props;
     if (!pathProblem) {
       return (
         <div
@@ -123,7 +135,7 @@ export class Activity extends React.PureComponent {
                 link: "/paths"
               },
               {
-                label: pathProblem.pathName,
+                label: pathName,
                 link: `/paths/${this.props.match.params.pathId}`
               },
               {
@@ -150,29 +162,30 @@ export class Activity extends React.PureComponent {
             }}
           />
         )}
-        {!readOnly && !embedded && (
-          <div
-            style={{
-              bottom: 0,
-              display: "flex",
-              justifyContent: "flex-end",
-              position: "relative"
-            }}
-          >
-            <Button
-              color="primary"
-              disabled={
-                !(solution && solution.checked) ||
-                solution.loading ||
-                solution.failed
-              }
-              onClick={this.onCommit}
-              variant="raised"
+        {!readOnly &&
+          !embedded && (
+            <div
+              style={{
+                bottom: 0,
+                display: "flex",
+                justifyContent: "flex-end",
+                position: "relative"
+              }}
             >
-              Commit
-            </Button>
-          </div>
-        )}
+              <Button
+                color="primary"
+                disabled={
+                  !(solution && solution.checked) ||
+                  solution.loading ||
+                  solution.failed
+                }
+                onClick={this.onCommit}
+                variant="raised"
+              >
+                Commit
+              </Button>
+            </div>
+          )}
       </Fragment>
     );
   }
@@ -192,6 +205,7 @@ const activityView = props => (
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
+  pathName: state.firebase.data.pathName,
   pathProblem: ownProps.pathProblem || state.problem.pathProblem,
   solution: ownProps.solution || state.problem.solution,
   userAchievements: state.firebase.data.myAchievements || {}
@@ -206,6 +220,10 @@ export default compose(
         `/problemSolutions/${ownProps.match.params.problemId}/${
           firebaseAuth.uid
         }`,
+        {
+          path: `/paths/${ownProps.match.params.pathId}/name`,
+          storeAs: "pathName"
+        },
         {
           path: `/userAchievements/${firebaseAuth.uid}`,
           storeAs: "myAchievements"

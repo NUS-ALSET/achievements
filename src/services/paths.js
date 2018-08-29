@@ -150,7 +150,7 @@ export class PathsService {
                     id: fileId,
                     data
                   }))
-              ),
+              )
               // Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
               //   fileId =>
               //     this.fetchFile(fileId).then(data => ({
@@ -163,7 +163,7 @@ export class PathsService {
                 Object.assign(pathProblem, {
                   problemColabURL: PathsService.getColabURL(files[0].id),
                   problemJSON: files[0].data,
-                  problemFileId: files[0].id,
+                  problemFileId: files[0].id
                   // solutionFileId: files[1].id,
                   // solutionColabURL: PathsService.getColabURL(files[1].id),
                   // solutionJSON: files[1].data
@@ -312,13 +312,17 @@ export class PathsService {
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.jupyterInline.id:
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
-        if (!problemInfo.solutionURL && !problemInfo.id) throw new Error("Missing solutionURL");
+        if (!problemInfo.solutionURL && !problemInfo.id)
+          throw new Error("Missing solutionURL");
         if (!problemInfo.frozen) throw new Error("Missing frozen field");
         if (problemInfo.type === "jupyterInline" && !problemInfo.code)
           throw new Error("Missing code field");
-        if(!problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL)) 
+        if (!problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
           throw new Error("Invalid Problem URL");
-        if(problemInfo.solutionURL && !problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL)) 
+        if (
+          problemInfo.solutionURL &&
+          !problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL)
+        )
           throw new Error("Invalid Solution URL");
         break;
       case ACTIVITY_TYPES.youtube.id:
@@ -349,10 +353,14 @@ export class PathsService {
     const isNew = !problemInfo.id;
     let next;
     let solutionURL = null;
-    
+
     this.validateProblem(problemInfo);
 
-    if([ACTIVITY_TYPES.jupyter.id,ACTIVITY_TYPES.jupyterInline.id ].includes(problemInfo.type)){
+    if (
+      [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(
+        problemInfo.type
+      )
+    ) {
       solutionURL = problemInfo.solutionURL;
       delete problemInfo.solutionURL;
     }
@@ -384,19 +392,13 @@ export class PathsService {
             .ref(`/paths/${pathId}/totalActivities`)
             .transaction(activities => ++activities)
       )
-      .then(() =>{
-        if(solutionURL){
-            this.fetchFile(this.getFileId(solutionURL))
-              .then(json => {
-                this.saveGivenSkillInProblem(
-                  json,
-                  key,
-                  uid,
-                  solutionURL
-                )
-              })
-          }
-        return key
+      .then(() => {
+        if (solutionURL) {
+          this.fetchFile(this.getFileId(solutionURL)).then(json => {
+            this.saveGivenSkillInProblem(json, key, uid, solutionURL);
+          });
+        }
+        return key;
       });
   }
 
@@ -584,44 +586,53 @@ export class PathsService {
       );
   }
 
-  saveGivenSkillInProblem(solution, activityId, uid, solutionURL ) {
+  saveGivenSkillInProblem(solution, activityId, uid, solutionURL) {
     // comment out any lines that start with !
     const editableBlockCode = solution.cells
-      .map(c => (c.cell_type === "code" ? c.source.map(line=>line[0]==='!' ? `#${line}` : line).join("") : ""))
+      .map(
+        c =>
+          c.cell_type === "code"
+            ? c.source
+                .map(line => (line[0] === "!" ? `#${line}` : line))
+                .join("")
+            : ""
+      )
       .join("");
     const data = {
       owner: uid,
       solution: editableBlockCode || ""
     };
 
-    return firebaseService
-      .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
-      .then(res => {
-        firebase
-          .database()
-          .ref(`/activityExampleSolutions/${activityId}`)
-          .set({
-            skills: res.skills || {},
-            solutionURL : solutionURL,
-            owner : uid
-          })
-          
+    return (
+      firebaseService
+        .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
+        .then(res => {
+          firebase
+            .database()
+            .ref(`/activityExampleSolutions/${activityId}`)
+            .set({
+              skills: res.skills || {},
+              solutionURL: solutionURL,
+              owner: uid
+            });
+
           // firebase
           // .database()
           // .ref(`/activities/${activityId}`)
           // .update({
           //   hasSolutionAnalysed : true
           // })
-      })
-      .catch(e=>{
-        // firebase
+        })
+        // eslint-disable-next-line no-unused-vars
+        .catch(e => {
+          // firebase
           // .database()
           // .ref(`/activities/${activityId}`)
           // .update({
           //   hasSolutionAnalysed : false
           // })
-      })
-
+        })
+    );
   }
 
   /**
@@ -992,4 +1003,3 @@ export class PathsService {
 
 /** @type PathsService */
 export const pathsService = new PathsService();
-
