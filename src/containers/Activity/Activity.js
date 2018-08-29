@@ -57,7 +57,9 @@ export class Activity extends React.PureComponent {
       );
     }
   }
-  componentWillReceiveProps(nextProps) {
+
+  // Renamed via https://reactjs.org/docs/react-component.html#unsafe_componentwillreceiveprops
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
       this.onProblemChange({});
     }
