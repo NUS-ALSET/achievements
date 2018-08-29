@@ -23,14 +23,12 @@ import { delay } from "redux-saga";
 import { notificationShow } from "../Root/actions";
 
 export function* signInHandler() {
-  const data = yield select(state => ({
-    authDomain: state.firebase.auth.authDomain || "",
-    uid: state.firebase.auth.uid
-  }));
+  const uid = yield select(state => state.firebase.auth.uid);
 
   try {
-    if (data.uid) {
-      const adminStatus = yield call(accountService.checkAdminStatus, data.uid);
+    if (uid) {
+      const adminStatus = yield call(accountService.checkAdminStatus, uid);
+      yield call(accountService.authTimeUpdate, uid);
       yield put(accountChangeAdminStatus(adminStatus));
     } else {
       yield put(accountChangeAdminStatus(false));

@@ -18,7 +18,7 @@ describe("Paths sagas", () => {
     pathsService.problemChange.restore();
   });
 
-  it("should create new problem", async () => {
+  it("should create new activity", async () => {
     pathsService.problemChange.returns("testKey");
 
     await runSaga(
