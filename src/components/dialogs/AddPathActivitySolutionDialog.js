@@ -118,7 +118,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
                     {/* TODO: refactor =>
                     the problemSolution state seems to be shared among multiple activities
                     listed in the same course page */}
-                    {!readOnly &&
+                    {!readOnly && !['jupyter','jupyterInline'].includes((props.pathProblem || {}).type) &&
                       <Button
                         color="primary"
                         disabled={!(

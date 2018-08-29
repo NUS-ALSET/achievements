@@ -6,6 +6,7 @@
 
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
+import { Button } from "@material-ui/core";
 
 import { problemSolveUpdate } from "../../containers/Activity/actions";
 import JupyterNotebook from "./JupyterNotebook";
@@ -18,7 +19,16 @@ class JupyterColabActivity extends React.PureComponent {
     solution: PropTypes.object,
     readOnly : PropTypes.bool
   };
-
+  state = {
+    showCommitBtn: false
+  };
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.solution || {}).checked) {
+      this.setState({ showCommitBtn: true });
+    } else {
+      this.setState({ showCommitBtn: false });
+    }
+  }
   onSolutionRefreshClick = solutionURL => {
     const { dispatch, problem } = this.props;
 
@@ -41,6 +51,17 @@ class JupyterColabActivity extends React.PureComponent {
 
     return (
       <Fragment>
+        {this.state.showCommitBtn &&
+          <div style={{ height: '20px' }}>
+            <Button
+              color="primary"
+              variant="raised"
+              style={{ float: 'right', marginBottom: '10px' }}
+              onClick={() => this.props.onCommit()}
+            >Commit
+        </Button>
+          </div>
+        }
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={solution && solution.id}
