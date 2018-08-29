@@ -102,6 +102,7 @@ class SampleCard extends React.PureComponent {
       subHeading
     } = this.props;
     const videoID = this.getVideoID(video);
+    const youtubeBackground = `url(https://img.youtube.com/vi/${videoID}/0.jpg`;
 
     return (
       <Card style={styles.card}>
@@ -115,8 +116,7 @@ class SampleCard extends React.PureComponent {
             video
               ? {
                   ...styles.contentYouTube,
-                  backgroundImage:
-                    "url(https://img.youtube.com/vi/" + `${videoID}/0.jpg`
+                  backgroundImage: youtubeBackground
                 }
               : {
                   ...styles.contentPython
