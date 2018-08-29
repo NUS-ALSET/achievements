@@ -6,8 +6,9 @@
 
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-
 import cloneDeep from "lodash/cloneDeep";
+import Typography from "@material-ui/core/Typography";
+import { Button } from "@material-ui/core";
 
 import {
   problemSolutionRefreshFail,
@@ -15,7 +16,6 @@ import {
 } from "../../containers/Activity/actions";
 import { notificationShow } from "../../containers/Root/actions";
 import JupyterNotebook from "./JupyterNotebook";
-import Typography from "@material-ui/core/Typography";
 
 class JupyterInlineActivity extends React.PureComponent {
   static propTypes = {
@@ -27,9 +27,16 @@ class JupyterInlineActivity extends React.PureComponent {
   };
 
   state = {
-    solutionJSON: false
+    solutionJSON: false,
+    showCommitBtn: false
   };
-
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.solution || {}).checked) {
+      this.setState({ showCommitBtn: true });
+    } else {
+      this.setState({ showCommitBtn: false });
+    }
+  }
   onSolutionRefreshClick = value => {
     const { dispatch, onChange, problem } = this.props;
 
@@ -103,6 +110,17 @@ class JupyterInlineActivity extends React.PureComponent {
 
     return (
       <Fragment>
+        {this.state.showCommitBtn &&
+          <div style={{ height: '20px' }}>
+            <Button
+              color="primary"
+              variant="raised"
+              style={{ float: 'right', marginBottom: '10px' }}
+              onClick={() => this.props.onCommit()}
+            >Commit
+        </Button>
+          </div>
+        }
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={this.getSolutionCode(solution, problem)}
