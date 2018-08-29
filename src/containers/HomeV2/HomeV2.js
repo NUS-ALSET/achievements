@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-import RecommendationListCard from "./RecommendationListCard";
+import RecommendationsListCard from "../../components/cards/RecommendationsListCard";
 
 const temporaryRecommendationsKinds = [
   "codeCombat",
@@ -19,9 +19,19 @@ const temporaryRecommendationsKinds = [
   "solvedPySkills"
 ];
 
+const recommendationTypes = {
+  codeCombat: "game",
+  game: "game",
+  jupyter: "code",
+  jupyterInline: "code",
+  unSolvedPySkills: "code",
+  solvedPySkills: "code",
+  youtube: "youtube"
+};
+
 const styles = theme => ({
   progress: {
-// eslint-disable-next-line no-magic-numbers
+    // eslint-disable-next-line no-magic-numbers
     margin: theme.spacing.unit * 2
   },
   loader: {
@@ -46,10 +56,10 @@ export class HomeV2 extends React.Component {
       .filter(key => key !== "title")
       .map(key => ({
         ...recommendations[key],
-        actualProblem: ["unSolvedPySkills", "solvedPySkills"].includes(
+        activityId: ["unSolvedPySkills", "solvedPySkills"].includes(
           recommendationKey
         )
-          ? recommendations[key].problem
+          ? recommendations[key].activity || recommendations[key].problem
           : key,
         subHeading: ["unSolvedPySkills", "solvedPySkills"].includes(
           recommendationKey
@@ -62,7 +72,10 @@ export class HomeV2 extends React.Component {
   };
 
   render() {
-    const { classes, userRecommendations } = this.props;
+    const { classes, uid, userRecommendations } = this.props;
+    if (!uid) {
+      return <div>Login required to display this page</div>;
+    }
     if (!isLoaded(userRecommendations)) {
       return (
         <div className={classes.loader}>
@@ -106,13 +119,11 @@ export class HomeV2 extends React.Component {
             }
 
             return recommendedData.length > 0 ? (
-              <RecommendationListCard
-                dummyData={recommendedData}
+              <RecommendationsListCard
+                data={recommendedData}
                 key={recommendationKey}
-                RecomType={
-                  recommendationKey === "youtube" ? "youtube" : "python"
-                }
                 title={userRecommendations[recommendationKey].title}
+                type={recommendationTypes[recommendedData[0].type]}
               />
             ) : (
               ""

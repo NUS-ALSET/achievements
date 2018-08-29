@@ -1,30 +1,25 @@
-/* eslint-disable no-magic-numbers */
+/**
+ * @file Recommendation card component module
+ * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
+ * @created 30.08.18
+ */
+
 import React from "react";
 import PropTypes from "prop-types";
 
 import { Link } from "react-router-dom";
 
+import withStyles from "@material-ui/core/styles/withStyles";
+
+import Button from "@material-ui/core/Button/Button";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 
-// TODO: 4 different logos for CodeCombat, Python, JavaScript activities
-// python logo for Jupyter, Colab
-import pythonlogo from "../../assets/python-logo-master-v3-TM-flattened.png";
-// codecombat logo for cobecombat activities
-import Codecombatlogo from "../../assets/CodeCombat-logo-min.png";
-// JS logo for Jest and Game (for now only React based games i think)
-// import JSlogo from '../../assets/JSlogoV2.png';
-// Game logo for game activities
-// import Gamelogo from '../../assets/Gamelogo.png';
-
-/*
- * the data code design is modeled after
- * Theodor Shaytanov's PathCard container module
- */
+import codeCombatLogo from "../../assets/CodeCombat-logo-min.png";
+import pythonLogo from "../../assets/python-logo-master-v3-TM-flattened.png";
 
 const styles = {
   card: {
@@ -63,29 +58,20 @@ const styles = {
   }
 };
 
-class SampleCard extends React.PureComponent {
+class RecommendationCard extends React.PureComponent {
   static propTypes = {
-    activityTitle: PropTypes.string.isRequired,
+    activity: PropTypes.object.isRequired,
+    classes: PropTypes.object,
     description: PropTypes.string,
-    path: PropTypes.string,
-    problem: PropTypes.string,
-    subHeading: PropTypes.string,
     video: PropTypes.string,
-    // temporary logo detection for CodeCombat
-    isCodeCombat: PropTypes.bool
+    pathId: PropTypes.string,
+    subHeading: PropTypes.string,
+    type: PropTypes.oneOf(["code", "youtube", "game"]).isRequired
   };
 
-  /*
-   * thanks to Github's protrolium (https://gist.github.com/protrolium/8831763)
-   * Each YouTube video has 4 generated thumbnails, they are formatted as:
-   * http(s)://img.youtube.com/vi/<video-id>/0,1,2,3.jpg
-   * 0.jpg is a suitable size in our app
-   */
-  // function to get the video-id of youtubeURL
   getVideoID = youtubeURL => {
-    // noinspection UnnecessaryLocalVariableJS
-    let endID = youtubeURL.substring(youtubeURL.lastIndexOf("?v=") + 3);
-    return endID;
+    // eslint-disable-next-line no-magic-numbers
+    return youtubeURL.substring(youtubeURL.lastIndexOf("?v=") + 3);
   };
 
   render() {
@@ -93,22 +79,31 @@ class SampleCard extends React.PureComponent {
     // props.path is the owner value
     // props.problem is the key value of the owner
     const {
-      activityTitle,
+      activity,
+      classes,
       description,
-      path,
-      problem,
-      video,
-      isCodeCombat,
-      subHeading
+      pathId,
+      type,
+      subHeading,
+      video
     } = this.props;
     const videoID = this.getVideoID(video);
     const youtubeBackground = `url(https://img.youtube.com/vi/${videoID}/0.jpg`;
+    let image;
+
+    switch (type) {
+      case "game":
+        image = codeCombatLogo;
+        break;
+      default:
+        image = pythonLogo;
+    }
 
     return (
       <Card style={styles.card}>
         <CardMedia
-          image={isCodeCombat ? Codecombatlogo : pythonlogo}
-          style={video ? styles.mediaYouTube : styles.mediaPython}
+          className={video ? classes.mediaYouTube : classes.mediaPython}
+          image={image}
           title={video ? "YouTube Video" : "Python Exercise"}
         />
         <CardContent
@@ -139,14 +134,27 @@ class SampleCard extends React.PureComponent {
             }
             variant="headline"
           >
-            {activityTitle}
+            {activity.name}
           </Typography>
           <Typography component="p">{subHeading || description}</Typography>
         </CardContent>
         <CardActions>
           <Link
+            onClick={
+              (activity.type === "codeCombat" &&
+                (() =>
+                  (window.location.href = `//codecombat.com/play/level/${
+                    activity.level
+                  }`))) ||
+              null
+            }
             style={{ textDecoration: "none" }}
-            to={`/paths/${path}/activities/${problem}`}
+            to={
+              (activity.type !== "codeCombat" &&
+                `/paths/${pathId}/activities/${activity.problem ||
+                  activity.activity}`) ||
+              ""
+            }
           >
             <Button color="primary" size="small">
               Learn More
@@ -158,4 +166,4 @@ class SampleCard extends React.PureComponent {
   }
 }
 
-export default SampleCard;
+export default withStyles(styles)(RecommendationCard);

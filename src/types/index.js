@@ -91,3 +91,8 @@ export const courseInfo = shape({
   totalAssignments: number.isRequired,
   assignments: arrayOf(assignmentInfo).isRequired
 });
+
+export const recommendationInfo = shape({
+  feature: string.isRequired,
+  featureType: string.isRequired
+});

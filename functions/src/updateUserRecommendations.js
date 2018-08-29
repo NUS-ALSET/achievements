@@ -65,6 +65,7 @@ exports.handler = userKey =>
             };
             result[activity.type][activityKey] = Object.assign(
               {
+                activity: activityKey,
                 name: activity.name,
                 feature: "activity",
                 featureType: activity.type,
