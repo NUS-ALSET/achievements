@@ -16,6 +16,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Tooltip from "@material-ui/core/Tooltip";
+import Timeline from "@material-ui/icons/Timeline";
 
 import DoneIcon from "@material-ui/icons/Done";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -27,6 +29,8 @@ import {
   PATH_STATUS_OWNER
 } from "../../containers/Path/selectors";
 
+import { ACTIVITY_TYPES } from "../../services/paths";
+
 const COLUMN_ACTIONS_WIDTH = 240;
 
 const styles = theme => ({
@@ -35,6 +39,9 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit
+  },
+  noWrap : {
+    whiteSpace: 'nowrap'
   }
 });
 
@@ -59,12 +66,13 @@ class ActivitiesTable extends React.PureComponent {
     activity: null,
     analysisDialog: {
       open: false,
-      data: {}
+      name : '',
+      activityId: null
     }
   };
 
-  openAnalysisDialog = defaultSolutionSkills =>
-    this.setState({ analysisDialog: { open: true, data: { defaultSolutionSkills } } });
+  openAnalysisDialog = (activityId, name) =>
+    this.setState({ analysisDialog: { open: true, name, activityId } });
 
   handleCloseAnalysisDialog = () =>
     this.setState({ analysisDialog: { open: false, data: {} } });
@@ -114,8 +122,8 @@ class ActivitiesTable extends React.PureComponent {
           <TableBody>
             {activities.map(activity => (
               <TableRow key={activity.id}>
-                <TableCell>{activity.name}</TableCell>
-                <TableCell>{activity.description}</TableCell>
+                <TableCell className={classes.noWrap}>{activity.name}</TableCell>
+                <TableCell className={classes.noWrap}>{activity.description}</TableCell>
                 {!canChange && (
                   <TableCell>
                     {activity.solved && (
@@ -125,7 +133,31 @@ class ActivitiesTable extends React.PureComponent {
                     )}
                   </TableCell>
                 )}
-                <TableCell>
+                <TableCell className={classes.noWrap} style={{ textAlign : 'right'}}>
+                  {[ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(activity.type) && (
+
+                    <Tooltip
+                      title={"View Default Solution Analysis"}
+                      PopperProps={
+                        {
+                          style: {
+                            pointerEvents: 'none'
+                          }
+                        }
+                      }
+                    >
+                      <Button
+                        onClick={() =>
+                          this.openAnalysisDialog(activity.id, activity.name)
+                        }
+                        variant="raised"
+                        className={classes.button}
+                      >
+                        <Timeline />
+                      </Button>
+                    </Tooltip>
+
+                  )}
                   <Button
                     onClick={() => onOpenActivity(activity)}
                     variant="raised"
@@ -140,16 +172,6 @@ class ActivitiesTable extends React.PureComponent {
                       variant="raised"
                     >
                       More
-                    </Button>
-                  )}
-                  {activity.defaultSolutionSkills && (
-                    <Button
-                      onClick={() =>
-                        this.openAnalysisDialog(activity.defaultSolutionSkills)
-                      }
-                      variant="raised"
-                    >
-                      View Analysis
                     </Button>
                   )}
                 </TableCell>
@@ -215,7 +237,8 @@ class ActivitiesTable extends React.PureComponent {
         <AnalysisDialog
           handleClose={this.handleCloseAnalysisDialog}
           open={this.state.analysisDialog.open}
-          skills={this.state.analysisDialog.data}
+          name={this.state.analysisDialog.name}
+          activityId={this.state.analysisDialog.activityId}
         />
       </Fragment>
     );

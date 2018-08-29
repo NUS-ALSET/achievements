@@ -230,6 +230,12 @@
         }
       }
     },
+    "activityExampleSolutions": {
+      "$activityKey": {
+      ".write": "auth != null && root.child('/activities/' + $activityKey + '/owner').val() == auth.uid",
+      ".read": "auth != null && root.child('/activities/' + $activityKey + '/owner').val() == auth.uid"
+      }
+    },
     "secrets": {
       ".read": "auth != null && root.child('admins/' + auth.uid).exists()"
     },

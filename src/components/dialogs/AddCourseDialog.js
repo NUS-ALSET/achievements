@@ -54,6 +54,13 @@ export class AddCourseDialog extends React.Component {
 
   // validate input first
   onFieldChange = (field, value) => {
+    const { course } = this.props;
+    if (course && course.id) {
+      this.setState({
+        isCorrectInput_Name: true,
+        isCorrectInput_Psw: true
+      });
+    }
     if (field === "name") {
       if (
         AddName.test(value) &&
