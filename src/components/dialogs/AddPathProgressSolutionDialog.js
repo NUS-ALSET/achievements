@@ -7,6 +7,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+// redirect Go To Path
+import { Link } from "react-router-dom";
+
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firebaseConnect } from "react-redux-firebase";
@@ -44,7 +47,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
   };
 
   getProgressMessage = () => {
-    const { pathProgress, assignment } = this.props;
+    const { pathProgress } = this.props;
 
     if (
       !(pathProgress && pathProgress.totalActivities && pathProgress.solutions)
@@ -53,13 +56,15 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     }
     return `You have solved ${pathProgress.solutions} of the ${
       pathProgress.totalActivities
-    } requested problems on the path (${assignment.name}).
+    } requested problems on the path (PATH NAME HERE).
     Your progress is ${this.getProgress()}
     `;
   };
 
   onProblemChange = problemSolution => this.setState({ problemSolution });
+
   onClose = () => this.props.dispatch(assignmentCloseDialog());
+
   onCommit = () => {
     this.props.dispatch(
       assignmentSolutionRequest(
@@ -72,7 +77,12 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
   };
 
   render() {
-    const { open, pathProgress } = this.props;
+    const {
+      open,
+      pathProgress,
+      assignment
+    } = this.props;
+
     return (
       <Dialog onClose={this.onClose} open={open}>
         <DialogTitle>Add Path Progress Status</DialogTitle>
@@ -94,13 +104,16 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={this.onClose}
-          >
-            Go to Path
-          </Button>
+          {assignment &&
+            <Button
+              component={Link}
+              to={`/paths/${assignment.path}`}
+              variant="outlined"
+              color="primary"
+            >
+              Go to Path
+            </Button>
+          }
           <Button color="primary" onClick={this.onCommit} variant="raised">
             Add Status
           </Button>
@@ -135,4 +148,3 @@ export default compose(
   }),
   connect(mapStateToProps)
 )(AddPathProgressSolutionDialog);
-
