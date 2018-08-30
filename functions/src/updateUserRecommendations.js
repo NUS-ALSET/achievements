@@ -4,10 +4,10 @@
 
 const admin = require("firebase-admin");
 
-const MAX_ACTIVITIES_COUNT = 4;
+const MAX_ACTIVITIES_COUNT = 12;
 const ACTIVITY_TYPES = {
   codeCombat: "CodeCombat Activities",
-  jupyter: "Jupyter Colaboratory Activities",
+  jupyter: "Colaboratory Notebook Activities",
   jupyterInline: "Jupyter Notebook Activities",
   youtube: "YouTube Video Activities",
   game: "Game Activities"
