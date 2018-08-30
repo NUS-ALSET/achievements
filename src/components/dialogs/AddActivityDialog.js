@@ -74,7 +74,7 @@ class AddActivityDialog extends React.PureComponent {
     }
     if (nextProps.activity) {
       let state = {};
-      if (nextProps.activity.type === ACTIVITY_TYPES.jupyterInline.id) {
+      if ([ ACTIVITY_TYPES.jupyterInline.id ,ACTIVITY_TYPES.jupyter.id ].includes(nextProps.activity.type)){
         state = {
           code: nextProps.activity.code || 1,
           frozen: nextProps.activity.frozen || 1
@@ -332,7 +332,7 @@ class AddActivityDialog extends React.PureComponent {
               />
             </FormControl>
             {this.state.files &&
-             this.state.files.length > 0 && (
+              this.state.files.length > 0 && (
               <Fragment>
                 <Typography
                   gutterBottom
@@ -409,7 +409,7 @@ class AddActivityDialog extends React.PureComponent {
       });
     }
     let state = {};
-    if (field === "type" && value === ACTIVITY_TYPES.jupyterInline.id) {
+    if (field === "type" && [ACTIVITY_TYPES.jupyterInline.id,ACTIVITY_TYPES.jupyter.id].includes(value)) {
       state = {
         code: 1,
         frozen: 1

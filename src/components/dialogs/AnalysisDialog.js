@@ -116,11 +116,11 @@ const AnalysisDialog = (props) => {
               </Typography>
               <Grid container spacing={8}  justify="space-between">
                 {
-                  Object.keys(skills[key]).map(subKey =>
+                  Object.keys(finalSkills[key]).map(subKey =>
                     <InteractiveList
                       key={`${key}_${subKey}`}
                       name={subKey}
-                      data={skills[key][subKey]}
+                      data={finalSkills[key][subKey]}
                       classes={classes}
                     />
                   )
