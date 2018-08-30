@@ -252,7 +252,6 @@ class AppFrame extends React.Component {
             />
             <main className={classes.content}>
               <Route component={withTracker(HomeV2)} exact path="(/|/home)" />
-              <Route component={withTracker(HomeV2)} exact path="/homev2" />
               <Route component={withTracker(HomeV3)} exact path="/homev3" />
               <Route component={withTracker(Admin)} exact path="/admin" />
               <Route component={withTracker(Courses)} exact path="/courses" />
