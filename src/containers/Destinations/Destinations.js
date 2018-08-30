@@ -35,7 +35,6 @@ function copyToClipBoard(event, destinationId, dispatch){
   event.stopPropagation();
   const inputEl = document.createElement("input");
   inputEl.setAttribute('value',`${window.location.origin}/#/destinations/${destinationId}`)
-  inputEl.setAttribute('hidden',true);
   document.body.appendChild(inputEl);
   inputEl.focus();
   inputEl.select();

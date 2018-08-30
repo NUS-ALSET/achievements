@@ -56,7 +56,6 @@ ViewDestination.propTypes = {
 };
 
 const mapStateToProps = (state, ownProps) => {
-  console.log(ownProps.match.params);
   return {
     destination: (state.firebase.data.destinations || {})[ownProps.match.params.destinationId],
   }
