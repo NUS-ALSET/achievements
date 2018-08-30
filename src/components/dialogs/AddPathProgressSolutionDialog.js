@@ -52,7 +52,9 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     }
     return `You have solved ${pathProgress.solutions} of the ${
       pathProgress.totalActivities
-    } requested problems on the path. Your progress is ${this.getProgress()}`;
+    } requested problems on the path (path name?).
+    Your progress is ${this.getProgress()}
+    `;
   };
 
   onProblemChange = problemSolution => this.setState({ problemSolution });
@@ -90,6 +92,13 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
         <DialogActions>
           <Button color="secondary" onClick={this.onClose}>
             Cancel
+          </Button>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={this.onClose}
+          >
+            Go to Path
           </Button>
           <Button color="primary" onClick={this.onCommit} variant="raised">
             Commit

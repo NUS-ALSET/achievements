@@ -50,7 +50,8 @@ class AddAssignmentDialog extends React.PureComponent {
 
   updateField = field => e => {
     // when update assignment
-    if (this.props.assignment.id) {
+    if (!(typeof this.props.assignment === "undefined") &&
+     this.props.assignment.id) {
       this.setState({
         isCorrectInput_Name: true
       });
