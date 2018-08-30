@@ -16,7 +16,7 @@ exports.addDestination = (title, ownerId, sourceKey, hasPathSource = false) => {
         title,
         sourceKey,
         sourceType: hasPathSource ? 'path' : 'activity',
-        orginanator: ownerId,
+        originator: ownerId,
         updatedOn: Date.now()
       }),
     admin

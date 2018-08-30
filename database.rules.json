@@ -135,6 +135,12 @@
         "
       }
     },
+    "destinations":{
+      ".read" : "auth != null",
+      ".write" : "auth != null &&
+      		newData.child('orginanator').exists() &&
+        	newData.child('orginanator').val() == auth.uid",
+    },
     "jupyterSolutionsQueue": {
       "responses": {
         "$taskKey": {

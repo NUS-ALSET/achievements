@@ -30,6 +30,9 @@ import Courses from "../Courses/Courses";
 import Path from "../Path/Path";
 import Paths from "../Paths/Paths";
 import Contribute from "../Contribute/Contribute";
+import AllDestinations from "../Destinations/AllDestionations";
+import MyDestinations from "../Destinations/MyDestinations";
+import ViewDestination from "../Destinations/ViewDestination";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
 import HomeV3 from "../HomeV3/HomeV3";
@@ -261,6 +264,9 @@ class AppFrame extends React.Component {
               <Route component={withTracker(Cohort)} exact path="/cohorts/:cohortId" />
               <Route component={withTracker(Paths)} exact path="/paths" />
               <Route component={withTracker(Path)} exact path="/paths/:pathId" />
+              <Route component={withTracker(AllDestinations)} exact path="/destinations" />
+              <Route component={withTracker(MyDestinations)} exact path="/my-destinations" />
+              <Route component={withTracker(ViewDestination)} exact path="/destinations/:destinationId" />
               <Route
                 component={withTracker(Activity)}
                 exact
