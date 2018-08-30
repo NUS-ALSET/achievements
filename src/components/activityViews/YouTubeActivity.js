@@ -24,6 +24,18 @@ class YouTubeActivity extends React.PureComponent {
     youtubeEvents: {}
   };
 
+  componentDidMount() {
+    const { solution, onChange } = this.props;
+    if (solution && onChange) {
+      const state = {
+        answers: solution.answers,
+        youtubeEvents: solution.youtubeEvents
+      };
+      this.setState(state);
+      onChange(state);
+    }
+  }
+
   setAnswer = (question, answer) => {
     this.setState({
       answers: {
@@ -32,12 +44,7 @@ class YouTubeActivity extends React.PureComponent {
       }
     });
     if (this.props.onChange) {
-      this.props.onChange({
-        answers: {
-          ...this.state.answers,
-          [question]: answer
-        }
-      });
+      this.props.onChange(this.state);
     }
   };
   setYoutubeEvent = (event, videoTime, info = {}) => {

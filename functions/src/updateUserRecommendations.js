@@ -52,6 +52,7 @@ exports.handler = userKey =>
         for (const activityKey of Object.keys(activities)) {
           const activity = activities[activityKey];
           if (
+            activity.type !== "codeCombat" &&
             ACTIVITY_TYPES[activity.type] &&
             !solutions[activityKey] &&
             (!updated[activity.type] ||
@@ -64,6 +65,7 @@ exports.handler = userKey =>
             };
             result[activity.type][activityKey] = Object.assign(
               {
+                activity: activityKey,
                 name: activity.name,
                 feature: "activity",
                 featureType: activity.type,
