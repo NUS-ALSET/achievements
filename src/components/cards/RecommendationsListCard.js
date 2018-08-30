@@ -86,15 +86,15 @@ class RecommendationsListCard extends React.PureComponent {
   getItemDescription(type) {
     switch (type) {
       case "codeCombat":
-        return "Code Combat Level";
+        return "CodeCombat Level";
       case "jupyter":
-        return "Jupyter Collaboratory";
+        return "Colaboratory Notebook";
       case "jupyterInline":
         return "Jupyter Notebook";
       case "youtube":
-        return "Watch YouTube Video";
+        return "";
       case "game":
-        return "Solve React Game";
+        return "React-Python Game";
       case "unSolvedPySkills":
       case "solvedPySkills":
         return "Python Skills";
