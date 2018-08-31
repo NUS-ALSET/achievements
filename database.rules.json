@@ -137,7 +137,7 @@
     },
     "destinations":{
       ".read" : "auth != null",
-      ".write" : "auth != null && newData.child('orginanator').exists() && newData.child('orginanator').val() == auth.uid"
+      ".write" : "auth != null && newData.child('originator').exists() && newData.child('originator').val() == auth.uid"
     },
     "jupyterSolutionsQueue": {
       "responses": {
