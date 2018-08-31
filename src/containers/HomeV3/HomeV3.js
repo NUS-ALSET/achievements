@@ -1,3 +1,5 @@
+// HomeV3 is combined into HomeV2 Aug 30 2018. This folder is archived.
+
 import React, { Fragment } from "react";
 import RecommendationListCard from "./RecommendationListCard";
 

@@ -152,7 +152,7 @@ class AddAssignmentDialog extends React.PureComponent {
             <TextField
               fullWidth
               label="Activity"
-              onChange={this.updateField("problem")}
+              onChange={this.updateField("pathActivity")}
               select
               value={assignment.problem || ""}
             >
@@ -252,6 +252,8 @@ class AddAssignmentDialog extends React.PureComponent {
             onChange={this.updateField("details")}
             value={assignment.details || ""}
           />
+          <br />
+          <br />
           <FormControlLabel
             control={
               <Checkbox
@@ -283,6 +285,8 @@ class AddAssignmentDialog extends React.PureComponent {
               </MenuItem>
             ))}
           </TextField>
+          <br />
+          <br />
           {this.getAssignmentSpecificFields(assignment)}
           <TextField
             fullWidth

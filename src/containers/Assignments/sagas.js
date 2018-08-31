@@ -53,8 +53,8 @@ import {
   ASSIGNMENT_SHOW_EDIT_DIALOG,
   ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
   assignmentsSolutionsRefreshSuccess,
-  assignmentsSolutionsRefreshFail /* ,
-  ASSIGNMENTS_TEST_SOMETHING */
+  assignmentsSolutionsRefreshFail
+  // ASSIGNMENTS_TEST_SOMETHING (do we still need this?)
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -130,9 +130,12 @@ export function* updateNewAssignmentFieldHandler(action) {
   let problems;
   let assignment = data.assignment;
 
+  // updateNewAssignmentField AUTOFILL text field
   assignment = assignment || {};
   if (["CodeCombat_Number", "Profile"].includes(assignment.questionType)) {
     yield put(updateNewAssignmentField("details", "https://codecombat.com"));
+  } else {
+    console.log("assignment questionTypes are:", assignment.questionType);
   }
 
   switch (action.field) {
@@ -147,11 +150,14 @@ export function* updateNewAssignmentFieldHandler(action) {
           [pathsService, pathsService.fetchPaths],
           data.uid
         );
-
+        console.log("Step 1 done");
+        // Only Step 1 console log is displayed
         yield put(assignmentPathsFetchSuccess(paths));
         yield put(
           updateNewAssignmentField("path", assignment.path || data.uid)
         );
+        console.log("Step 2 done");
+        //console.log Step 2 and 3 did not get execuated
 
         if (!data.manualUpdates.details) {
           yield put(
@@ -160,6 +166,7 @@ export function* updateNewAssignmentFieldHandler(action) {
               `${location}#/paths/${data.uid}`
             )
           );
+          console.log("Step 3 done");
         }
       }
       break;
@@ -179,11 +186,23 @@ export function* updateNewAssignmentFieldHandler(action) {
       );
 
       yield put(assignmentProblemsFetchSuccess(problems));
+
+      // autofil the Link field with the path
+      // didnt work...
+      // it causes the activity menuItem to display nothing...
+      // yield put(
+        // updateNewAssignmentField(
+          // "details",
+          // `${location}#/paths/${data.assignment.path}`
+        // )
+      // );
+      // end of my failed attempt
+
       if (data.assignment.path !== action.value) {
-        yield put(updateNewAssignmentField("problem", ""));
+        yield put(updateNewAssignmentField("pathActivity", ""));
       }
       break;
-    case "problem":
+    case "pathActivity":
       problems = yield select(state => state.assignments.dialog.problems);
 
       problem = findAt(problems, {
@@ -196,6 +215,7 @@ export function* updateNewAssignmentFieldHandler(action) {
         problem.type !== "jupyterInline"
       ) {
         // FIXIT: add `case` for problem type
+        // Agreed
         yield fork(function* subFork() {
           yield put(
             updateNewAssignmentField(

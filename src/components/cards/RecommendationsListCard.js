@@ -180,7 +180,7 @@ class RecommendationsListCard extends React.PureComponent {
               );
             }}
             slidesToShow={itemsPerSlide}
-            speed={1000}
+            speed={600}
           >
             {data.map((item, index) => (
               <RecommendationCard
