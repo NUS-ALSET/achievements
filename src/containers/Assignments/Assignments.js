@@ -280,7 +280,9 @@ class Assignments extends React.Component {
             }
           ]}
         />
-        <Typography gutterBottom>{course.description}</Typography>
+        <Typography gutterBottom>
+          Course Description: {course.description || "None provided"}
+        </Typography>
         {AssignmentView}
         <RemoveStudentDialog
           courseId={course.id}
