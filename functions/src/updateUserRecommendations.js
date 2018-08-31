@@ -77,13 +77,14 @@ exports.handler = userKey =>
         }
       }
 
+      // Process all declared activity types
       return Promise.all(
-        Object.keys(result).map(key =>
-          admin
+        Object.keys(ACTIVITY_TYPES).map(key => {
+          const ref = admin
             .database()
-            .ref(`/userRecommendations/${userKey}/${key}`)
-            .set(result[key])
-        )
+            .ref(`/userRecommendations/${userKey}/${key}`);
+          return result[key] ? ref.remove() : ref.set(result[key]);
+        })
       ).then(() => result);
     })
     .catch(err => {
