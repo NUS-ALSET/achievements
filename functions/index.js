@@ -16,6 +16,7 @@ const httpUtil = require("./src/utils/http").httpUtil;
 const migrateActivities = require("./src/migrateActivities");
 const updateUserRecommendations = require("./src/updateUserRecommendations");
 const updateUserPySkills = require("./src/updateUserPySkills.js")
+const { addDestination, updateDestinationSkills }  = require("./src/destinationHandler");
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -149,3 +150,44 @@ exports.handleUserAuth = functions.database
   .onWrite((snap, context) =>
     updateUserRecommendations.handler(context.params.userKey)
   );
+
+
+exports.addActivityDestination = functions.database
+.ref("/activities/{activityId}")
+.onCreate((sanpshot, context) => {
+  const { activityId } = context.params;
+  const activity = sanpshot.val();
+  const acceptedAcyivitiesTypes = ['jupyter', 'jupyterInline'];
+  if(acceptedAcyivitiesTypes.includes(activity.type)){
+    return addDestination(
+      activity.name,
+      activity.owner,
+      activityId
+    )
+  }
+  return Promise.resolve();
+});
+
+exports.addPathDestination = functions.database
+.ref("/paths/{pathId}")
+.onCreate((sanpshot, context) => {
+  const { pathId } = context.params;
+  const path = sanpshot.val();
+  return addDestination(
+    path.name,
+    path.owner,
+    pathId,
+    true
+  )
+});
+
+exports.updateDestinationSkills = functions.database
+.ref('activityExampleSolutions/{activityId}')
+.onWrite((change, context) => {
+  const {  activityId } = context.params;
+  return updateDestinationSkills(
+    activityId,
+    change.after.val()
+  )
+})
+  

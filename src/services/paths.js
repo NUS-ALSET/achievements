@@ -395,7 +395,7 @@ export class PathsService {
       .then(() => {
         if (solutionURL) {
           this.fetchFile(this.getFileId(solutionURL)).then(json => {
-            this.saveGivenSkillInProblem(json, key, uid, solutionURL);
+            this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
           });
         }
         return key;
@@ -586,7 +586,7 @@ export class PathsService {
       );
   }
 
-  saveGivenSkillInProblem(solution, activityId, uid, solutionURL) {
+  saveGivenSkillInProblem(solution, activityId, uid, solutionURL, pathId) {
     // comment out any lines that start with !
     const editableBlockCode = solution.cells
       .map(
@@ -607,13 +607,15 @@ export class PathsService {
       firebaseService
         .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
         .then(res => {
+          // pathId added, so solution's skills will be fetch on basis of pathId
           firebase
             .database()
             .ref(`/activityExampleSolutions/${activityId}`)
             .set({
               skills: res.skills || {},
               solutionURL: solutionURL,
-              owner: uid
+              owner: uid,
+              pathId 
             });
 
           // firebase
