@@ -99,7 +99,7 @@ class Cohort extends React.PureComponent {
             marginLeft: 30
           }}
         >
-          {cohort.description}
+          Cohort Description: {cohort.description || "None provided"}
         </Typography>
         {isOwner && (
           <Toolbar>
