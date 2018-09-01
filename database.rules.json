@@ -137,7 +137,24 @@
     },
     "destinations":{
       ".read" : "auth != null",
-      ".write" : "auth != null && newData.child('originator').exists() && newData.child('originator').val() == auth.uid"
+      "$destinationKey" :{
+        ".read" : "auth != null",
+        ".write" : "
+            auth != null &&  
+            (
+              ( 
+                newData.exists() && 
+                newData.child('originator').exists() &&
+                newData.child('originator').val() == auth.uid && 
+                ( 
+                  !data.exists()  || 
+                  ( data.child('originator').val() == auth.uid) 
+                ) 
+              ) || ( 
+                data.exists() && data.child('originator').val() == auth.uid 
+              )
+            )"
+        }
     },
     "jupyterSolutionsQueue": {
       "responses": {
