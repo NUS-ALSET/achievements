@@ -1,5 +1,5 @@
 /**
- * @file Destinations container module
+ * @file Skills component module
  * @created 30.08.18
  */
 
@@ -71,10 +71,12 @@ function Skills(props) {
   const { classes, skills } = props;
   return (
     <div className={classes.root}>
-    <Typography variant="subheading" className={classes.heading1}>
-        Skills
-        <Divider />
-      </Typography>
+      {Object.keys(skills || {}).length>0 &&
+        <Typography variant="subheading" className={classes.heading1}>
+          Skills
+          <Divider />
+        </Typography>
+      }
       <Grid container spacing={8} justify="space-around">
         {
           Object.keys(skills || {}).map(key =>

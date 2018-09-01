@@ -16,9 +16,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
 
 import { notificationShow } from '../Root/actions';
-
-
-import Skills from "./Skills";
+import Skills from "../../components/lists/Skills";
 
 const styles = theme => ({
   root: {
@@ -70,7 +68,7 @@ function Destinations(props) {
               
               {
                 Object.keys(dest.value.skills || {}).length > 0
-                  ? <Skills skills={dest.value.skills} destination={dest.value} />
+                  ? <Skills skills={dest.value.skills}  />
                   : <Typography className={classes.heading} variant={'display2'}>No Skills.</Typography>
               }
               </div>
