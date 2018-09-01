@@ -14,37 +14,54 @@ const ACTIVITY_TYPES = {
 };
 
 exports.handler = userKey =>
-  admin
-    .database()
-    .ref("/paths")
-    .orderByChild("isPublic")
-    .equalTo(true)
-    .once("value")
-    .then(snapshot => snapshot.val())
-    .then(paths =>
-      Promise.all(
-        Object.keys(paths).map(pathKey =>
-          Promise.all([
-            admin
-              .database()
-              .ref("/activities")
-              .orderByChild("path")
-              .equalTo(pathKey)
-              .once("value")
-              .then(snapshot => snapshot.val()),
-            admin
-              .database()
-              .ref(`/completedActivities/${userKey}/${pathKey}`)
-              .once("value")
-              .then(snapshot => snapshot.val())
-          ])
+  Promise.all([
+    admin
+      .database()
+      .ref("/activityExampleSolutions")
+      .once("value")
+      .then(snapshot => snapshot.val()),
+    admin
+      .database()
+      .ref(`/userCodingSkills/${userKey}`)
+      .once("value")
+      .then(snapshot => snapshot.val()),
+    admin
+      .database()
+      .ref("/paths")
+      .orderByChild("isPublic")
+      .equalTo(true)
+      .once("value")
+      .then(snapshot => snapshot.val())
+      .then(paths =>
+        Promise.all(
+          Object.keys(paths).map(pathKey =>
+            Promise.all([
+              admin
+                .database()
+                .ref("/activities")
+                .orderByChild("path")
+                .equalTo(pathKey)
+                .once("value")
+                .then(snapshot => snapshot.val()),
+              admin
+                .database()
+                .ref(`/completedActivities/${userKey}/${pathKey}`)
+                .once("value")
+                .then(snapshot => snapshot.val())
+            ])
+          )
         )
       )
-    )
-    .then(pathActivitiesData => {
+  ])
+    .then(([activityExampleSolutions = {}, userSkills = {}, pathActivitiesData]) => {
       const result = {};
       const updated = {};
-
+      const problemWithUnsolvedSkills = {
+        title: "Jupyter Activities With New Skills"
+      };
+      const problemWithSolvedSkills = {
+        title: "Jupyter Activities With Solved Skills"
+      };
       for (const data of pathActivitiesData) {
         const activities = data[0] || {};
         const solutions = data[1] || {};
@@ -74,9 +91,36 @@ exports.handler = userKey =>
               activity
             );
           }
+
+          // update solved & unsolved activities
+          if (
+            ["jupyter", "jupyterInline"].includes(activity.type)
+            && !solutions[activityKey]
+          ) {
+            const problemSkills = (activityExampleSolutions[activityKey] || {}).skills || {};
+
+            Object.keys(problemSkills).forEach(feature => {
+              Object.keys((problemSkills[feature] || {})).forEach(featureType => {
+                // set object reference
+                let skillsCollection = ((userSkills || {})[feature] || {})[featureType] ? problemWithSolvedSkills : problemWithUnsolvedSkills;
+                // add problem to reference
+                skillsCollection[`${feature}_${featureType}`] = {
+                  feature,
+                  featureType,
+                  path: activity.path,
+                  problem: activityKey,
+                  problemOwner: activity.owner,
+                  name: activity.name,
+                  description: activity.description || '',
+                  type: activity.type,
+                }
+              })
+            })
+          }
         }
       }
-
+      result.solvedPySkills = problemWithSolvedSkills;
+      result.unSolvedPySkills = problemWithUnsolvedSkills;
       return Promise.all(
         Object.keys(result).map(key =>
           admin
