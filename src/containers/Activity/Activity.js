@@ -24,6 +24,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
 import isEqual from "lodash/isEqual";
+import { notificationShow } from "../Root/actions";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
@@ -44,7 +45,8 @@ export class Activity extends React.PureComponent {
   };
 
   state = {
-    problemSolution: {}
+    problemSolution: {},
+    changed: false
   };
 
   componentDidMount() {
@@ -74,19 +76,23 @@ export class Activity extends React.PureComponent {
   }
 
   onProblemChange = problemSolution => {
-    this.setState({ problemSolution });
+    this.setState({ problemSolution, changed: true });
     return (
       this.props.onProblemChange && this.props.onProblemChange(problemSolution)
     );
   };
   onCommit = () => {
-    this.props.dispatch(
-      problemSolutionSubmitRequest(
-        this.props.match.params.pathId,
-        this.props.match.params.problemId,
-        this.state.problemSolution
-      )
-    );
+    if (this.state.changed) {
+      this.props.dispatch(
+        problemSolutionSubmitRequest(
+          this.props.match.params.pathId,
+          this.props.match.params.problemId,
+          this.state.problemSolution
+        )
+      );
+    } else {
+      this.props.dispatch(notificationShow("Nothing changed"));
+    }
   };
 
   propsCommit = data => {
