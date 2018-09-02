@@ -13,7 +13,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import Typography from '@material-ui/core/Typography';
-import Skills from './Skills';
+import Skills from "../../components/lists/Skills";
+
 
 const styles = theme => ({
   root: {

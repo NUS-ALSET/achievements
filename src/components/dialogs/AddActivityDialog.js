@@ -74,6 +74,9 @@ class AddActivityDialog extends React.PureComponent {
     }
     if (nextProps.activity) {
       let state = {};
+      if(nextProps.activity.name && AddName.test(nextProps.activity.name) && NoStartWhiteSpace.test(nextProps.activity.name)){
+        this.setState({ isCorrectInput : true})
+      }
       if ([ ACTIVITY_TYPES.jupyterInline.id ,ACTIVITY_TYPES.jupyter.id ].includes(nextProps.activity.type)){
         state = {
           code: nextProps.activity.code || 1,

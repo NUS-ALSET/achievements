@@ -602,37 +602,28 @@ export class PathsService {
       owner: uid,
       solution: editableBlockCode || ""
     };
-
+    const resData = {};
     return (
       firebaseService
         .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
         .then(res => {
+          resData.skills = res.skills || {};
+        })
+        .catch(e => {
+          resData.errorMsg = e.message || 'Error occured';
+        })
+        .finally(() => {
           // pathId added, so solution's skills will be fetch on basis of pathId
+
           firebase
             .database()
             .ref(`/activityExampleSolutions/${activityId}`)
             .set({
-              skills: res.skills || {},
+              ...resData,
               solutionURL: solutionURL,
               owner: uid,
-              pathId 
+              pathId
             });
-
-          // firebase
-          // .database()
-          // .ref(`/activities/${activityId}`)
-          // .update({
-          //   hasSolutionAnalysed : true
-          // })
-        })
-        // eslint-disable-next-line no-unused-vars
-        .catch(e => {
-          // firebase
-          // .database()
-          // .ref(`/activities/${activityId}`)
-          // .update({
-          //   hasSolutionAnalysed : false
-          // })
         })
     );
   }
