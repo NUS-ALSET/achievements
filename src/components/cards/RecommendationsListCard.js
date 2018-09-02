@@ -159,9 +159,9 @@ class RecommendationsListCard extends React.PureComponent {
             }}
             renderCenterRightControls={({ currentSlide, goToSlide }) => {
               const nextSlideIndex =
-                currentSlide + itemsPerSlide <= data.length
-                  ? currentSlide + itemsPerSlide
-                  : data.length;
+                currentSlide + 2*itemsPerSlide > data.length
+                  ? currentSlide + data.length%itemsPerSlide
+                  : currentSlide + itemsPerSlide;
               return (
                 <Button
                   aria-label="nexSlide"
