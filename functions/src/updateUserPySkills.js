@@ -101,10 +101,10 @@ function updateRecommendation(userKey, userSkills) {
     )
     .then(({ pathActivitiesData, activityExampleSolutions={} }) => {
       let problemWithUnsolvedSkills = {
-        title : "Jupyter Activities With New Skills"
+        title : "Jupyter Notebook Activities With New Skills"
       };
       let problemWithSolvedSkills = {
-        title : "Jupyter Activities With Solved Skills"
+        title : "Jupyter Notebook Activities With Solved Skills"
       };
       for (const data of pathActivitiesData) {
         const [ activities = {}, completedActivities = {} ] = data;
