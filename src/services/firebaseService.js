@@ -29,7 +29,7 @@ class FirebaseService {
           .ref(`/${this.collectionName}/responses/${taskKey}`)
           .remove()
         this.offFirebaseChangeListen(taskKey);
-        this.dispatch(notificationShow(`${this.processName} timeout`));
+        this.dispatch(notificationShow(`${this.processName} Timeout`));
         setTimeout(() => {
           cb();
         }, 1000)
@@ -100,23 +100,24 @@ class FirebaseService {
           this.deleteResponse(taskKey)
             .then(
               () => {
-                if (response.val()) {
+                const value = response.val() || {};
+                if (!value.error) {
                   this.showNotification('Completed');
                   resolve( 
-                    response.val()
+                    value
                   )
                 } else {
-                  this.showNotification('Failed');
+                  this.showNotification(`Failded (${value.error.message})`);
                   setTimeout(() => {
                     this.deleteTask(taskKey);
-                    reject();
+                    reject(value.error);
                   }, 1000)
                 }
               }
             );
         });
       this.addTask(taskKey, data);
-      this.stopProcessAfterTimeOut(taskKey, () => reject());
+      this.stopProcessAfterTimeOut(taskKey, () => reject({ message : 'Processing Timeout'}));
     });
   }
 }

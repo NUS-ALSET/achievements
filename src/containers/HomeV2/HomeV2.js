@@ -4,10 +4,9 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import { connect } from "react-redux";
-import { withStyles } from "@material-ui/core/styles";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 import RecommendationsListCard from "../../components/cards/RecommendationsListCard";
+import ContentLoader from './ContentLoader'
 
 const temporaryRecommendationsKinds = [
   "codeCombat",
@@ -29,24 +28,9 @@ const recommendationTypes = {
   youtube: "youtube"
 };
 
-const styles = theme => ({
-  progress: {
-    // eslint-disable-next-line no-magic-numbers
-    margin: theme.spacing.unit * 2
-  },
-  loader: {
-    display: "flex",
-    flexDirection: "column",
-    width: "50px",
-    height: "calc(100vh - 200px)",
-    justifyContent: "center",
-    margin: "0 auto"
-  }
-});
 
 export class HomeV2 extends React.Component {
   static propTypes = {
-    classes: PropTypes.object.isRequired,
     userRecommendations: PropTypes.any,
     uid: PropTypes.string
   };
@@ -72,15 +56,13 @@ export class HomeV2 extends React.Component {
   };
 
   render() {
-    const { classes, uid, userRecommendations } = this.props;
+    const { uid, userRecommendations } = this.props;
     if (!uid) {
-      return <div>Login required to display this page</div>;
+      return <div>Login required to display this page.</div>;
     }
     if (!isLoaded(userRecommendations)) {
       return (
-        <div className={classes.loader}>
-          <CircularProgress className={classes.progress} size={50} />
-        </div>
+          <ContentLoader />
       );
     }
     return (
@@ -142,7 +124,6 @@ const mapStateToProps = state => ({
 });
 
 export default compose(
-  withStyles(styles),
   firebaseConnect((ownProps, store) => {
     const state = store.getState();
     const uid = state.firebase.auth.uid;
