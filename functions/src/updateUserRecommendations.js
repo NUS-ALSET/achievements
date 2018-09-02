@@ -17,6 +17,11 @@ exports.handler = userKey =>
   Promise.all([
     admin
       .database()
+      .ref("/config/recommendations")
+      .once("value")
+      .then(snapshot => snapshot.val()),
+    admin
+      .database()
       .ref("/activityExampleSolutions")
       .once("value")
       .then(snapshot => snapshot.val()),
@@ -55,6 +60,7 @@ exports.handler = userKey =>
   ])
     .then(
       ([
+        allowedRecommendations,
         activityExampleSolutions = {},
         userSkills = {},
         pathActivitiesData
@@ -67,6 +73,17 @@ exports.handler = userKey =>
         const problemWithSolvedSkills = {
           title: "Jupyter Activities With Solved Skills"
         };
+
+        allowedRecommendations = allowedRecommendations || {
+          solvedPySkills: true,
+          unSolvedPySkills: true,
+          codeCombat: true,
+          jupyter: true,
+          jupyterInline: true,
+          youtube: true,
+          game: true
+        };
+
         for (const data of pathActivitiesData) {
           const activities = data[0] || {};
           const solutions = data[1] || {};
@@ -74,7 +91,6 @@ exports.handler = userKey =>
           for (const activityKey of Object.keys(activities)) {
             const activity = activities[activityKey];
             if (
-              activity.type !== "codeCombat" &&
               ACTIVITY_TYPES[activity.type] &&
               !solutions[activityKey] &&
               (!updated[activity.type] ||
@@ -88,9 +104,9 @@ exports.handler = userKey =>
               result[activity.type][activityKey] = Object.assign(
                 {
                   activity: activityKey,
-                  name: activity.name,
+                  name: activity.name || "",
                   feature: "activity",
-                  featureType: activity.type,
+                  featureType: activity.type || "",
                   problem: activityKey
                 },
                 activity
@@ -118,12 +134,12 @@ exports.handler = userKey =>
                     skillsCollection[`${feature}_${featureType}`] = {
                       feature,
                       featureType,
-                      path: activity.path,
-                      problem: activityKey,
-                      problemOwner: activity.owner,
-                      name: activity.name,
+                      path: activity.path || "",
+                      problem: activityKey || "",
+                      problemOwner: activity.owner || "",
+                      name: activity.name || "",
                       description: activity.description || "",
-                      type: activity.type
+                      type: activity.type || ""
                     };
                   }
                 );
@@ -131,14 +147,29 @@ exports.handler = userKey =>
             }
           }
         }
-        result.solvedPySkills = problemWithSolvedSkills;
-        result.unSolvedPySkills = problemWithUnsolvedSkills;
+        if (allowedRecommendations.solvedPySkills) {
+          result.solvedPySkills = problemWithSolvedSkills;
+        }
+        if (allowedRecommendations.unSolvedPySkills) {
+          result.unSolvedPySkills = problemWithUnsolvedSkills;
+        }
+
         return Promise.all(
           Object.keys(ACTIVITY_TYPES).map(key => {
             const ref = admin
               .database()
               .ref(`/userRecommendations/${userKey}/${key}`);
-            return result[key] ? ref.remove() : ref.set(result[key]);
+
+            // Debug
+            for (const subKey of Object.keys(result[key])) {
+              if (result[key][subKey] === undefined) {
+                console.error(`Missing ${subKey} at `);
+              }
+            }
+
+            return result[key] && allowedRecommendations[key]
+              ? ref.set(result[key])
+              : ref.remove();
           })
         ).then(() => result);
       }
