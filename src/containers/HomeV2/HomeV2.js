@@ -56,10 +56,7 @@ export class HomeV2 extends React.Component {
   };
 
   render() {
-    const { uid, userRecommendations } = this.props;
-    if (!uid) {
-      return <div>Login required to display this page.</div>;
-    }
+    const { userRecommendations } = this.props;
     if (!isLoaded(userRecommendations)) {
       return (
           <ContentLoader />
