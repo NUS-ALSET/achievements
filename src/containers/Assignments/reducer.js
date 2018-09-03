@@ -31,7 +31,8 @@ import {
   PROBLEM_SOLUTION_PROVIDED_SUCCESS,
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
-  PROBLEM_SOLUTION_REFRESH_SUCCESS
+  PROBLEM_SOLUTION_REFRESH_SUCCESS,
+  PROBLEM_SOLUTION_EXECUTION_STATUS
 } from "../Activity/actions";
 
 const DAYS_IN_WEEK = 7;
@@ -219,12 +220,24 @@ export const assignments = (
         dialog: {
           ...state.dialog,
           solution: {
-            ...(state.solution || {}),
+            ...(state.dialog.solution || {}),
             checked: false,
             loading: false
           }
         }
       };
+      case PROBLEM_SOLUTION_EXECUTION_STATUS: {
+        return {
+          ...state,
+          dialog: {
+            ...state.dialog,
+            solution: {
+              ...(state.dialog.solution || {}),
+              ...action.payload,
+            }
+          }
+        };
+      }
     case PROBLEM_SOLUTION_PROVIDED_SUCCESS:
       return {
         ...state,

@@ -65,7 +65,7 @@ export const problem = (
         ...state,
         solution: {
           ...(state.solution || {}),
-          ...action.payload
+          status : action.payload.status
         }
       };
     }

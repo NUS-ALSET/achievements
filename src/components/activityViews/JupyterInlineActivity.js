@@ -28,13 +28,19 @@ class JupyterInlineActivity extends React.PureComponent {
 
   state = {
     solutionJSON: false,
-    showCommitBtn: false
+    showCommitBtn: false,
+    statusText : null
   };
   componentWillReceiveProps(nextProps) {
     if ((nextProps.solution || {}).checked) {
       this.setState({ showCommitBtn: true });
     } else {
       this.setState({ showCommitBtn: false });
+    }
+    if(nextProps.solution.statusText){
+      this.setState({ statusText : nextProps.solution.statusText });  
+    }else{
+      this.setState({ statusText : null })
     }
   }
   onSolutionRefreshClick = value => {
@@ -110,6 +116,12 @@ class JupyterInlineActivity extends React.PureComponent {
 
     return (
       <Fragment>
+        {
+          this.state.statusText && 
+          <div style={{ textAlign : 'left',fontWeight : 'bold',paddingLeft : '10px',color : '#d2691e' }}>
+            <b>Execution Status: </b> {this.state.statusText }
+          </div>
+        }
         {this.state.showCommitBtn &&
           <div style={{ height: '20px' }}>
             <Button

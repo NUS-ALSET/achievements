@@ -20,13 +20,19 @@ class JupyterColabActivity extends React.PureComponent {
     readOnly : PropTypes.bool
   };
   state = {
-    showCommitBtn: false
+    showCommitBtn: false,
+    statusText : null
   };
   componentWillReceiveProps(nextProps) {
     if ((nextProps.solution || {}).checked) {
       this.setState({ showCommitBtn: true });
     } else {
       this.setState({ showCommitBtn: false });
+    }
+    if(nextProps.solution.statusText){
+      this.setState({ statusText : nextProps.solution.statusText });  
+    }else{
+      this.setState({ statusText : null })
     }
   }
   onSolutionRefreshClick = solutionURL => {
@@ -51,6 +57,13 @@ class JupyterColabActivity extends React.PureComponent {
 
     return (
       <Fragment>
+        {
+          this.state.statusText && 
+          <div style={{ textAlign : 'left',fontWeight : 'bold',paddingLeft : '10px',color : '#d2691e' }}>
+            <b>Execution Status: </b> {this.state.statusText }
+          </div>
+        }
+        
         {this.state.showCommitBtn &&
           <div style={{ height: '20px' }}>
             <Button
@@ -59,9 +72,10 @@ class JupyterColabActivity extends React.PureComponent {
               style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
             >Commit
-        </Button>
+          </Button>
           </div>
         }
+        
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={solution && solution.id}
