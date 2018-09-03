@@ -101,6 +101,23 @@ class RecommendationCard extends React.PureComponent {
 
     return (
       <Card style={styles.card}>
+      <Link
+        onClick={
+          (activity.type === "codeCombat" &&
+            (() =>
+              (window.location.href = `//codecombat.com/play/level/${
+                activity.level
+              }`))) ||
+          null
+        }
+        style={{ textDecoration: "none" }}
+        to={
+          (activity.type !== "codeCombat" &&
+            `/paths/${pathId}/activities/${activity.problem ||
+              activity.activity}`) ||
+          ""
+        }
+      >
         <CardMedia
           className={video ? classes.mediaYouTube : classes.mediaPython}
           image={image}
@@ -139,28 +156,11 @@ class RecommendationCard extends React.PureComponent {
           <Typography component="p">{subHeading || description}</Typography>
         </CardContent>
         <CardActions>
-          <Link
-            onClick={
-              (activity.type === "codeCombat" &&
-                (() =>
-                  (window.location.href = `//codecombat.com/play/level/${
-                    activity.level
-                  }`))) ||
-              null
-            }
-            style={{ textDecoration: "none" }}
-            to={
-              (activity.type !== "codeCombat" &&
-                `/paths/${pathId}/activities/${activity.problem ||
-                  activity.activity}`) ||
-              ""
-            }
-          >
-            <Button color="primary" size="small">
-              Learn More
-            </Button>
-          </Link>
+          <Button color="primary" size="small">
+            Learn More
+          </Button>
         </CardActions>
+      </Link>
       </Card>
     );
   }
