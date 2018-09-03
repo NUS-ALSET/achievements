@@ -68,10 +68,10 @@ exports.handler = userKey =>
         const result = {};
         const updated = {};
         const problemWithUnsolvedSkills = {
-          title: "Jupyter Activities With New Skills"
+          title: "Jupyter Notebook Activities With New Skills"
         };
         const problemWithSolvedSkills = {
-          title: "Jupyter Activities With Solved Skills"
+          title: "Jupyter Notebook Activities With Solved Skills"
         };
 
         allowedRecommendations = allowedRecommendations || {

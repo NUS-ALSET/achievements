@@ -36,8 +36,8 @@ const styles = theme => ({
 
 // FIXIT: move it into shared with functions place
 const recommendations = {
-  solvedPySkills: "Jupyter Activities With New Skills",
-  unSolvedPySkills: "Jupyter Activities With Solved Skills",
+  solvedPySkills: "Jupyter Notebook Activities With New Skills",
+  unSolvedPySkills: "Jupyter Notebook Activities With Solved Skills",
   codeCombat: "CodeCombat Activities",
   jupyter: "Colaboratory Notebook Activities",
   jupyterInline: "Jupyter Notebook Activities",

@@ -103,6 +103,27 @@ class RecommendationsListCard extends React.PureComponent {
     }
   }
 
+  // temporarily select the subheader to display
+  // TODO: change to "Our Suggestions" for new/non-logger users
+  getSubHeader = () => {
+    switch (this.props.title) {
+      case "CodeCombat Activities":
+        return "Recommended because you have not played them";
+      case "Colaboratory Notebook Activities":
+        return "Recommended because you have not given them a try";
+      case "Jupyter Notebook Activities":
+        return "Recommended because you have not completed them";
+      case "Jupyter Notebook Activities With New Skills":
+        return "Recommended for you to try new Python skills you have not used before";
+      case "Jupyter Notebook Activities With Solved Skills":
+        return "What are solved skills? to enhance their existing knowledge?";
+      case "YouTube Video Activities":
+        return "Recommended because you have not watched these videos";
+      default:
+        return "";
+    }
+  };
+
   render() {
     // the Firebase data in Redux is nested JSON
     // here temporarily use a dummy JSON with 2 pythonlists and 1 youtubelist
@@ -129,8 +150,8 @@ class RecommendationsListCard extends React.PureComponent {
               {this.getAvatarIcon()}
             </Avatar>
           }
-          subheader="Recommended for you"
-          title={title || "Jupyter Notebook Activities !"}
+          subheader={this.getSubHeader()}
+          title={title || "Other Activities"}
         />
         <CardContent>
           <Carousel
