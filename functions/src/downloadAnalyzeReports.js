@@ -20,7 +20,7 @@ exports.handler = request =>
     .then(snap => snap.val())
     .then(
       data =>
-        (request.skipHeader ? "" : `"${request.fields.join("\",\"")}"`) +
+        (request.skipHeader ? "" : `"${request.fields.join("\",\"")}"\n`) +
         Object.keys(data)
           .map(key => {
             let result = "";
