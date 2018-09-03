@@ -20,6 +20,7 @@ import Typography from "@material-ui/core/Typography";
 
 import codeCombatLogo from "../../assets/CodeCombat-logo-min.png";
 import pythonLogo from "../../assets/python-logo-master-v3-TM-flattened.png";
+import { ACTIVITY_TYPES } from "../../services/paths";
 
 const styles = {
   card: {
@@ -74,6 +75,13 @@ class RecommendationCard extends React.PureComponent {
     return youtubeURL.substring(youtubeURL.lastIndexOf("?v=") + 3);
   };
 
+  handleClick() {
+    const { activity } = this.props;
+    if (activity.type === ACTIVITY_TYPES.codeCombat.id) {
+      window.open(`//codecombat.com/play/level/${activity.level}`, "_blank");
+    }
+  }
+
   render() {
     // get the data from the dummy Redux State
     // props.path is the owner value
@@ -101,66 +109,59 @@ class RecommendationCard extends React.PureComponent {
 
     return (
       <Card style={styles.card}>
-      <Link
-        onClick={
-          (activity.type === "codeCombat" &&
-            (() =>
-              (window.location.href = `//codecombat.com/play/level/${
-                activity.level
-              }`))) ||
-          null
-        }
-        style={{ textDecoration: "none" }}
-        to={
-          (activity.type !== "codeCombat" &&
-            `/paths/${pathId}/activities/${activity.problem ||
-              activity.activity}`) ||
-          ""
-        }
-      >
-        <CardMedia
-          className={video ? classes.mediaYouTube : classes.mediaPython}
-          image={image}
-          title={video ? "YouTube Video" : "Python Exercise"}
-        />
-        <CardContent
-          style={
-            video
-              ? {
-                  ...styles.contentYouTube,
-                  backgroundImage: youtubeBackground
-                }
-              : {
-                  ...styles.contentPython
-                }
+        <Link
+          onClick={this.handleClick}
+          style={{ textDecoration: "none" }}
+          to={
+            (activity.type !== "codeCombat" &&
+              `/paths/${pathId}/activities/${activity.problem ||
+                activity.activity}`) ||
+            ""
           }
         >
-          <Typography
-            component="p"
+          <CardMedia
+            className={video ? classes.mediaYouTube : classes.mediaPython}
+            image={image}
+            title={video ? "YouTube Video" : "Python Exercise"}
+          />
+          <CardContent
             style={
               video
                 ? {
-                    color: "white",
-                    backgroundColor: "gray",
-                    height: 25,
-                    position: "absolute",
-                    bottom: 60,
-                    fontSize: 20
+                    ...styles.contentYouTube,
+                    backgroundImage: youtubeBackground
                   }
-                : {}
+                : {
+                    ...styles.contentPython
+                  }
             }
-            variant="headline"
           >
-            {activity.name}
-          </Typography>
-          <Typography component="p">{subHeading || description}</Typography>
-        </CardContent>
-        <CardActions>
-          <Button color="primary" size="small">
-            Learn More
-          </Button>
-        </CardActions>
-      </Link>
+            <Typography
+              component="p"
+              style={
+                video
+                  ? {
+                      color: "white",
+                      backgroundColor: "gray",
+                      height: 25,
+                      position: "absolute",
+                      bottom: 60,
+                      fontSize: 20
+                    }
+                  : {}
+              }
+              variant="headline"
+            >
+              {activity.name}
+            </Typography>
+            <Typography component="p">{subHeading || description}</Typography>
+          </CardContent>
+          <CardActions>
+            <Button color="primary" size="small">
+              Learn More
+            </Button>
+          </CardActions>
+        </Link>
       </Card>
     );
   }
