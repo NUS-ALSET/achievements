@@ -80,6 +80,10 @@
         ".write": "auth != null && $userKey == auth.uid"
       }
     },
+    "config": {
+      ".read": "auth != null && root.child('/admins/' + auth.uid).val() == true",
+      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
+    },
     "courseMembers": {
       ".read": "auth != null",
       "$courseKey": {
@@ -140,18 +144,18 @@
       "$destinationKey" :{
         ".read" : "auth != null",
         ".write" : "
-            auth != null &&  
+            auth != null &&
             (
-              ( 
-                newData.exists() && 
+              (
+                newData.exists() &&
                 newData.child('originator').exists() &&
-                newData.child('originator').val() == auth.uid && 
-                ( 
-                  !data.exists()  || 
-                  ( data.child('originator').val() == auth.uid) 
-                ) 
-              ) || ( 
-                data.exists() && data.child('originator').val() == auth.uid 
+                newData.child('originator').val() == auth.uid &&
+                (
+                  !data.exists()  ||
+                  ( data.child('originator').val() == auth.uid)
+                )
+              ) || (
+                data.exists() && data.child('originator').val() == auth.uid
               )
             )"
         }
