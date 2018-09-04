@@ -208,7 +208,7 @@
     "logged_events": {
       ".read": "auth != null",
       ".write": "auth != null",
-      ".indexOn": ["createdAt"]
+      ".indexOn": ["createdAt", "type"]
     },
     "moreProblemsRequests": {
       "$requestKey": {

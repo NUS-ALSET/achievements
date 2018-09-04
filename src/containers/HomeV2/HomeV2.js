@@ -6,7 +6,8 @@ import { firebaseConnect, isLoaded } from "react-redux-firebase";
 import { connect } from "react-redux";
 
 import RecommendationsListCard from "../../components/cards/RecommendationsListCard";
-import ContentLoader from './ContentLoader'
+import ContentLoader from "./ContentLoader";
+import { homeOpenRecommendation } from "./actions";
 
 const temporaryRecommendationsKinds = [
   "codeCombat",
@@ -28,12 +29,12 @@ const recommendationTypes = {
   youtube: "youtube"
 };
 
-
 export class HomeV2 extends React.Component {
   static propTypes = {
+    dispatch: PropTypes.func,
     userRecommendations: PropTypes.any,
     uid: PropTypes.string,
-    auth : PropTypes.object,    
+    auth: PropTypes.object
   };
 
   reformatRecommendation = (recommendations, recommendationKey = "") => {
@@ -56,15 +57,27 @@ export class HomeV2 extends React.Component {
       }));
   };
 
+  onRecommendationClick = (recommendationType, recommendations) => (
+    activityId,
+    pathId
+  ) =>
+    this.props.dispatch(
+      homeOpenRecommendation(
+        recommendationType,
+        JSON.stringify(recommendations),
+        activityId,
+        pathId
+      )
+    );
+
   render() {
-    const { auth, userRecommendations} = this.props;
+    const { auth, userRecommendations } = this.props;
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
     }
+
     if (!isLoaded(userRecommendations)) {
-      return (
-          <ContentLoader />
-      );
+      return <ContentLoader />;
     }
     return (
       <Fragment>
@@ -105,6 +118,10 @@ export class HomeV2 extends React.Component {
               <RecommendationsListCard
                 data={recommendedData}
                 key={recommendationKey}
+                onRecommendationClick={this.onRecommendationClick(
+                  recommendationTypes[recommendedData[0].type],
+                  recommendedData
+                )}
                 title={userRecommendations[recommendationKey].title}
                 type={recommendationTypes[recommendedData[0].type]}
               />
@@ -122,7 +139,7 @@ const mapStateToProps = state => ({
   userRecommendations:
     state.firebase.data.userRecommendations &&
     state.firebase.data.userRecommendations[state.firebase.auth.uid],
-    auth: state.firebase.auth,
+  auth: state.firebase.auth
 });
 
 export default compose(

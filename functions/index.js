@@ -86,6 +86,29 @@ exports.downloadActivitiesSolutionsReport = functions.https.onRequest(
       .catch(err => res.status(err.code || ERROR_500).send(err.message))
 );
 
+exports.downloadOpenedRecommendations = functions.https.onRequest((req, res) =>
+  checkToken(req)
+    .then(() =>
+      downloadAnalyzeReports.handler({
+        node: "/logged_events",
+        filterChild: "type",
+        filterValue: "HOME_OPEN_RECOMMENDATION",
+        limit: req.query.limit,
+        skipHeader: req.query.skipHeader,
+        fields: [
+          "createdAt",
+          "uid",
+          "otherActionData.recommendationType",
+          "otherActionData.recommendations",
+          "otherActionData.activityId",
+          "otherActionData.pathId"
+        ]
+      })
+    )
+    .then(data => res.send(data))
+    .catch(err => res.status(err.code || ERROR_500).send(err.message))
+);
+
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
   .onWrite((change, context) => {
