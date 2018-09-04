@@ -15,8 +15,13 @@ const solutionTriggers = require("./src/updateSolutionVisibility");
 const httpUtil = require("./src/utils/http").httpUtil;
 const migrateActivities = require("./src/migrateActivities");
 const updateUserRecommendations = require("./src/updateUserRecommendations");
-const updateUserPySkills = require("./src/updateUserPySkills.js")
-const { addDestination, updateDestinationSkills }  = require("./src/destinationHandler");
+const updateUserPySkills = require("./src/updateUserPySkills.js");
+const processActivitySolutions = require("./src/processActivitySolution");
+const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
+const {
+  addDestination,
+  updateDestinationSkills
+} = require("./src/destinationHandler");
 
 const profilesRefreshApproach =
   (functions.config().profiles &&
@@ -35,12 +40,11 @@ exports.handleNewProblemSolution =
       return jupyterTrigger.handler(data, data.taskKey, data.owner);
     });
 
-exports.handleGithubFilesFetchRequest =
-  functions.database
-    .ref("/fetchGithubFilesQueue/tasks/{requestId}")
-    .onWrite(change => {
-      const data = change.after.val();
-      return githubTrigger.handler(data, data.taskKey, data.owner);
+exports.handleGithubFilesFetchRequest = functions.database
+  .ref("/fetchGithubFilesQueue/tasks/{requestId}")
+  .onWrite(change => {
+    const data = change.after.val();
+    return githubTrigger.handler(data, data.taskKey, data.owner);
   });
 
 exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
@@ -52,11 +56,41 @@ exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
     .catch(err => res.status(err.code || ERROR_500).send(err.message));
 });
 
+exports.handleActivitySolution = functions.database
+  .ref("/problemSolutions/{activityKey}/{userKey}")
+  .onWrite((change, context) =>
+    processActivitySolutions.handler(
+      context.params.activityKey,
+      context.params.userKey
+    )
+  );
+
+exports.downloadActivitiesSolutionsReport = functions.https.onRequest(
+  (req, res) =>
+    checkToken(req)
+      .then(() =>
+        downloadAnalyzeReports.handler({
+          node: "/analyze/processActivities",
+          limit: req.query.limit,
+          skipHeader: req.query.skipHeader,
+          fields: [
+            "userKey",
+            "activityKey",
+            "completedAt",
+            "attemptsCount",
+            "spentTime"
+          ]
+        })
+      )
+      .then(data => res.send(data))
+      .catch(err => res.status(err.code || ERROR_500).send(err.message))
+);
+
 exports.handleNewSolution = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
   .onWrite((change, context) => {
     const { courseId, studentId, assignmentId } = context.params;
-    
+
     solutionTriggers.handler(
       change.after.val(),
       courseId,
@@ -65,17 +99,16 @@ exports.handleNewSolution = functions.database
     );
   });
 
-
 exports.handleUserSkills = functions.database
-.ref("/solutions/{courseId}/{studentId}/{assignmentId}")
-.onWrite((change, context) => {
-  const {  studentId , assignmentId} = context.params;
-  return updateUserPySkills.handler(
-    change.after.val(),
-    studentId,
-    assignmentId
-  )
-});
+  .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
+  .onWrite((change, context) => {
+    const { studentId, assignmentId } = context.params;
+    return updateUserPySkills.handler(
+      change.after.val(),
+      studentId,
+      assignmentId
+    );
+  });
 
 exports.handleProfileRefreshRequest =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
@@ -151,43 +184,29 @@ exports.handleUserAuth = functions.database
     updateUserRecommendations.handler(context.params.userKey)
   );
 
-
 exports.addActivityDestination = functions.database
-.ref("/activities/{activityId}")
-.onCreate((sanpshot, context) => {
-  const { activityId } = context.params;
-  const activity = sanpshot.val();
-  const acceptedAcyivitiesTypes = ['jupyter', 'jupyterInline'];
-  if(acceptedAcyivitiesTypes.includes(activity.type)){
-    return addDestination(
-      activity.name,
-      activity.owner,
-      activityId
-    )
-  }
-  return Promise.resolve();
-});
+  .ref("/activities/{activityId}")
+  .onCreate((sanpshot, context) => {
+    const { activityId } = context.params;
+    const activity = sanpshot.val();
+    const acceptedAcyivitiesTypes = ["jupyter", "jupyterInline"];
+    if (acceptedAcyivitiesTypes.includes(activity.type)) {
+      return addDestination(activity.name, activity.owner, activityId);
+    }
+    return Promise.resolve();
+  });
 
 exports.addPathDestination = functions.database
-.ref("/paths/{pathId}")
-.onCreate((sanpshot, context) => {
-  const { pathId } = context.params;
-  const path = sanpshot.val();
-  return addDestination(
-    path.name,
-    path.owner,
-    pathId,
-    true
-  )
-});
+  .ref("/paths/{pathId}")
+  .onCreate((sanpshot, context) => {
+    const { pathId } = context.params;
+    const path = sanpshot.val();
+    return addDestination(path.name, path.owner, pathId, true);
+  });
 
 exports.updateDestinationSkills = functions.database
-.ref('activityExampleSolutions/{activityId}')
-.onWrite((change, context) => {
-  const {  activityId } = context.params;
-  return updateDestinationSkills(
-    activityId,
-    change.after.val()
-  )
-})
-  
+  .ref("activityExampleSolutions/{activityId}")
+  .onWrite((change, context) => {
+    const { activityId } = context.params;
+    return updateDestinationSkills(activityId, change.after.val());
+  });
