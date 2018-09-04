@@ -110,7 +110,7 @@ class RecommendationCard extends React.PureComponent {
     return (
       <Card style={styles.card}>
         <Link
-          onClick={this.handleClick}
+          onClick={() => this.handleClick()}
           style={{ textDecoration: "none" }}
           to={
             (activity.type !== "codeCombat" &&
