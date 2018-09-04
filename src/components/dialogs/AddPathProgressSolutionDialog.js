@@ -7,9 +7,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-// redirect Go To Path
-import { Link } from "react-router-dom";
-
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firebaseConnect } from "react-redux-firebase";
@@ -32,7 +29,8 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     courseId: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    pathProgress: PropTypes.any
+    pathProgress: PropTypes.any,
+    activityPath: PropTypes.object.isRequired
   };
 
   getProgress = () => {
@@ -42,7 +40,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     if (
       !(pathProgress && totalActivities && pathProgress.solutions)
     ) {
-      return "No progress";
+      return "none";
     }
     return `${pathProgress.solutions} of ${totalActivities}`;
   };
@@ -57,15 +55,19 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
       return "Your have no progress at this path";
     }
     return `You have solved ${pathProgress.solutions} of the ${
-      totalActivities
-    } requested problems on the path ${activityPath.name}.
-    Your progress is ${this.getProgress()}
-    `;
+    totalActivities} requested problems on the "${activityPath.name}" path.
+    Your progress is ${this.getProgress()}`;
   };
 
   onProblemChange = problemSolution => this.setState({ problemSolution });
 
   onClose = () => this.props.dispatch(assignmentCloseDialog());
+
+  onGotoLink = () => {
+    const { assignment } = this.props;
+    window.open(`/#/paths/${assignment.path}`, "_blank");
+    this.onClose();
+  };
 
   onCommit = () => {
     this.props.dispatch(
@@ -81,8 +83,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
   render() {
     const {
       open,
-      pathProgress,
-      assignment
+      pathProgress
     } = this.props;
 
     return (
@@ -106,16 +107,13 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          {assignment &&
-            <Button
-              component={Link}
-              to={`/paths/${assignment.path}`}
-              variant="outlined"
-              color="primary"
-            >
-              Go to Path
-            </Button>
-          }
+          <Button
+            onClick={this.onGotoLink}
+            variant="outlined"
+            color="primary"
+          >
+            Go to Path
+          </Button>
           <Button color="primary" onClick={this.onCommit} variant="raised">
             Add Status
           </Button>
@@ -127,19 +125,26 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
 
 
 const mapStateToProps = (state, ownProps) => ({
-  activityPath : (state.firebase.data.paths || {})[(ownProps.assignment || {}).path] || {}
+  activityPath: (
+    (
+      state.firebase.data.paths ||
+      {}
+    )[
+      (
+        ownProps.assignment ||
+        {}
+      ).path
+    ] ||
+    {}
+  )
 });
 
 
 export default compose(
-  firebaseConnect((ownProps, store) => {
-    const  pathId= ownProps.assignment ? ownProps.assignment.path : null;
-    if(pathId){
-      return [
-          `/paths/${pathId}`,
-      ]
-    }
-    return [];
-  }),
+  firebaseConnect( (ownProps, store) => (
+    ownProps.assignment
+      ? [`/paths/${ownProps.assignment.path}`]
+      : []
+  )),
   connect(mapStateToProps)
 )(AddPathProgressSolutionDialog);
