@@ -117,10 +117,8 @@ function Contribute(props) {
                 </Grid>
               </Grid>
             </div>
-
           </div>
         </div>
-        <small>Test if LF and CRLF works in Windows Git Env</small>
       </main>
     </React.Fragment>
   );
