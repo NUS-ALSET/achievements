@@ -75,12 +75,12 @@ class RecommendationCard extends React.PureComponent {
     return youtubeURL.substring(youtubeURL.lastIndexOf("?v=") + 3);
   };
 
-  handleClick() {
+  handleClick = () => {
     const { activity } = this.props;
     if (activity.type === ACTIVITY_TYPES.codeCombat.id) {
       window.open(`//codecombat.com/play/level/${activity.level}`, "_blank");
     }
-  }
+  };
 
   render() {
     // get the data from the dummy Redux State
