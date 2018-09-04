@@ -18,6 +18,7 @@ import {
   assignmentSolutionFail,
   assignmentSolutionSuccess,
   updateNewAssignmentField,
+  setDefaultAssignmentFields,
   ASSIGNMENT_REFRESH_PROFILES_REQUEST,
   assignmentRefreshProfilesSuccess,
   assignmentRefreshProfilesFail,
@@ -60,7 +61,6 @@ import {
 import { eventChannel } from "redux-saga";
 import {
   call,
-  fork,
   put,
   select,
   take,
@@ -116,122 +116,101 @@ export function* addAssignmentRequestHandle(action) {
 }
 
 export function* updateNewAssignmentFieldHandler(action) {
-  if (["details", "name"].includes(action.field)) {
-    return;
-  }
+    if (["details", "name"].includes(action.field)) {
+      return;
+    }
 
-  const location = window.location.href.replace(/#.*$/, "");
-  const data = yield select(state => ({
-    assignment: state.assignments.dialog.value,
-    manualUpdates: state.assignments.dialog.manualUpdates || {},
-    uid: state.firebase.auth.uid
-  }));
-  let problem;
-  let problems;
-  let assignment = data.assignment;
+    const location = window.location.href.replace(/#.*$/, "");
+    const data = yield select(state => ({
+      assignment: state.assignments.dialog.value,
+      manualUpdates: state.assignments.dialog.manualUpdates || {},
+      uid: state.firebase.auth.uid
+    }));
+    let problem;
+    let problems;
+    let assignment = data.assignment;
+    let updatedFields = {};
 
-  // updateNewAssignmentField AUTOFILL text field
-  assignment = assignment || {};
-  if (["CodeCombat_Number", "Profile"].includes(assignment.questionType)) {
-    yield put(updateNewAssignmentField("details", "https://codecombat.com"));
-  } else {
-    console.log("assignment questionTypes are:", assignment.questionType);
-  }
+    // updateNewAssignmentField AUTOFILL text field
+    assignment = assignment || {};
+    if (["CodeCombat_Number", "Profile"].includes(assignment.questionType)) {
+      updatedFields.details = "https://codecombat.com"
+    } else {
+      console.log("assignment questionTypes are:", assignment.questionType);
+    }
 
-  switch (action.field) {
-    case "questionType":
-      if (
-        [
-          ASSIGNMENTS_TYPES.PathActivity.id,
-          ASSIGNMENTS_TYPES.PathProgress.id
-        ].includes(action.value)
-      ) {
-        const paths = yield call(
-          [pathsService, pathsService.fetchPaths],
-          data.uid
-        );
-        console.log("Step 1 done");
-        // Only Step 1 console log is displayed
-        yield put(assignmentPathsFetchSuccess(paths));
-        yield put(
-          updateNewAssignmentField("path", assignment.path || data.uid)
-        );
-        console.log("Step 2 done");
-        //console.log Step 2 and 3 did not get execuated
-
-        if (!data.manualUpdates.details) {
-          yield put(
-            updateNewAssignmentField(
-              "details",
-              `${location}#/paths/${data.uid}`
-            )
+    switch (action.field) {
+      case "questionType":
+        if (
+          [
+            ASSIGNMENTS_TYPES.PathActivity.id,
+            ASSIGNMENTS_TYPES.PathProgress.id
+          ].includes(action.value)
+        ) {
+          const paths = yield call(
+            [pathsService, pathsService.fetchPaths],
+            data.uid
           );
-          console.log("Step 3 done");
+          console.log("Step 1 done");
+          yield put(assignmentPathsFetchSuccess(paths));
+          updatedFields.path = assignment.path || data.uid
+          console.log("Step 2 done");
+
+          if (!data.manualUpdates.details) {
+            updatedFields.details = `${location}#/paths/${data.uid}`;
+            console.log("Step 3 done");
+          }
+        }else if([
+          ASSIGNMENTS_TYPES.TeamFormation.id,
+          ASSIGNMENTS_TYPES.TeamText.id
+        ].includes(action.value)){
+          updatedFields.details = '';
         }
-      }
-      break;
-    case "level":
-      yield put(
-        updateNewAssignmentField(
-          "details",
-          APP_SETTING.levels[action.value].url
-        )
-      );
-      break;
-    case "path":
-      problems = yield call(
-        [pathsService, pathsService.fetchProblems],
-        data.uid,
-        action.value
-      );
+        break;
+      case "level":
+        updatedFields.details = APP_SETTING.levels[action.value].url;
+        break;
+      case "path":
+        problems = yield call(
+          [pathsService, pathsService.fetchProblems],
+          data.uid,
+          action.value
+        );
 
-      yield put(assignmentProblemsFetchSuccess(problems));
+        yield put(assignmentProblemsFetchSuccess(problems));
 
-      // autofil the Link field with the path
-      // didnt work...
-      // it causes the activity menuItem to display nothing...
-      // yield put(
-        // updateNewAssignmentField(
-          // "details",
-          // `${location}#/paths/${data.assignment.path}`
-        // )
-      // );
-      // end of my failed attempt
+      
+        updatedFields.details = `${location}#/paths/${data.assignment.path}`;
 
-      if (data.assignment.path !== action.value) {
-        yield put(updateNewAssignmentField("pathActivity", ""));
-      }
-      break;
-    case "pathActivity":
-      problems = yield select(state => state.assignments.dialog.problems);
+      
+        updatedFields.pathActivity = "";
+        break;
+      case "pathActivity":
+        problems = yield select(state => state.assignments.dialog.problems);
 
-      problem = findAt(problems, {
-        id: assignment.problem
-      });
-
-      if (
-        !data.manualUpdates.details &&
-        problem &&
-        problem.type !== "jupyterInline"
-      ) {
-        // FIXIT: add `case` for problem type
-        // Agreed
-        yield fork(function* subFork() {
-          yield put(
-            updateNewAssignmentField(
-              "details",
-              problem.youtubeURL || problem.problemURL
-            )
-          );
+        problem = findAt(problems, {
+          id: assignment.problem
         });
-      }
-      if (!data.manualUpdates.name && problem) {
-        yield put.resolve(updateNewAssignmentField("name", problem.name));
-      }
 
-      break;
-    default:
-  }
+        if (
+          !data.manualUpdates.details &&
+          problem &&
+          problem.type !== "jupyterInline"
+        ) {
+          updatedFields.details = problem.youtubeURL || problem.problemURL || "";
+        }
+        if (!data.manualUpdates.name && problem) {
+          updatedFields.name = problem.name;
+        }
+
+        break;
+      default:
+    }
+  // do not dispatch updateNewAssignmentField action in this handler, otherwise result will be infinite loop.
+  // because if you dispatch updateNewAssignmentField action then this handler will run again 
+  yield put(
+    setDefaultAssignmentFields(updatedFields)
+  );
 }
 
 export function* assignmentSubmitRequestHandler(action) {
@@ -355,12 +334,11 @@ export function* assignmentShowEditDialogHandler(action) {
     switch (action.assignment.questionType) {
       case ASSIGNMENTS_TYPES.PathActivity.id:
         yield put(
-          updateNewAssignmentField(
-            "questionType",
-            ASSIGNMENTS_TYPES.PathActivity.id
-          )
+          updateNewAssignmentField({
+            "questionType": ASSIGNMENTS_TYPES.PathActivity.id
+          })
         );
-        yield put(updateNewAssignmentField("path", action.assignment.path));
+        yield put(updateNewAssignmentField({"path": action.assignment.path}));
         break;
       default:
     }
