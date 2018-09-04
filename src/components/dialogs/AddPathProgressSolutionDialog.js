@@ -36,27 +36,29 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
   };
 
   getProgress = () => {
-    const pathProgress = this.props.pathProgress;
+    const { pathProgress, activityPath } = this.props;
+    const totalActivities = Number(activityPath.totalActivities);
 
     if (
-      !(pathProgress && pathProgress.totalActivities && pathProgress.solutions)
+      !(pathProgress && totalActivities && pathProgress.solutions)
     ) {
       return "No progress";
     }
-    return `${pathProgress.solutions} of ${pathProgress.totalActivities}`;
+    return `${pathProgress.solutions} of ${totalActivities}`;
   };
 
   getProgressMessage = () => {
-    const { pathProgress } = this.props;
+    const { pathProgress, activityPath } = this.props;
+    const totalActivities = Number(activityPath.totalActivities);
 
     if (
-      !(pathProgress && pathProgress.totalActivities && pathProgress.solutions)
+      !(pathProgress && totalActivities && pathProgress.solutions)
     ) {
       return "Your have no progress at this path";
     }
     return `You have solved ${pathProgress.solutions} of the ${
-      pathProgress.totalActivities
-    } requested problems on the path (PATH NAME HERE).
+      totalActivities
+    } requested problems on the path ${activityPath.name}.
     Your progress is ${this.getProgress()}
     `;
   };
@@ -125,11 +127,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
 
 
 const mapStateToProps = (state, ownProps) => ({
-
-  pathProgress: {
-    ...ownProps.pathProgress,
-    totalActivities :  (state.firebase.data.currentActivityPathTotalActivites || 0)
-  }
+  activityPath : (state.firebase.data.paths || {})[(ownProps.assignment || {}).path] || {}
 });
 
 
@@ -138,10 +136,7 @@ export default compose(
     const  pathId= ownProps.assignment ? ownProps.assignment.path : null;
     if(pathId){
       return [
-        {
-          path : `/paths/${pathId}/totalActivities`,
-          storeAs : 'currentActivityPathTotalActivites'
-        }
+          `/paths/${pathId}`,
       ]
     }
     return [];
