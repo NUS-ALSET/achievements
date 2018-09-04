@@ -7,6 +7,7 @@ import {
   ASSIGNMENT_SUBMIT_REQUEST,
   ASSIGNMENT_SWITCH_TAB,
   UPDATE_NEW_ASSIGNMENT_FIELD,
+  SET_DEFAULT_ASSIGNMENT_FIELDS,
   ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW,
   ASSIGNMENT_ASSISTANT_FOUND,
   ASSIGNMENT_ADD_ASSISTANT_SUCCESS,
@@ -103,7 +104,7 @@ export const assignments = (
           value: action.assignment
         }
       };
-    case UPDATE_NEW_ASSIGNMENT_FIELD:
+      case UPDATE_NEW_ASSIGNMENT_FIELD:
       return {
         ...state,
         dialog: {
@@ -114,6 +115,17 @@ export const assignments = (
               action.field === "path" && action.value === "default"
                 ? ""
                 : action.value
+          }
+        }
+      };
+      case SET_DEFAULT_ASSIGNMENT_FIELDS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          value: {
+            ...state.dialog.value,
+            ...action.fields
           }
         }
       };

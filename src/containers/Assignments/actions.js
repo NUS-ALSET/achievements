@@ -81,6 +81,12 @@ export const updateNewAssignmentField = (field, value) => ({
   value
 });
 
+export const SET_DEFAULT_ASSIGNMENT_FIELDS = "SET_DEFAULT_ASSIGNMENT_FIELDS";
+export const setDefaultAssignmentFields = (fields) => ({
+  type: SET_DEFAULT_ASSIGNMENT_FIELDS,
+  fields
+});
+
 export const ASSIGNMENT_ADD_REQUEST = "ASSIGNMENT_ADD_REQUEST";
 export const assignmentAddRequest = (courseId, assignment) => ({
   type: ASSIGNMENT_ADD_REQUEST,
