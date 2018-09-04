@@ -32,7 +32,8 @@ const recommendationTypes = {
 export class HomeV2 extends React.Component {
   static propTypes = {
     userRecommendations: PropTypes.any,
-    uid: PropTypes.string
+    uid: PropTypes.string,
+    auth : PropTypes.object,    
   };
 
   reformatRecommendation = (recommendations, recommendationKey = "") => {
@@ -56,7 +57,10 @@ export class HomeV2 extends React.Component {
   };
 
   render() {
-    const { userRecommendations } = this.props;
+    const { auth, userRecommendations} = this.props;
+    if (auth.isEmpty) {
+      return <div>Login required to display this page</div>;
+    }
     if (!isLoaded(userRecommendations)) {
       return (
           <ContentLoader />
@@ -117,7 +121,8 @@ const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
   userRecommendations:
     state.firebase.data.userRecommendations &&
-    state.firebase.data.userRecommendations[state.firebase.auth.uid]
+    state.firebase.data.userRecommendations[state.firebase.auth.uid],
+    auth: state.firebase.auth,
 });
 
 export default compose(

@@ -38,7 +38,8 @@ import { pathsService, ACTIVITY_TYPES } from "../../services/paths";
 import {
   notificationShow,
   SOLUTION_PRIVATE_LINK,
-  SOLUTION_MODIFIED_TESTS
+  SOLUTION_MODIFIED_TESTS,
+  SOLUTION_PROCESSING_TIMEOUT
 } from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -136,7 +137,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
   try {
     yield put(notificationShow("Fetching your solution"));
-    yield put(problemSolutionExecutionStatus({ status: "CHECKING" }));
+    yield put(problemSolutionExecutionStatus({ status: "CHECKING", statusText: "Fetching your solution" }));
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
@@ -157,7 +158,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
-    yield put(problemSolutionExecutionStatus({ status: "EXECUTING" }));
+    yield put(problemSolutionExecutionStatus({ status: "EXECUTING" , statusText :"Checking your solution"}));
     yield put(notificationShow("Checking your solution"));
 
     const { solution, timedOut } = yield race({
@@ -171,7 +172,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
       timedOut: delay(ONE_MINUTE)
     });
     if (timedOut) {
-      throw new Error("Solution processing timed out");
+      throw new Error(SOLUTION_PROCESSING_TIMEOUT);
     }
     if (solution && solution.cells && solution.cells.slice) {
       let solutionFailed = false;
@@ -184,7 +185,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
-        yield put(problemSolutionExecutionStatus({ status: "FAILING" }));
+        yield put(problemSolutionExecutionStatus({ status: "FAILING" , statusText : "Failing - Your solution did not pass the provided tests."}));
         yield put(
           notificationShow(
             "Failing - Your solution did not pass the provided tests."
@@ -192,7 +193,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
         );
       } else {
         yield put(notificationShow("Solution is valid"));
-        yield put(problemSolutionExecutionStatus({ status: "COMPLETE" }));
+        yield put(problemSolutionExecutionStatus({ status: "COMPLETE",statusText : "Valid Solution" }));
       }
     }
 
@@ -218,15 +219,18 @@ export function* problemSolutionRefreshRequestHandler(action) {
         errMsg = "Failing - You have changed the last code block.";
         break;
       }
+      case SOLUTION_PROCESSING_TIMEOUT: {
+        status ="PROCESSING TIMEOUT";
+        errMsg = `Timeout: code took longer than ${ONE_MINUTE/1000} seconds to run`; 
+        break;
+      }
       default:
-        // I commented that cause it leads to snatching unexpected errors.
-        status = "UNEXPECTED ERROR";
-      /*
-        status = null;
-        errMsg = err.message;
-        */
+        // this is error thrown by any services called in try block
+        status = 'UNEXPECTED ERROR';
+        errMsg = err.message || 'Unexpected error'; 
+      
     }
-    yield put(problemSolutionExecutionStatus({ status }));
+    yield put(problemSolutionExecutionStatus({ status, statusText : errMsg }));
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
     yield put(notificationShow(errMsg));
   }

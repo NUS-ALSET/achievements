@@ -342,7 +342,7 @@ class AssignmentsTable extends React.PureComponent {
           assignmentPathProblemSolutionRequest(
             assignment,
             course.owner,
-            assignment.problem,
+            assignment.pathActivity || assignment.problem,
             solution
           )
         );

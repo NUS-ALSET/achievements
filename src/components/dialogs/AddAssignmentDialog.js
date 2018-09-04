@@ -154,7 +154,7 @@ class AddAssignmentDialog extends React.PureComponent {
               label="Activity"
               onChange={this.updateField("pathActivity")}
               select
-              value={assignment.problem || ""}
+              value={assignment.pathActivity || assignment.problem}
             >
               {activities.map(activity => (
                 <MenuItem key={activity.id} value={activity.id}>

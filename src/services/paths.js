@@ -224,7 +224,7 @@ export class PathsService {
         }
         resolve({
           ...data,
-          cells: data.cells.filter(d => d.source.join("").replace(/\n/g, "")),
+          cells: (data.cells || []).filter(d => d.source.join("").replace(/\n/g, "")),
           result: {
             ...data.result,
             cells: data.result.cells.filter(
