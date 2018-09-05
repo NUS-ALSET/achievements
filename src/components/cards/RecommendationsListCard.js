@@ -67,6 +67,7 @@ class RecommendationsListCard extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     data: PropTypes.array.isRequired,
+    onRecommendationClick: PropTypes.func,
     type: PropTypes.oneOf(["code", "youtube", "game"]).isRequired,
     title: PropTypes.string.isRequired,
     width: PropTypes.string.isRequired
@@ -127,7 +128,14 @@ class RecommendationsListCard extends React.PureComponent {
   render() {
     // the Firebase data in Redux is nested JSON
     // here temporarily use a dummy JSON with 2 pythonlists and 1 youtubelist
-    const { classes, data, type, title, width } = this.props;
+    const {
+      classes,
+      data,
+      onRecommendationClick,
+      type,
+      title,
+      width
+    } = this.props;
     let avatarClass = "";
 
     switch (type) {
@@ -180,8 +188,8 @@ class RecommendationsListCard extends React.PureComponent {
             }}
             renderCenterRightControls={({ currentSlide, goToSlide }) => {
               const nextSlideIndex =
-                currentSlide + 2*itemsPerSlide > data.length
-                  ? currentSlide + data.length%itemsPerSlide
+                currentSlide + 2 * itemsPerSlide > data.length
+                  ? currentSlide + (data.length % itemsPerSlide)
                   : currentSlide + itemsPerSlide;
               return (
                 <Button
@@ -208,6 +216,7 @@ class RecommendationsListCard extends React.PureComponent {
                 activity={item}
                 description={this.getItemDescription(item.type)}
                 key={index}
+                onRecommendationClick={onRecommendationClick}
                 pathId={item.path || item.owner}
                 subHeading={item.subHeading || ""}
                 type={type}

@@ -64,10 +64,11 @@ class RecommendationCard extends React.PureComponent {
     activity: PropTypes.object.isRequired,
     classes: PropTypes.object,
     description: PropTypes.string,
-    video: PropTypes.string,
+    onRecommendationClick: PropTypes.func,
     pathId: PropTypes.string,
     subHeading: PropTypes.string,
-    type: PropTypes.oneOf(["code", "youtube", "game"]).isRequired
+    type: PropTypes.oneOf(["code", "youtube", "game"]).isRequired,
+    video: PropTypes.string
   };
 
   getVideoID = youtubeURL => {
@@ -76,9 +77,13 @@ class RecommendationCard extends React.PureComponent {
   };
 
   handleClick = () => {
-    const { activity } = this.props;
+    const { activity, onRecommendationClick, pathId } = this.props;
     if (activity.type === ACTIVITY_TYPES.codeCombat.id) {
       window.open(`//codecombat.com/play/level/${activity.level}`, "_blank");
+    }
+
+    if (onRecommendationClick) {
+      onRecommendationClick(activity.problem || activity.activity, pathId);
     }
   };
 
