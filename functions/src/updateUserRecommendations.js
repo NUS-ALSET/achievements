@@ -161,9 +161,11 @@ exports.handler = userKey =>
               .ref(`/userRecommendations/${userKey}/${key}`);
 
             // Debug
-            for (const subKey of Object.keys(result[key])) {
-              if (result[key][subKey] === undefined) {
-                console.error(`Missing ${subKey} at `);
+            if (result[key]) {
+              for (const subKey of Object.keys(result[key])) {
+                if (result[key][subKey] === undefined) {
+                  console.error(`Missing ${subKey} at `);
+                }
               }
             }
 

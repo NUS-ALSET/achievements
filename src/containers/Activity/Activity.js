@@ -233,6 +233,10 @@ export default compose(
           storeAs: "pathName"
         },
         {
+          path: `/paths/${ownProps.match.params.pathId}/isPublic`,
+          storeAs: "isPathPublic"
+        },
+        {
           path: `/userAchievements/${firebaseAuth.uid}`,
           storeAs: "myAchievements"
         }

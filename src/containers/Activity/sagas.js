@@ -44,8 +44,10 @@ import {
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 import { pathFetchProblemsSolutionsSuccess } from "../Path/actions";
+import { accountService } from "../../services/account";
 
 const ONE_MINUTE = 60000;
+const ONE_SECOND = 1000;
 
 /**
  * This saga executes on open Problem or show AddPathProblemSolutionDialog
@@ -137,7 +139,12 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
   try {
     yield put(notificationShow("Fetching your solution"));
-    yield put(problemSolutionExecutionStatus({ status: "CHECKING", statusText: "Fetching your solution" }));
+    yield put(
+      problemSolutionExecutionStatus({
+        status: "CHECKING",
+        statusText: "Fetching your solution"
+      })
+    );
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
@@ -158,7 +165,12 @@ export function* problemSolutionRefreshRequestHandler(action) {
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
-    yield put(problemSolutionExecutionStatus({ status: "EXECUTING" , statusText :"Checking your solution"}));
+    yield put(
+      problemSolutionExecutionStatus({
+        status: "EXECUTING",
+        statusText: "Checking your solution"
+      })
+    );
     yield put(notificationShow("Checking your solution"));
 
     const { solution, timedOut } = yield race({
@@ -185,7 +197,13 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
-        yield put(problemSolutionExecutionStatus({ status: "FAILING" , statusText : "Failing - Your solution did not pass the provided tests."}));
+        yield put(
+          problemSolutionExecutionStatus({
+            status: "FAILING",
+            statusText:
+              "Failing - Your solution did not pass the provided tests."
+          })
+        );
         yield put(
           notificationShow(
             "Failing - Your solution did not pass the provided tests."
@@ -193,7 +211,12 @@ export function* problemSolutionRefreshRequestHandler(action) {
         );
       } else {
         yield put(notificationShow("Solution is valid"));
-        yield put(problemSolutionExecutionStatus({ status: "COMPLETE",statusText : "Valid Solution" }));
+        yield put(
+          problemSolutionExecutionStatus({
+            status: "COMPLETE",
+            statusText: "Valid Solution"
+          })
+        );
       }
     }
 
@@ -220,17 +243,17 @@ export function* problemSolutionRefreshRequestHandler(action) {
         break;
       }
       case SOLUTION_PROCESSING_TIMEOUT: {
-        status ="PROCESSING TIMEOUT";
-        errMsg = `Timeout: code took longer than ${ONE_MINUTE/1000} seconds to run`; 
+        status = "PROCESSING TIMEOUT";
+        errMsg = `Timeout: code took longer than ${ONE_MINUTE /
+          ONE_SECOND} seconds to run`;
         break;
       }
       default:
         // this is error thrown by any services called in try block
-        status = 'UNEXPECTED ERROR';
-        errMsg = err.message || 'Unexpected error'; 
-      
+        status = "UNEXPECTED ERROR";
+        errMsg = err.message || "Unexpected error";
     }
-    yield put(problemSolutionExecutionStatus({ status, statusText : errMsg }));
+    yield put(problemSolutionExecutionStatus({ status, statusText: errMsg }));
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
     yield put(notificationShow(errMsg));
   }
@@ -270,6 +293,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
   try {
     data = yield select(state => ({
       uid: state.firebase.auth.uid,
+      isPathPublic: state.firebase.data.isPathPublic,
       pathProblem:
         state.problem.pathProblem ||
         state.assignments.dialog.pathProblem ||
@@ -293,6 +317,9 @@ export function* problemSolutionSubmitRequestHandler(action) {
         [data.pathProblem.id || data.pathProblem.problemId]: true
       })
     );
+    if (data.isPathPublic) {
+      yield call(accountService.authTimeUpdate, data.uid);
+    }
     yield put(notificationShow("Solution submitted"));
   } catch (err) {
     yield put(
