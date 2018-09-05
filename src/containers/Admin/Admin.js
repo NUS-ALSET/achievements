@@ -36,8 +36,8 @@ const styles = theme => ({
 
 // FIXIT: move it into shared with functions place
 const recommendations = {
-  solvedPySkills: "Jupyter Notebook Activities With New Skills",
-  unSolvedPySkills: "Jupyter Notebook Activities With Solved Skills",
+  NotebookWithNewSkills: "Notebook Activities to Learn New Skills",
+  NotebookWithUsedSkills: "Notebook Activities to Reinforce Used Skills",
   codeCombat: "CodeCombat Activities",
   jupyter: "Colaboratory Notebook Activities",
   jupyterInline: "Jupyter Notebook Activities",
@@ -91,8 +91,8 @@ class Admin extends React.PureComponent {
   render() {
     const { classes, config, isAdmin } = this.props;
     const allowed = config.recommendations || {
-      solvedPySkills: true,
-      unSolvedPySkills: true,
+      NotebookWithNewSkills: true,
+      NotebookWithUsedSkills: true,
       codeCombat: true,
       jupyter: true,
       jupyterInline: true,

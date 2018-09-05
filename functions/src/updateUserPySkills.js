@@ -142,11 +142,11 @@ function updateRecommendation(userKey, userSkills) {
       return Promise.all[
         admin
         .database()
-        .ref(`/userRecommendations/${userKey}/solvedPySkills`)
+        .ref(`/userRecommendations/${userKey}/NotebookWithUsedSkills`)
         .set(problemWithSolvedSkills),
         admin
         .database()
-        .ref(`/userRecommendations/${userKey}/unSolvedPySkills`)
+        .ref(`/userRecommendations/${userKey}/NotebookWithNewSkills`)
         .set(problemWithUnsolvedSkills)
       ]
     })
