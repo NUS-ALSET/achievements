@@ -7,6 +7,10 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
+import { firebaseConnect,isLoaded } from "react-redux-firebase";
+import { compose } from "redux";
+import { connect } from "react-redux";
+
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
@@ -115,8 +119,11 @@ class AddActivityDialog extends React.PureComponent {
   }
 
   getTypeSpecificElements() {
-    let { activity } = this.props;
-
+    let { activity, activityExampleSolution } = this.props;
+    if(['jupyter','jupyterInline'].includes((activity || {}).type) && !isLoaded(activityExampleSolution)){
+      return "";
+    }
+    console.log('activity', (activity|| {}).id)
     activity = Object.assign(activity || {}, this.state);
     switch (this.state.type || (activity && activity.type) || "text") {
       case ACTIVITY_TYPES.text.id:
@@ -181,13 +188,13 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
-            <TextField
-              defaultValue={activity && activity.solutionURL}
-              fullWidth
-              label="Solution Notebook URL"
-              margin="dense"
-              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-            />
+              <TextField
+                defaultValue={(activityExampleSolution || {}).solutionURL || ""}
+                fullWidth
+                label="Solution Notebook URL"
+                margin="dense"
+                onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+              />
             <TextField
               defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
@@ -210,13 +217,13 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
-            <TextField
-              defaultValue={activity && activity.solutionURL}
-              fullWidth
-              label="Solution Notebook URL"
-              margin="dense"
-              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-            />
+              <TextField
+                defaultValue={(activityExampleSolution || {}).solutionURL || ""}
+                fullWidth
+                label="Solution Notebook URL"
+                margin="dense"
+                onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+              />
             <TextField
               defaultValue={activity && String(activity.code || "1")}
               fullWidth
@@ -547,4 +554,22 @@ class AddActivityDialog extends React.PureComponent {
   }
 }
 
-export default AddActivityDialog;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    activityExampleSolution : (state.firebase.data.activityExampleSolutions || {})[(ownProps.activity || {}).id]
+  }
+};
+
+export default compose(
+  firebaseConnect((ownProps, store) => {
+    if(!['jupyter','jupyterInline'].includes((ownProps.activity || {}).type)){
+      return false; 
+    }
+    return [
+      `/activityExampleSolutions/${ownProps.activity.id}`,
+    ];
+  }),
+  connect(
+    mapStateToProps,
+  )
+)(AddActivityDialog);
