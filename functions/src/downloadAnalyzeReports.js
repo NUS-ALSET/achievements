@@ -35,7 +35,7 @@ exports.handler = request => {
     ref = ref.orderByChild(request.filterChild).equalTo(request.filterValue);
   }
   return ref
-    .limitToLast(request.limit || DEFAULT_MAX_COUNT)
+    .limitToLast(Number(request.limit || DEFAULT_MAX_COUNT))
     .once("value")
     .then(snap => snap.val() || {})
     .then(
