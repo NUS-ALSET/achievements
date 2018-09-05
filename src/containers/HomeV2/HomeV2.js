@@ -15,8 +15,8 @@ const temporaryRecommendationsKinds = [
   "jupyterInline",
   "youtube",
   "game",
-  "unSolvedPySkills",
-  "solvedPySkills"
+  "NotebookWithNewSkills",
+  "NotebookWithUsedSkills"
 ];
 
 const recommendationTypes = {
@@ -24,8 +24,8 @@ const recommendationTypes = {
   game: "game",
   jupyter: "code",
   jupyterInline: "code",
-  unSolvedPySkills: "code",
-  solvedPySkills: "code",
+  NotebookWithNewSkills: "code",
+  NotebookWithUsedSkills: "code",
   youtube: "youtube"
 };
 
@@ -42,12 +42,12 @@ export class HomeV2 extends React.Component {
       .filter(key => key !== "title")
       .map(key => ({
         ...recommendations[key],
-        activityId: ["unSolvedPySkills", "solvedPySkills"].includes(
+        activityId: ["NotebookWithNewSkills", "NotebookWithUsedSkills"].includes(
           recommendationKey
         )
           ? recommendations[key].activity || recommendations[key].problem
           : key,
-        subHeading: ["unSolvedPySkills", "solvedPySkills"].includes(
+        subHeading: ["NotebookWithNewSkills", "NotebookWithUsedSkills"].includes(
           recommendationKey
         )
           ? `Complete this activity to use the ${
@@ -89,7 +89,7 @@ export class HomeV2 extends React.Component {
               recommendationKey
             );
             if (
-              ["unSolvedPySkills", "solvedPySkills"].includes(recommendationKey)
+              ["NotebookWithNewSkills", "NotebookWithUsedSkills"].includes(recommendationKey)
             ) {
               let uniqueActivities = {};
               recommendedData.forEach(data => {

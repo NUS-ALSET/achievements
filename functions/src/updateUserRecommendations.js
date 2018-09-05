@@ -75,8 +75,8 @@ exports.handler = userKey =>
         };
 
         allowedRecommendations = allowedRecommendations || {
-          solvedPySkills: true,
-          unSolvedPySkills: true,
+          NotebookWithNewSkills: true,
+          NotebookWithUsedSkills: true,
           codeCombat: true,
           jupyter: true,
           jupyterInline: true,
@@ -147,11 +147,11 @@ exports.handler = userKey =>
             }
           }
         }
-        if (allowedRecommendations.solvedPySkills) {
-          result.solvedPySkills = problemWithSolvedSkills;
+        if (allowedRecommendations.NotebookWithUsedSkills) {
+          result.NotebookWithUsedSkills = problemWithSolvedSkills;
         }
-        if (allowedRecommendations.unSolvedPySkills) {
-          result.unSolvedPySkills = problemWithUnsolvedSkills;
+        if (allowedRecommendations.NotebookWithNewSkills) {
+          result.NotebookWithNewSkills = problemWithUnsolvedSkills;
         }
 
         return Promise.all(

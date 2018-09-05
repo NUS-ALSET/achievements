@@ -96,8 +96,8 @@ class RecommendationsListCard extends React.PureComponent {
         return "";
       case "game":
         return "React-Python Game";
-      case "unSolvedPySkills":
-      case "solvedPySkills":
+      case "NotebookWithNewSkills":
+      case "NotebookWithUsedSkills":
         return "Python Skills";
       default:
         return "";
