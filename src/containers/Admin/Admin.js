@@ -21,6 +21,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { adminUpdateConfigRequest } from "./actions";
@@ -109,12 +110,28 @@ class Admin extends React.PureComponent {
       <Paper className={classes.section}>
         <Grid container spacing={24}>
           <Grid item xs={12}>
+            <Typography variant="headline" gutterBottom>
+              Admin Page
+            </Typography>
+            <Typography gutterBottom>
+              You are able to see this '/admin' page because you have been granted admin rights in our Firebase.<br />
+              <b>With great power comes great responsibility.</b><br />
+              Please do not delete ANYTHING in Firebase. Since the database is "schema-less", we may not know how the code is using different nodes and where the code is expecting certain properties to exist. If you need to repeatedly delete some data (activities, paths, courses), we should create a feature in the code to do that.
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="title" gutterBottom>
+              Remote URLs used
+            </Typography>
             <FormControl
               className={classes.formControl}
               component="fieldset"
               fullWidth
             >
-              <FormLabel component="legend">URLs</FormLabel>
+              <FormLabel component="legend">
+                Edit URLs
+              </FormLabel>
+              <br />
               <FormGroup>
                 {Object.keys(urls).map(url => (
                   <TextField
@@ -140,6 +157,9 @@ class Admin extends React.PureComponent {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
+            <Typography variant="title" gutterBottom>
+              Control recommendations to display at Home
+            </Typography>
             <FormControl className={classes.formControl} component="fieldset">
               <FormLabel component="legend">Allowed recommendations</FormLabel>
               <FormGroup>
@@ -174,7 +194,7 @@ class Admin extends React.PureComponent {
               onClick={this.commit}
               variant="raised"
             >
-              Save
+              UPDATE
             </Button>
           </Grid>
         </Grid>
