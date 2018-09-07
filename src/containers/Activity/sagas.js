@@ -77,7 +77,10 @@ export function* problemInitRequestHandler(action) {
       action.pathId,
       action.problemId
     );
-
+    // error only shows up when click into the SOVLE
+    // but users have already keyed in all the URLs in the AddActivity Dialog
+    // TODO: if the URLs are not valid, prompt the user at Dialog phase
+    // TODO: repalce the "loading..." with Error message
     if (!pathProblem) {
       throw new Error("Missing path activity");
     }

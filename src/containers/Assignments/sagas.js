@@ -179,10 +179,10 @@ export function* updateNewAssignmentFieldHandler(action) {
 
         yield put(assignmentProblemsFetchSuccess(problems));
 
-      
+
         updatedFields.details = `${location}#/paths/${data.assignment.path}`;
 
-      
+
         updatedFields.pathActivity = "";
         break;
       case "pathActivity":
@@ -207,7 +207,7 @@ export function* updateNewAssignmentFieldHandler(action) {
       default:
     }
   // do not dispatch updateNewAssignmentField action in this handler, otherwise result will be infinite loop.
-  // because if you dispatch updateNewAssignmentField action then this handler will run again 
+  // because if you dispatch updateNewAssignmentField action then this handler will run again
   yield put(
     setDefaultAssignmentFields(updatedFields)
   );
