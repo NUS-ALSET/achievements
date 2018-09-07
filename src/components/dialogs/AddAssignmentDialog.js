@@ -5,6 +5,8 @@
  */
 
 import { APP_SETTING } from "../../achievementsApp/config";
+import PropTypes from "prop-types";
+import React, { Fragment } from "react";
 
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -17,10 +19,11 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import PropTypes from "prop-types";
-import React, { Fragment } from "react";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
+import Tooltip from "@material-ui/core/Tooltip";
+
+
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import {
   assignmentAddRequest,
@@ -154,7 +157,7 @@ class AddAssignmentDialog extends React.PureComponent {
               label="Activity"
               onChange={this.updateField("pathActivity")}
               select
-              value={assignment.pathActivity || assignment.problem}
+              value={assignment.pathActivity || assignment.problem || " "}
             >
               {activities.map(activity => (
                 <MenuItem key={activity.id} value={activity.id}>
@@ -176,8 +179,14 @@ class AddAssignmentDialog extends React.PureComponent {
                   value="allowSolutionImport"
                 />
               }
-              label="Allow import existing path solution"
+              label="Allow student to import existing solution done for this activity"
             />
+            <Tooltip
+              title="If students have submitted their solutions to this path activity outside of this course before, tick to allow them to import existing solutions from their Path."
+              placement="left"
+            >
+             <Button size="small">(?)</Button>
+            </Tooltip>
           </Fragment>
         );
       case ASSIGNMENTS_TYPES.PathProgress.id:
@@ -187,9 +196,8 @@ class AddAssignmentDialog extends React.PureComponent {
             label="Path"
             onChange={this.updateField("path")}
             select
-            value={assignment.path || "default"}
+            value={assignment.path || " "}
           >
-            <MenuItem value="default">Default</MenuItem>
             {paths.map(path => (
               <MenuItem key={path.id} value={path.id}>
                 {path.name}
