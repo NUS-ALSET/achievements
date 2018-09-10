@@ -227,7 +227,7 @@ class AddActivityDialog extends React.PureComponent {
             <TextField
               defaultValue={activity && String(activity.code || "1")}
               fullWidth
-              label="Default code block"
+              label="Index of Code Block Student Can Edit Solution (Index starts from 0)"
               margin="dense"
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
               type="number"
@@ -235,7 +235,7 @@ class AddActivityDialog extends React.PureComponent {
             <TextField
               defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
-              label="Number of frozen cells"
+              label="How many code blocks are frozen (counting from bottom up)"
               margin="dense"
               onChange={e =>
                 this.onFieldChange("frozen", Number(e.target.value))
