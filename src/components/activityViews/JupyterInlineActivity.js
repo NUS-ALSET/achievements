@@ -149,7 +149,7 @@ class JupyterInlineActivity extends React.PureComponent {
               solution={solution}
               title={
                 <Fragment>
-                  Calculated Solution
+                  Solution Check
                   {this.getCalculatedSolution(solution)}
                 </Fragment>
               }
@@ -160,13 +160,13 @@ class JupyterInlineActivity extends React.PureComponent {
             <JupyterNotebook
               readOnly={readOnly}
               solution={{ json: solution.provided }}
-              title="Provided solution"
+              title="Your Solution"
             />
           )}
         <JupyterNotebook
           readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
-          title="Problem"
+          title="Path Activity"
         />
       </Fragment>
     );
