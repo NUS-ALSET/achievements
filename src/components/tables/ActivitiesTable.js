@@ -112,7 +112,7 @@ class ActivitiesTable extends React.PureComponent {
           <TableHead>
             <TableRow>
               <TableCell>Activity name</TableCell>
-              <TableCell>Description</TableCell>
+              <TableCell>Type</TableCell>
               {!canChange && <TableCell>Status</TableCell>}
               <TableCell style={{ width: COLUMN_ACTIONS_WIDTH }}>
                 Actions
