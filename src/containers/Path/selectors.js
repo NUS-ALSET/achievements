@@ -65,7 +65,7 @@ export const pathStatusSelector = createSelector(
 const getActivitySelector = problem => {
   switch (problem.type) {
     case ACTIVITY_TYPES.text.id:
-      return problem.question || "Answer the question";
+      return problem.question || "Answer text question";
     case ACTIVITY_TYPES.profile.id:
       return "Enter CodeCombat profile";
     case ACTIVITY_TYPES.codeCombat.id:
@@ -73,13 +73,13 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.codeCombatNumber.id:
       return `Finish ${problem.count} levels at CodeCombat`;
     case ACTIVITY_TYPES.jupyter.id:
-      return "Solve task at Jupyter Colab";
+      return "Colaboratory Notebook Activity";
     case ACTIVITY_TYPES.jupyterInline.id:
-      return "Solve jupyter task";
+      return "Jupyter Notebook Activity";
     case ACTIVITY_TYPES.youtube.id:
-      return "Watch Video and answer the questions";
+      return "YouTube Video Activity";
     case ACTIVITY_TYPES.game.id:
-      return "Win the game";
+      return "Game Activity";
     case ACTIVITY_TYPES.jest.id:
       return "Pass the Test";
     default:

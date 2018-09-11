@@ -140,7 +140,7 @@ class JupyterInlineActivity extends React.PureComponent {
           readOnly={readOnly}
           richEditor={true}
           solution={false}
-          title={readOnly ? "Submitted Code" : "Edit code"}
+          title={readOnly ? "Submitted Code" : "Edit Your Solution Here"}
         />
         {solution &&
           (solution.json || solution.loading) && (
