@@ -251,6 +251,7 @@ class AddActivityDialog extends React.PureComponent {
               defaultValue={activity && activity.problemURL}
               fullWidth
               label="Google Colab ipynb URL for this Activity"
+              helperText="Make sure the ipynb's Link Sharing is on"
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
@@ -259,7 +260,7 @@ class AddActivityDialog extends React.PureComponent {
               gutterBottom
               style={{marginTop:30}}
             >
-              Step 2: Paste the URL of the Solution Notebook
+              Step 2: Get the Shareable Link of the Solution Notebook
             </Typography>
             <a
               href="https://colab.research.google.com/drive/1k-Q9j1AGx3MmQ9xxATlXXggwKo5CGC7C"
@@ -272,7 +273,7 @@ class AddActivityDialog extends React.PureComponent {
                 gutterBottom
                 align="center"
               >
-                Solution Google Colab ipynb Link
+                Sample Solution Google Colab ipynb Link
               </Typography>
             </a>
             <TextField
