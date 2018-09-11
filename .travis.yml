@@ -22,7 +22,7 @@ before_deploy:
 
 after_success:
 - ./scripts/prepare-deployment.sh
-- firebase deploy --project "achievements-dev" --token $FIREBASE_SECRET --except functions
+- firebase deploy --project "achievements-dev" --token $FIREBASE_SECRET --only hosting
 
 # deploy:
 # - skip_cleanup: true
