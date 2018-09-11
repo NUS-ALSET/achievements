@@ -10,7 +10,6 @@ before_install:
 - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
 
 install:
-- npm install -g firebase-tools
 - npm install
 
 script:
@@ -20,15 +19,11 @@ script:
 before_deploy:
 - ./scripts/prepare-deployment.sh
 
-after_success:
-- ./scripts/prepare-deployment.sh
-- firebase deploy --project "achievements-dev" --token $FIREBASE_SECRET --only hosting
-
-# deploy:
-# - skip_cleanup: true
-  # provider: firebase
-  # on:
-    # branch: master
-  # token:
-    # secure: "$FIREBASE_SECRET"
-  # project: "achievements-dev"
+deploy:
+- skip_cleanup: true
+  provider: firebase
+  on:
+    branch: master
+  token:
+    secure: "$FIREBASE_SECRET"
+  project: "achievements-dev"
