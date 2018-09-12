@@ -129,8 +129,9 @@ class JupyterInlineActivity extends React.PureComponent {
               variant="raised"
               style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
-            >Commit
-        </Button>
+            >
+              Commit
+            </Button>
           </div>
         }
         <JupyterNotebook
