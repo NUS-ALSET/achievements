@@ -6,11 +6,11 @@ import React from "react";
 import PropTypes from "prop-types";
 
 
-import PassengerPickerGame from 'alset-passengerpicker-game/passengerPickup/src/game'
-import Squad from 'alset-squad-game/squadGame/src/game'
+// import PassengerPickerGame from 'alset-passengerpicker-game/passengerPickup/src/game'
+// import Squad from 'alset-squad-game/squadGame/src/game'
 
-// import PassengerPickerGame from '../games/passenger-picker'
-// import Squad from '../games/squad'
+import PassengerPickerGame from '../games/passenger-picker'
+import Squad from '../games/squad'
 
 const games = {
   'passenger-picker' : PassengerPickerGame,
