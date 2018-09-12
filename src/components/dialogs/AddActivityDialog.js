@@ -46,6 +46,36 @@ import {
   NoStartWhiteSpace
 } from "../regexp-rules/RegExpRules";
 
+const gameDefaultData = {
+  game : 'passenger-picker',
+  scoreToWin : 10,
+  gameTime : 90,
+  unitsPerSide : 1,
+  levelsToWin : 1,
+  playMode : 'manual control'
+}
+ /**
+   * @param {String} timeStr input timeString eg 01:10:20
+   * @returns {Number} time in second
+   */
+function convertTimeStrToSecond(timeStr){
+  const [ hours=0, minutes=0, seconds=0 ] = timeStr.split(':').map(t=>Number(t));
+  return (seconds + (hours*60 +  minutes)*60)
+}
+ /**
+   * @param {Number | String} value time in seconds 90
+   * @returns {String} eg 00:01:30
+   */
+function convertSecondsToTimeStr(value){
+  const totalSeconds = Number(value);
+  const hours = parseInt(totalSeconds/(60*60), 10);
+  const minutes = parseInt((totalSeconds/60)%60, 10)
+  const seconds = parseInt( (totalSeconds%60), 10)
+  function getFormat(number){
+    return number > 9 ? number : `0${number}`
+  }
+  return `${getFormat(hours)}:${getFormat(minutes)}:${getFormat(seconds)}`
+}
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
@@ -304,16 +334,110 @@ class AddActivityDialog extends React.PureComponent {
         );
       case ACTIVITY_TYPES.game.id:
         return (
+          <div>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-games">Select Game</InputLabel>
+            <Select
+              input={<Input id="select-games" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("game", e.target.value)}
+              value={activity.game}
+            >
+              {Object.keys(APP_SETTING.games).map(id => (
+                <MenuItem key={APP_SETTING.games[id].name} value={id}>
+                  {APP_SETTING.games[id].name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-mode">Select Play Mode</InputLabel>
+            <Select
+              input={<Input id="select-mode" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("playMode", e.target.value)}
+              value={activity.playMode}
+            >
+              {[{ mode : 'manual control', label : 'Manual Control' },{ mode : 'custom code', label : 'Custom Code' }].map(key => (
+                <MenuItem key={key.mode} value={key.mode}>
+                  {key.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-level">Select minimum level game must be won at</InputLabel>
+            <Select
+              input={<Input id="select-level" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("levelsToWin", e.target.value)}
+              value={activity.levelsToWin}
+            >
+              {[1,2,3].map(key => (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
-            defaultValue={activity && activity.game}
+              defaultValue={0}
+              value={activity.unitsPerSide}
+              fullWidth
+              type="number"
+              label="Number of units each side will have in the game."
+              margin="dense"
+              onChange={e => this.onFieldChange("unitsPerSide", e.target.value)}
+            />
+          
+          <TextField
+            value={activity.scoreToWin}
+            defaultValue={0}
             fullWidth
-            label="Game Variant"
+            label="Score to Win"
             margin="dense"
-            onChange={e => this.onFieldChange("game", e.target.value)}
-          >
-            <MenuItem value="GemCollector">Gem Collector</MenuItem>
-            <MenuItem value="Squad">Squad</MenuItem>
-          </TextField>
+            type="number"
+            onChange={e => this.onFieldChange("scoreToWin", e.target.value)}
+          />
+          <TextField
+            id="time"
+            label="Select the maximum time limit"
+            type="time"
+            value={convertSecondsToTimeStr(activity.gameTime)}
+            style={{ width : '100%' }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 1,
+            }}
+            onChange={e => this.onFieldChange("gameTime", convertTimeStrToSecond(e.target.value))}
+          />
+          </div>
         );
       case ACTIVITY_TYPES.jest.id:
         return (
@@ -424,6 +548,9 @@ class AddActivityDialog extends React.PureComponent {
         code: 1,
         frozen: 1
       };
+    }
+    if (field === "type" && value === 'game') {
+      state = { ...gameDefaultData };
     }
     if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
       state={

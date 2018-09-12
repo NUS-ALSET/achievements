@@ -525,6 +525,9 @@ export class PathsService {
       ...pathProblem,
       problemId: pathProblem.problemId || pathProblem.id
     };
+    if(typeof solution ==='object'){
+      solution.updatedAt = Date.now()
+    }
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
@@ -539,6 +542,7 @@ export class PathsService {
           case ACTIVITY_TYPES.jest.id:
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
+          case ACTIVITY_TYPES.game.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)

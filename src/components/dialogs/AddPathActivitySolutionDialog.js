@@ -89,7 +89,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           open={open}
         >
           <DialogTitle>
-            {readOnly ? 'Student' : 'Set'}
+            {readOnly ? 'Student ' : 'Set '}
             Assignment Solution {readOnly ? '( Read Only) ' : ''}
           </DialogTitle>
             <Activity
