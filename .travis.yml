@@ -20,7 +20,7 @@ after_success:
   - echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST TRAVIS_BRANCH=$TRAVIS_BRANCH"
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "test if exit works";
-      exit
+      exit;
     else
       npm install -g firebase-tools;
       echo "only deploy for merge to master, not PR";
