@@ -12,7 +12,7 @@ import { fetchPublicPathActiviesSuccess } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 const NOT_FOUND_ERROR = 404;
-
+const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
 export const YOUTUBE_QUESTIONS = {
   topics:
     "What topics were covered in this video? Put each topic on a new line",
@@ -150,23 +150,23 @@ export class PathsService {
                     id: fileId,
                     data
                   }))
-              ),
-              Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
-                fileId =>
-                  this.fetchFile(fileId).then(data => ({
-                    id: fileId,
-                    data
-                  }))
               )
+              // Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
+              //   fileId =>
+              //     this.fetchFile(fileId).then(data => ({
+              //       id: fileId,
+              //       data
+              //     }))
+              // )
             ])
               .then(files =>
                 Object.assign(pathProblem, {
                   problemColabURL: PathsService.getColabURL(files[0].id),
                   problemJSON: files[0].data,
-                  problemFileId: files[0].id,
-                  solutionFileId: files[1].id,
-                  solutionColabURL: PathsService.getColabURL(files[1].id),
-                  solutionJSON: files[1].data
+                  problemFileId: files[0].id
+                  // solutionFileId: files[1].id,
+                  // solutionColabURL: PathsService.getColabURL(files[1].id),
+                  // solutionJSON: files[1].data
                 })
               )
               .then(() => {
@@ -224,7 +224,7 @@ export class PathsService {
         }
         resolve({
           ...data,
-          cells: data.cells.filter(d => d.source.join("").replace(/\n/g, "")),
+          cells: (data.cells || []).filter(d => d.source.join("").replace(/\n/g, "")),
           result: {
             ...data.result,
             cells: data.result.cells.filter(
@@ -312,10 +312,18 @@ export class PathsService {
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.jupyterInline.id:
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
-        if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
+        if (!problemInfo.solutionURL && !problemInfo.id)
+          throw new Error("Missing solutionURL");
         if (!problemInfo.frozen) throw new Error("Missing frozen field");
         if (problemInfo.type === "jupyterInline" && !problemInfo.code)
           throw new Error("Missing code field");
+        if (!problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
+          throw new Error("Invalid Problem URL");
+        if (
+          problemInfo.solutionURL &&
+          !problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL)
+        )
+          throw new Error("Invalid Solution URL");
         break;
       case ACTIVITY_TYPES.youtube.id:
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
@@ -344,9 +352,18 @@ export class PathsService {
   problemChange(uid, pathId, problemInfo) {
     const isNew = !problemInfo.id;
     let next;
+    let solutionURL = null;
 
     this.validateProblem(problemInfo);
 
+    if (
+      [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(
+        problemInfo.type
+      )
+    ) {
+      solutionURL = problemInfo.solutionURL;
+      delete problemInfo.solutionURL;
+    }
     problemInfo.owner = uid;
     if (pathId) {
       problemInfo.path = pathId;
@@ -375,19 +392,13 @@ export class PathsService {
             .ref(`/paths/${pathId}/totalActivities`)
             .transaction(activities => ++activities)
       )
-      .then(() =>{
-        if(problemInfo.solutionURL && 
-          [ACTIVITY_TYPES.jupyter.id,ACTIVITY_TYPES.jupyterInline.id ].includes(problemInfo.type)){
-            this.fetchFile(this.getFileId(problemInfo.solutionURL))
-              .then(json => {
-                this.saveGivenSkillInProblem(
-                  json,
-                  key,
-                  uid
-                );
-              })
-          }
-        return key
+      .then(() => {
+        if (solutionURL) {
+          this.fetchFile(this.getFileId(solutionURL)).then(json => {
+            this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
+          });
+        }
+        return key;
       });
   }
 
@@ -514,6 +525,9 @@ export class PathsService {
       ...pathProblem,
       problemId: pathProblem.problemId || pathProblem.id
     };
+    if(typeof solution ==='object'){
+      solution.updatedAt = Date.now()
+    }
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
       .then(() => {
@@ -528,6 +542,7 @@ export class PathsService {
           case ACTIVITY_TYPES.jest.id:
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
+          case ACTIVITY_TYPES.game.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -535,11 +550,11 @@ export class PathsService {
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
               .then(json => {
-                this.saveGivenSkillInProblem(
-                  json,
-                  pathProblem.problemId,
-                  uid
-                );
+                // this.saveGivenSkillInProblem(
+                //   json,
+                //   pathProblem.problemId,
+                //   uid,
+                // );
                 return this.validateSolution(uid, pathProblem, solution, json);
               })
               .then(() =>
@@ -549,11 +564,11 @@ export class PathsService {
                   .set(solution)
               );
           case ACTIVITY_TYPES.jupyterInline.id: {
-            this.saveGivenSkillInProblem(
-              solution,
-              pathProblem.problemId,
-              uid
-            );
+            // this.saveGivenSkillInProblem(
+            //   solution,
+            //   pathProblem.problemId,
+            //   uid
+            // );
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -575,25 +590,46 @@ export class PathsService {
       );
   }
 
-  saveGivenSkillInProblem(solution, problemId, uid ) {
+  saveGivenSkillInProblem(solution, activityId, uid, solutionURL, pathId) {
+    // comment out any lines that start with !
     const editableBlockCode = solution.cells
-      .map(c => (c.cell_type === "code" ? c.source.join("") : ""))
+      .map(
+        c =>
+          c.cell_type === "code"
+            ? c.source
+                .map(line => (line[0] === "!" ? `#${line}` : line))
+                .join("")
+            : ""
+      )
       .join("");
     const data = {
       owner: uid,
       solution: editableBlockCode || ""
     };
+    const resData = {};
+    return (
+      firebaseService
+        .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
+        .then(res => {
+          resData.skills = res.skills || {};
+        })
+        .catch(e => {
+          resData.errorMsg = e.message || 'Error occured';
+        })
+        .finally(() => {
+          // pathId added, so solution's skills will be fetch on basis of pathId
 
-    firebaseService
-      .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
-      .then(res => {
-        firebase
-          .database()
-          .ref(`/activities/${problemId}`)
-          .update({
-            defaultSolutionSkills: res.skills || {}
-          });
-      });
+          firebase
+            .database()
+            .ref(`/activityExampleSolutions/${activityId}`)
+            .set({
+              ...resData,
+              solutionURL: solutionURL,
+              owner: uid,
+              pathId
+            });
+        })
+    );
   }
 
   /**
@@ -964,4 +1000,3 @@ export class PathsService {
 
 /** @type PathsService */
 export const pathsService = new PathsService();
-

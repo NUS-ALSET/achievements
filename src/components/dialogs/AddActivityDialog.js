@@ -7,6 +7,10 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
+import { firebaseConnect,isLoaded } from "react-redux-firebase";
+import { compose } from "redux";
+import { connect } from "react-redux";
+
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
@@ -42,6 +46,36 @@ import {
   NoStartWhiteSpace
 } from "../regexp-rules/RegExpRules";
 
+const gameDefaultData = {
+  game : 'passenger-picker',
+  scoreToWin : 10,
+  gameTime : 90,
+  unitsPerSide : 1,
+  levelsToWin : 1,
+  playMode : 'manual control'
+}
+ /**
+   * @param {String} timeStr input timeString eg 01:10:20
+   * @returns {Number} time in second
+   */
+function convertTimeStrToSecond(timeStr){
+  const [ hours=0, minutes=0, seconds=0 ] = timeStr.split(':').map(t=>Number(t));
+  return (seconds + (hours*60 +  minutes)*60)
+}
+ /**
+   * @param {Number | String} value time in seconds 90
+   * @returns {String} eg 00:01:30
+   */
+function convertSecondsToTimeStr(value){
+  const totalSeconds = Number(value);
+  const hours = parseInt(totalSeconds/(60*60), 10);
+  const minutes = parseInt((totalSeconds/60)%60, 10)
+  const seconds = parseInt( (totalSeconds%60), 10)
+  function getFormat(number){
+    return number > 9 ? number : `0${number}`
+  }
+  return `${getFormat(hours)}:${getFormat(minutes)}:${getFormat(seconds)}`
+}
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
@@ -69,10 +103,15 @@ class AddActivityDialog extends React.PureComponent {
       this.handelfetchGithubFilesStatus(nextProps.fetchGithubFilesStatus,nextProps.activity);
       return;
     }
-    this.resetState();
+    if((this.props || {}).open !== nextProps.open){
+      this.resetState();
+    }
     if (nextProps.activity) {
       let state = {};
-      if (nextProps.activity.type === ACTIVITY_TYPES.jupyterInline.id) {
+      if(nextProps.activity.name && AddName.test(nextProps.activity.name) && NoStartWhiteSpace.test(nextProps.activity.name)){
+        this.setState({ isCorrectInput : true})
+      }
+      if ([ ACTIVITY_TYPES.jupyterInline.id ,ACTIVITY_TYPES.jupyter.id ].includes(nextProps.activity.type)){
         state = {
           code: nextProps.activity.code || 1,
           frozen: nextProps.activity.frozen || 1
@@ -110,8 +149,11 @@ class AddActivityDialog extends React.PureComponent {
   }
 
   getTypeSpecificElements() {
-    let { activity } = this.props;
-
+    let { activity, activityExampleSolution } = this.props;
+    if(['jupyter','jupyterInline'].includes((activity || {}).type) && !isLoaded(activityExampleSolution)){
+      return "";
+    }
+    console.log('activity', (activity|| {}).id)
     activity = Object.assign(activity || {}, this.state);
     switch (this.state.type || (activity && activity.type) || "text") {
       case ACTIVITY_TYPES.text.id:
@@ -176,13 +218,13 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
-            <TextField
-              defaultValue={activity && activity.solutionURL}
-              fullWidth
-              label="Solution Notebook URL"
-              margin="dense"
-              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-            />
+              <TextField
+                defaultValue={(activityExampleSolution || {}).solutionURL || ""}
+                fullWidth
+                label="Solution Notebook URL"
+                margin="dense"
+                onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+              />
             <TextField
               defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
@@ -205,17 +247,17 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
-            <TextField
-              defaultValue={activity && activity.solutionURL}
-              fullWidth
-              label="Solution Notebook URL"
-              margin="dense"
-              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-            />
+              <TextField
+                defaultValue={(activityExampleSolution || {}).solutionURL || ""}
+                fullWidth
+                label="Solution Notebook URL"
+                margin="dense"
+                onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+              />
             <TextField
               defaultValue={activity && String(activity.code || "1")}
               fullWidth
-              label="Default code block"
+              label="Index of Code Block Student Can Edit Solution (Index starts from 0)"
               margin="dense"
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
               type="number"
@@ -223,7 +265,7 @@ class AddActivityDialog extends React.PureComponent {
             <TextField
               defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
-              label="Number of frozen cells"
+              label="How many code blocks are frozen (counting from bottom up)"
               margin="dense"
               onChange={e =>
                 this.onFieldChange("frozen", Number(e.target.value))
@@ -292,16 +334,110 @@ class AddActivityDialog extends React.PureComponent {
         );
       case ACTIVITY_TYPES.game.id:
         return (
+          <div>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-games">Select Game</InputLabel>
+            <Select
+              input={<Input id="select-games" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("game", e.target.value)}
+              value={activity.game}
+            >
+              {Object.keys(APP_SETTING.games).map(id => (
+                <MenuItem key={APP_SETTING.games[id].name} value={id}>
+                  {APP_SETTING.games[id].name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-mode">Select Play Mode</InputLabel>
+            <Select
+              input={<Input id="select-mode" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("playMode", e.target.value)}
+              value={activity.playMode}
+            >
+              {[{ mode : 'manual control', label : 'Manual Control' },{ mode : 'custom code', label : 'Custom Code' }].map(key => (
+                <MenuItem key={key.mode} value={key.mode}>
+                  {key.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-level">Select minimum level game must be won at</InputLabel>
+            <Select
+              input={<Input id="select-level" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("levelsToWin", e.target.value)}
+              value={activity.levelsToWin}
+            >
+              {[1,2,3].map(key => (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
-            defaultValue={activity && activity.game}
+              defaultValue={0}
+              value={activity.unitsPerSide}
+              fullWidth
+              type="number"
+              label="Number of units each side will have in the game."
+              margin="dense"
+              onChange={e => this.onFieldChange("unitsPerSide", e.target.value)}
+            />
+          
+          <TextField
+            value={activity.scoreToWin}
+            defaultValue={0}
             fullWidth
-            label="Game Variant"
+            label="Score to Win"
             margin="dense"
-            onChange={e => this.onFieldChange("game", e.target.value)}
-          >
-            <MenuItem value="GemCollector">Gem Collector</MenuItem>
-            <MenuItem value="Squad">Squad</MenuItem>
-          </TextField>
+            type="number"
+            onChange={e => this.onFieldChange("scoreToWin", e.target.value)}
+          />
+          <TextField
+            id="time"
+            label="Select the maximum time limit"
+            type="time"
+            value={convertSecondsToTimeStr(activity.gameTime)}
+            style={{ width : '100%' }}
+            InputLabelProps={{
+              shrink: true,
+            }}
+            inputProps={{
+              step: 1,
+            }}
+            onChange={e => this.onFieldChange("gameTime", convertTimeStrToSecond(e.target.value))}
+          />
+          </div>
         );
       case ACTIVITY_TYPES.jest.id:
         return (
@@ -330,7 +466,7 @@ class AddActivityDialog extends React.PureComponent {
               />
             </FormControl>
             {this.state.files &&
-             this.state.files.length > 0 && (
+              this.state.files.length > 0 && (
               <Fragment>
                 <Typography
                   gutterBottom
@@ -407,11 +543,14 @@ class AddActivityDialog extends React.PureComponent {
       });
     }
     let state = {};
-    if (field === "type" && value === ACTIVITY_TYPES.jupyterInline.id) {
+    if (field === "type" && [ACTIVITY_TYPES.jupyterInline.id,ACTIVITY_TYPES.jupyter.id].includes(value)) {
       state = {
         code: 1,
         frozen: 1
       };
+    }
+    if (field === "type" && value === 'game') {
+      state = { ...gameDefaultData };
     }
     if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
       state={
@@ -459,7 +598,6 @@ class AddActivityDialog extends React.PureComponent {
         })
       );
     }
-    this.onClose();
   };
 
   onClose = () => {
@@ -543,4 +681,22 @@ class AddActivityDialog extends React.PureComponent {
   }
 }
 
-export default AddActivityDialog;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    activityExampleSolution : (state.firebase.data.activityExampleSolutions || {})[(ownProps.activity || {}).id]
+  }
+};
+
+export default compose(
+  firebaseConnect((ownProps, store) => {
+    if(!['jupyter','jupyterInline'].includes((ownProps.activity || {}).type)){
+      return false; 
+    }
+    return [
+      `/activityExampleSolutions/${ownProps.activity.id}`,
+    ];
+  }),
+  connect(
+    mapStateToProps,
+  )
+)(AddActivityDialog);
