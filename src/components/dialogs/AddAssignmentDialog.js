@@ -177,7 +177,7 @@ class AddAssignmentDialog extends React.PureComponent {
                   value="allowSolutionImport"
                 />
               }
-              label="Allow student to import existing solution done for this activity"
+              label="If students have submitted solution to this path activity before, auto-fill with their previous answer"
             />
           </Fragment>
         );
