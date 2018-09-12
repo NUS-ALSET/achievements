@@ -10,26 +10,20 @@ before_install:
 - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
 
 install:
-# install firebase for firebase-cli
-- npm install -g firebase-tools
 - npm install
 
 script:
 - npm run-script build
-- npm run-script test
-
-# Note that pull request builds skip the deployment step altogether.
+- npm run-script coverage
 
 before_deploy:
-- cd ./functions && npm install && cd ..
-- "echo 'ready for deployment!'"
+- ./scripts/prepare-deployment.sh
 
 deploy:
-# use bash script to customize firebase deploy
-# we skip functions in firebase
 - skip_cleanup: true
-  provider: script
-  script: bash scripts/deployment.sh
+  provider: firebase
   on:
     branch: master
-  message: "deployment done"
+  token:
+    secure: "$FIREBASE_SECRET"
+  project: "achievements-dev"
