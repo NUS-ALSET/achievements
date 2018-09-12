@@ -99,17 +99,8 @@ class AssignmentsTable extends React.PureComponent {
       data: {}
     }
   };
-  openAnalysisDialog = (solution, name) =>
-    this.setState({
-      analysisDialog: {
-        open: true,
-        name,
-        data: {
-          userSkills: solution.userSkills || {},
-          skillsDifference: solution.skillsDifference || {}
-        }
-      }
-    });
+  openAnalysisDialog = (activityId, name) =>
+    this.setState({ analysisDialog: { open: true, name, activityId } });
 
   handleCloseAnalysisDialog = () =>
     this.setState({ analysisDialog: { open: false, data: {} } });
@@ -351,7 +342,7 @@ class AssignmentsTable extends React.PureComponent {
           assignmentPathProblemSolutionRequest(
             assignment,
             course.owner,
-            assignment.problem,
+            assignment.pathActivity || assignment.problem,
             solution
           )
         );
@@ -447,7 +438,7 @@ class AssignmentsTable extends React.PureComponent {
                         rel="noopener noreferrer"
                         target="_blank"
                       >
-                        details
+                        link
                       </a>
                     )}
                     {(assignment.details ? " " : "") + assignment.progress ||
@@ -471,7 +462,8 @@ class AssignmentsTable extends React.PureComponent {
                     direction={sortState.direction}
                     onClick={() => this.onSortClick("progress")}
                   >
-                    Progress (last submitted time)
+                    Progress <br />
+                    (last submitted time)
                   </TableSortLabel>
                 </TableCell>
               )}
@@ -549,8 +541,7 @@ class AssignmentsTable extends React.PureComponent {
                                 <IconButton
                                   onClick={() =>
                                     this.openAnalysisDialog(
-                                      studentInfo.solutions[assignment.id]
-                                        .originalSolution,
+                                        assignment.id,
                                         assignment.name
                                     )
                                   }
@@ -598,10 +589,23 @@ class AssignmentsTable extends React.PureComponent {
                         course.totalAssignments
                       } (${
                         studentInfo.progress.lastSolutionTime
-                          ? new Date(
+                          ? (
+                            new Date(
                               studentInfo.progress.lastSolutionTime
-                            ).toLocaleTimeString()
-                          : ""
+                            ).toLocaleString(
+                              'en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                second: '2-digit',
+                                hour12: true,
+                                timeZone: 'Asia/Singapore'
+                              }
+                            )
+                          )
+                          : "no submissions yet"
                       })`}
                     </TableCell>
                   )}
@@ -657,7 +661,7 @@ class AssignmentsTable extends React.PureComponent {
           handleClose={this.handleCloseAnalysisDialog}
           open={this.state.analysisDialog.open}
           name={this.state.analysisDialog.name}
-          skills={this.state.analysisDialog.data}
+          activityId={this.state.analysisDialog.activityId}
         />
       </Fragment>
     );

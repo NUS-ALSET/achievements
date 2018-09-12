@@ -6,8 +6,9 @@
 
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-
 import cloneDeep from "lodash/cloneDeep";
+import Typography from "@material-ui/core/Typography";
+import { Button } from "@material-ui/core";
 
 import {
   problemSolutionRefreshFail,
@@ -15,7 +16,6 @@ import {
 } from "../../containers/Activity/actions";
 import { notificationShow } from "../../containers/Root/actions";
 import JupyterNotebook from "./JupyterNotebook";
-import Typography from "@material-ui/core/Typography";
 
 class JupyterInlineActivity extends React.PureComponent {
   static propTypes = {
@@ -27,9 +27,22 @@ class JupyterInlineActivity extends React.PureComponent {
   };
 
   state = {
-    solutionJSON: false
+    solutionJSON: false,
+    showCommitBtn: false,
+    statusText : null
   };
-
+  componentWillReceiveProps(nextProps) {
+    if ((nextProps.solution || {}).checked) {
+      this.setState({ showCommitBtn: true });
+    } else {
+      this.setState({ showCommitBtn: false });
+    }
+    if(nextProps.solution.statusText){
+      this.setState({ statusText : nextProps.solution.statusText });  
+    }else{
+      this.setState({ statusText : null })
+    }
+  }
   onSolutionRefreshClick = value => {
     const { dispatch, onChange, problem } = this.props;
 
@@ -103,6 +116,24 @@ class JupyterInlineActivity extends React.PureComponent {
 
     return (
       <Fragment>
+        {
+          this.state.statusText && 
+          <div style={{ textAlign : 'left',fontWeight : 'bold',paddingLeft : '10px',color : '#d2691e' }}>
+            <b>Execution Status: </b> {this.state.statusText }
+          </div>
+        }
+        {this.state.showCommitBtn &&
+          <div style={{ height: '20px' }}>
+            <Button
+              color="primary"
+              variant="raised"
+              style={{ float: 'right', marginBottom: '10px' }}
+              onClick={() => this.props.onCommit()}
+            >
+              Commit
+            </Button>
+          </div>
+        }
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={this.getSolutionCode(solution, problem)}
@@ -110,7 +141,7 @@ class JupyterInlineActivity extends React.PureComponent {
           readOnly={readOnly}
           richEditor={true}
           solution={false}
-          title={readOnly ? "Submitted Code" : "Edit code"}
+          title={readOnly ? "Submitted Code" : "Edit Your Solution Here"}
         />
         {solution &&
           (solution.json || solution.loading) && (
@@ -119,7 +150,7 @@ class JupyterInlineActivity extends React.PureComponent {
               solution={solution}
               title={
                 <Fragment>
-                  Calculated Solution
+                  Solution Check
                   {this.getCalculatedSolution(solution)}
                 </Fragment>
               }
@@ -130,13 +161,13 @@ class JupyterInlineActivity extends React.PureComponent {
             <JupyterNotebook
               readOnly={readOnly}
               solution={{ json: solution.provided }}
-              title="Provided solution"
+              title="Your Solution"
             />
           )}
         <JupyterNotebook
           readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
-          title="Problem"
+          title="Path Activity"
         />
       </Fragment>
     );

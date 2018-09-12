@@ -24,20 +24,29 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
 import isEqual from "lodash/isEqual";
+import { notificationShow } from "../Root/actions";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
+    children: PropTypes.any,
     dispatch: PropTypes.func,
+    embedded: PropTypes.bool,
     match: PropTypes.object,
+    onCommit: PropTypes.func,
     onProblemChange: PropTypes.func,
+    pathName: PropTypes.string,
     pathProblem: PropTypes.any,
     solution: PropTypes.any,
-    embedded: PropTypes.bool,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
+  };
+
+  static defaultProps = {
+    pathName: "Default"
   };
 
   state = {
-    problemSolution: {}
+    problemSolution: {},
+    changed: false
   };
 
   componentDidMount() {
@@ -50,11 +59,11 @@ export class Activity extends React.PureComponent {
       );
     }
   }
-  componentWillReceiveProps(nextProps){
-    if(
-      !isEqual(nextProps.pathProblem, this.props.pathProblem)
-    ){
-    this.onProblemChange({});
+
+  // Renamed via https://reactjs.org/docs/react-component.html#unsafe_componentwillreceiveprops
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
+      this.onProblemChange({});
     }
   }
   componentWillUnmount() {
@@ -67,24 +76,28 @@ export class Activity extends React.PureComponent {
   }
 
   onProblemChange = problemSolution => {
-    this.setState({ problemSolution });
+    this.setState({ problemSolution, changed: true });
     return (
       this.props.onProblemChange && this.props.onProblemChange(problemSolution)
     );
   };
   onCommit = () => {
-    this.props.dispatch(
-      problemSolutionSubmitRequest(
-        this.props.match.params.pathId,
-        this.props.match.params.problemId,
-        this.state.problemSolution
-      )
-    );
+    if (this.state.changed) {
+      this.props.dispatch(
+        problemSolutionSubmitRequest(
+          this.props.match.params.pathId,
+          this.props.match.params.problemId,
+          this.state.problemSolution
+        )
+      );
+    } else {
+      this.props.dispatch(notificationShow("Nothing changed"));
+    }
   };
 
   propsCommit = data => {
-    if(this.props.readOnly){
-      return ;
+    if (this.props.readOnly) {
+      return;
     }
     if (
       this.props.pathProblem.type === "profile" &&
@@ -102,7 +115,14 @@ export class Activity extends React.PureComponent {
   };
 
   render() {
-    const { embedded, dispatch, pathProblem, solution, readOnly } = this.props;
+    const {
+      embedded,
+      dispatch,
+      pathName,
+      pathProblem,
+      solution,
+      readOnly
+    } = this.props;
     if (!pathProblem) {
       return (
         <div
@@ -123,7 +143,7 @@ export class Activity extends React.PureComponent {
                 link: "/paths"
               },
               {
-                label: pathProblem.pathName,
+                label: pathName,
                 link: `/paths/${this.props.match.params.pathId}`
               },
               {
@@ -150,29 +170,30 @@ export class Activity extends React.PureComponent {
             }}
           />
         )}
-        {!readOnly && !embedded && (
-          <div
-            style={{
-              bottom: 0,
-              display: "flex",
-              justifyContent: "flex-end",
-              position: "relative"
-            }}
-          >
-            <Button
-              color="primary"
-              disabled={
-                !(solution && solution.checked) ||
-                solution.loading ||
-                solution.failed
-              }
-              onClick={this.onCommit}
-              variant="raised"
+        {!readOnly &&
+          !embedded && (
+            <div
+              style={{
+                bottom: 0,
+                display: "flex",
+                justifyContent: "flex-end",
+                position: "relative"
+              }}
             >
-              Commit
-            </Button>
-          </div>
-        )}
+              <Button
+                color="primary"
+                disabled={
+                  !(solution && solution.checked) ||
+                  solution.loading ||
+                  solution.failed
+                }
+                onClick={this.onCommit}
+                variant="raised"
+              >
+                Commit
+              </Button>
+            </div>
+          )}
       </Fragment>
     );
   }
@@ -192,6 +213,7 @@ const activityView = props => (
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
+  pathName: state.firebase.data.pathName,
   pathProblem: ownProps.pathProblem || state.problem.pathProblem,
   solution: ownProps.solution || state.problem.solution,
   userAchievements: state.firebase.data.myAchievements || {}
@@ -206,6 +228,14 @@ export default compose(
         `/problemSolutions/${ownProps.match.params.problemId}/${
           firebaseAuth.uid
         }`,
+        {
+          path: `/paths/${ownProps.match.params.pathId}/name`,
+          storeAs: "pathName"
+        },
+        {
+          path: `/paths/${ownProps.match.params.pathId}/isPublic`,
+          storeAs: "isPathPublic"
+        },
         {
           path: `/userAchievements/${firebaseAuth.uid}`,
           storeAs: "myAchievements"

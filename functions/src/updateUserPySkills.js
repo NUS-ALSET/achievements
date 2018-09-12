@@ -87,12 +87,24 @@ function updateRecommendation(userKey, userSkills) {
         )
       )
     )
-    .then(pathActivitiesData => {
+    .then(pathActivitiesData=>
+      admin
+        .database()
+        .ref("/activityExampleSolutions")
+        .once("value")
+        .then(snapshot => snapshot.val())
+        .then(activityExampleSolutions=>({
+            pathActivitiesData,
+            activityExampleSolutions
+          })
+        )
+    )
+    .then(({ pathActivitiesData, activityExampleSolutions={} }) => {
       let problemWithUnsolvedSkills = {
-        title : "Jupyter Activities With New Skills"
+        title : "Jupyter Notebook Activities With New Skills"
       };
       let problemWithSolvedSkills = {
-        title : "Jupyter Activities With Solved Skills"
+        title : "Jupyter Notebook Activities With Solved Skills"
       };
       for (const data of pathActivitiesData) {
         const [ activities = {}, completedActivities = {} ] = data;
@@ -101,10 +113,10 @@ function updateRecommendation(userKey, userSkills) {
           const activity = activities[key];
           if (
             ["jupyter", "jupyterInline"].includes(activity.type)
-            && typeof activity.defaultSolutionSkills == 'object' 
+            && (activityExampleSolutions[key] || {}).skills 
             && !completedActivities[key]
           ) {
-            const problemSkills = activity.defaultSolutionSkills;
+            const problemSkills = activityExampleSolutions[key].skills;
 
             Object.keys(problemSkills).forEach(feature => {
               Object.keys((problemSkills[feature] || {})).forEach(featureType => {
@@ -130,11 +142,11 @@ function updateRecommendation(userKey, userSkills) {
       return Promise.all[
         admin
         .database()
-        .ref(`/userRecommendations/${userKey}/solvedPySkills`)
+        .ref(`/userRecommendations/${userKey}/NotebookWithUsedSkills`)
         .set(problemWithSolvedSkills),
         admin
         .database()
-        .ref(`/userRecommendations/${userKey}/unSolvedPySkills`)
+        .ref(`/userRecommendations/${userKey}/NotebookWithNewSkills`)
         .set(problemWithUnsolvedSkills)
       ]
     })

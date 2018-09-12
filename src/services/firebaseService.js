@@ -1,16 +1,16 @@
 import firebase from "firebase";
-import {
-  notificationShow,
-  notificationHide
-} from "../containers//Root/actions";
+import { notificationShow, notificationHide } from "../containers/Root/actions";
+
+const ONE_SECOND = 1000;
 
 class FirebaseService {
   constructor() {
-    this.stopAfter = 10;//in sec
+    // In sec
+    this.stopAfter = 10;
     this.timer = null;
     this.store = null;
-    this.collectionName = '';
-    this.processName = ''
+    this.collectionName = "";
+    this.processName = "";
   }
 
   setStore(store) {
@@ -22,18 +22,17 @@ class FirebaseService {
   }
 
   stopProcessAfterTimeOut(taskKey, cb) {
-    this.timer = setTimeout(
-      () => {
-        firebase
-          .database()
-          .ref(`/${this.collectionName}/responses/${taskKey}`)
-          .remove()
-        this.offFirebaseChangeListen(taskKey);
-        this.dispatch(notificationShow(`${this.processName} timeout`));
-        setTimeout(() => {
-          cb();
-        }, 1000)
-      }, this.stopAfter*1000);
+    this.timer = setTimeout(() => {
+      firebase
+        .database()
+        .ref(`/${this.collectionName}/responses/${taskKey}`)
+        .remove();
+      this.offFirebaseChangeListen(taskKey);
+      this.dispatch(notificationShow(`${this.processName} Timeout`));
+      setTimeout(() => {
+        cb();
+      }, ONE_SECOND);
+    }, this.stopAfter * ONE_SECOND);
   }
 
   clearTimer() {
@@ -52,42 +51,37 @@ class FirebaseService {
     return firebase
       .database()
       .ref(`/${this.collectionName}/responses/${taskKey}`)
-      .remove()
+      .remove();
   }
 
   deleteTask(taskKey) {
     return firebase
       .database()
       .ref(`/${this.collectionName}/tasks/${taskKey}`)
-      .remove()
+      .remove();
   }
 
-  addTask(taskKey,data) {
-    return firebase
-      .ref(`/${this.collectionName}/tasks/${taskKey}`).set({
-        taskKey,
-        ...data
-      });
+  addTask(taskKey, data) {
+    return firebase.ref(`/${this.collectionName}/tasks/${taskKey}`).set({
+      taskKey,
+      ...data
+    });
   }
 
-  showNotification(message){
-    if(this.processName && this.processName.length>0){
+  showNotification(message) {
+    if (this.processName && this.processName.length > 0) {
       this.dispatch(notificationHide());
-      this.dispatch(
-        notificationShow(`${this.processName} : ${message}`)
-      )
+      this.dispatch(notificationShow(`${this.processName} : ${message}`));
     }
   }
 
-  startProcess( data, collection, process='') {
+  startProcess(data, collection, process = "") {
     this.collectionName = collection;
     this.processName = process;
     this.dispatch(notificationHide());
     return new Promise((resolve, reject) => {
-      this.showNotification('Start');
-      const taskKey = firebase
-        .ref(`/${this.collectionName}/tasks`)
-        .push().key;
+      this.showNotification("Start");
+      const taskKey = firebase.ref(`/${this.collectionName}/tasks`).push().key;
       firebase
         .database()
         .ref(`/${this.collectionName}/responses/${taskKey}`)
@@ -97,26 +91,24 @@ class FirebaseService {
           }
           this.clearTimer();
           this.offFirebaseChangeListen(taskKey);
-          this.deleteResponse(taskKey)
-            .then(
-              () => {
-                if (response.val()) {
-                  this.showNotification('Completed');
-                  resolve( 
-                    response.val()
-                  )
-                } else {
-                  this.showNotification('Failed');
-                  setTimeout(() => {
-                    this.deleteTask(taskKey);
-                    reject();
-                  }, 1000)
-                }
-              }
-            );
+          this.deleteResponse(taskKey).then(() => {
+            const value = response.val() || {};
+            if (!value.error) {
+              this.showNotification("Completed");
+              resolve(value);
+            } else {
+              this.showNotification(`Failded (${value.error.message})`);
+              setTimeout(() => {
+                this.deleteTask(taskKey);
+                reject(value.error);
+              }, ONE_SECOND);
+            }
+          });
         });
       this.addTask(taskKey, data);
-      this.stopProcessAfterTimeOut(taskKey, () => reject());
+      this.stopProcessAfterTimeOut(taskKey, () =>
+        reject({ message: "Processing Timeout" })
+      );
     });
   }
 }

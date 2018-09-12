@@ -14,22 +14,24 @@ import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
 import { pathsService } from "./services/paths";
 import { historyService } from "./services/history";
-import { firebaseService } from './services/firebaseService'
+import { firebaseService } from "./services/firebaseService";
 
 const history = createHashHistory();
 const store = configureStore(undefined, history);
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#1a237e'//deepblue,
+      // deepblue
+      main: "#1a237e"
     },
     secondary: {
-      main: '#c62828'//red,
-    },
+      // red
+      main: "#c62828"
+    }
   },
   typography: {
     htmlFontSize: 14
-  },
+  }
 });
 
 coursesService.setStore(store);

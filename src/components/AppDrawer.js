@@ -17,7 +17,6 @@ import Hidden from "@material-ui/core/Hidden";
 import IconButton from "@material-ui/core/IconButton";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-
 const styles = theme => ({
   someClass: {
     width: APP_SETTING.drawerWidth,
@@ -37,7 +36,7 @@ const styles = theme => ({
     backgroundRepeat: "no-repeat",
     backgroundPosition: "50% 50%",
     ...theme.mixins.toolbar
-  },
+  }
 });
 
 class AppDrawer extends React.PureComponent {
@@ -49,7 +48,7 @@ class AppDrawer extends React.PureComponent {
       userId,
       mobileDrawerOpen,
       onRequestClose,
-      location,
+      location
     } = this.props;
 
     const drawer = (

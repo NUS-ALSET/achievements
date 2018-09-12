@@ -2,15 +2,15 @@
   {
     "name": "test",
     "type": "jupyter",
-    "problemURL": "test",
-    "solutionURL": "test",
+    "problemURL": "https://colab.research.google.com/drive/testFileID",
+    "solutionURL": "https://colab.research.google.com/drive/testFileID",
     "frozen": 2
   },
   {
     "name": "test",
     "type": "jupyterInline",
-    "problemURL": "test",
-    "solutionURL": "test",
+    "problemURL": "https://colab.research.google.com/drive/testFileID",
+    "solutionURL": "https://colab.research.google.com/drive/testFileID",
     "code": 1,
     "frozen": 2
   },
@@ -28,8 +28,8 @@
   {
     "name": "test",
     "type": "jupyter",
-    "problemURL": "test",
-    "solutionURL": "test",
+    "problemURL": "https://colab.research.google.com/drive/testFileID",
+    "solutionURL": "https://colab.research.google.com/drive/testFileID",
     "frozen": 2
   },
   {

@@ -39,6 +39,8 @@ import Typography from "@material-ui/core/Typography";
 
 import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
+import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
+import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
 
 // RegExp rules
 import {
@@ -76,6 +78,8 @@ function convertSecondsToTimeStr(value){
   }
   return `${getFormat(hours)}:${getFormat(minutes)}:${getFormat(seconds)}`
 }
+// images for user guide in the dialog
+
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
@@ -240,10 +244,44 @@ class AddActivityDialog extends React.PureComponent {
       case ACTIVITY_TYPES.jupyterInline.id:
         return (
           <Fragment>
+            <Typography
+              variant="body2"
+              gutterBottom
+            >
+              Jupyter Notebook Activity
+            </Typography>
+            <Typography
+              variant="body1"
+              gutterBottom
+            >
+              A type of activity that requires the students to submit the python solution for a single code box in a Jupyter notebook. The solution should ensure that any relevant assertions in the notebook pass.
+            </Typography>
+            <br />
+            <Typography
+              variant="body2"
+              gutterBottom
+            >
+              Step 1: Get the Shareable Link from Google Colab ipynb
+            </Typography>
+            <a
+              href="https://colab.research.google.com/drive/1Rx_oOoslo2bbT7CY6nXmWuwzJXootjzA"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img src={JupyterNotebookStep1} alt="JupyterNotebookStep1" />
+              <Typography
+                variant="caption"
+                gutterBottom
+                align="center"
+              >
+                Sample Google Colab ipynb Link
+              </Typography>
+            </a>
             <TextField
               defaultValue={activity && activity.problemURL}
               fullWidth
-              label="Problem Notebook URL"
+              label="Google Colab ipynb URL for this Activity"
+              helperText="Make sure the ipynb's Link Sharing is on"
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
@@ -254,6 +292,42 @@ class AddActivityDialog extends React.PureComponent {
                 margin="dense"
                 onChange={e => this.onFieldChange("solutionURL", e.target.value)}
               />
+            <Typography
+              variant="body2"
+              gutterBottom
+              style={{marginTop:30}}
+            >
+              Step 2: Get the Shareable Link of the Solution Notebook
+            </Typography>
+            <a
+              href="https://colab.research.google.com/drive/1k-Q9j1AGx3MmQ9xxATlXXggwKo5CGC7C"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img src={JupyterNotebookStep2} alt="JupyterNotebookStep2" />
+              <Typography
+                variant="caption"
+                gutterBottom
+                align="center"
+              >
+                Sample Solution Google Colab ipynb Link
+              </Typography>
+            </a>
+            <TextField
+              defaultValue={(activityExampleSolution || {}).solutionURL || ""}
+              fullWidth
+              label="Another Google Colab ipynb URL for the Solution"
+              helperText="just a sample solution from you is ok"
+              margin="dense"
+              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+            />
+            <Typography
+              variant="body2"
+              gutterBottom
+              style={{marginTop:30}}
+            >
+              Step 3: Select code block for solution input
+            </Typography>
             <TextField
               defaultValue={activity && String(activity.code || "1")}
               fullWidth

@@ -174,6 +174,59 @@ export class AccountService {
       } */
     };
   }
+
+  /**
+   * This method updates `authTime` data to current. Used mostly for invoking
+   * `generateUserRecommendations`
+   * @param uid
+   */
+  authTimeUpdate(uid) {
+    return firebase
+      .database()
+      .ref(`/users/${uid}/lastAuthTime`)
+      .set({ ".sv": "timestamp" });
+  }
+
+  /**
+   *
+   * @param config
+   * @returns {Promise<void>}
+   */
+  updateAdminConfig(config) {
+    const configUpdates = {};
+    const jestUpdates = {};
+    config = config || {};
+    config.recommendations = config.recommendations || {};
+    if (config.jupyterLambdaProcessor) {
+      configUpdates.jupyterLambdaProcessor = config.jupyterLambdaProcessor;
+    }
+    if (config.jupyterLambdaProcessor) {
+      configUpdates.jupyterAnalysisLambdaProcessor =
+        config.jupyterAnalysisLambdaProcessor;
+    }
+    if (config.awsJestRunnerServerURL) {
+      jestUpdates.awsJestRunnerServerURL = config.awsJestRunnerServerURL;
+    }
+    if (config.githubAccessToken) {
+      jestUpdates.githubAccessToken = config.githubAccessToken;
+    }
+    // FIXIT: should update it with one write but it's not too often procedure
+    // so, it could be little unoptimized
+    return Promise.all([
+      firebase
+        .database()
+        .ref("/config/recommendations")
+        .update(config.recommendations),
+      firebase
+        .database()
+        .ref("/config")
+        .update(configUpdates),
+      firebase
+        .database()
+        .ref("/config/jestRunnerConfig")
+        .update(jestUpdates)
+    ]);
+  }
 }
 
 /**

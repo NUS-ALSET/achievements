@@ -80,6 +80,10 @@
         ".write": "auth != null && $userKey == auth.uid"
       }
     },
+    "config": {
+      ".read": "auth != null && root.child('/admins/' + auth.uid).val() == true",
+      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
+    },
     "courseMembers": {
       ".read": "auth != null",
       "$courseKey": {
@@ -135,6 +139,27 @@
         "
       }
     },
+    "destinations":{
+      ".read" : "auth != null",
+      "$destinationKey" :{
+        ".read" : "auth != null",
+        ".write" : "
+            auth != null &&
+            (
+              (
+                newData.exists() &&
+                newData.child('originator').exists() &&
+                newData.child('originator').val() == auth.uid &&
+                (
+                  !data.exists()  ||
+                  ( data.child('originator').val() == auth.uid)
+                )
+              ) || (
+                data.exists() && data.child('originator').val() == auth.uid
+              )
+            )"
+        }
+    },
     "jupyterSolutionsQueue": {
       "responses": {
         "$taskKey": {
@@ -183,7 +208,7 @@
     "logged_events": {
       ".read": "auth != null",
       ".write": "auth != null",
-      ".indexOn": ["createdAt"]
+      ".indexOn": ["createdAt", "type"]
     },
     "moreProblemsRequests": {
       "$requestKey": {
@@ -228,6 +253,12 @@
           ".read": "auth != null",
           ".write": "auth != null && auth.uid == $userKey"
         }
+      }
+    },
+    "activityExampleSolutions": {
+      "$activityKey": {
+      ".write": "auth != null && root.child('/activities/' + $activityKey + '/owner').val() == auth.uid",
+      ".read": "auth != null && root.child('/activities/' + $activityKey + '/owner').val() == auth.uid"
       }
     },
     "secrets": {

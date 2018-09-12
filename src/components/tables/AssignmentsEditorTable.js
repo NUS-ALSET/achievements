@@ -114,7 +114,7 @@ class AssignmentsEditorTable extends React.Component {
             <TableCell>Solution Visible</TableCell>
             <TableCell>Open</TableCell>
             <TableCell>Deadline</TableCell>
-            <TableCell>Details</TableCell>
+            <TableCell>External Link</TableCell>
             <TableCell className={classes.actionCol}>Actions</TableCell>
           </TableRow>
         </TableHead>

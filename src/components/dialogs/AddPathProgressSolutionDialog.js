@@ -29,34 +29,46 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     courseId: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    pathProgress: PropTypes.any
+    pathProgress: PropTypes.any,
+    activityPath: PropTypes.object.isRequired
   };
 
   getProgress = () => {
-    const pathProgress = this.props.pathProgress;
+    const { pathProgress, activityPath } = this.props;
+    const totalActivities = Number(activityPath.totalActivities);
 
     if (
-      !(pathProgress && pathProgress.totalActivities && pathProgress.solutions)
+      !(pathProgress && totalActivities && pathProgress.solutions)
     ) {
-      return "No progress";
+      return "none";
     }
-    return `${pathProgress.solutions} of ${pathProgress.totalActivities}`;
+    return `${pathProgress.solutions} of ${totalActivities}`;
   };
+
   getProgressMessage = () => {
-    const pathProgress = this.props.pathProgress;
+    const { pathProgress, activityPath } = this.props;
+    const totalActivities = Number(activityPath.totalActivities);
 
     if (
-      !(pathProgress && pathProgress.totalActivities && pathProgress.solutions)
+      !(pathProgress && totalActivities && pathProgress.solutions)
     ) {
       return "Your have no progress at this path";
     }
     return `You have solved ${pathProgress.solutions} of the ${
-      pathProgress.totalActivities
-    } requested problems on the path. Your progress is ${this.getProgress()}`;
+    totalActivities} requested problems on the "${activityPath.name}" path.
+    Your progress is ${this.getProgress()}`;
   };
 
   onProblemChange = problemSolution => this.setState({ problemSolution });
+
   onClose = () => this.props.dispatch(assignmentCloseDialog());
+
+  onGotoLink = () => {
+    const { assignment } = this.props;
+    window.open(`/#/paths/${assignment.path}`, "_blank");
+    this.onClose();
+  };
+
   onCommit = () => {
     this.props.dispatch(
       assignmentSolutionRequest(
@@ -69,10 +81,14 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
   };
 
   render() {
-    const { open, pathProgress } = this.props;
+    const {
+      open,
+      pathProgress
+    } = this.props;
+
     return (
       <Dialog onClose={this.onClose} open={open}>
-        <DialogTitle>Add Path Progress Solution Status</DialogTitle>
+        <DialogTitle>Add Path Progress Status</DialogTitle>
         <DialogContent>
           {pathProgress ? (
             <Typography>{this.getProgressMessage()}</Typography>
@@ -91,8 +107,15 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
+          <Button
+            onClick={this.onGotoLink}
+            variant="outlined"
+            color="primary"
+          >
+            Go to Path
+          </Button>
           <Button color="primary" onClick={this.onCommit} variant="raised">
-            Commit
+            Add Status
           </Button>
         </DialogActions>
       </Dialog>
@@ -102,27 +125,26 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
 
 
 const mapStateToProps = (state, ownProps) => ({
-
-  pathProgress: {
-    ...ownProps.pathProgress,
-    totalActivities :  (state.firebase.data.currentActivityPathTotalActivites || 0)
-  }
+  activityPath: (
+    (
+      state.firebase.data.paths ||
+      {}
+    )[
+      (
+        ownProps.assignment ||
+        {}
+      ).path
+    ] ||
+    {}
+  )
 });
 
 
 export default compose(
-  firebaseConnect((ownProps, store) => {
-    const  pathId= ownProps.assignment ? ownProps.assignment.path : null;
-    if(pathId){
-      return [
-        {
-          path : `/paths/${pathId}/totalActivities`,
-          storeAs : 'currentActivityPathTotalActivites'
-        }
-      ]
-    }
-    return [];
-  }),
+  firebaseConnect( (ownProps, store) => (
+    ownProps.assignment
+      ? [`/paths/${ownProps.assignment.path}`]
+      : []
+  )),
   connect(mapStateToProps)
 )(AddPathProgressSolutionDialog);
-

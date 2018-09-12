@@ -27,4 +27,3 @@ deploy:
   token:
     secure: "$FIREBASE_SECRET"
   project: "achievements-dev"
-
