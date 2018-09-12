@@ -46,6 +46,11 @@ import {
   NoStartWhiteSpace
 } from "../regexp-rules/RegExpRules";
 
+// images for user guide in the dialog
+import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
+import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
+
+
 const gameDefaultData = {
   game : 'passenger-picker',
   scoreToWin : 10,
@@ -76,9 +81,6 @@ function convertSecondsToTimeStr(value){
   }
   return `${getFormat(hours)}:${getFormat(minutes)}:${getFormat(seconds)}`
 }
-// images for user guide in the dialog
-import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
-import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
 
 
 class AddActivityDialog extends React.PureComponent {
