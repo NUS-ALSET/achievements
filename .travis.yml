@@ -13,8 +13,9 @@ install:
   - npm install
 
 script:
+  - npm install -g firebase-tools
   - firebase deploy --token $FIREBASE_SECRET --project achievements-dev --only hosting,database
-  - npm run-script test
+  # - npm run-script test
   # - npm run-script build
 
 after_success:
