@@ -21,8 +21,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
-import Tooltip from "@material-ui/core/Tooltip";
-
 
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import {
@@ -181,12 +179,6 @@ class AddAssignmentDialog extends React.PureComponent {
               }
               label="Allow student to import existing solution done for this activity"
             />
-            <Tooltip
-              title="If students have submitted their solutions to this path activity outside of this course before, tick to allow them to import existing solutions from their Path."
-              placement="left"
-            >
-             <Button size="small">(?)</Button>
-            </Tooltip>
           </Fragment>
         );
       case ASSIGNMENTS_TYPES.PathProgress.id:
