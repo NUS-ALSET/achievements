@@ -129,8 +129,9 @@ class JupyterInlineActivity extends React.PureComponent {
               variant="raised"
               style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
-            >Commit
-        </Button>
+            >
+              Commit
+            </Button>
           </div>
         }
         <JupyterNotebook
@@ -140,7 +141,7 @@ class JupyterInlineActivity extends React.PureComponent {
           readOnly={readOnly}
           richEditor={true}
           solution={false}
-          title={readOnly ? "Submitted Code" : "Edit code"}
+          title={readOnly ? "Submitted Code" : "Edit Your Solution Here"}
         />
         {solution &&
           (solution.json || solution.loading) && (

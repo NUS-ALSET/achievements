@@ -1,30 +1,34 @@
 language: node_js
 node_js:
- - "8"
+  - "8"
 
 branches:
- only:
-  - master
+  only:
+    - master
 
 before_install:
-- npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
+  - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
 
 install:
-- npm install
+  - npm install
 
 script:
-- npm run-script build
-- npm run-script coverage
+  - npm run-script test
+  - npm run-script build
+
+after_success:
+  - echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST TRAVIS_BRANCH=$TRAVIS_BRANCH"
+  - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+      echo "deploy for upstream master merge";
+      npm install -g firebase-tools;
+      firebase deploy --token "$FIREBASE_TOKEN" --only hosting,database;
+    else
+      echo "Pull Request only build and test";
+      exit;
+    fi
 
 before_deploy:
-- ./scripts/prepare-deployment.sh
+  - echo "are we deploying?"
 
-deploy:
-- skip_cleanup: true
-  provider: firebase
-  on:
-    branch: master
-  token:
-    secure: "$FIREBASE_SECRET"
-  project: "achievements-dev"
-
+after_deploy:
+  - echo "deployment success!"
