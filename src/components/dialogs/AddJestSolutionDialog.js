@@ -76,7 +76,7 @@ class AddJestSolutionDialog extends React.PureComponent {
         if(this.props.onChange){
             this.props.onCommit({ type : 'SOLUTION', solution : finalSolution});
         }else{
-            this.props.onCommit(this.props.taskId, finalSolution );
+            this.props.onCommit(finalSolution,this.props.taskId);
         }
         this.handleClose();     
     }

@@ -1,0 +1,17 @@
+{
+	"width":500,
+	"height": 500,
+	"minGems": 20,
+	"maxGems": 30,
+    "time": 90,
+    "speed":1,
+    "scoreToWin" : 10,
+    "playerSize":50,
+    "collectiveSize":20,
+    "player1StartingPoint":{"x":20, "y":20},
+    "player2StartingPoint":{"x":120, "y":20},
+    "player1StartingDirection":"right",
+    "player2StartingDirection":"down",
+    "player1Keys":{"up":"w", "down":"s", "left":"a", "right":"d", "switch":"e"},
+    "player2Keys":{"up":"i", "down":"k", "left":"j", "right":"l", "switch":"o"}
+}

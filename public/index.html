@@ -21,6 +21,9 @@
     -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <script type="text/javascript" src="//apis.google.com/js/client.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.6.2/brython.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brython/3.6.2/brython_stdlib.js"></script>
+    <script type="text/python3" src="./myEditor.py"></script>
     <title>NUS ALSET Achievements</title>
   </head>
   <body>
@@ -38,5 +41,8 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script type="text/javascript">
+      window.onload =  ()=> { brython({ debug: 1 }) }
+    </script>
   </body>
 </html>
