@@ -11,4 +11,4 @@ const Game = (props) =>{
   )
 }
 
-export default Game
+export  { Game }

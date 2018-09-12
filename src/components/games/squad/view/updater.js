@@ -31,10 +31,10 @@ class Updater extends Component {
             status : false,
             message : ''
         }
-        console.log(level3)
         Store.player1Func = level3;
         Store.player2Func = control;
         this.simulation = new Simulation(config,Store.player1Func,Store.player2Func);
+        this.setDefaults(props);
     }
     loop = () => {
         if(Store.mode == 'play'){
@@ -180,6 +180,7 @@ class Updater extends Component {
         //Store.mode == 'play'?'pause':'play';
     }
     restartGame(){
+        console.log('hello')
         this.gameOver={
             status : false,
             winner : null,
