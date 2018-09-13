@@ -63,7 +63,9 @@ class GameActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem, solution, readOnly, onCommit, taskId } = this.props;
+    const { problem, 
+      // solution, readOnly, onCommit, taskId 
+    } = this.props;
     if (!problem) {
       return '';
     }

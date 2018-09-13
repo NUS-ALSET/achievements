@@ -87,5 +87,6 @@
     "prettier": "prettier --write src/**/*.{js,ts}",
     "lint": "./scripts/lint.sh",
     "windows-lint": "./scripts/lint.bat"
-  }
+  },
+  "eslintIgnore": ["src/components/games/**"]
 }
