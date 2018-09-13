@@ -37,7 +37,8 @@ export class Activity extends React.PureComponent {
     pathName: PropTypes.string,
     pathProblem: PropTypes.any,
     solution: PropTypes.any,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    showCommitBtnOnTop : PropTypes.bool
   };
 
   static defaultProps = {
@@ -46,7 +47,8 @@ export class Activity extends React.PureComponent {
 
   state = {
     problemSolution: {},
-    changed: false
+    changed: false,
+    disabledCommitBtn : true
   };
 
   componentDidMount() {
@@ -64,6 +66,14 @@ export class Activity extends React.PureComponent {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
       this.onProblemChange({});
+    }
+    if ((nextProps.solution || {}).checked && 
+        !(nextProps.solution || {}).failed &&
+        (nextProps.solution || {}).json
+      ) {
+      this.setState({ disabledCommitBtn: false });
+    } else {
+      this.setState({ disabledCommitBtn: true });
     }
   }
   componentWillUnmount() {
@@ -121,7 +131,8 @@ export class Activity extends React.PureComponent {
       pathName,
       pathProblem,
       solution,
-      readOnly
+      readOnly,
+      showCommitBtnOnTop
     } = this.props;
     if (!pathProblem) {
       return (
@@ -164,6 +175,8 @@ export class Activity extends React.PureComponent {
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
             pathProblem={pathProblem}
             solution={solution}
+            onCommit={this.onCommit}
+            showCommitBtnOnTop={showCommitBtnOnTop}
             style={{
               paddingBottom: 20,
               textAlign: "center"
@@ -182,11 +195,7 @@ export class Activity extends React.PureComponent {
             >
               <Button
                 color="primary"
-                disabled={
-                  !(solution && solution.checked) ||
-                  solution.loading ||
-                  solution.failed
-                }
+                disabled={this.state.disabledCommitBtn}
                 onClick={this.onCommit}
                 variant="raised"
               >
