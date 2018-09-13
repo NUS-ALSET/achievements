@@ -351,6 +351,7 @@ class AddActivityDialog extends React.PureComponent {
               fullWidth
               label="YouTube URL"
               margin="dense"
+              helperText="The URL should be a clean '?v=<id>', without time start or playlist info (for example, 'https://www.youtube.com/watch?v=ZK3O402wf1c')"
               onChange={e => this.onFieldChange("youtubeURL", e.target.value)}
             />
             <FormControl
