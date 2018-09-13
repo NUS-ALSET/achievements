@@ -256,7 +256,7 @@ class AddActivityDialog extends React.PureComponent {
               variant="body1"
               gutterBottom
             >
-              A type of activity that requires the students to submit the python solution for a single code box in a Jupyter notebook. The solution should ensure that any relevant assertions in the notebook pass.
+              A type of activity that requires the students to submit the python solution for a single code box in a Jupyter notebook. The solution should ensure that any relevant assertions/testing in the notebook pass.
             </Typography>
             <br />
             <Typography
@@ -329,16 +329,6 @@ class AddActivityDialog extends React.PureComponent {
               label="Index of Code Block Student Can Edit Solution (Index starts from 0)"
               margin="dense"
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
-              type="number"
-            />
-            <TextField
-              defaultValue={activity && String(activity.frozen || "1")}
-              fullWidth
-              label="How many code blocks are frozen (counting from bottom up)"
-              margin="dense"
-              onChange={e =>
-                this.onFieldChange("frozen", Number(e.target.value))
-              }
               type="number"
             />
           </Fragment>
