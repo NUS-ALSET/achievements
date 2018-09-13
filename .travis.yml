@@ -20,9 +20,11 @@ after_success:
   - echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST TRAVIS_BRANCH=$TRAVIS_BRANCH"
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "deploy for upstream master merge";
+      cd ./functions;
+      npm install
       npm install -g firebase-tools;
-      firebase deploy --token "$FIREBASE_SECRET" --project "achievements-dev" --only hosting,database;
-      echo "deployment sucess for hosting and dabatase";
+      firebase deploy --token "$FIREBASE_SECRET" --project "achievements-dev";
+      echo "deployment success";
     else
       echo "Pull Request only build and test";
       exit;
