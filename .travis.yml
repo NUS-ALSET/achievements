@@ -21,10 +21,11 @@ after_success:
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "deploy for upstream master merge";
       cd ./functions;
-      npm install
+      pwd;
+      npm install;
       npm install -g firebase-tools;
       firebase deploy --token "$FIREBASE_SECRET" --project "achievements-dev";
-      echo "deployment success";
+      echo "======deployment done======";
     else
       echo "Pull Request only build and test";
       exit;
