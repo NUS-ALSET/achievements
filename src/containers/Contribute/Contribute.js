@@ -111,7 +111,7 @@ function Contribute(props) {
                       color="primary"
                     >
                       <GithubIcon className={classes.leftIcon} />
-                      Our GitHub
+                      Our GitHub Thank you
                     </Button>
                   </a>
                 </Grid>
