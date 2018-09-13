@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React , { Fragment }from 'react';
 import App from './view/App.js';
 import Tournament from './simulation/tournament';

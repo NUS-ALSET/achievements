@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import Store from '../store';
 import img from '../assets/collective/trash1.png';

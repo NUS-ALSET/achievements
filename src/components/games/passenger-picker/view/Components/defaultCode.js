@@ -1,3 +1,4 @@
+/* eslint-disable */
 export const defaultPythonCodeFunction=`import random
 def getPlayersCommands(world):
   foo = ['RIGHT', 'LEFT', 'UP','DOWN']

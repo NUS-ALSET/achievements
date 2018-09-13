@@ -1,3 +1,4 @@
+/* eslint-disable */
 var bot = function(world){
     var direction = false;
     if(world.controlInfo.current[world.gameId] == world.index){

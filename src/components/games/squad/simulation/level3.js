@@ -1,3 +1,4 @@
+/* eslint-disable */
 var level3 =function(world){
 	var player = world.player;
 	var closestGem = false;

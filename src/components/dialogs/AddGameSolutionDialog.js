@@ -78,8 +78,8 @@ class AddGameSolutionDialog extends React.PureComponent {
     }
     render() {
         const { 
-            // onClose, onCommit, taskId, 
-            open, classes, problem, solution, readOnly } = this.props;
+            // onClose, onCommit, taskId, solution
+            open, classes, problem, readOnly } = this.props;
 
         return (
             <div>
