@@ -101,6 +101,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
               onCommit={this.onCommitClick}
               onClose={this.onClose}
               readOnly={readOnly}
+              showCommitBtnOnTop={true}
             >
               {(activityView, submitHandler, props) => (
                 <Fragment>
