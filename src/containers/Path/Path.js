@@ -195,9 +195,10 @@ export class Path extends React.Component {
     );
     onCloseDialog();
   };
-  onActivityDeleteRequest = activityId => {
+  onActivityDeleteRequest = (activityId, pathId) => {
     this.setState({
-      selectedActivityId: activityId
+      selectedActivityId: activityId,
+      selectedPathId : pathId
     });
   };
 
@@ -387,7 +388,7 @@ export class Path extends React.Component {
           message="This will remove activity"
           onClose={() => this.setState({ selectedActivityId: "" })}
           onCommit={() => {
-            onActivityDeleteRequest(this.state.selectedActivityId);
+            onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
             this.setState({ selectedActivityId: "" });
           }}
           open={!!this.state.selectedActivityId}

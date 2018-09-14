@@ -851,11 +851,17 @@ export class PathsService {
     });
   }
 
-  deleteActivity(activityId) {
+  deleteActivity(activityId, pathId=null) {
     return firebase
       .database()
       .ref(`/activities/${activityId}`)
-      .remove();
+      .remove()
+      .then(()=>{
+        pathId && firebase
+            .database()
+            .ref(`/paths/${pathId}/totalActivities`)
+            .transaction(activities => --activities)
+      })
   }
 
   /**
