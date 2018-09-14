@@ -54,32 +54,10 @@ import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
 const gameDefaultData = {
   game : 'passenger-picker',
   scoreToWin : 10,
-  gameTime : 90,
+  gameTime : 120,
   unitsPerSide : 1,
   levelsToWin : 1,
   playMode : 'manual control'
-}
- /**
-   * @param {String} timeStr input timeString eg 01:10:20
-   * @returns {Number} time in second
-   */
-function convertTimeStrToSecond(timeStr){
-  const [ hours=0, minutes=0, seconds=0 ] = timeStr.split(':').map(t=>Number(t));
-  return (seconds + (hours*60 +  minutes)*60)
-}
- /**
-   * @param {Number | String} value time in seconds 90
-   * @returns {String} eg 00:01:30
-   */
-function convertSecondsToTimeStr(value){
-  const totalSeconds = Number(value);
-  const hours = parseInt(totalSeconds/(60*60), 10);
-  const minutes = parseInt((totalSeconds/60)%60, 10)
-  const seconds = parseInt( (totalSeconds%60), 10)
-  function getFormat(number){
-    return number > 9 ? number : `0${number}`
-  }
-  return `${getFormat(hours)}:${getFormat(minutes)}:${getFormat(seconds)}`
 }
 
 
@@ -484,18 +462,13 @@ class AddActivityDialog extends React.PureComponent {
             onChange={e => this.onFieldChange("scoreToWin", e.target.value)}
           />
           <TextField
-            id="time"
-            label="Select the maximum time limit"
-            type="time"
-            value={convertSecondsToTimeStr(activity.gameTime)}
-            style={{ width : '100%' }}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            inputProps={{
-              step: 1,
-            }}
-            onChange={e => this.onFieldChange("gameTime", convertTimeStrToSecond(e.target.value))}
+            value={activity.gameTime}
+            defaultValue={0}
+            fullWidth
+            label="Select the maximum time limit (in seconds)"
+            margin="dense"
+            type="number"
+            onChange={e => this.onFieldChange("gameTime", Number(e.target.value))}
           />
           </div>
         );
