@@ -105,7 +105,6 @@ class ActivitiesTable extends React.PureComponent {
     const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
       pathStatus
     );
-
     return (
       <Fragment>
         <Table>
@@ -200,7 +199,7 @@ class ActivitiesTable extends React.PureComponent {
               className={classes.button}
               onClick={() =>
                 this.selectActivity() ||
-                onDeleteActivity(this.state.activity.id)
+                onDeleteActivity(this.state.activity.id, this.state.activity.path)
               }
               variant="raised"
             >
