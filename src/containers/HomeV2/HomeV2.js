@@ -87,10 +87,7 @@ export class HomeV2 extends React.Component {
     );
 
   render() {
-    const { auth, userRecommendations } = this.props;
-    if (auth.isEmpty) {
-      return <div>Login required to display this page</div>;
-    }
+    const { userRecommendations } = this.props;
 
     if (!isLoaded(userRecommendations)) {
       return <ContentLoader />;
@@ -153,9 +150,7 @@ export class HomeV2 extends React.Component {
 
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
-  userRecommendations:
-    state.firebase.data.userRecommendations &&
-    state.firebase.data.userRecommendations[state.firebase.auth.uid],
+  userRecommendations: state.firebase.data.recommendations,
   auth: state.firebase.auth
 });
 
@@ -165,10 +160,20 @@ export default compose(
     const uid = state.firebase.auth.uid;
 
     if (!uid) {
-      return [];
+      return [
+        {
+          path: "/config/defaultRecommendations",
+          storeAs: "recommendations"
+        }
+      ];
     }
 
-    return [`/userRecommendations/${uid}`];
+    return [
+      {
+        path: `/userRecommendations/${uid}`,
+        storeAs: "recommendations"
+      }
+    ];
   }),
   connect(mapStateToProps)
 )(HomeV2);

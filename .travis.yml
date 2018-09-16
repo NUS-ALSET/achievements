@@ -30,3 +30,4 @@ after_success:
       echo "Pull Request only build and test";
       exit;
     fi
+  - ./scripts/fake-deploy.sh
