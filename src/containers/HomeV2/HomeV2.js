@@ -42,14 +42,16 @@ export class HomeV2 extends React.Component {
       .filter(key => key !== "title")
       .map(key => ({
         ...recommendations[key],
-        activityId: ["NotebookWithNewSkills", "NotebookWithUsedSkills"].includes(
-          recommendationKey
-        )
+        activityId: [
+          "NotebookWithNewSkills",
+          "NotebookWithUsedSkills"
+        ].includes(recommendationKey)
           ? recommendations[key].activity || recommendations[key].problem
           : key,
-        subHeading: ["NotebookWithNewSkills", "NotebookWithUsedSkills"].includes(
-          recommendationKey
-        )
+        subHeading: [
+          "NotebookWithNewSkills",
+          "NotebookWithUsedSkills"
+        ].includes(recommendationKey)
           ? `Complete this activity to use the ${
               recommendations[key].feature
             } ${recommendations[key].featureType}`
@@ -57,14 +59,28 @@ export class HomeV2 extends React.Component {
       }));
   };
 
-  onRecommendationClick = (recommendationType, recommendations) => (
-    activityId,
-    pathId
-  ) =>
+  onRecommendationClick = recommendationType => (activityId, pathId) =>
     this.props.dispatch(
       homeOpenRecommendation(
         recommendationType,
-        JSON.stringify(recommendations),
+
+        /* Reduce userRecommendations to format
+         ```
+         {
+           <recommendationsKey1>: [<activityKey1>, <activityKey2>, ...],
+           <recommendationsKey2>: [<activityKey1>, <activityKey2>, ...],
+           ...
+         }
+         ```
+         */
+        JSON.stringify(
+          Object.assign(
+            {},
+            ...Object.keys(this.props.userRecommendations || {}).map(key => ({
+              [key]: Object.keys(this.props.userRecommendations[key])
+            }))
+          )
+        ),
         activityId,
         pathId
       )
@@ -89,7 +105,9 @@ export class HomeV2 extends React.Component {
               recommendationKey
             );
             if (
-              ["NotebookWithNewSkills", "NotebookWithUsedSkills"].includes(recommendationKey)
+              ["NotebookWithNewSkills", "NotebookWithUsedSkills"].includes(
+                recommendationKey
+              )
             ) {
               let uniqueActivities = {};
               recommendedData.forEach(data => {
@@ -119,8 +137,7 @@ export class HomeV2 extends React.Component {
                 data={recommendedData}
                 key={recommendationKey}
                 onRecommendationClick={this.onRecommendationClick(
-                  recommendationTypes[recommendedData[0].type],
-                  recommendedData
+                  recommendationTypes[recommendedData[0].type]
                 )}
                 title={userRecommendations[recommendationKey].title}
                 type={recommendationTypes[recommendedData[0].type]}
