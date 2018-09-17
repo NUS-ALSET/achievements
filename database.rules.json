@@ -1,7 +1,7 @@
 {
   "rules": {
     "activities": {
-      ".read": false,
+      ".read": "auth != null",
       ".indexOn": ["path"],
       "$activityKey": {
         ".write": "auth != null &&
