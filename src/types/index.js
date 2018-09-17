@@ -96,3 +96,10 @@ export const recommendationInfo = shape({
   feature: string.isRequired,
   featureType: string.isRequired
 });
+
+export const cohort = shape({
+  name: string.isRequired,
+  description: string.isRequired,
+  threshold: number,
+  paths: arrayOf(string)
+});
