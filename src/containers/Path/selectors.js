@@ -65,7 +65,7 @@ export const pathStatusSelector = createSelector(
 const getActivitySelector = problem => {
   switch (problem.type) {
     case ACTIVITY_TYPES.text.id:
-      return problem.question || "Answer text question";
+      return "Text Activity";
     case ACTIVITY_TYPES.profile.id:
       return "Enter CodeCombat profile";
     case ACTIVITY_TYPES.codeCombat.id:
@@ -81,7 +81,7 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.game.id:
       return "Game Activity";
     case ACTIVITY_TYPES.jest.id:
-      return "Pass the Test";
+      return "Jest Activity";
     default:
       return "Usual activity";
   }
