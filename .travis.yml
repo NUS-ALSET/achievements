@@ -17,6 +17,7 @@ script:
   - npm run-script build
 
 after_success:
+  - ./scripts/fake-deploy.sh
   - echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST TRAVIS_BRANCH=$TRAVIS_BRANCH"
   - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       echo "deploy for upstream master merge";

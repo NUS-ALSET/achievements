@@ -38,6 +38,7 @@ import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
+import { getDisplayName } from "./selectors";
 
 const styles = theme => ({
   card: {
@@ -141,7 +142,12 @@ class Account extends React.PureComponent {
 
     // taken from Courses.js, display if not logged in
     if (auth.isEmpty) {
-      return <div>You do not seem to have a profile registered. Login required to display this page</div>;
+      return (
+        <div>
+          You do not seem to have a profile registered. Login required to
+          display this page
+        </div>
+      );
     }
 
     return (
@@ -235,13 +241,7 @@ class Account extends React.PureComponent {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
-  userName:
-    state.firebase.auth.uid &&
-    state.firebase.data &&
-    state.firebase.data.users &&
-    state.firebase.data.users[
-      ownProps.match.params.accountId || state.firebase.auth.uid
-    ].displayName,
+  userName: getDisplayName(state, ownProps),
   uid: state.firebase.auth.uid,
   auth: state.firebase.auth,
 

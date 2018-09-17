@@ -82,7 +82,10 @@
     },
     "config": {
       ".read": "auth != null && root.child('/admins/' + auth.uid).val() == true",
-      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
+      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true",
+      "defaultRecommendations": {
+        ".read": true
+      }
     },
     "courseMembers": {
       ".read": "auth != null",
