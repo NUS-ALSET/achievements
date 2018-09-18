@@ -67,7 +67,9 @@ export class Activity extends React.PureComponent {
     if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
       this.onProblemChange({});
     }
-    if ((nextProps.solution || {}).checked && 
+    if(![ 'jupyter', 'jupyterInline' ].includes((nextProps.pathProblem || {}).type)){
+      this.setState({ disabledCommitBtn: false });
+    }else if ((nextProps.solution || {}).checked && 
         !(nextProps.solution || {}).failed &&
         (nextProps.solution || {}).json
       ) {
