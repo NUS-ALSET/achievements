@@ -1,15 +1,16 @@
 export const selectCohort = (state, ownProps) => {
   const cohortId = ownProps.match.params.cohortId;
-  const cohort =
-    (state.firebase.data.cohorts && state.firebase.data.cohorts[cohortId]) ||
-    {};
-  const cohortCourses =
-    state.firebase.data.cohortCourses &&
-    state.firebase.data.cohortCourses[cohortId];
+  const cohort = state.firebase.data.cohort;
+  const cohortCourses = state.firebase.data.cohortCourses;
+  const paths = state.firebase.data.paths || {};
 
+  if (!cohort) {
+    return null;
+  }
   return {
     id: cohortId,
     ...cohort,
+    pathsData: (cohort.paths || []).map(id => paths[id]),
     courses: Object.keys(cohortCourses || {})
       .map(id => ({
         id,

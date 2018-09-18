@@ -20,6 +20,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { cohortsService } from "../../services/cohorts";
+import { cohort } from "../../types";
 
 const styles = theme => ({
   button: {
@@ -30,13 +31,14 @@ const styles = theme => ({
 class CohortCoursesTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
+    cohort: cohort,
     courses: PropTypes.array,
     isOwner: PropTypes.bool,
     match: PropTypes.object
   };
 
   render() {
-    const { courses, isOwner } = this.props;
+    const { courses, cohort, isOwner } = this.props;
     let totals = {
       progress: 0,
       participants: 0
@@ -52,8 +54,18 @@ class CohortCoursesTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>Course Rank</TableCell>
-            <TableCell>Path Progress ({totals.progress})</TableCell>
-            <TableCell> Participants ({totals.participants})</TableCell>
+            {cohort.pathsData.length &&
+              cohort.pathsData.map(pathData => (
+                <TableCell key={(pathData && pathData.id) || Math.random()}>
+                  {pathData && pathData.name}
+                </TableCell>
+              ))}
+            <TableCell>
+              Explorers(
+              {totals.progress})
+            </TableCell>
+
+            <TableCell> Members ({totals.participants})</TableCell>
             <TableCell>Course</TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
@@ -64,6 +76,14 @@ class CohortCoursesTable extends React.PureComponent {
               <TableCell>
                 <strong>{course.rank}</strong>
               </TableCell>
+              {cohort.pathsData.length &&
+                cohort.pathsData.map(pathData => (
+                  <TableCell key={(pathData && pathData.id) || Math.random()}>
+                    {(course.pathsProgress &&
+                      course.pathsProgress[pathData && pathData.id]) ||
+                      0}
+                  </TableCell>
+                ))}
               <TableCell>{course.progress}</TableCell>
               <TableCell>{course.participants}</TableCell>
               <TableCell>

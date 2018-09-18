@@ -10,6 +10,12 @@ class CohortsService {
       if (cohortData.description) {
         config.description = cohortData.description;
       }
+      if (cohortData.paths) {
+        config.paths = cohortData.paths;
+      }
+      if (cohortData.threshold) {
+        config.threshold = cohortData.threshold;
+      }
       return firebase
         .database()
         .ref(`/cohorts/${cohortData.id}`)
@@ -27,7 +33,9 @@ class CohortsService {
       .set({
         name: cohortData.name,
         description: cohortData.description || "",
+        paths: cohortData.paths,
         owner: uid,
+        threshold: cohortData.threshold || 1,
         instructorName
       })
       .then(() => key);
@@ -58,7 +66,74 @@ class CohortsService {
     });
   }
 
-  recalculateCourse(cohortId, courseId) {
+  recalculatePathsCourse(cohortId, courseId, cohort) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/courseMembers/${courseId}`)
+        .once("value")
+        .then(members => Object.keys(members.val() || {})),
+      firebase
+        .database()
+        .ref(`/assignments/${courseId}`)
+        .once("value")
+        .then(snap => snap.val()),
+      firebase
+        .database()
+        .ref(`/solutions/${courseId}`)
+        .once("value")
+        .then(userSolutions => userSolutions.val())
+    ]).then(responses => {
+      const [studentKeys, assignments, solutions] = responses;
+      const targetAssignments = {};
+      const pathProgress = Object.assign(
+        {},
+        ...cohort.paths.map(id => ({ [id]: 0 }))
+      );
+      let explorers = 0;
+
+      for (const assignmentId of Object.keys(assignments)) {
+        const assignment = assignments[assignmentId];
+        if (cohort.paths.includes(assignment.path)) {
+          targetAssignments[assignmentId] = assignment.path;
+        }
+      }
+
+      for (const studentKey of studentKeys) {
+        const studentProgress = {};
+        for (const assignmentId of Object.keys(targetAssignments)) {
+          if (solutions[studentKey] && solutions[assignmentId]) {
+            studentProgress[targetAssignments[assignmentId]] =
+              studentProgress[targetAssignments[assignmentId]] || 0;
+            studentProgress[targetAssignments[assignmentId]] += 1;
+            if (
+              studentProgress[targetAssignments[assignmentId]] ===
+              (cohort.threshold || 1)
+            ) {
+              pathProgress[targetAssignments[assignmentId]] += 1;
+            }
+          }
+        }
+        if (Object.keys(studentProgress) > 0) {
+          explorers += 1;
+        }
+      }
+
+      return firebase
+        .database()
+        .ref(`/cohortCourses/${cohortId}/${courseId}`)
+        .update({
+          participants: studentKeys.length,
+          pathsProgress: pathProgress,
+          progress: explorers
+        });
+    });
+  }
+
+  recalculateCourse(cohortId, courseId, cohort) {
+    if (cohort.paths && cohort.paths.length) {
+      return this.recalculatePathsCourse(cohortId, courseId, cohort);
+    }
     return Promise.all([
       firebase
         .database()
@@ -81,7 +156,7 @@ class CohortsService {
     );
   }
 
-  recalculateCourses(cohortId) {
+  recalculateCourses(cohortId, cohort) {
     return firebase
       .database()
       .ref(`/cohortCourses/${cohortId}`)
@@ -89,7 +164,7 @@ class CohortsService {
       .then(courses =>
         Promise.all(
           Object.keys(courses.val() || {}).map(courseId =>
-            this.recalculateCourse(cohortId, courseId)
+            this.recalculateCourse(cohortId, courseId, cohort)
           )
         )
       );
