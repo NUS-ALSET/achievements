@@ -102,6 +102,9 @@ export class Activity extends React.PureComponent {
           this.state.problemSolution
         )
       );
+      this.props.history.push(
+        `/paths/${this.props.match.params.pathId}`
+      );
     } else {
       this.props.dispatch(notificationShow("Nothing changed"));
     }
