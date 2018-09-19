@@ -140,6 +140,7 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
         </Typography>
+        <br />
         {solution !== null &&
           action &&
           (richEditor ? (

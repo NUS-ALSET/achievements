@@ -82,7 +82,7 @@ class JupyterInlineActivity extends React.PureComponent {
     if (solution.failed) {
       return (
         <Typography color="error">
-          (Error- Final output should be empty)
+          (There is something wrong with your solution...)
         </Typography>
       );
     }
@@ -148,7 +148,17 @@ class JupyterInlineActivity extends React.PureComponent {
           readOnly={readOnly}
           richEditor={true}
           solution={false}
-          title={readOnly ? "Submitted Code" : "Edit Your Solution Here"}
+          title={readOnly
+            ? "Submitted Code"
+            : (
+            <Fragment>
+              Edit Your Solution Here
+              <Typography color="textSecondary">
+                (First read the Path Activity below. Click the RUN bottom on the right to test your solution)
+              </Typography>
+            </Fragment>
+            )
+          }
         />
         {(solution && (solution.json || solution.loading))
           ? (
