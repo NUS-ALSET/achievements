@@ -191,6 +191,11 @@ class Assignments extends React.Component {
           label="Enter password"
           onChange={this.handlePasswordChange}
           type="password"
+          onKeyPress={ (e) => {
+            if (e.key === 'Enter') {
+              this.submitPassword()
+            }
+          }}
         />
         <Grid container>
           <Grid item xs={12}>

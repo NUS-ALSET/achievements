@@ -54,8 +54,8 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     ) {
       return "Your have no progress at this path";
     }
-    return `You have solved ${pathProgress.solutions} of the ${
-    totalActivities} requested problems on the "${activityPath.name}" path.
+    return `You have completed ${pathProgress.solutions} of the ${
+    totalActivities} activities on the "${activityPath.name}" path.
     Your progress is ${this.getProgress()}`;
   };
 
