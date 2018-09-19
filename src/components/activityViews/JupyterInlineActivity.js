@@ -137,7 +137,7 @@ class JupyterInlineActivity extends React.PureComponent {
               style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
             >
-              Commit
+              Commit Solution
             </Button>
           </div>
         }
@@ -150,8 +150,8 @@ class JupyterInlineActivity extends React.PureComponent {
           solution={false}
           title={readOnly ? "Submitted Code" : "Edit Your Solution Here"}
         />
-        {solution &&
-          (solution.json || solution.loading) && (
+        {(solution && (solution.json || solution.loading))
+          ? (
             <JupyterNotebook
               readOnly={readOnly}
               solution={solution}
@@ -162,20 +162,14 @@ class JupyterInlineActivity extends React.PureComponent {
                 </Fragment>
               }
             />
-          )}
-        {solution &&
-          solution.provided && (
-            <JupyterNotebook
-              readOnly={readOnly}
-              solution={{ json: solution.provided }}
-              title="Your Solution"
-            />
-          )}
-        <JupyterNotebook
-          readOnly={readOnly}
-          solution={{ json: problem.problemJSON }}
-          title="Path Activity"
-        />
+          )
+        : (
+          <JupyterNotebook
+            readOnly={readOnly}
+            solution={{ json: problem.problemJSON }}
+            title="Path Activity"
+          />
+        )}
       </Fragment>
     );
   }
