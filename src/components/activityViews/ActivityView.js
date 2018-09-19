@@ -39,29 +39,47 @@ class ActivityView extends React.PureComponent {
   };
   state={
     open : true
-  }
+  };
   handleClose=()=>{
     this.setState({ open : false});
     this.props.onClose();
-  }
+  };
   componentWillReceiveProps(nextProps){
     this.setState({ open : true});
-    if(this.props.pathProblem.type==='profile' && this.props.userAchievements && this.props.userAchievements.CodeCombat && this.props.userAchievements.CodeCombat.id){
+    if (
+      this.props.pathProblem.type==='profile' &&
+      this.props.userAchievements &&
+      this.props.userAchievements.CodeCombat &&
+      this.props.userAchievements.CodeCombat.id
+    ) {
       this.props.onCommit({
         type : 'SOLUTION',
         solution : {
           value : this.props.userAchievements.CodeCombat.id
         }
-      })
+      });
     }
   }
   render() {
-    const { dispatch, onProblemChange, pathProblem, solution, readOnly, showCommitBtnOnTop } = this.props;
+    const {
+      dispatch,
+      onClose,
+      onProblemChange,
+      onCommit,
+      pathProblem,
+      solution,
+      readOnly,
+      showCommitBtnOnTop,
+      userAchievements
+    } = this.props;
     let SpecificView = views[pathProblem.type];
-    const extraProps=['jest','jestInline','game'].includes(pathProblem.type) ? {
-        onClose: this.handleClose,
-        open: this.state.open,
-    } : {};
+    const extraProps=['jest','jestInline','game']
+      .includes(pathProblem.type)
+        ? {
+          onClose: this.handleClose,
+          open: this.state.open,
+        }
+        : {};
     if (!SpecificView) {
       // noinspection JSUnusedAssignment
       SpecificView = <div>Wrong problem type</div>;
@@ -78,9 +96,9 @@ class ActivityView extends React.PureComponent {
           onChange={onProblemChange}
           problem={pathProblem}
           solution={solution}
-          userAchievements={this.props.userAchievements}
-          onClose={this.props.onClose}
-          onCommit={this.props.onCommit}
+          userAchievements={userAchievements}
+          onClose={onClose}
+          onCommit={onCommit}
           readOnly={readOnly}
           showCommitBtnOnTop={showCommitBtnOnTop}
           {...extraProps}
