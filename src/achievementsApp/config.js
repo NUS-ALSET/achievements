@@ -12,7 +12,27 @@ export const APP_SETTING = {
     "squad" : {
       "id" : "squad",
       "name" : "Squad"
-    }
+    },
+    // "gemCollector": { 
+    //   "id" : '',
+    //   "name" : 'Gem collector'
+    // },
+    // "plantSavior": { 
+    //   "id" : '',
+    //   "name" : 'Plant savior'
+    // },
+    // "pizzaDelivery": { 
+    //   "id" : '',
+    //   "name" : 'Pizza delivery'
+    // },
+    // "protectBorders" : { 
+    //   "id" : '',
+    //   "name" : 'Protect the borders'
+    // },
+    // "protectTheSkies" : { 
+    //   "id" : '',
+    //   "name" : 'Protect the skies'
+    // }
   },
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,

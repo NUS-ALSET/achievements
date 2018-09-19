@@ -82,7 +82,9 @@ const getActivitySelector = problem => {
       return "Game Activity";
     case ACTIVITY_TYPES.jest.id:
       return "Jest Activity";
-    default:
+    case ACTIVITY_TYPES.gameTournament.id:
+      return 'Tournament Activity'
+      default:
       return "Usual activity";
   }
 };

@@ -49,6 +49,7 @@ import {
 // images for user guide in the dialog
 import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
 import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
+import AddGameTournamentActivityDialog from "./AddGameTournamentActivityDialog";
 
 
 const gameDefaultData = {
@@ -651,8 +652,12 @@ class AddActivityDialog extends React.PureComponent {
 
   render() {
     const { activity, open } = this.props;
+    const { type } = this.state;
+    const openModal = open && type !== ACTIVITY_TYPES.gameTournament.id;
     return (
-      <Dialog fullWidth onClose={this.onClose} open={open}>
+      <div>
+      { type === ACTIVITY_TYPES.gameTournament.id && <AddGameTournamentActivityDialog {...this.props}/> }
+      <Dialog fullWidth onClose={this.onClose} open={openModal}>
         <DialogTitle>
           {activity && activity.id ? "Edit Activity" : "Add New Activity"}
         </DialogTitle>
@@ -710,6 +715,7 @@ class AddActivityDialog extends React.PureComponent {
           </Button>
         </DialogActions>
       </Dialog>
+      </div>
     );
   }
 }

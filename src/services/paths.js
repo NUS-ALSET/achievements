@@ -52,13 +52,17 @@ export const ACTIVITY_TYPES = {
     id: "youtube",
     caption: "YouTube"
   },
+  jest: {
+    id: "jest",
+    caption: "Jest"
+  },
   game: {
     id: "game",
     caption: "Game"
   },
-  jest: {
-    id: "jest",
-    caption: "Jest"
+  gameTournament: {
+    id: "gameTournament",
+    caption: "Game Tournament"
   }
 };
 
@@ -339,6 +343,12 @@ export class PathsService {
         }
         break;
       case ACTIVITY_TYPES.game.id:
+      case ACTIVITY_TYPES.gameTournament.id:
+        if (!problemInfo.name) throw new Error("Missing tournament name");
+        if (!problemInfo.game) throw new Error("Missing tournament game");
+        if (!problemInfo.tournamentStyle) throw new Error("Missing tournament style");
+        if (!problemInfo.agents) throw new Error("Missing Tournament agents");
+        if (Object.keys(problemInfo.agents).length===0) throw new Error("Please select atleast one agent");
         break;
       case ACTIVITY_TYPES.jest.id:
         if (!problemInfo.githubURL) throw new Error("Missing GithubURL");
