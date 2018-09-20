@@ -82,7 +82,7 @@ class JupyterInlineActivity extends React.PureComponent {
     if (solution.failed) {
       return (
         <Typography color="error">
-          (Error- Final output should be empty)
+          (There is something wrong with your solution...)
         </Typography>
       );
     }
@@ -137,7 +137,7 @@ class JupyterInlineActivity extends React.PureComponent {
               style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
             >
-              Commit
+              Commit Solution
             </Button>
           </div>
         }
@@ -148,10 +148,20 @@ class JupyterInlineActivity extends React.PureComponent {
           readOnly={readOnly}
           richEditor={true}
           solution={false}
-          title={readOnly ? "Submitted Code" : "Edit Your Solution Here"}
+          title={readOnly
+            ? "Submitted Code"
+            : (
+            <Fragment>
+              <Typography color="textSecondary">
+                Please first read the Path Activity below. Click the RUN bottom on the right to test your solution.
+              </Typography>
+              Edit Your Solution Here
+            </Fragment>
+            )
+          }
         />
-        {solution &&
-          (solution.json || solution.loading) && (
+        {(solution && (solution.json || solution.loading))
+          ? (
             <JupyterNotebook
               readOnly={readOnly}
               solution={solution}
@@ -162,20 +172,14 @@ class JupyterInlineActivity extends React.PureComponent {
                 </Fragment>
               }
             />
-          )}
-        {solution &&
-          solution.provided && (
-            <JupyterNotebook
-              readOnly={readOnly}
-              solution={{ json: solution.provided }}
-              title="Your Solution"
-            />
-          )}
-        <JupyterNotebook
-          readOnly={readOnly}
-          solution={{ json: problem.problemJSON }}
-          title="Path Activity"
-        />
+          )
+        : (
+          <JupyterNotebook
+            readOnly={readOnly}
+            solution={{ json: problem.problemJSON }}
+            title="Path Activity"
+          />
+        )}
       </Fragment>
     );
   }
