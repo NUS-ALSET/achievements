@@ -152,10 +152,10 @@ class JupyterInlineActivity extends React.PureComponent {
             ? "Submitted Code"
             : (
             <Fragment>
-              Edit Your Solution Here
               <Typography color="textSecondary">
-                (First read the Path Activity below. Click the RUN bottom on the right to test your solution)
+                Please first read the Path Activity below. Click the RUN bottom on the right to test your solution.
               </Typography>
+              Edit Your Solution Here
             </Fragment>
             )
           }
