@@ -32,6 +32,7 @@ import { courseInfo, entityInfo } from "../../types/index";
 
 // RegExp rules
 import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
+import PathsSelector from "../selectors/PathsSelector";
 
 class AddAssignmentDialog extends React.PureComponent {
   static propTypes = {
@@ -40,19 +41,24 @@ class AddAssignmentDialog extends React.PureComponent {
     assignment: PropTypes.any,
     dispatch: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    paths: PropTypes.arrayOf(entityInfo).isRequired,
+    paths: PropTypes.shape({
+      myPaths: PropTypes.object,
+      publicPaths: PropTypes.object
+    }),
     activities: PropTypes.arrayOf(entityInfo).isRequired
   };
 
   state = {
     // Name of Assignment cannot be nonsense or empty spaces
-    isCorrectInput_Name: false,
+    isCorrectInput_Name: true
   };
 
   updateField = field => e => {
     // when update assignment
-    if (!(typeof this.props.assignment === "undefined") &&
-     this.props.assignment.id) {
+    if (
+      !(typeof this.props.assignment === "undefined") &&
+      this.props.assignment.id
+    ) {
       this.setState({
         isCorrectInput_Name: true
       });
@@ -71,9 +77,7 @@ class AddAssignmentDialog extends React.PureComponent {
         });
       }
     }
-    this.props.dispatch(
-      updateNewAssignmentField(field, e.target.value)
-    );
+    this.props.dispatch(updateNewAssignmentField(field, e.target.value));
   };
 
   onClose = () => this.props.dispatch(assignmentCloseDialog());
@@ -82,13 +86,20 @@ class AddAssignmentDialog extends React.PureComponent {
     const { course, dispatch, assignment } = this.props;
     dispatch(assignmentAddRequest(course.id, assignment));
     this.setState({
-      isCorrectInput_Name: false
+      isCorrectInput_Name: true
     });
   };
 
-  componentWillReceiveProps(nextProps){
-    if(!this.props.open && nextProps.open && nextProps.assignment && nextProps.assignment.questionType){
-        this.updateField('questionType')({ target : { value : nextProps.assignment.questionType}});
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (
+      !this.props.open &&
+      nextProps.open &&
+      nextProps.assignment &&
+      nextProps.assignment.questionType
+    ) {
+      this.updateField("questionType")({
+        target: { value: nextProps.assignment.questionType }
+      });
     }
   }
 
@@ -134,8 +145,7 @@ class AddAssignmentDialog extends React.PureComponent {
           />
         );
       case ASSIGNMENTS_TYPES.PathActivity.id:
-        return (
-          <Fragment>
+        /*
             <TextField
               fullWidth
               label="Path"
@@ -150,6 +160,16 @@ class AddAssignmentDialog extends React.PureComponent {
                 </MenuItem>
               ))}
             </TextField>
+
+ */
+        return (
+          <Fragment>
+            <PathsSelector
+              allowMultiple={false}
+              onChange={this.updateField("path")}
+              paths={paths}
+              value={assignment.path || uid}
+            />
             <TextField
               fullWidth
               label="Activity"
@@ -177,25 +197,21 @@ class AddAssignmentDialog extends React.PureComponent {
                   value="allowSolutionImport"
                 />
               }
-              label="If students have submitted solution to this path activity before, auto-fill with their previous answer"
+              label={
+                "If students have submitted solution to this path activity " +
+                "before auto-fill with their previous answer"
+              }
             />
           </Fragment>
         );
       case ASSIGNMENTS_TYPES.PathProgress.id:
         return (
-          <TextField
-            fullWidth
-            label="Path"
+          <PathsSelector
+            allowMultiple={false}
             onChange={this.updateField("path")}
-            select
-            value={assignment.path || " "}
-          >
-            {paths.map(path => (
-              <MenuItem key={path.id} value={path.id}>
-                {path.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            paths={paths}
+            value={assignment.path || uid}
+          />
         );
       default:
     }
@@ -233,23 +249,25 @@ class AddAssignmentDialog extends React.PureComponent {
           </TextField>
           <TextField
             error={!this.state.isCorrectInput_Name}
-            helperText={this.state.isCorrectInput_Name
-              ? ""
-              : "Name cannot be empty or too long or have invalid characters"}
             fullWidth
+            helperText={
+              this.state.isCorrectInput_Name
+                ? ""
+                : "Name cannot be empty or too long or have invalid characters"
+            }
             label="Name"
             margin="normal"
             onChange={this.updateField("name")}
-            value={assignment.name || ""}
             required
+            value={assignment.name || ""}
           />
           <TextField
             fullWidth
-            label="Link"
             helperText="link to external website (if needed)"
-            placeholder="start with http:// or https://"
+            label="Link"
             margin="normal"
             onChange={this.updateField("details")}
+            placeholder="start with http:// or https://"
             value={assignment.details || ""}
           />
           <br />
@@ -317,9 +335,7 @@ class AddAssignmentDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            disabled={
-              !this.state.isCorrectInput_Name
-            }
+            disabled={!this.state.isCorrectInput_Name}
             onClick={this.onCommit}
             variant="raised"
           >
