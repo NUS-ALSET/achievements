@@ -367,7 +367,7 @@ class Assignments extends React.Component {
           course={course}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "AddAssignment"}
-          paths={(ui.dialog && ui.dialog.paths) || []}
+          paths={(ui.dialog && ui.dialog.paths) || {}}
           teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
           uid={currentUser && currentUser.id}
         />
