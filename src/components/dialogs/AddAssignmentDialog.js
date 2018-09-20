@@ -263,9 +263,8 @@ class AddAssignmentDialog extends React.PureComponent {
           />
           <TextField
             fullWidth
-            label="Link"
             helperText="link to resources (if needed)"
-            placeholder="start with http:// or https://"
+            label="Link"
             margin="normal"
             onChange={this.updateField("details")}
             placeholder="start with http:// or https://"
