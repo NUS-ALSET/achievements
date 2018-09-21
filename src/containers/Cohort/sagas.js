@@ -1,5 +1,9 @@
-import { call, select, take, takeLatest } from "redux-saga/effects";
-import { COHORT_COURSES_RECALCULATE_REQUEST } from "./actions";
+import { call, put, select, take, takeLatest } from "redux-saga/effects";
+import {
+  COHORT_COURSES_RECALCULATE_REQUEST,
+  cohortCoursesRecalculateFail,
+  cohortCoursesRecalculateSuccess
+} from "./actions";
 import { cohortsService } from "../../services/cohorts";
 import { selectCohort } from "./selectors";
 
@@ -14,11 +18,16 @@ function* cohortRecalculationRequestHandle(action) {
     yield take("@@reactReduxFirebase/LOGIN");
   }
 
-  yield call(
-    [cohortsService, cohortsService.recalculateCourses],
-    action.cohortId,
-    data.cohort
-  );
+  try {
+    yield call(
+      [cohortsService, cohortsService.recalculateCourses],
+      action.cohortId,
+      data.cohort
+    );
+    yield put(cohortCoursesRecalculateSuccess(action.cohortId));
+  } catch (err) {
+    yield put(cohortCoursesRecalculateFail(err.message));
+  }
 }
 
 export default [

@@ -17,9 +17,20 @@ export class ActionsService {
     ASSIGNMENTS_SORT_CHANGE,
     UPDATE_NEW_ASSIGNMENT_FIELD
   ];
+  static clearActions = {
+    PROBLEM_INIT_SUCCESS: ["payload"]
+  };
 
   static pickActionData(action) {
     action = Object.assign({}, action);
+    const clearInfo = ActionsService.clearActions[action.type];
+
+    if (clearInfo) {
+      for (const field of clearInfo) {
+        delete action[field];
+      }
+    }
+
     delete action.type;
     return action;
   }
@@ -58,21 +69,24 @@ export class ActionsService {
       !this.bannedActions.includes(action.type) &&
       currentUserId
     ) {
-      firebase
-        .database()
-        .ref("/logged_events")
-        .push({
-          ...data,
-          createdAt: {
-            ".sv": "timestamp"
-          },
-          type: action.type,
-          uid: currentUserId,
-          otherActionData: this.removeEmpty(
-            ActionsService.pickActionData(action)
-          )
-        })
-        .catch(err => console.error(err));
+      try {
+        firebase
+          .database()
+          .ref("/logged_events")
+          .push({
+            ...data,
+            createdAt: {
+              ".sv": "timestamp"
+            },
+            type: action.type,
+            uid: currentUserId,
+            otherActionData: this.removeEmpty(
+              ActionsService.pickActionData(action)
+            )
+          });
+      } catch (err) {
+        console.error(err, action);
+      }
     }
     return next(action);
   };

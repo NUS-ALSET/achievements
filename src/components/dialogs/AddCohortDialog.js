@@ -7,18 +7,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import FormControl from "@material-ui/core/FormControl";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import {
   addCohortDialogHide,
@@ -27,9 +19,7 @@ import {
 
 // RegExp rules
 import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
-
-const ITEMS_HEIGHT = 216;
-const ITEM_PADDING_TOP = 8;
+import PathsSelector from "../selectors/PathsSelector";
 
 class AddCohortDialog extends React.PureComponent {
   static propTypes = {
@@ -48,6 +38,11 @@ class AddCohortDialog extends React.PureComponent {
 
     // Cohort name cannot be nonsense or empty spaces
     isCorrectInput: true
+  };
+
+  static defaultProps = {
+    myPaths: {},
+    publicPaths: {}
   };
 
   getPaths = () => {
@@ -153,61 +148,16 @@ class AddCohortDialog extends React.PureComponent {
             margin="dense"
             onChange={this.onDescriptionChange}
           />
-          <FormControl disabled={!(myPaths && publicPaths)} fullWidth>
-            <InputLabel htmlFor="select-multiple-checkbox">Paths</InputLabel>
-            <Select
-              input={<Input id="select-multiple-checkbox" />}
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: ITEMS_HEIGHT + ITEM_PADDING_TOP,
-                    width: 250
-                  }
-                }
-              }}
-              multiple
-              onChange={this.handleChange}
-              renderValue={selected =>
-                selected
-                  .map(id => (myPaths[id] || publicPaths[id] || {}).name || "")
-                  .join(", ")
-              }
-              value={paths}
-            >
-              {myPaths && (
-                <ListSubheader
-                  component="div"
-                  disableSticky
-                  style={{ outlineWidth: 0 }}
-                >
-                  Own Paths
-                </ListSubheader>
-              )}
-              {myPaths &&
-                Object.keys(myPaths).map(id => (
-                  <MenuItem key={id} value={id}>
-                    <Checkbox checked={paths.indexOf(id) > -1} />
-                    <ListItemText primary={myPaths[id].name} />
-                  </MenuItem>
-                ))}
-              {publicPaths && (
-                <ListSubheader
-                  component="div"
-                  disableSticky
-                  style={{ outlineWidth: 0 }}
-                >
-                  Public Paths
-                </ListSubheader>
-              )}
-              {publicPaths &&
-                Object.keys(publicPaths).map(id => (
-                  <MenuItem key={id} value={id}>
-                    <Checkbox checked={paths.indexOf(id) > -1} />
-                    <ListItemText primary={publicPaths[id].name} />
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
+          <PathsSelector
+            allowMultiple={true}
+            onChange={this.handleChange}
+            paths={{
+              myPaths,
+              publicPaths
+            }}
+            value={paths}
+          />
+
           <TextField
             defaultValue={cohort && cohort.threshold}
             fullWidth

@@ -1,4 +1,5 @@
 import firebase from "firebase";
+import { ASSIGNMENTS_TYPES } from "./courses";
 
 class CohortsService {
   addCohort(cohortData, uid, instructorName) {
@@ -94,7 +95,10 @@ class CohortsService {
 
       for (const assignmentId of Object.keys(assignments)) {
         const assignment = assignments[assignmentId];
-        if (cohort.paths.includes(assignment.path)) {
+        if (
+          assignment.questionType === ASSIGNMENTS_TYPES.PathProgress.id &&
+          cohort.paths.includes(assignment.path)
+        ) {
           targetAssignments[assignmentId] = assignment.path;
         }
       }
@@ -102,19 +106,28 @@ class CohortsService {
       for (const studentKey of studentKeys) {
         const studentProgress = {};
         for (const assignmentId of Object.keys(targetAssignments)) {
-          if (solutions[studentKey] && solutions[assignmentId]) {
-            studentProgress[targetAssignments[assignmentId]] =
-              studentProgress[targetAssignments[assignmentId]] || 0;
-            studentProgress[targetAssignments[assignmentId]] += 1;
-            if (
-              studentProgress[targetAssignments[assignmentId]] ===
-              (cohort.threshold || 1)
-            ) {
-              pathProgress[targetAssignments[assignmentId]] += 1;
+          const solution =
+            solutions[studentKey] && solutions[studentKey][assignmentId];
+          if (solution) {
+            let value = /^(\d+) of \d+$/.exec(solution.value);
+
+            if (value[1] && !isNaN(Number(value[1]))) {
+              studentProgress[targetAssignments[assignmentId]] =
+                studentProgress[targetAssignments[assignmentId]] || 0;
+              studentProgress[targetAssignments[assignmentId]] += Number(
+                value[1]
+              );
             }
           }
         }
-        if (Object.keys(studentProgress) > 0) {
+        for (const pathId of Object.keys(studentProgress)) {
+          if (!(studentProgress[pathId] < cohort.threshold)) {
+            pathProgress[pathId] += 1;
+          } else {
+            delete studentProgress[pathId];
+          }
+        }
+        if (Object.keys(studentProgress).length > 0) {
           explorers += 1;
         }
       }

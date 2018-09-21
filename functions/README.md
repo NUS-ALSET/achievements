@@ -1,10 +1,34 @@
 # Firebase Functions
 
-Note: all scripts below should be invoked in `/functions` dir
+Note: all scripts below should be invoked in `/functions` directory
 
 ## Local launch
 
- * `npm start` - launches `localTrigger` file. Make sure that you have `./config/serviceAccountKey.json`. It can be obtained at `https://console.firebase.google.com/project/<your-project>/settings/serviceaccounts/adminsdk`. More details at `https://firebase.google.com/docs/admin/setup`
+ * Obtain the **serviceAccountKey.json from Firebase console**
+ * `npm start` - **launches `localTrigger` file.**
+ 
+ More details from [Firebase-admin Docs](https://firebase.google.com/docs/admin/setup):
+ - Log in the Firebase console
+ - Navigate to "Service accounts" in Settings
+ - Click the **Generate New Private** Key button at the bottom of the Firebase Admin SDK section of the Service Accounts tab.
+ - After you click the button, a JSON file containing your service account's credentials will be downloaded. You'll need this to initialize the SDK in the next step.
+ - Put the obtained JSON file (achievements-dev-firebase-adminskd-*key*.json) in `/functions/.config`
+  
+**Important**: This achievements-dev-firebase-adminskd-*key*.json file contains sensitive information, including your service account's private encryption key. **Keep it confidential and NEVER store it in a public repository.**
+
+Once you have created a Firebase console project and downloaded a JSON file with your service account credentials, you can initialize the SDK with this code snippet:
+
+```
+var admin = require('firebase-admin');
+
+var serviceAccount = require('path/to/serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'
+});
+```
+  
 
 ## Local testing
  * `npm test` - launch tests with mocha.

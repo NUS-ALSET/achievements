@@ -76,12 +76,10 @@ class CohortCoursesTable extends React.PureComponent {
               <TableCell>
                 <strong>{course.rank}</strong>
               </TableCell>
-              {cohort.pathsData.length &&
-                cohort.pathsData.map(pathData => (
-                  <TableCell key={(pathData && pathData.id) || Math.random()}>
-                    {(course.pathsProgress &&
-                      course.pathsProgress[pathData && pathData.id]) ||
-                      0}
+              {cohort.paths.length &&
+                cohort.paths.map(id => (
+                  <TableCell key={id || Math.random()}>
+                    {(course.pathsProgress && course.pathsProgress[id]) || 0}
                   </TableCell>
                 ))}
               <TableCell>{course.progress}</TableCell>
