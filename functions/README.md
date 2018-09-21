@@ -5,6 +5,7 @@ Note: all scripts below should be invoked in `/functions` directory
 ## Local launch
 
  * Obtain the **serviceAccountKey.json from Firebase console**
+ * `npm install`
  * `npm start` - **launches `localTrigger` file.**
  
  More details from [Firebase-admin Docs](https://firebase.google.com/docs/admin/setup):
