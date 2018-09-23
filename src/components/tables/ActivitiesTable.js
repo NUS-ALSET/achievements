@@ -132,7 +132,7 @@ class ActivitiesTable extends React.PureComponent {
                     )}
                   </TableCell>
                 )}
-                <TableCell className={classes.noWrap} style={{ textAlign : 'right'}}>
+                <TableCell className={classes.noWrap} style={{ textAlign : 'left'}}>
                   {[ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(activity.type) && (
 
                     <Tooltip
