@@ -153,7 +153,7 @@ class JupyterInlineActivity extends React.PureComponent {
             : (
             <Fragment>
               <Typography color="textSecondary">
-                Please first read the Path Activity below. Click the RUN bottom on the right to test your solution.
+                Please first read the Path Activity below. Click the RUN button on the right to test your solution.
               </Typography>
               Edit Your Solution Here
             </Fragment>
