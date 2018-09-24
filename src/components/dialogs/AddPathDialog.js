@@ -112,10 +112,8 @@ class AddPathDialog extends React.PureComponent {
             defaultValue={path && path.description}
             label="Description"
             margin="dense"
+            fullWidth
             onChange={e => this.onFieldChange("description", e.target.value)}
-            style={{
-              width: 320
-            }}
           />
         </DialogContent>
         <DialogActions>

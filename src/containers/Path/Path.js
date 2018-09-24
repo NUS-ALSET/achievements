@@ -303,7 +303,7 @@ export class Path extends React.Component {
             }
           ]}
         />
-        <Toolbar><span className={classes.desHeading}>Path</span> Description: {pathDesc}</Toolbar>
+        <Toolbar><Typography variant="body1"> <span className={classes.desHeading}>Path</span> Description: {pathDesc}</Typography></Toolbar>
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
           (!APP_SETTING.isSuggesting ? (
             <Toolbar>
