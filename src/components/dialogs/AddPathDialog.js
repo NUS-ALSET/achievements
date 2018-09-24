@@ -106,10 +106,16 @@ class AddPathDialog extends React.PureComponent {
             label="Path name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
+            required
+          />
+          <TextField
+            defaultValue={path && path.description}
+            label="Description"
+            margin="dense"
+            onChange={e => this.onFieldChange("description", e.target.value)}
             style={{
               width: 320
             }}
-            required
           />
         </DialogContent>
         <DialogActions>
