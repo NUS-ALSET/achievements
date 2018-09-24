@@ -75,9 +75,8 @@ export class AddCourseDialog extends React.Component {
           isCorrectInput_Name: false
         });
       }
-    }
-    // password does not allow spaces anywhere
-    if (field === "password") {
+    }else if (field === "password") {
+      // password does not allow spaces anywhere
       if (
         CoursePswRule.test(value) &&
         NoStartWhiteSpace.test(value)
@@ -91,6 +90,10 @@ export class AddCourseDialog extends React.Component {
           isCorrectInput_Psw: false
         });
       }
+    }else{
+      this.setState({
+        [field]: value.trim(),
+      });
     }
   };
 
