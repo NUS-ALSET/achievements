@@ -67,7 +67,9 @@ export class Activity extends React.PureComponent {
     if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
       this.onProblemChange({});
     }
-    if ((nextProps.solution || {}).checked && 
+    if(![ 'jupyter', 'jupyterInline' ].includes((nextProps.pathProblem || {}).type)){
+      this.setState({ disabledCommitBtn: false });
+    }else if ((nextProps.solution || {}).checked && 
         !(nextProps.solution || {}).failed &&
         (nextProps.solution || {}).json
       ) {
@@ -99,6 +101,9 @@ export class Activity extends React.PureComponent {
           this.props.match.params.problemId,
           this.state.problemSolution
         )
+      );
+      this.props.history.push(
+        `/paths/${this.props.match.params.pathId}`
       );
     } else {
       this.props.dispatch(notificationShow("Nothing changed"));

@@ -158,7 +158,7 @@ export class AccountService {
         url: "https://codecombat.com",
         id: "CodeCombat",
         name: "Code Combat",
-        description: "learn to Code JavaScript by Playing a Game"
+        description: "learn programming by playing games"
       }
       /* Unnecessary for now
       FreeCodeCamp: {

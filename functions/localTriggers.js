@@ -6,11 +6,11 @@ const analyseJupyterSolution = require("./src/analyseJupyterSolution");
 const outgoingRequests = require("./src/outgoingRequest");
 const fetchGithubFiles = require("./src/fetchGithubFiles")
 
-const serviceAccount = require("./config/serviceAccountKey");
+const serviceAccount = require("./config/serviceAccountKey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://fir-project-3d2a4.firebaseio.com"
+  databaseURL: "https://achievements-dev.firebaseio.com"
 });
 
 updateProfile.queueHandler();

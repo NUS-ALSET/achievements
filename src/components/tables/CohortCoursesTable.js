@@ -20,6 +20,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { cohortsService } from "../../services/cohorts";
+import { cohort } from "../../types";
 
 const styles = theme => ({
   button: {
@@ -30,13 +31,14 @@ const styles = theme => ({
 class CohortCoursesTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
+    cohort: cohort,
     courses: PropTypes.array,
     isOwner: PropTypes.bool,
     match: PropTypes.object
   };
 
   render() {
-    const { courses, isOwner } = this.props;
+    const { courses, cohort, isOwner } = this.props;
     let totals = {
       progress: 0,
       participants: 0
@@ -51,19 +53,46 @@ class CohortCoursesTable extends React.PureComponent {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Course Rank</TableCell>
-            <TableCell>Path Progress ({totals.progress})</TableCell>
-            <TableCell> Participants ({totals.participants})</TableCell>
-            <TableCell>Course</TableCell>
+            <TableCell>School Rank</TableCell>
+            {cohort.pathsData.length
+            ? (
+              cohort.pathsData.map(pathData => (
+                <TableCell key={(pathData && pathData.id) || Math.random()}>
+                  {pathData && pathData.name}
+                </TableCell>
+              ))
+            )
+            : (
+              <TableCell>Paths for Cohort</TableCell>
+            )}
+            <TableCell>
+              Explorers(
+              {totals.progress})
+            </TableCell>
+
+            <TableCell> Total Students ({totals.participants})</TableCell>
+            <TableCell>School</TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
-          {courses.map(course => (
+          {courses && courses.map(course => (
             <TableRow key={course.id}>
               <TableCell>
                 <strong>{course.rank}</strong>
               </TableCell>
+              {cohort.paths
+              ? (
+                cohort.paths.length &&
+                cohort.paths.map(id => (
+                  <TableCell key={id}>
+                    {course.pathsProgress && course.pathsProgress[id]}
+                  </TableCell>
+                ))
+              )
+              : (
+                <TableCell>None</TableCell>
+              )}
               <TableCell>{course.progress}</TableCell>
               <TableCell>{course.participants}</TableCell>
               <TableCell>

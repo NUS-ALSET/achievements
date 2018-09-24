@@ -31,7 +31,9 @@ class Cohorts extends React.PureComponent {
     ui: PropTypes.object,
     currentUser: PropTypes.object,
     myCohorts: PropTypes.object,
+    myPaths: PropTypes.object,
     publicCohorts: PropTypes.object,
+    publicPaths: PropTypes.object,
 
     onAddCohortClick: PropTypes.func.isRequired,
     onEditCohortClick: PropTypes.func.isRequired,
@@ -43,7 +45,9 @@ class Cohorts extends React.PureComponent {
       dispatch,
       ui,
       myCohorts,
+      myPaths,
       publicCohorts,
+      publicPaths,
       currentUser,
       onEditCohortClick
     } = this.props;
@@ -64,15 +68,17 @@ class Cohorts extends React.PureComponent {
 
     return (
       <Fragment>
-        <Toolbar>
-          <Button
-            color="primary"
-            onClick={this.props.onAddCohortClick}
-            variant="raised"
-          >
-            Add New Cohort
-          </Button>
-        </Toolbar>
+        {currentUser.id && (
+          <Toolbar>
+            <Button
+              color="primary"
+              onClick={this.props.onAddCohortClick}
+              variant="raised"
+            >
+              Add New Cohort
+            </Button>
+          </Toolbar>
+        )}
         <Tabs
           indicatorColor="primary"
           onChange={this.props.onChangeTab}
@@ -80,7 +86,7 @@ class Cohorts extends React.PureComponent {
           value={ui.currentTab}
         >
           <Tab label="Public Cohorts" />
-          <Tab label="My Cohorts" />
+          {currentUser.id && <Tab label="My Cohorts" />}
         </Tabs>
         <CohortsTable
           cohorts={cohorts}
@@ -90,7 +96,9 @@ class Cohorts extends React.PureComponent {
         <AddCohortDialog
           cohort={ui.dialog.cohort}
           dispatch={dispatch}
+          myPaths={myPaths}
           open={ui.dialog && ui.dialog.type === "addCohort"}
+          publicPaths={publicPaths}
         />
       </Fragment>
     );
@@ -101,7 +109,9 @@ sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   myCohorts: state.firebase.data.myCohorts,
+  myPaths: state.firebase.data.myPaths,
   publicCohorts: state.firebase.data.publicCohorts,
+  publicPaths: state.firebase.data.publicPaths,
   currentUser: {
     id: state.firebase.auth.uid
   },
@@ -131,6 +141,16 @@ export default compose(
       firebaseAuth.isEmpty
         ? []
         : [
+            {
+              path: "/paths",
+              storeAs: "myPaths",
+              queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
+            },
+            {
+              path: "/paths",
+              storeAs: "publicPaths",
+              queryParams: ["orderByChild=isPublic", "equalTo=true"]
+            },
             {
               path: "/cohorts",
               storeAs: "myCohorts",

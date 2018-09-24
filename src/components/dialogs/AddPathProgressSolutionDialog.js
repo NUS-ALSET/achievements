@@ -52,11 +52,11 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     if (
       !(pathProgress && totalActivities && pathProgress.solutions)
     ) {
-      return "Your have no progress at this path";
+      return `Your have no progress at this "${activityPath.name}" path`;
     }
-    return `You have solved ${pathProgress.solutions} of the ${
-    totalActivities} requested problems on the "${activityPath.name}" path.
-    Your progress is ${this.getProgress()}`;
+    return `You have completed ${pathProgress.solutions} of the ${
+    totalActivities} activities on the "${activityPath.name}" path.
+    Your progress is ${this.getProgress()}.`;
   };
 
   onProblemChange = problemSolution => this.setState({ problemSolution });
@@ -83,8 +83,11 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
   render() {
     const {
       open,
-      pathProgress
+      pathProgress,
+      activityPath
     } = this.props;
+
+    const totalActivities = Number(activityPath.totalActivities);
 
     return (
       <Dialog onClose={this.onClose} open={open}>
@@ -114,9 +117,11 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
           >
             Go to Path
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised">
-            Add Status
-          </Button>
+          {(pathProgress && totalActivities && pathProgress.solutions) &&
+            <Button color="primary" onClick={this.onCommit} variant="raised">
+              Update Progress
+            </Button>
+          }
         </DialogActions>
       </Dialog>
     );

@@ -224,7 +224,9 @@ export class PathsService {
         }
         resolve({
           ...data,
-          cells: (data.cells || []).filter(d => d.source.join("").replace(/\n/g, "")),
+          cells: (data.cells || []).filter(d =>
+            d.source.join("").replace(/\n/g, "")
+          ),
           result: {
             ...data.result,
             cells: data.result.cells.filter(
@@ -525,8 +527,8 @@ export class PathsService {
       ...pathProblem,
       problemId: pathProblem.problemId || pathProblem.id
     };
-    if(typeof solution ==='object'){
-      solution.updatedAt = Date.now()
+    if (typeof solution === "object") {
+      solution.updatedAt = Date.now();
     }
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
@@ -607,29 +609,27 @@ export class PathsService {
       solution: editableBlockCode || ""
     };
     const resData = {};
-    return (
-      firebaseService
-        .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
-        .then(res => {
-          resData.skills = res.skills || {};
-        })
-        .catch(e => {
-          resData.errorMsg = e.message || 'Error occured';
-        })
-        .finally(() => {
-          // pathId added, so solution's skills will be fetch on basis of pathId
+    return firebaseService
+      .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
+      .then(res => {
+        resData.skills = res.skills || {};
+      })
+      .catch(e => {
+        resData.errorMsg = e.message || "Error occured";
+      })
+      .finally(() => {
+        // pathId added, so solution's skills will be fetch on basis of pathId
 
-          firebase
-            .database()
-            .ref(`/activityExampleSolutions/${activityId}`)
-            .set({
-              ...resData,
-              solutionURL: solutionURL,
-              owner: uid,
-              pathId
-            });
-        })
-    );
+        firebase
+          .database()
+          .ref(`/activityExampleSolutions/${activityId}`)
+          .set({
+            ...resData,
+            solutionURL: solutionURL,
+            owner: uid,
+            pathId
+          });
+      });
   }
 
   /**
@@ -638,19 +638,25 @@ export class PathsService {
    * @returns {Promise<Path[]>}
    */
   fetchPaths(uid) {
-    return firebase
-      .database()
-      .ref("/paths")
-      .orderByChild("owner")
-      .equalTo(uid)
-      .once("value")
-      .then(data => data.val())
-      .then(paths =>
-        Object.keys(paths || {}).map(id => ({
-          ...paths[id],
-          id
-        }))
-      );
+    return Promise.all([
+      firebase
+        .database()
+        .ref("/paths")
+        .orderByChild("owner")
+        .equalTo(uid)
+        .once("value")
+        .then(data => data.val()),
+      firebase
+        .database()
+        .ref("/paths")
+        .orderByChild("isPublic")
+        .equalTo(true)
+        .once("value")
+        .then(data => data.val())
+    ]).then(responses => ({
+      myPaths: responses[0],
+      publicPaths: responses[1]
+    }));
   }
 
   togglePathJoinStatus(uid, pathId, status) {
@@ -851,17 +857,19 @@ export class PathsService {
     });
   }
 
-  deleteActivity(activityId, pathId=null) {
+  deleteActivity(activityId, pathId = null) {
     return firebase
       .database()
       .ref(`/activities/${activityId}`)
       .remove()
-      .then(()=>{
-        pathId && firebase
+      .then(
+        () =>
+          pathId &&
+          firebase
             .database()
             .ref(`/paths/${pathId}/totalActivities`)
             .transaction(activities => --activities)
-      })
+      );
   }
 
   /**

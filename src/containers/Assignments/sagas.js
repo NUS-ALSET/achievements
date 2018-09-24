@@ -1,4 +1,4 @@
-import findAt from "lodash/find";
+/* eslint no-console: 0 */
 
 import { APP_SETTING } from "../../achievementsApp/config";
 import {
@@ -116,101 +116,101 @@ export function* addAssignmentRequestHandle(action) {
 }
 
 export function* updateNewAssignmentFieldHandler(action) {
-    if (["details", "name"].includes(action.field)) {
-      return;
-    }
+  if (["details", "name"].includes(action.field)) {
+    return;
+  }
 
-    const location = window.location.href.replace(/#.*$/, "");
-    const data = yield select(state => ({
-      assignment: state.assignments.dialog.value,
-      manualUpdates: state.assignments.dialog.manualUpdates || {},
-      uid: state.firebase.auth.uid
-    }));
-    let problem;
-    let problems;
-    let assignment = data.assignment;
-    let updatedFields = {};
+  const location = window.location.href.replace(/#.*$/, "");
+  const data = yield select(state => ({
+    assignment: state.assignments.dialog.value,
+    manualUpdates: state.assignments.dialog.manualUpdates || {},
+    uid: state.firebase.auth.uid
+  }));
+  let activity;
+  let activities;
+  let assignment = data.assignment;
+  let updatedFields = {};
 
-    // updateNewAssignmentField AUTOFILL text field
-    assignment = assignment || {};
-    if (["CodeCombat_Number", "Profile"].includes(assignment.questionType)) {
-      updatedFields.details = "https://codecombat.com"
-    } else {
-      console.log("assignment questionTypes are:", assignment.questionType);
-    }
+  // updateNewAssignmentField AUTOFILL text field
+  assignment = assignment || {};
+  if (["CodeCombat_Number", "Profile"].includes(assignment.questionType)) {
+    updatedFields.details = "https://codecombat.com";
+  } else {
+    console.log("assignment questionTypes are:", assignment.questionType);
+  }
 
-    switch (action.field) {
-      case "questionType":
-        if (
-          [
-            ASSIGNMENTS_TYPES.PathActivity.id,
-            ASSIGNMENTS_TYPES.PathProgress.id
-          ].includes(action.value)
-        ) {
-          const paths = yield call(
-            [pathsService, pathsService.fetchPaths],
-            data.uid
-          );
-          console.log("Step 1 done");
-          yield put(assignmentPathsFetchSuccess(paths));
-          updatedFields.path = assignment.path || data.uid
-          console.log("Step 2 done");
+  switch (action.field) {
+    case "questionType":
+      if (
+        [
+          ASSIGNMENTS_TYPES.PathActivity.id,
+          ASSIGNMENTS_TYPES.PathProgress.id
+        ].includes(action.value)
+      ) {
+        const paths = yield call(
+          [pathsService, pathsService.fetchPaths],
+          data.uid
+        );
+        console.log("Step 1 done");
+        yield put(assignmentPathsFetchSuccess(paths));
+        updatedFields.path = assignment.path || data.uid;
+        console.log("Step 2 done");
 
-          if (!data.manualUpdates.details) {
-            updatedFields.details = `${location}#/paths/${data.uid}`;
-            console.log("Step 3 done");
-          }
-        }else if([
+        if (!data.manualUpdates.details) {
+          updatedFields.details = `${location}#/paths/${data.uid}`;
+          console.log("Step 3 done");
+        }
+      } else if (
+        [
           ASSIGNMENTS_TYPES.TeamFormation.id,
           ASSIGNMENTS_TYPES.TeamText.id
-        ].includes(action.value)){
-          updatedFields.details = '';
-        }
-        break;
-      case "level":
-        updatedFields.details = APP_SETTING.levels[action.value].url;
-        break;
-      case "path":
-        problems = yield call(
-          [pathsService, pathsService.fetchProblems],
-          data.uid,
-          action.value
-        );
+        ].includes(action.value)
+      ) {
+        updatedFields.details = "";
+      }
+      break;
+    case "level":
+      updatedFields.details = APP_SETTING.levels[action.value].url;
+      break;
+    case "path":
+      activities = yield call(
+        [pathsService, pathsService.fetchProblems],
+        data.uid,
+        action.value
+      );
 
-        yield put(assignmentProblemsFetchSuccess(problems));
+      yield put(assignmentProblemsFetchSuccess(activities));
 
+      updatedFields.details = `${location}#/paths/${data.assignment.path}`;
 
-        updatedFields.details = `${location}#/paths/${data.assignment.path}`;
+      updatedFields.pathActivity = "";
+      break;
+    case "pathActivity":
+      activities = yield select(state => state.assignments.dialog.activities);
+      activities = activities || [];
 
+      activity = activities.find(
+        activity => activity.id === assignment.pathActivity
+      );
 
-        updatedFields.pathActivity = "";
-        break;
-      case "pathActivity":
-        problems = yield select(state => state.assignments.dialog.problems);
+      if (
+        !data.manualUpdates.details &&
+        activity &&
+        activity.type !== "jupyterInline"
+      ) {
+        updatedFields.details =
+          activity.youtubeURL || activity.problemURL || "";
+      }
+      if (!data.manualUpdates.name && activity) {
+        updatedFields.name = activity.name;
+      }
 
-        problem = findAt(problems, {
-          id: assignment.problem
-        });
-
-        if (
-          !data.manualUpdates.details &&
-          problem &&
-          problem.type !== "jupyterInline"
-        ) {
-          updatedFields.details = problem.youtubeURL || problem.problemURL || "";
-        }
-        if (!data.manualUpdates.name && problem) {
-          updatedFields.name = problem.name;
-        }
-
-        break;
-      default:
-    }
+      break;
+    default:
+  }
   // do not dispatch updateNewAssignmentField action in this handler, otherwise result will be infinite loop.
   // because if you dispatch updateNewAssignmentField action then this handler will run again
-  yield put(
-    setDefaultAssignmentFields(updatedFields)
-  );
+  yield put(setDefaultAssignmentFields(updatedFields));
 }
 
 export function* assignmentSubmitRequestHandler(action) {
@@ -335,10 +335,10 @@ export function* assignmentShowEditDialogHandler(action) {
       case ASSIGNMENTS_TYPES.PathActivity.id:
         yield put(
           updateNewAssignmentField({
-            "questionType": ASSIGNMENTS_TYPES.PathActivity.id
+            questionType: ASSIGNMENTS_TYPES.PathActivity.id
           })
         );
-        yield put(updateNewAssignmentField({"path": action.assignment.path}));
+        yield put(updateNewAssignmentField({ path: action.assignment.path }));
         break;
       default:
     }
