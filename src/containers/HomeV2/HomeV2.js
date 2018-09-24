@@ -7,7 +7,9 @@ import { connect } from "react-redux";
 
 import RecommendationsListCard from "../../components/cards/RecommendationsListCard";
 import ContentLoader from "./ContentLoader";
-import { homeOpenRecommendation } from "./actions";
+import sagas from "./sagas";
+import { homeOpenRecommendation, updateRecommendation } from "./actions";
+import { sagaInjector } from "../../services/saga";
 
 const temporaryRecommendationsKinds = [
   "codeCombat",
@@ -85,7 +87,9 @@ export class HomeV2 extends React.Component {
         pathId
       )
     );
-
+  componentDidMount(){
+    this.props.dispatch(updateRecommendation());
+  }
   render() {
     const { userRecommendations } = this.props;
 
@@ -147,6 +151,8 @@ export class HomeV2 extends React.Component {
     );
   }
 }
+
+sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
