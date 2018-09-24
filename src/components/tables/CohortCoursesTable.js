@@ -53,35 +53,46 @@ class CohortCoursesTable extends React.PureComponent {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Course Rank</TableCell>
-            {cohort.pathsData.length &&
+            <TableCell>School Rank</TableCell>
+            {cohort.pathsData.length
+            ? (
               cohort.pathsData.map(pathData => (
                 <TableCell key={(pathData && pathData.id) || Math.random()}>
                   {pathData && pathData.name}
                 </TableCell>
-              ))}
+              ))
+            )
+            : (
+              <TableCell>Paths for Cohort</TableCell>
+            )}
             <TableCell>
               Explorers(
               {totals.progress})
             </TableCell>
 
-            <TableCell> Members ({totals.participants})</TableCell>
-            <TableCell>Course</TableCell>
+            <TableCell> Total Students ({totals.participants})</TableCell>
+            <TableCell>School</TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
-          {courses.map(course => (
+          {courses && courses.map(course => (
             <TableRow key={course.id}>
               <TableCell>
                 <strong>{course.rank}</strong>
               </TableCell>
-              {cohort.paths.length &&
+              {cohort.paths
+              ? (
+                cohort.paths.length &&
                 cohort.paths.map(id => (
-                  <TableCell key={id || Math.random()}>
-                    {(course.pathsProgress && course.pathsProgress[id]) || 0}
+                  <TableCell key={id}>
+                    {course.pathsProgress && course.pathsProgress[id]}
                   </TableCell>
-                ))}
+                ))
+              )
+              : (
+                <TableCell>None</TableCell>
+              )}
               <TableCell>{course.progress}</TableCell>
               <TableCell>{course.participants}</TableCell>
               <TableCell>
