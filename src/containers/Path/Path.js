@@ -72,14 +72,7 @@ import { Typography } from "@material-ui/core";
 const styles = theme => ({
   toolbarButton: {
     marginLeft: theme.spacing.unit
-  },
-  desHeading: {
-    fontSize: '12px',
-    verticalAlign: 'top',
-    background: '#ddd',
-    padding: '5px 10px',
-    marginRight: '4px'
-}
+  }
 });
 
 export class Path extends React.Component {
@@ -269,7 +262,7 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
-      pathDesc = (pathActivities.path && pathActivities.path.description) || "Not Provided";
+      pathDesc = (pathActivities.path && pathActivities.path.description) || "None Provided";
 
     return (
       <Fragment>
@@ -303,7 +296,14 @@ export class Path extends React.Component {
             }
           ]}
         />
-        <Toolbar><Typography variant="body1"> <span className={classes.desHeading}>Path</span> Description: {pathDesc}</Typography></Toolbar>
+        <Typography
+          gutterBottom
+          style={{
+            marginLeft: 30
+          }}
+        >
+          Path Description: {pathDesc}
+        </Typography>
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
           (!APP_SETTING.isSuggesting ? (
             <Toolbar>

@@ -285,7 +285,12 @@ class Assignments extends React.Component {
             }
           ]}
         />
-        <Typography gutterBottom>
+        <Typography
+          gutterBottom
+          style={{
+            marginLeft: 30
+          }}
+        >
           Course Description: {course.description || "None provided"}
         </Typography>
         {AssignmentView}
