@@ -275,10 +275,11 @@ export class Path extends React.Component {
                 label: "Request more",
                 handler: this.requestMoreProblems.bind(this)
               },
-              !allFinished && {
-                label: "Refresh",
-                handler: this.refreshSolutions.bind(this)
-              },
+              // disable Refresh button.
+              // !allFinished && {
+              // label: "Refresh",
+              // handler: this.refreshSolutions.bind(this)
+              // },
               {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
