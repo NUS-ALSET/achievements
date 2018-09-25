@@ -43,6 +43,7 @@ describe("<Path>", () => {
           dialog: false
         }}
         uid="testUser"
+        classes={{}}
       />
     );
 

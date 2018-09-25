@@ -67,11 +67,19 @@ import { pathActivities } from "../../types/index";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
+import { Typography } from "@material-ui/core";
 
 const styles = theme => ({
   toolbarButton: {
     marginLeft: theme.spacing.unit
-  }
+  },
+  desHeading: {
+    fontSize: '12px',
+    verticalAlign: 'top',
+    background: '#ddd',
+    padding: '5px 10px',
+    marginRight: '4px'
+}
 });
 
 export class Path extends React.Component {
@@ -253,7 +261,7 @@ export class Path extends React.Component {
     const allFinished =
       (pathActivities.activities || []).filter(problem => problem.solved)
         .length === (pathActivities.activities || []).length;
-    let pathName;
+    let pathName, pathDesc;
 
     if (match.params.pathId[0] !== "-") {
       pathName = "Default";
@@ -261,6 +269,7 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
+      pathDesc = (pathActivities.path && pathActivities.path.description) || "Not Provided";
 
     return (
       <Fragment>
@@ -294,6 +303,7 @@ export class Path extends React.Component {
             }
           ]}
         />
+        <Toolbar><Typography variant="body1"> <span className={classes.desHeading}>Path</span> Description: {pathDesc}</Typography></Toolbar>
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
           (!APP_SETTING.isSuggesting ? (
             <Toolbar>
