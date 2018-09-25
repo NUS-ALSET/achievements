@@ -8,15 +8,11 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
 
-import { Link } from "react-router-dom";
-
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import MenuItem from "@material-ui/core/MenuItem";
-
-import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 
 import { firebaseConnect } from "react-redux-firebase";
 
@@ -30,6 +26,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 import sagas from "./sagas";
 import { cohort } from "../../types";
+
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -90,15 +88,17 @@ class Cohort extends React.PureComponent {
 
     return (
       <Fragment>
-        <Toolbar>
-          <Link className={classes.breadcrumbLink} to={"/cohorts"}>
-            <Typography className={classes.breadcrumbText}>Cohorts</Typography>
-          </Link>
-          <ChevronRightIcon />
-          <Typography className={classes.breadcrumbText}>
-            {cohort.name}
-          </Typography>
-        </Toolbar>
+        <Breadcrumbs
+          paths={[
+            {
+              label: "Cohorts",
+              link: "/cohorts"
+            },
+            {
+              label: cohort.name
+            }
+          ]}
+        />
         <Typography
           gutterBottom
           style={{

@@ -37,7 +37,6 @@ import React, { Fragment } from "react";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
-import withStyles from "@material-ui/core/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 import AddPathActivitySolutionDialog from "../../components/dialogs/AddPathActivitySolutionDialog";
@@ -47,23 +46,6 @@ import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
 
-const styles = theme => ({
-  breadcrumbLink: {
-    textDecoration: "none"
-  },
-  breadcrumbText: {
-    margin: theme.spacing.unit,
-    textTransform: "uppercase",
-    fontSize: "0.875rem"
-  },
-  actions: {
-    position: "absolute",
-    right: theme.spacing.unit
-  },
-  action: {
-    marginLeft: theme.spacing.unit
-  }
-});
 
 class Assignments extends React.Component {
   static propTypes = {
@@ -400,7 +382,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 export default compose(
   withRouter,
-  withStyles(styles),
   firebaseConnect((ownProps, store) => {
     const courseId = ownProps.match.params.courseId;
     const state = store.getState();
