@@ -22,6 +22,8 @@ import AddCohortDialog from "../../components/dialogs/AddCohortDialog";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 
+import Breadcrumbs from "../../components/Breadcrumbs";
+
 const COHORT_TAB_PUBLIC_COHORTS = 0;
 const COHORT_TAB_MY_COHORTS = 1;
 
@@ -68,6 +70,7 @@ class Cohorts extends React.PureComponent {
 
     return (
       <Fragment>
+        <Breadcrumbs paths={[{ label: "Cohorts" }]} />
         {currentUser.id && (
           <Toolbar>
             <Button
