@@ -48,6 +48,7 @@ const styles = theme => ({
 class ActivitiesTable extends React.PureComponent {
   static propTypes = {
     activities: PropTypes.array.isRequired,
+    codeCombatProfile : PropTypes.any,
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
     onDeleteActivity: PropTypes.func.isRequired,
@@ -79,6 +80,23 @@ class ActivitiesTable extends React.PureComponent {
 
   selectActivity = activity => this.setState({ activity });
 
+  getStatus = (activity) => {
+    const codeCombatProfile = this.props.codeCombatProfile || {};
+    switch (activity.type) {
+      case ACTIVITY_TYPES.profile.id:
+        return Boolean(codeCombatProfile.id);
+      case ACTIVITY_TYPES.codeCombat.id:
+        return (Boolean((codeCombatProfile.achievements || {})[activity.level]));
+      case ACTIVITY_TYPES.codeCombatNumber.id:
+        return (
+          !codeCombatProfile.totalAchievements &&
+          Number(codeCombatProfile.totalAchievements) >= Number(activity.count)
+        )
+      default:
+        return true
+    }
+  }
+
   render() {
     const {
       activities,
@@ -104,7 +122,7 @@ class ActivitiesTable extends React.PureComponent {
 
     const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
       pathStatus
-    );
+    );  
     return (
       <Fragment>
         <Table>
@@ -125,7 +143,7 @@ class ActivitiesTable extends React.PureComponent {
                 <TableCell className={classes.noWrap}>{activity.description}</TableCell>
                 {!canChange && (
                   <TableCell>
-                    {activity.solved && (
+                    {this.getStatus(activity) && activity.solved && (
                       <Icon>
                         <DoneIcon />
                       </Icon>

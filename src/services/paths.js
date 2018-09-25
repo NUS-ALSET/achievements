@@ -552,11 +552,6 @@ export class PathsService {
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
               .then(json => {
-                // this.saveGivenSkillInProblem(
-                //   json,
-                //   pathProblem.problemId,
-                //   uid,
-                // );
                 return this.validateSolution(uid, pathProblem, solution, json);
               })
               .then(() =>
@@ -566,11 +561,6 @@ export class PathsService {
                   .set(solution)
               );
           case ACTIVITY_TYPES.jupyterInline.id: {
-            // this.saveGivenSkillInProblem(
-            //   solution,
-            //   pathProblem.problemId,
-            //   uid
-            // );
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
