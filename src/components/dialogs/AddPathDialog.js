@@ -49,20 +49,28 @@ class AddPathDialog extends React.PureComponent {
         .map(key => ({ [key]: value[key] }))
     );
 
-  // validate Path name input first
+  // validate Path name
   onFieldChange = (field, value) => {
-    if (
-      AddName.test(value) &&
-      NoStartWhiteSpace.test(value)
-    ) {
+    const { path } = this.props;
+    if (path && path.id) {
       this.setState({
-        isCorrectInput: true,
-        [field]: value.trim()
+        isCorrectInput: true
       });
-    } else {
-      this.setState({
-        isCorrectInput: false
-      });
+    }
+    if (field === "name") {
+      if (
+        AddName.test(value) &&
+        NoStartWhiteSpace.test(value)
+      ) {
+        this.setState({
+          isCorrectInput: true,
+          [field]: value.trim()
+        });
+      } else {
+        this.setState({
+          isCorrectInput: false
+        });
+      }
     }
   };
 
