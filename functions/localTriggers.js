@@ -4,7 +4,7 @@ const updateProfile = require("./src/updateProfile");
 const executeJupyterSolution = require("./src/executeJupyterSolution");
 const analyseJupyterSolution = require("./src/analyseJupyterSolution");
 const outgoingRequests = require("./src/outgoingRequest");
-const fetchGithubFiles = require("./src/fetchGithubFiles")
+const fetchGithubFiles = require("./src/fetchGithubFiles");
 
 const serviceAccount = require("./config/serviceAccountKey.json");
 
