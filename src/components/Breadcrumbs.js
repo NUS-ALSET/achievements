@@ -19,7 +19,7 @@ import { breadcrumbAction, breadcrumbPath } from "../types/index";
 
 const styles = theme => ({
   breadcrumbLink: {
-    textDecoration: "none"
+    color: "red"
   },
   breadcrumbText: {
     margin: theme.spacing.unit,
