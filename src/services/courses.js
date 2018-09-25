@@ -4,6 +4,7 @@
  */
 
 import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
+import { externalProfileRefreshRequest } from "../containers/Account/actions"
 import {
   coursePasswordEnterFail,
   coursePasswordEnterRequest
@@ -15,6 +16,7 @@ import { pathsService } from "./paths";
 
 import each from "lodash/each";
 import firebase from "firebase";
+import { APP_SETTING } from "../achievementsApp/config"
 
 const ERROR_TIMEOUT = 6000;
 
@@ -327,36 +329,64 @@ export class CoursesService {
    * @param {Assignment} assignment
    */
   getAchievementsStatus(userId, assignment) {
-    return firebase
-      .ref(`/userAchievements/${userId}/CodeCombat`)
-      .once("value")
-      .then(profileData => {
-        const profile = profileData.val() || {};
-        const achievements = profile.achievements || {};
+    return new Promise((resolve, reject) => {
+      firebase
+        .ref(`/userAchievements/${userId}/CodeCombat`)
+        .once("value")
+        .then(profileData => {
+          if (profileData.exists()) {
+            const err = this.checkAchievementsError(profileData, assignment);
+            const profile = profileData.val() || {};
+            if (err) {
+              this.dispatch(externalProfileRefreshRequest( profile.id, "CodeCombat" ))
+              setTimeout(() => {
+                firebase
+                  .ref(`/userAchievements/${userId}/CodeCombat`)
+                  .once("value")
+                  .then(profileData => {
+                    const err = this.checkAchievementsError(profileData, assignment, true);
+                    err ?  reject(err) : resolve(profile.id);
+                  })
+              }, APP_SETTING.defaultTimeout + 500)
+            } else {
+              resolve(profile.id);
+            }
+          } else {
+            reject(new Error(
+              `Please enter your Code Combat username`
+            ));
+          }
+        });
+    })
+  }
 
-        switch (assignment.questionType) {
-          case "CodeCombat":
-            if (!achievements[assignment.level]) {
-              throw new Error(
-                `Not finished required level "${assignment.level}"`
-              );
-            }
-            break;
-          case "CodeCombat_Number":
-            if (
-              !profile.totalAchievements ||
-              profile.totalAchievements < assignment.count
-            ) {
-              throw new Error(
-                `Not finished required amount of levels (${assignment.count})`
-              );
-            }
-            break;
-          default:
+  checkAchievementsError = (profileData, assignment, openTab = false) => {
+    const profile = profileData.val() || {};
+    const achievements = profile.achievements || {};
+    switch (assignment.questionType) {
+      case "CodeCombat":
+        if (!achievements[assignment.level]) {
+          openTab && setTimeout(() => {
+            window.open(`http://codecombat.com/play/level/${assignment.level}`, '_blank');
+          }, 2000)
+          return new Error(
+            `Opening up "${assignment.level}" level in another tab`
+          )
         }
-
-        return profile.id;
-      });
+        break;
+      case "CodeCombat_Number":
+        if (
+          !profile.totalAchievements ||
+          profile.totalAchievements < assignment.count
+        ) {
+          return new Error(
+            `Not finished required amount of levels (${assignment.count})`
+          );
+        }
+        break;
+      default:
+    }
+    return false
   }
 
   submitSolution(courseId, assignment, value, userId,status=null) {
