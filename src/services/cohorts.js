@@ -78,12 +78,12 @@ class CohortsService {
         .database()
         .ref(`/assignments/${courseId}`)
         .once("value")
-        .then(snap => snap.val()),
+        .then(snap => snap.val() || {}),
       firebase
         .database()
         .ref(`/solutions/${courseId}`)
         .once("value")
-        .then(userSolutions => userSolutions.val())
+        .then(userSolutions => userSolutions.val() || {})
     ]).then(responses => {
       const [studentKeys, assignments, solutions] = responses;
       const targetAssignments = {};
