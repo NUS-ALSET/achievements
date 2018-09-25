@@ -11,3 +11,9 @@ export const homeOpenRecommendation = (
   activityId,
   pathId
 });
+
+
+export const UPDATE_RECOMMENDATION = "UPDATE_RECOMMENDATION";
+export const updateRecommendation = () => ({
+  type : UPDATE_RECOMMENDATION
+})
