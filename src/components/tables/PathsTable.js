@@ -82,7 +82,7 @@ class PathsTable extends React.PureComponent {
                   <TableCell>
                     {path.solutions !== undefined && path.totalActivities
                       ? `${path.solutions} of ${path.totalActivities}`
-                      : ""}
+                      : "not joined"}
                   </TableCell>
                 )}
                 {APP_SETTING.isSuggesting ? (
