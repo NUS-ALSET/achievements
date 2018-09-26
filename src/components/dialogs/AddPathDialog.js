@@ -71,6 +71,8 @@ class AddPathDialog extends React.PureComponent {
           isCorrectInput: false
         });
       }
+    }else{
+      this.setState({ [field] : value.trim() })
     }
   };
 
@@ -98,7 +100,7 @@ class AddPathDialog extends React.PureComponent {
   render() {
     const { path, open } = this.props;
     return (
-      <Dialog onClose={this.onClose} open={open}>
+      <Dialog onClose={this.onClose} open={open} maxWidth={"sm"} fullWidth>
         <DialogTitle>
           {path && path.id ? "Edit Path" : "Add New Path"}
         </DialogTitle>
