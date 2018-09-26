@@ -34,7 +34,7 @@ class JupyterInlineActivity extends React.PureComponent {
   };
   componentWillReceiveProps(nextProps) {
     if(
-      (nextProps.solution || {}).checked && 
+      (nextProps.solution || {}).checked &&
       (
         nextProps.showCommitBtnOnTop ||
         !(nextProps.solution || {}).failed
@@ -45,7 +45,7 @@ class JupyterInlineActivity extends React.PureComponent {
       this.setState({ showCommitBtn: false });
     }
     if(nextProps.solution.statusText){
-      this.setState({ statusText : nextProps.solution.statusText });  
+      this.setState({ statusText : nextProps.solution.statusText });
     }else{
       this.setState({ statusText : null })
     }
@@ -124,7 +124,7 @@ class JupyterInlineActivity extends React.PureComponent {
     return (
       <Fragment>
         {
-          this.state.statusText && 
+          this.state.statusText &&
           <div style={{ textAlign : 'left',fontWeight : 'bold',paddingLeft : '10px',color : '#d2691e' }}>
             <b>Execution Status: </b> {this.state.statusText }
           </div>
@@ -141,25 +141,6 @@ class JupyterInlineActivity extends React.PureComponent {
             </Button>
           </div>
         }
-        <JupyterNotebook
-          action={this.onSolutionRefreshClick}
-          defaultValue={this.getSolutionCode(solution, problem)}
-          persistent={true}
-          readOnly={readOnly}
-          richEditor={true}
-          solution={false}
-          title={readOnly
-            ? "Submitted Code"
-            : (
-            <Fragment>
-              <Typography color="textSecondary">
-                Please first read the Path Activity below. Click the RUN button on the right to test your solution.
-              </Typography>
-              Edit Your Solution Here
-            </Fragment>
-            )
-          }
-        />
         {(solution && (solution.json || solution.loading))
           ? (
             <JupyterNotebook
@@ -180,6 +161,25 @@ class JupyterInlineActivity extends React.PureComponent {
             title="Path Activity"
           />
         )}
+        <JupyterNotebook
+          action={this.onSolutionRefreshClick}
+          defaultValue={this.getSolutionCode(solution, problem)}
+          persistent={true}
+          readOnly={readOnly}
+          richEditor={true}
+          solution={false}
+          title={readOnly
+            ? "Submitted Code"
+            : (
+            <Fragment>
+              <Typography color="textSecondary">
+                Please first read the Path Activity above. Click the RUN button on the right to test your solution.
+              </Typography>
+              Edit Your Solution Here
+            </Fragment>
+            )
+          }
+        />
       </Fragment>
     );
   }
