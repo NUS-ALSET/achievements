@@ -110,6 +110,7 @@ export function* externalProfileRefreshRequestHandler(action) {
       uid,
       action.externalProfileId
     );
+    yield put(notificationShow(`Refreshing ${action.externalProfileType} Achievements`))
     const { timedOut } = yield race({
       response: call(
         [accountService, accountService.watchProfileRefresh],

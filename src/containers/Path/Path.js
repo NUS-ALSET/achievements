@@ -384,6 +384,7 @@ export class Path extends React.Component {
           onOpenActivity={this.onOpenProblem}
           pathStatus={pathStatus}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
+          codeCombatProfile={codeCombatProfile}
         />
         <AddActivityDialog
           fetchGithubFiles={fetchGithubFiles}
