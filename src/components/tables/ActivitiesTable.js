@@ -16,8 +16,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Tooltip from "@material-ui/core/Tooltip";
-import Timeline from "@material-ui/icons/Timeline";
+// import Tooltip from "@material-ui/core/Tooltip";
+// import Timeline from "@material-ui/icons/Timeline";
 
 import DoneIcon from "@material-ui/icons/Done";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -151,7 +151,8 @@ class ActivitiesTable extends React.PureComponent {
                   </TableCell>
                 )}
                 <TableCell className={classes.noWrap} style={{ textAlign : 'left'}}>
-                  {[ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(activity.type) && (
+                  {/* temporary hide for online Oct2018 competition
+                    [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(activity.type) && (
 
                     <Tooltip
                       title={"View Default Solution Analysis"}
@@ -174,7 +175,7 @@ class ActivitiesTable extends React.PureComponent {
                       </Button>
                     </Tooltip>
 
-                  )}
+                  ) */}
                   <Button
                     onClick={() => onOpenActivity(activity)}
                     variant="raised"
