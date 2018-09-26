@@ -7,10 +7,9 @@ import { accountService } from "../../services/account";
 function* updateRecommendationRequestHandler() {
   try {
     const userId = yield select(state => state.firebase.auth.uid);
-    console.log('userid',userId);
-    yield call(accountService.authTimeUpdate, userId);
+      yield call(accountService.authTimeUpdate, userId);
 
-  }catch (err) {
+    }catch (err) {
     console.error(err);
   }
 }
