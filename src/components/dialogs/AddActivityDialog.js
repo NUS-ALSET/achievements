@@ -243,12 +243,12 @@ class AddActivityDialog extends React.PureComponent {
             >
               Step 1: Get the Shareable Link from Google Colab ipynb
             </Typography>
+            <img src={JupyterNotebookStep1} alt="JupyterNotebookStep1" />
             <a
               href="https://colab.research.google.com/drive/1Rx_oOoslo2bbT7CY6nXmWuwzJXootjzA"
               rel="noopener noreferrer"
               target="_blank"
             >
-              <img src={JupyterNotebookStep1} alt="JupyterNotebookStep1" />
               <Typography
                 variant="caption"
                 gutterBottom
@@ -272,12 +272,12 @@ class AddActivityDialog extends React.PureComponent {
             >
               Step 2: Get the Shareable Link of the Solution Notebook
             </Typography>
+            <img src={JupyterNotebookStep2} alt="JupyterNotebookStep2" />
             <a
               href="https://colab.research.google.com/drive/1k-Q9j1AGx3MmQ9xxATlXXggwKo5CGC7C"
               rel="noopener noreferrer"
               target="_blank"
             >
-              <img src={JupyterNotebookStep2} alt="JupyterNotebookStep2" />
               <Typography
                 variant="caption"
                 gutterBottom
