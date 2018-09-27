@@ -18,6 +18,7 @@ const updateUserRecommendations = require("./src/updateUserRecommendations");
 const updateUserPySkills = require("./src/updateUserPySkills.js");
 const processActivitySolutions = require("./src/processActivitySolution");
 const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
+const cohortRecalculate = require("./src/cohortRecalculate");
 const {
   addDestination,
   updateDestinationSkills
@@ -232,4 +233,11 @@ exports.updateDestinationSkills = functions.database
   .onWrite((change, context) => {
     const { activityId } = context.params;
     return updateDestinationSkills(activityId, change.after.val());
+  });
+
+exports.cohortRecalculate = functions.database
+  .ref("/cohortRecalculateQueue/{cohortKey}/{taskKey}")
+  .onCreate((change, context) => {
+    const { cohortKey, taskKey } = context.params;
+    return cohortRecalculate.handler(cohortKey, taskKey);
   });

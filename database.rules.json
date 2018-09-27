@@ -54,6 +54,12 @@
         }
       }
     },
+    "cohortRecalculateQueue": {
+      "$cohortKey": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('/cohorts/' + $cohortKey).exists()"
+      }
+    },
     "cohorts": {
       ".read": true,
       ".write": false,

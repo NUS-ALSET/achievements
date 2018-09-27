@@ -2,6 +2,78 @@ import firebase from "firebase";
 import { ASSIGNMENTS_TYPES } from "./courses";
 
 class CohortsService {
+  fetchCohort(uid, cohortId, checkRecountNeeds) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/cohorts/${cohortId}`)
+        .once("value")
+        .then(snap => snap.val()),
+      firebase
+        .database()
+        .ref(`/cohortCourses/${cohortId}`)
+        .once("value")
+        .then(snap => snap.val()),
+      (checkRecountNeeds &&
+        firebase
+          .database()
+          .ref(`/studentJoinedCourses/${uid}`)
+          .once("value")
+          .then(snap => Object.keys(snap.val() || {}))) ||
+        Promise.resolve([])
+    ])
+      .then(([cohortData, cohortCourses, joinedKeys]) => {
+        if (cohortData) {
+          const coursesKeys = Object.keys(cohortCourses || {});
+
+          cohortData = {
+            id: cohortId,
+            needRecount: coursesKeys.some(key => joinedKeys.includes(key)),
+            ...cohortData,
+            courses: coursesKeys
+              .map(id => ({
+                id,
+                ...cohortCourses[id]
+              }))
+              .sort((a, b) => {
+                if (a.progress > b.progress) {
+                  return -1;
+                } else if (a.progress < b.progress) {
+                  return 1;
+                } else if (a.participants > b.participants) {
+                  return -1;
+                } else if (a.participants < b.participants) {
+                  return 1;
+                }
+                return 0;
+              })
+              .map((course, index) => {
+                return { ...course, rank: index + 1 };
+              })
+          };
+
+          if (cohortData.paths && cohortData.paths.length) {
+            return Promise.all([
+              cohortData,
+              ...cohortData.paths.map(pathId =>
+                firebase
+                  .database()
+                  .ref(`/paths/${pathId}`)
+                  .once("value")
+                  .then(snap => snap.val())
+              )
+            ]);
+          }
+          return [cohortData];
+        }
+        return false;
+      })
+      .then(([cohortData, ...pathsData]) => ({
+        ...cohortData,
+        pathsData
+      }));
+  }
+
   addCohort(cohortData, uid, instructorName) {
     if (cohortData.id) {
       const config = {};
@@ -169,7 +241,8 @@ class CohortsService {
     );
   }
 
-  recalculateCourses(cohortId, cohort) {
+  recalculateCourses(cohortId) {
+    /*
     return firebase
       .database()
       .ref(`/cohortCourses/${cohortId}`)
@@ -181,6 +254,24 @@ class CohortsService {
           )
         )
       );
+      */
+    return new Promise(resolve => {
+      firebase
+        .database()
+        .ref(`/cohortRecalculateQueue/${cohortId}`)
+        .on("child_removed", () => {
+          firebase
+            .database()
+            .ref(`/cohortRecalculateQueue/${cohortId}`)
+            .off("child_removed");
+          resolve();
+        });
+
+      firebase
+        .database()
+        .ref(`/cohortRecalculateQueue/${cohortId}/`)
+        .push(true);
+    });
   }
 
   removeCourse(cohortId, courseId) {
