@@ -1,3 +1,15 @@
+export const COHORT_OPEN = "COHORT_OPEN";
+export const cohortOpen = cohortId => ({
+  type: COHORT_OPEN,
+  cohortId
+});
+
+export const COHORT_FETCH_SUCCESS = "COHORT_FETCH_SUCCESS";
+export const cohortFetchSuccess = cohortData => ({
+  type: COHORT_FETCH_SUCCESS,
+  cohortData
+});
+
 export const COHORT_COURSES_RECALCULATE_REQUEST =
   "COHORT_COURSES_RECALCULATE_REQUEST";
 export const cohortCoursesRecalculateRequest = cohortId => ({

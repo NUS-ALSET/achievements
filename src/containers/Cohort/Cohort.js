@@ -18,8 +18,7 @@ import { firebaseConnect } from "react-redux-firebase";
 
 import CohortCoursesTable from "../../components/tables/CohortCoursesTable";
 import { cohortsService } from "../../services/cohorts";
-import { selectCohort } from "./selectors";
-import { cohortCoursesRecalculateRequest } from "./actions";
+import { cohortCoursesRecalculateRequest, cohortOpen } from "./actions";
 import { sagaInjector } from "../../services/saga";
 
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -48,20 +47,22 @@ class Cohort extends React.PureComponent {
     dispatch: PropTypes.func,
     classes: PropTypes.object,
     cohort: cohort,
-    cohortCourses: PropTypes.object,
     courses: PropTypes.object,
     currentUser: PropTypes.object,
     match: PropTypes.object
   };
 
   state = {
-    selectedCourse: ""
+    selectedCourse: "",
+    mounted: false
   };
 
   componentDidMount() {
     const { dispatch, match } = this.props;
-
-    dispatch(cohortCoursesRecalculateRequest(match.params.cohortId));
+    if (!this.state.mounted) {
+      dispatch(cohortOpen(match.params.cohortId));
+    }
+    this.setState({ mounted: true });
   }
 
   selectCourse = e => this.setState({ selectedCourse: e.target.value });
@@ -157,7 +158,7 @@ class Cohort extends React.PureComponent {
 
 sagaInjector.inject(sagas);
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   currentUser: {
     uid: state.firebase.auth.uid,
     name: state.firebase.auth.displayName
@@ -167,22 +168,16 @@ const mapStateToProps = (state, ownProps) => ({
     state.firebase.data.myCourses,
     state.firebase.data.publicCourses
   ),
-  cohort: selectCohort(state, ownProps),
-  cohortCourses: state.firebase.data.cohortCourses
+  cohort: state.cohort.cohort
 });
 
 export default compose(
   withStyles(styles),
   firebaseConnect((ownProps, store) => {
     const state = store.getState();
-    const cohortId = ownProps.match.params.cohortId;
     const firebaseAuth = state.firebase.auth;
-    const cohort = selectCohort(state, ownProps) || {};
-    const paths = cohort.paths || [];
 
     return [
-      { path: `/cohorts/${cohortId}`, storeAs: "cohort" },
-      { path: `/cohortCourses/${cohortId}`, storeAs: "cohortCourses" },
       {
         path: "/courses",
         storeAs: "myCourses",
@@ -192,10 +187,7 @@ export default compose(
         path: "/courses",
         storeAs: "publicCourses",
         queryParams: ["orderByChild=isPublic", "equalTo=true"]
-      },
-      ...paths.map(id => ({
-        path: `/paths/${id}`
-      }))
+      }
     ];
   }),
   connect(mapStateToProps)
