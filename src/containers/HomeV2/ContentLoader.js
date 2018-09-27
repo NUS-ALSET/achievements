@@ -21,12 +21,12 @@ const Header = () => (
 const Card = () => (
   <ReactContentLoader
     speed={2}
-    width={'100%'}
-    height={'100%'}
+    width={100}
+    height={60}
     primaryColor="#f3f3f3"
     secondaryColor="#ecebeb"
   >
-    <rect x='0' y="0" rx="1" ry="1" width="272" height="200" />
+    <rect x='0' y="0" rx="1" ry="1" width="272" height="175" />
   </ReactContentLoader>
 )
 
@@ -42,18 +42,18 @@ const styles = theme => ({
   container: {
     width: 'calc(100% - 10px)',
     overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'row'
+    whiteSpace: 'nowrap',
+    marginTop: '50px'
   },
   header: {
     height: '50px',
     width: '276px'
   },
   card: {
-    height: '200px',
+    height: '150px',
     width: '272px',
     marginLeft: '9px',
-    marginTop: '50px'
+    display : 'inline-block',
   }
 });
 

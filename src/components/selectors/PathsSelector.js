@@ -23,10 +23,10 @@ class PathsSelector extends React.PureComponent {
     allowMultiple: PropTypes.bool,
     onChange: PropTypes.func,
     paths: PropTypes.object,
-    value: PropTypes.oneOfType(
+    value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.arrayOf(PropTypes.string)
-    )
+    ])
   };
 
   static defaultProps = {

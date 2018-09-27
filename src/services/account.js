@@ -181,10 +181,10 @@ export class AccountService {
    * @param uid
    */
   authTimeUpdate(uid) {
-    return firebase
+    return uid ? firebase
       .database()
       .ref(`/users/${uid}/lastAuthTime`)
-      .set({ ".sv": "timestamp" });
+      .set({ ".sv": "timestamp" }) : Promise.resolve();
   }
 
   /**
