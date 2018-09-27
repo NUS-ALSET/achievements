@@ -246,7 +246,7 @@ export class Path extends React.Component {
     if (!uid) {
       return <div>Login required to display this page</div>;
     }
-
+    
     if (!(pathActivities && pathActivities.path)) {
       return <LinearProgress />;
     }

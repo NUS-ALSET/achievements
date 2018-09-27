@@ -106,20 +106,7 @@ export class AccountService {
   }
 
   watchProfileRefresh(uid, externalProfileId) {
-    let skip = true;
-    return new Promise(resolve =>
-      firebase
-        .ref(`/userAchievements/${uid}/${externalProfileId}`)
-        .on("value", data => {
-          if (skip) {
-            skip = false;
-            return;
-          }
-          data = data.val();
-          firebase.ref(`/userAchievements/${uid}/${externalProfileId}`).off();
-          resolve(data);
-        })
-    );
+    return firebase.watchEvent('value', `/userAchievements/${uid}/${externalProfileId}`)
   }
 
   /**
