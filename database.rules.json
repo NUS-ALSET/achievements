@@ -244,7 +244,7 @@
       }
     },
     "paths": {
-      ".read": "auth != null",
+      ".read": true,
       ".indexOn": ["owner", "isPublic"],
       "$pathKey": {
         ".write": "auth != null && (

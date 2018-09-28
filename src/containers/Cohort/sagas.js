@@ -1,4 +1,4 @@
-import { call, put, select, take, takeLatest } from "redux-saga/effects";
+import { call, put, select, takeLatest } from "redux-saga/effects";
 import {
   COHORT_COURSES_RECALCULATE_REQUEST,
   COHORT_OPEN,
@@ -8,25 +8,19 @@ import {
   cohortFetchSuccess
 } from "./actions";
 import { cohortsService } from "../../services/cohorts";
-import { selectCohort } from "./selectors";
 import { notificationShow } from "../Root/actions";
 
 function* cohortOpenHandle(action) {
   let uid = yield select(state => state.firebase.auth.uid);
-
-  if (!uid) {
-    yield take("@@reactReduxFirebase/LOGIN");
-    uid = yield select(state => state.firebase.auth.uid);
-  }
 
   try {
     const cohortData = yield call(
       [cohortsService, cohortsService.fetchCohort],
       uid,
       action.cohortId,
-      true
+      !!uid
     );
-    if (cohortData.needRecount) {
+    if (uid && cohortData.needRecount) {
       yield put(cohortCoursesRecalculateRequest(cohortData.id));
     }
     yield put(cohortFetchSuccess(cohortData));
@@ -36,15 +30,7 @@ function* cohortOpenHandle(action) {
 }
 
 function* cohortRecalculationRequestHandle(action) {
-  let data = yield select(state => ({
-    uid: state.firebase.auth.uid,
-    cohort: selectCohort(state, { match: { params: action } })
-  }));
-
-  // If no uid then wait for login
-  if (!data.uid) {
-    yield take("@@reactReduxFirebase/LOGIN");
-  }
+  let uid = yield select(state => state.firebase.auth.uid);
 
   try {
     yield call(
@@ -54,7 +40,7 @@ function* cohortRecalculationRequestHandle(action) {
     yield put(cohortCoursesRecalculateSuccess(action.cohortId));
     const cohortData = yield call(
       [cohortsService, cohortsService.fetchCohort],
-      data.uid,
+      uid,
       action.cohortId,
       true
     );
