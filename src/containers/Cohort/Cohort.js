@@ -53,16 +53,12 @@ class Cohort extends React.PureComponent {
   };
 
   state = {
-    selectedCourse: "",
-    mounted: false
+    selectedCourse: ""
   };
 
   componentDidMount() {
     const { dispatch, match } = this.props;
-    if (!this.state.mounted) {
-      dispatch(cohortOpen(match.params.cohortId));
-    }
-    this.setState({ mounted: true });
+    dispatch(cohortOpen(match.params.cohortId));
   }
 
   selectCourse = e => this.setState({ selectedCourse: e.target.value });
@@ -176,6 +172,10 @@ export default compose(
   firebaseConnect((ownProps, store) => {
     const state = store.getState();
     const firebaseAuth = state.firebase.auth;
+
+    if (!firebaseAuth.uid) {
+      return [];
+    }
 
     return [
       {

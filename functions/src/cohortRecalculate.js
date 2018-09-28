@@ -155,7 +155,7 @@ exports.handler = (cohortKey, taskKey) =>
       const cohort = responses[0];
       const courses = responses[1];
       return Promise.all(
-        Object.keys(courses || {}).map(courseId =>
+        Object.keys(courses || []).map(courseId =>
           recalculateCourse(cohortKey, courseId, cohort)
         )
       );
