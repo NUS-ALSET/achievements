@@ -81,16 +81,36 @@ class JupyterInlineActivity extends React.PureComponent {
     }
     if (solution.failed) {
       return (
-        <Typography color="error">
+        <Typography
+          variant="title"
+          gutterBottom
+          color="error"
+        >
           (There is something wrong with your solution...)
         </Typography>
       );
     }
     if (solution.loading) {
-      return <Typography color="textSecondary">(Checking)</Typography>;
+      return (
+        <Typography
+          variant="display2"
+          gutterBottom
+          color="textSecondary"
+        >
+          (Checking)
+        </Typography>
+      );
     }
     if (solution.checked) {
-      return <Typography color="primary">(Passed)</Typography>;
+      return (
+        <Typography
+          variant="display2"
+          gutterBottom
+          color="primary"
+        >
+          (Passed)
+        </Typography>
+      );
     }
   };
 
