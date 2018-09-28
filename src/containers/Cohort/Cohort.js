@@ -75,7 +75,15 @@ class Cohort extends React.PureComponent {
   };
 
   render() {
-    const { dispatch, currentUser, cohort, courses, classes } = this.props;
+    const { auth, dispatch, currentUser, cohort, courses, classes } = this.props;
+    // taken from Courses.js, display if not logged in
+    if (auth.isEmpty) {
+      return (
+        <div>
+          Register or Login required to display cohort
+        </div>
+      );
+    }
 
     if (!cohort) {
       return <div>Loading</div>;
@@ -155,6 +163,7 @@ class Cohort extends React.PureComponent {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
+  auth: state.firebase.auth,
   currentUser: {
     uid: state.firebase.auth.uid,
     name: state.firebase.auth.displayName
