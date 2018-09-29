@@ -890,7 +890,7 @@ export class PathsService {
    *
    * @param {String} pathId
    * @param {String} collaboratorId empty param leads to remove that
-   * collaborator
+   * assistants
    * @param {String} action - could be `add` and `remove` only
    */
   updatePathCollaborator(pathId, collaboratorId, action) {

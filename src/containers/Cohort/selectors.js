@@ -1,3 +1,24 @@
+import { USER_STATUSES } from "../../types/constants";
+
+export const selectUserStatus = state => {
+  const uid = state.firebase.auth.uid;
+  const cohort = state.cohort.cohort;
+
+  if (!(cohort && uid)) {
+    return USER_STATUSES.viewer;
+  }
+
+  if (uid === cohort.owner) {
+    return USER_STATUSES.owner;
+  }
+
+  if (cohort.assistantKeys && cohort.assistantKeys.includes(uid)) {
+    return USER_STATUSES.assistant;
+  }
+
+  return USER_STATUSES.viewer;
+};
+
 export const selectCohort = (state, ownProps) => {
   const cohortId = ownProps.match.params.cohortId;
   const cohort = state.firebase.data.cohort;
