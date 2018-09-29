@@ -1,5 +1,6 @@
 import {
   ACCOUNT_CHANGE_ADMIN_STATUS,
+  ACCOUNT_FETCH_PATHS,
   DISPLAY_NAME_EDIT_TOGGLE,
   EXTERNAL_PROFILE_DIALOG_HIDE,
   EXTERNAL_PROFILE_DIALOG_SHOW,
@@ -15,12 +16,13 @@ import {
 
 export const account = (
   state = {
+    achievementsRefreshingInProgress: false,
+    externalProfileInUpdate: false,
+    displayNameEdit: false,
     isAdmin: false,
+    joinedPaths: {},
     showExternalProfileDialog: false,
     showRemoveExternalProfileDialog: false,
-    externalProfileInUpdate: false,
-    achievementsRefreshingInProgress: false,
-    displayNameEdit: false,
     removingProfileId: "",
     removingProfileType: ""
   },
@@ -31,6 +33,14 @@ export const account = (
       return {
         ...state,
         isAdmin: action.adminStatus
+      };
+    case ACCOUNT_FETCH_PATHS:
+      return {
+        ...state,
+        joinedPaths: {
+          ...state.joinedPaths,
+          [action.accountId]: action.paths
+        }
       };
     case EXTERNAL_PROFILE_DIALOG_SHOW:
       return {
