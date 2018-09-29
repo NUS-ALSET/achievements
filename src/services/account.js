@@ -106,7 +106,10 @@ export class AccountService {
   }
 
   watchProfileRefresh(uid, externalProfileId) {
-    return firebase.watchEvent('value', `/userAchievements/${uid}/${externalProfileId}`)
+    return firebase.watchEvent(
+      "value",
+      `/userAchievements/${uid}/${externalProfileId}`
+    );
   }
 
   /**
@@ -121,6 +124,47 @@ export class AccountService {
       serviceId: login,
       uid: uid
     });
+  }
+
+  fetchJoinedPaths(uid) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref(`/users/${uid}/displayName`)
+        .once("value")
+        .then(snap => snap.val()),
+      firebase
+        .database()
+        .ref(`/studentJoinedPaths/${uid}`)
+        .once("value")
+        .then(snap => snap.val() || {})
+        .then(joinedPathsData =>
+          Promise.all(
+            Object.keys(joinedPathsData).map(key =>
+              firebase
+                .database()
+                .ref(`/paths/${key}/name`)
+                .once("value")
+                .then(snap => ({
+                  id: key,
+                  name: snap.val() || ""
+                }))
+            )
+          )
+        ),
+      firebase
+        .database()
+        .ref(`/completedActivities/${uid}`)
+        .once("value")
+        .then(snap => snap.val() || {})
+    ]).then(
+      ([userName, paths, solutions]) =>
+        userName &&
+        paths.map(path => ({
+          ...path,
+          solutions: Object.keys(solutions[path.id] || {}).length
+        }))
+    );
   }
 
   /**
@@ -168,10 +212,12 @@ export class AccountService {
    * @param uid
    */
   authTimeUpdate(uid) {
-    return uid ? firebase
-      .database()
-      .ref(`/users/${uid}/lastAuthTime`)
-      .set({ ".sv": "timestamp" }) : Promise.resolve();
+    return uid
+      ? firebase
+          .database()
+          .ref(`/users/${uid}/lastAuthTime`)
+          .set({ ".sv": "timestamp" })
+      : Promise.resolve();
   }
 
   /**
@@ -213,6 +259,13 @@ export class AccountService {
         .ref("/config/jestRunnerConfig")
         .update(jestUpdates)
     ]);
+  }
+
+  updateProfileData(uid, field, data) {
+    return firebase
+      .database()
+      .ref(`/users/${uid}/${field}`)
+      .set(data);
   }
 }
 

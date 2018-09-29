@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import Typography from "@material-ui/core/Typography";
 
-class ExternalProfileCard extends React.PureComponent {
+class ExternalProfileCard extends React.Component {
   static propTypes = {
     userAchievements: PropTypes.object,
     externalProfile: PropTypes.object.isRequired,

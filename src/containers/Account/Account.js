@@ -7,13 +7,15 @@ import { accountService } from "../../services/account";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import {
+  accountOpen,
   displayNameEditToggle,
   displayNameUpdateRequest,
   externalProfileDialogHide,
   externalProfileDialogShow,
   externalProfileRefreshRequest,
   externalProfileRemoveDialogShow,
-  externalProfileUpdateRequest
+  externalProfileUpdateRequest,
+  profileUpdateDataRequest
 } from "./actions";
 import { firebaseConnect } from "react-redux-firebase";
 import { notificationShow } from "../Root/actions";
@@ -26,7 +28,15 @@ import CheckIcon from "@material-ui/icons/Check";
 import EditIcon from "@material-ui/icons/Edit";
 
 import ExternalProfileCard from "../../components/cards/ExternalProfileCard";
+import FormControl from "@material-ui/core/FormControl";
+import FormLabel from "@material-ui/core/FormLabel";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Switch from "@material-ui/core/Switch";
 import Grid from "@material-ui/core/Grid";
+import MenuItem from "@material-ui/core/MenuItem";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
@@ -38,7 +48,8 @@ import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
-import { getDisplayName } from "./selectors";
+import { getDisplayName, getProfileData } from "./selectors";
+import JoinedPathCard from "../../components/cards/JoinedPathCard";
 
 const styles = theme => ({
   card: {
@@ -48,25 +59,31 @@ const styles = theme => ({
 
 class Account extends React.PureComponent {
   static propTypes = {
-    externalProfileInUpdate: PropTypes.bool,
     achievementsRefreshingInProgress: PropTypes.bool,
-    classes: PropTypes.object.isRequired,
-    showDialog: PropTypes.bool.isRequired,
-    firebase: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
-    user: PropTypes.object,
     auth: PropTypes.object,
+    classes: PropTypes.object.isRequired,
+    dispatch: PropTypes.func.isRequired,
+    displayNameEdit: PropTypes.bool,
+    externalProfileInUpdate: PropTypes.bool,
+    externalProfiles: PropTypes.object,
+    joinedPaths: PropTypes.object,
+    match: PropTypes.object,
+    profileData: PropTypes.array,
+    removeRequest: PropTypes.any,
+    showDialog: PropTypes.bool.isRequired,
+    user: PropTypes.object,
     uid: PropTypes.string,
     userName: PropTypes.string,
-    externalProfiles: PropTypes.object,
-    userAchievements: PropTypes.object,
-    displayNameEdit: PropTypes.bool,
-    removeRequest: PropTypes.any
+    userAchievements: PropTypes.object
   };
 
   state = {
     newDisplayName: ""
   };
+
+  componentDidMount() {
+    this.props.dispatch(accountOpen(this.props.match.params.accountId));
+  }
 
   addExternalProfileRequest = externalProfile => {
     this.props.dispatch(externalProfileDialogShow(externalProfile));
@@ -126,18 +143,24 @@ class Account extends React.PureComponent {
     this.props.dispatch(externalProfileUpdateRequest(profile, "CodeCombat"));
   };
 
+  onProfileDataUpdate = (field, value) =>
+    this.props.dispatch(profileUpdateDataRequest(field, value));
+
   render() {
     const {
+      achievementsRefreshingInProgress,
       auth,
       classes,
-      userAchievements,
-      externalProfiles,
-      removeRequest,
-      user,
-      userName,
       displayNameEdit,
       dispatch,
-      achievementsRefreshingInProgress
+      externalProfiles,
+      joinedPaths,
+      match,
+      profileData,
+      userAchievements,
+      removeRequest,
+      user,
+      userName
     } = this.props;
 
     // taken from Courses.js, display if not logged in
@@ -148,6 +171,10 @@ class Account extends React.PureComponent {
           display this page
         </div>
       );
+    }
+
+    if (!user) {
+      return <LinearProgress />;
     }
 
     return (
@@ -196,6 +223,73 @@ class Account extends React.PureComponent {
                     </IconButton>
                   </Fragment>
                 )}
+                {profileData.map(item => (
+                  <TextField
+                    fullWidth
+                    key={item.id}
+                    label={item.title}
+                    onChange={e =>
+                      this.onProfileDataUpdate(item.id, e.target.value)
+                    }
+                    select
+                    value={user[item.id] || ""}
+                  >
+                    {item.options.map(option => (
+                      <MenuItem key={option.id} value={option.name}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                ))}
+                <FormControl
+                  component="fieldset"
+                  style={{
+                    marginTop: "20px"
+                  }}
+                >
+                  <FormLabel component="legend">Public visibility</FormLabel>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={
+                            user.showDisplayName === undefined
+                              ? true
+                              : user.showDisplayName
+                          }
+                          onChange={e =>
+                            this.onProfileDataUpdate(
+                              "showDisplayName",
+                              e.target.checked
+                            )
+                          }
+                          value="showDisplayName"
+                        />
+                      }
+                      label="Show Display Name"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={
+                            user.showCodeCombatProfile === undefined
+                              ? true
+                              : user.showCodeCombatProfile
+                          }
+                          onChange={e =>
+                            this.onProfileDataUpdate(
+                              "showCodeCombatProfile",
+                              e.target.checked
+                            )
+                          }
+                          value="showCodeCombatProfile"
+                        />
+                      }
+                      label="Show CodeCombat Profile"
+                    />
+                  </FormGroup>
+                  <FormHelperText>Display data to other users</FormHelperText>
+                </FormControl>
               </CardContent>
             </Card>
           </Grid>
@@ -215,6 +309,7 @@ class Account extends React.PureComponent {
                     (userAchievements || {})[externalProfileKey]
                   }
                 />
+
                 <AddProfileDialog
                   externalProfile={externalProfiles[externalProfileKey]}
                   inProgress={this.props.externalProfileInUpdate}
@@ -224,6 +319,15 @@ class Account extends React.PureComponent {
                   uid={this.props.uid}
                 />
               </Fragment>
+            ))}
+            {(joinedPaths[match.params.accountId] || []).map(path => (
+              <JoinedPathCard
+                classes={classes}
+                id={path.id}
+                key={path.id}
+                name={path.name}
+                solutions={path.solutions}
+              />
             ))}
           </Grid>
         </Grid>
@@ -241,34 +345,36 @@ class Account extends React.PureComponent {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
-  userName: getDisplayName(state, ownProps),
-  uid: state.firebase.auth.uid,
+  achievementsRefreshingInProgress:
+    state.account.achievementsRefreshingInProgress,
   auth: state.firebase.auth,
+  displayNameEdit: state.account.displayNameEdit,
 
   // That should be in firebase
   externalProfiles: accountService.fetchExternalProfiles(),
-
-  userAchievements: (state.firebase.data.userAchievements || {})[
-    ownProps.match.params.accountId || state.firebase.auth.uid
-  ],
-  showDialog: state.account.showExternalProfileDialog,
+  externalProfileInUpdate: state.account.externalProfileInUpdate,
+  joinedPaths: state.account.joinedPaths,
+  profileData: getProfileData(state),
   removeRequest: {
     actual: state.account.showRemoveExternalProfileDialog,
     id: state.account.removingProfileId,
     type: state.account.removingProfileType
   },
-  externalProfileInUpdate: state.account.externalProfileInUpdate,
-  achievementsRefreshingInProgress:
-    state.account.achievementsRefreshingInProgress,
-  displayNameEdit: state.account.displayNameEdit,
+  showDialog: state.account.showExternalProfileDialog,
+  uid: state.firebase.auth.uid,
   user: (state.firebase.data.users || {})[
     ownProps.match.params.accountId || state.firebase.auth.uid
-  ]
+  ],
+  userAchievements: (state.firebase.data.userAchievements || {})[
+    ownProps.match.params.accountId || state.firebase.auth.uid
+  ],
+  userName: getDisplayName(state, ownProps)
 });
 
 export default compose(
   withRouter,
   firebaseConnect((ownProps, store) => [
+    "/profileData",
     `/users/${ownProps.match.params.accountId}`,
     `/userAchievements/${ownProps.match.params.accountId}`,
     `/users/${store.getState().firebase.auth.uid}`,
