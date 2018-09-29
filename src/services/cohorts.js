@@ -8,12 +8,17 @@ class CohortsService {
         .database()
         .ref(`/cohorts/${cohortId}`)
         .once("value")
-        .then(snap => snap.val()),
+        .then(snap => snap.val() || {}),
       firebase
         .database()
         .ref(`/cohortCourses/${cohortId}`)
         .once("value")
-        .then(snap => snap.val()),
+        .then(snap => snap.val() || {}),
+      firebase
+        .database()
+        .ref(`/cohortAssistants/${cohortId}`)
+        .once("value")
+        .then(snap => snap.val() || {}),
       (checkRecountNeeds &&
         firebase
           .database()
@@ -22,54 +27,68 @@ class CohortsService {
           .then(snap => Object.keys(snap.val() || {}))) ||
         Promise.resolve([])
     ])
-      .then(([cohortData, cohortCourses, joinedKeys]) => {
+      .then(([cohortData, cohortCourses, assistants, joinedKeys]) => {
         if (cohortData) {
           const coursesKeys = Object.keys(cohortCourses || {});
 
-          cohortData = {
-            id: cohortId,
-            needRecount: coursesKeys.some(key => joinedKeys.includes(key)),
-            ...cohortData,
-            courses: coursesKeys
-              .map(id => ({
-                id,
-                ...cohortCourses[id]
-              }))
-              .sort((a, b) => {
-                if (a.progress > b.progress) {
-                  return -1;
-                } else if (a.progress < b.progress) {
-                  return 1;
-                } else if (a.participants > b.participants) {
-                  return -1;
-                } else if (a.participants < b.participants) {
-                  return 1;
-                }
-                return 0;
-              })
-              .map((course, index) => {
-                return { ...course, rank: index + 1 };
-              })
-          };
-
-          if (cohortData.paths && cohortData.paths.length) {
-            return Promise.all([
-              cohortData,
-              ...cohortData.paths.map(pathId =>
+          const promises = [
+            {
+              id: cohortId,
+              needRecount: coursesKeys.some(key => joinedKeys.includes(key)),
+              ...cohortData,
+              assistantKeys: Object.keys(assistants || {}),
+              courses: coursesKeys
+                .map(id => ({
+                  id,
+                  ...cohortCourses[id]
+                }))
+                .sort((a, b) => {
+                  if (a.progress > b.progress) {
+                    return -1;
+                  } else if (a.progress < b.progress) {
+                    return 1;
+                  } else if (a.participants > b.participants) {
+                    return -1;
+                  } else if (a.participants < b.participants) {
+                    return 1;
+                  }
+                  return 0;
+                })
+                .map((course, index) => {
+                  return { ...course, rank: index + 1 };
+                })
+            },
+            Promise.all(
+              Object.keys(assistants || {}).map(id =>
                 firebase
                   .database()
-                  .ref(`/paths/${pathId}`)
+                  .ref(`/users/${id}`)
                   .once("value")
-                  .then(snap => snap.val())
+                  .then(snap => ({ id, ...(snap.val() || {}) }))
               )
-            ]);
+            )
+          ];
+
+          if (cohortData.paths && cohortData.paths.length) {
+            promises.push(
+              Promise.all(
+                cohortData.paths.map(pathId =>
+                  firebase
+                    .database()
+                    .ref(`/paths/${pathId}`)
+                    .once("value")
+                    .then(snap => snap.val())
+                )
+              )
+            );
           }
-          return [cohortData];
+          return Promise.all(promises);
         }
         return false;
       })
-      .then(([cohortData, ...pathsData]) => ({
+      .then(([cohortData, assistants, pathsData]) => ({
         ...cohortData,
+        assistants,
         pathsData
       }));
   }
@@ -124,19 +143,21 @@ class CohortsService {
         .database()
         .ref(`/courseMembers/${courseId}`)
         .once("value")
-    ]).then(responses => {
-      const course = responses[0].val();
-      const members = responses[1].val();
+    ])
+      .then(responses => {
+        const course = responses[0].val();
+        const members = responses[1].val();
 
-      return firebase
-        .database()
-        .ref(`/cohortCourses/${cohortId}/${courseId}`)
-        .set({
-          name: course.name,
-          progress: 0,
-          participants: Object.keys(members || {}).length
-        });
-    });
+        return firebase
+          .database()
+          .ref(`/cohortCourses/${cohortId}/${courseId}`)
+          .set({
+            name: course.name,
+            progress: 0,
+            participants: Object.keys(members || {}).length
+          });
+      })
+      .catch(err => console.error(err.message));
   }
 
   recalculatePathsCourse(cohortId, courseId, cohort) {
@@ -279,6 +300,20 @@ class CohortsService {
       .database()
       .ref(`/cohortCourses/${cohortId}/${courseId}`)
       .remove();
+  }
+
+  updateAssistants(action) {
+    const ref = firebase
+      .database()
+      .ref(`/cohortAssistants/${action.cohortId}/${action.assistantId}`);
+
+    // If action.action equals action do some action until action occurs
+    switch (action.action) {
+      case "add":
+        return ref.set(true);
+      default:
+        return ref.remove();
+    }
   }
 }
 

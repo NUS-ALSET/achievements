@@ -53,3 +53,54 @@ export const cohortCourseRecalculateFail = (cohortId, courseId) => ({
   cohortId,
   courseId
 });
+
+export const COHORT_OPEN_ASSISTANTS_DIALOG = "COHORT_OPEN_ASSISTANTS_DIALOG";
+export const cohortOpenAssistantsDialog = cohortId => ({
+  type: COHORT_OPEN_ASSISTANTS_DIALOG,
+  cohortId
+});
+
+export const COHORT_CLOSE_DIALOG = "COHORT_CLOSE_DIALOG";
+export const cohortCloseDialog = () => ({
+  type: COHORT_CLOSE_DIALOG
+});
+
+export const COHORT_UPDATE_ASSISTANTS_REQUEST =
+  "COHORT_UPDATE_ASSISTANTS_REQUEST";
+export const cohortUpdateAssistantsRequest = (
+  cohortId,
+  assistantId,
+  action
+) => ({
+  type: COHORT_UPDATE_ASSISTANTS_REQUEST,
+  cohortId,
+  assistantId,
+  action
+});
+
+export const COHORT_UPDATE_ASSISTANTS_SUCCESS =
+  "COHORT_UPDATE_ASSISTANTS_SUCCESS";
+export const cohortUpdateAssistantsSuccess = (
+  cohortId,
+  assistantId,
+  action
+) => ({
+  type: COHORT_UPDATE_ASSISTANTS_SUCCESS,
+  cohortId,
+  assistantId,
+  action
+});
+
+export const COHORT_UPDATE_ASSISTANTS_FAIL = "COHORT_UPDATE_ASSISTANTS_FAIL";
+export const cohortUpdateAssistantsFail = (
+  cohortId,
+  assistantId,
+  action,
+  reason
+) => ({
+  type: COHORT_UPDATE_ASSISTANTS_FAIL,
+  cohortId,
+  assistantId,
+  action,
+  reason
+});

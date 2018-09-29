@@ -2,10 +2,13 @@ import { call, put, select, takeLatest } from "redux-saga/effects";
 import {
   COHORT_COURSES_RECALCULATE_REQUEST,
   COHORT_OPEN,
+  COHORT_UPDATE_ASSISTANTS_REQUEST,
   cohortCoursesRecalculateFail,
   cohortCoursesRecalculateRequest,
   cohortCoursesRecalculateSuccess,
-  cohortFetchSuccess
+  cohortFetchSuccess,
+  cohortUpdateAssistantsFail,
+  cohortUpdateAssistantsSuccess
 } from "./actions";
 import { cohortsService } from "../../services/cohorts";
 import { notificationShow } from "../Root/actions";
@@ -50,6 +53,29 @@ function* cohortRecalculationRequestHandle(action) {
   }
 }
 
+function* cohortUpdateAssistantRequestHandler(action) {
+  try {
+    yield call(cohortsService.updateAssistants, action);
+    yield put(
+      cohortUpdateAssistantsSuccess(
+        action.cohortId,
+        action.assistantId,
+        action.action
+      )
+    );
+  } catch (err) {
+    yield put(
+      cohortUpdateAssistantsFail(
+        action.cohortId,
+        action.assistantId,
+        action.action,
+        err.message
+      )
+    );
+    yield notificationShow(err.message);
+  }
+}
+
 export default [
   function* watchCohortOpen() {
     yield takeLatest(COHORT_OPEN, cohortOpenHandle);
@@ -58,6 +84,12 @@ export default [
     yield takeLatest(
       COHORT_COURSES_RECALCULATE_REQUEST,
       cohortRecalculationRequestHandle
+    );
+  },
+  function* watchCohortUpdateAssistantRequest() {
+    yield takeLatest(
+      COHORT_UPDATE_ASSISTANTS_REQUEST,
+      cohortUpdateAssistantRequestHandler
     );
   }
 ];

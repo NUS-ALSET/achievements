@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 import { ACTIVITY_TYPES } from "../../services/paths";
 
 export const PATH_STATUS_OWNER = "owner";
-export const PATH_STATUS_COLLABORATOR = "collaborator";
+export const PATH_STATUS_COLLABORATOR = "assistants";
 export const PATH_STATUS_JOINED = "joined";
 export const PATH_STATUS_NOT_JOINED = "not_joined";
 

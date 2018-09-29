@@ -49,7 +49,8 @@
         "$courseKey": {
           ".write": "
             auth != null &&
-            auth.uid == root.child('/cohorts/' + $cohortKey + '/owner').val()
+            (auth.uid == root.child('/cohorts/' + $cohortKey + '/owner').val() ||
+            root.child('/cohortAssistants/' + $cohortKey + '/' + auth.uid).exists())
           "
         }
       }
@@ -58,6 +59,14 @@
       "$cohortKey": {
         ".read": "auth != null",
         ".write": "auth != null && root.child('/cohorts/' + $cohortKey).exists()"
+      }
+    },
+    "cohortAssistants": {
+      "$cohortKey": {
+        ".read": true,
+        ".write": "auth != null &&
+          root.child('/cohorts/' + $cohortKey).exists() &&
+          root.child('/cohorts/' + $cohortKey + '/owner').val() == auth.uid"
       }
     },
     "cohorts": {

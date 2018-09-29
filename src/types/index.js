@@ -103,3 +103,9 @@ export const cohort = shape({
   threshold: number,
   paths: arrayOf(string)
 });
+
+export const user = shape({
+  displayName: string,
+  id: string,
+  photoURL: string
+});

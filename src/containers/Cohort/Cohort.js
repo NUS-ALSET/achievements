@@ -18,7 +18,13 @@ import { firebaseConnect } from "react-redux-firebase";
 
 import CohortCoursesTable from "../../components/tables/CohortCoursesTable";
 import { cohortsService } from "../../services/cohorts";
-import { cohortCoursesRecalculateRequest, cohortOpen } from "./actions";
+import {
+  cohortCloseDialog,
+  cohortCoursesRecalculateRequest,
+  cohortOpen,
+  cohortOpenAssistantsDialog,
+  cohortUpdateAssistantsRequest
+} from "./actions";
 import { sagaInjector } from "../../services/saga";
 
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -27,6 +33,10 @@ import sagas from "./sagas";
 import { cohort } from "../../types";
 
 import Breadcrumbs from "../../components/Breadcrumbs";
+import { USER_STATUSES } from "../../types/constants";
+import { selectUserStatus } from "./selectors";
+import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
+import { assignmentAssistantKeyChange } from "../Assignments/actions";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -49,7 +59,8 @@ class Cohort extends React.PureComponent {
     cohort: cohort,
     courses: PropTypes.object,
     currentUser: PropTypes.object,
-    match: PropTypes.object
+    match: PropTypes.object,
+    ui: PropTypes.object
   };
 
   state = {
@@ -63,19 +74,37 @@ class Cohort extends React.PureComponent {
 
   selectCourse = e => this.setState({ selectedCourse: e.target.value });
 
+  addAssistant = (cohortId, assistantId) =>
+    this.props.dispatch(
+      cohortUpdateAssistantsRequest(cohortId, assistantId, "add")
+    );
+
   addCourse = () => {
     const { cohort } = this.props;
 
     cohortsService.addCourse(cohort.id, this.state.selectedCourse);
   };
 
+  checkAssistant = assistantKey =>
+    this.props.dispatch(assignmentAssistantKeyChange(assistantKey));
+
+  closeDialog = () => this.props.dispatch(cohortCloseDialog());
+
   recalculate = () => {
     const { cohort, dispatch } = this.props;
     dispatch(cohortCoursesRecalculateRequest(cohort.id));
   };
 
+  removeAssistant = (cohortId, assistantId) =>
+    this.props.dispatch(
+      cohortUpdateAssistantsRequest(cohortId, assistantId, "remove")
+    );
+
+  showAssistantsDialog = () =>
+    this.props.dispatch(cohortOpenAssistantsDialog(this.props.cohort.id));
+
   render() {
-    const { dispatch, currentUser, cohort, courses, classes } = this.props;
+    const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
 
     if (!cohort) {
       return <div>Loading</div>;
@@ -104,7 +133,9 @@ class Cohort extends React.PureComponent {
         >
           Cohort Description: {cohort.description || "None provided"}
         </Typography>
-        {isOwner && (
+        {[USER_STATUSES.owner, USER_STATUSES.assistant].includes(
+          currentUser.status
+        ) && (
           <Toolbar>
             <TextField
               className={classes.toolbarItem}
@@ -139,8 +170,27 @@ class Cohort extends React.PureComponent {
             >
               Recalculate
             </Button>
+            {currentUser.status === USER_STATUSES.owner && (
+              <Button
+                className={classes.toolbarButton}
+                onClick={this.showAssistantsDialog}
+                variant="raised"
+              >
+                Collaborators
+              </Button>
+            )}
           </Toolbar>
         )}
+        <ControlAssistantsDialog
+          assistants={cohort.assistants}
+          newAssistant={ui.newAssistant}
+          onAddAssistant={this.addAssistant}
+          onAssistantKeyChange={this.checkAssistant}
+          onClose={this.closeDialog}
+          onRemoveAssistant={this.removeAssistant}
+          open={ui.dialog === "Assistants"}
+          target={cohort.id}
+        />
         <CohortCoursesTable
           cohort={cohort}
           courses={cohort.courses}
@@ -155,16 +205,18 @@ class Cohort extends React.PureComponent {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
-  currentUser: {
-    uid: state.firebase.auth.uid,
-    name: state.firebase.auth.displayName
-  },
   courses: Object.assign(
     {},
     state.firebase.data.myCourses,
     state.firebase.data.publicCourses
   ),
-  cohort: state.cohort.cohort
+  cohort: state.cohort.cohort,
+  currentUser: {
+    uid: state.firebase.auth.uid,
+    name: state.firebase.auth.displayName,
+    status: selectUserStatus(state)
+  },
+  ui: state.cohort.ui
 });
 
 export default compose(
