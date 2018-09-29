@@ -27,15 +27,15 @@ export const ASSIGNMENTS_TYPES = {
   },
   Profile: {
     id: "Profile",
-    caption: "Enter Code Combat Profile"
+    caption: "Fetch CodeCombat Profile"
   },
   CodeCombat: {
     id: "CodeCombat",
-    caption: "Complete Code Combat Level"
+    caption: "Complete CodeCombat Level"
   },
   CodeCombat_Number: {
     id: "CodeCombat_Number",
-    caption: "Complete Number of Code Combat Levels"
+    caption: "Complete Number of CodeCombat Levels"
   },
   TeamFormation: {
     id: "TeamFormation",
@@ -220,7 +220,7 @@ export class CoursesService {
       throw new Error("Name required for Assignment");
     }
     if (assignment.questionType === "CodeCombat" && !assignment.level) {
-      throw new Error("Level required for Code Combat Assignment");
+      throw new Error("Level required for CodeCombat Assignment");
     }
   }
 
@@ -353,7 +353,7 @@ export class CoursesService {
             }
           } else {
             reject(new Error(
-              `Please enter your Code Combat username`
+              `Please enter your CodeCombat profile in the 1st question`
             ));
           }
         });
@@ -370,7 +370,7 @@ export class CoursesService {
             window.open(`http://codecombat.com/play/level/${assignment.level}`, '_blank');
           }, 2000)
           return new Error(
-            `Opening up "${assignment.level}" level in another tab`
+            `Opening up "${assignment.level}" level in another tab... Please allow pop-up to see the new tab.`
           )
         }
         break;

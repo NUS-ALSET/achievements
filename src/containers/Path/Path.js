@@ -61,7 +61,7 @@ import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialo
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
-import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
+import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
@@ -363,12 +363,13 @@ export class Path extends React.Component {
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
-        <AddProfileDialog
+        <FetchCodeCombatDialog
           defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
+          currentUserId={uid}
           externalProfile={{
             url: "https://codecombat.com",
             id: "CodeCombat",
-            name: "Code Combat",
+            name: "CodeCombat",
             description: "learn programming by playing games"
           }}
           onClose={onCloseDialog}

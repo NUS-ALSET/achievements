@@ -144,7 +144,7 @@ export class AccountService {
       CodeCombat: {
         url: "https://codecombat.com",
         id: "CodeCombat",
-        name: "Code Combat",
+        name: "CodeCombat",
         description: "learn programming by playing games"
       }
       /* Unnecessary for now

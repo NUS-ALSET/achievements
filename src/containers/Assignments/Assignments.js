@@ -294,7 +294,7 @@ class Assignments extends React.Component {
         <AddProfileDialog
           externalProfile={{
             url: "https://codecombat.com",
-            name: "Code Combat",
+            name: "CodeCombat",
             id: "CodeCombat"
           }}
           onClose={this.closeDialog}

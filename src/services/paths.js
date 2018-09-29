@@ -30,15 +30,15 @@ export const ACTIVITY_TYPES = {
   },
   profile: {
     id: "profile",
-    caption: "Enter Code Combat Profile"
+    caption: "Fetch CodeCombat Profile"
   },
   codeCombat: {
     id: "codeCombat",
-    caption: "Complete Code Combat Level"
+    caption: "Complete CodeCombat Level"
   },
   codeCombatNumber: {
     id: "codeCombatNumber",
-    caption: "Complete Number of Code Combat Levels"
+    caption: "Complete Number of CodeCombat Levels"
   },
   jupyter: {
     id: "jupyter",

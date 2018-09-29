@@ -27,6 +27,7 @@ import EditIcon from "@material-ui/icons/Edit";
 
 import ExternalProfileCard from "../../components/cards/ExternalProfileCard";
 import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import IconButton from "@material-ui/core/IconButton";
 import PropTypes from "prop-types";
@@ -144,10 +145,13 @@ class Account extends React.PureComponent {
     if (auth.isEmpty) {
       return (
         <div>
-          You do not seem to have a profile registered. Login required to
-          display this page
+          Login required to display this page.
         </div>
       );
+    }
+
+    if (!user) {
+      return <LinearProgress />;
     }
 
     return (

@@ -13,7 +13,7 @@ import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import Typography from "@material-ui/core/Typography";
 
-class ExternalProfileCard extends React.PureComponent {
+class ExternalProfileCard extends React.Component {
   static propTypes = {
     userAchievements: PropTypes.object,
     externalProfile: PropTypes.object.isRequired,
@@ -59,8 +59,9 @@ class ExternalProfileCard extends React.PureComponent {
             </Fragment>
           ) : (
             <Typography className={classes.card}>
-              <a href={externalProfile.url}>{externalProfile.name}</a>,{" "}
-              {externalProfile.description}
+              <a href={externalProfile.url} target="_blank" rel="noopener noreferrer">
+                {externalProfile.name}
+              </a>,{" "}{externalProfile.description}
             </Typography>
           )}
         </CardContent>
