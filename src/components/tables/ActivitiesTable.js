@@ -122,7 +122,7 @@ class ActivitiesTable extends React.PureComponent {
 
     const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
       pathStatus
-    );  
+    );
     return (
       <Fragment>
         <Table>
@@ -180,7 +180,14 @@ class ActivitiesTable extends React.PureComponent {
                     onClick={() => onOpenActivity(activity)}
                     variant="raised"
                   >
-                    Solve
+                    {(activities && activities[0].type === "profile")
+                      ? (
+                        "Fetch"
+                      )
+                      : (
+                        "Solve"
+                      )
+                    }
                   </Button>
                   {canChange && (
                     <Button

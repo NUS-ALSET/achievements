@@ -16,6 +16,9 @@ import React from "react";
 
 import TextField from "@material-ui/core/TextField";
 import { AccountService } from "../../services/account";
+import { Typography } from "@material-ui/core";
+
+import CodeCombatLogin from "../../assets/CodeCombatLogin.png";
 
 class AddProfileDialog extends React.PureComponent {
   static propTypes = {
@@ -56,15 +59,35 @@ class AddProfileDialog extends React.PureComponent {
 
     return (
       <Dialog onClose={onClose} open={this.props.open}>
-        <DialogTitle>Set {externalProfile.name} Profile</DialogTitle>
+        <DialogTitle>Set Up {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
-          <div>
-            <a href={url}>{url}</a>
-          </div>
+          <Typography variant="body2" gutterBottom>
+            1. Register or Login with CodeCombat.com
+          </Typography>
+          <img
+            src={CodeCombatLogin}
+            alt="CodeCombatLogin"
+            style={{maxHeight: 110}}
+            align="center"
+          />
+          <Typography variant="subheading" gutterBottom>
+            <a
+              href="https://codecombat.com/home"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              https://codecombat.com/home
+            </a>
+          </Typography>
+          <Typography variant="body2" gutterBottom>
+            2. Enter your CodeCombat username:
+          </Typography>
           <TextField
             autoFocus
-            label="Profile"
+            label="Profile Name"
             margin="dense"
+            placeholder="e.g. dummyuser3"
+            helperText="we only need the URL after /user/"
             onChange={this.onProfileChange}
             onKeyPress={this.catchReturn}
             style={{
@@ -72,6 +95,9 @@ class AddProfileDialog extends React.PureComponent {
             }}
             value={login}
           />
+          <Typography variant="subheading" gutterBottom>
+            <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+          </Typography>
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={onClose}>
