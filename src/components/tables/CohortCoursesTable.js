@@ -60,7 +60,8 @@ class CohortCoursesTable extends React.PureComponent {
         <TableHead>
           <TableRow>
             <TableCell>School Rank</TableCell>
-            {cohort.pathsData.length ? (
+            {cohort.pathsData && cohort.pathsData.length
+            ? (
               cohort.pathsData.map(pathData => (
                 <TableCell key={(pathData && pathData.id) || Math.random()}>
                   {pathData && pathData.name}
