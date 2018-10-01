@@ -106,20 +106,7 @@ export class AccountService {
   }
 
   watchProfileRefresh(uid, externalProfileId) {
-    let skip = true;
-    return new Promise(resolve =>
-      firebase
-        .ref(`/userAchievements/${uid}/${externalProfileId}`)
-        .on("value", data => {
-          if (skip) {
-            skip = false;
-            return;
-          }
-          data = data.val();
-          firebase.ref(`/userAchievements/${uid}/${externalProfileId}`).off();
-          resolve(data);
-        })
-    );
+    return firebase.watchEvent('value', `/userAchievements/${uid}/${externalProfileId}`)
   }
 
   /**
@@ -157,8 +144,8 @@ export class AccountService {
       CodeCombat: {
         url: "https://codecombat.com",
         id: "CodeCombat",
-        name: "Code Combat",
-        description: "learn to Code JavaScript by Playing a Game"
+        name: "CodeCombat",
+        description: "learn programming by playing games"
       }
       /* Unnecessary for now
       FreeCodeCamp: {
@@ -173,6 +160,59 @@ export class AccountService {
         description: "Some description"
       } */
     };
+  }
+
+  /**
+   * This method updates `authTime` data to current. Used mostly for invoking
+   * `generateUserRecommendations`
+   * @param uid
+   */
+  authTimeUpdate(uid) {
+    return uid ? firebase
+      .database()
+      .ref(`/users/${uid}/lastAuthTime`)
+      .set({ ".sv": "timestamp" }) : Promise.resolve();
+  }
+
+  /**
+   *
+   * @param config
+   * @returns {Promise<void>}
+   */
+  updateAdminConfig(config) {
+    const configUpdates = {};
+    const jestUpdates = {};
+    config = config || {};
+    config.recommendations = config.recommendations || {};
+    if (config.jupyterLambdaProcessor) {
+      configUpdates.jupyterLambdaProcessor = config.jupyterLambdaProcessor;
+    }
+    if (config.jupyterLambdaProcessor) {
+      configUpdates.jupyterAnalysisLambdaProcessor =
+        config.jupyterAnalysisLambdaProcessor;
+    }
+    if (config.awsJestRunnerServerURL) {
+      jestUpdates.awsJestRunnerServerURL = config.awsJestRunnerServerURL;
+    }
+    if (config.githubAccessToken) {
+      jestUpdates.githubAccessToken = config.githubAccessToken;
+    }
+    // FIXIT: should update it with one write but it's not too often procedure
+    // so, it could be little unoptimized
+    return Promise.all([
+      firebase
+        .database()
+        .ref("/config/recommendations")
+        .update(config.recommendations),
+      firebase
+        .database()
+        .ref("/config")
+        .update(configUpdates),
+      firebase
+        .database()
+        .ref("/config/jestRunnerConfig")
+        .update(jestUpdates)
+    ]);
   }
 }
 

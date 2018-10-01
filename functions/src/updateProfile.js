@@ -103,7 +103,8 @@ function updateProfile(data, resolve) {
             })
 
             .then(() => resolve())
-        );
+        )
+        .catch(err => console.error(data.uid, err.message));
     default:
       return Promise.resolve();
   }

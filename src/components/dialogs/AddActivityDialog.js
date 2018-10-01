@@ -7,6 +7,10 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
+import { firebaseConnect,isLoaded } from "react-redux-firebase";
+import { compose } from "redux";
+import { connect } from "react-redux";
+
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Dialog from "@material-ui/core/Dialog";
@@ -42,6 +46,20 @@ import {
   NoStartWhiteSpace
 } from "../regexp-rules/RegExpRules";
 
+// images for user guide in the dialog
+import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
+import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
+
+
+const gameDefaultData = {
+  game : 'passenger-picker',
+  scoreToWin : 10,
+  gameTime : 120,
+  unitsPerSide : 1,
+  levelsToWin : 1,
+  playMode : 'manual control'
+}
+
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
@@ -69,10 +87,15 @@ class AddActivityDialog extends React.PureComponent {
       this.handelfetchGithubFilesStatus(nextProps.fetchGithubFilesStatus,nextProps.activity);
       return;
     }
-    this.resetState();
+    if((this.props || {}).open !== nextProps.open){
+      this.resetState();
+    }
     if (nextProps.activity) {
       let state = {};
-      if (nextProps.activity.type === ACTIVITY_TYPES.jupyterInline.id) {
+      if(nextProps.activity.name && AddName.test(nextProps.activity.name) && NoStartWhiteSpace.test(nextProps.activity.name)){
+        this.setState({ isCorrectInput : true})
+      }
+      if ([ ACTIVITY_TYPES.jupyterInline.id ,ACTIVITY_TYPES.jupyter.id ].includes(nextProps.activity.type)){
         state = {
           code: nextProps.activity.code || 1,
           frozen: nextProps.activity.frozen || 1
@@ -110,8 +133,11 @@ class AddActivityDialog extends React.PureComponent {
   }
 
   getTypeSpecificElements() {
-    let { activity } = this.props;
-
+    let { activity, activityExampleSolution } = this.props;
+    if(['jupyter','jupyterInline'].includes((activity || {}).type) && !isLoaded(activityExampleSolution)){
+      return "";
+    }
+    console.log('activity', (activity|| {}).id)
     activity = Object.assign(activity || {}, this.state);
     switch (this.state.type || (activity && activity.type) || "text") {
       case ACTIVITY_TYPES.text.id:
@@ -176,13 +202,13 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
-            <TextField
-              defaultValue={activity && activity.solutionURL}
-              fullWidth
-              label="Solution Notebook URL"
-              margin="dense"
-              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-            />
+              <TextField
+                defaultValue={(activityExampleSolution || {}).solutionURL || ""}
+                fullWidth
+                label="Solution Notebook URL"
+                margin="dense"
+                onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+              />
             <TextField
               defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
@@ -198,36 +224,89 @@ class AddActivityDialog extends React.PureComponent {
       case ACTIVITY_TYPES.jupyterInline.id:
         return (
           <Fragment>
+            <Typography
+              variant="body2"
+              gutterBottom
+            >
+              Jupyter Notebook Activity
+            </Typography>
+            <Typography
+              variant="body1"
+              gutterBottom
+            >
+              A type of activity that requires the students to submit the python solution for a single code box in a Jupyter notebook. The solution should ensure that any relevant assertions/testing in the notebook pass.
+            </Typography>
+            <br />
+            <Typography
+              variant="body2"
+              gutterBottom
+            >
+              Step 1: Get the Shareable Link from Google Colab ipynb
+            </Typography>
+            <img src={JupyterNotebookStep1} alt="JupyterNotebookStep1" />
+            <a
+              href="https://colab.research.google.com/drive/1Rx_oOoslo2bbT7CY6nXmWuwzJXootjzA"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Typography
+                variant="caption"
+                gutterBottom
+                align="center"
+              >
+                Sample Google Colab ipynb Link
+              </Typography>
+            </a>
             <TextField
               defaultValue={activity && activity.problemURL}
               fullWidth
-              label="Problem Notebook URL"
+              label="Google Colab ipynb URL for this Activity"
+              helperText="Make sure the ipynb's Link Sharing is on"
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
+            <Typography
+              variant="body2"
+              gutterBottom
+              style={{marginTop:30}}
+            >
+              Step 2: Get the Shareable Link of the Solution Notebook
+            </Typography>
+            <img src={JupyterNotebookStep2} alt="JupyterNotebookStep2" />
+            <a
+              href="https://colab.research.google.com/drive/1k-Q9j1AGx3MmQ9xxATlXXggwKo5CGC7C"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <Typography
+                variant="caption"
+                gutterBottom
+                align="center"
+              >
+                Sample Solution Google Colab ipynb Link
+              </Typography>
+            </a>
             <TextField
-              defaultValue={activity && activity.solutionURL}
+              defaultValue={(activityExampleSolution || {}).solutionURL || ""}
               fullWidth
-              label="Solution Notebook URL"
+              label="Another Google Colab ipynb URL for the Solution"
+              helperText="just a sample solution from you is ok"
               margin="dense"
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
             />
+            <Typography
+              variant="body2"
+              gutterBottom
+              style={{marginTop:30}}
+            >
+              Step 3: Select code block for solution input
+            </Typography>
             <TextField
               defaultValue={activity && String(activity.code || "1")}
               fullWidth
-              label="Default code block"
+              label="Index of Code Block Student Can Edit Solution (Index starts from 0)"
               margin="dense"
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
-              type="number"
-            />
-            <TextField
-              defaultValue={activity && String(activity.frozen || "1")}
-              fullWidth
-              label="Number of frozen cells"
-              margin="dense"
-              onChange={e =>
-                this.onFieldChange("frozen", Number(e.target.value))
-              }
               type="number"
             />
           </Fragment>
@@ -240,6 +319,7 @@ class AddActivityDialog extends React.PureComponent {
               fullWidth
               label="YouTube URL"
               margin="dense"
+              helperText="The URL should be a clean '?v=<id>', without time start or playlist info (for example, 'https://www.youtube.com/watch?v=ZK3O402wf1c')"
               onChange={e => this.onFieldChange("youtubeURL", e.target.value)}
             />
             <FormControl
@@ -292,16 +372,105 @@ class AddActivityDialog extends React.PureComponent {
         );
       case ACTIVITY_TYPES.game.id:
         return (
+          <div>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-games">Select Game</InputLabel>
+            <Select
+              input={<Input id="select-games" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("game", e.target.value)}
+              value={activity.game}
+            >
+              {Object.keys(APP_SETTING.games).map(id => (
+                <MenuItem key={APP_SETTING.games[id].name} value={id}>
+                  {APP_SETTING.games[id].name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-mode">Select Play Mode</InputLabel>
+            <Select
+              input={<Input id="select-mode" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("playMode", e.target.value)}
+              value={activity.playMode}
+            >
+              {[{ mode : 'manual control', label : 'Manual Control' },{ mode : 'custom code', label : 'Custom Code' }].map(key => (
+                <MenuItem key={key.mode} value={key.mode}>
+                  {key.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel htmlFor="select-level">Select minimum level game must be won at</InputLabel>
+            <Select
+              input={<Input id="select-level" />}
+              margin="none"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 224,
+                    width: 250
+                  }
+                }
+              }}
+              onChange={e => this.onFieldChange("levelsToWin", e.target.value)}
+              value={activity.levelsToWin}
+            >
+              {[1,2,3].map(key => (
+                <MenuItem key={key} value={key}>
+                  {key}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
-            defaultValue={activity && activity.game}
+              defaultValue={0}
+              value={activity.unitsPerSide}
+              fullWidth
+              type="number"
+              label="Number of units each side will have in the game."
+              margin="dense"
+              onChange={e => this.onFieldChange("unitsPerSide", e.target.value)}
+            />
+          
+          <TextField
+            value={activity.scoreToWin}
+            defaultValue={0}
             fullWidth
-            label="Game Variant"
+            label="Score to Win"
             margin="dense"
-            onChange={e => this.onFieldChange("game", e.target.value)}
-          >
-            <MenuItem value="GemCollector">Gem Collector</MenuItem>
-            <MenuItem value="Squad">Squad</MenuItem>
-          </TextField>
+            type="number"
+            onChange={e => this.onFieldChange("scoreToWin", e.target.value)}
+          />
+          <TextField
+            value={activity.gameTime}
+            defaultValue={0}
+            fullWidth
+            label="Select the maximum time limit (in seconds)"
+            margin="dense"
+            type="number"
+            onChange={e => this.onFieldChange("gameTime", Number(e.target.value))}
+          />
+          </div>
         );
       case ACTIVITY_TYPES.jest.id:
         return (
@@ -330,7 +499,7 @@ class AddActivityDialog extends React.PureComponent {
               />
             </FormControl>
             {this.state.files &&
-             this.state.files.length > 0 && (
+              this.state.files.length > 0 && (
               <Fragment>
                 <Typography
                   gutterBottom
@@ -407,11 +576,14 @@ class AddActivityDialog extends React.PureComponent {
       });
     }
     let state = {};
-    if (field === "type" && value === ACTIVITY_TYPES.jupyterInline.id) {
+    if (field === "type" && [ACTIVITY_TYPES.jupyterInline.id,ACTIVITY_TYPES.jupyter.id].includes(value)) {
       state = {
         code: 1,
         frozen: 1
       };
+    }
+    if (field === "type" && value === 'game') {
+      state = { ...gameDefaultData };
     }
     if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
       state={
@@ -459,7 +631,6 @@ class AddActivityDialog extends React.PureComponent {
         })
       );
     }
-    this.onClose();
   };
 
   onClose = () => {
@@ -543,4 +714,22 @@ class AddActivityDialog extends React.PureComponent {
   }
 }
 
-export default AddActivityDialog;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    activityExampleSolution : (state.firebase.data.activityExampleSolutions || {})[(ownProps.activity || {}).id]
+  }
+};
+
+export default compose(
+  firebaseConnect((ownProps, store) => {
+    if(!['jupyter','jupyterInline'].includes((ownProps.activity || {}).type)){
+      return false; 
+    }
+    return [
+      `/activityExampleSolutions/${ownProps.activity.id}`,
+    ];
+  }),
+  connect(
+    mapStateToProps,
+  )
+)(AddActivityDialog);

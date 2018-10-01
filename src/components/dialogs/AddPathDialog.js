@@ -49,20 +49,30 @@ class AddPathDialog extends React.PureComponent {
         .map(key => ({ [key]: value[key] }))
     );
 
-  // validate Path name input first
+  // validate Path name
   onFieldChange = (field, value) => {
-    if (
-      AddName.test(value) &&
-      NoStartWhiteSpace.test(value)
-    ) {
+    const { path } = this.props;
+    if (path && path.id) {
       this.setState({
-        isCorrectInput: true,
-        [field]: value.trim()
+        isCorrectInput: true
       });
-    } else {
-      this.setState({
-        isCorrectInput: false
-      });
+    }
+    if (field === "name") {
+      if (
+        AddName.test(value) &&
+        NoStartWhiteSpace.test(value)
+      ) {
+        this.setState({
+          isCorrectInput: true,
+          [field]: value.trim()
+        });
+      } else {
+        this.setState({
+          isCorrectInput: false
+        });
+      }
+    }else{
+      this.setState({ [field] : value.trim() })
     }
   };
 
@@ -90,7 +100,7 @@ class AddPathDialog extends React.PureComponent {
   render() {
     const { path, open } = this.props;
     return (
-      <Dialog onClose={this.onClose} open={open}>
+      <Dialog onClose={this.onClose} open={open} maxWidth={"sm"} fullWidth>
         <DialogTitle>
           {path && path.id ? "Edit Path" : "Add New Path"}
         </DialogTitle>
@@ -106,10 +116,14 @@ class AddPathDialog extends React.PureComponent {
             label="Path name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
-            style={{
-              width: 320
-            }}
             required
+          />
+          <TextField
+            defaultValue={path && path.description}
+            label="Description"
+            margin="dense"
+            fullWidth
+            onChange={e => this.onFieldChange("description", e.target.value)}
           />
         </DialogContent>
         <DialogActions>

@@ -89,7 +89,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           open={open}
         >
           <DialogTitle>
-            {readOnly ? 'Student' : 'Set'}
+            {readOnly ? 'Student ' : 'Set '}
             Assignment Solution {readOnly ? '( Read Only) ' : ''}
           </DialogTitle>
             <Activity
@@ -101,6 +101,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
               onCommit={this.onCommitClick}
               onClose={this.onClose}
               readOnly={readOnly}
+              showCommitBtnOnTop={true}
             >
               {(activityView, submitHandler, props) => (
                 <Fragment>
@@ -118,7 +119,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
                     {/* TODO: refactor =>
                     the problemSolution state seems to be shared among multiple activities
                     listed in the same course page */}
-                    {!readOnly &&
+                    {!readOnly && !['jupyter','jupyterInline'].includes((props.pathProblem || {}).type) &&
                       <Button
                         color="primary"
                         disabled={!(

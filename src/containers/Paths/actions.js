@@ -105,9 +105,10 @@ export const pathActivityChangeFail = (pathId, activityInfo, reason) => ({
 });
 
 export const PATH_ACTIVITY_DELETE_REQUEST = "PATH_ACTIVITY_DELETE_REQUEST";
-export const pathActivityDeleteRequest = activityId => ({
+export const pathActivityDeleteRequest = (activityId, pathId) => ({
   type: PATH_ACTIVITY_DELETE_REQUEST,
-  activityId
+  activityId,
+  pathId
 });
 
 export const PATH_ACTIVITY_DELETE_SUCCESS = "PATH_ACTIVITY_DELETE_SUCCESS";

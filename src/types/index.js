@@ -91,3 +91,21 @@ export const courseInfo = shape({
   totalAssignments: number.isRequired,
   assignments: arrayOf(assignmentInfo).isRequired
 });
+
+export const recommendationInfo = shape({
+  feature: string.isRequired,
+  featureType: string.isRequired
+});
+
+export const cohort = shape({
+  name: string.isRequired,
+  description: string.isRequired,
+  threshold: number,
+  paths: arrayOf(string)
+});
+
+export const user = shape({
+  displayName: string,
+  id: string,
+  photoURL: string
+});

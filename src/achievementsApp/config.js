@@ -4,11 +4,22 @@ import levels from "./levels";
 export const APP_SETTING = {
   drawerWidth: 250,
   levels: levels,
+  games : {
+    "passenger-picker" : {
+      "id" : "passenger-picker",
+      "name" : "Passenger Picker"
+    },
+    "squad" : {
+      "id" : "squad",
+      "name" : "Squad"
+    }
+  },
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,
   defaultTimeout: 6000,
   isSuggesting: window.location.href.includes("isSuggesting=true"),
   GITHUB_BASE_URL: 'https://github.com/',
+  AWS_SERVER_URL: 'https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest',
 };
 
 // Initialize Firebase

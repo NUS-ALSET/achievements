@@ -117,7 +117,6 @@ function Contribute(props) {
                 </Grid>
               </Grid>
             </div>
-
           </div>
         </div>
       </main>

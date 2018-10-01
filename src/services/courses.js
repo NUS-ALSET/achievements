@@ -4,6 +4,7 @@
  */
 
 import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
+import { externalProfileRefreshRequest } from "../containers/Account/actions"
 import {
   coursePasswordEnterFail,
   coursePasswordEnterRequest
@@ -11,10 +12,11 @@ import {
 import { notificationHide, notificationShow } from "../containers/Root/actions";
 // import { solutionsService } from "./solutions";
 import { firebaseService } from "./firebaseService";
+import { pathsService } from "./paths";
 
 import each from "lodash/each";
-import cloneDeep from "lodash/cloneDeep";
 import firebase from "firebase";
+import { APP_SETTING } from "../achievementsApp/config"
 
 const ERROR_TIMEOUT = 6000;
 
@@ -25,15 +27,15 @@ export const ASSIGNMENTS_TYPES = {
   },
   Profile: {
     id: "Profile",
-    caption: "Enter Code Combat Profile"
+    caption: "Fetch CodeCombat Profile"
   },
   CodeCombat: {
     id: "CodeCombat",
-    caption: "Complete Code Combat Level"
+    caption: "Complete CodeCombat Level"
   },
   CodeCombat_Number: {
     id: "CodeCombat_Number",
-    caption: "Complete Number of Code Combat Levels"
+    caption: "Complete Number of CodeCombat Levels"
   },
   TeamFormation: {
     id: "TeamFormation",
@@ -218,7 +220,7 @@ export class CoursesService {
       throw new Error("Name required for Assignment");
     }
     if (assignment.questionType === "CodeCombat" && !assignment.level) {
-      throw new Error("Level required for Code Combat Assignment");
+      throw new Error("Level required for CodeCombat Assignment");
     }
   }
 
@@ -327,36 +329,64 @@ export class CoursesService {
    * @param {Assignment} assignment
    */
   getAchievementsStatus(userId, assignment) {
-    return firebase
-      .ref(`/userAchievements/${userId}/CodeCombat`)
-      .once("value")
-      .then(profileData => {
-        const profile = profileData.val() || {};
-        const achievements = profile.achievements || {};
+    return new Promise((resolve, reject) => {
+      firebase
+        .ref(`/userAchievements/${userId}/CodeCombat`)
+        .once("value")
+        .then(profileData => {
+          if (profileData.exists()) {
+            const err = this.checkAchievementsError(profileData, assignment);
+            const profile = profileData.val() || {};
+            if (err) {
+              this.dispatch(externalProfileRefreshRequest( profile.id, "CodeCombat" ))
+              setTimeout(() => {
+                firebase
+                  .ref(`/userAchievements/${userId}/CodeCombat`)
+                  .once("value")
+                  .then(profileData => {
+                    const err = this.checkAchievementsError(profileData, assignment, true);
+                    err ?  reject(err) : resolve(profile.id);
+                  })
+              }, APP_SETTING.defaultTimeout + 500)
+            } else {
+              resolve(profile.id);
+            }
+          } else {
+            reject(new Error(
+              `Please enter your CodeCombat profile in the 1st question`
+            ));
+          }
+        });
+    })
+  }
 
-        switch (assignment.questionType) {
-          case "CodeCombat":
-            if (!achievements[assignment.level]) {
-              throw new Error(
-                `Not finished required level "${assignment.level}"`
-              );
-            }
-            break;
-          case "CodeCombat_Number":
-            if (
-              !profile.totalAchievements ||
-              profile.totalAchievements < assignment.count
-            ) {
-              throw new Error(
-                `Not finished required amount of levels (${assignment.count})`
-              );
-            }
-            break;
-          default:
+  checkAchievementsError = (profileData, assignment, openTab = false) => {
+    const profile = profileData.val() || {};
+    const achievements = profile.achievements || {};
+    switch (assignment.questionType) {
+      case "CodeCombat":
+        if (!achievements[assignment.level]) {
+          openTab && setTimeout(() => {
+            window.open(`http://codecombat.com/play/level/${assignment.level}`, '_blank');
+          }, 2000)
+          return new Error(
+            `Opening up "${assignment.level}" level in another tab... Please allow pop-up to see the new tab.`
+          )
         }
-
-        return profile.id;
-      });
+        break;
+      case "CodeCombat_Number":
+        if (
+          !profile.totalAchievements ||
+          profile.totalAchievements < assignment.count
+        ) {
+          return new Error(
+            `Not finished required amount of levels (${assignment.count})`
+          );
+        }
+        break;
+      default:
+    }
+    return false
   }
 
   submitSolution(courseId, assignment, value, userId,status=null) {
@@ -384,40 +414,39 @@ export class CoursesService {
           });
       })
       .then((res) => {
-        if (((assignment || {}).problemJSON || {}).type === 'jupyterInline') {
-            const editableBlockCode = 
-              value.cells
-                .map(c => c.cell_type === 'code' ? c.source.join("") : "")
-                .join("");
-            const data={
-              owner: userId,
-              solution: editableBlockCode || "",
-            }
-            firebaseService.startProcess(
-              data,
-              "jupyterSolutionAnalysisQueue",
-              "Code Analysis"
-            )
-            .then(res => {
-              const response=res.skills || {};
-              const defaultSolutionSkills = assignment.problemJSON.defaultSolutionSkills;
-              let skillsDifference=cloneDeep(response);
-              if(defaultSolutionSkills){
-                Object.keys(defaultSolutionSkills).forEach(key=>{
-                  Object.keys(defaultSolutionSkills[key]).forEach(subKey=>{
-                    delete (skillsDifference[key] || {})[subKey];
-                    if(Object.keys(skillsDifference[key] || {}).length===0){
-                      delete skillsDifference[key];
-                    }
-                  })
+        if (['jupyterInline', 'jupyter'].includes(((assignment || {}).problemJSON || {}).type)) {
+          new Promise((resolve, reject) => {
+            if (assignment.problemJSON.type === 'jupyterInline') {
+              resolve(value)
+            } else {
+              pathsService.fetchFile(pathsService.getFileId(value))
+                .then(json => {
+                  resolve(json);
                 })
+            }
+          })
+            .then(jsonValue => {
+              const editableBlockCode =
+                jsonValue.cells
+                  .map(c => c.cell_type === 'code' ? c.source.map(line => line[0] === '!' ? `#${line}` : line).join("") : "")
+                  .join("");
+              const data = {
+                owner: userId,
+                solution: editableBlockCode || "",
               }
-              firebase
-                .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
-                .update({
-                  userSkills : response,
-                  skillsDifference
-                });
+              firebaseService.startProcess(
+                data,
+                "jupyterSolutionAnalysisQueue",
+                "Code Analysis"
+              )
+                .then(res => {
+                  const response = res.skills || {};
+                  firebase
+                    .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
+                    .update({
+                      userSkills: response,
+                    });
+                })
             })
         }
         if (userId && assignment.path && assignment.problem) {

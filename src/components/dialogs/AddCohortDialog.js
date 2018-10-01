@@ -18,23 +18,40 @@ import {
 } from "../../containers/Cohorts/actions";
 
 // RegExp rules
-import {
-  AddName,
-  NoStartWhiteSpace
-} from "../regexp-rules/RegExpRules";
+import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
+import PathsSelector from "../selectors/PathsSelector";
 
 class AddCohortDialog extends React.PureComponent {
   static propTypes = {
     cohort: PropTypes.object,
     dispatch: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired
+    myPaths: PropTypes.object,
+    open: PropTypes.bool.isRequired,
+    publicPaths: PropTypes.object
   };
 
   state = {
+    paths: [],
     cohortName: "",
     cohortDescription: "",
-    // cohort name cannot be nonsense or empty spaces
-    isCorrectInput: false
+    threshold: 1,
+
+    // Cohort name cannot be nonsense or empty spaces
+    isCorrectInput: true
+  };
+
+  static defaultProps = {
+    myPaths: {},
+    publicPaths: {}
+  };
+
+  getPaths = () => {
+    const { cohort } = this.props;
+    let paths = this.state.paths;
+    if (!paths.length) {
+      paths = cohort && cohort.paths;
+    }
+    return paths || [];
   };
 
   onNameChange = e => {
@@ -63,25 +80,36 @@ class AddCohortDialog extends React.PureComponent {
     this.setState({ cohortDescription: e.target.value });
   };
 
+  onThresholdChange = e => this.setState({ threshold: e.target.value });
+
   resetState = () => {
     this.setState({
       cohortName: "",
       cohortDescription: "",
-      isCorrectInput: false
+      paths: [],
+      isCorrectInput: true,
+      threshold: 1
     });
+  };
+
+  handleChange = event => {
+    this.setState({ paths: event.target.value.filter(id => id) });
   };
 
   onClose = () => {
     this.resetState();
     this.props.dispatch(addCohortDialogHide());
-  }
+  };
 
   onCommit = () => {
-    this.props.dispatch(
+    const { cohort, dispatch } = this.props;
+    dispatch(
       addCohortRequest({
-        ...this.props.cohort,
+        ...cohort,
         name: this.state.cohortName,
-        description: this.state.cohortDescription
+        description: this.state.cohortDescription,
+        threshold: Number(this.state.threshold || cohort.threshold || 1),
+        paths: this.getPaths()
       })
     );
     // reset the disable of commit button
@@ -89,7 +117,8 @@ class AddCohortDialog extends React.PureComponent {
   };
 
   render() {
-    const { open, cohort } = this.props;
+    const { cohort, open, myPaths, publicPaths } = this.props;
+    const paths = this.getPaths();
 
     return (
       <Dialog onClose={this.onClose} open={open}>
@@ -99,23 +128,43 @@ class AddCohortDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
-            fullWidth
-            error={!this.state.isCorrectInput}
-            helperText={this.state.isCorrectInput
-              ? ""
-              : "Name should not be empty or too long or have invalid characters"}
             defaultValue={cohort && cohort.name}
+            error={!this.state.isCorrectInput}
+            fullWidth
+            helperText={
+              this.state.isCorrectInput
+                ? ""
+                : "Name should not be empty, too long, have invalid characters"
+            }
             label="Name"
             margin="dense"
             onChange={this.onNameChange}
             required
           />
           <TextField
-            fullWidth
             defaultValue={cohort && cohort.description}
+            fullWidth
             label="Description"
             margin="dense"
             onChange={this.onDescriptionChange}
+          />
+          <PathsSelector
+            allowMultiple={true}
+            onChange={this.handleChange}
+            paths={{
+              myPaths,
+              publicPaths
+            }}
+            value={paths}
+          />
+
+          <TextField
+            defaultValue={cohort && cohort.threshold}
+            fullWidth
+            label="Credit threshold"
+            margin="dense"
+            onChange={this.onThresholdChange}
+            type="number"
           />
         </DialogContent>
         <DialogActions>
@@ -123,10 +172,8 @@ class AddCohortDialog extends React.PureComponent {
             Cancel
           </Button>
           <Button
-            disabled={
-              !this.state.isCorrectInput
-            }
             color="primary"
+            disabled={!this.state.isCorrectInput}
             onClick={this.onCommit}
             variant="raised"
           >

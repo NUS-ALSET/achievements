@@ -124,7 +124,7 @@ export function* pathActivityMoveRequestHandler(action) {
 
 export function* pathActivityDeleteRequestHandler(action) {
   try {
-    yield call(pathsService.deleteActivity, action.activityId);
+    yield call(pathsService.deleteActivity, action.activityId, action.pathId);
     yield put(pathActivityDeleteSuccess(action.activityId));
   } catch (err) {
     yield put(pathActivityDeleteFail(action.activityId, err.message));

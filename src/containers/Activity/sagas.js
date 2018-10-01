@@ -38,13 +38,16 @@ import { pathsService, ACTIVITY_TYPES } from "../../services/paths";
 import {
   notificationShow,
   SOLUTION_PRIVATE_LINK,
-  SOLUTION_MODIFIED_TESTS
+  SOLUTION_MODIFIED_TESTS,
+  SOLUTION_PROCESSING_TIMEOUT
 } from "../Root/actions";
 import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 import { pathFetchProblemsSolutionsSuccess } from "../Path/actions";
+import { accountService } from "../../services/account";
 
 const ONE_MINUTE = 60000;
+const ONE_SECOND = 1000;
 
 /**
  * This saga executes on open Problem or show AddPathProblemSolutionDialog
@@ -74,7 +77,10 @@ export function* problemInitRequestHandler(action) {
       action.pathId,
       action.problemId
     );
-
+    // error only shows up when click into the SOVLE
+    // but users have already keyed in all the URLs in the AddActivity Dialog
+    // TODO: if the URLs are not valid, prompt the user at Dialog phase
+    // TODO: repalce the "loading..." with Error message
     if (!pathProblem) {
       throw new Error("Missing path activity");
     }
@@ -136,7 +142,12 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
   try {
     yield put(notificationShow("Fetching your solution"));
-    yield put(problemSolutionExecutionStatus({ status: "CHECKING" }));
+    yield put(
+      problemSolutionExecutionStatus({
+        status: "CHECKING",
+        statusText: "Fetching your solution"
+      })
+    );
     let pathSolution;
     if (action.fileId) {
       pathSolution = {
@@ -157,7 +168,12 @@ export function* problemSolutionRefreshRequestHandler(action) {
     yield put(
       problemSolutionProvidedSuccess(action.problemId, pathSolution.json)
     );
-    yield put(problemSolutionExecutionStatus({ status: "EXECUTING" }));
+    yield put(
+      problemSolutionExecutionStatus({
+        status: "EXECUTING",
+        statusText: "Checking your solution"
+      })
+    );
     yield put(notificationShow("Checking your solution"));
 
     const { solution, timedOut } = yield race({
@@ -171,7 +187,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
       timedOut: delay(ONE_MINUTE)
     });
     if (timedOut) {
-      throw new Error("Solution processing timed out");
+      throw new Error(SOLUTION_PROCESSING_TIMEOUT);
     }
     if (solution && solution.cells && solution.cells.slice) {
       let solutionFailed = false;
@@ -184,7 +200,13 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
-        yield put(problemSolutionExecutionStatus({ status: "FAILING" }));
+        yield put(
+          problemSolutionExecutionStatus({
+            status: "FAILING",
+            statusText:
+              "Failing - Your solution did not pass the provided tests."
+          })
+        );
         yield put(
           notificationShow(
             "Failing - Your solution did not pass the provided tests."
@@ -192,7 +214,12 @@ export function* problemSolutionRefreshRequestHandler(action) {
         );
       } else {
         yield put(notificationShow("Solution is valid"));
-        yield put(problemSolutionExecutionStatus({ status: "COMPLETE" }));
+        yield put(
+          problemSolutionExecutionStatus({
+            status: "COMPLETE",
+            statusText: "Valid Solution"
+          })
+        );
       }
     }
 
@@ -218,15 +245,18 @@ export function* problemSolutionRefreshRequestHandler(action) {
         errMsg = "Failing - You have changed the last code block.";
         break;
       }
+      case SOLUTION_PROCESSING_TIMEOUT: {
+        status = "PROCESSING TIMEOUT";
+        errMsg = `Timeout: code took longer than ${ONE_MINUTE /
+          ONE_SECOND} seconds to run`;
+        break;
+      }
       default:
-        // I commented that cause it leads to snatching unexpected errors.
+        // this is error thrown by any services called in try block
         status = "UNEXPECTED ERROR";
-      /*
-        status = null;
-        errMsg = err.message;
-        */
+        errMsg = err.message || "Unexpected error";
     }
-    yield put(problemSolutionExecutionStatus({ status }));
+    yield put(problemSolutionExecutionStatus({ status, statusText: errMsg }));
     yield put(problemSolutionRefreshFail(action.problemId, err.message));
     yield put(notificationShow(errMsg));
   }
@@ -266,6 +296,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
   try {
     data = yield select(state => ({
       uid: state.firebase.auth.uid,
+      isPathPublic: state.firebase.data.isPathPublic,
       pathProblem:
         state.problem.pathProblem ||
         state.assignments.dialog.pathProblem ||
@@ -289,7 +320,10 @@ export function* problemSolutionSubmitRequestHandler(action) {
         [data.pathProblem.id || data.pathProblem.problemId]: true
       })
     );
-    yield put(notificationShow("Solution submitted"));
+    if (data.isPathPublic) {
+      yield call(accountService.authTimeUpdate, data.uid);
+    }
+    yield put(notificationShow(data.pathProblem.type==='codeCombat' ? `Completed ${data.pathProblem.name} level` : "Solution submitted"));
   } catch (err) {
     yield put(
       problemSolutionSubmitFail(

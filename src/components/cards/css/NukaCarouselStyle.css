@@ -1,0 +1,13 @@
+.slider.customizeCarousel {
+}
+
+div.slider.customizeCarousel > div.slider-frame {
+    padding: 1px 0 !important;
+}
+
+.slider.customizeCarousel  li.slider-slide {
+}
+
+.slider.customizeCarousel div.slider-control-bottomcenter {
+    display: none;
+}

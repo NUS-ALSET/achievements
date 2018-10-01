@@ -13,18 +13,16 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import Bookmarks from "@material-ui/icons/Bookmarks";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { breadcrumbAction, breadcrumbPath } from "../types/index";
 
 const styles = theme => ({
-  breadcrumbLink: {
-    textDecoration: "none"
-  },
   breadcrumbText: {
     margin: theme.spacing.unit,
     textTransform: "uppercase",
-    fontSize: "0.875rem"
+    fontSize: "1.2rem"
   },
   breadcrumbActions: {
     position: "absolute",
@@ -50,6 +48,7 @@ class Breadcrumbs extends React.PureComponent {
 
     return (
       <Toolbar>
+        <Bookmarks style={{fill: "red"}}/>
         {paths.map(
           (pathInfo, index) =>
             index === paths.length - 1 ? (
@@ -58,11 +57,15 @@ class Breadcrumbs extends React.PureComponent {
               </Typography>
             ) : (
               <Fragment key={index}>
-                <Link className={classes.breadcrumbLink} to={pathInfo.link}>
+                <Button
+                  size="small"
+                  component={Link}
+                  to={pathInfo.link}
+                >
                   <Typography className={classes.breadcrumbText}>
                     {pathInfo.label}
                   </Typography>
-                </Link>
+                </Button>
                 <ChevronRightIcon />
               </Fragment>
             )

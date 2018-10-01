@@ -100,9 +100,6 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
           {persistent ? (
-            action &&
-            this.state.solution &&
-            richEditor &&
             (APP_SETTING.isSuggesting ? (
               <IconButton
                 onClick={() => action(this.state.solution)}
@@ -117,6 +114,11 @@ class JupyterNotebook extends React.PureComponent {
               <Button
                 color="primary"
                 onClick={() => action(this.state.solution)}
+                disabled={!(
+                  this.state.solution &&
+                  action &&
+                  richEditor
+                )}
                 style={{
                   position: "absolute",
                   top: 4,
@@ -138,6 +140,7 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
         </Typography>
+        <br />
         {solution !== null &&
           action &&
           (richEditor ? (

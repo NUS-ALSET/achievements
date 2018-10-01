@@ -57,15 +57,17 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
+import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog"
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
-import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
+import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
+import { Typography } from "@material-ui/core";
 
 const styles = theme => ({
   toolbarButton: {
@@ -194,9 +196,10 @@ export class Path extends React.Component {
     );
     onCloseDialog();
   };
-  onActivityDeleteRequest = activityId => {
+  onActivityDeleteRequest = (activityId, pathId) => {
     this.setState({
-      selectedActivityId: activityId
+      selectedActivityId: activityId,
+      selectedPathId : pathId
     });
   };
 
@@ -243,7 +246,7 @@ export class Path extends React.Component {
     if (!uid) {
       return <div>Login required to display this page</div>;
     }
-
+    
     if (!(pathActivities && pathActivities.path)) {
       return <LinearProgress />;
     }
@@ -251,7 +254,7 @@ export class Path extends React.Component {
     const allFinished =
       (pathActivities.activities || []).filter(problem => problem.solved)
         .length === (pathActivities.activities || []).length;
-    let pathName;
+    let pathName, pathDesc;
 
     if (match.params.pathId[0] !== "-") {
       pathName = "Default";
@@ -259,6 +262,7 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
+      pathDesc = (pathActivities.path && pathActivities.path.description) || "None Provided";
 
     return (
       <Fragment>
@@ -271,10 +275,11 @@ export class Path extends React.Component {
                 label: "Request more",
                 handler: this.requestMoreProblems.bind(this)
               },
-              !allFinished && {
-                label: "Refresh",
-                handler: this.refreshSolutions.bind(this)
-              },
+              // disable Refresh button.
+              // !allFinished && {
+              // label: "Refresh",
+              // handler: this.refreshSolutions.bind(this)
+              // },
               {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
@@ -292,6 +297,14 @@ export class Path extends React.Component {
             }
           ]}
         />
+        <Typography
+          gutterBottom
+          style={{
+            marginLeft: 30
+          }}
+        >
+          Path Description: {pathDesc}
+        </Typography>
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
           (!APP_SETTING.isSuggesting ? (
             <Toolbar>
@@ -343,13 +356,21 @@ export class Path extends React.Component {
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
-        <AddProfileDialog
+        <AddGameSolutionDialog
+          onClose={onCloseDialog}
+          onCommit={this.onTextSolutionSubmit}
+          open={ui.dialog.type === `${ACTIVITY_TYPES.game.id}Solution`}
+          problem={ui.dialog.value}
+          taskId={ui.dialog.value && ui.dialog.value.id}
+        />
+        <FetchCodeCombatDialog
           defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
+          currentUserId={uid}
           externalProfile={{
             url: "https://codecombat.com",
             id: "CodeCombat",
-            name: "Code Combat",
-            description: "learn to Code JavaScript by Playing a Game"
+            name: "CodeCombat",
+            description: "learn programming by playing games"
           }}
           onClose={onCloseDialog}
           onCommit={this.onProfileUpdate}
@@ -364,6 +385,7 @@ export class Path extends React.Component {
           onOpenActivity={this.onOpenProblem}
           pathStatus={pathStatus}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
+          codeCombatProfile={codeCombatProfile}
         />
         <AddActivityDialog
           fetchGithubFiles={fetchGithubFiles}
@@ -379,7 +401,7 @@ export class Path extends React.Component {
           message="This will remove activity"
           onClose={() => this.setState({ selectedActivityId: "" })}
           onCommit={() => {
-            onActivityDeleteRequest(this.state.selectedActivityId);
+            onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
             this.setState({ selectedActivityId: "" });
           }}
           open={!!this.state.selectedActivityId}

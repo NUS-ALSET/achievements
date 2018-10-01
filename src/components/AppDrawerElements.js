@@ -22,17 +22,13 @@ import Group from "@material-ui/icons/Group";
 import Domain from "@material-ui/icons/Domain";
 // Profile
 import Mood from "@material-ui/icons/Mood";
-// TODO: isAdmin might not be serving any function anymore
+// isAdmin for admin actions
 import Security from "@material-ui/icons/Security";
 // for Github icon
 import GithubIcon from "./icons/GithubIcon";
 
 import Typography from '@material-ui/core/Typography';
 
-
-const linkStyle = {
-  textDecoration: "none"
-};
 
 const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
   <Fragment>
@@ -139,14 +135,20 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
         </ListItem>
       </MenuItem>
       {isAdmin && (
-        <Link style={linkStyle} to={"/admin"}>
-          <ListItem button>
+        <MenuItem
+          component={Link}
+          to={`/admin`}
+          selected={(/^\/admin/).test(location.pathname)}
+        >
+          <ListItem>
             <ListItemIcon>
-              <Security />
+              {(/^\/admin/).test(location.pathname)
+                ? <Security style={{fill: "red"}} />
+                : <Security />}
             </ListItemIcon>
-            <ListItemText primary="Administration" />
+            <ListItemText primary="Admin" />
           </ListItem>
-        </Link>
+        </MenuItem>
       )}
     </MenuList>
 

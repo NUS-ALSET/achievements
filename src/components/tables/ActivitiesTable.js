@@ -16,6 +16,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+// import Tooltip from "@material-ui/core/Tooltip";
+// import Timeline from "@material-ui/icons/Timeline";
 
 import DoneIcon from "@material-ui/icons/Done";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -27,6 +29,8 @@ import {
   PATH_STATUS_OWNER
 } from "../../containers/Path/selectors";
 
+import { ACTIVITY_TYPES } from "../../services/paths";
+
 const COLUMN_ACTIONS_WIDTH = 240;
 
 const styles = theme => ({
@@ -35,12 +39,16 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit
+  },
+  noWrap : {
+    whiteSpace: 'nowrap'
   }
 });
 
 class ActivitiesTable extends React.PureComponent {
   static propTypes = {
     activities: PropTypes.array.isRequired,
+    codeCombatProfile : PropTypes.any,
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
     onDeleteActivity: PropTypes.func.isRequired,
@@ -60,17 +68,34 @@ class ActivitiesTable extends React.PureComponent {
     analysisDialog: {
       open: false,
       name : '',
-      data: {}
+      activityId: null
     }
   };
 
-  openAnalysisDialog = (defaultSolutionSkills, name) =>
-    this.setState({ analysisDialog: { open: true, name, data: { defaultSolutionSkills } } });
+  openAnalysisDialog = (activityId, name) =>
+    this.setState({ analysisDialog: { open: true, name, activityId } });
 
   handleCloseAnalysisDialog = () =>
     this.setState({ analysisDialog: { open: false, data: {} } });
 
   selectActivity = activity => this.setState({ activity });
+
+  getStatus = (activity) => {
+    const codeCombatProfile = this.props.codeCombatProfile || {};
+    switch (activity.type) {
+      case ACTIVITY_TYPES.profile.id:
+        return Boolean(codeCombatProfile.id);
+      case ACTIVITY_TYPES.codeCombat.id:
+        return (Boolean((codeCombatProfile.achievements || {})[activity.level]));
+      case ACTIVITY_TYPES.codeCombatNumber.id:
+        return (
+          !codeCombatProfile.totalAchievements &&
+          Number(codeCombatProfile.totalAchievements) >= Number(activity.count)
+        )
+      default:
+        return true
+    }
+  }
 
   render() {
     const {
@@ -98,14 +123,13 @@ class ActivitiesTable extends React.PureComponent {
     const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
       pathStatus
     );
-
     return (
       <Fragment>
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Activity name</TableCell>
-              <TableCell>Description</TableCell>
+              <TableCell>Type</TableCell>
               {!canChange && <TableCell>Status</TableCell>}
               <TableCell style={{ width: COLUMN_ACTIONS_WIDTH }}>
                 Actions
@@ -115,23 +139,55 @@ class ActivitiesTable extends React.PureComponent {
           <TableBody>
             {activities.map(activity => (
               <TableRow key={activity.id}>
-                <TableCell>{activity.name}</TableCell>
-                <TableCell>{activity.description}</TableCell>
+                <TableCell className={classes.noWrap}>{activity.name}</TableCell>
+                <TableCell className={classes.noWrap}>{activity.description}</TableCell>
                 {!canChange && (
                   <TableCell>
-                    {activity.solved && (
+                    {this.getStatus(activity) && activity.solved && (
                       <Icon>
                         <DoneIcon />
                       </Icon>
                     )}
                   </TableCell>
                 )}
-                <TableCell>
+                <TableCell className={classes.noWrap} style={{ textAlign : 'left'}}>
+                  {/* temporary hide for online Oct2018 competition
+                    [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(activity.type) && (
+
+                    <Tooltip
+                      title={"View Default Solution Analysis"}
+                      PopperProps={
+                        {
+                          style: {
+                            pointerEvents: 'none'
+                          }
+                        }
+                      }
+                    >
+                      <Button
+                        onClick={() =>
+                          this.openAnalysisDialog(activity.id, activity.name)
+                        }
+                        variant="raised"
+                        className={classes.button}
+                      >
+                        <Timeline />
+                      </Button>
+                    </Tooltip>
+
+                  ) */}
                   <Button
                     onClick={() => onOpenActivity(activity)}
                     variant="raised"
                   >
-                    Solve
+                    {(activities && activities[0].type === "profile")
+                      ? (
+                        "Fetch"
+                      )
+                      : (
+                        "Solve"
+                      )
+                    }
                   </Button>
                   {canChange && (
                     <Button
@@ -141,16 +197,6 @@ class ActivitiesTable extends React.PureComponent {
                       variant="raised"
                     >
                       More
-                    </Button>
-                  )}
-                  {activity.defaultSolutionSkills && (
-                    <Button
-                      onClick={() =>
-                        this.openAnalysisDialog(activity.defaultSolutionSkills,activity.name)
-                      }
-                      variant="raised"
-                    >
-                      View Analysis
                     </Button>
                   )}
                 </TableCell>
@@ -179,7 +225,7 @@ class ActivitiesTable extends React.PureComponent {
               className={classes.button}
               onClick={() =>
                 this.selectActivity() ||
-                onDeleteActivity(this.state.activity.id)
+                onDeleteActivity(this.state.activity.id, this.state.activity.path)
               }
               variant="raised"
             >
@@ -217,7 +263,7 @@ class ActivitiesTable extends React.PureComponent {
           handleClose={this.handleCloseAnalysisDialog}
           open={this.state.analysisDialog.open}
           name={this.state.analysisDialog.name}
-          skills={this.state.analysisDialog.data}
+          activityId={this.state.analysisDialog.activityId}
         />
       </Fragment>
     );

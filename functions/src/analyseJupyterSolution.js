@@ -60,7 +60,12 @@ const analyseJupyterSolution = (data, taskKey, owner) => {
         admin
           .database()
           .ref(`/jupyterSolutionAnalysisQueue/responses/${taskKey}`)
-          .set(false)
+          .set({ 
+            owner,
+            error : {
+              message : err.message
+            } 
+          })
       );
     })
     .then(() =>

@@ -7,6 +7,7 @@ import {
   ASSIGNMENT_SUBMIT_REQUEST,
   ASSIGNMENT_SWITCH_TAB,
   UPDATE_NEW_ASSIGNMENT_FIELD,
+  SET_DEFAULT_ASSIGNMENT_FIELDS,
   ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW,
   ASSIGNMENT_ASSISTANT_FOUND,
   ASSIGNMENT_ADD_ASSISTANT_SUCCESS,
@@ -31,7 +32,8 @@ import {
   PROBLEM_SOLUTION_PROVIDED_SUCCESS,
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
-  PROBLEM_SOLUTION_REFRESH_SUCCESS
+  PROBLEM_SOLUTION_REFRESH_SUCCESS,
+  PROBLEM_SOLUTION_EXECUTION_STATUS
 } from "../Activity/actions";
 
 const DAYS_IN_WEEK = 7;
@@ -102,7 +104,7 @@ export const assignments = (
           value: action.assignment
         }
       };
-    case UPDATE_NEW_ASSIGNMENT_FIELD:
+      case UPDATE_NEW_ASSIGNMENT_FIELD:
       return {
         ...state,
         dialog: {
@@ -113,6 +115,17 @@ export const assignments = (
               action.field === "path" && action.value === "default"
                 ? ""
                 : action.value
+          }
+        }
+      };
+      case SET_DEFAULT_ASSIGNMENT_FIELDS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          value: {
+            ...state.dialog.value,
+            ...action.fields
           }
         }
       };
@@ -219,12 +232,24 @@ export const assignments = (
         dialog: {
           ...state.dialog,
           solution: {
-            ...(state.solution || {}),
+            ...(state.dialog.solution || {}),
             checked: false,
             loading: false
           }
         }
       };
+      case PROBLEM_SOLUTION_EXECUTION_STATUS: {
+        return {
+          ...state,
+          dialog: {
+            ...state.dialog,
+            solution: {
+              ...(state.dialog.solution || {}),
+              ...action.payload,
+            }
+          }
+        };
+      }
     case PROBLEM_SOLUTION_PROVIDED_SUCCESS:
       return {
         ...state,

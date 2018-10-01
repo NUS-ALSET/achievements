@@ -37,7 +37,6 @@ import React, { Fragment } from "react";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
-import withStyles from "@material-ui/core/styles/withStyles";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import RemoveStudentDialog from "../../components/dialogs/RemoveStudentDialog";
 import AddPathActivitySolutionDialog from "../../components/dialogs/AddPathActivitySolutionDialog";
@@ -47,23 +46,6 @@ import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
 
-const styles = theme => ({
-  breadcrumbLink: {
-    textDecoration: "none"
-  },
-  breadcrumbText: {
-    margin: theme.spacing.unit,
-    textTransform: "uppercase",
-    fontSize: "0.875rem"
-  },
-  actions: {
-    position: "absolute",
-    right: theme.spacing.unit
-  },
-  action: {
-    marginLeft: theme.spacing.unit
-  }
-});
 
 class Assignments extends React.Component {
   static propTypes = {
@@ -191,6 +173,11 @@ class Assignments extends React.Component {
           label="Enter password"
           onChange={this.handlePasswordChange}
           type="password"
+          onKeyPress={ (e) => {
+            if (e.key === 'Enter') {
+              this.submitPassword()
+            }
+          }}
         />
         <Grid container>
           <Grid item xs={12}>
@@ -280,7 +267,14 @@ class Assignments extends React.Component {
             }
           ]}
         />
-        <Typography gutterBottom>{course.description}</Typography>
+        <Typography
+          gutterBottom
+          style={{
+            marginLeft: 30
+          }}
+        >
+          Course Description: {course.description || "None provided"}
+        </Typography>
         {AssignmentView}
         <RemoveStudentDialog
           courseId={course.id}
@@ -300,7 +294,7 @@ class Assignments extends React.Component {
         <AddProfileDialog
           externalProfile={{
             url: "https://codecombat.com",
-            name: "Code Combat",
+            name: "CodeCombat",
             id: "CodeCombat"
           }}
           onClose={this.closeDialog}
@@ -360,7 +354,7 @@ class Assignments extends React.Component {
           course={course}
           dispatch={dispatch}
           open={ui.dialog && ui.dialog.type === "AddAssignment"}
-          paths={(ui.dialog && ui.dialog.paths) || []}
+          paths={(ui.dialog && ui.dialog.paths) || {}}
           teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
           uid={currentUser && currentUser.id}
         />
@@ -388,7 +382,6 @@ const mapStateToProps = (state, ownProps) => ({
 
 export default compose(
   withRouter,
-  withStyles(styles),
   firebaseConnect((ownProps, store) => {
     const courseId = ownProps.match.params.courseId;
     const state = store.getState();

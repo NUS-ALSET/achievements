@@ -22,26 +22,14 @@ import { call, put, race, select, takeLatest } from "redux-saga/effects";
 import { delay } from "redux-saga";
 import { notificationShow } from "../Root/actions";
 
-const updateFunctionUrl =
-  "https://us-central1-achievements-dev.cloudfunctions.net/" +
-  "checkUserRecommendations?userId=";
-
 export function* signInHandler() {
-  const data = yield select(state => ({
-    authDomain: state.firebase.auth.authDomain || "",
-    uid: state.firebase.auth.uid
-  }));
+  const uid = yield select(state => state.firebase.auth.uid);
 
   try {
-    if (data.uid) {
-      const adminStatus = yield call(accountService.checkAdminStatus, data.uid);
+    if (uid) {
+      const adminStatus = yield call(accountService.checkAdminStatus, uid);
+      yield call(accountService.authTimeUpdate, uid);
       yield put(accountChangeAdminStatus(adminStatus));
-      // Temporary workaround to invoke function. It throws CORS error, but we
-      // don't need result of execution, so, it's ok, since it's temporary
-      // workaround
-      if (data.authDomain.includes("achievements-dev.firebaseapp.com")) {
-        fetch(`${updateFunctionUrl}${data.uid}`);
-      }
     } else {
       yield put(accountChangeAdminStatus(false));
     }
@@ -122,6 +110,7 @@ export function* externalProfileRefreshRequestHandler(action) {
       uid,
       action.externalProfileId
     );
+    yield put(notificationShow(`Fetching ${action.externalProfileType} Achievements...`))
     const { timedOut } = yield race({
       response: call(
         [accountService, accountService.watchProfileRefresh],
