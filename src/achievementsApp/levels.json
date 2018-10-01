@@ -243,6 +243,11 @@
     "name" : "Endangered Burl",
     "url" : "http://codecombat.com/play/level/endangered-burl"
   },
+  "enemy-mine" : {
+    "id" : "enemy-mine",
+    "name" : "Enemy Mine",
+    "url" : "https://codecombat.com/play/level/enemy-mine"
+  },
   "fire-dancing" : {
     "campaign" : "dungeon",
     "iconUrl" : "/assets/icons/taunt_blank.png",
