@@ -17,10 +17,10 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { firebaseConnect } from "react-redux-firebase";
 
 import CohortCoursesTable from "../../components/tables/CohortCoursesTable";
-import { cohortsService } from "../../services/cohorts";
 import {
   cohortCloseDialog,
   cohortCoursesRecalculateRequest,
+  cohortCourseUpdateRequest,
   cohortOpen,
   cohortOpenAssistantsDialog,
   cohortUpdateAssistantsRequest
@@ -80,9 +80,11 @@ class Cohort extends React.PureComponent {
     );
 
   addCourse = () => {
-    const { cohort } = this.props;
+    const { cohort, dispatch } = this.props;
 
-    cohortsService.addCourse(cohort.id, this.state.selectedCourse);
+    dispatch(
+      cohortCourseUpdateRequest(cohort.id, this.state.selectedCourse, "add")
+    );
   };
 
   checkAssistant = assistantKey =>
@@ -154,6 +156,7 @@ class Cohort extends React.PureComponent {
             >
               {Object.keys(courses || {})
                 .map(id => ({ ...courses[id], id }))
+                .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
                 .map(course => (
                   <MenuItem key={course.id} value={course.id}>
                     {course.name}

@@ -1,11 +1,14 @@
 import { call, put, select, takeLatest } from "redux-saga/effects";
 import {
+  COHORT_COURSE_UPDATE_REQUEST,
   COHORT_COURSES_RECALCULATE_REQUEST,
   COHORT_OPEN,
   COHORT_UPDATE_ASSISTANTS_REQUEST,
   cohortCoursesRecalculateFail,
   cohortCoursesRecalculateRequest,
   cohortCoursesRecalculateSuccess,
+  cohortCourseUpdateFail,
+  cohortCourseUpdateSuccess,
   cohortFetchSuccess,
   cohortUpdateAssistantsFail,
   cohortUpdateAssistantsSuccess
@@ -32,7 +35,7 @@ function* cohortOpenHandle(action) {
   }
 }
 
-function* cohortRecalculationRequestHandle(action) {
+function* cohortRecalculationRequestHandler(action) {
   let uid = yield select(state => state.firebase.auth.uid);
 
   try {
@@ -50,6 +53,37 @@ function* cohortRecalculationRequestHandle(action) {
     yield put(cohortFetchSuccess(cohortData));
   } catch (err) {
     yield put(cohortCoursesRecalculateFail(err.message));
+  }
+}
+
+function* cohortCourseUpdateRequestHandler(action) {
+  try {
+    yield call(
+      [
+        cohortsService,
+        action.kind === "add"
+          ? cohortsService.addCourse
+          : cohortsService.removeCourse
+      ],
+      action.cohortId,
+      action.courseId
+    );
+    if (action.kind === "add") {
+      yield put(cohortCoursesRecalculateRequest(action.cohortId));
+    }
+    yield put(
+      cohortCourseUpdateSuccess(action.cohortId, action.courseId, action.kind)
+    );
+  } catch (err) {
+    yield put(
+      cohortCourseUpdateFail(
+        action.cohortId,
+        action.courseId,
+        action.kind,
+        err.message
+      )
+    );
+    yield notificationShow(err.message);
   }
 }
 
@@ -83,7 +117,13 @@ export default [
   function* watchCohortRecalculationRequest() {
     yield takeLatest(
       COHORT_COURSES_RECALCULATE_REQUEST,
-      cohortRecalculationRequestHandle
+      cohortRecalculationRequestHandler
+    );
+  },
+  function* watchCohortCourseUpdateRequest() {
+    yield takeLatest(
+      COHORT_COURSE_UPDATE_REQUEST,
+      cohortCourseUpdateRequestHandler
     );
   },
   function* watchCohortUpdateAssistantRequest() {
