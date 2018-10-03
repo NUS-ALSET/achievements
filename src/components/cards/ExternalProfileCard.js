@@ -59,8 +59,9 @@ class ExternalProfileCard extends React.Component {
             </Fragment>
           ) : (
             <Typography className={classes.card}>
-              <a href={externalProfile.url}>{externalProfile.name}</a>,{" "}
-              {externalProfile.description}
+              <a href={externalProfile.url} target="_blank" rel="noopener noreferrer">
+                {externalProfile.name}
+              </a>,{" "}{externalProfile.description}
             </Typography>
           )}
         </CardContent>

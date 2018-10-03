@@ -167,8 +167,7 @@ class Account extends React.PureComponent {
     if (auth.isEmpty) {
       return (
         <div>
-          You do not seem to have a profile registered. Login required to
-          display this page
+          Login required to display this page.
         </div>
       );
     }

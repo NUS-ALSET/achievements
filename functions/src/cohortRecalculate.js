@@ -7,15 +7,15 @@ const ASSIGNMENTS_TYPES = {
   },
   Profile: {
     id: "Profile",
-    caption: "Enter Code Combat Profile"
+    caption: "Fetch CodeCombat Profile"
   },
   CodeCombat: {
     id: "CodeCombat",
-    caption: "Complete Code Combat Level"
+    caption: "Complete CodeCombat Level"
   },
   CodeCombat_Number: {
     id: "CodeCombat_Number",
-    caption: "Complete Number of Code Combat Levels"
+    caption: "Complete Number of CodeCombat Levels"
   },
   TeamFormation: {
     id: "TeamFormation",

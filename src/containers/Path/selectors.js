@@ -67,7 +67,7 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.text.id:
       return "Text Activity";
     case ACTIVITY_TYPES.profile.id:
-      return "Enter CodeCombat profile";
+      return "Fetch CodeCombat profile";
     case ACTIVITY_TYPES.codeCombat.id:
       return `Finish "${problem.level}" level at CodeCombat`;
     case ACTIVITY_TYPES.codeCombatNumber.id:
