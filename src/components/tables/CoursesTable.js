@@ -68,6 +68,7 @@ class CoursesTable extends React.PureComponent {
           ) : (
             Object.keys(courses)
               .map(id => ({ ...courses[id], id }))
+              .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
               .map(course => (
                 <TableRow key={course.id}>
                   <TableCell>{course.name}</TableCell>

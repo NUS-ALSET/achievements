@@ -8,7 +8,9 @@ Note: all scripts below should be invoked in `/functions` directory
  * `npm install`
  * `npm start` - **launches `localTrigger` file.**
  
- More details from [Firebase-admin Docs](https://firebase.google.com/docs/admin/setup):
+ _`localTrigger` is simple node app launched on some machineis for dev version. Prod version doesn't uses localTriggers and queue, and instead it uses database trigger. Dev version uses firebase plan that doesn't allow outside http requests. So, dev site's firebase functions can't help with requests to CodeCombat/AWS etc_
+ 
+ ### More details on setting up local firebase functions from [Firebase-admin Docs](https://firebase.google.com/docs/admin/setup):
  - Log in the Firebase console
  - Navigate to "Service accounts" in Settings
  - Click the **Generate New Private** Key button at the bottom of the Firebase Admin SDK section of the Service Accounts tab.
