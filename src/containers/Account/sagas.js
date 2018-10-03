@@ -204,6 +204,7 @@ function* profileUpdateDataRequestHandler(action) {
     yield put(profileUpdateDataSuccess(action.field, action.data));
   } catch (err) {
     yield put(profileUpdateDataFail(action.field, action.data, err.message));
+    yield put(notificationShow(err.message));
   }
 }
 

@@ -165,16 +165,14 @@ class Account extends React.PureComponent {
 
     // taken from Courses.js, display if not logged in
     if (auth.isEmpty) {
-      return (
-        <div>
-          Login required to display this page.
-        </div>
-      );
+      return <div>Login required to display this page.</div>;
     }
 
     if (!user) {
       return <LinearProgress />;
     }
+
+    const isOwner = auth.uid === match.params.accountId;
 
     return (
       <Fragment>
@@ -187,7 +185,7 @@ class Account extends React.PureComponent {
                 title={this.props.userName}
               />
               <CardContent>
-                {displayNameEdit ? (
+                {isOwner && displayNameEdit ? (
                   <Fragment>
                     <TextField
                       autoFocus
@@ -213,18 +211,27 @@ class Account extends React.PureComponent {
                         width: "calc(100% - 48px)"
                       }}
                     >
-                      {userName}
+                      {isOwner ||
+                      (user.showDisplayName ||
+                        user.showDisplayName === undefined)
+                        ? userName
+                        : "Hidden"}
                     </Typography>
-                    <IconButton>
-                      <EditIcon
+                    {isOwner && (
+                      <IconButton
                         onClick={() => this.toggleDisplayNameEdit(true)}
-                      />
-                    </IconButton>
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    )}
                   </Fragment>
                 )}
                 {profileData.map(item => (
                   <TextField
                     fullWidth
+                    InputProps={{
+                      readOnly: !isOwner
+                    }}
                     key={item.id}
                     label={item.title}
                     onChange={e =>
@@ -240,85 +247,91 @@ class Account extends React.PureComponent {
                     ))}
                   </TextField>
                 ))}
-                <FormControl
-                  component="fieldset"
-                  style={{
-                    marginTop: "20px"
-                  }}
-                >
-                  <FormLabel component="legend">Public visibility</FormLabel>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={
-                            user.showDisplayName === undefined
-                              ? true
-                              : user.showDisplayName
-                          }
-                          onChange={e =>
-                            this.onProfileDataUpdate(
-                              "showDisplayName",
-                              e.target.checked
-                            )
-                          }
-                          value="showDisplayName"
-                        />
-                      }
-                      label="Show Display Name"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={
-                            user.showCodeCombatProfile === undefined
-                              ? true
-                              : user.showCodeCombatProfile
-                          }
-                          onChange={e =>
-                            this.onProfileDataUpdate(
-                              "showCodeCombatProfile",
-                              e.target.checked
-                            )
-                          }
-                          value="showCodeCombatProfile"
-                        />
-                      }
-                      label="Show CodeCombat Profile"
-                    />
-                  </FormGroup>
-                  <FormHelperText>Display data to other users</FormHelperText>
-                </FormControl>
+                {isOwner && (
+                  <FormControl
+                    component="fieldset"
+                    style={{
+                      marginTop: "20px"
+                    }}
+                  >
+                    <FormLabel component="legend">Public visibility</FormLabel>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={
+                              user.showDisplayName === undefined
+                                ? true
+                                : user.showDisplayName
+                            }
+                            onChange={e =>
+                              this.onProfileDataUpdate(
+                                "showDisplayName",
+                                e.target.checked
+                              )
+                            }
+                            value="showDisplayName"
+                          />
+                        }
+                        label="Show Display Name"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={
+                              user.showCodeCombatProfile === undefined
+                                ? true
+                                : user.showCodeCombatProfile
+                            }
+                            onChange={e =>
+                              this.onProfileDataUpdate(
+                                "showCodeCombatProfile",
+                                e.target.checked
+                              )
+                            }
+                            value="showCodeCombatProfile"
+                          />
+                        }
+                        label="Show CodeCombat Profile"
+                      />
+                    </FormGroup>
+                    <FormHelperText>Display data to other users</FormHelperText>
+                  </FormControl>
+                )}
               </CardContent>
             </Card>
           </Grid>
           <Grid item xs={6}>
-            {Object.keys(externalProfiles).map(externalProfileKey => (
-              <Fragment key={externalProfileKey}>
-                <ExternalProfileCard
-                  addExternalProfileRequest={this.addExternalProfileRequest}
-                  classes={classes}
-                  externalProfile={externalProfiles[externalProfileKey]}
-                  inProgress={achievementsRefreshingInProgress}
-                  refreshAchievementsRequest={this.refreshAchievementsRequest}
-                  removeExternalProfileRequest={
-                    this.removeExternalProfileRequest
-                  }
-                  userAchievements={
-                    (userAchievements || {})[externalProfileKey]
-                  }
-                />
+            {(isOwner ||
+              user.showCodeCombatProfile ||
+              user.showCodeCombatProfile === undefined) &&
+              Object.keys(externalProfiles).map(externalProfileKey => (
+                <Fragment key={externalProfileKey}>
+                  <ExternalProfileCard
+                    addExternalProfileRequest={this.addExternalProfileRequest}
+                    classes={classes}
+                    externalProfile={externalProfiles[externalProfileKey]}
+                    inProgress={achievementsRefreshingInProgress}
+                    isOwner={isOwner}
+                    refreshAchievementsRequest={this.refreshAchievementsRequest}
+                    removeExternalProfileRequest={
+                      this.removeExternalProfileRequest
+                    }
+                    userAchievements={
+                      (userAchievements || {})[externalProfileKey]
+                    }
+                  />
 
-                <AddProfileDialog
-                  externalProfile={externalProfiles[externalProfileKey]}
-                  inProgress={this.props.externalProfileInUpdate}
-                  onClose={this.closeExternalProfileDialog}
-                  onCommit={this.onProfileUpdate}
-                  open={this.props.showDialog}
-                  uid={this.props.uid}
-                />
-              </Fragment>
-            ))}
+                  <AddProfileDialog
+                    externalProfile={externalProfiles[externalProfileKey]}
+                    inProgress={this.props.externalProfileInUpdate}
+                    onClose={this.closeExternalProfileDialog}
+                    onCommit={this.onProfileUpdate}
+                    open={this.props.showDialog}
+                    uid={this.props.uid}
+                  />
+                </Fragment>
+              ))}
             {(joinedPaths[match.params.accountId] || []).map(path => (
               <JoinedPathCard
                 classes={classes}

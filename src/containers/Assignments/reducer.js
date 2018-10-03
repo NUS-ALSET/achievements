@@ -245,7 +245,7 @@ export const assignments = (
             ...state.dialog,
             solution: {
               ...(state.dialog.solution || {}),
-              ...action.payload,
+              ...action.payload
             }
           }
         };

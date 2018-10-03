@@ -124,7 +124,8 @@ export function* updateNewAssignmentFieldHandler(action) {
   const data = yield select(state => ({
     assignment: state.assignments.dialog.value,
     manualUpdates: state.assignments.dialog.manualUpdates || {},
-    uid: state.firebase.auth.uid
+    uid: state.firebase.auth.uid,
+    paths: state.assignments.dialog.paths
   }));
   let activity;
   let activities;
@@ -182,6 +183,16 @@ export function* updateNewAssignmentFieldHandler(action) {
       yield put(assignmentProblemsFetchSuccess(activities));
 
       updatedFields.details = `${location}#/paths/${data.assignment.path}`;
+
+      if (assignment.questionType === ASSIGNMENTS_TYPES.PathProgress.id) {
+        const paths = Object.assign(
+          {},
+          data.paths.myPaths,
+          data.paths.publicPaths
+        );
+        const path = (paths[action.value] && paths[action.value].name) || {};
+        updatedFields.name = `Path progress for ${path.name || "Some path"}`;
+      }
 
       updatedFields.pathActivity = "";
       break;
