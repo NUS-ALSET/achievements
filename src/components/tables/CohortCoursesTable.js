@@ -19,8 +19,8 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { cohortsService } from "../../services/cohorts";
 import { cohort } from "../../types";
+import { cohortCourseUpdateRequest } from "../../containers/Cohort/actions";
 
 const styles = theme => ({
   button: {
@@ -33,9 +33,15 @@ class CohortCoursesTable extends React.PureComponent {
     classes: PropTypes.object,
     cohort: cohort,
     courses: PropTypes.array,
+    dispatch: PropTypes.func,
     isOwner: PropTypes.bool,
     match: PropTypes.object
   };
+
+  onRemoveClick = courseId =>
+    this.props.dispatch(
+      cohortCourseUpdateRequest(this.props.cohort.id, courseId, "remove")
+    );
 
   render() {
     const { courses, cohort, isOwner } = this.props;
@@ -61,8 +67,7 @@ class CohortCoursesTable extends React.PureComponent {
                   {pathData && pathData.name}
                 </TableCell>
               ))
-            )
-            : (
+            ) : (
               <TableCell>Paths for Cohort</TableCell>
             )}
             <TableCell>
@@ -76,44 +81,38 @@ class CohortCoursesTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {courses && courses.map(course => (
-            <TableRow key={course.id}>
-              <TableCell>
-                <strong>{course.rank}</strong>
-              </TableCell>
-              {cohort.paths
-              ? (
-                cohort.paths.length &&
-                cohort.paths.map(id => (
-                  <TableCell key={id}>
-                    {course.pathsProgress && course.pathsProgress[id]}
-                  </TableCell>
-                ))
-              )
-              : (
-                <TableCell>None</TableCell>
-              )}
-              <TableCell>{course.progress}</TableCell>
-              <TableCell>{course.participants}</TableCell>
-              <TableCell>
-                <Link to={`/courses/${course.id}`}>{course.name}</Link>
-              </TableCell>
-              {isOwner && (
+          {courses &&
+            courses.map(course => (
+              <TableRow key={course.id}>
                 <TableCell>
-                  <IconButton>
-                    <DeleteIcon
-                      onClick={() =>
-                        cohortsService.removeCourse(
-                          this.props.match.params.cohortId,
-                          course.id
-                        )
-                      }
-                    />
-                  </IconButton>
+                  <strong>{course.rank}</strong>
                 </TableCell>
-              )}
-            </TableRow>
-          ))}
+                {cohort.paths ? (
+                  cohort.paths.length &&
+                  cohort.paths.map(id => (
+                    <TableCell key={id}>
+                      {course.pathsProgress && course.pathsProgress[id]}
+                    </TableCell>
+                  ))
+                ) : (
+                  <TableCell>None</TableCell>
+                )}
+                <TableCell>{course.progress}</TableCell>
+                <TableCell>{course.participants}</TableCell>
+                <TableCell>
+                  <Link to={`/courses/${course.id}`}>{course.name}</Link>
+                </TableCell>
+                {isOwner && (
+                  <TableCell>
+                    <IconButton>
+                      <DeleteIcon
+                        onClick={() => this.onRemoveClick(course.id)}
+                      />
+                    </IconButton>
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     );

@@ -1,5 +1,6 @@
 import {
   COHORT_CLOSE_DIALOG,
+  COHORT_COURSE_UPDATE_SUCCESS,
   COHORT_FETCH_SUCCESS,
   COHORT_OPEN_ASSISTANTS_DIALOG,
   COHORT_UPDATE_ASSISTANTS_SUCCESS
@@ -16,6 +17,18 @@ export const cohort = (state = { ui: {} }, action) => {
           newAssistant: action.assistant
         }
       };
+    case COHORT_COURSE_UPDATE_SUCCESS:
+      return action.kind === "remove"
+        ? {
+            ...state,
+            cohort: {
+              ...state.cohort,
+              courses: state.cohort.courses.filter(
+                course => course.id !== action.courseId
+              )
+            }
+          }
+        : state;
     case COHORT_OPEN_ASSISTANTS_DIALOG:
       return {
         ...state,
@@ -23,7 +36,6 @@ export const cohort = (state = { ui: {} }, action) => {
           dialog: "Assistants"
         }
       };
-
     case COHORT_UPDATE_ASSISTANTS_SUCCESS:
       return {
         ...state,

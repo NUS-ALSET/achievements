@@ -432,8 +432,8 @@ class AssignmentsTable extends React.PureComponent {
                     {assignment.name}
                   </TableSortLabel>
                   <div>
-                    {/* temporarily hide for the Oct18 competition
-                    assignment.details && (
+                    {!(assignment.questionType === "PathProgress") &&
+                      assignment.details && (
                       <a
                         href={assignment.details}
                         rel="noopener noreferrer"
@@ -441,7 +441,7 @@ class AssignmentsTable extends React.PureComponent {
                       >
                         link
                       </a>
-                    ) */}
+                    )}
                     {(assignment.details ? " " : "") + "(" + assignment.progress
                       + " students submitted)" ||
                       ""}
