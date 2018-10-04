@@ -59,7 +59,7 @@ class CohortCoursesTable extends React.PureComponent {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>School Rank</TableCell>
+            <TableCell>Course Rank</TableCell>
             {cohort.pathsData && cohort.pathsData.length
             ? (
               cohort.pathsData.map(pathData => (
@@ -76,7 +76,7 @@ class CohortCoursesTable extends React.PureComponent {
             </TableCell>
 
             <TableCell> Total Students ({totals.participants})</TableCell>
-            <TableCell>School</TableCell>
+            <TableCell>Course</TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
