@@ -488,7 +488,6 @@ export const getCourseProps = (state, ownProps) => {
     totalAssignments: Object.keys(assignments).filter(key =>
       checkVisibilitySolution(assignments, key, options)
     ).length,
-    watchSeveralPaths: pathProgressAssignments.length > PATH_PROGRESS_THRESHOLD,
     assignments: Object.keys(assignments)
       .map(id => ({
         ...assignments[id],
