@@ -48,6 +48,7 @@ import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 import { APP_SETTING } from "../../achievementsApp/config";
 import AnalysisDialog from "../dialogs/AnalysisDialog";
+import { courseInfo } from "../../types";
 
 const MAX_TEXT_LENGTH = 39;
 const MAX_NAME_LENGTH = 15;
@@ -81,7 +82,7 @@ const styles = theme => ({
 class AssignmentsTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
-    course: PropTypes.object,
+    course: courseInfo,
 
     isInstructor: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
@@ -95,7 +96,7 @@ class AssignmentsTable extends React.PureComponent {
     currentStudent: null,
     analysisDialog: {
       open: false,
-      name: '',
+      name: "",
       data: {}
     }
   };
@@ -168,8 +169,8 @@ class AssignmentsTable extends React.PureComponent {
       return (
         <Tooltip
           classes={{ tooltip: classes.noWrapTooltip }}
+          PopperProps={{ style: { pointerEvents: "none" } }}
           title={result}
-          PopperProps={{ style: { pointerEvents: 'none' } }}
         >
           <span>{result.slice(0, MAX_TEXT_LENGTH) + "..."}</span>
         </Tooltip>
@@ -226,8 +227,8 @@ class AssignmentsTable extends React.PureComponent {
         return solution ? (
           <Tooltip
             classes={{ tooltip: classes.noWrapTooltip }}
+            PopperProps={{ style: { pointerEvents: "none" } }}
             title={this.getTooltip(assignment, solution)}
-            PopperProps={{ style: { pointerEvents: 'none' } }}
           >
             <span>
               {/^http[s]?:\/\//.test(
@@ -434,17 +435,18 @@ class AssignmentsTable extends React.PureComponent {
                   <div>
                     {!(assignment.questionType === "PathProgress") &&
                       assignment.details && (
-                      <a
-                        href={assignment.details}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        link
-                      </a>
-                    )}
-                    {(assignment.details ? " " : "") + "(" + assignment.progress
-                      + " students submitted)" ||
-                      ""}
+                        <a
+                          href={assignment.details}
+                          rel="noopener noreferrer"
+                          target="_blank"
+                        >
+                          link
+                        </a>
+                      )}
+                    {(assignment.details ? " " : "") +
+                      "(" +
+                      assignment.progress +
+                      " students submitted)" || ""}
                   </div>
                   {!APP_SETTING.isSuggesting && (
                     <div>
@@ -457,6 +459,18 @@ class AssignmentsTable extends React.PureComponent {
                   )}
                 </TableCell>
               ))}
+              {isInstructor &&
+                course.watchSeveralPaths && (
+                  <TableCell>
+                    <TableSortLabel
+                      active={sortState.field === "pathProgress"}
+                      direction={sortState.direction}
+                      onClick={() => this.onSortClick("pathProgress")}
+                    >
+                      Paths Progress
+                    </TableSortLabel>
+                  </TableCell>
+                )}
               {isInstructor && (
                 <TableCell className={classes.nowrap}>
                   <TableSortLabel
@@ -480,25 +494,21 @@ class AssignmentsTable extends React.PureComponent {
                     {isInstructor &&
                       course.owner === currentUser.id && (
                         <IconButton
-                          onClick={
-                            e => this.onShowStudentMenu(studentInfo, e)
-                          }
+                          onClick={e => this.onShowStudentMenu(studentInfo, e)}
                         >
                           <MoreVertIcon />
                         </IconButton>
-                    )}
+                      )}
                     <Tooltip
                       classes={{ tooltip: classes.noWrapTooltip }}
+                      PopperProps={{ style: { pointerEvents: "none" } }}
                       title={studentInfo.name}
-                      PopperProps={{ style: { pointerEvents: 'none' } }}
                     >
                       <span>
-                        {studentInfo.name.slice(0, MAX_NAME_LENGTH)
-                          +
-                        (studentInfo.name.length > MAX_NAME_LENGTH
-                          ? "..."
-                          : ""
-                        )}
+                        {studentInfo.name.slice(0, MAX_NAME_LENGTH) +
+                          (studentInfo.name.length > MAX_NAME_LENGTH
+                            ? "..."
+                            : "")}
                       </span>
                     </Tooltip>
                   </TableCell>
@@ -526,12 +536,12 @@ class AssignmentsTable extends React.PureComponent {
                                 }
                               >
                                 <Tooltip
+                                  PopperProps={{
+                                    style: {
+                                      pointerEvents: "none"
+                                    }
+                                  }}
                                   title={"View Solution"}
-                                  PopperProps={
-                                    {style: {
-                                      pointerEvents: 'none'
-                                    }}
-                                  }
                                 >
                                   <RemoveRedEye />
                                 </Tooltip>
@@ -543,18 +553,18 @@ class AssignmentsTable extends React.PureComponent {
                                 <IconButton
                                   onClick={() =>
                                     this.openAnalysisDialog(
-                                        assignment.id,
-                                        assignment.name
+                                      assignment.id,
+                                      assignment.name
                                     )
                                   }
                                 >
                                   <Tooltip
+                                    PopperProps={{
+                                      style: {
+                                        pointerEvents: "none"
+                                      }
+                                    }}
                                     title={"View Analysis"}
-                                    PopperProps={
-                                      {style: {
-                                        pointerEvents: 'none'
-                                      }}
-                                    }
                                   >
                                     <Timeline />
                                   </Tooltip>
@@ -587,30 +597,49 @@ class AssignmentsTable extends React.PureComponent {
                   ))}
                   {isInstructor && (
                     <TableCell className={classes.nowrap}>
-                      {`${studentInfo.progress.totalSolutions} / ${
-                        course.totalAssignments
+                      {`${studentInfo.pathProgress.totalSolutions} / ${
+                        studentInfo.pathProgress.totalActivities
                       } (${
-                        studentInfo.progress.lastSolutionTime
-                          ? (
-                            new Date(
-                              studentInfo.progress.lastSolutionTime
-                            ).toLocaleString(
-                              'en-US', {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                second: '2-digit',
-                                hour12: true,
-                                timeZone: 'Asia/Singapore'
-                              }
-                            )
-                          )
+                        studentInfo.pathProgress.lastSolutionTime
+                          ? new Date(
+                              studentInfo.pathProgress.lastSolutionTime
+                            ).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                              timeZone: "Asia/Singapore"
+                            })
                           : "no submissions yet"
                       })`}
                     </TableCell>
                   )}
+                  {isInstructor &&
+                    course.watchSeveralPaths && (
+                      <TableCell className={classes.nowrap}>
+                        {`${studentInfo.progress.totalSolutions} / ${
+                          course.totalAssignments
+                        } (${
+                          studentInfo.progress.lastSolutionTime
+                            ? new Date(
+                                studentInfo.progress.lastSolutionTime
+                              ).toLocaleString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                                day: "numeric",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: true,
+                                timeZone: "Asia/Singapore"
+                              })
+                            : "no submissions yet"
+                        })`}
+                      </TableCell>
+                    )}
                 </TableRow>
               );
             })}
@@ -660,10 +689,10 @@ class AssignmentsTable extends React.PureComponent {
           </Popper>
         )}
         <AnalysisDialog
-          handleClose={this.handleCloseAnalysisDialog}
-          open={this.state.analysisDialog.open}
-          name={this.state.analysisDialog.name}
           activityId={this.state.analysisDialog.activityId}
+          handleClose={this.handleCloseAnalysisDialog}
+          name={this.state.analysisDialog.name}
+          open={this.state.analysisDialog.open}
         />
       </Fragment>
     );

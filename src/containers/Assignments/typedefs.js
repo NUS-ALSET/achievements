@@ -18,8 +18,9 @@
  * @property {Boolean} loaded
  * @property {Object | Boolean} members
  * @property {Array<Assignment>} assignments
+ * @property {Number} totalAssignments
  * @property {Object} solutions
-
+ * @property {Boolean} watchSeveralPaths
  */
 
 /**
