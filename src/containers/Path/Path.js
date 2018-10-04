@@ -363,6 +363,13 @@ export class Path extends React.Component {
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
+        <AddGameSolutionDialog
+          onClose={onCloseDialog}
+          onCommit={this.onTextSolutionSubmit}
+          open={ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`}
+          problem={ui.dialog.value}
+          taskId={ui.dialog.value && ui.dialog.value.id}
+        />
         <FetchCodeCombatDialog
           defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
           currentUserId={uid}
