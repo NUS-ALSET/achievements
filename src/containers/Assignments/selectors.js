@@ -5,6 +5,9 @@ import { ASSIGNMENTS_TYPES } from "../../services/courses";
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
+const REGEXP_SOLUTIONS_INDEX = 1;
+const REGEXP_ACTIVITIES_INDEX = 2;
+
 /**
  * Get Solutions for student. It compares `/solutions` and `/visibleSolutions` refs and returns solution data with
  * flags - is concrete solution published, validated and/or rejected by instructor
@@ -304,6 +307,51 @@ function checkVisibilitySolution(assignments, key, options) {
 
 /**
  *
+ * @param {Object} assignments hash map with assignments
+ */
+function getPathProgressAssignments(assignments) {
+  return Object.keys(assignments || {}).filter(
+    key => assignments[key].questionType === ASSIGNMENTS_TYPES.PathProgress.id
+  );
+}
+
+function getStudentPathProgress(member, targetAssignments) {
+  const result = {
+    totalActivities: 0,
+    totalSolutions: 0,
+    lastSolutionTime: 0
+  };
+  try {
+    for (const key of targetAssignments) {
+      const solution = member.solutions[key];
+      if (solution && solution.value && solution.createdAt) {
+        let value = /^(\d+) of (\d+)$/.exec(solution.value || "");
+        value =
+          value ||
+          /^\s*(\d+)\s*\/\s*(\d+)\s*$/.exec(solution.value || "") ||
+          [];
+        result.totalActivities += Number(value[REGEXP_ACTIVITIES_INDEX] || 0);
+        result.totalSolutions += Number(value[REGEXP_SOLUTIONS_INDEX] || 0);
+        result.lastSolutionTime = Math.max(
+          result.lastSolutionTime,
+          solution.createdAt
+        );
+      }
+    }
+    // Temporary solution
+  } catch (err) {
+    console.error(err);
+    return {
+      totalActivities: 0,
+      totalSolutions: 0,
+      lastSolutionTime: 0
+    };
+  }
+  return result;
+}
+
+/**
+ *
  * @param {AchievementsAppState} state
  * @param {Object} ownProps
  * @returns {AssignmentCourse} course props
@@ -318,6 +366,8 @@ export const getCourseProps = (state, ownProps) => {
   const options = {
     showHiddenAssignments: state.assignments.showHiddenAssignments
   };
+  const pathProgressAssignments =
+    instructorView && getPathProgressAssignments(assignments);
   const courseData = getFrom(state.firebase.data, "courses")[courseId];
 
   if (!courseData) {
@@ -338,6 +388,9 @@ export const getCourseProps = (state, ownProps) => {
   members = members
     .map(member => ({
       ...member,
+      pathProgress:
+        pathProgressAssignments.length > 1 &&
+        getStudentPathProgress(member, pathProgressAssignments),
       progress: {
         totalSolutions: Object.keys(member.solutions).filter(key =>
           checkVisibilitySolution(assignments, key, options)
@@ -370,7 +423,20 @@ export const getCourseProps = (state, ownProps) => {
         }
       }
 
-      if (!["studentName", "progress"].includes(state.assignments.sort.field)) {
+      if (state.assignments.sort.field === "pathProgress") {
+        aValue = a.pathProgress.totalSolutions;
+        bValue = b.pathProgress.totalSolutions;
+        if (aValue === bValue) {
+          aValue = -a.pathProgress.lastSolutionTime;
+          bValue = -b.pathProgress.lastSolutionTime;
+        }
+      }
+
+      if (
+        !["studentName", "pathProgress", "progress"].includes(
+          state.assignments.sort.field
+        )
+      ) {
         aValue = getValueToSort(a.solutions, state.assignments.sort.field);
         bValue = getValueToSort(b.solutions, state.assignments.sort.field);
         if (aValue === bValue) {
@@ -423,6 +489,7 @@ export const getCourseProps = (state, ownProps) => {
     totalAssignments: Object.keys(assignments).filter(key =>
       checkVisibilitySolution(assignments, key, options)
     ).length,
+    watchSeveralPaths: pathProgressAssignments.length > 1,
     assignments: Object.keys(assignments)
       .map(id => ({
         ...assignments[id],
