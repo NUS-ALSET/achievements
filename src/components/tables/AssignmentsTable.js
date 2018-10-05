@@ -460,15 +460,15 @@ class AssignmentsTable extends React.PureComponent {
                 </TableCell>
               ))}
               {course.watchSeveralPaths && (
-                  <TableCell>
-                    <TableSortLabel
-                      active={sortState.field === "pathProgress"}
-                      direction={sortState.direction}
-                      onClick={() => this.onSortClick("pathProgress")}
-                    >
-                      Combined Paths Progress
-                    </TableSortLabel>
-                  </TableCell>
+                <TableCell>
+                  <TableSortLabel
+                    active={sortState.field === "pathProgress"}
+                    direction={sortState.direction}
+                    onClick={() => this.onSortClick("pathProgress")}
+                  >
+                    Combined Paths Progress
+                  </TableSortLabel>
+                </TableCell>
               )}
               {isInstructor && (
                 <TableCell className={classes.nowrap}>
@@ -594,33 +594,35 @@ class AssignmentsTable extends React.PureComponent {
                       </Fragment>
                     </TableCell>
                   ))}
-                  <TableCell className={classes.nowrap}>
-                    {`${studentInfo.pathProgress.totalSolutions} / ${
-                      studentInfo.pathProgress.totalActivities}`}
-                  </TableCell>
-                  {isInstructor &&
-                    course.watchSeveralPaths && (
-                      <TableCell className={classes.nowrap}>
-                        {`${studentInfo.progress.totalSolutions} / ${
-                          course.totalAssignments
-                        } (${
-                          studentInfo.progress.lastSolutionTime
-                            ? new Date(
-                                studentInfo.progress.lastSolutionTime
-                              ).toLocaleString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                                second: "2-digit",
-                                hour12: true,
-                                timeZone: "Asia/Singapore"
-                              })
-                            : "no submissions yet"
-                        })`}
-                      </TableCell>
-                    )}
+                  {course.watchSeveralPaths && (
+                    <TableCell className={classes.nowrap}>
+                      {`${studentInfo.pathProgress.totalSolutions} / ${
+                        studentInfo.pathProgress.totalActivities
+                      }`}
+                    </TableCell>
+                  )}
+                  {isInstructor && (
+                    <TableCell className={classes.nowrap}>
+                      {`${studentInfo.progress.totalSolutions} / ${
+                        course.totalAssignments
+                      } (${
+                        studentInfo.progress.lastSolutionTime
+                          ? new Date(
+                              studentInfo.progress.lastSolutionTime
+                            ).toLocaleString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              second: "2-digit",
+                              hour12: true,
+                              timeZone: "Asia/Singapore"
+                            })
+                          : "no submissions yet"
+                      })`}
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}

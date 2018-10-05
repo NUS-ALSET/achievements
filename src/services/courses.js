@@ -4,7 +4,7 @@
  */
 
 import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
-import { externalProfileRefreshRequest } from "../containers/Account/actions"
+import { externalProfileRefreshRequest } from "../containers/Account/actions";
 import {
   coursePasswordEnterFail,
   coursePasswordEnterRequest
@@ -16,9 +16,11 @@ import { pathsService } from "./paths";
 
 import each from "lodash/each";
 import firebase from "firebase";
-import { APP_SETTING } from "../achievementsApp/config"
+import { APP_SETTING } from "../achievementsApp/config";
 
 const ERROR_TIMEOUT = 6000;
+const TAB_OPEN_TIMEOUT = 2000;
+const TIMEOUT_DELAY = 500;
 
 export const ASSIGNMENTS_TYPES = {
   Text: {
@@ -270,7 +272,7 @@ export class CoursesService {
                     return firebase
                       .ref(
                         "/visibleSolutions/" +
-                        `${courseId}/${studentId}/${assignmentId}`
+                          `${courseId}/${studentId}/${assignmentId}`
                       )
                       .set({
                         ...solutions[assignmentId],
@@ -338,26 +340,34 @@ export class CoursesService {
             const err = this.checkAchievementsError(profileData, assignment);
             const profile = profileData.val() || {};
             if (err) {
-              this.dispatch(externalProfileRefreshRequest( profile.id, "CodeCombat" ))
+              this.dispatch(
+                externalProfileRefreshRequest(profile.id, "CodeCombat")
+              );
               setTimeout(() => {
                 firebase
                   .ref(`/userAchievements/${userId}/CodeCombat`)
                   .once("value")
                   .then(profileData => {
-                    const err = this.checkAchievementsError(profileData, assignment, true);
-                    err ?  reject(err) : resolve(profile.id);
-                  })
-              }, APP_SETTING.defaultTimeout + 500)
+                    const err = this.checkAchievementsError(
+                      profileData,
+                      assignment,
+                      true
+                    );
+                    return err ? reject(err) : resolve(profile.id);
+                  });
+              }, APP_SETTING.defaultTimeout + TIMEOUT_DELAY);
             } else {
               resolve(profile.id);
             }
           } else {
-            reject(new Error(
-              `Please enter your CodeCombat profile in the 1st question`
-            ));
+            reject(
+              new Error(
+                "Please enter your CodeCombat profile in the 1st question"
+              )
+            );
           }
         });
-    })
+    });
   }
 
   checkAchievementsError = (profileData, assignment, openTab = false) => {
@@ -366,12 +376,19 @@ export class CoursesService {
     switch (assignment.questionType) {
       case "CodeCombat":
         if (!achievements[assignment.level]) {
-          openTab && setTimeout(() => {
-            window.open(`http://codecombat.com/play/level/${assignment.level}`, '_blank');
-          }, 2000)
+          if (openTab) {
+            setTimeout(() => {
+              window.open(
+                `http://codecombat.com/play/level/${assignment.level}`,
+                "_blank"
+              );
+            }, TAB_OPEN_TIMEOUT);
+          }
           return new Error(
-            `Opening up "${assignment.level}" level in another tab... Please allow pop-up to see the new tab.`
-          )
+            `Opening up "${
+              assignment.level
+            }" level in another tab... Please allow pop-up to see the new tab.`
+          );
         }
         break;
       case "CodeCombat_Number":
@@ -386,10 +403,10 @@ export class CoursesService {
         break;
       default:
     }
-    return false
-  }
+    return false;
+  };
 
-  submitSolution(courseId, assignment, value, userId,status=null) {
+  submitSolution(courseId, assignment, value, userId, status = null) {
     userId = userId || this.getUser("uid");
 
     return Promise.resolve()
@@ -413,55 +430,65 @@ export class CoursesService {
             status
           });
       })
-      .then((res) => {
-        if (['jupyterInline', 'jupyter'].includes(((assignment || {}).problemJSON || {}).type)) {
-          new Promise((resolve, reject) => {
-            if (assignment.problemJSON.type === 'jupyterInline') {
-              resolve(value)
+      .then(res => {
+        if (
+          ["jupyterInline", "jupyter"].includes(
+            ((assignment || {}).problemJSON || {}).type
+          )
+        ) {
+          new Promise(resolve => {
+            if (assignment.problemJSON.type === "jupyterInline") {
+              resolve(value);
             } else {
-              pathsService.fetchFile(pathsService.getFileId(value))
+              pathsService
+                .fetchFile(pathsService.getFileId(value))
                 .then(json => {
                   resolve(json);
-                })
+                });
             }
-          })
-            .then(jsonValue => {
-              const editableBlockCode =
-                jsonValue.cells
-                  .map(c => c.cell_type === 'code' ? c.source.map(line => line[0] === '!' ? `#${line}` : line).join("") : "")
-                  .join("");
-              const data = {
-                owner: userId,
-                solution: editableBlockCode || "",
-              }
-              firebaseService.startProcess(
+          }).then(jsonValue => {
+            const editableBlockCode = jsonValue.cells
+              .map(
+                c =>
+                  c.cell_type === "code"
+                    ? c.source
+                        .map(line => (line[0] === "!" ? `#${line}` : line))
+                        .join("")
+                    : ""
+              )
+              .join("");
+            const data = {
+              owner: userId,
+              solution: editableBlockCode || ""
+            };
+            firebaseService
+              .startProcess(
                 data,
                 "jupyterSolutionAnalysisQueue",
                 "Code Analysis"
               )
-                .then(res => {
-                  const response = res.skills || {};
-                  firebase
-                    .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
-                    .update({
-                      userSkills: response,
-                    });
-                })
-            })
+              .then(res => {
+                const response = res.skills || {};
+                firebase
+                  .ref(`/solutions/${courseId}/${userId}/${assignment.id}`)
+                  .update({
+                    userSkills: response
+                  });
+              });
+          });
         }
         if (userId && assignment.path && assignment.problem) {
           firebase
             .database()
             .ref(
               `/completedActivities/${userId}/${assignment.path}/${
-              assignment.problem
+                assignment.problem
               }`
             )
-            .set(true)
+            .set(true);
         }
         return res;
-      }
-      );
+      });
   }
 
   /**
@@ -510,7 +537,9 @@ export class CoursesService {
     return {
       showActions: isOwner,
       value: solution
-        ? assignment.solutionVisible || isOwner ? solution : "Complete"
+        ? assignment.solutionVisible || isOwner
+          ? solution
+          : "Complete"
         : ""
     };
   }
@@ -632,8 +661,8 @@ export class CoursesService {
 
         const unknownSolution =
           assignment.solutionVisible ||
-            members[i].id === userId ||
-            (instructorView && course.owner === userId)
+          members[i].id === userId ||
+          (instructorView && course.owner === userId)
             ? "Incomplete"
             : "Who knows";
 
