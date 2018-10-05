@@ -492,7 +492,7 @@ class AssignmentsTable extends React.PureComponent {
                 <TableRow key={studentInfo.id}>
                   <TableCell className={classes.nowrap}>
                     {isInstructor &&
-                      course.owner === currentUser.id && (
+                      currentUser.isAssistant && (
                         <IconButton
                           onClick={e => this.onShowStudentMenu(studentInfo, e)}
                         >

@@ -5,7 +5,6 @@ import { ASSIGNMENTS_TYPES } from "../../services/courses";
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
-const PATH_PROGRESS_THRESHOLD = 2;
 const REGEXP_SOLUTIONS_INDEX = 1;
 const REGEXP_ACTIVITIES_INDEX = 2;
 
@@ -326,9 +325,11 @@ function getStudentPathProgress(member, targetAssignments) {
     for (const key of targetAssignments) {
       const solution = member.solutions[key];
       if (solution && solution.value && solution.createdAt) {
-        let value = solution.value || "";
-        value = /^(\d+) of (\d+)$/.exec(value);
-        value = value || /^\s*(\d+)\s*\/\s*(\d+)\s*$/.exec(value) || [];
+        let value = /^(\d+) of (\d+)$/.exec(solution.value || "");
+        value =
+          value ||
+          /^\s*(\d+)\s*\/\s*(\d+)\s*$/.exec(solution.value || "") ||
+          [];
         result.totalActivities += Number(value[REGEXP_ACTIVITIES_INDEX] || 0);
         result.totalSolutions += Number(value[REGEXP_SOLUTIONS_INDEX] || 0);
         result.lastSolutionTime = Math.max(
@@ -388,7 +389,7 @@ export const getCourseProps = (state, ownProps) => {
     .map(member => ({
       ...member,
       pathProgress:
-        pathProgressAssignments.length > PATH_PROGRESS_THRESHOLD &&
+        pathProgressAssignments.length > 1 &&
         getStudentPathProgress(member, pathProgressAssignments),
       progress: {
         totalSolutions: Object.keys(member.solutions).filter(key =>
@@ -488,7 +489,7 @@ export const getCourseProps = (state, ownProps) => {
     totalAssignments: Object.keys(assignments).filter(key =>
       checkVisibilitySolution(assignments, key, options)
     ).length,
-    watchSeveralPaths: pathProgressAssignments.length > PATH_PROGRESS_THRESHOLD,
+    watchSeveralPaths: pathProgressAssignments.length > 1,
     assignments: Object.keys(assignments)
       .map(id => ({
         ...assignments[id],
