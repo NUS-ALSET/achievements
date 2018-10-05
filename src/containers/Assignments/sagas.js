@@ -624,68 +624,6 @@ export function* assignmentsSolutionsRefreshRequestHandler(action) {
   }
 }
 
-/*
-export function* assignmentsTestSomethingHandler() {
-  const courseId = "-LJpI9bReMokQOdyiGBP";
-  const teamFormation = "-LK0bb7FwaZW5ooH2yY8";
-  const me = "n6gi7Xazb8Yj6mx2PJKezcxhYny1";
-  const teamTasks = ["-LK0bdJM9rjeQAAxsilZ", "-LK0bfBRFv4lMPsGwYa5"];
-  const teams = [];
-  const courseMembers = {};
-  const users = {};
-  const solutions = {};
-  for (let i = 0; i < 70; i += 1) {
-    teams.push(`Some Team ${i}`);
-  }
-  for (let i = 0; i < 200; i += 1) {
-    const userId = "testUser" + i;
-
-    courseMembers[userId] = true;
-    if (Math.random() > 0.05) {
-      users[userId] = {
-        name: "Test User " + i,
-        displayName: "Test User " + i
-      };
-    } else {
-      users[userId] = {
-        email: "test@mail.test"
-      };
-    }
-    solutions[userId] = {
-      [teamFormation]: {
-        createdAt: new Date().getTime(),
-        value: teams[(Math.random() * 70) | 0]
-      },
-      "-LK0bdJM9rjeQAAxsilZ": {
-        createdAt: (Math.random() * 10000) | 0,
-        value: String(Math.random())
-      },
-      "-LK0bfBRFv4lMPsGwYa5": {
-        createdAt: (Math.random() * 10000) | 0,
-        value: String(Math.random())
-      }
-    };
-  }
-  yield put(
-    courseMembersFetchSuccess(
-      courseId,
-      Object.keys(users).map(id => ({ ...users[id], id }))
-    )
-  );
-  yield put({
-    type: "@@reactReduxFirebase/SET",
-    path: "/visibleSolutions/-LJpI9bReMokQOdyiGBP",
-    data: solutions
-  });
-  //ASSIGNMENTS_TEST_SOMETHING
-  // yield put({
-  //   type: "@@reactReduxFirebase/SET",
-  //   path: "/courseMembers/-LJpI9bReMokQOdyiGBP",
-  //   data: courseMembers
-  // });
-}
-*/
-
 export default [
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
