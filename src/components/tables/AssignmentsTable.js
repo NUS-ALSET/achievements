@@ -459,18 +459,17 @@ class AssignmentsTable extends React.PureComponent {
                   )}
                 </TableCell>
               ))}
-              {isInstructor &&
-                course.watchSeveralPaths && (
+              {course.watchSeveralPaths && (
                   <TableCell>
                     <TableSortLabel
                       active={sortState.field === "pathProgress"}
                       direction={sortState.direction}
                       onClick={() => this.onSortClick("pathProgress")}
                     >
-                      Paths Progress
+                      Combined Paths Progress
                     </TableSortLabel>
                   </TableCell>
-                )}
+              )}
               {isInstructor && (
                 <TableCell className={classes.nowrap}>
                   <TableSortLabel
@@ -478,7 +477,7 @@ class AssignmentsTable extends React.PureComponent {
                     direction={sortState.direction}
                     onClick={() => this.onSortClick("progress")}
                   >
-                    Progress <br />
+                    Assignments Progress <br />
                     (last submitted time)
                   </TableSortLabel>
                 </TableCell>
@@ -595,28 +594,10 @@ class AssignmentsTable extends React.PureComponent {
                       </Fragment>
                     </TableCell>
                   ))}
-                  {isInstructor && (
-                    <TableCell className={classes.nowrap}>
-                      {`${studentInfo.pathProgress.totalSolutions} / ${
-                        studentInfo.pathProgress.totalActivities
-                      } (${
-                        studentInfo.pathProgress.lastSolutionTime
-                          ? new Date(
-                              studentInfo.pathProgress.lastSolutionTime
-                            ).toLocaleString("en-US", {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              second: "2-digit",
-                              hour12: true,
-                              timeZone: "Asia/Singapore"
-                            })
-                          : "no submissions yet"
-                      })`}
-                    </TableCell>
-                  )}
+                  <TableCell className={classes.nowrap}>
+                    {`${studentInfo.pathProgress.totalSolutions} / ${
+                      studentInfo.pathProgress.totalActivities}`}
+                  </TableCell>
                   {isInstructor &&
                     course.watchSeveralPaths && (
                       <TableCell className={classes.nowrap}>
