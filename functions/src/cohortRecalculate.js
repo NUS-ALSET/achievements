@@ -78,7 +78,9 @@ const recalculatePathsCourse = (cohortId, courseId, cohort) => {
         const solution =
           solutions[studentKey] && solutions[studentKey][assignmentId];
         if (solution) {
-          let value = /^(\d+) of \d+$/.exec(solution.value) || [];
+          let value = /^(\d+) of \d+$/.exec(solution.value);
+          value =
+            value || /^\s*(\d+)\s*\/\s*\d+\s*$/.exec(solution.value) || [];
 
           if (value[1] && !isNaN(Number(value[1]))) {
             studentProgress[targetAssignments[assignmentId]] =
@@ -161,7 +163,7 @@ exports.handler = (cohortKey, taskKey) =>
       );
     })
     .catch(err => console.error(err.message))
-    .then(
+    .then(() =>
       admin
         .database()
         .ref(`/cohortRecalculateQueue/${cohortKey}/${taskKey}`)

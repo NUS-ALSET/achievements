@@ -108,10 +108,6 @@ class Cohort extends React.PureComponent {
   render() {
     const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
 
-    if (!(currentUser && currentUser.uid)) {
-      return <div>Register or Login required to display cohort</div>;
-    }
-
     if (!cohort) {
       return <div>Loading</div>;
     }

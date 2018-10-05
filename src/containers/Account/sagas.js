@@ -15,11 +15,17 @@ import {
   externalProfileRemoveSuccess,
   externalProfileUpdateFail,
   externalProfileUpdateSuccess,
-  accountChangeAdminStatus
+  accountChangeAdminStatus,
+  PROFILE_UPDATE_DATA_REQUEST,
+  profileUpdateDataFail,
+  profileUpdateDataSuccess,
+  ACCOUNT_OPEN,
+  accountFetchPaths
 } from "./actions";
 import { accountService } from "../../services/account";
-import { call, put, race, select, takeLatest } from "redux-saga/effects";
+import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
 import { delay } from "redux-saga";
+import { push } from "connected-react-router";
 import { notificationShow } from "../Root/actions";
 
 export function* signInHandler() {
@@ -35,6 +41,27 @@ export function* signInHandler() {
     }
   } catch (err) {
     accountChangeAdminStatus(false, err.message);
+  }
+}
+
+function* accountOpenHandler(action) {
+  let uid = yield select(state => state.firebase.auth.uid);
+
+  if (!uid) {
+    yield take("@@reactReduxFirebase/LOGIN");
+    uid = yield select(state => state.firebase.auth.uid);
+  }
+  try {
+    const paths = yield call(accountService.fetchJoinedPaths, action.accountId);
+
+    if (!paths) {
+      yield put(notificationShow("Wrong user ID. Redirecting to your profile"));
+      yield put(push(`/profile/${uid}`));
+    } else {
+      yield put(accountFetchPaths(action.accountId, paths));
+    }
+  } catch (err) {
+    yield put(notificationShow(err.message));
   }
 }
 
@@ -110,7 +137,11 @@ export function* externalProfileRefreshRequestHandler(action) {
       uid,
       action.externalProfileId
     );
-    yield put(notificationShow(`Fetching ${action.externalProfileType} Achievements...`))
+    yield put(
+      notificationShow(
+        `Refreshing ${action.externalProfileType} Achievements...`
+      )
+    );
     const { timedOut } = yield race({
       response: call(
         [accountService, accountService.watchProfileRefresh],
@@ -166,6 +197,17 @@ function* externalProfileRemoveRequestHandler(action) {
   }
 }
 
+function* profileUpdateDataRequestHandler(action) {
+  try {
+    const uid = yield select(state => state.firebase.auth.uid);
+    accountService.updateProfileData(uid, action.field, action.data);
+    yield put(profileUpdateDataSuccess(action.field, action.data));
+  } catch (err) {
+    yield put(profileUpdateDataFail(action.field, action.data, err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
 export function* displayNameUpdateRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
 
@@ -183,6 +225,9 @@ export default [
   function* watchSignIn() {
     yield takeLatest("@@reactReduxFirebase/LOGIN", signInHandler);
   },
+  function* watchAccountOpen() {
+    yield takeLatest(ACCOUNT_OPEN, accountOpenHandler);
+  },
   function* watchExternalProfileUpdateRequest() {
     yield takeLatest(
       EXTERNAL_PROFILE_UPDATE_REQUEST,
@@ -199,6 +244,12 @@ export default [
     yield takeLatest(
       EXTERNAL_PROFILE_REMOVE_REQUEST,
       externalProfileRemoveRequestHandler
+    );
+  },
+  function* watchProfileUpdateDataRequest() {
+    yield takeLatest(
+      PROFILE_UPDATE_DATA_REQUEST,
+      profileUpdateDataRequestHandler
     );
   },
   function* watchDisplayNameUpdateRequest() {
