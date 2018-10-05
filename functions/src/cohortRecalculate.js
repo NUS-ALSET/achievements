@@ -163,7 +163,7 @@ exports.handler = (cohortKey, taskKey) =>
       );
     })
     .catch(err => console.error(err.message))
-    .then(
+    .then(() =>
       admin
         .database()
         .ref(`/cohortRecalculateQueue/${cohortKey}/${taskKey}`)
