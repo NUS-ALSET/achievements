@@ -158,7 +158,7 @@ export function* updateNewAssignmentFieldHandler(action) {
         console.log("Step 2 done");
 
         if (!data.manualUpdates.details) {
-          updatedFields.details = `${location}#/paths/${data.uid}`;
+          updatedFields.details = `${location}#/paths/${updatedFields.path}`;
           console.log("Step 3 done");
         }
       } else if (
