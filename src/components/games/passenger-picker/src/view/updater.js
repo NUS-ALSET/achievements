@@ -95,7 +95,10 @@ class Updater extends Component {
                     break;
             }
         }
-        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,config.botsQuantityPerGame);
+        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.botsQuantity);
+    }
+    componentWillMount(){
+        this.changeBotsQuantity(this.props.botsQuantity)
     }
     loop = () => {
         if(this.props.store.mode == 'play'){
@@ -207,10 +210,10 @@ class Updater extends Component {
     }
     changeBotsQuantity(e){
         this.props.store.mode = 'pause';
-        if(e.target.value!==this.props.store.botsQuantity){
-            this.props.store.botsQuantity = e.target.value;
+        //if(e!==this.props.store.botsQuantity){
+            this.props.store.botsQuantity = e;
             this.restartGame();
-        }
+        //}
     }
     changePlayer1Func(e){
         /*if(e.target.value!=="Custom code")
@@ -284,7 +287,7 @@ class Updater extends Component {
     }
     restartGame(){
         this.props.store.time = config.time;
-        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.store.botsQuantity);
+        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.botsQuantity);
         this.props.store.mode = 'play';
     }
     componentDidMount() {
@@ -320,16 +323,7 @@ class Updater extends Component {
             <p style={{position:'absolute', left:'50%', top:'15px', transform:'translate(-50%, -50%)', zIndex:1101}}>
                 <button onClick={() => this.restartGame()}>Restart</button>
                 <button onClick={() => this.pauseResumeGame()}>{this.props.store.mode == 'play' ? 'Pause' : 'Resume'}</button>
-                <select id={"botsQuantity"} value={this.props.store.botsQuantity} onChange={this.changeBotsQuantity}>
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                    <option value={5}>5</option>
-                    <option value={6}>6</option>
-                    <option value={7}>7</option>
-                    <option value={8}>8</option>
-                </select>
+                
             </p>
         </div>)
     }
