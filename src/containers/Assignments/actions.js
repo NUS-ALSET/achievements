@@ -25,6 +25,13 @@ export const courseMembersFetchSuccess = (courseId, courseMembers) => ({
   courseMembers
 });
 
+export const COURSE_PATHS_FETCH_SUCCESS = "COURSE_PATHS_FETCH_SUCCESS";
+export const coursePathsFetchSuccess = (courseId, paths) => ({
+  type: COURSE_PATHS_FETCH_SUCCESS,
+  courseId,
+  paths
+});
+
 export const COURSE_MEMBER_ACHIEVEMENTS_REFETCH =
   "COURSE_MEMBER_ACHIEVEMENTS_REFETCH";
 export const courseMemberAchievementsRefetch = (
@@ -82,7 +89,7 @@ export const updateNewAssignmentField = (field, value) => ({
 });
 
 export const SET_DEFAULT_ASSIGNMENT_FIELDS = "SET_DEFAULT_ASSIGNMENT_FIELDS";
-export const setDefaultAssignmentFields = (fields) => ({
+export const setDefaultAssignmentFields = fields => ({
   type: SET_DEFAULT_ASSIGNMENT_FIELDS,
   fields
 });
