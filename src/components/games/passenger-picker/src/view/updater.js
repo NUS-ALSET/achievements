@@ -289,14 +289,15 @@ class Updater extends Component {
     }
     componentDidMount() {
         this.loopID = this.context.loop.subscribe(this.loop);
-    }
+        this.restartGame();
+    }  
     componentWillUnmount() {
         this.context.loop.unsubscribe(this.loopID);
     }
     render() {
         return (<div>
             <WinningScreen store={this.props.store} restartGame={this.restartGame}/>
-            <p style={{position:'absolute', left:0, top:0, margin:0, zIndex:100}}>
+            <p style={{position:'absolute', left:0, top:0, margin:0, zIndex:1101}}>
                 <ScoreDisplay store={this.props.store} gameId={0}></ScoreDisplay>
                 <select id={"player1Select"} value={this.props.store.player1ControlSelected} onChange={this.changePlayer1Func}>
                     <option value={"custom code"}>Custom code</option>
@@ -306,7 +307,7 @@ class Updater extends Component {
                     <option value={"level3"}>Level 3</option>
                 </select>
             </p>
-            <p style={{position:'absolute', right:0, top:0, margin:0, zIndex:100}}>
+            <p style={{position:'absolute', right:0, top:0, margin:0, zIndex:1101}}>
                 <select id={"player2Select"} value={this.props.store.player2ControlSelected} onChange={this.changePlayer2Func}>
                     <option value={"custom code"}>Custom code</option>
                     <option value={"manual control"}>Manual control</option>
@@ -316,7 +317,7 @@ class Updater extends Component {
                 </select>
                 <ScoreDisplay store={this.props.store} gameId={1}></ScoreDisplay>
             </p>
-            <p style={{position:'absolute', left:'50%', top:'15px', transform:'translate(-50%, -50%)', zIndex:100}}>
+            <p style={{position:'absolute', left:'50%', top:'15px', transform:'translate(-50%, -50%)', zIndex:1101}}>
                 <button onClick={() => this.restartGame()}>Restart</button>
                 <button onClick={() => this.pauseResumeGame()}>{this.props.store.mode == 'play' ? 'Pause' : 'Resume'}</button>
                 <select id={"botsQuantity"} value={this.props.store.botsQuantity} onChange={this.changeBotsQuantity}>

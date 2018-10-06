@@ -15,6 +15,7 @@ const COMMON_PROPS = {
       achievements: {
         CodeCombat: { id: "test-user-1", totalAchievements: 100 }
       },
+      pathProgress: false,
       progress: {
         totalSolutions: 2,
         lastSolutionTime: 1001
@@ -43,6 +44,7 @@ const COMMON_PROPS = {
       achievements: {
         CodeCombat: { id: "test-user-2", totalAchievements: 10 }
       },
+      pathProgress: false,
       progress: {
         totalSolutions: 1,
         lastSolutionTime: 1000
@@ -60,6 +62,7 @@ const COMMON_PROPS = {
     }
   },
   totalAssignments: 2,
+  watchSeveralPaths: false,
   assignments: [
     {
       open: "1959-06-03T00:00",

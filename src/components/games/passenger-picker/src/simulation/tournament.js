@@ -31,7 +31,7 @@ class Tournament extends Component {
     }
     render() {
         return (
-            <div style={{position:'absolute', zIndex:100, left:'50%', transform:'translate(-50%, 0%)', top:'45px'}}>
+            <div style={{position:'absolute', zIndex:1101, left:'50%', transform:'translate(-50%, 0%)', top:'45px'}}>
                 <div style={{textAlign:'center'}}>
                     <button className="control-btn active"  onClick={()=>{
                         /*tournamentSimulate.default().then((result)=>{

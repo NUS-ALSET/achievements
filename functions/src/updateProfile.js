@@ -101,12 +101,11 @@ function updateProfile(data, resolve) {
                     : Promise.resolve()
                 );
             })
-
-            .then(() => resolve())
         )
-        .catch(err => console.error(data.uid, err.message));
+        .catch(err => console.error(data.uid, err.message))
+        .then(() => resolve());
     default:
-      return Promise.resolve();
+      return Promise.resolve().then(() => resolve());
   }
 }
 

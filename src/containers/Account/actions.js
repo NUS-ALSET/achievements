@@ -1,3 +1,16 @@
+export const ACCOUNT_OPEN = "ACCOUNT_OPEN";
+export const accountOpen = accountId => ({
+  type: ACCOUNT_OPEN,
+  accountId
+});
+
+export const ACCOUNT_FETCH_PATHS = "ACCOUNT_FETCH_PATHS";
+export const accountFetchPaths = (accountId, paths) => ({
+  type: ACCOUNT_FETCH_PATHS,
+  accountId,
+  paths
+});
+
 export const EXTERNAL_PROFILE_DIALOG_SHOW = "EXTERNAL_PROFILE_DIALOG_SHOW";
 
 export const ACCOUNT_CHANGE_ADMIN_STATUS = "ACCOUNT_CHANGE_ADMIN_STATUS";
@@ -32,6 +45,28 @@ export const externalProfileUpdateRequest = (
   type: EXTERNAL_PROFILE_UPDATE_REQUEST,
   externalProfileId,
   externalProfileType
+});
+
+export const PROFILE_UPDATE_DATA_REQUEST = "PROFILE_UPDATE_DATA_REQUEST";
+export const profileUpdateDataRequest = (field, data) => ({
+  type: PROFILE_UPDATE_DATA_REQUEST,
+  field,
+  data
+});
+
+export const PROFILE_UPDATE_DATA_SUCCESS = "PROFILE_UPDATE_DATA_SUCCESS";
+export const profileUpdateDataSuccess = (field, data) => ({
+  type: PROFILE_UPDATE_DATA_SUCCESS,
+  field,
+  data
+});
+
+export const PROFILE_UPDATE_DATA_FAIL = "PROFILE_UPDATE_DATA_FAIL";
+export const profileUpdateDataFail = (field, data, reason) => ({
+  type: PROFILE_UPDATE_DATA_FAIL,
+  field,
+  data,
+  reason
 });
 
 export const EXTERNAL_PROFILE_UPDATE_SUCCESS =

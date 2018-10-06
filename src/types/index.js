@@ -68,6 +68,7 @@ export const assignmentInfo = shape({
   open: string.isRequired,
   orderIndex: number.isRequired,
   visible: bool.isRequired,
+
   // Temporary solution to keep old PathProblem type
   questionType: oneOf([...Object.keys(ASSIGNMENTS_TYPES), "PathProblem"]),
 
@@ -89,6 +90,7 @@ export const courseInfo = shape({
   owner: string.isRequired,
   members: object.isRequired,
   totalAssignments: number.isRequired,
+  watchSeveralPaths: bool,
   assignments: arrayOf(assignmentInfo).isRequired
 });
 
