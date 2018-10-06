@@ -63,7 +63,7 @@ class GameActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem, 
+    const { problem, botsQuantity
       // solution, readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
@@ -72,6 +72,7 @@ class GameActivity extends React.PureComponent {
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
+        botsQuantity={botsQuantity}
         player1Data={{
           levelsToWin: `level${problem.levelsToWin}`,
           playMode: problem.playMode

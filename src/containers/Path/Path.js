@@ -107,7 +107,8 @@ export class Path extends React.Component {
   };
 
   state = {
-    selectedActivityId: ""
+    selectedActivityId: "",
+    botsQuantity: 0
   };
 
   componentDidMount() {
@@ -127,6 +128,9 @@ export class Path extends React.Component {
       onPushPath,
       pathActivities
     } = this.props;
+    this.setState(() => ({
+      botsQuantity: problem.unitsPerSide
+    }))
     switch (problem.type) {
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:
@@ -358,6 +362,7 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddGameSolutionDialog
+          botsQuantity={this.state.botsQuantity}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${ACTIVITY_TYPES.game.id}Solution`}
@@ -468,7 +473,7 @@ export default compose(
     const state = store.getState();
     const uid = state.firebase.auth.uid;
     const pathId = ownProps.match.params.pathId;
-
+    
     if (!uid) {
       return false;
     }
