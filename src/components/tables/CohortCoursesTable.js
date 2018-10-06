@@ -23,6 +23,9 @@ import { cohort } from "../../types";
 import { cohortCourseUpdateRequest } from "../../containers/Cohort/actions";
 
 const styles = theme => ({
+  narrowCell: {
+    padding: theme.spacing.unit
+  },
   button: {
     margin: theme.spacing.unit
   }
@@ -44,7 +47,7 @@ class CohortCoursesTable extends React.PureComponent {
     );
 
   render() {
-    const { courses, cohort, isOwner } = this.props;
+    const { classes, courses, cohort, isOwner } = this.props;
     let totals = {
       progress: 0,
       participants: 0
@@ -59,24 +62,37 @@ class CohortCoursesTable extends React.PureComponent {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Course Rank</TableCell>
-            {cohort.pathsData && cohort.pathsData.length
-            ? (
+            <TableCell className={classes.narrowCell}>Course Rank</TableCell>
+            {cohort.pathsData && cohort.pathsData.length ? (
               cohort.pathsData.map(pathData => (
-                <TableCell key={(pathData && pathData.id) || Math.random()}>
+                <TableCell
+                  className={classes.narrowCell}
+                  key={(pathData && pathData.id) || Math.random()}
+                >
                   {pathData && pathData.name}
                 </TableCell>
               ))
             ) : (
-              <TableCell>Paths for Cohort</TableCell>
+              <TableCell className={classes.narrowCell}>
+                Paths for Cohort
+              </TableCell>
             )}
-            <TableCell>
+            <TableCell className={classes.narrowCell}>
               Explorers(
               {totals.progress})
             </TableCell>
 
-            <TableCell> Total Students ({totals.participants})</TableCell>
-            <TableCell>Course</TableCell>
+            <TableCell className={classes.narrowCell}>
+              Total Students ({totals.participants})
+            </TableCell>
+            <TableCell
+              className={classes.narrowCell}
+              style={{
+                width: "50%"
+              }}
+            >
+              Course
+            </TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
@@ -84,26 +100,30 @@ class CohortCoursesTable extends React.PureComponent {
           {courses &&
             courses.map(course => (
               <TableRow key={course.id}>
-                <TableCell>
+                <TableCell className={classes.narrowCell}>
                   <strong>{course.rank}</strong>
                 </TableCell>
                 {cohort.paths ? (
                   cohort.paths.length &&
                   cohort.paths.map(id => (
-                    <TableCell key={id}>
+                    <TableCell className={classes.narrowCell} key={id}>
                       {course.pathsProgress && course.pathsProgress[id]}
                     </TableCell>
                   ))
                 ) : (
-                  <TableCell>None</TableCell>
+                  <TableCell className={classes.narrowCell}>None</TableCell>
                 )}
-                <TableCell>{course.progress}</TableCell>
-                <TableCell>{course.participants}</TableCell>
-                <TableCell>
+                <TableCell className={classes.narrowCell}>
+                  {course.progress}
+                </TableCell>
+                <TableCell className={classes.narrowCell}>
+                  {course.participants}
+                </TableCell>
+                <TableCell className={classes.narrowCell}>
                   <Link to={`/courses/${course.id}`}>{course.name}</Link>
                 </TableCell>
                 {isOwner && (
-                  <TableCell>
+                  <TableCell className={classes.narrowCell}>
                     <IconButton>
                       <DeleteIcon
                         onClick={() => this.onRemoveClick(course.id)}
