@@ -935,6 +935,28 @@ export class CoursesService {
       );
   }
 
+  fetchCoursePaths(courseId) {
+    return firebase
+      .database()
+      .ref(`/assignments/${courseId}`)
+      .orderByChild("questionType")
+      .equalTo(ASSIGNMENTS_TYPES.PathProgress.id)
+      .once("value")
+      .then(snap => snap.val())
+      .then(courses =>
+        Promise.all(
+          Object.keys(courses).map(id =>
+            firebase
+              .database()
+              .ref(`/paths/${courses[id].path}/totalActivities`)
+              .once("value")
+              .then(snap => ({ [id]: snap.val() }))
+          )
+        )
+      )
+      .then(pathsData => Object.assign({}, ...pathsData));
+  }
+
   removeStudentFromCourse(courseId, studentId) {
     return firebase
       .database()
