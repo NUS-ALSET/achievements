@@ -99,6 +99,7 @@ class Updater extends Component {
     }
     componentWillMount(){
         this.changeBotsQuantity(this.props.botsQuantity)
+        this.props.store.p1Level = this.props.player1Data.levelsToWin
     }
     loop = () => {
         if(this.props.store.mode == 'play'){
@@ -298,19 +299,13 @@ class Updater extends Component {
         this.context.loop.unsubscribe(this.loopID);
     }
     render() {
+        console.log('updater......', this.props.store)
         return (<div>
             <WinningScreen store={this.props.store} restartGame={this.restartGame}/>
             <p style={{position:'absolute', left:0, top:0, margin:0, zIndex:1101}}>
                 <ScoreDisplay store={this.props.store} gameId={0}></ScoreDisplay>
             </p>
             <p style={{position:'absolute', right:0, top:0, margin:0, zIndex:1101}}>
-                <select id={"player2Select"} value={this.props.store.player2ControlSelected} onChange={this.changePlayer2Func}>
-                    <option value={"custom code"}>Custom code</option>
-                    <option value={"manual control"}>Manual control</option>
-                    <option value={"level1"}>Level 1</option>
-                    <option value={"level2"}>Level 2</option>
-                    <option value={"level3"}>Level 3</option>
-                </select>
                 <ScoreDisplay store={this.props.store} gameId={1}></ScoreDisplay>
             </p>
             <p style={{position:'absolute', left:'50%', top:'15px', transform:'translate(-50%, -50%)', zIndex:1101}}>
