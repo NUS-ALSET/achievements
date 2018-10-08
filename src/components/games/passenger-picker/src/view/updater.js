@@ -286,7 +286,7 @@ class Updater extends Component {
         //this.props.store.mode == 'play'?'pause':'play';
     }
     restartGame(){
-        this.props.store.time = config.time;
+        this.props.store.time = this.props.time;
         this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.botsQuantity);
         this.props.store.mode = 'play';
     }
@@ -302,13 +302,6 @@ class Updater extends Component {
             <WinningScreen store={this.props.store} restartGame={this.restartGame}/>
             <p style={{position:'absolute', left:0, top:0, margin:0, zIndex:1101}}>
                 <ScoreDisplay store={this.props.store} gameId={0}></ScoreDisplay>
-                <select id={"player1Select"} value={this.props.store.player1ControlSelected} onChange={this.changePlayer1Func}>
-                    <option value={"custom code"}>Custom code</option>
-                    <option value={"manual control"}>Manual control</option>
-                    <option value={"level1"}>Level 1</option>
-                    <option value={"level2"}>Level 2</option>
-                    <option value={"level3"}>Level 3</option>
-                </select>
             </p>
             <p style={{position:'absolute', right:0, top:0, margin:0, zIndex:1101}}>
                 <select id={"player2Select"} value={this.props.store.player2ControlSelected} onChange={this.changePlayer2Func}>
