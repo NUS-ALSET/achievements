@@ -19,9 +19,10 @@ import { connect } from "react-redux";
 import { ASSIGNMENTS_TYPES, coursesService } from "../../services/courses";
 import { firebaseConnect } from "react-redux-firebase";
 import {
-  getAssignmentsUIProps,
-  getCourseProps,
-  getCurrentUserProps
+  courseSelector,
+  getCurrentUserProps,
+  uiDialogSelector,
+  uiSelector
 } from "./selectors";
 import { sagaInjector } from "../../services/saga";
 
@@ -46,7 +47,6 @@ import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
 
-
 class Assignments extends React.Component {
   static propTypes = {
     auth: PropTypes.object,
@@ -58,7 +58,9 @@ class Assignments extends React.Component {
     firebase: PropTypes.any,
     match: PropTypes.object,
     readOnly: PropTypes.bool,
-    ui: PropTypes.object.isRequired
+    currentDialog: PropTypes.object,
+    ui: PropTypes.object.isRequired,
+    uiDialog: PropTypes.object
   };
   state = {
     password: ""
@@ -68,6 +70,25 @@ class Assignments extends React.Component {
     this.props.dispatch(
       courseAssignmentsOpen(this.props.match.params.courseId)
     );
+  }
+
+  shouldComponentUpdate(newProps) {
+    const { course, ui, uiDialog } = this.props;
+    if (course !== newProps.course) {
+      console.error("Assignments Rerendered because course!");
+      return true;
+    }
+
+    if (ui !== newProps.ui) {
+      console.error("Assignments Rerendered becouse ui!");
+      return true;
+    }
+
+    if (uiDialog !== newProps.uiDialog) {
+      return true;
+    }
+
+    return false;
   }
 
   componentWillUnmount() {
@@ -172,12 +193,12 @@ class Assignments extends React.Component {
           fullWidth
           label="Enter password"
           onChange={this.handlePasswordChange}
-          type="password"
-          onKeyPress={ (e) => {
-            if (e.key === 'Enter') {
-              this.submitPassword()
+          onKeyPress={e => {
+            if (e.key === "Enter") {
+              this.submitPassword();
             }
           }}
+          type="password"
         />
         <Grid container>
           <Grid item xs={12}>
@@ -205,7 +226,15 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const { ui, auth, dispatch, course, currentUser, readOnly } = this.props;
+    const {
+      auth,
+      dispatch,
+      course,
+      currentUser,
+      readOnly,
+      ui,
+      uiDialog
+    } = this.props;
 
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
@@ -224,9 +253,8 @@ class Assignments extends React.Component {
           currentUser={currentUser}
           dispatch={dispatch}
           handleTabChange={this.handleTabChange}
-          paths={[]}
-          problems={[]}
           ui={ui}
+          uiDialog={uiDialog}
         />
       );
     } else if (course.members && course.members[currentUser.id]) {
@@ -278,18 +306,18 @@ class Assignments extends React.Component {
         {AssignmentView}
         <RemoveStudentDialog
           courseId={course.id}
-          courseMemberId={ui && ui.dialog && ui.dialog.studentId}
-          courseMemberName={ui && ui.dialog && ui.dialog.studentName}
+          courseMemberId={ui && uiDialog && uiDialog.studentId}
+          courseMemberName={ui && uiDialog && uiDialog.studentName}
           dispatch={dispatch}
-          open={ui.dialog && ui.dialog.type === "RemoveStudent"}
+          open={uiDialog && uiDialog.type === "RemoveStudent"}
         />
         <MoveStudentDialog
           courseId={course.id}
-          courses={(ui.dialog && ui.dialog.courses) || []}
+          courses={(uiDialog && uiDialog.courses) || []}
           dispatch={dispatch}
-          open={ui.dialog && ui.dialog.type === "MoveStudent"}
-          studentId={ui && ui.dialog && ui.dialog.studentId}
-          studentName={ui && ui.dialog && ui.dialog.studentName}
+          open={uiDialog && uiDialog.type === "MoveStudent"}
+          studentId={ui && uiDialog && uiDialog.studentId}
+          studentName={ui && uiDialog && uiDialog.studentName}
         />
         <AddProfileDialog
           externalProfile={{
@@ -299,18 +327,18 @@ class Assignments extends React.Component {
           }}
           onClose={this.closeDialog}
           onCommit={this.onProfileCommit}
-          open={ui.dialog && ui.dialog.type === "Profile"}
+          open={uiDialog && uiDialog.type === "Profile"}
           uid={currentUser.id}
         />
         {currentUser.isOwner && (
           <ControlAssistantsDialog
-            assistants={(ui.dialog && ui.dialog.assistants) || []}
-            newAssistant={ui.dialog && ui.dialog.newAssistant}
+            assistants={(uiDialog && uiDialog.assistants) || []}
+            newAssistant={uiDialog && uiDialog.newAssistant}
             onAddAssistant={this.onAddAssistant}
             onAssistantKeyChange={this.onAssistantKeyChange}
             onClose={this.closeDialog}
             onRemoveAssistant={this.onRemoveAssistant}
-            open={ui.dialog && ui.dialog.type === "CourseAssistants"}
+            open={uiDialog && uiDialog.type === "CourseAssistants"}
             target={course.id}
           />
         )}
@@ -318,44 +346,43 @@ class Assignments extends React.Component {
           onClose={this.closeDialog}
           onCommit={this.commitTextSolution}
           open={
-            ui.dialog &&
+            uiDialog &&
             [
               ASSIGNMENTS_TYPES.TeamFormation.id,
               ASSIGNMENTS_TYPES.TeamText.id,
               ASSIGNMENTS_TYPES.Text.id
-            ].includes(ui.dialog.type)
+            ].includes(uiDialog.type)
           }
-          solution={ui.dialog && ui.dialog.value}
+          solution={uiDialog && uiDialog.value}
           taskId={ui.currentAssignment && ui.currentAssignment.id}
         />
         <AddPathActivitySolutionDialog
           assignment={ui.currentAssignment}
           dispatch={dispatch}
-          loadingSolution={!!ui.dialog && ui.dialog.loadingSolution}
+          loadingSolution={!!uiDialog && uiDialog.loadingSolution}
           onCommit={this.onPathProblemSolutionCommit}
           open={
-            ui.dialog &&
-            ["PathActivity", "PathProblem"].includes(ui.dialog.type)
+            uiDialog && ["PathActivity", "PathProblem"].includes(uiDialog.type)
           }
-          pathProblem={ui.dialog.pathProblem}
+          pathProblem={uiDialog.pathProblem}
           readOnly={readOnly}
-          solution={ui.dialog.solution}
+          solution={uiDialog.solution}
         />
         <AddPathProgressSolutionDialog
           assignment={ui.currentAssignment}
           courseId={course.id}
           dispatch={dispatch}
-          open={ui.dialog && ui.dialog.type === "PathProgress"}
-          pathProgress={ui.dialog && ui.dialog.pathProgress}
+          open={uiDialog && uiDialog.type === "PathProgress"}
+          pathProgress={uiDialog && uiDialog.pathProgress}
         />
         <AddAssignmentDialog
-          activities={(ui.dialog && ui.dialog.activities) || []}
-          assignment={ui.dialog && ui.dialog.value}
+          activities={(uiDialog && uiDialog.activities) || []}
+          assignment={uiDialog && uiDialog.value}
           course={course}
           dispatch={dispatch}
-          open={ui.dialog && ui.dialog.type === "AddAssignment"}
-          paths={(ui.dialog && ui.dialog.paths) || {}}
-          teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
+          open={uiDialog && uiDialog.type === "AddAssignment"}
+          paths={(uiDialog && uiDialog.paths) || {}}
+          teamFormations={(uiDialog && uiDialog.teamFormations) || []}
           uid={currentUser && currentUser.id}
         />
       </Fragment>
@@ -372,9 +399,10 @@ sagaInjector.inject(sagas);
  * @returns {*} props
  */
 const mapStateToProps = (state, ownProps) => ({
-  ui: getAssignmentsUIProps(state),
+  ui: uiSelector(state),
+  uiDialog: uiDialogSelector(state),
   currentUser: getCurrentUserProps(state, ownProps),
-  course: getCourseProps(state, ownProps),
+  course: courseSelector(state, ownProps),
   auth: state.firebase.auth,
   assistants: state.assignments.assistants,
   readOnly: state.problem && state.problem.readOnly

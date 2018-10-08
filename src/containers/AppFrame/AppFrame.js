@@ -54,7 +54,6 @@ import withStyles from "@material-ui/core/styles/withStyles";
  * it describes the responsive drawer with an appbar
  * Routes are passed as props to be rendered within this component*/
 
-
 const styles = theme => ({
   "@global": {
     html: {
@@ -91,7 +90,7 @@ const styles = theme => ({
   appBar: {
     [theme.breakpoints.up("lg")]: {
       // up.lg = large or more, 1280px or larger
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`,
+      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
     }
   },
   drawer: {
@@ -105,7 +104,7 @@ const styles = theme => ({
     height: "calc(100% - 56px)",
     marginTop: 56,
     [theme.breakpoints.up("lg")]: {
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`,
+      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
     },
     [theme.breakpoints.up("sm")]: {
       height: "calc(100% - 64px)",
@@ -140,6 +139,7 @@ class AppFrame extends React.Component {
 
     for (const field of fields) {
       if (this.props[field] !== newProps[field]) {
+        console.error("AppFrame RERENDERED");
         return true;
       }
     }
@@ -258,14 +258,38 @@ class AppFrame extends React.Component {
               <Route component={withTracker(HomeV3)} exact path="/homev3" />
               <Route component={withTracker(Admin)} exact path="/admin" />
               <Route component={withTracker(Courses)} exact path="/courses" />
-              <Route component={withTracker(Assignments)} exact path="/courses/:courseId" />
+              <Route
+                component={withTracker(Assignments)}
+                exact
+                path="/courses/:courseId"
+              />
               <Route component={withTracker(Cohorts)} exact path="/cohorts" />
-              <Route component={withTracker(Cohort)} exact path="/cohorts/:cohortId" />
+              <Route
+                component={withTracker(Cohort)}
+                exact
+                path="/cohorts/:cohortId"
+              />
               <Route component={withTracker(Paths)} exact path="/paths" />
-              <Route component={withTracker(Path)} exact path="/paths/:pathId" />
-              <Route component={withTracker(AllDestinations)} exact path="/destinations" />
-              <Route component={withTracker(MyDestinations)} exact path="/my-destinations" />
-              <Route component={withTracker(ViewDestination)} exact path="/destinations/:destinationId" />
+              <Route
+                component={withTracker(Path)}
+                exact
+                path="/paths/:pathId"
+              />
+              <Route
+                component={withTracker(AllDestinations)}
+                exact
+                path="/destinations"
+              />
+              <Route
+                component={withTracker(MyDestinations)}
+                exact
+                path="/my-destinations"
+              />
+              <Route
+                component={withTracker(ViewDestination)}
+                exact
+                path="/destinations/:destinationId"
+              />
               <Route
                 component={withTracker(Activity)}
                 exact
@@ -276,7 +300,11 @@ class AppFrame extends React.Component {
                 path="/(account|profile)/:accountId"
                 render={() => <Account userName={userName} />}
               />
-              <Route component={withTracker(Contribute)} exact path="/contribute" />
+              <Route
+                component={withTracker(Contribute)}
+                exact
+                path="/contribute"
+              />
             </main>
           </div>
         </div>

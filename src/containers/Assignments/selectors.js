@@ -1,7 +1,10 @@
 /* eslint-disable no-continue */
-// Tab with instructor view
+
+import { createSelector } from "reselect";
+
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 
+// Tab with instructor view
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
@@ -9,27 +12,30 @@ const INSTRUCTOR_TAB_VIEW = 2;
  * Get Solutions for student. It compares `/solutions` and `/visibleSolutions` refs and returns solution data with
  * flags - is concrete solution published, validated and/or rejected by instructor
  *
- * @param {AchievementsAppState} state
+ * @param {Object} data
+ * @param {Object} data.assignments
+ * @param {Object} data.solutions
+ * @param {Object} data.visibleSolutions
  * @param {String} courseId
  * @param {String} student
  * @param {Object} [options]
  * @param {Boolean} [options.onlyVisible]
  * @returns {*}
  */
-const getStudentSolutions = (state, courseId, student, options = {}) => {
+const getStudentSolutions = (data, courseId, student, options = {}) => {
   const achievements = student.achievements || {};
-  const assignments = getFrom(state.firebase.data.assignments, courseId);
+  const assignments = getFrom(data.assignments, courseId);
 
   // If we need only visible(published) results then we ignore real ones
   // It could be used at `assignments` tab viewed by course instructor,
   // since real solutions will be shown only at `instructor view` tab
   const solutions = options.onlyVisible
     ? {}
-    : getFrom(getFrom(state.firebase.data.solutions, courseId), student.id);
+    : getFrom(getFrom(data.solutions, courseId), student.id);
 
   // Published (visible) results should be fetched in any case, to get info - was that solution published
   const publishedSolutions = getFrom(
-    getFrom(state.firebase.data.visibleSolutions, courseId),
+    getFrom(data.visibleSolutions, courseId),
     student.id
   );
   const result = Object.assign({}, publishedSolutions, solutions);
@@ -185,10 +191,12 @@ export const processTeamSolutions = (assignments, members) => {
     for (const teamFormationKey of teamFormationKeys) {
       const solutions = members[memberKey].solutions;
       const teamFormation = teamFormations[teamFormationKey];
-      const teamName =
+      let teamName =
         solutions &&
         solutions[teamFormationKey] &&
         solutions[teamFormationKey].value;
+
+      teamName = teamName.replace(/\(\d+\)$/, "");
 
       if (!(teamName && solutions)) {
         continue;
@@ -343,6 +351,225 @@ function getStudentPathProgress(member, targetAssignments, pathsData) {
   }
   return result;
 }
+
+const getAssignments = state => state.firebase.data.assignments || {};
+const getCurrentTab = state => state.assignments.currentTab;
+const getPathData = state => state.assignments.pathData;
+const getCourseId = (state, props) => props.match.params.courseId;
+const getShowHiddenAssignments = state =>
+  state.assignments.showHiddenAssignments;
+const getCourses = state => state.firebase.data.courses;
+const getCourseMembers = state => state.assignments.courseMembers;
+const getSolutions = state => state.firebase.data.solutions;
+const getVisibleSolutions = state => state.firebase.data.visibleSolutions;
+const getSortInfo = state => state.assignments.sort;
+const getCurrentAssignment = state => state.assignments.currentAssignment;
+const getUID = state => state.firebase.auth.uid;
+const getUIDialog = state => state.assignments.dialog;
+
+export const uiSelector = createSelector(
+  getCurrentTab,
+  getSortInfo,
+  getShowHiddenAssignments,
+  getCurrentAssignment,
+  (currentTab, sortState, showHiddenAssignments, currentAssignment) => ({
+    showHiddenAssignments,
+    sortState,
+    currentTab,
+    currentAssignment
+  })
+);
+
+export const uiDialogSelector = createSelector(
+  getUIDialog,
+  dialog => dialog || {}
+);
+
+export const courseSelector = createSelector(
+  getAssignments,
+  getCurrentTab,
+  getCourseId,
+  getPathData,
+  getCourses,
+  getCourseMembers,
+  getSolutions,
+  getVisibleSolutions,
+  getSortInfo,
+  getShowHiddenAssignments,
+  getUID,
+  (
+    assignments,
+    currentTab,
+    courseId,
+    pathsData,
+    courses,
+    courseMembers,
+    solutions,
+    visibleSolutions,
+    showHiddenAssignments,
+    sort,
+    uid
+  ) => {
+    console.error("WE DOING RESELECT");
+    assignments = assignments[courseId] || {};
+    const sortedMembers = {};
+    const instructorView = currentTab === INSTRUCTOR_TAB_VIEW;
+    const assignmentsEdit = currentTab === INSTRUCTOR_TAB_EDIT;
+    const now = new Date().getTime();
+    const options = {
+      showHiddenAssignments
+    };
+    const pathProgressAssignments = getPathProgressAssignments(assignments);
+    const courseData = (courses || {})[courseId];
+
+    if (!courseData) {
+      return null;
+    }
+
+    let members = courseMembers.map(courseMember => ({
+      ...courseMember,
+      solutions: getStudentSolutions(
+        {
+          assignments,
+          solutions,
+          visibleSolutions
+        },
+        courseId,
+        courseMember,
+        {
+          onlyVisible: !(instructorView || courseMember.id === uid)
+        }
+      )
+    }));
+
+    processTeamSolutions(assignments, members);
+
+    members = members
+      .map(member => ({
+        ...member,
+        pathProgress:
+          pathProgressAssignments.length > 1 &&
+          getStudentPathProgress(member, pathProgressAssignments, pathsData),
+        progress: {
+          totalSolutions: Object.keys(member.solutions).filter(key =>
+            checkVisibilitySolution(assignments, key, options)
+          ).length,
+          lastSolutionTime: Object.keys(member.solutions)
+            .filter(key => checkVisibilitySolution(assignments, key, options))
+            .map(
+              id =>
+                member.solutions[id].createdAt ||
+                (member.solutions[id].originalSolution &&
+                  member.solutions[id].originalSolution.createdAt)
+            )
+            .sort()
+            .slice(-1)
+            .pop()
+        }
+      }))
+      .sort((a, b) => {
+        const sortAssignment = assignments[sort.field];
+        let aValue = a.name;
+        let bValue = b.name;
+        let result = 0;
+
+        if (sort.field === "progress") {
+          aValue = a.progress.totalSolutions;
+          bValue = b.progress.totalSolutions;
+          if (aValue === bValue) {
+            aValue = -a.progress.lastSolutionTime;
+            bValue = -b.progress.lastSolutionTime;
+          }
+        }
+
+        if (sort.field === "pathProgress") {
+          aValue = a.pathProgress.totalSolutions;
+          bValue = b.pathProgress.totalSolutions;
+          if (aValue === bValue) {
+            aValue = -a.pathProgress.lastSolutionTime;
+            bValue = -b.pathProgress.lastSolutionTime;
+          }
+        }
+
+        if (!["studentName", "pathProgress", "progress"].includes(sort.field)) {
+          aValue = getValueToSort(a.solutions, sort.field);
+          bValue = getValueToSort(b.solutions, sort.field);
+          if (aValue === bValue) {
+            aValue =
+              a.solutions[sort.field] && a.solutions[sort.field].createdAt;
+            bValue =
+              b.solutions[sort.field] && b.solutions[sort.field].createdAt;
+          }
+        }
+        aValue = aValue || "";
+        bValue = bValue || "";
+
+        // Sorting TeamFormation for members count
+        if (
+          sortAssignment &&
+          sortAssignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id &&
+          typeof aValue === "string" &&
+          typeof bValue === "string"
+        ) {
+          aValue = aValue.toLowerCase();
+          bValue = bValue.toLowerCase();
+          const aCountData = (aValue.match(/\(\d+\)$/) || [])[0] || "";
+          const bCountData = (bValue.match(/\(\d+\)$/) || [])[0] || "";
+          if (aCountData !== bCountData) {
+            aValue = aCountData;
+            bValue = bCountData;
+          }
+        }
+
+        if (aValue > bValue) {
+          result = 1;
+        } else if (aValue < bValue) {
+          result = -1;
+        }
+        return sort.direction === "asc" ? result : -result;
+      });
+
+    members.forEach(member => {
+      sortedMembers[member.id] = member;
+      sortedMembers[member.id].name = sortedMembers[member.id].name || "";
+      return true;
+    });
+
+    return {
+      id: courseId,
+      ...courseData,
+      members: sortedMembers,
+      totalAssignments: Object.keys(assignments).filter(key =>
+        checkVisibilitySolution(assignments, key, options)
+      ).length,
+      watchSeveralPaths: pathProgressAssignments.length > 1,
+      assignments: Object.keys(assignments)
+        .map(id => ({
+          ...assignments[id],
+          id,
+          progress: `${
+            members.filter(member => !!member.solutions[id]).length
+          }/${members.length}`
+        }))
+        .filter(
+          assignment =>
+            assignmentsEdit ||
+            (options.showHiddenAssignments ||
+              (assignment.visible &&
+                new Date(assignment.open).getTime() < now &&
+                new Date(assignment.deadline).getTime() > now))
+        )
+        .sort((a, b) => {
+          if (a.orderIndex > b.orderIndex) {
+            return 1;
+          } else if (a.orderIndex === b.orderIndex) {
+            return 0;
+          }
+          return -1;
+        })
+    };
+  }
+);
 
 /**
  *

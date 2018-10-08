@@ -40,30 +40,42 @@ const styles = theme => ({
   }
 });
 
-class InstructorTabs extends React.PureComponent {
+class InstructorTabs extends React.Component {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     ui: PropTypes.object,
+    uiDialog: PropTypes.object,
     course: PropTypes.object,
     currentUser: PropTypes.object,
     match: PropTypes.object.isRequired,
-    paths: PropTypes.array,
-    problems: PropTypes.array,
 
     dispatch: PropTypes.func.isRequired,
     closeDialog: PropTypes.func.isRequired,
     handleTabChange: PropTypes.func.isRequired
   };
 
+  shouldComponentUpdate(newProps) {
+    const { ui, uiDialog, course } = this.props;
+    switch (true) {
+      case ui !== newProps.ui:
+      case course !== newProps.course:
+      case uiDialog.type !== newProps.uiDialog.type:
+        return true;
+      default:
+        return false;
+    }
+  }
+
   getInstructorTab() {
     /** @type AssignmentProps */
     const {
       classes,
+      closeDialog,
       course,
-      ui,
       currentUser,
       dispatch,
-      closeDialog
+      ui,
+      uiDialog
     } = this.props;
 
     switch (ui.currentTab) {
@@ -136,10 +148,10 @@ class InstructorTabs extends React.PureComponent {
               dispatch={dispatch}
             />
             <DeleteAssignmentDialog
-              assignment={(ui.dialog && ui.dialog.value) || false}
+              assignment={(uiDialog && uiDialog.value) || false}
               courseId={course.id}
               onClose={closeDialog}
-              open={ui.dialog && ui.dialog.type === "DeleteAssignment"}
+              open={uiDialog && uiDialog.type === "DeleteAssignment"}
             />
           </Fragment>
         );
