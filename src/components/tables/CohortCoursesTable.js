@@ -15,6 +15,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import IconButton from "@material-ui/core/IconButton";
+import Paper from '@material-ui/core/Paper';
 
 import DeleteIcon from "@material-ui/icons/Delete";
 
@@ -23,6 +24,14 @@ import { cohort } from "../../types";
 import { cohortCourseUpdateRequest } from "../../containers/Cohort/actions";
 
 const styles = theme => ({
+  root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+    overflowX: 'auto',
+  },
+  table: {
+    minWidth: 700,
+  },
   narrowCell: {
     padding: theme.spacing.unit
   },
@@ -59,7 +68,8 @@ class CohortCoursesTable extends React.PureComponent {
     });
 
     return (
-      <Table>
+      <Paper className={classes.root}>
+      <Table className={classes.table}>
         <TableHead>
           <TableRow>
             <TableCell className={classes.narrowCell}>Course Rank</TableCell>
@@ -87,9 +97,6 @@ class CohortCoursesTable extends React.PureComponent {
             </TableCell>
             <TableCell
               className={classes.narrowCell}
-              style={{
-                width: "50%"
-              }}
             >
               Course
             </TableCell>
@@ -135,6 +142,7 @@ class CohortCoursesTable extends React.PureComponent {
             ))}
         </TableBody>
       </Table>
+      </Paper>
     );
   }
 }
