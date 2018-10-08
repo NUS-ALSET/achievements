@@ -54,6 +54,7 @@ class ExternalProfileCard extends React.Component {
                 >
                   {userAchievements.id}
                 </a>
+                &nbsp;on CodeCombat.com
               </Typography>
               <Typography className={classes.card}>
                 {userAchievements.totalAchievements} achievements
@@ -97,7 +98,7 @@ class ExternalProfileCard extends React.Component {
                   color="secondary"
                   onClick={() => removeExternalProfileRequest(externalProfile)}
                 >
-                  Remove
+                  Disconnect
                 </Button>
               </Fragment>
             ) : (
