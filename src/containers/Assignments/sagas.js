@@ -216,7 +216,7 @@ export function* updateNewAssignmentFieldHandler(action) {
       }
       break;
     case "level":
-      updatedFields.details = APP_SETTING.levels[action.value].url;
+      updatedFields.details = APP_SETTING.CodeCombatLevels[action.value].url;
       break;
     case "path":
       activities = yield call(

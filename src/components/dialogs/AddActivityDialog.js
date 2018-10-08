@@ -173,9 +173,9 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("level", e.target.value)}
               value={activity.level || ""}
             >
-              {Object.keys(APP_SETTING.levels).map(id => (
-                <MenuItem key={APP_SETTING.levels[id].name} value={id}>
-                  {APP_SETTING.levels[id].name}
+              {Object.keys(APP_SETTING.CodeCombatLevels).map(id => (
+                <MenuItem key={APP_SETTING.CodeCombatLevels[id].name} value={id}>
+                  {APP_SETTING.CodeCombatLevels[id].name}
                 </MenuItem>
               ))}
             </Select>
@@ -490,7 +490,7 @@ class AddActivityDialog extends React.PureComponent {
     }
     if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
       state={
-        name : APP_SETTING.levels[value].name,
+        name : APP_SETTING.CodeCombatLevels[value].name,
         isCorrectInput: true
       }
     }
