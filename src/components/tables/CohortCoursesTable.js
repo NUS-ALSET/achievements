@@ -14,29 +14,32 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import IconButton from "@material-ui/core/IconButton";
-import Paper from '@material-ui/core/Paper';
-
-import DeleteIcon from "@material-ui/icons/Delete";
+import Button from '@material-ui/core/Button';
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { cohort } from "../../types";
 import { cohortCourseUpdateRequest } from "../../containers/Cohort/actions";
 
 const styles = theme => ({
-  root: {
+  table: {
     width: '100%',
     marginTop: theme.spacing.unit * 3,
     overflowX: 'auto',
-  },
-  table: {
-    minWidth: 700,
+    minWidth: 700
   },
   narrowCell: {
-    padding: theme.spacing.unit
+    paddingRight: theme.spacing.unit,
+    paddingLeft: theme.spacing.unit,
+    paddingBottom: 2,
+    paddingTop: 0,
   },
   button: {
     margin: theme.spacing.unit
+  },
+  row: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: "#f0f0f0"
+    },
   }
 });
 
@@ -68,11 +71,14 @@ class CohortCoursesTable extends React.PureComponent {
     });
 
     return (
-      <Paper className={classes.root}>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.narrowCell}>Course Rank</TableCell>
+            <TableCell
+              className={classes.narrowCell}
+            >
+              Course Rank
+            </TableCell>
             {cohort.pathsData && cohort.pathsData.length ? (
               cohort.pathsData.map(pathData => (
                 <TableCell
@@ -97,6 +103,7 @@ class CohortCoursesTable extends React.PureComponent {
             </TableCell>
             <TableCell
               className={classes.narrowCell}
+              style={{width:"50%", textAlign:"center"}}
             >
               Course
             </TableCell>
@@ -106,7 +113,12 @@ class CohortCoursesTable extends React.PureComponent {
         <TableBody>
           {courses &&
             courses.map(course => (
-              <TableRow key={course.id}>
+              <TableRow
+                hover
+                style={{height:18}}
+                key={course.id}
+                className={classes.row}
+              >
                 <TableCell className={classes.narrowCell}>
                   <strong>{course.rank}</strong>
                 </TableCell>
@@ -126,23 +138,24 @@ class CohortCoursesTable extends React.PureComponent {
                 <TableCell className={classes.narrowCell}>
                   {course.participants}
                 </TableCell>
-                <TableCell className={classes.narrowCell}>
+                <TableCell className={classes.narrowCell} style={{width:"50%", textAlign:"center"}}>
                   <Link to={`/courses/${course.id}`}>{course.name}</Link>
                 </TableCell>
                 {isOwner && (
                   <TableCell className={classes.narrowCell}>
-                    <IconButton>
-                      <DeleteIcon
-                        onClick={() => this.onRemoveClick(course.id)}
-                      />
-                    </IconButton>
+                    <Button
+                      size="small"
+                      color="secondary"
+                      onClick={() => this.onRemoveClick(course.id)}
+                    >
+                      Remove
+                    </Button>
                   </TableCell>
                 )}
               </TableRow>
             ))}
         </TableBody>
       </Table>
-      </Paper>
     );
   }
 }
