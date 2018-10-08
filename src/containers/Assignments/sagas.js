@@ -54,7 +54,8 @@ import {
   ASSIGNMENT_SHOW_EDIT_DIALOG,
   ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
   assignmentsSolutionsRefreshSuccess,
-  assignmentsSolutionsRefreshFail
+  assignmentsSolutionsRefreshFail,
+  coursePathsFetchSuccess
   // ASSIGNMENTS_TEST_SOMETHING (do we still need this?)
 } from "./actions";
 
@@ -95,6 +96,50 @@ function createCourseMembersChannel(courseId) {
 
 const ONE_SECOND = 1000;
 
+export function* courseAssignmentsOpenHandler(action) {
+  let uid = yield select(state => state.firebase.auth.uid);
+
+  if (!uid) {
+    yield take("@@reactReduxFirebase/LOGIN");
+    yield select(state => state.firebase.auth.uid);
+  }
+
+  const pathsData = yield call(
+    coursesService.fetchCoursePaths,
+    action.courseId
+  );
+  yield put(coursePathsFetchSuccess(action.courseId, pathsData));
+
+  const channel = yield call(createCourseMembersChannel, action.courseId);
+
+  while (true) {
+    const { courseMembers, err, stop, achievements, studentId } = yield take(
+      channel
+    );
+
+    if (stop) {
+      channel.close();
+      break;
+    }
+    if (err) {
+      yield put(courseMembersFetchFail(action.courseId, err.message));
+      break;
+    }
+    if (courseMembers) {
+      yield put(courseMembersFetchSuccess(action.courseId, courseMembers));
+    }
+    if (achievements && studentId) {
+      yield put(
+        courseMemberAchievementsRefetch(
+          action.courseId,
+          studentId,
+          achievements
+        )
+      );
+    }
+  }
+}
+
 export function* addAssignmentRequestHandle(action) {
   try {
     const assignments = yield select(
@@ -124,7 +169,8 @@ export function* updateNewAssignmentFieldHandler(action) {
   const data = yield select(state => ({
     assignment: state.assignments.dialog.value,
     manualUpdates: state.assignments.dialog.manualUpdates || {},
-    uid: state.firebase.auth.uid
+    uid: state.firebase.auth.uid,
+    paths: state.assignments.dialog.paths
   }));
   let activity;
   let activities;
@@ -157,7 +203,7 @@ export function* updateNewAssignmentFieldHandler(action) {
         console.log("Step 2 done");
 
         if (!data.manualUpdates.details) {
-          updatedFields.details = `${location}#/paths/${data.uid}`;
+          updatedFields.details = `${location}#/paths/${updatedFields.path}`;
           console.log("Step 3 done");
         }
       } else if (
@@ -170,7 +216,7 @@ export function* updateNewAssignmentFieldHandler(action) {
       }
       break;
     case "level":
-      updatedFields.details = APP_SETTING.levels[action.value].url;
+      updatedFields.details = APP_SETTING.CodeCombatLevels[action.value].url;
       break;
     case "path":
       activities = yield call(
@@ -182,6 +228,16 @@ export function* updateNewAssignmentFieldHandler(action) {
       yield put(assignmentProblemsFetchSuccess(activities));
 
       updatedFields.details = `${location}#/paths/${data.assignment.path}`;
+
+      if (assignment.questionType === ASSIGNMENTS_TYPES.PathProgress.id) {
+        const paths = Object.assign(
+          {},
+          data.paths.myPaths,
+          data.paths.publicPaths
+        );
+        const path = (paths[action.value] && paths[action.value].name) || {};
+        updatedFields.name = `Path progress for ${path.name || "Some path"}`;
+      }
 
       updatedFields.pathActivity = "";
       break;
@@ -416,45 +472,6 @@ function* assignmentRemoveAssistantRequestHandler(action) {
   }
 }
 
-export function* courseAssignmentsOpenHandler(action) {
-  let uid = yield select(state => state.firebase.auth.uid);
-
-  if (!uid) {
-    yield take("@@reactReduxFirebase/LOGIN");
-    yield select(state => state.firebase.auth.uid);
-  }
-
-  const channel = yield call(createCourseMembersChannel, action.courseId);
-
-  while (true) {
-    const { courseMembers, err, stop, achievements, studentId } = yield take(
-      channel
-    );
-
-    if (stop) {
-      channel.close();
-      break;
-    }
-    if (err)
-      if (err) {
-        yield put(courseMembersFetchFail(action.courseId, err.message));
-        break;
-      }
-    if (courseMembers) {
-      yield put(courseMembersFetchSuccess(action.courseId, courseMembers));
-    }
-    if (achievements && studentId) {
-      yield put(
-        courseMemberAchievementsRefetch(
-          action.courseId,
-          studentId,
-          achievements
-        )
-      );
-    }
-  }
-}
-
 export function* courseAssignmentsCloseHandler(action) {
   const emitToChannel = courseMembersChannels[action.courseId];
 
@@ -613,69 +630,10 @@ export function* assignmentsSolutionsRefreshRequestHandler(action) {
   }
 }
 
-/*
-export function* assignmentsTestSomethingHandler() {
-  const courseId = "-LJpI9bReMokQOdyiGBP";
-  const teamFormation = "-LK0bb7FwaZW5ooH2yY8";
-  const me = "n6gi7Xazb8Yj6mx2PJKezcxhYny1";
-  const teamTasks = ["-LK0bdJM9rjeQAAxsilZ", "-LK0bfBRFv4lMPsGwYa5"];
-  const teams = [];
-  const courseMembers = {};
-  const users = {};
-  const solutions = {};
-  for (let i = 0; i < 70; i += 1) {
-    teams.push(`Some Team ${i}`);
-  }
-  for (let i = 0; i < 200; i += 1) {
-    const userId = "testUser" + i;
-
-    courseMembers[userId] = true;
-    if (Math.random() > 0.05) {
-      users[userId] = {
-        name: "Test User " + i,
-        displayName: "Test User " + i
-      };
-    } else {
-      users[userId] = {
-        email: "test@mail.test"
-      };
-    }
-    solutions[userId] = {
-      [teamFormation]: {
-        createdAt: new Date().getTime(),
-        value: teams[(Math.random() * 70) | 0]
-      },
-      "-LK0bdJM9rjeQAAxsilZ": {
-        createdAt: (Math.random() * 10000) | 0,
-        value: String(Math.random())
-      },
-      "-LK0bfBRFv4lMPsGwYa5": {
-        createdAt: (Math.random() * 10000) | 0,
-        value: String(Math.random())
-      }
-    };
-  }
-  yield put(
-    courseMembersFetchSuccess(
-      courseId,
-      Object.keys(users).map(id => ({ ...users[id], id }))
-    )
-  );
-  yield put({
-    type: "@@reactReduxFirebase/SET",
-    path: "/visibleSolutions/-LJpI9bReMokQOdyiGBP",
-    data: solutions
-  });
-  //ASSIGNMENTS_TEST_SOMETHING
-  // yield put({
-  //   type: "@@reactReduxFirebase/SET",
-  //   path: "/courseMembers/-LJpI9bReMokQOdyiGBP",
-  //   data: courseMembers
-  // });
-}
-*/
-
 export default [
+  function* watchCourseAssignmentsOpen() {
+    yield takeLatest(COURSE_ASSIGNMENTS_OPEN, courseAssignmentsOpenHandler);
+  },
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
   },
@@ -751,9 +709,6 @@ export default [
       COURSE_REMOVE_STUDENT_REQUEST,
       courseRemoveStudentRequestHandler
     );
-  },
-  function* watchCourseAssignmentsOpen() {
-    yield takeLatest(COURSE_ASSIGNMENTS_OPEN, courseAssignmentsOpenHandler);
   },
   function* watchCourseAssignmentsClose() {
     yield takeLatest(COURSE_ASSIGNMENTS_CLOSE, courseAssignmentsCloseHandler);

@@ -1,9 +1,9 @@
 import firebase from "firebase";
-import levels from "./levels";
+import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {
   drawerWidth: 250,
-  levels: levels,
+  CodeCombatLevels: CodeCombatLevels,
   games : {
     "passenger-picker" : {
       "id" : "passenger-picker",

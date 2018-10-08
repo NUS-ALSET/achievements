@@ -36,6 +36,7 @@ import LinkIcon from "@material-ui/icons/Link";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
+import {GameActivity, TournamentActivity} from '../AddActivitiesForm/'
 
 import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -172,9 +173,9 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("level", e.target.value)}
               value={activity.level || ""}
             >
-              {Object.keys(APP_SETTING.levels).map(id => (
-                <MenuItem key={APP_SETTING.levels[id].name} value={id}>
-                  {APP_SETTING.levels[id].name}
+              {Object.keys(APP_SETTING.CodeCombatLevels).map(id => (
+                <MenuItem key={APP_SETTING.CodeCombatLevels[id].name} value={id}>
+                  {APP_SETTING.CodeCombatLevels[id].name}
                 </MenuItem>
               ))}
             </Select>
@@ -371,107 +372,7 @@ class AddActivityDialog extends React.PureComponent {
           </Fragment>
         );
       case ACTIVITY_TYPES.game.id:
-        return (
-          <div>
-          <FormControl fullWidth margin="normal">
-            <InputLabel htmlFor="select-games">Select Game</InputLabel>
-            <Select
-              input={<Input id="select-games" />}
-              margin="none"
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 224,
-                    width: 250
-                  }
-                }
-              }}
-              onChange={e => this.onFieldChange("game", e.target.value)}
-              value={activity.game}
-            >
-              {Object.keys(APP_SETTING.games).map(id => (
-                <MenuItem key={APP_SETTING.games[id].name} value={id}>
-                  {APP_SETTING.games[id].name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <InputLabel htmlFor="select-mode">Select Play Mode</InputLabel>
-            <Select
-              input={<Input id="select-mode" />}
-              margin="none"
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 224,
-                    width: 250
-                  }
-                }
-              }}
-              onChange={e => this.onFieldChange("playMode", e.target.value)}
-              value={activity.playMode}
-            >
-              {[{ mode : 'manual control', label : 'Manual Control' },{ mode : 'custom code', label : 'Custom Code' }].map(key => (
-                <MenuItem key={key.mode} value={key.mode}>
-                  {key.label}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth margin="normal">
-            <InputLabel htmlFor="select-level">Select minimum level game must be won at</InputLabel>
-            <Select
-              input={<Input id="select-level" />}
-              margin="none"
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 224,
-                    width: 250
-                  }
-                }
-              }}
-              onChange={e => this.onFieldChange("levelsToWin", e.target.value)}
-              value={activity.levelsToWin}
-            >
-              {[1,2,3].map(key => (
-                <MenuItem key={key} value={key}>
-                  {key}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <TextField
-              defaultValue={0}
-              value={activity.unitsPerSide}
-              fullWidth
-              type="number"
-              label="Number of units each side will have in the game."
-              margin="dense"
-              onChange={e => this.onFieldChange("unitsPerSide", e.target.value)}
-            />
-          
-          <TextField
-            value={activity.scoreToWin}
-            defaultValue={0}
-            fullWidth
-            label="Score to Win"
-            margin="dense"
-            type="number"
-            onChange={e => this.onFieldChange("scoreToWin", e.target.value)}
-          />
-          <TextField
-            value={activity.gameTime}
-            defaultValue={0}
-            fullWidth
-            label="Select the maximum time limit (in seconds)"
-            margin="dense"
-            type="number"
-            onChange={e => this.onFieldChange("gameTime", Number(e.target.value))}
-          />
-          </div>
-        );
+        return <GameActivity onFieldChange={this.onFieldChange} activity={activity} />
       case ACTIVITY_TYPES.jest.id:
         return (
           <Fragment>
@@ -538,6 +439,8 @@ class AddActivityDialog extends React.PureComponent {
             )}
           </Fragment>
         );
+      case ACTIVITY_TYPES.gameTournament.id:
+        return <TournamentActivity onFieldChange={this.onFieldChange} activity={activity} />
       default:
         return;
     }
@@ -587,7 +490,7 @@ class AddActivityDialog extends React.PureComponent {
     }
     if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
       state={
-        name : APP_SETTING.levels[value].name,
+        name : APP_SETTING.CodeCombatLevels[value].name,
         isCorrectInput: true
       }
     }

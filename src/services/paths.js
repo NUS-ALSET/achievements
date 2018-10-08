@@ -59,6 +59,10 @@ export const ACTIVITY_TYPES = {
   jest: {
     id: "jest",
     caption: "Jest"
+  },
+  gameTournament: {
+    id: "gameTournament",
+    caption: "Game Tournament"
   }
 };
 
@@ -341,6 +345,8 @@ export class PathsService {
         }
         break;
       case ACTIVITY_TYPES.game.id:
+        break;
+      case ACTIVITY_TYPES.gameTournament.id:
         break;
       case ACTIVITY_TYPES.jest.id:
         if (!problemInfo.githubURL) throw new Error("Missing GithubURL");

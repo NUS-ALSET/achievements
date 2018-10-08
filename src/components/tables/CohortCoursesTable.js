@@ -14,17 +14,32 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import IconButton from "@material-ui/core/IconButton";
-
-import DeleteIcon from "@material-ui/icons/Delete";
+import Button from '@material-ui/core/Button';
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { cohort } from "../../types";
 import { cohortCourseUpdateRequest } from "../../containers/Cohort/actions";
 
 const styles = theme => ({
+  table: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+    overflowX: 'auto',
+    minWidth: 700
+  },
+  narrowCell: {
+    paddingRight: theme.spacing.unit,
+    paddingLeft: theme.spacing.unit,
+    paddingBottom: 2,
+    paddingTop: 0,
+  },
   button: {
     margin: theme.spacing.unit
+  },
+  row: {
+    '&:nth-of-type(odd)': {
+      backgroundColor: "#f0f0f0"
+    },
   }
 });
 
@@ -44,7 +59,7 @@ class CohortCoursesTable extends React.PureComponent {
     );
 
   render() {
-    const { courses, cohort, isOwner } = this.props;
+    const { classes, courses, cohort, isOwner } = this.props;
     let totals = {
       progress: 0,
       participants: 0
@@ -56,59 +71,85 @@ class CohortCoursesTable extends React.PureComponent {
     });
 
     return (
-      <Table>
+      <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell>School Rank</TableCell>
-            {cohort.pathsData && cohort.pathsData.length
-            ? (
+            <TableCell
+              className={classes.narrowCell}
+            >
+              Course Rank
+            </TableCell>
+            {cohort.pathsData && cohort.pathsData.length ? (
               cohort.pathsData.map(pathData => (
-                <TableCell key={(pathData && pathData.id) || Math.random()}>
+                <TableCell
+                  className={classes.narrowCell}
+                  key={(pathData && pathData.id) || Math.random()}
+                >
                   {pathData && pathData.name}
                 </TableCell>
               ))
             ) : (
-              <TableCell>Paths for Cohort</TableCell>
+              <TableCell className={classes.narrowCell}>
+                Paths for Cohort
+              </TableCell>
             )}
-            <TableCell>
+            <TableCell className={classes.narrowCell}>
               Explorers(
               {totals.progress})
             </TableCell>
 
-            <TableCell> Total Students ({totals.participants})</TableCell>
-            <TableCell>School</TableCell>
+            <TableCell className={classes.narrowCell}>
+              Total Students ({totals.participants})
+            </TableCell>
+            <TableCell
+              className={classes.narrowCell}
+              style={{width:"50%", textAlign:"center"}}
+            >
+              Course
+            </TableCell>
             {isOwner && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
           {courses &&
             courses.map(course => (
-              <TableRow key={course.id}>
-                <TableCell>
+              <TableRow
+                hover
+                style={{height:18}}
+                key={course.id}
+                className={classes.row}
+              >
+                <TableCell className={classes.narrowCell}>
                   <strong>{course.rank}</strong>
                 </TableCell>
                 {cohort.paths ? (
                   cohort.paths.length &&
                   cohort.paths.map(id => (
-                    <TableCell key={id}>
+                    <TableCell className={classes.narrowCell} key={id}>
                       {course.pathsProgress && course.pathsProgress[id]}
                     </TableCell>
                   ))
                 ) : (
-                  <TableCell>None</TableCell>
+                  <TableCell className={classes.narrowCell}>None</TableCell>
                 )}
-                <TableCell>{course.progress}</TableCell>
-                <TableCell>{course.participants}</TableCell>
-                <TableCell>
+                <TableCell className={classes.narrowCell}>
+                  {course.progress}
+                </TableCell>
+                <TableCell className={classes.narrowCell}>
+                  {course.participants}
+                </TableCell>
+                <TableCell className={classes.narrowCell} style={{width:"50%", textAlign:"center"}}>
                   <Link to={`/courses/${course.id}`}>{course.name}</Link>
                 </TableCell>
                 {isOwner && (
-                  <TableCell>
-                    <IconButton>
-                      <DeleteIcon
-                        onClick={() => this.onRemoveClick(course.id)}
-                      />
-                    </IconButton>
+                  <TableCell className={classes.narrowCell}>
+                    <Button
+                      size="small"
+                      color="secondary"
+                      onClick={() => this.onRemoveClick(course.id)}
+                    >
+                      Remove
+                    </Button>
                   </TableCell>
                 )}
               </TableRow>

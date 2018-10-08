@@ -15,24 +15,26 @@ import Typography from "@material-ui/core/Typography";
 
 class ExternalProfileCard extends React.Component {
   static propTypes = {
-    userAchievements: PropTypes.object,
-    externalProfile: PropTypes.object.isRequired,
-    classes: PropTypes.object.isRequired,
     addExternalProfileRequest: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired,
+    externalProfile: PropTypes.object.isRequired,
+    inProgress: PropTypes.bool,
+    isOwner: PropTypes.bool,
     refreshAchievementsRequest: PropTypes.func.isRequired,
     removeExternalProfileRequest: PropTypes.func.isRequired,
-    inProgress: PropTypes.bool
+    userAchievements: PropTypes.object
   };
 
   render() {
     const {
-      classes,
-      inProgress,
-      userAchievements,
-      externalProfile,
       addExternalProfileRequest,
+      classes,
+      externalProfile,
+      inProgress,
+      isOwner,
       refreshAchievementsRequest,
-      removeExternalProfileRequest
+      removeExternalProfileRequest,
+      userAchievements
     } = this.props;
 
     return (
@@ -52,56 +54,64 @@ class ExternalProfileCard extends React.Component {
                 >
                   {userAchievements.id}
                 </a>
+                &nbsp;on CodeCombat.com
               </Typography>
               <Typography className={classes.card}>
-                {userAchievements.totalAchievements} achievements
+                {userAchievements.totalAchievements} completed levels
               </Typography>
             </Fragment>
           ) : (
             <Typography className={classes.card}>
-              <a href={externalProfile.url} target="_blank" rel="noopener noreferrer">
+              <a
+                href={externalProfile.url}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
                 {externalProfile.name}
-              </a>,{" "}{externalProfile.description}
+              </a>
+              , {externalProfile.description}
             </Typography>
           )}
         </CardContent>
-        <CardActions>
-          {userAchievements ? (
-            <Fragment>
+        {isOwner && (
+          <CardActions>
+            {userAchievements ? (
+              <Fragment>
+                <Button
+                  color="primary"
+                  disabled={inProgress}
+                  onClick={() => refreshAchievementsRequest(externalProfile)}
+                >
+                  Fetch levels
+                  {inProgress && (
+                    <CircularProgress
+                      style={{
+                        position: "absolute",
+                        left: "50%",
+                        width: 20,
+                        height: 20
+                      }}
+                    />
+                  )}
+                </Button>
+                <Button
+                  color="secondary"
+                  onClick={() => removeExternalProfileRequest(externalProfile)}
+                >
+                  Disconnect
+                </Button>
+              </Fragment>
+            ) : (
               <Button
                 color="primary"
-                disabled={inProgress}
-                onClick={() => refreshAchievementsRequest(externalProfile)}
+                onClick={() => addExternalProfileRequest(externalProfile)}
+                variant="raised"
               >
-                Refresh achievements
-                {inProgress && (
-                  <CircularProgress
-                    style={{
-                      position: "absolute",
-                      left: "50%",
-                      width: 20,
-                      height: 20
-                    }}
-                  />
-                )}
+                Add Profile
               </Button>
-              <Button
-                color="secondary"
-                onClick={() => removeExternalProfileRequest(externalProfile)}
-              >
-                Remove
-              </Button>
-            </Fragment>
-          ) : (
-            <Button
-              color="primary"
-              onClick={() => addExternalProfileRequest(externalProfile)}
-              variant="raised"
-            >
-              Add Profile
-            </Button>
-          )}
-        </CardActions>
+            )}
+          </CardActions>
+        )}
       </Card>
     );
   }
