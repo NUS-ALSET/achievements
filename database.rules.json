@@ -390,7 +390,7 @@
       }
     },
     "users": {
-      ".read": "auth != null",
+      ".read": true,
       "$userKey": {
         ".write": "auth != null && auth.uid == $userKey",
       }
