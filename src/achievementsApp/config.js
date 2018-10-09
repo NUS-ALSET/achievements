@@ -9,10 +9,10 @@ export const APP_SETTING = {
       "id" : "passenger-picker",
       "name" : "Passenger Picker"
     },
-    "squad" : {
-      "id" : "squad",
-      "name" : "Squad"
-    }
+    // "squad" : {
+    //   "id" : "squad",
+    //   "name" : "Squad"
+    // }
   },
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,

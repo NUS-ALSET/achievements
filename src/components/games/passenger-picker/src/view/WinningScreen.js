@@ -1,23 +1,22 @@
 import React from 'react';
 import {observer} from 'mobx-react';
 
-const WinningScreen = ({store, restartGame})=>{
+const WinningScreen = ({ restartGame, gameOver, submitSolition})=>{
+    console.log(gameOver);
     return <div>
-        {store.time<=0&&<div className={"gameEndWindow"} style={{
-                position:'absolute',
+        {gameOver.status &&<div className={"gameEndWindow"} style={{
+                position:'fixed',
                 width:'100%',
                 height:'100vh',
                 background:'green',
-                zIndex:200
+                zIndex:2000
             }}>
                 <h1 style={{
                     textAlign:'center',
                     marginTop:'40vh',
                     color:'#fff'
                 }}>
-                    {store.score[0]>store.score[1]?'Player 1 won!!!':''}
-                    {store.score[0]<store.score[1]?'Player 2 won!!!':''}
-                    {store.score[0]==store.score[1]?'Score is even!':''}
+                    {gameOver.message}
                 </h1>
                 <button style={{
                     margin:'0 auto',
@@ -28,6 +27,16 @@ const WinningScreen = ({store, restartGame})=>{
                     padding:'10px 40px',
                     fontWeight:'bold'
                 }} onClick={restartGame}>RESTART</button>
+                <br></br>
+                <button style={{
+                    margin:'0 auto',
+                    display:'block', 
+                    border:'3px solid white', 
+                    color:'white', 
+                    background:'none',
+                    padding:'10px 40px',
+                    fontWeight:'bold'
+                }} onClick={submitSolition}>SUBMIT SOLUTION</button>
             </div>}
     </div>
 }

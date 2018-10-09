@@ -7,18 +7,17 @@ import Road from './road';
 import Passengers from './passengers';
 import Destinations from './destination';
 import Updater from './updater.js';
-import Time from './time';
 import './style.css';
 
 import CodeEditor from './code-editor';
 
+
 export default class App extends Component {
     render() {
         return <Loop>
-            <Updater botsQuantity={this.props.botsQuantity} level1={this.props.level1} level2={this.props.level2} level3={this.props.level3} store={this.props.store}></Updater>
-            <Time store={this.props.store}></Time>
-            <div style={{height: '98vh', width: '50%', float:"left"}}>
-                <Stage width={500} height={500}>
+            <Updater {...this.props}></Updater>
+            <div style={{height: '60vh', width: '50%', float:"left"}}>
+                <Stage width={800} height={480}>
                     <Tile></Tile>
                     <Road></Road>
                     <Passengers store={this.props.store} gameId={0}></Passengers>
@@ -26,8 +25,8 @@ export default class App extends Component {
                     <Characters store={this.props.store} gameId={0}></Characters>
                 </Stage>
             </div>
-            <div style={{height: '98vh', width: '50%', float:"left"}}>
-                <Stage width={500} height={500}>
+            <div style={{height: '60vh', width: '50%', float:"left"}}>
+                <Stage width={800} height={480}>
                     <Tile></Tile>
                     <Road></Road>
                     <Passengers store={this.props.store} gameId={1}></Passengers>
@@ -35,7 +34,13 @@ export default class App extends Component {
                     <Characters store={this.props.store} gameId={1}></Characters>
                 </Stage>
             </div>
-            <CodeEditor></CodeEditor>
+            <div style={{ clear : 'both'}}>
+
+            </div>
+            {
+                this.props.gameData.playMode = 'custom code' && 
+                <CodeEditor player1Data={this.props.player1Data} ></CodeEditor>
+            }
         </Loop>
     }
 }

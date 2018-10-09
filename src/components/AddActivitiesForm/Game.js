@@ -57,7 +57,7 @@ const GameActivity = ({activity, onFieldChange}) => (
         ))}
       </Select>
     </FormControl>
-    <FormControl fullWidth margin="normal">
+    {/* <FormControl fullWidth margin="normal">
       <InputLabel htmlFor="select-level">Select minimum level game must be won at</InputLabel>
       <Select
         input={<Input id="select-level" />}
@@ -79,7 +79,7 @@ const GameActivity = ({activity, onFieldChange}) => (
           </MenuItem>
         ))}
       </Select>
-    </FormControl>
+    </FormControl> */}
     <TextField
         value={activity.unitsPerSide}
         fullWidth

@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 
 
 const Loading = () => {
-  return 'Loading...';
+  return <div style={{ width : '100%', marginTop :'45vh', textAlign : 'center'}}>Loading...</div>;
 }
 
 const Game404 = () => {
@@ -33,7 +33,7 @@ class GameActivity extends React.PureComponent {
   };
 
   handleSubmit = solution => {
-
+    
     if (this.props.onChange) {
       this.props.onCommit({ type: 'SOLUTION', solution });
     } else {
@@ -63,7 +63,7 @@ class GameActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem, botsQuantity
+    const { problem
       // solution, readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
@@ -72,16 +72,18 @@ class GameActivity extends React.PureComponent {
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
-        botsQuantity={botsQuantity}
         player1Data={{
-          levelsToWin: `level${problem.levelsToWin}`,
-          playMode: problem.playMode
+          pyCode: '', 
+          jsCode: ''
         }}
-        player2Data={{
-          levelsToWin: `level${problem.levelsToWin}`,
+        gameData={{
+          playMode: problem.playMode,
+          // levelsToWin: problem.levelsToWin,
+          scoreToWin: Number(problem.scoreToWin),
+          gameTime: problem.gameTime,
+          botsQuantities: problem.unitsPerSide,
+          gameType: problem.type.toUpperCase(),
         }}
-        scoreToWin={Number(problem.scoreToWin)}
-        time={problem.gameTime}
         onCommit={this.handleSubmit}
       />
     );

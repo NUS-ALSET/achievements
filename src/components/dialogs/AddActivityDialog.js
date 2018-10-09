@@ -57,7 +57,7 @@ const gameDefaultData = {
   scoreToWin : 10,
   gameTime : 120,
   unitsPerSide : 1,
-  levelsToWin : 1,
+  // levelsToWin : 1,
   playMode : 'manual control'
 }
 
