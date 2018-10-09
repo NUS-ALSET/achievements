@@ -1,18 +1,19 @@
 import React from 'react';
-import {observer} from 'mobx-react';
+import { observer } from 'mobx-react';
 
-const ScoreDisplay = ({ store, restartGame, pauseResumeGame }) => (
-    <div className='scoreDisplay' id="player1Holder">
-        <div>Player 1 score: {store.score[0]} level: {store.p1Level}</div>
+const ScoreDisplay = ({ store, restartGame, pauseResumeGame }) => {
+    return <div className="score-display">
+        <div>Player 1 score: {store.score[0]}</div>
         <div>
-            <button onClick={() => restartGame()}> Restart </button>
-            {` Time left: ${store.time} `}
-            <button onClick={() => pauseResumeGame()}>
-                {store.mode == 'play' ? 'Pause' : 'Resume'}
-            </button>
+            Time left: {store.time} sec
         </div>
-        <div>Player 2 score: {store.score[1]} level: {store.p1Level}</div>
+        <div>
+            <button className="control-btn restart" onClick={() => restartGame()}> Restart </button>
+            <button className="control-btn pause" onClick={() => pauseResumeGame()}> {store.mode == 'play' ? 'Pause' : 'Resume'} </button>
+        </div>
+        <div>Level: {store.currentLevel}</div>
+        <div>Player 2 score: {store.score[1]}</div>
     </div>
-);
+}
 
 export default observer(ScoreDisplay);

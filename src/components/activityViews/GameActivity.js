@@ -5,13 +5,22 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import { withStyles } from '@material-ui/core/styles';
 
-const Loading = () => {
-  return 'Loading...';
+
+const styles = {
+  root : {},
+  verticalMiddle: {
+    width: '100%', marginTop: '45vh', textAlign: 'center'
+  }
+};
+
+const Loading = ({ className }) => {
+  return <div className={className}>Loading...</div>;
 }
 
-const Game404 = () => {
-  return 'Game not exist'
+const Game404 = ({ className }) => {
+  return <div className={className}>Game not exist</div>;
 }
 
 class GameActivity extends React.PureComponent {
@@ -63,7 +72,8 @@ class GameActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem
+    const { problem,
+      classes
       // solution, readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
@@ -74,23 +84,21 @@ class GameActivity extends React.PureComponent {
       <SpecificGame
         gameData={{
           playMode: problem.playMode,
-          // levelsToWin: problem.levelsToWin,
+          levelsToWin: Number(problem.levelsToWin),
           scoreToWin: Number(problem.scoreToWin),
           gameTime: problem.gameTime,
           botsQuantities: problem.unitsPerSide,
           gameType: problem.type.toUpperCase(),
         }}
         player1Data={{
-          levelsToWin: `level${problem.levelsToWin}`,
-          playMode: problem.playMode
-        }}
-        player2Data={{
-          levelsToWin: `level${problem.levelsToWin}`,
+          pyCode : '',
+          jsCode : ''
         }}
         onCommit={this.handleSubmit}
+        className={classes.verticalMiddle}
       />
     );
   }
 }
 
-export default GameActivity;
+export default withStyles(styles)(GameActivity);

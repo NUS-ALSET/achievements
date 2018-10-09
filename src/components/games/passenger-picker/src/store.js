@@ -16,7 +16,7 @@ class passengerStore {
             time: config.time,
             prevTime: Date.now(),
             position: position,
-            botsQuantity:config.botsQuantityPerGame,
+            botsQuantity:  config.botsQuantityPerGame,
             direction: [['right','down'], ['right','down']],
             passengers: [[], []],
             destination: destination,
@@ -26,8 +26,8 @@ class passengerStore {
             player2Func: undefined,
             func: defaultJavascriptFunctionCode,
             needToRestartGame: false,
-            player1ControlSelected: "level3",
-            player2ControlSelected:"manual control"
+            editorMode : 'javascript',
+            currentLevel : 1,
         });
     }
     updatePosition(gameId, playerId, newPosition, offset){

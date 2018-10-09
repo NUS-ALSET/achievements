@@ -13,14 +13,14 @@ class CodeEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            customFunctionCode: defaultPythonCodeFunction,
-            updatedCode: defaultPythonCodeFunction,
-            jsCode: defaultJavascriptFunctionCode,
+            // compiledCode: defaultJavascriptFunctionCode,
+            pyCode: props.player1Data.pyCode || defaultPythonCodeFunction,
+            jsCode: props.player1Data.jsCode || defaultJavascriptFunctionCode,
             errors: [],
-            mode: 'javascript',
+            mode: Store.editorMode,
         };
         this.resetUndoManager = false;
-        this.updateCustomCode = this.updateCustomCode.bind(this);
+        // this.updateCustomCode = this.updateCustomCode.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleValidation = this.handleValidation.bind(this);
         this.toggleMode = this.toggleMode.bind(this);
@@ -30,25 +30,25 @@ class CodeEditor extends Component {
     }
     resetDefaultCode() {
         this.setState({
-            customFunctionCode: defaultPythonCodeFunction,
-            updatedCode: defaultPythonCodeFunction,
-            jsCode: defaultJavascriptFunctionCode,
+            // compiledCode: defaultJavascriptFunctionCode,
+            pyCode: this.props.player1Data.pyCode || defaultPythonCodeFunction,
+            jsCode: this.props.player1Data.jSCode || defaultJavascriptFunctionCode,
         });
     }
-    updateCustomCode() {
-        if (this.state.errors.length > 0) {
-            alert('Invalid code,please correct thr code');
-        return;
-        }
-        this.setState({ customFunctionCode: this.state.updatedCode });
-        Store.func = this.state.updatedCode;
-    }
+    // updateCustomCode() {
+    //     if (this.state.errors.length > 0) {
+    //         alert('Invalid code,please correct thr code');
+    //     return;
+    //     }
+    //     this.setState({ compiledCode: this.state.pyCode });
+    //     Store.func = this.state.pyCode;
+    // }
     toggleMode() {
         this.setState({ showMode: !this.state.showMode });
     }
     handleChange(newCode) {
-        if (this.state.mode === 'python') {
-            this.setState({ updatedCode: newCode });
+        if (Store.editorMode === 'python') {
+            this.setState({ pyCode: newCode });
         } else {
             this.setState({ jsCode: newCode });
         }
@@ -58,28 +58,28 @@ class CodeEditor extends Component {
         this.setState({ errors: errors });
     }
     handleMode(mode) {
-        this.setState({ mode });
+        Store.editorMode = mode;
         this.resetUndoManager = true;
     }
-    handleCodeExecution(){
+    handleCodeExecution() {
         if (this.state.errors.length > 0) {
             console.log(this.state.errors);
-            alert('Invalid code,please correct thr code');
+            alert('Invalid code,please correct the code');
             return;
         }
-        if (this.state.mode === 'python') {
-            var error = window.createFunctionFromPython(this.state.updatedCode);
-            if(error==0){
+        if (Store.editorMode === 'python') {
+            var error = window.createFunctionFromPython(this.state.pyCode);
+            if (error == 0) {
                 Store.func = window.getPlayersCommands;
                 Store.needToRestartGame = true;
             }
         } else {
             //window.newPySrc = this.state.jscode;
             var error = 0;
-            try{
-                Store.func = eval("("+this.state.jsCode+")");
+            try {
+                Store.func = eval("(" + this.state.jsCode + ")");
                 Store.needToRestartGame = true;
-            }catch(e){
+            } catch (e) {
                 alert('Error ' + e.name + ":" + e.message);
             }
         }
@@ -89,7 +89,7 @@ class CodeEditor extends Component {
         //window.oldPySrc = '';
         window.result = 'down';
         window.world = null;
-        window.calculateShortestPath=()=>{};
+        window.calculateShortestPath = () => { };
         Store.func = this.state.jsCode;
     }
     componentDidUpdate() {
@@ -101,40 +101,41 @@ class CodeEditor extends Component {
     }
     render() {
         const { classes } = this.props;
-        const { updatedCode, mode, jsCode } = this.state;
-        const code = mode === 'python' ? updatedCode : jsCode;
+        const { pyCode, jsCode } = this.state;
+        const code = Store.editorMode === 'python' ? pyCode : jsCode;
         return (
-            <div>
-            {(Store.player1ControlSelected=='custom code'||Store.player2ControlSelected=='custom code')&&<div style={{position:'absolute', top:'100%'}} className={"editorContainer"}>
-                <h4 style={{ margin: '4px' }}>
-                    Write <b className="active-text">{mode.toUpperCase()}</b> Code Here :{' '}
+            <div className="editor-container">
+                <h4>
+                    Write <b className="active-text">{Store.editorMode.toUpperCase()}</b> Code Here :{' '}
                 </h4>
-                <h5 style={{ margin: '12px' }}>
+                <h5>
                     <strong>Note : </strong>Please do not change the name of the function{' '}
                     <strong>getPlayersCommands(world)</strong> & function must return one of these direction (LEFT, RIGHT, UP,
                     DOWN)
                 </h5>
-                <div>
+                {/* Temp diabled */}
+                {/* <div>
                     <button
                         type="button"
-                        className={mode === 'python' ? 'btn half active' : 'btn half'}
+                        className={Store.editorMode === 'python' ? 'btn half active' : 'btn half'}
                         onClick={() => this.handleMode('python')}
                     >
                         Python
                     </button>
                     <button
                         type="button"
-                        className={mode === 'python' ? 'btn half' : 'btn half active'}
+                        className={Store.editorMode === 'python' ? 'btn half' : 'btn half active'}
                         onClick={() => this.handleMode('javascript')}
                     >
                         Javascript
                     </button>
-                </div>
+                </div> */}
+                <div className="editor-header">ALSET Editor</div>
                 <div id="editor" className="editor">
                     <AceEditor
                         ref="alsetEditor"
                         name="alset-editor"
-                        mode={mode}
+                        mode={Store.editorMode}
                         theme="github"
                         width={'100%'}
                         height={'650px'}
@@ -148,12 +149,13 @@ class CodeEditor extends Component {
                         value={code}
                         wrapEnabled={true}
                         setOptions={{
-                        enableBasicAutocompletion: false,
-                        enableLiveAutocompletion: false,
-                        enableSnippets: false,
-                        showLineNumbers: true,
-                        tabSize: 2,
+                            enableBasicAutocompletion: false,
+                            enableLiveAutocompletion: false,
+                            enableSnippets: false,
+                            showLineNumbers: true,
+                            tabSize: 2,
                         }}
+                        
                     />
                 </div>
                 <div className="">
@@ -168,7 +170,7 @@ class CodeEditor extends Component {
                     <h4>Python Console</h4>
                     <textarea id="python-console" className="res" />
                 </div>
-            </div>}
+
             </div>
         );
     }
