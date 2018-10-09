@@ -63,7 +63,7 @@ class GameActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem, botsQuantity
+    const { problem
       // solution, readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
@@ -72,7 +72,14 @@ class GameActivity extends React.PureComponent {
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
-        botsQuantity={botsQuantity}
+        gameData={{
+          playMode: problem.playMode,
+          // levelsToWin: problem.levelsToWin,
+          scoreToWin: Number(problem.scoreToWin),
+          gameTime: problem.gameTime,
+          botsQuantities: problem.unitsPerSide,
+          gameType: problem.type.toUpperCase(),
+        }}
         player1Data={{
           levelsToWin: `level${problem.levelsToWin}`,
           playMode: problem.playMode
@@ -80,8 +87,6 @@ class GameActivity extends React.PureComponent {
         player2Data={{
           levelsToWin: `level${problem.levelsToWin}`,
         }}
-        scoreToWin={Number(problem.scoreToWin)}
-        time={problem.gameTime}
         onCommit={this.handleSubmit}
       />
     );
