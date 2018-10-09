@@ -95,10 +95,10 @@ class Updater extends Component {
                     break;
             }
         }
-        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.botsQuantity);
+        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.gameData.botsQuantity);
     }
     componentWillMount(){
-        this.changeBotsQuantity(this.props.botsQuantity)
+        this.changeBotsQuantity(this.props.gameData.botsQuantities)
         this.props.store.p1Level = this.props.player1Data.levelsToWin
     }
     loop = () => {
@@ -287,8 +287,8 @@ class Updater extends Component {
         //this.props.store.mode == 'play'?'pause':'play';
     }
     restartGame(){
-        this.props.store.time = this.props.time;
-        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.botsQuantity);
+        this.props.store.time = this.props.gameData.gameTime;
+        this.simulation = new Simulation(config,this.props.store.player1Func,this.props.store.player2Func,this.props.gameData.botsQuantities);
         this.props.store.mode = 'play';
     }
     componentDidMount() {

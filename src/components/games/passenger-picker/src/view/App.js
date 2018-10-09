@@ -15,7 +15,7 @@ import CodeEditor from './code-editor';
 export default class App extends Component {
     render() {
         return <Loop>
-            <Updater time={this.props.gameData.gameTime} botsQuantity={this.props.gameData.botsQuantities} player1Data={this.props.player1Data} level1={this.props.level1} level2={this.props.level2} level3={this.props.level3} store={this.props.store}></Updater>
+            <Updater gameData={this.props.gameData} player1Data={this.props.player1Data} level1={this.props.level1} level2={this.props.level2} level3={this.props.level3} store={this.props.store}></Updater>
             <Time store={this.props.store}></Time>
             <div style={{height: '98vh', width: '50%', float:"left"}}>
                 <Stage width={500} height={500}>
