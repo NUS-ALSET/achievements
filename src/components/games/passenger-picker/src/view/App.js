@@ -16,7 +16,6 @@ export default class App extends Component {
     render() {
         return <Loop>
             <Updater time={this.props.time} botsQuantity={this.props.botsQuantity} player1Data={this.props.player1Data} level1={this.props.level1} level2={this.props.level2} level3={this.props.level3} store={this.props.store}></Updater>
-            <Time store={this.props.store}></Time>
             <div style={{height: '98vh', width: '50%', float:"left"}}>
                 <Stage width={500} height={500}>
                     <Tile></Tile>

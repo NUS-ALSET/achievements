@@ -299,20 +299,9 @@ class Updater extends Component {
         this.context.loop.unsubscribe(this.loopID);
     }
     render() {
-        console.log('updater......', this.props.store)
         return (<div>
             <WinningScreen store={this.props.store} restartGame={this.restartGame}/>
-            <p style={{position:'absolute', left:0, top:0, margin:0, zIndex:1101}}>
-                <ScoreDisplay store={this.props.store} gameId={0}></ScoreDisplay>
-            </p>
-            <p style={{position:'absolute', right:0, top:0, margin:0, zIndex:1101}}>
-                <ScoreDisplay store={this.props.store} gameId={1}></ScoreDisplay>
-            </p>
-            <p style={{position:'absolute', left:'50%', top:'15px', transform:'translate(-50%, -50%)', zIndex:1101}}>
-                <button onClick={() => this.restartGame()}>Restart</button>
-                <button onClick={() => this.pauseResumeGame()}>{this.props.store.mode == 'play' ? 'Pause' : 'Resume'}</button>
-                
-            </p>
+            <ScoreDisplay store={this.props.store} restartGame={this.restartGame} pauseResumeGame={this.pauseResumeGame}></ScoreDisplay>
         </div>)
     }
 } 

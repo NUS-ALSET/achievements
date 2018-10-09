@@ -6,7 +6,7 @@ import Store from './store';
 import level1 from './simulation/level1';
 import level2 from './simulation/level2';
 import level3 from './simulation/level3';
-
+import './assets/css/main.css'
 
 const Game = (props) => (
     <Fragment>
