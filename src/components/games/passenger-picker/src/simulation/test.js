@@ -1,3 +1,4 @@
+/* eslint-disable */
 function getPlayersCommands(world) {
 	var findShortestPath = function(arr, pointA, pointB, charId){
 		var heuristic = function (a,b){

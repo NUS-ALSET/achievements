@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import img1 from '../assets/destination/PickupGreen.png';
 import img2 from '../assets/destination/PickupViolet.png';

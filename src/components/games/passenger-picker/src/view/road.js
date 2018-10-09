@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { TileMap } from 'react-game-kit';
 import img from '../assets/tiles/asphalt.jpg';

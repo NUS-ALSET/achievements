@@ -1,3 +1,4 @@
+/* eslint-disable */
 function Simulation(config, bot1clb, bot2clb, botsQuantity){
     this.config = config;
     this.bot1clb = bot1clb;

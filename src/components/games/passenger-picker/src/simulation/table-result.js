@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Store from '../store';
 function createLink(func1,func2){
     return '?player2='+func1+'&player1='+func2;

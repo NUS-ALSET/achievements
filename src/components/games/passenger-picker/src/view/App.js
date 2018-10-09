@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { Loop, Stage } from 'react-game-kit';
 import Tile from './tile';

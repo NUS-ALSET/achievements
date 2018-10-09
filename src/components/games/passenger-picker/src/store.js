@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { observable, computed, extendObservable } from 'mobx';
 import config from './simulation/config.json';
 import {defaultJavascriptFunctionCode} from './view/Components/defaultCode';

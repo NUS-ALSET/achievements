@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import Sprite from './Sprite';
 import { observer } from 'mobx-react';

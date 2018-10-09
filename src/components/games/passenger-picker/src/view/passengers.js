@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import img from '../assets/passenger/passenger.png';
 import squadConfig from '../simulation/config.json';
