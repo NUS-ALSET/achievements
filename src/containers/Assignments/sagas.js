@@ -104,11 +104,18 @@ export function* courseAssignmentsOpenHandler(action) {
     yield select(state => state.firebase.auth.uid);
   }
 
-  const pathsData = yield call(
-    coursesService.fetchCoursePaths,
-    action.courseId
-  );
-  yield put(coursePathsFetchSuccess(action.courseId, pathsData));
+  try {
+    const pathsData = yield call(
+      coursesService.fetchCoursePaths,
+      action.courseId
+    );
+    yield put(coursePathsFetchSuccess(action.courseId, pathsData));
+  } catch (err) {
+    // That's normal behavior if user isn't course member
+    if (!err.code === "PERMISSION_DENIED") {
+      yield put(notificationShow(err.message));
+    }
+  }
 
   const channel = yield call(createCourseMembersChannel, action.courseId);
 
