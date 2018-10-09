@@ -299,7 +299,6 @@ class Updater extends Component {
         this.context.loop.unsubscribe(this.loopID);
     }
     render() {
-        console.log('updater......', this.props.store)
         return (<div>
             <WinningScreen store={this.props.store} restartGame={this.restartGame}/>
             <p style={{position:'absolute', left:0, top:0, margin:0, zIndex:1101}}>
