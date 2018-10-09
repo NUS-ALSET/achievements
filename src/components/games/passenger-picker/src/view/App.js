@@ -36,10 +36,9 @@ export default class App extends Component {
                     <Characters store={this.props.store} gameId={1}></Characters>
                 </Stage>
             </div>
-            <div className="clear-both">
-            </div>
+            <div className="clear-both">            </div>
             {
-                this.props.gameData.playMode = 'custom code' && 
+                this.props.gameData.playMode === 'custom code' && 
                 <CodeEditor player1Data={this.props.player1Data} ></CodeEditor>
             }
         </Loop>

@@ -1,8 +1,26 @@
 
+body{margin: 0}
+button {
+    background: none;
+    background-color: #1a237e;
+    color: white;
+    font-size: 16px;
+    box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+    padding: 8px 16px;
+    font-size: 1rem;
+    min-width: 64px;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+    min-height: 36px;
+    box-sizing: border-box;
+    line-height: 1.4em;
+    font-weight: 500;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
 .stage {
   height: 60vh;
   width: 50%;
-  float:left
+  float:left;
 }
 .clear-both{
   clear: both;
@@ -26,13 +44,11 @@
   color: white;
   background: none;
   padding: 10px 40px;
-  font-weight: bold;
 }
 .score-display{
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  width: 100%;
   background-color: rgb(232, 232, 232);
   padding: 16px;
   font-size: 20px;
@@ -40,15 +56,8 @@
   letter-spacing: -1px;
 }
 .control-btn{
-    background: none;
-    padding: 8px 15px;
-    font-weight: bold;
     background-color: #1a237e;
-    border: solid 1px white;
-    color: white;
     margin-top: -4px;
-    font-family: monospace;
-    font-size: 16px;
 }
 .score-dsiplay .restart{
   border-radius: 30px 0px 0px 30px;

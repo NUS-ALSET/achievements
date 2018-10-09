@@ -85,8 +85,8 @@ class Updater extends Component {
     updateStateFromProps(props) {
         if (props.player1Data) {
             this.props.store.mode = PAUSE;
-            this.time = this.props.gameData.gameTime || config.time;
-            this.props.store.time = this.time;
+            this.gameTime = this.props.gameData.gameTime || config.time;
+            this.props.store.time = this.gameTime;
             this.props.store.scoreToWin = props.gameData.scoreToWin || config.scoreToWin;
             this.props.store.botsQuantity = props.gameData.botsQuantities || props.store.botsQuantity;
             this.props.store.currentLevel = Number(props.gameData.levelsToWin) || 1;
@@ -94,7 +94,7 @@ class Updater extends Component {
             this.props.store.player2Func = (props.player2Data || {}).jsCode || levels[props.gameData.levelsToWin - 1];
             this.restartGame();
         } else {
-            this.props.store.mode = PAUSE
+            this.props.store.mode = PAUSE;
         }
 
     }
@@ -135,8 +135,8 @@ class Updater extends Component {
     submitSolition = () => {
         this.props.onCommit({
             result: this.state.gameOver.winner === 0 ? 'NONE' : this.state.gameOver.winner == 1 ? "WON" : 'LOST',
-            score: [this.props.store.score[0],this.props.store.score[1]],
-            timeTaken: this.time - this.props.store.time,
+            score: [this.props.store.score[0], this.props.store.score[1]],
+            timeTaken: this.gameTime - this.props.store.time,
             jsCode: this.props.gameData.playMode === CUSTOM_CODE ? this.props.store.player1Func.toString() : ''
         })
     }

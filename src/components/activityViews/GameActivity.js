@@ -88,7 +88,7 @@ class GameActivity extends React.PureComponent {
           scoreToWin: Number(problem.scoreToWin),
           gameTime: problem.gameTime,
           botsQuantities: problem.unitsPerSide,
-          gameType: problem.type.toUpperCase(),
+          gameType: problem.type,
         }}
         player1Data={{
           pyCode : '',
