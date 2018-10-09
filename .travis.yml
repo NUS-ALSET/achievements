@@ -33,5 +33,6 @@ after_success:
       fi
     else
       echo "Pull Request only build and test";
+      bash ../scripts/firebase-deploy.sh --dry-run
       exit;
     fi
