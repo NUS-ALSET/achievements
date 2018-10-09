@@ -272,17 +272,22 @@ class AssignmentsTable extends React.PureComponent {
 
       case ASSIGNMENTS_TYPES.Text.id:
       case ASSIGNMENTS_TYPES.TeamText.id:
-        return APP_SETTING.isSuggesting ? (
-          <IconButton
-            onClick={() =>
-              this.onSubmitClick(assignment, solutions[assignment.id])
-            }
-          >
-            <DoneIcon />
-          </IconButton>
-        ) : (
-          this.getReducedLength(result)
+        return (
+          <span>
+            {/^http[s]?:\/\//.test(result) ? (
+              <a
+                href={result}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                COMPLETED
+              </a>
+            ) : (
+              this.getReducedLength(result)
+            )}
+          </span>
         );
+
       default:
         return APP_SETTING.isSuggesting ? (
           <IconButton
