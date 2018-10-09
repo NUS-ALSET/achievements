@@ -179,7 +179,36 @@ export class AccountService {
   }
 
   updateDisplayName(uid, displayName) {
-    return firebase.ref(`/users/${uid}/displayName`).set(displayName);
+    const needUpdate = ["cohorts", "courses"];
+    return firebase
+      .database()
+      .ref(`/users/${uid}/displayName`)
+      .set(displayName)
+      .then(() =>
+        // Since we cache `instructorName` for cohorts and courses we have
+        // update these values directly
+        Promise.all(
+          needUpdate.map(node =>
+            firebase
+              .database()
+              .ref(`/${node}`)
+              .orderByChild("owner")
+              .equalTo(uid)
+              .once("value")
+              .then(snap => snap.val() || {})
+              .then(items =>
+                Promise.all(
+                  Object.keys(items).map(key =>
+                    firebase
+                      .database()
+                      .ref(`/${node}/${key}/instructorName`)
+                      .set(displayName)
+                  )
+                )
+              )
+          )
+        )
+      );
   }
 
   fetchExternalProfiles() {

@@ -466,6 +466,8 @@ export const getCourseProps = (state, ownProps) => {
         result = 1;
       } else if (aValue < bValue) {
         result = -1;
+      } else {
+        result = 0;
       }
       return state.assignments.sort.direction === "asc" ? result : -result;
     });
