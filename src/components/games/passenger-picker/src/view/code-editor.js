@@ -14,14 +14,12 @@ class CodeEditor extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // compiledCode: defaultJavascriptFunctionCode,
             pyCode: props.player1Data.pyCode || defaultPythonCodeFunction,
             jsCode: props.player1Data.jsCode || defaultJavascriptFunctionCode,
             errors: [],
             mode: Store.editorMode,
         };
         this.resetUndoManager = false;
-        // this.updateCustomCode = this.updateCustomCode.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleValidation = this.handleValidation.bind(this);
         this.toggleMode = this.toggleMode.bind(this);
@@ -31,19 +29,11 @@ class CodeEditor extends Component {
     }
     resetDefaultCode() {
         this.setState({
-            // compiledCode: defaultJavascriptFunctionCode,
             pyCode: this.props.player1Data.pyCode || defaultPythonCodeFunction,
             jsCode: this.props.player1Data.jSCode || defaultJavascriptFunctionCode,
         });
     }
-    // updateCustomCode() {
-    //     if (this.state.errors.length > 0) {
-    //         alert('Invalid code,please correct thr code');
-    //     return;
-    //     }
-    //     this.setState({ compiledCode: this.state.pyCode });
-    //     Store.func = this.state.pyCode;
-    // }
+
     toggleMode() {
         this.setState({ showMode: !this.state.showMode });
     }
@@ -72,6 +62,7 @@ class CodeEditor extends Component {
             var error = window.createFunctionFromPython(this.state.pyCode);
             if (error == 0) {
                 Store.func = window.getPlayersCommands;
+                Store.editorPyCode = this.state.pyCode;
                 Store.needToRestartGame = true;
             }
         } else {
@@ -92,6 +83,7 @@ class CodeEditor extends Component {
         window.world = null;
         window.calculateShortestPath = () => { };
         Store.func = this.state.jsCode;
+        Store.editorPyCode = defaultPythonCodeFunction;
     }
     componentDidUpdate() {
         if (this.resetUndoManager) {
@@ -106,14 +98,27 @@ class CodeEditor extends Component {
         const code = Store.editorMode === 'python' ? pyCode : jsCode;
         return (
             <div className="editor-container">
-                <h4>
-                    Write <b className="active-text">{Store.editorMode.toUpperCase()}</b> Code Here :{' '}
-                </h4>
-                <h5>
-                    <strong>Note : </strong>Please do not change the name of the function{' '}
-                    <strong>getPlayersCommands(world)</strong> & function must return one of these direction (LEFT, RIGHT, UP,
-                    DOWN)
-                </h5>
+                <div class="editor-control">
+                    <div>
+                        <h4>
+                            Write <b className="active-text">{Store.editorMode.toUpperCase()}</b> Code Here :{' '}
+                        </h4>
+                        <h5>
+                            <strong>Note : </strong>Please do not change the name of the function{' '}
+                            <strong>getPlayersCommands(world)</strong> & function must return one of these direction (LEFT, RIGHT, UP,
+                            DOWN)
+                        </h5>
+                    </div>
+                    <div className="btn-group">
+                        <button type="button" className="btn half active" id="run" onClick={this.handleCodeExecution}>
+                            Update Solution
+                    </button>
+                        <button type="button" className="btn half reset" onClick={this.resetDefaultCode}>
+                            Reset Solution
+                    </button>
+                    </div>
+                </div>
+
                 {/* Temp diabled */}
                 {/* <div>
                     <button
@@ -156,17 +161,10 @@ class CodeEditor extends Component {
                             showLineNumbers: true,
                             tabSize: 2,
                         }}
-                        
+
                     />
                 </div>
-                <div className="">
-                    <button type="button" className="btn half active" id="run" onClick={this.handleCodeExecution}>
-                        Update Solution
-                    </button>
-                    <button type="button" className="btn half reset" onClick={this.resetDefaultCode}>
-                        Reset Solution
-                    </button>
-                </div>
+
                 <div id="js" className="js" hidden>
                     <h4>Python Console</h4>
                     <textarea id="python-console" className="res" />

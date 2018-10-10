@@ -73,8 +73,9 @@ class GameActivity extends React.PureComponent {
   }
   render() {
     const { problem,
-      classes
-      // solution, readOnly, onCommit, taskId 
+      classes,
+      solution
+      // , readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
       return '';
@@ -91,8 +92,8 @@ class GameActivity extends React.PureComponent {
           gameType: problem.type,
         }}
         player1Data={{
-          pyCode : '',
-          jsCode : ''
+          pyCode : (solution || {}).pyCode || '' ,
+          jsCode : (solution || {}).jsCode || ''
         }}
         onCommit={this.handleSubmit}
         className={classes.verticalMiddle}

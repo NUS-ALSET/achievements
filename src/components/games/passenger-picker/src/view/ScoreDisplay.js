@@ -9,8 +9,8 @@ const ScoreDisplay = ({ store, restartGame, pauseResumeGame }) => {
             Time left: {store.time} sec
         </div>
         <div>
-            <button className="control-btn restart" onClick={() => restartGame()}> Restart </button>
-            <button className="control-btn pause" onClick={() => pauseResumeGame()}> {store.mode == 'play' ? 'Pause' : 'Resume'} </button>
+            <button className="btn control-btn restart" onClick={() => restartGame()}> Restart </button>
+            <button className="btn control-btn pause" onClick={() => pauseResumeGame()}> {store.mode == 'play' ? 'Pause' : 'Resume'} </button>
         </div>
         <div>Level: {store.currentLevel}</div>
         <div>Player 2 score: {store.score[1]}</div>

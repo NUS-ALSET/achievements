@@ -137,7 +137,8 @@ class Updater extends Component {
             result: this.state.gameOver.winner === 0 ? 'NONE' : this.state.gameOver.winner == 1 ? "WON" : 'LOST',
             score: [this.props.store.score[0], this.props.store.score[1]],
             timeTaken: this.gameTime - this.props.store.time,
-            jsCode: this.props.gameData.playMode === CUSTOM_CODE ? this.props.store.player1Func.toString() : ''
+            jsCode: this.props.gameData.playMode === CUSTOM_CODE  && this.props.store.editorMode==='javascript' ? this.props.store.player1Func.toString() : '',
+            pyCode : this.props.gameData.playMode === CUSTOM_CODE && this.props.store.editorMode==='python' ? this.props.store.editorPyCode : ''
         })
     }
     componentDidMount() {
@@ -155,7 +156,7 @@ class Updater extends Component {
     render() {
         return (<div>
             <WinningScreen gameOver={this.state.gameOver} restartGame={this.restartGame} submitSolition={this.submitSolition} />
-            <ScoreDisplay store={this.props.store} restartGame={this.restartGame} pauseResumeGame={this.pauseResumeGame} ></ScoreDisplay>
+            <ScoreDisplay store={this.props.store} restartGame={this.restartGame} pauseResumeGame={this.pauseResumeGame} />
         </div>)
     }
 }

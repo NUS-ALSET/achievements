@@ -10,6 +10,7 @@
     "playerSize":20,
     "roadWidth":30,
     "passengerSize":20,
+    "editorMode": "python",
     "player1StartingPoint":{"x":30, "y":0},
     "player2StartingPoint":{"x":0, "y":0},
     "player1StartingDirection":"right",

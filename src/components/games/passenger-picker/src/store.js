@@ -27,7 +27,8 @@ class passengerStore {
             player2Func: undefined,
             func: defaultJavascriptFunctionCode,
             needToRestartGame: false,
-            editorMode : 'javascript',
+            editorMode : config.editorMode,
+            editorPyCode : '',
             currentLevel : 1,
         });
     }
