@@ -241,7 +241,7 @@ describe("Paths service tests", () => {
         }
       ];
       firebase.refStub.returns({
-        update: () => {
+        set: () => {
           calls += 1;
           return Promise.resolve();
         }

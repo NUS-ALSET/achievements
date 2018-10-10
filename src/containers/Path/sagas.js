@@ -1,4 +1,5 @@
 import { call, put, select, take, takeLatest } from "redux-saga/effects";
+import { getFirebase } from "react-redux-firebase";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
@@ -31,6 +32,7 @@ import {
   pathActivityDeleteFail,
   pathActivityDeleteSuccess,
   pathActivityMoveFail,
+  pathActivityMoveSuccess,
   PATHS_JOINED_FETCH_SUCCESS
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
@@ -96,6 +98,7 @@ export function* pathActivityMoveRequestHandler(action) {
       uid: state.firebase.auth.uid,
       activities: state.firebase.data.activities || {}
     }));
+    const firebase = getFirebase();
 
     const activities = Object.keys(data.activities)
       .map(id => ({ ...data.activities[id], id }))
@@ -109,6 +112,17 @@ export function* pathActivityMoveRequestHandler(action) {
       action.activityId,
       action.direction
     );
+    yield put(
+      pathActivityMoveSuccess(
+        action.pathId,
+        action.activityId,
+        action.direction
+      )
+    );
+    // Dirty workaround for fetching new values from firebaseConnect
+    // FIXIT replace firebase connect with plain firebase calls
+    firebase.unWatchEvent("value", "/activities");
+    firebase.watchEvent("value", "/activities");
   } catch (err) {
     yield put(
       pathActivityMoveFail(
@@ -240,20 +254,19 @@ export function* pathRefreshSolutionsRequestHandler(action) {
   }
 }
 
-export function* fetchGithubFilesHandler(action){
+export function* fetchGithubFilesHandler(action) {
   let data;
-  try{
-    yield put(fetchGithubFilesLoading())
+  try {
+    yield put(fetchGithubFilesLoading());
     data = yield select(state => ({
       uid: state.firebase.auth.uid
     }));
     yield call(
       [pathsService, pathsService.fetchGithubFiles],
-        data.uid,
-        action.githubURL
-    )
-
-  }catch(err){
+      data.uid,
+      action.githubURL
+    );
+  } catch (err) {
     yield put(fetchGithubFilesError());
   }
 }
@@ -315,9 +328,6 @@ export default [
     );
   },
   function* watchFetchGithubFilesHandler() {
-    yield takeLatest(
-      FETCH_GITHUB_FILES,
-      fetchGithubFilesHandler
-    )
+    yield takeLatest(FETCH_GITHUB_FILES, fetchGithubFilesHandler);
   }
 ];
