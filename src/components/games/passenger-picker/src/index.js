@@ -34,15 +34,32 @@ function getURLParameters(paramName) {
 }
 
 function App() {
-  const playMode = getURLParameters('mode');
   const gameData = {
-    playMode:  playMode === 'manual' ? 'manual code' : 'custom code',
+    playMode:  getURLParameters('mode') === 'manual' ? 'manual code' : 'custom code',
     levelsToWin: Number(getURLParameters('level')) || 3, 
     gameTime: Number(getURLParameters('gameTime')) || 10,
-    botsQuantities: Number(getURLParameters('botsQuantities')) || 10,
+    botsQuantities: Number(getURLParameters('botsQuantities')) || 2,
     gameType: getURLParameters('gameType') || 'game',
+    scoreToWin :Number(getURLParameters('scoreToWin')) || 20
   }
-  return <Game player1Data={defaultPlayer1Data} gameData={ameData} onCommit={()=>{}}  />
+  return <div>
+    <Game player1Data={defaultPlayer1Data} gameData={gameData} onCommit={()=>{}}  />
+    <div className="info">
+    <p>URL params used to customize game are</p>
+    <ol>
+      <li> mode : manual || custom</li>
+      <li>level : 1 || 2 || 3 [max 3]</li>
+      <li>gameTime : 90</li>
+      <li>botsQuantities : 3 [max 8]</li>
+      <li>gameType : game || gameTournament</li>
+      <li>scoreToWin : 30</li>
+
+    </ol>
+    <p>Example :</p>
+    <a href={`${window.location.origin}/?mode=manual&level=2&gameTime=200&botsQuantities=5&scoreToWin=35`}>{`${window.location.origin}/?mode=manual&level=2&gameTime=200&botsQuantities=5&scoreToWin=35`}</a>
+  
+    </div>
+  </div>
 }
 
 ReactDOM.render(<App />, document.getElementById('root'));

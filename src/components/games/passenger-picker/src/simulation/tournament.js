@@ -46,7 +46,7 @@ class Tournament extends Component {
                         
                     }}
                     >Run tournament</button>
-                    <button class="control-btn active"  onClick={()=>{
+                    <button className="control-btn active"  onClick={()=>{
                         /*tournamentSimulate.default().then((result)=>{
                             this.setState({presult : result, showTable: true});
                         });*/
@@ -56,7 +56,7 @@ class Tournament extends Component {
                         this.setState({presult : result, showTable: true});
                     }}
                     >Custom code tournament</button>
-                    <button class="control-btn active" onClick={()=>{
+                    <button className="control-btn active" onClick={()=>{
                         this.setState({showTable: !this.state.showTable});
                     }}>Hide tournament</button>
                 </div>

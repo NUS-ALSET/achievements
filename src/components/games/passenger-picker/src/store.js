@@ -5,9 +5,9 @@ import {defaultJavascriptFunctionCode} from './view/Components/defaultCode';
 
 class passengerStore {
     constructor() {
-        let position = [new Array(8),new Array(8)];
-        let destination = [new Array(8),new Array(8)];
-        for(var i=0;i<8;i++){
+        let position = [new Array(config.maxBotsQuantityPerGame),new Array(config.maxBotsQuantityPerGame)];
+        let destination = [new Array(config.maxBotsQuantityPerGame),new Array(config.maxBotsQuantityPerGame)];
+        for(var i=0;i<config.maxBotsQuantityPerGame;i++){
             position[0][i] = config.player1StartingPoint;
             position[1][i] = config.player1StartingPoint;
             destination[0][i] = null;
