@@ -54,9 +54,10 @@ class ExternalProfileCard extends React.Component {
                 >
                   {userAchievements.id}
                 </a>
+                &nbsp;on CodeCombat.com
               </Typography>
               <Typography className={classes.card}>
-                {userAchievements.totalAchievements} achievements
+                {userAchievements.totalAchievements} completed levels
               </Typography>
             </Fragment>
           ) : (
@@ -81,7 +82,7 @@ class ExternalProfileCard extends React.Component {
                   disabled={inProgress}
                   onClick={() => refreshAchievementsRequest(externalProfile)}
                 >
-                  Refresh achievements
+                  Fetch levels
                   {inProgress && (
                     <CircularProgress
                       style={{
@@ -97,7 +98,7 @@ class ExternalProfileCard extends React.Component {
                   color="secondary"
                   onClick={() => removeExternalProfileRequest(externalProfile)}
                 >
-                  Remove
+                  Disconnect
                 </Button>
               </Fragment>
             ) : (

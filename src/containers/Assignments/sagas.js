@@ -54,7 +54,8 @@ import {
   ASSIGNMENT_SHOW_EDIT_DIALOG,
   ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
   assignmentsSolutionsRefreshSuccess,
-  assignmentsSolutionsRefreshFail
+  assignmentsSolutionsRefreshFail,
+  coursePathsFetchSuccess
   // ASSIGNMENTS_TEST_SOMETHING (do we still need this?)
 } from "./actions";
 
@@ -94,6 +95,57 @@ function createCourseMembersChannel(courseId) {
 }
 
 const ONE_SECOND = 1000;
+
+export function* courseAssignmentsOpenHandler(action) {
+  let uid = yield select(state => state.firebase.auth.uid);
+
+  if (!uid) {
+    yield take("@@reactReduxFirebase/LOGIN");
+    yield select(state => state.firebase.auth.uid);
+  }
+
+  try {
+    const pathsData = yield call(
+      coursesService.fetchCoursePaths,
+      action.courseId
+    );
+    yield put(coursePathsFetchSuccess(action.courseId, pathsData));
+  } catch (err) {
+    // That's normal behavior if user isn't course member
+    if (!err.code === "PERMISSION_DENIED") {
+      yield put(notificationShow(err.message));
+    }
+  }
+
+  const channel = yield call(createCourseMembersChannel, action.courseId);
+
+  while (true) {
+    const { courseMembers, err, stop, achievements, studentId } = yield take(
+      channel
+    );
+
+    if (stop) {
+      channel.close();
+      break;
+    }
+    if (err) {
+      yield put(courseMembersFetchFail(action.courseId, err.message));
+      break;
+    }
+    if (courseMembers) {
+      yield put(courseMembersFetchSuccess(action.courseId, courseMembers));
+    }
+    if (achievements && studentId) {
+      yield put(
+        courseMemberAchievementsRefetch(
+          action.courseId,
+          studentId,
+          achievements
+        )
+      );
+    }
+  }
+}
 
 export function* addAssignmentRequestHandle(action) {
   try {
@@ -158,7 +210,7 @@ export function* updateNewAssignmentFieldHandler(action) {
         console.log("Step 2 done");
 
         if (!data.manualUpdates.details) {
-          updatedFields.details = `${location}#/paths/${data.uid}`;
+          updatedFields.details = `${location}#/paths/${updatedFields.path}`;
           console.log("Step 3 done");
         }
       } else if (
@@ -171,7 +223,7 @@ export function* updateNewAssignmentFieldHandler(action) {
       }
       break;
     case "level":
-      updatedFields.details = APP_SETTING.levels[action.value].url;
+      updatedFields.details = APP_SETTING.CodeCombatLevels[action.value].url;
       break;
     case "path":
       activities = yield call(
@@ -427,45 +479,6 @@ function* assignmentRemoveAssistantRequestHandler(action) {
   }
 }
 
-export function* courseAssignmentsOpenHandler(action) {
-  let uid = yield select(state => state.firebase.auth.uid);
-
-  if (!uid) {
-    yield take("@@reactReduxFirebase/LOGIN");
-    yield select(state => state.firebase.auth.uid);
-  }
-
-  const channel = yield call(createCourseMembersChannel, action.courseId);
-
-  while (true) {
-    const { courseMembers, err, stop, achievements, studentId } = yield take(
-      channel
-    );
-
-    if (stop) {
-      channel.close();
-      break;
-    }
-    if (err)
-      if (err) {
-        yield put(courseMembersFetchFail(action.courseId, err.message));
-        break;
-      }
-    if (courseMembers) {
-      yield put(courseMembersFetchSuccess(action.courseId, courseMembers));
-    }
-    if (achievements && studentId) {
-      yield put(
-        courseMemberAchievementsRefetch(
-          action.courseId,
-          studentId,
-          achievements
-        )
-      );
-    }
-  }
-}
-
 export function* courseAssignmentsCloseHandler(action) {
   const emitToChannel = courseMembersChannels[action.courseId];
 
@@ -625,6 +638,9 @@ export function* assignmentsSolutionsRefreshRequestHandler(action) {
 }
 
 export default [
+  function* watchCourseAssignmentsOpen() {
+    yield takeLatest(COURSE_ASSIGNMENTS_OPEN, courseAssignmentsOpenHandler);
+  },
   function* watchNewAssignmentRequest() {
     yield takeLatest(ASSIGNMENT_ADD_REQUEST, addAssignmentRequestHandle);
   },
@@ -700,9 +716,6 @@ export default [
       COURSE_REMOVE_STUDENT_REQUEST,
       courseRemoveStudentRequestHandler
     );
-  },
-  function* watchCourseAssignmentsOpen() {
-    yield takeLatest(COURSE_ASSIGNMENTS_OPEN, courseAssignmentsOpenHandler);
   },
   function* watchCourseAssignmentsClose() {
     yield takeLatest(COURSE_ASSIGNMENTS_CLOSE, courseAssignmentsCloseHandler);

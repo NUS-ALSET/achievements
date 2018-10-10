@@ -5,9 +5,6 @@ import { ASSIGNMENTS_TYPES } from "../../services/courses";
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
-const REGEXP_SOLUTIONS_INDEX = 1;
-const REGEXP_ACTIVITIES_INDEX = 2;
-
 /**
  * Get Solutions for student. It compares `/solutions` and `/visibleSolutions` refs and returns solution data with
  * flags - is concrete solution published, validated and/or rejected by instructor
@@ -315,12 +312,15 @@ function getPathProgressAssignments(assignments) {
   );
 }
 
-function getStudentPathProgress(member, targetAssignments) {
+function getStudentPathProgress(member, targetAssignments, pathsData) {
   const result = {
     totalActivities: 0,
     totalSolutions: 0,
     lastSolutionTime: 0
   };
+  for (const pathId of Object.keys(pathsData || {})) {
+    result.totalActivities += pathsData[pathId];
+  }
   try {
     for (const key of targetAssignments) {
       const solution = member.solutions[key];
@@ -330,8 +330,7 @@ function getStudentPathProgress(member, targetAssignments) {
           value ||
           /^\s*(\d+)\s*\/\s*(\d+)\s*$/.exec(solution.value || "") ||
           [];
-        result.totalActivities += Number(value[REGEXP_ACTIVITIES_INDEX] || 0);
-        result.totalSolutions += Number(value[REGEXP_SOLUTIONS_INDEX] || 0);
+        result.totalSolutions += Number(value[1] || 0);
         result.lastSolutionTime = Math.max(
           result.lastSolutionTime,
           solution.createdAt
@@ -341,11 +340,6 @@ function getStudentPathProgress(member, targetAssignments) {
     // Temporary solution
   } catch (err) {
     console.error(err);
-    return {
-      totalActivities: 0,
-      totalSolutions: 0,
-      lastSolutionTime: 0
-    };
   }
   return result;
 }
@@ -363,11 +357,11 @@ export const getCourseProps = (state, ownProps) => {
   const instructorView = state.assignments.currentTab === INSTRUCTOR_TAB_VIEW;
   const assignmentsEdit = state.assignments.currentTab === INSTRUCTOR_TAB_EDIT;
   const now = new Date().getTime();
+  const pathsData = state.assignments.pathsData;
   const options = {
     showHiddenAssignments: state.assignments.showHiddenAssignments
   };
-  const pathProgressAssignments =
-    instructorView && getPathProgressAssignments(assignments);
+  const pathProgressAssignments = getPathProgressAssignments(assignments);
   const courseData = getFrom(state.firebase.data, "courses")[courseId];
 
   if (!courseData) {
@@ -390,7 +384,7 @@ export const getCourseProps = (state, ownProps) => {
       ...member,
       pathProgress:
         pathProgressAssignments.length > 1 &&
-        getStudentPathProgress(member, pathProgressAssignments),
+        getStudentPathProgress(member, pathProgressAssignments, pathsData),
       progress: {
         totalSolutions: Object.keys(member.solutions).filter(key =>
           checkVisibilitySolution(assignments, key, options)
@@ -472,6 +466,8 @@ export const getCourseProps = (state, ownProps) => {
         result = 1;
       } else if (aValue < bValue) {
         result = -1;
+      } else {
+        result = 0;
       }
       return state.assignments.sort.direction === "asc" ? result : -result;
     });

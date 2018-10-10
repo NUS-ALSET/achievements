@@ -126,9 +126,9 @@ class AddAssignmentDialog extends React.PureComponent {
               onChange={this.updateField("level")}
               value={assignment.level || ""}
             >
-              {Object.keys(APP_SETTING.levels).map(id => (
-                <MenuItem key={APP_SETTING.levels[id].name} value={id}>
-                  {APP_SETTING.levels[id].name}
+              {Object.keys(APP_SETTING.CodeCombatLevels).map(id => (
+                <MenuItem key={APP_SETTING.CodeCombatLevels[id].name} value={id}>
+                  {APP_SETTING.CodeCombatLevels[id].name}
                 </MenuItem>
               ))}
             </Select>

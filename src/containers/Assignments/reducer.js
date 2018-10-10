@@ -22,7 +22,8 @@ import {
   COURSE_MOVE_STUDENT_DIALOG_SHOW,
   COURSE_MY_COURSES_FETCH_SUCCESS,
   ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS,
-  ASSIGNMENTS_SHOW_HIDDEN_TOGGLE
+  ASSIGNMENTS_SHOW_HIDDEN_TOGGLE,
+  COURSE_PATHS_FETCH_SUCCESS
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -104,7 +105,7 @@ export const assignments = (
           value: action.assignment
         }
       };
-      case UPDATE_NEW_ASSIGNMENT_FIELD:
+    case UPDATE_NEW_ASSIGNMENT_FIELD:
       return {
         ...state,
         dialog: {
@@ -118,7 +119,7 @@ export const assignments = (
           }
         }
       };
-      case SET_DEFAULT_ASSIGNMENT_FIELDS:
+    case SET_DEFAULT_ASSIGNMENT_FIELDS:
       return {
         ...state,
         dialog: {
@@ -238,18 +239,18 @@ export const assignments = (
           }
         }
       };
-      case PROBLEM_SOLUTION_EXECUTION_STATUS: {
-        return {
-          ...state,
-          dialog: {
-            ...state.dialog,
-            solution: {
-              ...(state.dialog.solution || {}),
-              ...action.payload
-            }
+    case PROBLEM_SOLUTION_EXECUTION_STATUS: {
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          solution: {
+            ...(state.dialog.solution || {}),
+            ...action.payload
           }
-        };
-      }
+        }
+      };
+    }
     case PROBLEM_SOLUTION_PROVIDED_SUCCESS:
       return {
         ...state,
@@ -309,7 +310,11 @@ export const assignments = (
         ...state,
         courseMembers: []
       };
-
+    case COURSE_PATHS_FETCH_SUCCESS:
+      return {
+        ...state,
+        pathsData: action.paths
+      };
     case COURSE_REMOVE_STUDENT_DIALOG_SHOW:
       return {
         ...state,
