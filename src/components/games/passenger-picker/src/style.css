@@ -67,7 +67,7 @@ body{margin: 0}
 }
 
 .editor-container{
-  width: calc(100% - 40px);
+  width: calc(100% - 42px);
   padding: 10px;
   margin: 50px 20px;
   border: 1px solid;
@@ -94,4 +94,11 @@ body{margin: 0}
 }
 .editor-control .btn-group{
   display: flex;
+}
+.info{
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid black;
+  background-color: rgb(232, 232, 232);
+  font-family: monospace;
 }

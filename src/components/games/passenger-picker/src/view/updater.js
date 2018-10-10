@@ -88,8 +88,8 @@ class Updater extends Component {
             this.gameTime = this.props.gameData.gameTime || config.time;
             this.props.store.time = this.gameTime;
             this.props.store.scoreToWin = props.gameData.scoreToWin || config.scoreToWin;
-            this.props.store.botsQuantity = props.gameData.botsQuantities || props.store.botsQuantity;
-            this.props.store.currentLevel = Number(props.gameData.levelsToWin) || 1;
+            this.props.store.botsQuantity = Math.min(props.gameData.botsQuantities || props.store.botsQuantity, config.maxBotsQuantityPerGame);
+            this.props.store.currentLevel = Math.min(Number(props.gameData.levelsToWin) || 1, 3);
             this.props.store.player1Func = props.gameData.playMode === CUSTOM_CODE ? props.player1Data.jsCode || defaultJavascriptFunctionCode : control;
             this.props.store.player2Func = (props.player2Data || {}).jsCode || levels[props.gameData.levelsToWin - 1];
             this.restartGame();

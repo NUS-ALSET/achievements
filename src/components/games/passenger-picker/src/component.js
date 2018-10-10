@@ -4,6 +4,8 @@ import App from './view/App.js';
 import Tournament from './simulation/tournament';
 import Store from './store';
 
+import './style.css';
+
 
 const Game = (props) => (
     <Fragment>

@@ -10,8 +10,6 @@ import Destinations from './destination';
 import Updater from './updater.js';
 import CodeEditor from './code-editor';
 
-import './style.css';
-
 
 
 export default class App extends Component {

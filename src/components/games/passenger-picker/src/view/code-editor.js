@@ -98,7 +98,7 @@ class CodeEditor extends Component {
         const code = Store.editorMode === 'python' ? pyCode : jsCode;
         return (
             <div className="editor-container">
-                <div class="editor-control">
+                <div className="editor-control">
                     <div>
                         <h4>
                             Write <b className="active-text">{Store.editorMode.toUpperCase()}</b> Code Here :{' '}
