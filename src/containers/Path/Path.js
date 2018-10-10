@@ -58,6 +58,7 @@ import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
 import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog"
+import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog"
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
@@ -106,7 +107,8 @@ export class Path extends React.Component {
   };
 
   state = {
-    selectedActivityId: ""
+    selectedActivityId: "",
+    botsQuantity: 0
   };
 
   componentDidMount() {
@@ -126,6 +128,9 @@ export class Path extends React.Component {
       onPushPath,
       pathActivities
     } = this.props;
+    this.setState(() => ({
+      botsQuantity: problem.unitsPerSide
+    }))
     switch (problem.type) {
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:
@@ -357,13 +362,14 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddGameSolutionDialog
+          botsQuantity={this.state.botsQuantity}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${ACTIVITY_TYPES.game.id}Solution`}
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
-        <AddGameSolutionDialog
+        <AddGameTournamentSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`}
@@ -467,7 +473,7 @@ export default compose(
     const state = store.getState();
     const uid = state.firebase.auth.uid;
     const pathId = ownProps.match.params.pathId;
-
+    
     if (!uid) {
       return false;
     }

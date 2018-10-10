@@ -5,38 +5,37 @@ import {defaultJavascriptFunctionCode} from './view/Components/defaultCode';
 
 class passengerStore {
     constructor() {
+        let position = [new Array(8),new Array(8)];
+        let destination = [new Array(8),new Array(8)];
+        for(var i=0;i<8;i++){
+            position[0][i] = config.player1StartingPoint;
+            position[1][i] = config.player1StartingPoint;
+            destination[0][i] = null;
+            destination[1][i] = null;
+        }
         extendObservable(this, {
             time: config.time,
-            scoreToWin : config.scoreToWin,
             prevTime: Date.now(),
-            position: [
-                [
-                    config.player1StartingPoint,
-                    config.player2StartingPoint
-                ],
-                [
-                    config.player1StartingPoint,
-                    config.player2StartingPoint
-                ]
-            ],
+            position: position,
+            botsQuantity:  config.botsQuantityPerGame,
             direction: [['right','down'], ['right','down']],
             passengers: [[], []],
-            destination: [[null, null], [null, null]],
+            destination: destination,
             score: [0, 0],
             mode: 'play',
             player1Func: undefined,
             player2Func: undefined,
             func: defaultJavascriptFunctionCode,
             needToRestartGame: false,
-            player1ControlSelected: "level3",
-            player2ControlSelected:"manual control"
+            editorMode : config.editorMode,
+            editorPyCode : '',
+            currentLevel : 1,
         });
     }
     updatePosition(gameId, playerId, newPosition, offset){
         if(Math.abs(this.position[gameId][playerId].x - newPosition.x) >= offset || Math.abs(this.position[gameId][playerId].y - newPosition.y) >= offset){
             this.position[gameId][playerId] = newPosition;
         }
-        //this.position[gameId][playerId] = newPosition;
     }
     updatePassengers(gameId, passengersArr){
         if(this.passengers[gameId].length !== passengersArr.length){

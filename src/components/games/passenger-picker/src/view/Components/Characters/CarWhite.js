@@ -6,7 +6,7 @@ import img from '../../../assets/sprites/white-car-sprite.png';
 
 class WhiteCar extends Component {
   getAnimationState() {
-    switch (this.props.direction) {
+    switch (this.props.store.direction[this.props.gameId][this.props.charId]) {
       case 'up':
         this.animState = 0;
         break;
@@ -26,8 +26,8 @@ class WhiteCar extends Component {
   }
   getWrapperStyles() {
     this.getAnimationState();
-    var targetX = this.props.position.x*this.props.scale;
-    var targetY = this.props.position.y*this.props.scale;
+    var targetX = this.props.store.position[this.props.gameId][this.props.charId].x*this.props.scale;
+    var targetY = this.props.store.position[this.props.gameId][this.props.charId].y*this.props.scale;
     return {
       position: 'absolute',
       transform: `translate(${targetX}px, ${targetY}px)`,
