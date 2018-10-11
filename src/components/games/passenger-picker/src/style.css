@@ -34,7 +34,7 @@ body{margin: 0}
 }
 .result-display h1{
   text-align: center;
-    margin-top: 40vh;
+    margin-top: 35vh;
     color: rgb(255, 255, 255);
 }
 .result-display button{
@@ -100,5 +100,9 @@ body{margin: 0}
   padding: 20px;
   border: 1px solid black;
   background-color: rgb(232, 232, 232);
+  font-family: monospace;
+}
+.syntax-error{
+  color: red;
   font-family: monospace;
 }

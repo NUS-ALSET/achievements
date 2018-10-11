@@ -90,8 +90,13 @@ class Updater extends Component {
             this.props.store.scoreToWin = props.gameData.scoreToWin || config.scoreToWin;
             this.props.store.botsQuantity = Math.min(props.gameData.botsQuantities || props.store.botsQuantity, config.maxBotsQuantityPerGame);
             this.props.store.currentLevel = Math.min(Number(props.gameData.levelsToWin) || 1, 3);
-            this.props.store.player1Func = props.gameData.playMode === CUSTOM_CODE ? props.player1Data.jsCode || defaultJavascriptFunctionCode : control;
-            this.props.store.player2Func = (props.player2Data || {}).jsCode || levels[props.gameData.levelsToWin - 1];
+            if(this.props.playAsPlayer2){
+                this.props.store.player2Func = props.gameData.playMode === CUSTOM_CODE ? props.player1Data.jsCode || defaultJavascriptFunctionCode : control;
+                this.props.store.player1Func = (props.player2Data || {}).jsCode || levels[props.gameData.levelsToWin - 1];
+            }else{
+                this.props.store.player1Func = props.gameData.playMode === CUSTOM_CODE ? props.player1Data.jsCode || defaultJavascriptFunctionCode : control;
+                this.props.store.player2Func = (props.player2Data || {}).jsCode || levels[props.gameData.levelsToWin - 1];
+            }
             this.restartGame();
         } else {
             this.props.store.mode = PAUSE;
@@ -102,7 +107,7 @@ class Updater extends Component {
     pauseResumeGame() {
         this.props.store.mode = this.props.store.mode === PLAY ? PAUSE : PLAY;
     }
-    restartGame() {
+    restartGame(gameState=PLAY) {
         this.setState({
             gameOver: {
                 status: false,
@@ -118,7 +123,7 @@ class Updater extends Component {
             this.evaluateStringCode(this.props.store.player2Func),
             this.props.gameData.botsQuantities
         );
-        this.props.store.mode = PLAY;
+        this.props.store.mode = gameState;
 
     }
     evaluateStringCode = (code) => {
@@ -134,6 +139,7 @@ class Updater extends Component {
     }
     submitSolition = () => {
         this.props.onCommit({
+            status: this.state.gameOver.winner === 0 ? 'DRAW' : this.state.gameOver.winner == 1 ? "WON" : 'LOST',
             result: this.state.gameOver.winner === 0 ? 'NONE' : this.state.gameOver.winner == 1 ? "WON" : 'LOST',
             score: [this.props.store.score[0], this.props.store.score[1]],
             timeTaken: this.gameTime - this.props.store.time,
@@ -144,7 +150,7 @@ class Updater extends Component {
     componentDidMount() {
         this.loopID = this.context.loop.subscribe(this.loop);
         this.updateStateFromProps(this.props);
-        this.restartGame();
+        this.restartGame(PAUSE);
     }
     componentWillReceiveProps(nextProps) {
         this.updateStateFromProps(nextProps);
@@ -156,7 +162,7 @@ class Updater extends Component {
     render() {
         return (<div>
             <WinningScreen gameOver={this.state.gameOver} restartGame={this.restartGame} submitSolition={this.submitSolition} />
-            <ScoreDisplay store={this.props.store} restartGame={this.restartGame} pauseResumeGame={this.pauseResumeGame} />
+            <ScoreDisplay store={this.props.store} intiGame={this.gameTime===this.props.store.time} playAsPlayer2={this.props.playAsPlayer2} restartGame={this.restartGame} pauseResumeGame={this.pauseResumeGame} />
         </div>)
     }
 }

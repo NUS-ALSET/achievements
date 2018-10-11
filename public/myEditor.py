@@ -4,17 +4,14 @@ import time
 import traceback
 import javascript
 
-from browser import document as doc, window, alert
-
-from browser import document, alert, console
+from browser import document as doc, window, alert, console
 
 def createFunctionFromPython(string):
 	try:
 		exec(string+"""
 window.getPlayersCommands = getPlayersCommands""")
 	except Exception as e:
-		alert(e)
-		return 1
+		return str(e)
 	else:
 		return 0
 window.createFunctionFromPython=createFunctionFromPython;

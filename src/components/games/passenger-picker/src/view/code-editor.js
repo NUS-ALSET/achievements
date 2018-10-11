@@ -18,6 +18,7 @@ class CodeEditor extends Component {
             jsCode: props.player1Data.jsCode || defaultJavascriptFunctionCode,
             errors: [],
             mode: Store.editorMode,
+            pythonSyntaxError : ''
         };
         this.resetUndoManager = false;
         this.handleChange = this.handleChange.bind(this);
@@ -54,16 +55,19 @@ class CodeEditor extends Component {
     }
     handleCodeExecution() {
         if (this.state.errors.length > 0) {
+            console.log('Invalid code,please correct the code\n');
             console.log(this.state.errors);
-            alert('Invalid code,please correct the code');
             return;
         }
         if (Store.editorMode === 'python') {
-            var error = window.createFunctionFromPython(this.state.pyCode);
+            const error = window.createFunctionFromPython(this.state.pyCode);
             if (error == 0) {
                 Store.func = window.getPlayersCommands;
                 Store.editorPyCode = this.state.pyCode;
+                this.setState({ pythonSyntaxError : ''});
                 Store.needToRestartGame = true;
+            }else{
+                this.setState({ pythonSyntaxError : error });
             }
         } else {
             //window.newPySrc = this.state.jscode;
@@ -94,7 +98,7 @@ class CodeEditor extends Component {
     }
     render() {
         const { classes } = this.props;
-        const { pyCode, jsCode } = this.state;
+        const { pyCode, jsCode, pythonSyntaxError } = this.state;
         const code = Store.editorMode === 'python' ? pyCode : jsCode;
         return (
             <div className="editor-container">
@@ -104,7 +108,7 @@ class CodeEditor extends Component {
                             Write <b className="active-text">{Store.editorMode.toUpperCase()}</b> Code Here :{' '}
                         </h4>
                         <h5>
-                            <strong>Note : </strong>Please do not change the name of the function{' '}
+                            <strong>Note : </strong>h5lease do not change the name of the function{' '}
                             <strong>getPlayersCommands(world)</strong> & function must return one of these direction (LEFT, RIGHT, UP,
                             DOWN)
                         </h5>
@@ -118,7 +122,10 @@ class CodeEditor extends Component {
                     </button>
                     </div>
                 </div>
-
+                <div className="syntax-error">
+                    <p>{ pythonSyntaxError && `Error: ${pythonSyntaxError}`}</p>
+                </div>
+                
                 {/* Temp diabled */}
                 {/* <div>
                     <button
