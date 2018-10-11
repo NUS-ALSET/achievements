@@ -6,7 +6,7 @@
 	"minPassengers": 20,
 	"maxPassengers": 30,
     "time": 90,
-    "speed":5,
+    "speed":1,
     "scoreToWin" : 10,
     "playerSize":20,
     "roadWidth":30,

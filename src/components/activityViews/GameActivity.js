@@ -95,6 +95,7 @@ class GameActivity extends React.PureComponent {
           pyCode : (solution || {}).pyCode || '' ,
           jsCode : (solution || {}).jsCode || ''
         }}
+        playAsPlayer2={false} // default false
         onCommit={this.handleSubmit}
         className={classes.verticalMiddle}
       />

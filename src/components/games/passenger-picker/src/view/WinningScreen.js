@@ -9,7 +9,7 @@ const WinningScreen = ({ restartGame, gameOver, submitSolition }) => {
             <h1>
                 {gameOver.message}
             </h1>
-            <button onClick={restartGame}>RESTART</button>
+            <button onClick={restartGame}>PLAY AGAIN</button>
             <br></br>
             <button onClick={submitSolition}>SUBMIT SOLUTION</button>
         </div>}
