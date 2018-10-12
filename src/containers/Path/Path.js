@@ -99,7 +99,7 @@ export class Path extends React.Component {
     onRequestMoreProblems: PropTypes.func,
     onShowCollaboratorsClick: PropTypes.func,
     onToggleJoinStatus: PropTypes.func,
-    fetchGithubFiles : PropTypes.func,
+    fetchGithubFiles: PropTypes.func,
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
     ui: PropTypes.any,
@@ -204,7 +204,7 @@ export class Path extends React.Component {
   onActivityDeleteRequest = (activityId, pathId) => {
     this.setState({
       selectedActivityId: activityId,
-      selectedPathId : pathId
+      selectedPathId: pathId
     });
   };
 
@@ -251,7 +251,7 @@ export class Path extends React.Component {
     if (!uid) {
       return <div>Login required to display this page</div>;
     }
-    
+
     if (!(pathActivities && pathActivities.path)) {
       return <LinearProgress />;
     }
@@ -267,7 +267,9 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
-      pathDesc = (pathActivities.path && pathActivities.path.description) || "None Provided";
+    pathDesc =
+      (pathActivities.path && pathActivities.path.description) ||
+      "None Provided";
 
     return (
       <Fragment>
@@ -372,13 +374,15 @@ export class Path extends React.Component {
         <AddGameTournamentSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`}
+          open={
+            ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`
+          }
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <FetchCodeCombatDialog
-          defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
           currentUserId={uid}
+          defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
           externalProfile={{
             url: "https://codecombat.com",
             id: "CodeCombat",
@@ -391,6 +395,7 @@ export class Path extends React.Component {
         />
         <ActivitiesTable
           activities={pathActivities.activities || []}
+          codeCombatProfile={codeCombatProfile}
           currentUserId={uid || "Anonymous"}
           onDeleteActivity={this.onActivityDeleteRequest}
           onEditActivity={onActivityDialogShow}
@@ -398,12 +403,11 @@ export class Path extends React.Component {
           onOpenActivity={this.onOpenProblem}
           pathStatus={pathStatus}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
-          codeCombatProfile={codeCombatProfile}
         />
         <AddActivityDialog
+          activity={ui.dialog.value}
           fetchGithubFiles={fetchGithubFiles}
           fetchGithubFilesStatus={ui.fetchGithubFilesStatus}
-          activity={ui.dialog.value}
           onClose={onCloseDialog}
           onCommit={this.onActivityChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
@@ -414,7 +418,10 @@ export class Path extends React.Component {
           message="This will remove activity"
           onClose={() => this.setState({ selectedActivityId: "" })}
           onCommit={() => {
-            onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
+            onActivityDeleteRequest(
+              this.state.selectedActivityId,
+              this.state.selectedPathId
+            );
             this.setState({ selectedActivityId: "" });
           }}
           open={!!this.state.selectedActivityId}
@@ -463,7 +470,7 @@ const mapDispatchToProps = {
   onRemoveAssistant: pathRemoveCollaboratorRequest,
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
-  fetchGithubFiles : fetchGithubFiles
+  fetchGithubFiles: fetchGithubFiles
 };
 
 export default compose(
@@ -473,19 +480,16 @@ export default compose(
     const state = store.getState();
     const uid = state.firebase.auth.uid;
     const pathId = ownProps.match.params.pathId;
-    
+
     if (!uid) {
-      return false;
+      return [];
     }
 
     return [
       `/completedActivities/${uid}/${pathId}`,
       `/paths/${pathId}`,
       `/pathAssistants/${pathId}`,
-      {
-        path: "/activities",
-        queryParams: ["orderByChild=path", `equalTo=${pathId}`]
-      },
+      `/activities#orderByChild=path&equalTo=${pathId}`,
       `/studentJoinedPaths/${uid}/${pathId}`,
       `userAchievements/${uid}/CodeCombat`
     ];

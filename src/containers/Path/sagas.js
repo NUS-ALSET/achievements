@@ -1,5 +1,4 @@
 import { call, put, select, take, takeLatest } from "redux-saga/effects";
-import { getFirebase } from "react-redux-firebase";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
@@ -98,8 +97,6 @@ export function* pathActivityMoveRequestHandler(action) {
       uid: state.firebase.auth.uid,
       activities: state.firebase.data.activities || {}
     }));
-    const firebase = getFirebase();
-
     const activities = Object.keys(data.activities)
       .map(id => ({ ...data.activities[id], id }))
       .filter(activity => activity.path === action.pathId);
@@ -119,10 +116,6 @@ export function* pathActivityMoveRequestHandler(action) {
         action.direction
       )
     );
-    // Dirty workaround for fetching new values from firebaseConnect
-    // FIXIT replace firebase connect with plain firebase calls
-    firebase.unWatchEvent("value", "/activities");
-    firebase.watchEvent("value", "/activities");
   } catch (err) {
     yield put(
       pathActivityMoveFail(
