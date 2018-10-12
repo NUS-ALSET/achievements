@@ -477,6 +477,10 @@ export class CoursesService {
               });
           });
         }
+        let completed= true;
+        if(((assignment || {}).problemJSON || {}).type==='game' && value.result!=='WON'){
+          completed=false;
+        }
         if (userId && assignment.path && assignment.problem) {
           firebase
             .database()
@@ -485,7 +489,7 @@ export class CoursesService {
                 assignment.problem
               }`
             )
-            .set(true);
+            .set(completed);
         }
         return res;
       });

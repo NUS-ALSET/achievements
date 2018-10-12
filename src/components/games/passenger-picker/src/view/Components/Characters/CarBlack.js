@@ -2,11 +2,11 @@
 import React, { Component } from 'react';
 import Sprite from './Sprite';
 import { observer } from 'mobx-react';
-import img from '../../../assets/sprites/orange-car-sprite.png';
+import img from '../../../assets/sprites/black-car-sprite.png';
 
-class OrangeCar extends Component {
+class BlackCar extends Component {
   getAnimationState() {
-    switch (this.props.direction) {
+    switch (this.props.store.direction[this.props.gameId][this.props.charId]) {
       case 'up':
         this.animState = 2;
         break;
@@ -26,8 +26,8 @@ class OrangeCar extends Component {
   }
   getWrapperStyles() {
     this.getAnimationState();
-    var targetX = this.props.position.x*this.props.scale;
-    var targetY = this.props.position.y*this.props.scale;
+    var targetX = this.props.store.position[this.props.gameId][this.props.charId].x*this.props.scale;
+    var targetY = this.props.store.position[this.props.gameId][this.props.charId].y*this.props.scale;
     return {
       position: 'absolute',
       transform: `translate(${targetX}px, ${targetY}px)`,
@@ -53,4 +53,4 @@ class OrangeCar extends Component {
     );
   }
 }
-export default observer(OrangeCar);
+export default observer(BlackCar);

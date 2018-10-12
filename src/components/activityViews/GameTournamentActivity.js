@@ -5,25 +5,16 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import { withStyles } from '@material-ui/core/styles';
 
-
-const styles = {
-  root : {},
-  verticalMiddle: {
-    width: '100%', marginTop: '45vh', textAlign: 'center'
-  }
-};
-
-const Loading = ({ className }) => {
-  return <div className={className}>Loading...</div>;
+const Loading = () => {
+  return 'Loading...';
 }
 
-const Game404 = ({ className }) => {
-  return <div className={className}>Game not exist</div>;
+const Game404 = () => {
+  return 'Game not exist'
 }
 
-class GameActivity extends React.PureComponent {
+class GameTournamentActivity extends React.PureComponent {
   constructor(props) {
     super(props);
     this.selectGame(props);
@@ -72,10 +63,8 @@ class GameActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem,
-      classes,
-      solution
-      // , readOnly, onCommit, taskId 
+    const { problem, botsQuantity
+      // solution, readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
       return '';
@@ -83,24 +72,21 @@ class GameActivity extends React.PureComponent {
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
-        gameData={{
-          playMode: problem.playMode,
-          levelsToWin: Number(problem.levelsToWin),
-          scoreToWin: Number(problem.scoreToWin),
-          gameTime: problem.gameTime,
-          botsQuantities: problem.unitsPerSide,
-          gameType: problem.type,
-        }}
+        tournament
+        botsQuantity={botsQuantity}
         player1Data={{
-          pyCode : (solution || {}).pyCode || '' ,
-          jsCode : (solution || {}).jsCode || ''
+          levelsToWin: `level${problem.levelsToWin}`,
+          playMode: problem.playMode
         }}
-        playAsPlayer2={false} // default false
+        player2Data={{
+          levelsToWin: `level${problem.levelsToWin}`,
+        }}
+        scoreToWin={Number(problem.scoreToWin)}
+        time={problem.gameTime}
         onCommit={this.handleSubmit}
-        className={classes.verticalMiddle}
       />
     );
   }
 }
 
-export default withStyles(styles)(GameActivity);
+export default GameTournamentActivity;

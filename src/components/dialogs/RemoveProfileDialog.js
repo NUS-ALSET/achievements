@@ -41,7 +41,7 @@ class RemoveExternalProfileDialog extends React.PureComponent {
         <DialogTitle>Confirmation</DialogTitle>
         <DialogContent>
           <Typography>
-            {"This action will delete the " +
+            {"This action will disconnect your " +
               `${externalProfileType} profile "${externalProfileId}"` +
               ". Are you sure?"}
           </Typography>
@@ -51,7 +51,7 @@ class RemoveExternalProfileDialog extends React.PureComponent {
             Cancel
           </Button>
           <Button color="secondary" onClick={this.onCommit} variant="raised">
-            Delete
+            Disconnect
           </Button>
         </DialogActions>
       </Dialog>

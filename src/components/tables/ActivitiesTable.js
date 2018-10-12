@@ -138,7 +138,10 @@ class ActivitiesTable extends React.PureComponent {
           </TableHead>
           <TableBody>
             {activities.map(activity => (
-              <TableRow key={activity.id}>
+              <TableRow
+                hover
+                key={activity.id}
+              >
                 <TableCell className={classes.noWrap}>{activity.name}</TableCell>
                 <TableCell className={classes.noWrap}>{activity.description}</TableCell>
                 {!canChange && (
