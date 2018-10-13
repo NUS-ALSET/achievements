@@ -57,8 +57,8 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
-import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog"
-import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog"
+import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog";
+import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
@@ -130,7 +130,7 @@ export class Path extends React.Component {
     } = this.props;
     this.setState(() => ({
       botsQuantity: problem.unitsPerSide
-    }))
+    }));
     switch (problem.type) {
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:

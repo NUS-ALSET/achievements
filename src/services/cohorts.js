@@ -36,6 +36,7 @@ class CohortsService {
               id: cohortId,
               needRecount: coursesKeys.some(key => joinedKeys.includes(key)),
               ...cohortData,
+              threshold: Number(cohortData.threshold || 1),
               assistantKeys: Object.keys(assistants || {}),
               courses: coursesKeys
                 .map(id => ({
@@ -106,7 +107,7 @@ class CohortsService {
         config.paths = cohortData.paths;
       }
       if (cohortData.threshold) {
-        config.threshold = cohortData.threshold;
+        config.threshold = Number(cohortData.threshold);
       }
       return firebase
         .database()
@@ -127,7 +128,7 @@ class CohortsService {
         description: cohortData.description || "",
         paths: cohortData.paths,
         owner: uid,
-        threshold: cohortData.threshold || 1,
+        threshold: Number(cohortData.threshold) || 1,
         instructorName
       })
       .then(() => key);
