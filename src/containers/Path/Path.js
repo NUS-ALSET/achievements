@@ -69,6 +69,7 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
 import { Typography } from "@material-ui/core";
+import RequestMorePathContentDialog from "../../components/dialogs/RequestMorePathContentDialog";
 
 const styles = theme => ({
   toolbarButton: {
@@ -108,7 +109,8 @@ export class Path extends React.Component {
 
   state = {
     selectedActivityId: "",
-    botsQuantity: 0
+    botsQuantity: 0,
+    requestMoreDialogShow: false
   };
 
   componentDidMount() {
@@ -149,6 +151,9 @@ export class Path extends React.Component {
         onOpenSolution(pathActivities.path.id, problem);
     }
   };
+
+  requestMoreDialogHide = () => this.setState({ requestMoreDialogShow: false });
+  requestMoreDialogShow = () => this.setState({ requestMoreDialogShow: true });
 
   requestMoreProblems = () =>
     this.props.onRequestMoreProblems(
@@ -280,7 +285,7 @@ export class Path extends React.Component {
             ) && [
               allFinished && {
                 label: "Request more",
-                handler: this.requestMoreProblems.bind(this)
+                handler: this.requestMoreDialogShow.bind(this)
               },
               // disable Refresh button.
               // !allFinished && {
@@ -435,6 +440,11 @@ export class Path extends React.Component {
           onRemoveAssistant={onRemoveAssistant}
           open={ui.dialog.type === "CollaboratorsControl"}
           target={pathActivities.path && pathActivities.path.id}
+        />
+        <RequestMorePathContentDialog
+          onClose={this.requestMoreDialogHide}
+          onConfirm={this.requestMoreProblems}
+          open={this.state.requestMoreDialogShow}
         />
       </Fragment>
     );

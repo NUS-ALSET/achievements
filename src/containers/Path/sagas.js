@@ -154,6 +154,7 @@ export function* pathMoreProblemsRequestHandler(action) {
         action.activityCount
       )
     );
+    yield put(notificationShow("Request has been sent to the path creator"));
   } catch (err) {
     yield put(
       pathMoreProblemsFail(
