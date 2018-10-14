@@ -14,32 +14,34 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { cohort } from "../../types";
 import { cohortCourseUpdateRequest } from "../../containers/Cohort/actions";
 
+const MARGIN_MULTIPLIER = 3;
+
 const styles = theme => ({
   table: {
-    width: '100%',
-    marginTop: theme.spacing.unit * 3,
-    overflowX: 'auto',
+    width: "100%",
+    marginTop: theme.spacing.unit * MARGIN_MULTIPLIER,
+    overflowX: "auto",
     minWidth: 700
   },
   narrowCell: {
     paddingRight: theme.spacing.unit,
     paddingLeft: theme.spacing.unit,
     paddingBottom: 2,
-    paddingTop: 0,
+    paddingTop: 0
   },
   button: {
     margin: theme.spacing.unit
   },
   row: {
-    '&:nth-of-type(odd)': {
+    "&:nth-of-type(odd)": {
       backgroundColor: "#f0f0f0"
-    },
+    }
   }
 });
 
@@ -50,6 +52,7 @@ class CohortCoursesTable extends React.PureComponent {
     courses: PropTypes.array,
     dispatch: PropTypes.func,
     isOwner: PropTypes.bool,
+    isInstructor: PropTypes.bool,
     match: PropTypes.object
   };
 
@@ -59,7 +62,7 @@ class CohortCoursesTable extends React.PureComponent {
     );
 
   render() {
-    const { classes, courses, cohort, isOwner } = this.props;
+    const { classes, courses, cohort, isInstructor } = this.props;
     let totals = {
       progress: 0,
       participants: 0
@@ -74,11 +77,7 @@ class CohortCoursesTable extends React.PureComponent {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell
-              className={classes.narrowCell}
-            >
-              Course Rank
-            </TableCell>
+            <TableCell className={classes.narrowCell}>Course Rank</TableCell>
             {cohort.pathsData && cohort.pathsData.length ? (
               cohort.pathsData.map(pathData => (
                 <TableCell
@@ -103,21 +102,21 @@ class CohortCoursesTable extends React.PureComponent {
             </TableCell>
             <TableCell
               className={classes.narrowCell}
-              style={{width:"50%", textAlign:"center"}}
+              style={{ width: "50%", textAlign: "center" }}
             >
               Course
             </TableCell>
-            {isOwner && <TableCell>Actions</TableCell>}
+            {isInstructor && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
           {courses &&
             courses.map(course => (
               <TableRow
-                hover
-                style={{height:18}}
-                key={course.id}
                 className={classes.row}
+                hover
+                key={course.id}
+                style={{ height: 18 }}
               >
                 <TableCell className={classes.narrowCell}>
                   <strong>{course.rank}</strong>
@@ -138,15 +137,18 @@ class CohortCoursesTable extends React.PureComponent {
                 <TableCell className={classes.narrowCell}>
                   {course.participants}
                 </TableCell>
-                <TableCell className={classes.narrowCell} style={{width:"50%", textAlign:"center"}}>
+                <TableCell
+                  className={classes.narrowCell}
+                  style={{ width: "50%", textAlign: "center" }}
+                >
                   <Link to={`/courses/${course.id}`}>{course.name}</Link>
                 </TableCell>
-                {isOwner && (
+                {isInstructor && (
                   <TableCell className={classes.narrowCell}>
                     <Button
-                      size="small"
                       color="secondary"
                       onClick={() => this.onRemoveClick(course.id)}
+                      size="small"
                     >
                       Remove
                     </Button>

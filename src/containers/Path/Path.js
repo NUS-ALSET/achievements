@@ -57,8 +57,8 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
-import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog"
-import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog"
+import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog";
+import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
@@ -69,6 +69,7 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
 import { Typography } from "@material-ui/core";
+import RequestMorePathContentDialog from "../../components/dialogs/RequestMorePathContentDialog";
 
 const styles = theme => ({
   toolbarButton: {
@@ -108,7 +109,8 @@ export class Path extends React.Component {
 
   state = {
     selectedActivityId: "",
-    botsQuantity: 0
+    botsQuantity: 0,
+    requestMoreDialogShow: false
   };
 
   componentDidMount() {
@@ -130,7 +132,7 @@ export class Path extends React.Component {
     } = this.props;
     this.setState(() => ({
       botsQuantity: problem.unitsPerSide
-    }))
+    }));
     switch (problem.type) {
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:
@@ -149,6 +151,9 @@ export class Path extends React.Component {
         onOpenSolution(pathActivities.path.id, problem);
     }
   };
+
+  requestMoreDialogHide = () => this.setState({ requestMoreDialogShow: false });
+  requestMoreDialogShow = () => this.setState({ requestMoreDialogShow: true });
 
   requestMoreProblems = () =>
     this.props.onRequestMoreProblems(
@@ -280,7 +285,7 @@ export class Path extends React.Component {
             ) && [
               allFinished && {
                 label: "Request more",
-                handler: this.requestMoreProblems.bind(this)
+                handler: this.requestMoreDialogShow.bind(this)
               },
               // disable Refresh button.
               // !allFinished && {
@@ -435,6 +440,11 @@ export class Path extends React.Component {
           onRemoveAssistant={onRemoveAssistant}
           open={ui.dialog.type === "CollaboratorsControl"}
           target={pathActivities.path && pathActivities.path.id}
+        />
+        <RequestMorePathContentDialog
+          onClose={this.requestMoreDialogHide}
+          onConfirm={this.requestMoreProblems}
+          open={this.state.requestMoreDialogShow}
         />
       </Fragment>
     );
