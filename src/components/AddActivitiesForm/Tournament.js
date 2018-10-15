@@ -39,64 +39,34 @@ const TournamentActivity = ({activity, onFieldChange}) => (
             value={activity.unitsPerSide}
             fullWidth
             type="number"
-            label="Number of units each side will have in the game."
+            label="Number of Units for Each Player"
             margin="dense"
             onChange={e => onFieldChange("unitsPerSide", e.target.value)}
         />
         <TextField
             value={activity.gameTime}
             fullWidth
-            label="Select the maximum time limit (in seconds)"
+            label="Select Game Time (sec)"
             margin="dense"
             type="number"
             onChange={e => onFieldChange("gameTime", Number(e.target.value))}
         />
-        <FormControl fullWidth margin="normal">
-            <InputLabel htmlFor="select-level">Select the minimum score needed to win an individual game</InputLabel>
-            <Select
-                input={<Input id="select-level" />}
-                margin="none"
-                MenuProps={{
-                PaperProps: {
-                    style: {
-                    maxHeight: 224,
-                    width: 250
-                    }
-                }
-                }}
-                onChange={e => onFieldChange("minimumGameScore", e.target.value)}
-                value={activity.minimumGameScore}
-            >
-                {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10].map(key => (
-                <MenuItem key={key} value={key}>
-                    {key}
-                </MenuItem>
-                ))}
-            </Select>
-        </FormControl>
-        <FormControl fullWidth margin="normal">
-            <InputLabel htmlFor="select-level">Select the minimum tournament score needed</InputLabel>
-            <Select
-                input={<Input id="select-level" />}
-                margin="none"
-                MenuProps={{
-                PaperProps: {
-                    style: {
-                    maxHeight: 224,
-                    width: 250
-                    }
-                }
-                }}
-                onChange={e => onFieldChange("minimumTournamentScore", e.target.value)}
-                value={activity.minimumTournamentScore}
-            >
-                {[0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10].map(key => (
-                <MenuItem key={key} value={key}>
-                    {key}
-                </MenuItem>
-                ))}
-            </Select>
-        </FormControl>
+        <TextField
+            value={activity.minimumGameScore}
+            fullWidth
+            label="Score How Many Points to Win a Single Game"
+            margin="dense"
+            type="number"
+            onChange={e => onFieldChange("minimumGameScore", e.target.value)}
+        />
+        <TextField
+            value={activity.minimumTournamentScore}
+            fullWidth
+            label="Minimum tournament score needed to pass"
+            margin="dense"
+            type="number"
+            onChange={e => onFieldChange("minimumTournamentScore", e.target.value)}
+        />
     </Fragment>
 );
 TournamentActivity.propTypes = {
