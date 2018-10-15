@@ -50,7 +50,10 @@ const GameActivity = ({activity, onFieldChange}) => (
         onChange={e => onFieldChange("playMode", e.target.value)}
         value={activity.playMode}
       >
-        {[{ mode : 'manual control', label : 'Manual Control' },{ mode : 'custom code', label : 'Custom Code' }].map(key => (
+        {[
+          { mode : 'manual control', label : 'Manual Control' },
+          { mode : 'custom code', label : 'Custom Code' }
+         ].map(key => (
           <MenuItem key={key.mode} value={key.mode}>
             {key.label}
           </MenuItem>
@@ -58,7 +61,9 @@ const GameActivity = ({activity, onFieldChange}) => (
       </Select>
     </FormControl>
     <FormControl fullWidth margin="normal">
-      <InputLabel htmlFor="select-level">Select minimum level game must be won at</InputLabel>
+      <InputLabel htmlFor="select-level">
+        Select Bot Opponent
+      </InputLabel>
       <Select
         input={<Input id="select-level" />}
         margin="none"
@@ -73,25 +78,29 @@ const GameActivity = ({activity, onFieldChange}) => (
         onChange={e => onFieldChange("levelsToWin", e.target.value)}
         value={activity.levelsToWin}
       >
-        {[1,2,3].map(key => (
-          <MenuItem key={key} value={key}>
-            {key}
+        {[
+          {level: 1, label: "Easy"},
+          {level: 2, label: "Medium"},
+          {level: 3, label: "Hard"}
+         ].map(key => (
+          <MenuItem key={key.level} value={key.label}>
+            {key.label}
           </MenuItem>
         ))}
       </Select>
     </FormControl>
     <TextField
-        value={activity.unitsPerSide}
-        fullWidth
-        type="number"
-        label="Number of units each side will have in the game."
-        margin="dense"
-        onChange={e => onFieldChange("unitsPerSide", e.target.value)}
-      />
+      value={activity.unitsPerSide}
+      fullWidth
+      type="number"
+      label="Number of Units for Control"
+      margin="dense"
+      onChange={e => onFieldChange("unitsPerSide", e.target.value)}
+    />
     <TextField
       value={activity.scoreToWin}
       fullWidth
-      label="Score to Win"
+      label="Score How Many Points to Win"
       margin="dense"
       type="number"
       onChange={e => onFieldChange("scoreToWin", e.target.value)}
@@ -99,7 +108,7 @@ const GameActivity = ({activity, onFieldChange}) => (
     <TextField
       value={activity.gameTime}
       fullWidth
-      label="Select the maximum time limit (in seconds)"
+      label="Select Game Time (sec)"
       margin="dense"
       type="number"
       onChange={e => onFieldChange("gameTime", Number(e.target.value))}
