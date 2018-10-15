@@ -7,7 +7,7 @@ export const APP_SETTING = {
   games : {
     "passenger-picker" : {
       "id" : "passenger-picker",
-      "name" : "Passenger Picker"
+      "name" : "Passenger Pick-up"
     },
     "squad" : {
       "id" : "squad",
