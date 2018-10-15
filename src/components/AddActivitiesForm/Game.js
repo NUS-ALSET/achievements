@@ -12,7 +12,7 @@ import Input from "@material-ui/core/Input";
 const GameActivity = ({activity, onFieldChange}) => (
   <Fragment>
     <FormControl fullWidth margin="normal">
-      <InputLabel htmlFor="select-games">Select Game</InputLabel>
+      <InputLabel shrink htmlFor="select-games">Select Game</InputLabel>
       <Select
         input={<Input id="select-games" />}
         margin="none"
@@ -35,7 +35,7 @@ const GameActivity = ({activity, onFieldChange}) => (
       </Select>
     </FormControl>
     <FormControl fullWidth margin="normal">
-      <InputLabel htmlFor="select-mode">Select Play Mode</InputLabel>
+      <InputLabel shrink htmlFor="select-mode">Select Play Mode</InputLabel>
       <Select
         input={<Input id="select-mode" />}
         margin="none"
@@ -61,7 +61,7 @@ const GameActivity = ({activity, onFieldChange}) => (
       </Select>
     </FormControl>
     <FormControl fullWidth margin="normal">
-      <InputLabel htmlFor="select-level">
+      <InputLabel shrink htmlFor="select-level">
         Select Bot Opponent
       </InputLabel>
       <Select
@@ -95,6 +95,7 @@ const GameActivity = ({activity, onFieldChange}) => (
       type="number"
       label="Number of Units for Control"
       margin="dense"
+      defaultValue="1"
       onChange={e => onFieldChange("unitsPerSide", e.target.value)}
     />
     <TextField
@@ -103,6 +104,7 @@ const GameActivity = ({activity, onFieldChange}) => (
       label="Score How Many Points to Win"
       margin="dense"
       type="number"
+      defaultValue="1"
       onChange={e => onFieldChange("scoreToWin", e.target.value)}
     />
     <TextField
@@ -111,6 +113,7 @@ const GameActivity = ({activity, onFieldChange}) => (
       label="Select Game Time (sec)"
       margin="dense"
       type="number"
+      defaultValue="60"
       onChange={e => onFieldChange("gameTime", Number(e.target.value))}
     />
   </Fragment>

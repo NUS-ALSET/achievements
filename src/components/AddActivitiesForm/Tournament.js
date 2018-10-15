@@ -12,7 +12,7 @@ import Input from "@material-ui/core/Input";
 const TournamentActivity = ({activity, onFieldChange}) => (
     <Fragment>
         <FormControl fullWidth margin="normal">
-            <InputLabel htmlFor="select-games">Select Game</InputLabel>
+            <InputLabel shrink htmlFor="select-games">Select Game</InputLabel>
             <Select
                 input={<Input id="select-games" />}
                 margin="none"
@@ -41,6 +41,7 @@ const TournamentActivity = ({activity, onFieldChange}) => (
             type="number"
             label="Number of Units for Each Player"
             margin="dense"
+            defaultValue="1"
             onChange={e => onFieldChange("unitsPerSide", e.target.value)}
         />
         <TextField
@@ -49,6 +50,7 @@ const TournamentActivity = ({activity, onFieldChange}) => (
             label="Select Game Time (sec)"
             margin="dense"
             type="number"
+            defaultValue="60"
             onChange={e => onFieldChange("gameTime", Number(e.target.value))}
         />
         <TextField
@@ -57,6 +59,7 @@ const TournamentActivity = ({activity, onFieldChange}) => (
             label="Score How Many Points to Win a Single Game"
             margin="dense"
             type="number"
+            defaultValue="1"
             onChange={e => onFieldChange("minimumGameScore", e.target.value)}
         />
         <TextField
@@ -65,6 +68,7 @@ const TournamentActivity = ({activity, onFieldChange}) => (
             label="Minimum tournament score needed to pass"
             margin="dense"
             type="number"
+            defaultValue="1"
             onChange={e => onFieldChange("minimumTournamentScore", e.target.value)}
         />
     </Fragment>
