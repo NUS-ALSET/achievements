@@ -33,7 +33,7 @@ class RequestMorePathContentDialog extends React.PureComponent {
         <DialogTitle>Request for additional path content</DialogTitle>
         <DialogContent>
           <Typography>
-            Thanks for you completing this path. Would you link to request more
+            Thanks for you completing this path. Would you like to request more
             content on this path?
           </Typography>
         </DialogContent>
