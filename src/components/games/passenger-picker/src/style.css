@@ -17,10 +17,12 @@ body{margin: 0}
     border-radius: 4px;
     text-transform: uppercase;
 }
+
 .stage {
   height: 60vh;
-  width: 50%;
+  width: calc(50% - 2px);
   float:left;
+  border: 2px solid white;
 }
 .clear-both{
   clear: both;
@@ -45,11 +47,13 @@ body{margin: 0}
   background: none;
   padding: 10px 40px;
 }
+.bg-grey{
+  background-color: rgb(232, 232, 232);
+}
 .score-display{
   display: flex;
   justify-content: space-between;
   flex-direction: row;
-  background-color: rgb(232, 232, 232);
   padding: 16px;
   font-size: 20px;
   font-family: monospace;
@@ -105,4 +109,17 @@ body{margin: 0}
 .syntax-error{
   color: red;
   font-family: monospace;
+}
+.game-info{
+  font-size: 20px;
+  font-family: monospace;
+  text-transform: capitalize;
+  text-align: center;
+}
+.instructions{
+  margin: 20px;
+  padding: 20px;
+  font-size: 20px;
+  font-family: monospace;
+  border: solid 1px black;
 }
