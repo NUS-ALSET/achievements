@@ -147,6 +147,26 @@ export const pathActivityOpen = (pathId, problemId) => ({
   problemId
 });
 
+export const PATH_ACTIVITY_CODECOMBAT_OPEN = "PATH_ACTIVITY_CODECOMBAT_OPEN";
+export const pathActivityCodeCombatOpen = (
+  pathId,
+  activityId,
+  codeCombatProfile
+) => ({
+  type: PATH_ACTIVITY_CODECOMBAT_OPEN,
+  pathId,
+  activityId,
+  codeCombatProfile
+});
+
+export const PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW =
+  "PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW";
+export const pathActivityCodeCombatDialogShow = (pathId, activityId) => ({
+  type: PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW,
+  pathId,
+  activityId
+});
+
 export const PATH_REFRESH_SOLUTIONS_REQUEST = "PATH_REFRESH_SOLUTIONS_REQUEST";
 export const pathRefreshSolutionsRequest = pathId => ({
   type: PATH_REFRESH_SOLUTIONS_REQUEST,
@@ -166,24 +186,22 @@ export const pathRefreshSolutionsFail = (pathId, reason) => ({
   reason
 });
 
-export const FETCH_GITHUB_FILES = 'FETCH_GITHUB_FILES';
-export const fetchGithubFiles = (
+export const FETCH_GITHUB_FILES = "FETCH_GITHUB_FILES";
+export const fetchGithubFiles = githubURL => ({
+  type: FETCH_GITHUB_FILES,
   githubURL
-)=>({
-  type : FETCH_GITHUB_FILES,
-  githubURL
-})
+});
 
-export const FETCH_GITHUB_FILES_LOADING = 'FETCH_GITHUB_FILES_LOADING';
-export const fetchGithubFilesLoading = () =>({
-  type : FETCH_GITHUB_FILES_LOADING
-})
-export const FETCH_GITHUB_FILES_SUCCESS = 'FETCH_GITHUB_FILES_SUCCESS';
-export const fetchGithubFilesSuccess = (data) =>({
-  type : FETCH_GITHUB_FILES_SUCCESS,
+export const FETCH_GITHUB_FILES_LOADING = "FETCH_GITHUB_FILES_LOADING";
+export const fetchGithubFilesLoading = () => ({
+  type: FETCH_GITHUB_FILES_LOADING
+});
+export const FETCH_GITHUB_FILES_SUCCESS = "FETCH_GITHUB_FILES_SUCCESS";
+export const fetchGithubFilesSuccess = data => ({
+  type: FETCH_GITHUB_FILES_SUCCESS,
   data
-})
-export const FETCH_GITHUB_FILES_ERROR = 'FETCH_GITHUB_FILES_ERROR';
-export const fetchGithubFilesError = () =>({
-  type : FETCH_GITHUB_FILES_ERROR
-})
+});
+export const FETCH_GITHUB_FILES_ERROR = "FETCH_GITHUB_FILES_ERROR";
+export const fetchGithubFilesError = () => ({
+  type: FETCH_GITHUB_FILES_ERROR
+});

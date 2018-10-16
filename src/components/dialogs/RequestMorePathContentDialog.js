@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 /**
  * @file RequestMorePathContentDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>

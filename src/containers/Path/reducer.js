@@ -8,7 +8,9 @@ import {
   PATH_SHOW_COLLABORATORS_DIALOG,
   FETCH_GITHUB_FILES_LOADING,
   FETCH_GITHUB_FILES_ERROR,
-  FETCH_GITHUB_FILES_SUCCESS
+  FETCH_GITHUB_FILES_SUCCESS,
+  PATH_ACTIVITY_CODECOMBAT_OPEN,
+  PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW
 } from "./actions";
 import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
@@ -20,8 +22,8 @@ export const path = (
       dialog: {
         type: ""
       },
-      fetchGithubFilesStatus : ''
-    },
+      fetchGithubFilesStatus: ""
+    }
   },
   action
 ) => {
@@ -54,9 +56,28 @@ export const path = (
             type: "ProblemChange",
             value: action.activityInfo
           },
-          fetchGithubFilesStatus : ''
+          fetchGithubFilesStatus: ""
         }
       };
+    case PATH_ACTIVITY_CODECOMBAT_OPEN:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          pendingActivityId: action.activityId
+        }
+      };
+    case PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW: {
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            type: "FetchCodeCombatLevel"
+          }
+        }
+      };
+    }
     case PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS:
       return {
         ...state,
@@ -124,50 +145,50 @@ export const path = (
           }
         }
       };
-    case FETCH_GITHUB_FILES_LOADING:{
-      let  dialog = state.ui.dialog || {};
-      dialog={
+    case FETCH_GITHUB_FILES_LOADING: {
+      let dialog = state.ui.dialog || {};
+      dialog = {
         ...dialog,
-        value : {
+        value: {
           ...(dialog.value || {}),
-          files : []
+          files: []
         }
-      }
+      };
       return {
         ...state,
-        ui : {
+        ui: {
           ...state.ui,
           dialog,
-          fetchGithubFilesStatus : 'LOADING'
+          fetchGithubFilesStatus: "LOADING"
         }
-      }
+      };
     }
-    case FETCH_GITHUB_FILES_SUCCESS:{
-      let  dialog = state.ui.dialog || {};
-      dialog={
+    case FETCH_GITHUB_FILES_SUCCESS: {
+      let dialog = state.ui.dialog || {};
+      dialog = {
         ...dialog,
-        value : {
+        value: {
           ...(dialog.value || {}),
-          files : action.data.files
+          files: action.data.files
         }
-      }
+      };
       return {
         ...state,
-        ui : {
+        ui: {
           ...state.ui,
           dialog,
-          fetchGithubFilesStatus : 'SUCCESS'
+          fetchGithubFilesStatus: "SUCCESS"
         }
-      }
+      };
     }
     case FETCH_GITHUB_FILES_ERROR:
       return {
         ...state,
-        ui : {
+        ui: {
           ...state.ui,
-          fetchGithubFilesStatus : 'ERROR'
+          fetchGithubFilesStatus: "ERROR"
         }
-      }
+      };
     default:
       return state;
   }

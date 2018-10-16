@@ -22,7 +22,9 @@ import {
   pathToggleJoinStatusRequest,
   pathToggleJoinStatusSuccess,
   fetchGithubFilesLoading,
-  fetchGithubFilesError
+  fetchGithubFilesError,
+  PATH_ACTIVITY_CODECOMBAT_OPEN,
+  pathActivityCodeCombatDialogShow
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import {
@@ -225,6 +227,10 @@ export function* pathRemoveCollaboratorRequestHandler(action) {
   }
 }
 
+export function* pathActivityCodeCombatOpenHandler(action) {
+  yield put(pathActivityCodeCombatDialogShow(action.pathId, action.activityId));
+}
+
 export function* pathRefreshSolutionsRequestHandler(action) {
   try {
     const data = yield select(state => ({
@@ -313,6 +319,12 @@ export default [
     yield takeLatest(
       PATH_REMOVE_COLLABORATOR_REQUEST,
       pathRemoveCollaboratorRequestHandler
+    );
+  },
+  function* watchPathActivityCodeCombatOpen() {
+    yield takeLatest(
+      PATH_ACTIVITY_CODECOMBAT_OPEN,
+      pathActivityCodeCombatOpenHandler
     );
   },
   function* watchPathRefreshSolutionsRequest() {
