@@ -162,7 +162,17 @@ class Updater extends Component {
     render() {
         return (<div>
             <WinningScreen gameOver={this.state.gameOver} restartGame={this.restartGame} submitSolition={this.submitSolition} />
-            <ScoreDisplay store={this.props.store} intiGame={this.gameTime===this.props.store.time} playAsPlayer2={this.props.playAsPlayer2} restartGame={this.restartGame} pauseResumeGame={this.pauseResumeGame} />
+            <ScoreDisplay 
+                store={this.props.store} 
+                intiGame={this.gameTime===this.props.store.time} 
+                playAsPlayer2={this.props.playAsPlayer2} 
+                restartGame={this.restartGame} 
+                pauseResumeGame={this.pauseResumeGame} 
+                playersName={this.props.playersName}
+                mode={this.props.gameData.playMode}
+                units={this.props.gameData.botsQuantities}
+                scoreToWin={this.props.gameData.scoreToWin}
+            />
         </div>)
     }
 }

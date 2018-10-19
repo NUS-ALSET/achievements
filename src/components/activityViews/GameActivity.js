@@ -4,7 +4,8 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-
+import { compose } from "redux";
+import { connect } from "react-redux";
 import { withStyles } from '@material-ui/core/styles';
 
 
@@ -74,18 +75,27 @@ class GameActivity extends React.PureComponent {
   render() {
     const { problem,
       classes,
-      solution
+      solution,
+      displayName
       // , readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
       return '';
+    }
+    const levelNumber={
+      "1" : 1,
+      "2" : 2,
+      "3" : 3,
+      "Easy" : 1,
+      "Medium" : 2,
+      "Hard" : 3
     }
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
         gameData={{
           playMode: problem.playMode,
-          levelsToWin: Number(problem.levelsToWin),
+          levelsToWin: levelNumber[problem.levelsToWin],
           scoreToWin: Number(problem.scoreToWin),
           gameTime: problem.gameTime,
           botsQuantities: problem.unitsPerSide,
@@ -95,12 +105,27 @@ class GameActivity extends React.PureComponent {
           pyCode : (solution || {}).pyCode || '' ,
           jsCode : (solution || {}).jsCode || ''
         }}
-        playAsPlayer2={false} // default false
+        playAsPlayer2={problem.playAsPlayer2} // default false
         onCommit={this.handleSubmit}
+        playersName = {{
+          player1 : problem.playAsPlayer2 ? 'Bot' : displayName,
+          player2 : !problem.playAsPlayer2 ? 'Bot' : displayName
+        }}
         className={classes.verticalMiddle}
       />
     );
   }
 }
 
-export default withStyles(styles)(GameActivity);
+const mapStateToProps = (state) => {
+  return {
+    displayName : state.firebase.auth.displayName || '',
+  }
+};
+
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+  )
+)(GameActivity);

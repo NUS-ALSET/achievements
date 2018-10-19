@@ -9,11 +9,13 @@ import Passengers from './passengers';
 import Destinations from './destination';
 import Updater from './updater.js';
 import CodeEditor from './code-editor';
+import config from '../simulation/config.json'
 
 
 
 export default class App extends Component {
     render() {
+        const playerKeys = this.props.playAsPlayer2 ? config.player2Keys : config.player1Keys;
         return <Loop>
             <Updater {...this.props}></Updater>
             <div className="stage">
@@ -34,10 +36,22 @@ export default class App extends Component {
                     <Characters store={this.props.store} gameId={1}></Characters>
                 </Stage>
             </div>
-            <div className="clear-both">            </div>
+            <div className="clear-both"></div>
+
             {
-                this.props.gameData.playMode === 'custom code' && 
-                <CodeEditor player1Data={this.props.player1Data} ></CodeEditor>
+                this.props.gameData.playMode === 'custom code' ?
+                    <CodeEditor player1Data={this.props.player1Data} ></CodeEditor> :
+                    <div className="instructions">
+                        Manual Control:
+                    <br />
+                        Control the units on your map by pressing
+                    <ul >
+                            {
+                                Object.keys(playerKeys).map(key => <li key={key}> {key.toUpperCase()}: {playerKeys[key]} </li>)
+                            }
+
+                        </ul>
+                    </div>
             }
         </Loop>
     }
