@@ -80,7 +80,8 @@ export class ActionsService {
             },
             type: action.type,
             uid: currentUserId,
-            otherActionData: this.removeEmpty(
+            version: process.env.REACT_APP_VERSION,
+            otherActionData: JSON.stringify(
               ActionsService.pickActionData(action)
             )
           });

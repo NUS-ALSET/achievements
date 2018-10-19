@@ -142,7 +142,7 @@ export function* externalProfileRefreshRequestHandler(action) {
         `Refreshing ${action.externalProfileType} Achievements...`
       )
     );
-    const { timedOut } = yield race({
+    const result = yield race({
       response: call(
         [accountService, accountService.watchProfileRefresh],
         uid,
@@ -151,7 +151,7 @@ export function* externalProfileRefreshRequestHandler(action) {
       timedOut: call(delay, APP_SETTING.defaultTimeout)
     });
 
-    if (timedOut) {
+    if (result.timedOut) {
       const error = "Profile refresh timed out";
       yield put(
         externalProfileRefreshFail(
@@ -163,12 +163,14 @@ export function* externalProfileRefreshRequestHandler(action) {
       return yield put(notificationShow(error));
     }
 
-    yield put(
-      externalProfileRefreshSuccess(
-        action.externalProfileId,
-        action.externalProfileType
-      )
-    );
+    if (result.response) {
+      yield put(
+        externalProfileRefreshSuccess(
+          action.externalProfileId,
+          action.externalProfileType
+        )
+      );
+    }
   } catch (err) {
     yield put(
       externalProfileRefreshFail(
