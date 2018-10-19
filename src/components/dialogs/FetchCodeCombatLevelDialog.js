@@ -59,19 +59,20 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
               <div
                 style={{
                   position: "relative",
-                  height: 320,
+                  height: 90,
                   width: "100%",
                   overflow: "hidden"
                 }}
               >
                 <iframe
-                  height={480}
+                  height={200}
                   scrolling="no"
                   seamless={true}
-                  src="https://codecombat.com/account/payments"
+                  src="https://codecombat.com/students"
                   style={{
                     position: "absolute",
-                    left: -220,
+                    left: -230,
+                    top: -110,
                     width: 1024,
                     height: 768
                   }}
@@ -79,9 +80,7 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
                   width={640}
                 />
               </div>
-              <Typography>
-                Make sure that there is no 401 error above
-              </Typography>
+              <Typography>Make sure that there is your hero above</Typography>
             </Fragment>
           )}
         </DialogContent>

@@ -10,10 +10,16 @@ import {
   FETCH_GITHUB_FILES_ERROR,
   FETCH_GITHUB_FILES_SUCCESS,
   PATH_ACTIVITY_CODECOMBAT_OPEN,
-  PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW
+  PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW,
+  PATH_PROFILE_DIALOG_SHOW
 } from "./actions";
 import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
+import {
+  EXTERNAL_PROFILE_REFRESH_REQUEST,
+  EXTERNAL_PROFILE_UPDATE_FAIL,
+  EXTERNAL_PROFILE_UPDATE_SUCCESS
+} from "../Account/actions";
 
 export const path = (
   state = {
@@ -45,6 +51,33 @@ export const path = (
             type: action.problemInfo.type + "Solution",
             value: action.problemInfo
           }
+        }
+      };
+    case PATH_PROFILE_DIALOG_SHOW:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            type: "Profile"
+          }
+        }
+      };
+    case EXTERNAL_PROFILE_UPDATE_SUCCESS:
+    case EXTERNAL_PROFILE_UPDATE_FAIL:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          pendingProfileUpdate: false
+        }
+      };
+    case EXTERNAL_PROFILE_REFRESH_REQUEST:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          pendingProfileUpdate: true
         }
       };
     case PATH_ACTIVITY_DIALOG_SHOW:

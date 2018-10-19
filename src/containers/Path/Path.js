@@ -72,6 +72,7 @@ import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmatio
 import { Typography } from "@material-ui/core";
 import RequestMorePathContentDialog from "../../components/dialogs/RequestMorePathContentDialog";
 import FetchCodeCombatLevelDialog from "../../components/dialogs/FetchCodeCombatLevelDialog";
+import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 
 const styles = theme => ({
   toolbarButton: {
@@ -107,6 +108,7 @@ export class Path extends React.Component {
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
     pendingActivityId: PropTypes.string,
+    pendingProfileUpdate: PropTypes.bool,
     ui: PropTypes.any,
     uid: PropTypes.string
   };
@@ -144,7 +146,8 @@ export class Path extends React.Component {
         onActivityCodeCombatOpen(
           pathActivities.path.id,
           activity.id,
-          codeCombatProfile.id
+          codeCombatProfile && codeCombatProfile.id,
+          activity
         );
         break;
       case ACTIVITY_TYPES.jupyterInline.id:
@@ -213,6 +216,7 @@ export class Path extends React.Component {
     );
     onCloseDialog();
   };
+
   onActivityDeleteRequest = (activityId, pathId) => {
     this.setState({
       selectedActivityId: activityId,
@@ -253,11 +257,13 @@ export class Path extends React.Component {
       onCloseDialog,
       onActivityDeleteRequest,
       onActivityDialogShow,
+      onProfileUpdate,
       onShowCollaboratorsClick,
       onRemoveAssistant,
       pathActivities,
       pathStatus,
       pendingActivityId,
+      pendingProfileUpdate,
       ui,
       uid,
       fetchGithubFiles
@@ -419,6 +425,21 @@ export class Path extends React.Component {
           pendingActivityId={pendingActivityId}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
+        <AddProfileDialog
+          externalProfile={{
+            url: "https://codecombat.com",
+            name: "CodeCombat",
+            id: "CodeCombat"
+          }}
+          inProgress={pendingProfileUpdate}
+          keepOnCommit={true}
+          onClose={onCloseDialog}
+          onCommit={profile => {
+            onProfileUpdate(profile, "CodeCombat");
+          }}
+          open={ui.dialog && ui.dialog.type === "Profile"}
+          uid={uid}
+        />
         <AddActivityDialog
           activity={ui.dialog.value}
           fetchGithubFiles={fetchGithubFiles}
@@ -476,6 +497,7 @@ const mapStateToProps = (state, ownProps) => ({
   pathActivities: pathActivitiesSelector(state, ownProps),
   pathStatus: pathStatusSelector(state, ownProps),
   pendingActivityId: state.path.ui.pendingActivityId,
+  pendingProfileUpdate: state.path.ui.pendingProfileUpdate,
   ui: state.path.ui,
   uid: state.firebase.auth.uid
 });

@@ -147,6 +147,13 @@ export const pathActivityOpen = (pathId, problemId) => ({
   problemId
 });
 
+export const PATH_PROFILE_DIALOG_SHOW = "PATH_PROFILE_DIALOG_SHOW";
+export const pathProfileDialogShow = () => ({
+  type: PATH_PROFILE_DIALOG_SHOW,
+
+});
+
+
 export const PATH_ACTIVITY_CODECOMBAT_OPEN = "PATH_ACTIVITY_CODECOMBAT_OPEN";
 export const pathActivityCodeCombatOpen = (
   pathId,

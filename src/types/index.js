@@ -9,6 +9,7 @@ import {
   number,
   object,
   oneOf,
+  oneOfType,
   shape,
   string
 } from "prop-types";
@@ -36,10 +37,13 @@ export const pathActivities = shape({
   activities: arrayOf(activity).isRequired
 });
 
-export const breadcrumbAction = shape({
-  label: string.isRequired,
-  handler: func.isRequired
-});
+export const breadcrumbAction = oneOfType([
+  shape({
+    label: string.isRequired,
+    handler: func.isRequired
+  }),
+  bool
+]);
 
 export const breadcrumbPath = shape({
   label: string.isRequired,

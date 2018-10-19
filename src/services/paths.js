@@ -509,7 +509,7 @@ export class PathsService {
                   owner: uid,
                   taskKey: answerKey,
                   problem: pathProblem.problemId,
-                  solution: json
+                  solution: JSON.stringify(json)
                 });
             });
           }

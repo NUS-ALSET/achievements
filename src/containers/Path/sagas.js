@@ -1,4 +1,4 @@
-import { call, put, select, take, takeLatest } from "redux-saga/effects";
+import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
@@ -24,7 +24,9 @@ import {
   fetchGithubFilesLoading,
   fetchGithubFilesError,
   PATH_ACTIVITY_CODECOMBAT_OPEN,
-  pathActivityCodeCombatDialogShow
+  pathActivityCodeCombatDialogShow,
+  pathProfileDialogShow,
+  PATH_CLOSE_DIALOG
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import {
@@ -38,6 +40,11 @@ import {
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
 import { codeCombatProfileSelector, pathActivitiesSelector } from "./selectors";
+import {
+  EXTERNAL_PROFILE_REFRESH_FAIL,
+  EXTERNAL_PROFILE_REFRESH_SUCCESS,
+  externalProfileRefreshRequest
+} from "../Account/actions";
 
 export function* pathActivityOpenHandler(action) {
   const data = yield select(state => ({
@@ -228,7 +235,42 @@ export function* pathRemoveCollaboratorRequestHandler(action) {
 }
 
 export function* pathActivityCodeCombatOpenHandler(action) {
-  yield put(pathActivityCodeCombatDialogShow(action.pathId, action.activityId));
+  try {
+    const data = yield select(state => ({
+      uid: state.firebase.auth.uid,
+      activity: state.firebase.data.activities[action.activityId],
+      achievements: state.firebase.data.userAchievements
+    }));
+
+    if (!action.codeCombatProfile) {
+      yield put(pathProfileDialogShow());
+    } else {
+      yield put(
+        externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
+      );
+    }
+    console.error("step 1");
+    const result = yield race({
+      skip: take(PATH_CLOSE_DIALOG),
+      success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
+      fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
+    });
+    console.error("step 2", result);
+    if (result.success) {
+      const levelsData = yield select(
+        state => state.firebase.data.userAchievements[data.uid]
+      );
+      if (levelsData.achievements[data.activity.level]) {
+        yield put(notificationShow("Yay"));
+      } else {
+        yield put(
+          pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
+        );
+      }
+    }
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
 }
 
 export function* pathRefreshSolutionsRequestHandler(action) {

@@ -24,6 +24,7 @@ class AddProfileDialog extends React.PureComponent {
   static propTypes = {
     externalProfile: PropTypes.object.isRequired,
     defaultValue: PropTypes.string,
+    keepOnCommit: PropTypes.bool,
     inProgress: PropTypes.any,
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
@@ -48,7 +49,9 @@ class AddProfileDialog extends React.PureComponent {
   };
   onCommit = () => {
     this.props.onCommit(this.state.login || this.props.defaultValue);
-    this.props.onClose();
+    if (!this.props.keepOnCommit) {
+      this.props.onClose();
+    }
   };
 
   render() {
@@ -67,7 +70,7 @@ class AddProfileDialog extends React.PureComponent {
           <img
             src={CodeCombatLogin}
             alt="CodeCombatLogin"
-            style={{maxHeight: 110}}
+            style={{ maxHeight: 110 }}
             align="center"
           />
           <Typography variant="subheading" gutterBottom>
@@ -96,7 +99,9 @@ class AddProfileDialog extends React.PureComponent {
             value={login}
           />
           <Typography variant="subheading" gutterBottom>
-            <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+            <a href={url} target="_blank" rel="noopener noreferrer">
+              {url}
+            </a>
           </Typography>
         </DialogContent>
         <DialogActions>
