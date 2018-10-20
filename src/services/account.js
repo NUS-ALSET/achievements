@@ -312,6 +312,18 @@ export class AccountService {
       .ref(`/users/${uid}/${field}`)
       .set(data);
   }
+
+  watchVersionChange(callback) {
+    firebase
+      .database()
+      .ref("/config/version")
+      .on("value", snap => callback({ version: snap.val() }));
+    return () =>
+      firebase
+        .database()
+        .ref("/config/version")
+        .off();
+  }
 }
 
 /**
