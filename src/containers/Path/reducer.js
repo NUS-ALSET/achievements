@@ -20,6 +20,10 @@ import {
   EXTERNAL_PROFILE_UPDATE_FAIL,
   EXTERNAL_PROFILE_UPDATE_SUCCESS
 } from "../Account/actions";
+import {
+  PROBLEM_SOLUTION_SUBMIT_FAIL,
+  PROBLEM_SOLUTION_SUBMIT_SUCCESS
+} from "../Activity/actions";
 
 export const path = (
   state = {
@@ -78,6 +82,15 @@ export const path = (
         ui: {
           ...state.ui,
           pendingProfileUpdate: true
+        }
+      };
+    case PROBLEM_SOLUTION_SUBMIT_SUCCESS:
+    case PROBLEM_SOLUTION_SUBMIT_FAIL:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          pendingActivityId: ""
         }
       };
     case PATH_ACTIVITY_DIALOG_SHOW:

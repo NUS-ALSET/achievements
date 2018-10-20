@@ -45,6 +45,10 @@ import {
   EXTERNAL_PROFILE_REFRESH_SUCCESS,
   externalProfileRefreshRequest
 } from "../Account/actions";
+import {
+  problemSolutionSubmitFail,
+  problemSolutionSubmitSuccess
+} from "../Activity/actions";
 
 export function* pathActivityOpenHandler(action) {
   const data = yield select(state => ({
@@ -249,19 +253,33 @@ export function* pathActivityCodeCombatOpenHandler(action) {
         externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
       );
     }
-    console.error("step 1");
     const result = yield race({
       skip: take(PATH_CLOSE_DIALOG),
       success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
       fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
     });
-    console.error("step 2", result);
     if (result.success) {
       const levelsData = yield select(
         state => state.firebase.data.userAchievements[data.uid]
       );
-      if (levelsData.achievements[data.activity.level]) {
-        yield put(notificationShow("Yay"));
+      if (levelsData.CodeCombat.achievements[data.activity.level]) {
+        yield call(
+          [pathsService, pathsService.submitSolution],
+          data.uid,
+          {
+            ...data.activity,
+            path: action.pathId,
+            problemId: action.activityId
+          },
+          "Completed"
+        );
+        yield put(
+          problemSolutionSubmitSuccess(
+            action.pathId,
+            action.activityId,
+            "Completed"
+          )
+        );
       } else {
         yield put(
           pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
@@ -270,6 +288,14 @@ export function* pathActivityCodeCombatOpenHandler(action) {
     }
   } catch (err) {
     yield put(notificationShow(err.message));
+    yield put(
+      problemSolutionSubmitFail(
+        action.pathId,
+        action.activityId,
+        "Completed",
+        err.message
+      )
+    );
   }
 }
 

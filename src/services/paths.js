@@ -535,6 +535,7 @@ export class PathsService {
     };
     if (typeof solution === "object") {
       solution.updatedAt = Date.now();
+      solution.version = process.env.REACT_APP_VERSION;
     }
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))

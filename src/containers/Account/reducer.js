@@ -63,7 +63,6 @@ export const account = (
         ...state,
         externalProfileInUpdate: false
       };
-
     case EXTERNAL_PROFILE_REFRESH_REQUEST:
       return {
         ...state,
