@@ -45,7 +45,7 @@ class JupyterNotebook extends React.PureComponent {
     solution: PropTypes.any,
     title: PropTypes.any.isRequired,
     url: PropTypes.string,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
   };
 
   state = {
@@ -100,7 +100,7 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
           {persistent ? (
-            (APP_SETTING.isSuggesting ? (
+            APP_SETTING.isSuggesting ? (
               <IconButton
                 onClick={() => action(this.state.solution)}
                 style={{
@@ -114,11 +114,7 @@ class JupyterNotebook extends React.PureComponent {
               <Button
                 color="primary"
                 onClick={() => action(this.state.solution)}
-                disabled={!(
-                  this.state.solution &&
-                  action &&
-                  richEditor
-                )}
+                disabled={!(this.state.solution && action && richEditor)}
                 style={{
                   position: "absolute",
                   top: 4,
@@ -127,7 +123,7 @@ class JupyterNotebook extends React.PureComponent {
               >
                 Run
               </Button>
-            ))
+            )
           ) : (
             <IconButton
               onClick={this.onSwitchCollapse}
@@ -152,6 +148,9 @@ class JupyterNotebook extends React.PureComponent {
               onChange={this.onChange}
               onLoad={editor => editor.focus()}
               readOnly={readOnly}
+              style={{
+                width: "100%"
+              }}
               theme="github"
               value={this.state.solution || defaultValue || ""}
             />
