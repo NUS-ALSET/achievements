@@ -64,8 +64,9 @@ export const routeChange = (pathname, method) => ({
 });
 
 export const VERSION_CHANGE = "VERSION_CHANGE";
-export const versionChange = () => ({
-  type: VERSION_CHANGE
+export const versionChange = needRefresh => ({
+  type: VERSION_CHANGE,
+  needRefresh
 });
 
 // constants

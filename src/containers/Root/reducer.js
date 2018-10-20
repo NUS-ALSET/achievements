@@ -37,7 +37,7 @@ export const root = (
     case VERSION_CHANGE:
       return {
         ...state,
-        needRefresh: true
+        needRefresh: action.needRefresh
       };
     case NOTIFICATION_SHOW:
       return {

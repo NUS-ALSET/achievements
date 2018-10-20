@@ -1,4 +1,5 @@
 import { APP_SETTING } from "../../achievementsApp/config";
+import compareVersions from "compare-versions";
 import {
   DISPLAY_NAME_UPDATE_REQUEST,
   EXTERNAL_PROFILE_REFRESH_REQUEST,
@@ -48,9 +49,11 @@ export function* versionChangeHandler() {
   versionWatcherChannel = yield call(createVersionWatcherChannel);
   while (true) {
     const { version } = yield take(versionWatcherChannel);
-    if (version && version !== process.env.REACT_APP_VERSION) {
-      yield put(versionChange());
-    }
+    yield put(
+      versionChange(
+        version && compareVersions(version, process.env.REACT_APP_VERSION) === 1
+      )
+    );
   }
 }
 
