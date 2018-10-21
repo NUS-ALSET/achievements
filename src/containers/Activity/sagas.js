@@ -23,6 +23,7 @@ import {
   problemSolutionSubmitSuccess,
   problemSolutionExecutionStatus
 } from "./actions";
+import { push } from "connected-react-router";
 import { delay } from "redux-saga";
 
 import {
@@ -339,6 +340,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
           : "Solution submitted"
       )
     );
+    yield put(push(`/paths/${data.pathProblem.path}`));
   } catch (err) {
     yield put(
       problemSolutionSubmitFail(
