@@ -46,7 +46,6 @@ import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
 
-
 class Assignments extends React.Component {
   static propTypes = {
     auth: PropTypes.object,
@@ -172,12 +171,12 @@ class Assignments extends React.Component {
           fullWidth
           label="Enter password"
           onChange={this.handlePasswordChange}
-          type="password"
-          onKeyPress={ (e) => {
-            if (e.key === 'Enter') {
-              this.submitPassword()
+          onKeyPress={e => {
+            if (e.key === "Enter") {
+              this.submitPassword();
             }
           }}
+          type="password"
         />
         <Grid container>
           <Grid item xs={12}>
@@ -245,7 +244,7 @@ class Assignments extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            (currentUser.isOwner && [
+            (currentUser.isAssistant && [
               {
                 label: "Refresh",
                 handler: this.refreshSolutions

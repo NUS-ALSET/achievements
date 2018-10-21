@@ -19,9 +19,20 @@ class Tournament extends Component {
         Object.defineProperty(level2, "name", { value: "level2" });
         Object.defineProperty(level3, "name", { value: "level3" });
     }
+    attachClickEvent(){
+        var restartGame = document.getElementsByClassName('restartGame');
+        for (var i = 0; i < restartGame.length; i++) {
+            restartGame[i].onclick= (e)=>{
+                //console.log(e.target.attributes[1].value, e.target.attributes[2].value)
+                Store.player1ControlSelected = e.target.attributes[1].value=='level1'||'level2'||'level3'?e.target.attributes[1].value:'custom code';
+                Store.player2ControlSelected = e.target.attributes[2].value=='level1'||'level2'||'level3'?e.target.attributes[2].value:'custom code';
+                Store.needToRestartGame = true;
+            };
+        }
+    }
     render() {
         return (
-            <div style={{position:'absolute', zIndex:100, left:'50%', transform:'translate(-50%, 0%)', top:'130px'}}>
+            <div style={{position:'absolute', zIndex:1101, left:'50%', transform:'translate(-50%, 0%)', top:'70px'}}>
                 <div style={{textAlign:'center'}}>
                     <button className="control-btn active"  onClick={()=>{
                         /*tournamentSimulate.default().then((result)=>{
@@ -29,6 +40,10 @@ class Tournament extends Component {
                         });*/
                         var result = tableResult([level1,level2,level3], config);
                         this.setState({presult : result, showTable: true});
+                        setTimeout(()=>{
+                            this.attachClickEvent();
+                        },1000);
+                        
                     }}
                     >Run tournament</button>
                     <button className="control-btn active"  onClick={()=>{
@@ -48,6 +63,7 @@ class Tournament extends Component {
                 <div style={{background:'white'}}>
                     {
                         this.state.showTable && <p dangerouslySetInnerHTML={{__html: this.state.presult}} />
+                        
                     }
                 </div>
             </div>

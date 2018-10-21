@@ -4,14 +4,24 @@
 
 import React from "react";
 import PropTypes from "prop-types";
+import { compose } from "redux";
+import { connect } from "react-redux";
+import { withStyles } from '@material-ui/core/styles';
 
 
-const Loading = () => {
-  return 'Loading...';
+const styles = {
+  root : {},
+  verticalMiddle: {
+    width: '100%', marginTop: '45vh', textAlign: 'center'
+  }
+};
+
+const Loading = ({ className }) => {
+  return <div className={className}>Loading...</div>;
 }
 
-const Game404 = () => {
-  return 'Game not exist'
+const Game404 = ({ className }) => {
+  return <div className={className}>Game not exist</div>;
 }
 
 class GameActivity extends React.PureComponent {
@@ -44,7 +54,7 @@ class GameActivity extends React.PureComponent {
     const { problem = {} } = props;
     switch (problem.game) {
       case 'passenger-picker': {
-        import('../games/passenger-picker')
+        import('../games/passenger-picker/src/component')
           .then(({ Game }) => {
             this.setState({ specificGame: Game })
           })
@@ -63,28 +73,59 @@ class GameActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem, 
-      // solution, readOnly, onCommit, taskId 
+    const { problem,
+      classes,
+      solution,
+      displayName
+      // , readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
       return '';
     }
+    const levelNumber={
+      "1" : 1,
+      "2" : 2,
+      "3" : 3,
+      "Easy" : 1,
+      "Medium" : 2,
+      "Hard" : 3
+    }
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
+        gameData={{
+          playMode: problem.playMode,
+          levelsToWin: levelNumber[problem.levelsToWin],
+          scoreToWin: Number(problem.scoreToWin),
+          gameTime: problem.gameTime,
+          botsQuantities: problem.unitsPerSide,
+          gameType: problem.type,
+        }}
         player1Data={{
-          levelsToWin: `level${problem.levelsToWin}`,
-          playMode: problem.playMode
+          pyCode : (solution || {}).pyCode || '' ,
+          jsCode : (solution || {}).jsCode || ''
         }}
-        player2Data={{
-          levelsToWin: `level${problem.levelsToWin}`,
-        }}
-        scoreToWin={Number(problem.scoreToWin)}
-        time={problem.gameTime}
+        playAsPlayer2={problem.playAsPlayer2} // default false
         onCommit={this.handleSubmit}
+        playersName = {{
+          player1 : problem.playAsPlayer2 ? 'Bot' : displayName,
+          player2 : !problem.playAsPlayer2 ? 'Bot' : displayName
+        }}
+        className={classes.verticalMiddle}
       />
     );
   }
 }
 
-export default GameActivity;
+const mapStateToProps = (state) => {
+  return {
+    displayName : state.firebase.auth.displayName || '',
+  }
+};
+
+export default compose(
+  withStyles(styles),
+  connect(
+    mapStateToProps,
+  )
+)(GameActivity);

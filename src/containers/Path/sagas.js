@@ -1,4 +1,4 @@
-import { call, put, select, take, takeLatest } from "redux-saga/effects";
+import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
@@ -22,7 +22,11 @@ import {
   pathToggleJoinStatusRequest,
   pathToggleJoinStatusSuccess,
   fetchGithubFilesLoading,
-  fetchGithubFilesError
+  fetchGithubFilesError,
+  PATH_ACTIVITY_CODECOMBAT_OPEN,
+  pathActivityCodeCombatDialogShow,
+  pathProfileDialogShow,
+  PATH_CLOSE_DIALOG
 } from "./actions";
 import { pathsService } from "../../services/paths";
 import {
@@ -31,10 +35,20 @@ import {
   pathActivityDeleteFail,
   pathActivityDeleteSuccess,
   pathActivityMoveFail,
+  pathActivityMoveSuccess,
   PATHS_JOINED_FETCH_SUCCESS
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
 import { codeCombatProfileSelector, pathActivitiesSelector } from "./selectors";
+import {
+  EXTERNAL_PROFILE_REFRESH_FAIL,
+  EXTERNAL_PROFILE_REFRESH_SUCCESS,
+  externalProfileRefreshRequest
+} from "../Account/actions";
+import {
+  problemSolutionSubmitFail,
+  problemSolutionSubmitSuccess
+} from "../Activity/actions";
 
 export function* pathActivityOpenHandler(action) {
   const data = yield select(state => ({
@@ -96,7 +110,6 @@ export function* pathActivityMoveRequestHandler(action) {
       uid: state.firebase.auth.uid,
       activities: state.firebase.data.activities || {}
     }));
-
     const activities = Object.keys(data.activities)
       .map(id => ({ ...data.activities[id], id }))
       .filter(activity => activity.path === action.pathId);
@@ -108,6 +121,13 @@ export function* pathActivityMoveRequestHandler(action) {
       activities,
       action.activityId,
       action.direction
+    );
+    yield put(
+      pathActivityMoveSuccess(
+        action.pathId,
+        action.activityId,
+        action.direction
+      )
     );
   } catch (err) {
     yield put(
@@ -147,6 +167,7 @@ export function* pathMoreProblemsRequestHandler(action) {
         action.activityCount
       )
     );
+    yield put(notificationShow("Request has been sent to the path creator"));
   } catch (err) {
     yield put(
       pathMoreProblemsFail(
@@ -217,6 +238,67 @@ export function* pathRemoveCollaboratorRequestHandler(action) {
   }
 }
 
+export function* pathActivityCodeCombatOpenHandler(action) {
+  try {
+    const data = yield select(state => ({
+      uid: state.firebase.auth.uid,
+      activity: state.firebase.data.activities[action.activityId],
+      achievements: state.firebase.data.userAchievements
+    }));
+
+    if (!action.codeCombatProfile) {
+      yield put(pathProfileDialogShow());
+    } else {
+      yield put(
+        externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
+      );
+    }
+    const result = yield race({
+      skip: take(PATH_CLOSE_DIALOG),
+      success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
+      fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
+    });
+    if (result.success) {
+      const levelsData = yield select(
+        state => state.firebase.data.userAchievements[data.uid]
+      );
+      if (levelsData.CodeCombat.achievements[data.activity.level]) {
+        yield call(
+          [pathsService, pathsService.submitSolution],
+          data.uid,
+          {
+            ...data.activity,
+            path: action.pathId,
+            problemId: action.activityId
+          },
+          "Completed"
+        );
+        yield put(
+          problemSolutionSubmitSuccess(
+            action.pathId,
+            action.activityId,
+            "Completed"
+          )
+        );
+      } else {
+        yield put(
+          pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
+        );
+      }
+    }
+  } catch (err) {
+    yield put(notificationShow(err.message));
+    yield put(
+      problemSolutionSubmitFail(
+        action.pathId,
+        action.activityId,
+        "Completed",
+        err.message
+      )
+    );
+  }
+}
+
 export function* pathRefreshSolutionsRequestHandler(action) {
   try {
     const data = yield select(state => ({
@@ -240,20 +322,19 @@ export function* pathRefreshSolutionsRequestHandler(action) {
   }
 }
 
-export function* fetchGithubFilesHandler(action){
+export function* fetchGithubFilesHandler(action) {
   let data;
-  try{
-    yield put(fetchGithubFilesLoading())
+  try {
+    yield put(fetchGithubFilesLoading());
     data = yield select(state => ({
       uid: state.firebase.auth.uid
     }));
     yield call(
       [pathsService, pathsService.fetchGithubFiles],
-        data.uid,
-        action.githubURL
-    )
-
-  }catch(err){
+      data.uid,
+      action.githubURL
+    );
+  } catch (err) {
     yield put(fetchGithubFilesError());
   }
 }
@@ -308,6 +389,12 @@ export default [
       pathRemoveCollaboratorRequestHandler
     );
   },
+  function* watchPathActivityCodeCombatOpen() {
+    yield takeLatest(
+      PATH_ACTIVITY_CODECOMBAT_OPEN,
+      pathActivityCodeCombatOpenHandler
+    );
+  },
   function* watchPathRefreshSolutionsRequest() {
     yield takeLatest(
       PATH_REFRESH_SOLUTIONS_REQUEST,
@@ -315,9 +402,6 @@ export default [
     );
   },
   function* watchFetchGithubFilesHandler() {
-    yield takeLatest(
-      FETCH_GITHUB_FILES,
-      fetchGithubFilesHandler
-    )
+    yield takeLatest(FETCH_GITHUB_FILES, fetchGithubFilesHandler);
   }
 ];

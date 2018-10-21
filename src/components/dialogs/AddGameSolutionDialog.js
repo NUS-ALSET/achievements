@@ -16,6 +16,8 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import GameActivity from '../activityViews/GameActivity'
+import { APP_SETTING } from '../../achievementsApp/config';
+
 const styles = {
     root: {
         backgroundColor: '#252a31'
@@ -25,6 +27,7 @@ const styles = {
     },
     flex: {
         flex: 1,
+        textTransform: 'capitalize'
     },
 };
 
@@ -74,12 +77,17 @@ class AddGameSolutionDialog extends React.PureComponent {
             this.props.onCommit(this.props.taskId, finalSolution );
         }
         this.setState({ open : false})
-        this.handleClose();     
+        this.handleClose();
     }
     render() {
-        const { 
+        const {
             // onClose, onCommit, taskId, solution
             open, classes, problem, readOnly } = this.props;
+
+        if (!(["game", "gameTournament"]).includes((problem || {}).type)) {
+            return "";
+        }
+        const heading = `${APP_SETTING.games[(problem || {}).game].name || ""} Game Level${problem.levelsToWin} ${problem.unitsPerSide === 1 ? 'Single Unit' : `${problem.unitsPerSide} Units`} ${problem.playMode}`
 
         return (
             <div>
@@ -96,19 +104,13 @@ class AddGameSolutionDialog extends React.PureComponent {
                                 <CloseIcon />
                             </IconButton>
                             <Typography variant="title" color="inherit" className={classes.flex}>
-                                {problem && problem.name} {readOnly ? '( Read Only )' : ''}
+                                {heading} {readOnly ? '( Read Only )' : ''}
                             </Typography>
                             <Typography variant="title" color="inherit">
-                                {/* ALSET Editor */}
                             </Typography>
-                            {/* { problem && 
-                            <Tooltip title="Open in Codesandbox">
-                            Something here
-                            </Tooltip>
-                            } */}
                         </Toolbar>
                     </AppBar>
-                    {open && problem && 
+                    {open && problem &&
                         <GameActivity
                             {...this.props}
                         />

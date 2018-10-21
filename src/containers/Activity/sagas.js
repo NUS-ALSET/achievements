@@ -323,7 +323,13 @@ export function* problemSolutionSubmitRequestHandler(action) {
     if (data.isPathPublic) {
       yield call(accountService.authTimeUpdate, data.uid);
     }
-    yield put(notificationShow(data.pathProblem.type==='codeCombat' ? `Completed ${data.pathProblem.name} level` : "Solution submitted"));
+    yield put(
+      notificationShow(
+        data.pathProblem.type === "codeCombat"
+          ? `Completed ${data.pathProblem.name} level`
+          : "Solution submitted"
+      )
+    );
   } catch (err) {
     yield put(
       problemSolutionSubmitFail(

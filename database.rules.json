@@ -82,16 +82,19 @@
       "$cohortKey": {
         ".write": "auth != null &&
           newData.exists() &&
-          !newData.child('isPublic').exists() &&
+          (root.child('/admins/' + auth.uid).exists() ||
           (
+          !newData.child('isPublic').exists() &&
             (
-              !data.exists() &&
-                newData.child('owner').exists() &&
-                newData.child('owner').val() == auth.uid
-            ) || (
-              data.exists() && data.child('owner').val() == auth.uid
+              (
+                !data.exists() &&
+                  newData.child('owner').exists() &&
+                  newData.child('owner').val() == auth.uid
+              ) || (
+                data.exists() && data.child('owner').val() == auth.uid
+              )
             )
-          )
+          ))
         "
       }
     },
@@ -150,14 +153,17 @@
         ".read": "auth != null",
         ".write": "
           auth != null &&
-          !newData.child('isPublic').exists() &&
           (
+            root.child('/admins/' + auth.uid).exists() ||
+            !newData.child('isPublic').exists() &&
             (
-              !data.exists() &&
-                newData.child('owner').exists() &&
-                newData.child('owner').val() == auth.uid
-            ) || (
-              data.exists() && data.child('owner').val() == auth.uid
+              (
+                !data.exists() &&
+                  newData.child('owner').exists() &&
+                  newData.child('owner').val() == auth.uid
+              ) || (
+                data.exists() && data.child('owner').val() == auth.uid
+              )
             )
           )
         "
@@ -262,13 +268,16 @@
       ".read": true,
       ".indexOn": ["owner", "isPublic"],
       "$pathKey": {
-        ".write": "auth != null && (
-          !data.exists() && newData.child('owner').val() == auth.uid ||
-          data.exists() && (
-            data.child('owner').val() == auth.uid ||
-            root.child('pathAssistants/' + $pathKey + '/' + auth.uid).exists()
-          )
-        )"
+        ".write": "auth != null &&
+          (
+            root.child('/admins/' + auth.uid).exists() || (
+              !data.exists() && newData.child('owner').val() == auth.uid ||
+              data.exists() && (
+                data.child('owner').val() == auth.uid ||
+                root.child('pathAssistants/' + $pathKey + '/' + auth.uid).exists()
+              )
+            )
+          )"
       }
     },
     "problemSolutions": {

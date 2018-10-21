@@ -30,109 +30,121 @@ class Bot extends Component {
       case 'gnome1':
         return <div>
           <Gnome1
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
       case 'gnome2':
         return <div>
           <Gnome2
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
       case 'blonde':
         return <div>
           <Blonde
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
       case 'brunette':
         return <div>
           <Brunette
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
       case 'drone1':
         return <div>
           <Drone1
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
       case 'drone2':
         return <div>
           <Drone2
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
       case 'drone3':
         return <div>
           <Drone3
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
       case 'black-car':
         return <div>
           <BlackCar
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
        </div>;
       case 'blue-car':
         return <div>
           <BlueCar
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
       </div>;
       case 'orange-car':
         return <div>
           <OrangeCar
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
        </div>;
       case 'white-car':
         return <div>
           <WhiteCar
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
        </div>;
       default:
         return <div>
           <Gnome1
-            position={Store.position[this.props.gameId][this.props.charId]}
-            direction={Store.direction[this.props.gameId][this.props.charId]}
-            scale={this.context.scale}
+            store={this.props.store}
+            scale={this.props.scale}
             size={config.playerSize}
+            gameId={this.props.gameId}
+            charId={this.props.charId}
           />
         </div>;
     }

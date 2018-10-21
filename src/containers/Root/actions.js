@@ -63,7 +63,13 @@ export const routeChange = (pathname, method) => ({
   method
 });
 
+export const VERSION_CHANGE = "VERSION_CHANGE";
+export const versionChange = needRefresh => ({
+  type: VERSION_CHANGE,
+  needRefresh
+});
+
 // constants
 export const SOLUTION_PRIVATE_LINK = "PRIVATE_LINK";
 export const SOLUTION_MODIFIED_TESTS = "MODIFIED_TESTS";
-export const SOLUTION_PROCESSING_TIMEOUT = "PROCESSING_TIMEOUT"; 
+export const SOLUTION_PROCESSING_TIMEOUT = "PROCESSING_TIMEOUT";

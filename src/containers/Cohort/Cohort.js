@@ -37,6 +37,7 @@ import { USER_STATUSES } from "../../types/constants";
 import { selectUserStatus } from "./selectors";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
+import CohortTabs from "../../components/tabs/CohortTabs";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -52,6 +53,10 @@ const styles = theme => ({
   }
 });
 
+const COHORT_TAB_COMMON = 0;
+const COHORT_TAB_EDIT = 1;
+const COHORT_TAB_INSTRUCTOR = 2;
+
 class Cohort extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
@@ -64,7 +69,8 @@ class Cohort extends React.PureComponent {
   };
 
   state = {
-    selectedCourse: ""
+    selectedCourse: "",
+    tabIndex: COHORT_TAB_COMMON
   };
 
   componentDidMount() {
@@ -87,6 +93,8 @@ class Cohort extends React.PureComponent {
     );
   };
 
+  changeTabIndex = (event, tabIndex) => this.setState({ tabIndex });
+
   checkAssistant = assistantKey =>
     this.props.dispatch(assignmentAssistantKeyChange(assistantKey));
 
@@ -107,6 +115,7 @@ class Cohort extends React.PureComponent {
 
   render() {
     const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
+    const tabIndex = this.state.tabIndex;
 
     if (!cohort) {
       return <div>Loading</div>;
@@ -137,50 +146,60 @@ class Cohort extends React.PureComponent {
         </Typography>
         {[USER_STATUSES.owner, USER_STATUSES.assistant].includes(
           currentUser.status
-        ) && (
+        ) && <CohortTabs onChange={this.changeTabIndex} tabIndex={tabIndex} />}
+        {[COHORT_TAB_INSTRUCTOR, COHORT_TAB_EDIT].includes(tabIndex) && (
           <Toolbar>
-            <TextField
-              className={classes.toolbarItem}
-              label="Course"
-              onChange={this.selectCourse}
-              select
-              style={{
-                width: 320,
-                marginTop: 0
-              }}
-              value={this.state.selectedCourse}
-            >
-              {Object.keys(courses || {})
-                .map(id => ({ ...courses[id], id }))
-                .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
-                .map(course => (
-                  <MenuItem key={course.id} value={course.id}>
-                    {course.name}
-                  </MenuItem>
-                ))}
-            </TextField>
-            <Button
-              className={classes.toolbarItem}
-              onClick={this.addCourse}
-              variant="raised"
-            >
-              Add
-            </Button>
-            <Button
-              className={classes.toolbarItem}
-              onClick={this.recalculate}
-              variant="raised"
-            >
-              Recalculate
-            </Button>
-            {currentUser.status === USER_STATUSES.owner && (
-              <Button
-                className={classes.toolbarButton}
-                onClick={this.showAssistantsDialog}
-                variant="raised"
-              >
-                Collaborators
-              </Button>
+            {tabIndex === COHORT_TAB_EDIT && (
+              <Fragment>
+                <TextField
+                  className={classes.toolbarItem}
+                  label="Course"
+                  onChange={this.selectCourse}
+                  select
+                  style={{
+                    width: 320,
+                    marginTop: 0
+                  }}
+                  value={this.state.selectedCourse}
+                >
+                  {Object.keys(courses || {})
+                    .map(id => ({ ...courses[id], id }))
+                    .sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
+                    .map(course => (
+                      <MenuItem key={course.id} value={course.id}>
+                        {course.name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+                <Button
+                  className={classes.toolbarItem}
+                  onClick={this.addCourse}
+                  variant="raised"
+                >
+                  Add
+                </Button>
+              </Fragment>
+            )}
+
+            {tabIndex === COHORT_TAB_INSTRUCTOR && (
+              <Fragment>
+                <Button
+                  className={classes.toolbarItem}
+                  onClick={this.recalculate}
+                  variant="raised"
+                >
+                  Recalculate
+                </Button>
+                {currentUser.status === USER_STATUSES.owner && (
+                  <Button
+                    className={classes.toolbarButton}
+                    onClick={this.showAssistantsDialog}
+                    variant="raised"
+                  >
+                    Collaborators
+                  </Button>
+                )}
+              </Fragment>
             )}
           </Toolbar>
         )}
@@ -198,6 +217,8 @@ class Cohort extends React.PureComponent {
           cohort={cohort}
           courses={cohort.courses}
           dispatch={dispatch}
+          isEdit={tabIndex === COHORT_TAB_EDIT}
+          isInstructor={tabIndex === COHORT_TAB_INSTRUCTOR}
           isOwner={isOwner}
         />
       </Fragment>

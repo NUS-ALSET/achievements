@@ -42,7 +42,8 @@ import {
   pathRemoveCollaboratorRequest,
   pathShowCollaboratorsDialog,
   pathToggleJoinStatusRequest,
-  fetchGithubFiles
+  fetchGithubFiles,
+  pathActivityCodeCombatOpen
 } from "./actions";
 import {
   pathActivityChangeRequest,
@@ -57,7 +58,8 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
-import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog"
+import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog";
+import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest } from "../Activity/actions";
@@ -68,6 +70,9 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
 import { Typography } from "@material-ui/core";
+import RequestMorePathContentDialog from "../../components/dialogs/RequestMorePathContentDialog";
+import FetchCodeCombatLevelDialog from "../../components/dialogs/FetchCodeCombatLevelDialog";
+import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 
 const styles = theme => ({
   toolbarButton: {
@@ -87,6 +92,7 @@ export class Path extends React.Component {
     onOpen: PropTypes.func,
     onOpenSolution: PropTypes.func,
     onActivityChangeRequest: PropTypes.func,
+    onActivityCodeCombatOpen: PropTypes.func,
     onActivityDeleteRequest: PropTypes.func,
     onActivityDialogShow: PropTypes.func,
     onActivityMoveRequest: PropTypes.func,
@@ -98,52 +104,66 @@ export class Path extends React.Component {
     onRequestMoreProblems: PropTypes.func,
     onShowCollaboratorsClick: PropTypes.func,
     onToggleJoinStatus: PropTypes.func,
-    fetchGithubFiles : PropTypes.func,
+    fetchGithubFiles: PropTypes.func,
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
+    pendingActivityId: PropTypes.string,
+    pendingProfileUpdate: PropTypes.bool,
     ui: PropTypes.any,
     uid: PropTypes.string
   };
 
   state = {
-    selectedActivityId: ""
+    selectedActivityId: "",
+    botsQuantity: 0,
+    requestMoreDialogShow: false
   };
 
   componentDidMount() {
     this.props.onOpen(this.props.match.params.pathId);
   }
 
-  onMoveProblem = (problem, direction) => {
+  onMoveActivity = (problem, direction) => {
     const { pathActivities, onActivityMoveRequest } = this.props;
 
     onActivityMoveRequest(pathActivities.path.id, problem.id, direction);
   };
 
-  onOpenProblem = problem => {
+  onOpenActivity = activity => {
     const {
+      codeCombatProfile,
       onOpenSolution,
-      onActivitySolutionSubmit,
+      onActivityCodeCombatOpen,
       onPushPath,
       pathActivities
     } = this.props;
-    switch (problem.type) {
+    this.setState(() => ({
+      botsQuantity: activity.unitsPerSide
+    }));
+    switch (activity.type) {
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:
-        onActivitySolutionSubmit(
+        onActivityCodeCombatOpen(
           pathActivities.path.id,
-          { problemId: problem.id, ...problem },
-          "Completed"
+          activity.id,
+          codeCombatProfile && codeCombatProfile.id,
+          activity
         );
         break;
       case ACTIVITY_TYPES.jupyterInline.id:
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.youtube.id:
-        onPushPath(`/paths/${pathActivities.path.id}/activities/${problem.id}`);
+        onPushPath(
+          `/paths/${pathActivities.path.id}/activities/${activity.id}`
+        );
         break;
       default:
-        onOpenSolution(pathActivities.path.id, problem);
+        onOpenSolution(pathActivities.path.id, activity);
     }
   };
+
+  requestMoreDialogHide = () => this.setState({ requestMoreDialogShow: false });
+  requestMoreDialogShow = () => this.setState({ requestMoreDialogShow: true });
 
   requestMoreProblems = () =>
     this.props.onRequestMoreProblems(
@@ -196,10 +216,11 @@ export class Path extends React.Component {
     );
     onCloseDialog();
   };
+
   onActivityDeleteRequest = (activityId, pathId) => {
     this.setState({
       selectedActivityId: activityId,
-      selectedPathId : pathId
+      selectedPathId: pathId
     });
   };
 
@@ -225,6 +246,7 @@ export class Path extends React.Component {
       ...additionalData
     });
   };
+
   render() {
     const {
       classes,
@@ -235,10 +257,13 @@ export class Path extends React.Component {
       onCloseDialog,
       onActivityDeleteRequest,
       onActivityDialogShow,
+      onProfileUpdate,
       onShowCollaboratorsClick,
       onRemoveAssistant,
       pathActivities,
       pathStatus,
+      pendingActivityId,
+      pendingProfileUpdate,
       ui,
       uid,
       fetchGithubFiles
@@ -246,7 +271,7 @@ export class Path extends React.Component {
     if (!uid) {
       return <div>Login required to display this page</div>;
     }
-    
+
     if (!(pathActivities && pathActivities.path)) {
       return <LinearProgress />;
     }
@@ -262,7 +287,9 @@ export class Path extends React.Component {
 
     pathName =
       pathName || (pathActivities.path && pathActivities.path.name) || "";
-      pathDesc = (pathActivities.path && pathActivities.path.description) || "None Provided";
+    pathDesc =
+      (pathActivities.path && pathActivities.path.description) ||
+      "None Provided";
 
     return (
       <Fragment>
@@ -273,7 +300,7 @@ export class Path extends React.Component {
             ) && [
               allFinished && {
                 label: "Request more",
-                handler: this.requestMoreProblems.bind(this)
+                handler: this.requestMoreDialogShow.bind(this)
               },
               // disable Refresh button.
               // !allFinished && {
@@ -357,22 +384,25 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddGameSolutionDialog
+          botsQuantity={this.state.botsQuantity}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${ACTIVITY_TYPES.game.id}Solution`}
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
-        <AddGameSolutionDialog
+        <AddGameTournamentSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`}
+          open={
+            ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`
+          }
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <FetchCodeCombatDialog
-          defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
           currentUserId={uid}
+          defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
           externalProfile={{
             url: "https://codecombat.com",
             id: "CodeCombat",
@@ -385,19 +415,35 @@ export class Path extends React.Component {
         />
         <ActivitiesTable
           activities={pathActivities.activities || []}
+          codeCombatProfile={codeCombatProfile}
           currentUserId={uid || "Anonymous"}
           onDeleteActivity={this.onActivityDeleteRequest}
           onEditActivity={onActivityDialogShow}
-          onMoveActivity={this.onMoveProblem}
-          onOpenActivity={this.onOpenProblem}
+          onMoveActivity={this.onMoveActivity}
+          onOpenActivity={this.onOpenActivity}
           pathStatus={pathStatus}
+          pendingActivityId={pendingActivityId}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
-          codeCombatProfile={codeCombatProfile}
+        />
+        <AddProfileDialog
+          externalProfile={{
+            url: "https://codecombat.com",
+            name: "CodeCombat",
+            id: "CodeCombat"
+          }}
+          inProgress={pendingProfileUpdate}
+          keepOnCommit={true}
+          onClose={onCloseDialog}
+          onCommit={profile => {
+            onProfileUpdate(profile, "CodeCombat");
+          }}
+          open={ui.dialog && ui.dialog.type === "Profile"}
+          uid={uid}
         />
         <AddActivityDialog
+          activity={ui.dialog.value}
           fetchGithubFiles={fetchGithubFiles}
           fetchGithubFilesStatus={ui.fetchGithubFilesStatus}
-          activity={ui.dialog.value}
           onClose={onCloseDialog}
           onCommit={this.onActivityChangeRequest}
           open={ui.dialog.type === "ProblemChange"}
@@ -408,20 +454,36 @@ export class Path extends React.Component {
           message="This will remove activity"
           onClose={() => this.setState({ selectedActivityId: "" })}
           onCommit={() => {
-            onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
+            onActivityDeleteRequest(
+              this.state.selectedActivityId,
+              this.state.selectedPathId
+            );
             this.setState({ selectedActivityId: "" });
           }}
           open={!!this.state.selectedActivityId}
         />
         <ControlAssistantsDialog
-          assistants={ui.dialog && ui.dialog.assistants}
-          newAssistant={ui.dialog && ui.dialog.newAssistant}
+          assistants={ui.dialog.assistants}
+          newAssistant={ui.dialog.newAssistant}
           onAddAssistant={onAddAssistant}
           onAssistantKeyChange={onAssistantKeyChange}
           onClose={onCloseDialog}
           onRemoveAssistant={onRemoveAssistant}
           open={ui.dialog.type === "CollaboratorsControl"}
-          target={pathActivities.path && pathActivities.path.id}
+          target={pathActivities.path.id}
+        />
+        <FetchCodeCombatLevelDialog
+          activity={pathActivities.activities.find(
+            activity => activity.id === pendingActivityId
+          )}
+          codeCombatId={codeCombatProfile && codeCombatProfile.id}
+          onClose={onCloseDialog}
+          open={ui.dialog.type === "FetchCodeCombatLevel"}
+        />
+        <RequestMorePathContentDialog
+          onClose={this.requestMoreDialogHide}
+          onConfirm={this.requestMoreProblems}
+          open={this.state.requestMoreDialogShow}
         />
       </Fragment>
     );
@@ -431,11 +493,13 @@ export class Path extends React.Component {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
+  codeCombatProfile: codeCombatProfileSelector(state),
   pathActivities: pathActivitiesSelector(state, ownProps),
   pathStatus: pathStatusSelector(state, ownProps),
+  pendingActivityId: state.path.ui.pendingActivityId,
+  pendingProfileUpdate: state.path.ui.pendingProfileUpdate,
   ui: state.path.ui,
-  uid: state.firebase.auth.uid,
-  codeCombatProfile: codeCombatProfileSelector(state)
+  uid: state.firebase.auth.uid
 });
 
 const mapDispatchToProps = {
@@ -448,6 +512,7 @@ const mapDispatchToProps = {
   onProfileUpdate: externalProfileUpdateRequest,
   onOpenSolution: pathOpenSolutionDialog,
   onActivityChangeRequest: pathActivityChangeRequest,
+  onActivityCodeCombatOpen: pathActivityCodeCombatOpen,
   onActivityDeleteRequest: pathActivityDeleteRequest,
   onActivityDialogShow: pathActivityDialogShow,
   onActivityMoveRequest: pathActivityMoveRequest,
@@ -457,7 +522,7 @@ const mapDispatchToProps = {
   onRemoveAssistant: pathRemoveCollaboratorRequest,
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
-  fetchGithubFiles : fetchGithubFiles
+  fetchGithubFiles: fetchGithubFiles
 };
 
 export default compose(
@@ -469,17 +534,14 @@ export default compose(
     const pathId = ownProps.match.params.pathId;
 
     if (!uid) {
-      return false;
+      return [];
     }
 
     return [
       `/completedActivities/${uid}/${pathId}`,
       `/paths/${pathId}`,
       `/pathAssistants/${pathId}`,
-      {
-        path: "/activities",
-        queryParams: ["orderByChild=path", `equalTo=${pathId}`]
-      },
+      `/activities#orderByChild=path&equalTo=${pathId}`,
       `/studentJoinedPaths/${uid}/${pathId}`,
       `userAchievements/${uid}/CodeCombat`
     ];

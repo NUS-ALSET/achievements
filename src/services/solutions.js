@@ -15,6 +15,7 @@ export class SolutionsService {
   }
 
   /**
+   * Refreshes solutions for PathProgress assignments
    *
    * @param {ICourse} course
    */
@@ -53,26 +54,54 @@ export class SolutionsService {
           )
             // Remove empty paths from list
             .then(pathsData => pathsData.filter(pathInfo => pathInfo.total))
+
+            // Fetch completed activities for all paths and all assignments
+            // solutions for students to compare provided solutions count with
+            // actually solved activities count
             .then(pathsData =>
               Promise.all(
                 Object.keys(course.members).map(memberId =>
-                  firebase
-                    .database()
-                    .ref(`/completedActivities/${memberId}`)
-                    .once("value")
-                    .then(snapshot => snapshot.val() || {})
-                    .then(completed => ({
-                      memberId,
-                      completed
-                    }))
+                  Promise.all([
+                    firebase
+                      .database()
+                      .ref(`/solutions/${course.id}/${memberId}`)
+                      .once("value")
+                      .then(snap => snap.val() || {}),
+                    firebase
+                      .database()
+                      .ref(`/completedActivities/${memberId}`)
+                      .once("value")
+                      .then(snapshot => snapshot.val() || {})
+                  ]).then(([solutions, completed]) => ({
+                    memberId,
+                    completed,
+                    solutions
+                  }))
                 )
               )
                 .then(completedData => {
+                  // Prepare changes list
                   const changes = [];
                   for (const pathInfo of pathsData) {
                     for (const completedInfo of completedData) {
-                      if (completedInfo.completed[pathInfo.pathId]) {
-                        const assignments = paths[pathInfo.pathId];
+                      const count = Object.keys(
+                        completedInfo.completed[pathInfo.pathId] || {}
+                      ).length;
+
+                      // If there is solutions for one of completed paths
+                      if (count) {
+                        // Then select assignments linked to this path
+                        let assignments = paths[pathInfo.pathId];
+
+                        // Select only assignments where solutions outdated to
+                        // actual solved activities count
+                        assignments = assignments.filter(assignment => {
+                          let data = completedInfo.solutions[assignment.id];
+                          data = (data || {}).value;
+                          return !(data && data.startsWith(String(count)));
+                        });
+
+                        // And push them into changes list
                         changes.push({
                           assignments,
                           memberId: completedInfo.memberId,
@@ -80,7 +109,7 @@ export class SolutionsService {
                             Object.keys(
                               completedInfo.completed[pathInfo.pathId] || {}
                             ).length
-                          } /${pathInfo.total}`
+                          } of ${pathInfo.total}`
                         });
                       }
                     }
@@ -89,6 +118,8 @@ export class SolutionsService {
                 })
                 .then(changes =>
                   Promise.all(
+                    // Process changes list - every change contains list of
+                    // assignments, s
                     changes.map(changeInfo =>
                       Promise.all(
                         changeInfo.assignments.map(assignment =>

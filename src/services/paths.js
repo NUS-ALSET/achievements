@@ -509,7 +509,7 @@ export class PathsService {
                   owner: uid,
                   taskKey: answerKey,
                   problem: pathProblem.problemId,
-                  solution: json
+                  solution: JSON.stringify(json)
                 });
             });
           }
@@ -535,6 +535,7 @@ export class PathsService {
     };
     if (typeof solution === "object") {
       solution.updatedAt = Date.now();
+      solution.version = process.env.REACT_APP_VERSION;
     }
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
@@ -780,18 +781,17 @@ export class PathsService {
       } else if (a.orderIndex > b.orderIndex) {
         return 1;
       }
+      needUpdate = true;
       return 0;
     });
     if (needUpdate) {
-      let maxOrderIndex = 0;
+      console.error("Path activities order was broken");
+      let currentOrderIndex = 0;
       const updated = [];
       for (const activity of activities) {
-        if (!activity.orderIndex) {
-          maxOrderIndex += 1;
-          updated.push(activity);
-          activity.orderIndex = maxOrderIndex;
-        }
-        maxOrderIndex = Math.max(maxOrderIndex, activity.orderIndex);
+        currentOrderIndex += 1;
+        updated.push(activity);
+        activity.orderIndex = currentOrderIndex;
       }
       return Promise.all(
         updated.map(activity =>
@@ -836,20 +836,17 @@ export class PathsService {
       if (!siblingActivity) {
         return Promise.resolve();
       }
-      return firebase
-        .database()
-        .ref(`/activities/${targetActivity.id}`)
-        .update({
-          orderIndex: siblingActivity.orderIndex
-        })
-        .then(() =>
-          firebase
-            .database()
-            .ref(`/activities/${siblingActivity.id}`)
-            .update({
-              orderIndex: targetActivity.orderIndex
-            })
-        );
+      return Promise.all([
+        firebase
+          .database()
+          .ref(`/activities/${targetActivity.id}/orderIndex`)
+          .set(siblingActivity.orderIndex),
+
+        firebase
+          .database()
+          .ref(`/activities/${siblingActivity.id}/orderIndex`)
+          .set(targetActivity.orderIndex)
+      ]);
     });
   }
 

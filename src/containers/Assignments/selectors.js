@@ -32,6 +32,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
     getFrom(state.firebase.data.visibleSolutions, courseId),
     student.id
   );
+  const pathsData = state.assignments.pathsData || {};
   const result = Object.assign({}, publishedSolutions, solutions);
 
   Object.keys(Object.assign({}, solutions, publishedSolutions)).forEach(
@@ -42,6 +43,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       const userAchievements = achievements.CodeCombat || {};
       const published = !!publishedSolutions[assignmentId];
       const createdAt = solution && solution.createdAt;
+      const pathActivities = pathsData[assignmentId];
 
       solution = solution && solution.value;
 
@@ -52,7 +54,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       if (options.onlyVisible && !assignment.solutionVisible) {
         solution = "Completed";
       }
-
+      
       switch (assignment.questionType) {
         case ASSIGNMENTS_TYPES.Text.id:
           result[assignmentId] = {
@@ -93,11 +95,14 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: (result[assignmentId] || {}).status || "COMPLETED",
+            value: (result[assignmentId] || {}).status || ((result[assignmentId] || {}).value || {}).status || "COMPLETED",
             solution
           };
           return true;
         case ASSIGNMENTS_TYPES.PathProgress.id:
+          if (pathActivities) {
+            solution = solution && solution.replace(/\d+$/, pathActivities);
+          }
           result[assignmentId] = {
             createdAt,
             published,
@@ -186,9 +191,10 @@ export const processTeamSolutions = (assignments, members) => {
       const solutions = members[memberKey].solutions;
       const teamFormation = teamFormations[teamFormationKey];
       const teamName =
-        solutions &&
-        solutions[teamFormationKey] &&
-        solutions[teamFormationKey].value;
+        (solutions &&
+          solutions[teamFormationKey] &&
+          solutions[teamFormationKey].value) ||
+        "";
 
       if (!(teamName && solutions)) {
         continue;
@@ -444,6 +450,23 @@ export const getCourseProps = (state, ownProps) => {
       }
       aValue = aValue || "";
       bValue = bValue || "";
+
+      // Sorting PathProgress for completed activities count
+      if (
+        sortAssignment &&
+        sortAssignment.questionType === ASSIGNMENTS_TYPES.PathProgress.id &&
+        typeof aValue === "string" &&
+        typeof bValue === "string"
+      ) {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+        const aCountData = (aValue.match(/^\s*\d+/) || [])[0] || "";
+        const bCountData = (bValue.match(/^\s*\d+/) || [])[0] || "";
+        if (aCountData !== bCountData) {
+          aValue = Number(aCountData);
+          bValue = Number(bCountData);
+        }
+      }
 
       // Sorting TeamFormation for members count
       if (

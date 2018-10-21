@@ -8,6 +8,7 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Icon from "@material-ui/core/Icon";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -40,15 +41,15 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit
   },
-  noWrap : {
-    whiteSpace: 'nowrap'
+  noWrap: {
+    whiteSpace: "nowrap"
   }
 });
 
 class ActivitiesTable extends React.PureComponent {
   static propTypes = {
     activities: PropTypes.array.isRequired,
-    codeCombatProfile : PropTypes.any,
+    codeCombatProfile: PropTypes.any,
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
     onDeleteActivity: PropTypes.func.isRequired,
@@ -60,14 +61,15 @@ class ActivitiesTable extends React.PureComponent {
       PATH_STATUS_COLLABORATOR,
       PATH_STATUS_JOINED,
       PATH_STATUS_NOT_JOINED
-    ])
+    ]),
+    pendingActivityId: PropTypes.string
   };
 
   state = {
     activity: null,
     analysisDialog: {
       open: false,
-      name : '',
+      name: "",
       activityId: null
     }
   };
@@ -80,22 +82,22 @@ class ActivitiesTable extends React.PureComponent {
 
   selectActivity = activity => this.setState({ activity });
 
-  getStatus = (activity) => {
+  getStatus = activity => {
     const codeCombatProfile = this.props.codeCombatProfile || {};
     switch (activity.type) {
       case ACTIVITY_TYPES.profile.id:
         return Boolean(codeCombatProfile.id);
       case ACTIVITY_TYPES.codeCombat.id:
-        return (Boolean((codeCombatProfile.achievements || {})[activity.level]));
+        return Boolean((codeCombatProfile.achievements || {})[activity.level]);
       case ACTIVITY_TYPES.codeCombatNumber.id:
         return (
           !codeCombatProfile.totalAchievements &&
           Number(codeCombatProfile.totalAchievements) >= Number(activity.count)
-        )
+        );
       default:
-        return true
+        return true;
     }
-  }
+  };
 
   render() {
     const {
@@ -105,7 +107,8 @@ class ActivitiesTable extends React.PureComponent {
       onEditActivity,
       onMoveActivity,
       onOpenActivity,
-      pathStatus
+      pathStatus,
+      pendingActivityId
     } = this.props;
 
     let minOrderIndex = Infinity;
@@ -138,22 +141,27 @@ class ActivitiesTable extends React.PureComponent {
           </TableHead>
           <TableBody>
             {activities.map(activity => (
-              <TableRow
-                hover
-                key={activity.id}
-              >
-                <TableCell className={classes.noWrap}>{activity.name}</TableCell>
-                <TableCell className={classes.noWrap}>{activity.description}</TableCell>
+              <TableRow hover key={activity.id}>
+                <TableCell className={classes.noWrap}>
+                  {activity.name}
+                </TableCell>
+                <TableCell className={classes.noWrap}>
+                  {activity.description}
+                </TableCell>
                 {!canChange && (
                   <TableCell>
-                    {this.getStatus(activity) && activity.solved && (
-                      <Icon>
-                        <DoneIcon />
-                      </Icon>
-                    )}
+                    {this.getStatus(activity) &&
+                      activity.solved && (
+                        <Icon>
+                          <DoneIcon />
+                        </Icon>
+                      )}
                   </TableCell>
                 )}
-                <TableCell className={classes.noWrap} style={{ textAlign : 'left'}}>
+                <TableCell
+                  className={classes.noWrap}
+                  style={{ textAlign: "left" }}
+                >
                   {/* temporary hide for online Oct2018 competition
                     [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(activity.type) && (
 
@@ -180,18 +188,25 @@ class ActivitiesTable extends React.PureComponent {
 
                   ) */}
                   <Button
+                    disabled={activity.id === pendingActivityId}
                     onClick={() => onOpenActivity(activity)}
                     variant="raised"
                   >
-                    {(activities && activities[0].type === "profile")
-                      ? (
-                        "Fetch"
-                      )
-                      : (
-                        "Solve"
-                      )
-                    }
+                    {activity.type === ACTIVITY_TYPES.codeCombat.id
+                      ? "Fetch"
+                      : "Solve"}
+                    {activity.id === pendingActivityId && (
+                      <CircularProgress
+                        style={{
+                          position: "absolute",
+                          left: "35%",
+                          width: 20,
+                          height: 20
+                        }}
+                      />
+                    )}
                   </Button>
+
                   {canChange && (
                     <Button
                       className={classes.button}
@@ -228,7 +243,10 @@ class ActivitiesTable extends React.PureComponent {
               className={classes.button}
               onClick={() =>
                 this.selectActivity() ||
-                onDeleteActivity(this.state.activity.id, this.state.activity.path)
+                onDeleteActivity(
+                  this.state.activity.id,
+                  this.state.activity.path
+                )
               }
               variant="raised"
             >
@@ -263,10 +281,10 @@ class ActivitiesTable extends React.PureComponent {
           </Menu>
         )}
         <AnalysisDialog
-          handleClose={this.handleCloseAnalysisDialog}
-          open={this.state.analysisDialog.open}
-          name={this.state.analysisDialog.name}
           activityId={this.state.analysisDialog.activityId}
+          handleClose={this.handleCloseAnalysisDialog}
+          name={this.state.analysisDialog.name}
+          open={this.state.analysisDialog.open}
         />
       </Fragment>
     );
