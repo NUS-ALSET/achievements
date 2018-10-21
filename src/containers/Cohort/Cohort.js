@@ -38,6 +38,7 @@ import { selectUserStatus } from "./selectors";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import CohortTabs from "../../components/tabs/CohortTabs";
+import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -180,7 +181,6 @@ class Cohort extends React.PureComponent {
                 </Button>
               </Fragment>
             )}
-
             {tabIndex === COHORT_TAB_INSTRUCTOR && (
               <Fragment>
                 <Button
@@ -203,6 +203,19 @@ class Cohort extends React.PureComponent {
             )}
           </Toolbar>
         )}
+        <DeleteConfirmationDialog
+          message="This will remove activity"
+          onClose={() => this.setState({ selectedActivityId: "" })}
+          onCommit={() => {
+            this.removeAssistant(
+              cohort.id,
+              this.state.selectedActivityId,
+              this.state.selectedPathId
+            );
+            this.setState({ selectedActivityId: "" });
+          }}
+          open={!!this.state.selectedActivityId}
+        />
         <ControlAssistantsDialog
           assistants={cohort.assistants}
           newAssistant={ui.newAssistant}

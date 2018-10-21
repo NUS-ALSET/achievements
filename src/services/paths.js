@@ -571,7 +571,7 @@ export class PathsService {
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(solution);
+              .set(JSON.stringify(solution));
           }
           default:
             break;
