@@ -18,7 +18,6 @@ import Button from "@material-ui/core/Button";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { cohort } from "../../types";
-import { cohortCourseUpdateRequest } from "../../containers/Cohort/actions";
 
 const MARGIN_MULTIPLIER = 3;
 
@@ -53,16 +52,18 @@ class CohortCoursesTable extends React.PureComponent {
     dispatch: PropTypes.func,
     isOwner: PropTypes.bool,
     isInstructor: PropTypes.bool,
-    match: PropTypes.object
+    match: PropTypes.object,
+    onRemoveClick: PropTypes.func
   };
 
-  onRemoveClick = courseId =>
-    this.props.dispatch(
-      cohortCourseUpdateRequest(this.props.cohort.id, courseId, "remove")
-    );
-
   render() {
-    const { classes, courses, cohort, isInstructor } = this.props;
+    const {
+      classes,
+      courses,
+      cohort,
+      isInstructor,
+      onRemoveClick
+    } = this.props;
     let totals = {
       progress: 0,
       participants: 0
@@ -146,7 +147,7 @@ class CohortCoursesTable extends React.PureComponent {
                   <TableCell className={classes.narrowCell}>
                     <Button
                       color="secondary"
-                      onClick={() => this.onRemoveClick(course.id)}
+                      onClick={() => onRemoveClick(course.id)}
                       size="small"
                     >
                       Remove
