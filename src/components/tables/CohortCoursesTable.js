@@ -93,8 +93,7 @@ class CohortCoursesTable extends React.PureComponent {
               </TableCell>
             )}
             <TableCell className={classes.narrowCell}>
-              Explorers(
-              {totals.progress})
+              Explorers ({totals.progress})
             </TableCell>
 
             <TableCell className={classes.narrowCell}>
