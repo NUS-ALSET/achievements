@@ -62,7 +62,7 @@ export class Paths extends React.PureComponent {
             />
           </Fragment>
         ) : (
-          <PathsTable paths={publicPaths || {}} />
+          <PathsTable dispatch={dispatch} paths={publicPaths || {}} />
         )}
       </Fragment>
     );
