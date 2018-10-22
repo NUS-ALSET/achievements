@@ -4,6 +4,7 @@
       ".read": "auth != null",
       ".indexOn": ["path"],
       "$activityKey": {
+        ".read": "root.child('/paths/' + data.child('path').val() + '/isPublic').val() == true",
         ".write": "auth != null &&
           !newData.exists() || (
             newData.child('path').exists() &&
