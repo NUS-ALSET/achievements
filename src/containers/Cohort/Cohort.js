@@ -38,6 +38,7 @@ import { selectUserStatus } from "./selectors";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import CohortTabs from "../../components/tabs/CohortTabs";
+import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -69,6 +70,7 @@ class Cohort extends React.PureComponent {
   };
 
   state = {
+    deletingCourseId: "",
     selectedCourse: "",
     tabIndex: COHORT_TAB_COMMON
   };
@@ -99,6 +101,16 @@ class Cohort extends React.PureComponent {
     this.props.dispatch(assignmentAssistantKeyChange(assistantKey));
 
   closeDialog = () => this.props.dispatch(cohortCloseDialog());
+
+  onRemoveCourseClick = courseId =>
+    this.setState({ deletingCourseId: courseId });
+  onRemoveAccept = () => {
+    const { cohort, dispatch } = this.props;
+    const { deletingCourseId } = this.state;
+
+    dispatch(cohortCourseUpdateRequest(cohort.id, deletingCourseId, "remove"));
+    this.setState({ deletingCourseId: "" });
+  };
 
   recalculate = () => {
     const { cohort, dispatch } = this.props;
@@ -180,7 +192,6 @@ class Cohort extends React.PureComponent {
                 </Button>
               </Fragment>
             )}
-
             {tabIndex === COHORT_TAB_INSTRUCTOR && (
               <Fragment>
                 <Button
@@ -203,6 +214,12 @@ class Cohort extends React.PureComponent {
             )}
           </Toolbar>
         )}
+        <DeleteConfirmationDialog
+          message="This will remove course from cohort"
+          onClose={() => this.setState({ deletingCourseId: "" })}
+          onCommit={this.onRemoveAccept}
+          open={!!this.state.deletingCourseId}
+        />
         <ControlAssistantsDialog
           assistants={cohort.assistants}
           newAssistant={ui.newAssistant}
@@ -220,6 +237,7 @@ class Cohort extends React.PureComponent {
           isEdit={tabIndex === COHORT_TAB_EDIT}
           isInstructor={tabIndex === COHORT_TAB_INSTRUCTOR}
           isOwner={isOwner}
+          onRemoveClick={this.onRemoveCourseClick}
         />
       </Fragment>
     );

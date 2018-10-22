@@ -23,6 +23,7 @@ import {
   problemSolutionSubmitSuccess,
   problemSolutionExecutionStatus
 } from "./actions";
+import { push } from "connected-react-router";
 import { delay } from "redux-saga";
 
 import {
@@ -94,7 +95,7 @@ export function* problemInitRequestHandler(action) {
       )
     );
 
-    const solution = yield action.solution &&
+    let solution = yield action.solution &&
     action.solution.originalSolution &&
     action.solution.originalSolution.value
       ? Promise.resolve(
@@ -103,6 +104,15 @@ export function* problemInitRequestHandler(action) {
             : action.solution.originalSolution.value
         )
       : call([pathsService, pathsService.fetchSolutionFile], pathProblem, uid);
+
+    // Condition to keep existing and new one solutions jupyter inline solution
+    // format (changed to string via #435 issue)
+    if (
+      pathProblem.type === ACTIVITY_TYPES.jupyterInline.id &&
+      typeof solution === "string"
+    ) {
+      solution = JSON.parse(solution);
+    }
     yield put(
       problemSolutionRefreshSuccess(action.problemId, solution || false)
     );
@@ -330,6 +340,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
           : "Solution submitted"
       )
     );
+    yield put(push(`/paths/${data.pathProblem.path}`));
   } catch (err) {
     yield put(
       problemSolutionSubmitFail(

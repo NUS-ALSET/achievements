@@ -38,7 +38,7 @@ export class Activity extends React.PureComponent {
     pathProblem: PropTypes.any,
     solution: PropTypes.any,
     readOnly: PropTypes.bool,
-    showCommitBtnOnTop : PropTypes.bool
+    showCommitBtnOnTop: PropTypes.bool
   };
 
   static defaultProps = {
@@ -48,7 +48,7 @@ export class Activity extends React.PureComponent {
   state = {
     problemSolution: {},
     changed: false,
-    disabledCommitBtn : true
+    disabledCommitBtn: true
   };
 
   componentDidMount() {
@@ -67,12 +67,15 @@ export class Activity extends React.PureComponent {
     if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
       this.onProblemChange({});
     }
-    if(![ 'jupyter', 'jupyterInline' ].includes((nextProps.pathProblem || {}).type)){
+    if (
+      !["jupyter", "jupyterInline"].includes((nextProps.pathProblem || {}).type)
+    ) {
       this.setState({ disabledCommitBtn: false });
-    }else if ((nextProps.solution || {}).checked && 
-        !(nextProps.solution || {}).failed &&
-        (nextProps.solution || {}).json
-      ) {
+    } else if (
+      (nextProps.solution || {}).checked &&
+      !(nextProps.solution || {}).failed &&
+      (nextProps.solution || {}).json
+    ) {
       this.setState({ disabledCommitBtn: false });
     } else {
       this.setState({ disabledCommitBtn: true });
@@ -101,9 +104,6 @@ export class Activity extends React.PureComponent {
           this.props.match.params.problemId,
           this.state.problemSolution
         )
-      );
-      this.props.history.push(
-        `/paths/${this.props.match.params.pathId}`
       );
     } else {
       this.props.dispatch(notificationShow("Nothing changed"));
@@ -177,11 +177,11 @@ export class Activity extends React.PureComponent {
         ) : (
           <ActivityView
             dispatch={dispatch}
+            onCommit={this.onCommit}
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
             pathProblem={pathProblem}
-            solution={solution}
-            onCommit={this.onCommit}
             showCommitBtnOnTop={showCommitBtnOnTop}
+            solution={solution}
             style={{
               paddingBottom: 20,
               textAlign: "center"
