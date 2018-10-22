@@ -269,9 +269,6 @@ export class Path extends React.Component {
       uid,
       fetchGithubFiles
     } = this.props;
-    if (!uid) {
-      return <div>Login required to display this page</div>;
-    }
 
     if (!(pathActivities && pathActivities.path)) {
       return <LinearProgress />;
@@ -308,7 +305,7 @@ export class Path extends React.Component {
               // label: "Refresh",
               // handler: this.refreshSolutions.bind(this)
               // },
-              {
+              uid && {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
               }
@@ -535,10 +532,14 @@ export default compose(
     const pathId = ownProps.match.params.pathId;
 
     if (!uid) {
-      return [];
+      return [
+        `/paths/${pathId}`,
+        `/activities#orderByChild=path&equalTo=${pathId}`
+      ];
     }
 
     return [
+      `/activities#orderByChild=path&equalTo=${pathId}`,
       `/completedActivities/${uid}/${pathId}`,
       `/paths/${pathId}`,
       `/pathAssistants/${pathId}`,

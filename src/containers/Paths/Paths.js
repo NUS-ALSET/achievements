@@ -22,6 +22,7 @@ import { getProblems } from "./selectors";
 import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { pathsOpen } from "./actions";
+import PathsTable from "../../components/tables/PathsTable";
 
 export class Paths extends React.PureComponent {
   static propTypes = {
@@ -45,24 +46,24 @@ export class Paths extends React.PureComponent {
 
     return (
       <Fragment>
-        <Breadcrumbs
-          paths={[
-            {
-              label: "Paths"
-            }
-          ]}
-        />
-        <PathTabs
-          dispatch={dispatch}
-          joinedPaths={joinedPaths}
-          myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
-          publicPaths={publicPaths}
-        />
-        <AddPathDialog
-          dispatch={dispatch}
-          open={ui.dialog.type === "PathChange"}
-          path={ui.dialog.value}
-        />
+        <Breadcrumbs paths={[{ label: "Paths" }]} />
+        {uid ? (
+          <Fragment>
+            <PathTabs
+              dispatch={dispatch}
+              joinedPaths={joinedPaths}
+              myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+              publicPaths={publicPaths}
+            />
+            <AddPathDialog
+              dispatch={dispatch}
+              open={ui.dialog.type === "PathChange"}
+              path={ui.dialog.value}
+            />
+          </Fragment>
+        ) : (
+          <PathsTable paths={publicPaths || {}} />
+        )}
       </Fragment>
     );
   }
@@ -84,19 +85,22 @@ export default compose(
   firebaseConnect((ownProps, store) => {
     // I didn't find way to test this
     const firebaseAuth = store.getState().firebase.auth;
-    return (
-      !firebaseAuth.isEmpty && [
-        {
-          path: "/paths",
-          storeAs: "myPaths",
-          queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
-        },
-        {
-          path: "/paths",
-          storeAs: "publicPaths",
-          queryParams: ["orderByChild=isPublic", "equalTo=true"]
-        }
-      ]
+    return [
+      {
+        path: "/paths",
+        storeAs: "publicPaths",
+        queryParams: ["orderByChild=isPublic", "equalTo=true"]
+      }
+    ].concat(
+      firebaseAuth.isEmpty
+        ? []
+        : [
+            {
+              path: "/paths",
+              storeAs: "myPaths",
+              queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
+            }
+          ]
     );
   }),
   connect(mapStateToProps)
