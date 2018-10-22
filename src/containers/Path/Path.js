@@ -141,6 +141,7 @@ export class Path extends React.Component {
       botsQuantity: activity.unitsPerSide
     }));
     switch (activity.type) {
+      case ACTIVITY_TYPES.profile.id:
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:
         onActivityCodeCombatOpen(
