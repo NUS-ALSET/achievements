@@ -84,6 +84,9 @@ class ActivitiesTable extends React.PureComponent {
 
   getStatus = activity => {
     const codeCombatProfile = this.props.codeCombatProfile || {};
+    if (activity.solved) {
+      return true;
+    }
     switch (activity.type) {
       case ACTIVITY_TYPES.profile.id:
         return Boolean(codeCombatProfile.id);
@@ -95,7 +98,7 @@ class ActivitiesTable extends React.PureComponent {
           Number(codeCombatProfile.totalAchievements) >= Number(activity.count)
         );
       default:
-        return true;
+        return false;
     }
   };
 

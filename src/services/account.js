@@ -141,6 +141,14 @@ export class AccountService {
     });
   }
 
+  fetchAchievements(uid) {
+    return firebase
+      .database()
+      .ref(`/userAchievements/${uid}/CodeCombat`)
+      .once("value")
+      .then(snap => snap.val());
+  }
+
   fetchJoinedPaths(uid) {
     return Promise.all([
       firebase
