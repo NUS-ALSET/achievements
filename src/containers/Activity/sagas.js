@@ -58,9 +58,15 @@ const ONE_SECOND = 1000;
 export function* problemInitRequestHandler(action) {
   try {
     let uid = yield select(state => state.firebase.auth.uid);
+
     if (!uid) {
-      yield take("@@reactReduxFirebase/LOGIN");
-      uid = yield select(state => state.firebase.auth.uid);
+      const { auth } = yield race({
+        auth: take("@@reactReduxFirebase/LOGIN"),
+        empty: "@@reactReduxFirebase/AuthEmptyChange"
+      });
+      if (auth) {
+        uid = yield select(state => state.firebase.auth.uid);
+      }
     }
 
     yield put(
@@ -91,9 +97,13 @@ export function* problemInitRequestHandler(action) {
         action.pathId,
         action.problemId,
         pathProblem,
-        action.readOnly
+        action.readOnly || !uid
       )
     );
+
+    if (!uid) {
+      return yield put(problemSolutionRefreshSuccess(action.problemId, false));
+    }
 
     let solution = yield action.solution &&
     action.solution.originalSolution &&

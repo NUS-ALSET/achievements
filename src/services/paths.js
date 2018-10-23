@@ -196,7 +196,7 @@ export class PathsService {
             return pathProblem;
         }
       })
-      .catch(err => console.error(err.stack, err.message));
+      .catch(err => console.error(err.stack, err.message) || false);
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {

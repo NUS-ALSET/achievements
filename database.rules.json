@@ -1,9 +1,13 @@
 {
   "rules": {
     "activities": {
-      ".read": "auth != null",
+      ".read": "auth != null || (
+          query.orderByChild == 'path' &&
+          root.child('/paths/' + query.equalTo + '/isPublic').val() == true
+        )",
       ".indexOn": ["path"],
       "$activityKey": {
+        ".read": "root.child('/paths/' + data.child('path').val() + '/isPublic').val() == true",
         ".write": "auth != null &&
           !newData.exists() || (
             newData.child('path').exists() &&
