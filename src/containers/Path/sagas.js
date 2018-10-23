@@ -26,9 +26,10 @@ import {
   PATH_ACTIVITY_CODECOMBAT_OPEN,
   pathActivityCodeCombatDialogShow,
   pathProfileDialogShow,
-  PATH_CLOSE_DIALOG
+  PATH_CLOSE_DIALOG,
+  pathCloseDialog
 } from "./actions";
-import { pathsService } from "../../services/paths";
+import { ACTIVITY_TYPES, pathsService } from "../../services/paths";
 import {
   PATH_ACTIVITY_DELETE_REQUEST,
   PATH_ACTIVITY_MOVE_REQUEST,
@@ -49,6 +50,7 @@ import {
   problemSolutionSubmitFail,
   problemSolutionSubmitSuccess
 } from "../Activity/actions";
+import { accountService } from "../../services/account";
 
 export function* pathActivityOpenHandler(action) {
   const data = yield select(state => ({
@@ -259,10 +261,8 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
     });
     if (result.success) {
-      const levelsData = yield select(
-        state => state.firebase.data.userAchievements[data.uid]
-      );
-      if (levelsData.CodeCombat.achievements[data.activity.level]) {
+      // FIXIT: cleanup this
+      if (data.activity.type === ACTIVITY_TYPES.profile.id) {
         yield call(
           [pathsService, pathsService.submitSolution],
           data.uid,
@@ -280,6 +280,29 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             "Completed"
           )
         );
+        yield put(pathCloseDialog());
+        return;
+      }
+      const levelsData = yield call(accountService.fetchAchievements, data.uid);
+      if (levelsData && levelsData.achievements[data.activity.level]) {
+        yield call(
+          [pathsService, pathsService.submitSolution],
+          data.uid,
+          {
+            ...data.activity,
+            path: action.pathId,
+            problemId: action.activityId
+          },
+          "Completed"
+        );
+        yield put(
+          problemSolutionSubmitSuccess(
+            action.pathId,
+            action.activityId,
+            "Completed"
+          )
+        );
+        yield put(pathCloseDialog());
       } else {
         yield put(
           pathActivityCodeCombatDialogShow(action.pathId, action.activityId)

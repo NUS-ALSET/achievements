@@ -32,13 +32,9 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
   };
 
   goToLevel = () => {
-    window.addEventListener("focus", () => console.error("test"), {
-      once: true
-    });
-    window.open(
-      `//codecombat.com/play/level/${this.props.activity.level}`,
-      "_blank"
-    );
+    const { activity, onClose } = this.props;
+    window.open(`//codecombat.com/play/level/${activity.level}`, "_blank");
+    onClose();
   };
 
   render() {

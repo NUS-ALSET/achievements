@@ -23,6 +23,7 @@ import {
   problemSolutionSubmitSuccess,
   problemSolutionExecutionStatus
 } from "./actions";
+import { push } from "connected-react-router";
 import { delay } from "redux-saga";
 
 import {
@@ -57,9 +58,15 @@ const ONE_SECOND = 1000;
 export function* problemInitRequestHandler(action) {
   try {
     let uid = yield select(state => state.firebase.auth.uid);
+
     if (!uid) {
-      yield take("@@reactReduxFirebase/LOGIN");
-      uid = yield select(state => state.firebase.auth.uid);
+      const { auth } = yield race({
+        auth: take("@@reactReduxFirebase/LOGIN"),
+        empty: "@@reactReduxFirebase/AuthEmptyChange"
+      });
+      if (auth) {
+        uid = yield select(state => state.firebase.auth.uid);
+      }
     }
 
     yield put(
@@ -90,11 +97,15 @@ export function* problemInitRequestHandler(action) {
         action.pathId,
         action.problemId,
         pathProblem,
-        action.readOnly
+        action.readOnly || !uid
       )
     );
 
-    const solution = yield action.solution &&
+    if (!uid) {
+      return yield put(problemSolutionRefreshSuccess(action.problemId, false));
+    }
+
+    let solution = yield action.solution &&
     action.solution.originalSolution &&
     action.solution.originalSolution.value
       ? Promise.resolve(
@@ -103,6 +114,15 @@ export function* problemInitRequestHandler(action) {
             : action.solution.originalSolution.value
         )
       : call([pathsService, pathsService.fetchSolutionFile], pathProblem, uid);
+
+    // Condition to keep existing and new one solutions jupyter inline solution
+    // format (changed to string via #435 issue)
+    if (
+      pathProblem.type === ACTIVITY_TYPES.jupyterInline.id &&
+      typeof solution === "string"
+    ) {
+      solution = JSON.parse(solution);
+    }
     yield put(
       problemSolutionRefreshSuccess(action.problemId, solution || false)
     );
@@ -330,6 +350,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
           : "Solution submitted"
       )
     );
+    yield put(push(`/paths/${data.pathProblem.path}`));
   } catch (err) {
     yield put(
       problemSolutionSubmitFail(

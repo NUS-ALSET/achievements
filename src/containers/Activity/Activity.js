@@ -24,7 +24,8 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
 import isEqual from "lodash/isEqual";
-import { notificationShow } from "../Root/actions";
+import { notificationShow, signInRequest } from "../Root/actions";
+import AuthRequireBanner from "../../components/banners/AuthRequireBanner";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
@@ -36,9 +37,10 @@ export class Activity extends React.PureComponent {
     onProblemChange: PropTypes.func,
     pathName: PropTypes.string,
     pathProblem: PropTypes.any,
-    solution: PropTypes.any,
     readOnly: PropTypes.bool,
-    showCommitBtnOnTop : PropTypes.bool
+    solution: PropTypes.any,
+    showCommitBtnOnTop: PropTypes.bool,
+    uid: PropTypes.string
   };
 
   static defaultProps = {
@@ -48,7 +50,7 @@ export class Activity extends React.PureComponent {
   state = {
     problemSolution: {},
     changed: false,
-    disabledCommitBtn : true
+    disabledCommitBtn: true
   };
 
   componentDidMount() {
@@ -67,12 +69,15 @@ export class Activity extends React.PureComponent {
     if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
       this.onProblemChange({});
     }
-    if(![ 'jupyter', 'jupyterInline' ].includes((nextProps.pathProblem || {}).type)){
+    if (
+      !["jupyter", "jupyterInline"].includes((nextProps.pathProblem || {}).type)
+    ) {
       this.setState({ disabledCommitBtn: false });
-    }else if ((nextProps.solution || {}).checked && 
-        !(nextProps.solution || {}).failed &&
-        (nextProps.solution || {}).json
-      ) {
+    } else if (
+      (nextProps.solution || {}).checked &&
+      !(nextProps.solution || {}).failed &&
+      (nextProps.solution || {}).json
+    ) {
       this.setState({ disabledCommitBtn: false });
     } else {
       this.setState({ disabledCommitBtn: true });
@@ -86,6 +91,8 @@ export class Activity extends React.PureComponent {
       )
     );
   }
+
+  onSignIn = () => this.props.dispatch(signInRequest());
 
   onProblemChange = problemSolution => {
     this.setState({ problemSolution, changed: true });
@@ -101,9 +108,6 @@ export class Activity extends React.PureComponent {
           this.props.match.params.problemId,
           this.state.problemSolution
         )
-      );
-      this.props.history.push(
-        `/paths/${this.props.match.params.pathId}`
       );
     } else {
       this.props.dispatch(notificationShow("Nothing changed"));
@@ -137,7 +141,8 @@ export class Activity extends React.PureComponent {
       pathProblem,
       solution,
       readOnly,
-      showCommitBtnOnTop
+      showCommitBtnOnTop,
+      uid
     } = this.props;
     if (!pathProblem) {
       return (
@@ -151,6 +156,7 @@ export class Activity extends React.PureComponent {
 
     return (
       <Fragment>
+        <AuthRequireBanner onSignIn={this.onSignIn} open={!uid} />
         {!embedded && (
           <Breadcrumbs
             paths={[
@@ -177,11 +183,12 @@ export class Activity extends React.PureComponent {
         ) : (
           <ActivityView
             dispatch={dispatch}
+            onCommit={this.onCommit}
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
             pathProblem={pathProblem}
-            solution={solution}
-            onCommit={this.onCommit}
+            readOnly={readOnly || !uid}
             showCommitBtnOnTop={showCommitBtnOnTop}
+            solution={solution}
             style={{
               paddingBottom: 20,
               textAlign: "center"
@@ -189,6 +196,7 @@ export class Activity extends React.PureComponent {
           />
         )}
         {!readOnly &&
+          uid &&
           !embedded && (
             <div
               style={{
@@ -227,6 +235,7 @@ const activityView = props => (
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
+  uid: state.firebase.auth.uid,
   pathName: state.firebase.data.pathName,
   pathProblem: ownProps.pathProblem || state.problem.pathProblem,
   solution: ownProps.solution || state.problem.solution,
@@ -237,24 +246,27 @@ export default compose(
   withRouter,
   firebaseConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;
-    return (
-      !firebaseAuth.isEmpty && [
-        `/problemSolutions/${ownProps.match.params.problemId}/${
-          firebaseAuth.uid
-        }`,
-        {
-          path: `/paths/${ownProps.match.params.pathId}/name`,
-          storeAs: "pathName"
-        },
-        {
-          path: `/paths/${ownProps.match.params.pathId}/isPublic`,
-          storeAs: "isPathPublic"
-        },
-        {
-          path: `/userAchievements/${firebaseAuth.uid}`,
-          storeAs: "myAchievements"
-        }
-      ]
+    return [
+      {
+        path: `/paths/${ownProps.match.params.pathId}/name`,
+        storeAs: "pathName"
+      },
+      {
+        path: `/paths/${ownProps.match.params.pathId}/isPublic`,
+        storeAs: "isPathPublic"
+      }
+    ].concat(
+      firebaseAuth.isEmpty
+        ? []
+        : [
+            `/problemSolutions/${ownProps.match.params.problemId}/${
+              firebaseAuth.uid
+            }`,
+            {
+              path: `/userAchievements/${firebaseAuth.uid}`,
+              storeAs: "myAchievements"
+            }
+          ]
     );
   }),
   connect(mapStateToProps)
