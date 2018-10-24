@@ -3,7 +3,10 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  */
 
-import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
+import {
+  courseAssistantFetchSuccess,
+  courseJoinedFetchSuccess
+} from "../containers/Courses/actions";
 import { externalProfileRefreshRequest } from "../containers/Account/actions";
 import {
   coursePasswordEnterFail,
@@ -111,14 +114,38 @@ export class CoursesService {
 
   /**
    * This method should be invoked at login. It add listener for
-   * `/studentJoinedCourses` and fetches received courses
+   * `/studentJoinedCourses` and `/courseAssistants` and fetches received courses
    * @returns {*}
    */
   watchJoinedCourses() {
     if (!this.getUser("uid")) {
       return Promise.resolve();
     }
-    return (
+    console.error("UID", this.getUser("uid"));
+    return Promise.resolve([
+      firebase
+        .database()
+        .ref("/courseAssistants")
+        .orderByChild(this.getUser("uid"))
+        .equalTo(true)
+        .on("value", snap => {
+          debugger;
+          return Promise.all(
+            Object.keys(snap.val() || {}).map(id =>
+              firebase
+                .database()
+                .ref(`/courses/${id}`)
+                .once("value")
+                .then(snap => ({ [id]: snap.val() }))
+            )
+          )
+            .then(courses =>
+              this.store.dispatch(
+                courseAssistantFetchSuccess(Object.assign({}, ...courses))
+              )
+            )
+            .catch(err => console.error(err));
+        }),
       firebase
         .database()
         .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
@@ -148,7 +175,7 @@ export class CoursesService {
             })
             .catch(err => console.error(err.message))
         )
-    );
+    ]);
   }
 
   validateNewCourse(courseData) {
@@ -477,9 +504,12 @@ export class CoursesService {
               });
           });
         }
-        let completed= true;
-        if(((assignment || {}).problemJSON || {}).type==='game' && value.result!=='WON'){
-          completed=false;
+        let completed = true;
+        if (
+          ((assignment || {}).problemJSON || {}).type === "game" &&
+          value.result !== "WON"
+        ) {
+          completed = false;
         }
         if (userId && assignment.path && assignment.problem) {
           firebase
