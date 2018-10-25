@@ -4,14 +4,22 @@
 
 import React from "react";
 import PropTypes from "prop-types";
+import { compose } from 'redux';
+import { withStyles } from '@material-ui/core/styles';
 
+const styles = {
+  root : {},
+  verticalMiddle: {
+    width: '100%', marginTop: '45vh', textAlign: 'center'
+  }
+};
 
-const Loading = () => {
-  return 'Loading...';
+const Loading = ({ className }) => {
+  return <div className={className}>Loading...</div>;
 }
 
-const Game404 = () => {
-  return 'Game not exist'
+const Game404 = ({ className }) => {
+  return <div className={className}>Game not exist</div>;
 }
 
 class GameTournamentActivity extends React.PureComponent {
@@ -63,25 +71,33 @@ class GameTournamentActivity extends React.PureComponent {
     }
   }
   render() {
-    const { problem, botsQuantity
+    const { problem, botsQuantity, classes
       // solution, readOnly, onCommit, taskId 
     } = this.props;
     if (!problem) {
       return '';
     }
+    const levelNumber={
+      "1" : 1,
+      "2" : 2,
+      "3" : 3,
+      "Easy" : 1,
+      "Medium" : 2,
+      "Hard" : 3
+    }
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
-      gameData = {{
-        playMode: 'custom code',
-        levelsToWin: 3,
-        gameTime: 10,
-        botsQuantities: 2,
-        gameType: 'gameTournament',
-        scoreToWin:  20,
-        tournamentScoreToWin:  3,
-        singleWindowGame: true
-      }}
+        gameData={{
+          gameType: 'gameTournament', // problem.type
+          tournamentScoreToWin:  3,
+          singleWindowGame: true,
+          playMode: problem.playMode,
+          levelsToWin: levelNumber[problem.levelsToWin],
+          scoreToWin: Number(problem.scoreToWin),
+          gameTime: problem.gameTime,
+          botsQuantities: problem.unitsPerSide,
+        }}
         tournament
         botsQuantity={botsQuantity}
         player1Data={{
@@ -94,9 +110,12 @@ class GameTournamentActivity extends React.PureComponent {
         scoreToWin={Number(problem.scoreToWin)}
         time={problem.gameTime}
         onCommit={this.handleSubmit}
+        className={classes.verticalMiddle}
       />
     );
   }
 }
 
-export default GameTournamentActivity;
+export default compose(
+  withStyles(styles)
+)(GameTournamentActivity);
