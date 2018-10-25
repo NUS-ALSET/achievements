@@ -121,61 +121,58 @@ export class CoursesService {
     if (!this.getUser("uid")) {
       return Promise.resolve();
     }
-    console.error("UID", this.getUser("uid"));
-    return Promise.resolve([
-      firebase
-        .database()
-        .ref("/courseAssistants")
-        .orderByChild(this.getUser("uid"))
-        .equalTo(true)
-        .on("value", snap => {
-          debugger;
-          return Promise.all(
-            Object.keys(snap.val() || {}).map(id =>
-              firebase
-                .database()
-                .ref(`/courses/${id}`)
-                .once("value")
-                .then(snap => ({ [id]: snap.val() }))
-            )
+    firebase
+      .database()
+      .ref("/courseAssistants")
+      .orderByChild(this.getUser("uid"))
+      .equalTo(true)
+      .on("value", snap =>
+        Promise.all(
+          Object.keys(snap.val() || {}).map(id =>
+            firebase
+              .database()
+              .ref(`/courses/${id}`)
+              .once("value")
+              .then(snap => ({ [id]: snap.val() }))
           )
-            .then(courses =>
-              this.store.dispatch(
-                courseAssistantFetchSuccess(Object.assign({}, ...courses))
-              )
-            )
-            .catch(err => console.error(err));
-        }),
-      firebase
-        .database()
-        .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
-
-        // Firebase `on('value')` doesn't return promise
-        .on("value", courses =>
-          // So, we catch errors here
-          Promise.all(
-            Object.keys(courses.val() || {}).map(courseId =>
-              firebase
-                .database()
-                .ref(`/courses/${courseId}`)
-                .once("value")
-                .then(course => ({
-                  ...course.val(),
-                  courseId
-                }))
-            )
-          )
-            .then(courses => {
-              const map = {};
-              courses.forEach(course => {
-                map[course.courseId] = course;
-                return true;
-              });
-              this.store.dispatch(courseJoinedFetchSuccess(map));
-            })
-            .catch(err => console.error(err.message))
         )
-    ]);
+          .then(courses =>
+            this.store.dispatch(
+              courseAssistantFetchSuccess(Object.assign({}, ...courses))
+            )
+          )
+          .catch(err => console.error(err))
+      );
+    firebase
+      .database()
+      .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
+
+      // Firebase `on('value')` doesn't return promise
+      .on("value", courses =>
+        // So, we catch errors here
+        Promise.all(
+          Object.keys(courses.val() || {}).map(courseId =>
+            firebase
+              .database()
+              .ref(`/courses/${courseId}`)
+              .once("value")
+              .then(course => ({
+                ...course.val(),
+                courseId
+              }))
+          )
+        )
+          .then(courses => {
+            const map = {};
+            courses.forEach(course => {
+              map[course.courseId] = course;
+              return true;
+            });
+            this.store.dispatch(courseJoinedFetchSuccess(map));
+          })
+          .catch(err => console.error(err.message))
+      );
+    return Promise.resolve();
   }
 
   validateNewCourse(courseData) {

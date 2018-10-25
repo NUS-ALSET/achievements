@@ -179,12 +179,10 @@ class Courses extends React.Component {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
-  assitantCourses: state.courses.assitantCourses,
+  assistantCourses: state.courses.assistantCourses,
   auth: state.firebase.auth,
   courses: Object.assign(
     {},
-    state.firebase.data.assitantCourses,
-    state.firebase.data.myCourses,
     state.firebase.data.publicCourses,
     state.courses.joinedCourses
   ),
