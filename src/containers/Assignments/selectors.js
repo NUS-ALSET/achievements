@@ -77,8 +77,8 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             solution
           };
           return true;
-        case ASSIGNMENTS_TYPES.CodeCombat.id:
         case ASSIGNMENTS_TYPES.CodeCombat_Number.id:
+        case ASSIGNMENTS_TYPES.CodeCombat.id:
           result[assignmentId] = {
             createdAt,
             published,
