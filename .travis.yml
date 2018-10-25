@@ -8,6 +8,8 @@ branches:
 
 before_install:
   - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
+  - cd src/components
+  - git clone https://github.com/NUS-ALSET/games.git
 
 install:
   - npm install

@@ -44,14 +44,14 @@ class GameTournamentActivity extends React.PureComponent {
     const { problem = {} } = props;
     switch (problem.game) {
       case 'passenger-picker': {
-        import('../games/passenger-picker/src/component')
+        import('../games/src/passengerPickup/src/component')
           .then(({ Game }) => {
             this.setState({ specificGame: Game })
           })
         break;
       }
       case 'squad': {
-        import('../games/squad')
+        import('../games/src/squadGame/src/')
           .then(({ Game }) => {
             this.setState({ specificGame: Game })
           })
@@ -72,6 +72,16 @@ class GameTournamentActivity extends React.PureComponent {
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
+      gameData = {{
+        playMode: 'custom code',
+        levelsToWin: 3,
+        gameTime: 10,
+        botsQuantities: 2,
+        gameType: 'gameTournament',
+        scoreToWin:  20,
+        tournamentScoreToWin:  3,
+        singleWindowGame: true
+      }}
         tournament
         botsQuantity={botsQuantity}
         player1Data={{

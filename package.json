@@ -77,6 +77,7 @@
     "targaryen": "^3.1.0"
   },
   "scripts": {
+    "preinstall": "cd src/components/ && git clone https://github.com/NUS-ALSET/games.git",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "CI=true react-scripts test --env=jsdom",
