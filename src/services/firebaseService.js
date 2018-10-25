@@ -86,7 +86,7 @@ class FirebaseService {
         .database()
         .ref(`/${this.collectionName}/responses/${taskKey}`)
         .on("value", response => {
-          if (response.val() === null) {
+          if ((typeof response.val())!=='object' || Object.keys(response.val() || {}).length===0) {
             return;
           }
           this.clearTimer();
