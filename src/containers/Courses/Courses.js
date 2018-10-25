@@ -29,10 +29,12 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 
 const COURSE_TAB_JOINED = 0;
 const COURSE_TAB_OWNED = 1;
-const COURSE_TAB_PUBLIC = 2;
+const COURSE_TAB_ASSISTANT = 2;
+const COURSE_TAB_PUBLIC = 3;
 
 class Courses extends React.Component {
   static propTypes = {
+    assistantCourses: PropTypes.any,
     auth: PropTypes.object,
     dispatch: PropTypes.func,
     dialog: PropTypes.any,
@@ -74,6 +76,7 @@ class Courses extends React.Component {
   };
   render() {
     const {
+      assistantCourses,
       auth,
       ownerId,
       dispatch,
@@ -97,6 +100,9 @@ class Courses extends React.Component {
         break;
       case COURSE_TAB_OWNED:
         courses = myCourses;
+        break;
+      case COURSE_TAB_ASSISTANT:
+        courses = assistantCourses;
         break;
       case COURSE_TAB_PUBLIC:
         courses = publicCourses;
@@ -145,6 +151,7 @@ class Courses extends React.Component {
         >
           <Tab label="Enrolled In" />
           <Tab label="Instructor For" />
+          <Tab label="Assistant To" />
           <Tab label="Public courses" />
         </Tabs>
         <CoursesTable
@@ -172,10 +179,10 @@ class Courses extends React.Component {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
+  assistantCourses: state.courses.assistantCourses,
   auth: state.firebase.auth,
   courses: Object.assign(
     {},
-    state.firebase.data.myCourses,
     state.firebase.data.publicCourses,
     state.courses.joinedCourses
   ),

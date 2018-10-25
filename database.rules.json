@@ -145,6 +145,7 @@
       }
     },
     "courseAssistants": {
+      ".read": "auth.uid != null",
       "$courseKey": {
         ".read": "auth != null",
         ".write": "auth != null && auth.uid == root.child('courses/' + $courseKey + '/owner').val()"

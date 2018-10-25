@@ -78,3 +78,14 @@ export const courseJoinedFetchSuccess = courses => ({
   type: COURSE_JOINED_FETCH_SUCCESS,
   courses
 });
+
+export const COURSE_ASSISTANT_FETCH_REQUEST = "COURSE_ASSISTANT_FETCH_REQUEST";
+export const courseAssistantFetchRequest = () => ({
+  type: COURSE_ASSISTANT_FETCH_REQUEST
+});
+
+export const COURSE_ASSISTANT_FETCH_SUCCESS = "COURSE_ASSISTANT_FETCH_SUCCESS";
+export const courseAssistantFetchSuccess = courses => ({
+  type: COURSE_ASSISTANT_FETCH_SUCCESS,
+  courses
+});

@@ -1,4 +1,5 @@
 import {
+  COURSE_ASSISTANT_FETCH_SUCCESS,
   COURSE_HIDE_DIALOG,
   COURSE_JOINED_FETCH_SUCCESS,
   COURSE_NEW_DIALOG_CHANGE,
@@ -9,13 +10,15 @@ import {
 
 export const courses = (
   state = {
-    dialog: false,
-    removingCourse: false,
+    assistantCourses: {},
     currentTab: 0,
+    dialog: false,
+    joinedCourses: {},
     newCourseValues: {
       name: "",
       password: ""
-    }
+    },
+    removingCourse: false
   },
   action
 ) => {
@@ -57,6 +60,11 @@ export const courses = (
           id: action.id,
           name: action.name
         }
+      };
+    case COURSE_ASSISTANT_FETCH_SUCCESS:
+      return {
+        ...state,
+        assistantCourses: action.courses
       };
     case COURSE_JOINED_FETCH_SUCCESS:
       return {
