@@ -37,7 +37,7 @@ const styles = () => ({
   }
 });
 
-class AssignmentsEditorTable extends React.Component {
+class AssignmentsEditorTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     match: PropTypes.object,

@@ -136,6 +136,7 @@ class AppFrame extends React.Component {
 
     for (const field of fields) {
       if (this.props[field] !== newProps[field]) {
+        console.error("AppFrame RERENDERED");
         return true;
       }
     }

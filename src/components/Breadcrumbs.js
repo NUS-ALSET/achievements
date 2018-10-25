@@ -33,7 +33,7 @@ const styles = theme => ({
   }
 });
 
-class Breadcrumbs extends React.PureComponent {
+class Breadcrumbs extends React.Component {
   static propTypes = {
     action: PropTypes.oneOfType([
       PropTypes.arrayOf(breadcrumbAction),
@@ -43,12 +43,24 @@ class Breadcrumbs extends React.PureComponent {
     paths: PropTypes.arrayOf(breadcrumbPath).isRequired
   };
 
+  shouldComponentUpdate(newProps) {
+    const { action, paths } = this.props;
+
+    // noinspection RedundantIfStatementJS
+    if ((!action && newProps.action) || (!paths && newProps.paths)) {
+      return true;
+    }
+    return false;
+  }
+
   render() {
     const { action, classes, paths } = this.props;
 
+    console.error("WE ARE RENDERERD!!!!");
+
     return (
       <Toolbar>
-        <Bookmarks style={{fill: "red"}}/>
+        <Bookmarks style={{ fill: "red" }} />
         {paths.map(
           (pathInfo, index) =>
             index === paths.length - 1 ? (
@@ -57,11 +69,7 @@ class Breadcrumbs extends React.PureComponent {
               </Typography>
             ) : (
               <Fragment key={index}>
-                <Button
-                  size="small"
-                  component={Link}
-                  to={pathInfo.link}
-                >
+                <Button size="small" component={Link} to={pathInfo.link}>
                   <Typography className={classes.breadcrumbText}>
                     {pathInfo.label}
                   </Typography>
