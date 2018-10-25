@@ -893,6 +893,7 @@ export class CoursesService {
                   .then(response => {
                     const userInfo = response;
 
+                    /*
                     firebase
                       .ref(`/userAchievements/${id}`)
                       .on("value", achievements =>
@@ -901,6 +902,7 @@ export class CoursesService {
                           achievements: achievements.val()
                         })
                       );
+                      */
 
                     return Object.assign(
                       {
