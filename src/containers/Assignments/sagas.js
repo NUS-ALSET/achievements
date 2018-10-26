@@ -36,7 +36,7 @@ import {
   COURSE_ASSIGNMENTS_CLOSE,
   courseMembersFetchFail,
   courseMembersFetchSuccess,
-  courseMemberAchievementsRefetch,
+  // courseMemberAchievementsRefetch,
   COURSE_REMOVE_STUDENT_REQUEST,
   courseRemoveStudentSuccess,
   courseRemoveStudentFail,
@@ -120,9 +120,12 @@ export function* courseAssignmentsOpenHandler(action) {
   const channel = yield call(createCourseMembersChannel, action.courseId);
 
   while (true) {
-    const { courseMembers, err, stop, achievements, studentId } = yield take(
-      channel
-    );
+    const {
+      courseMembers,
+      err,
+      stop
+      /* , achievements, studentId*/
+    } = yield take(channel);
 
     if (stop) {
       channel.close();
@@ -135,6 +138,7 @@ export function* courseAssignmentsOpenHandler(action) {
     if (courseMembers) {
       yield put(courseMembersFetchSuccess(action.courseId, courseMembers));
     }
+    /*
     if (achievements && studentId) {
       yield put(
         courseMemberAchievementsRefetch(
@@ -144,6 +148,7 @@ export function* courseAssignmentsOpenHandler(action) {
         )
       );
     }
+    */
   }
 }
 

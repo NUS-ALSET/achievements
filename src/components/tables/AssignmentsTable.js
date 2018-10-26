@@ -275,11 +275,7 @@ class AssignmentsTable extends React.PureComponent {
         return (
           <span>
             {/^http[s]?:\/\//.test(result) ? (
-              <a
-                href={result}
-                rel="noopener noreferrer"
-                target="_blank"
-              >
+              <a href={result} rel="noopener noreferrer" target="_blank">
                 COMPLETED
               </a>
             ) : (
