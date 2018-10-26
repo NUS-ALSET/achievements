@@ -113,6 +113,9 @@
       ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true",
       "defaultRecommendations": {
         ".read": true
+      },
+      "version": {
+        ".read": true
       }
     },
     "courseMembers": {
