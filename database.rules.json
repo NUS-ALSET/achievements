@@ -113,6 +113,9 @@
       ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true",
       "defaultRecommendations": {
         ".read": true
+      },
+      "version": {
+        ".read": true
       }
     },
     "courseMembers": {
@@ -145,6 +148,7 @@
       }
     },
     "courseAssistants": {
+      ".read": "auth.uid != null",
       "$courseKey": {
         ".read": "auth != null",
         ".write": "auth != null && auth.uid == root.child('courses/' + $courseKey + '/owner').val()"

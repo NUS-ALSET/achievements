@@ -301,9 +301,10 @@ class Assignments extends React.Component {
           open={ui.dialog && ui.dialog.type === "Profile"}
           uid={currentUser.id}
         />
-        {currentUser.isOwner && (
+        {currentUser.isAssistant && (
           <ControlAssistantsDialog
             assistants={(ui.dialog && ui.dialog.assistants) || []}
+            isOwner={currentUser.isOwner}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
             onAddAssistant={this.onAddAssistant}
             onAssistantKeyChange={this.onAssistantKeyChange}

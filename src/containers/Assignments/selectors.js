@@ -54,7 +54,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       if (options.onlyVisible && !assignment.solutionVisible) {
         solution = "Completed";
       }
-      
+
       switch (assignment.questionType) {
         case ASSIGNMENTS_TYPES.Text.id:
           result[assignmentId] = {
@@ -95,7 +95,10 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
             published,
             validated: userAchievements.id === solution,
             originalSolution: result[assignmentId],
-            value: (result[assignmentId] || {}).status || ((result[assignmentId] || {}).value || {}).status || "COMPLETED",
+            value:
+              (result[assignmentId] || {}).status ||
+              ((result[assignmentId] || {}).value || {}).status ||
+              "COMPLETED",
             solution
           };
           return true;

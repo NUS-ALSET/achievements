@@ -24,7 +24,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
 import isEqual from "lodash/isEqual";
-import { notificationShow, signInRequest } from "../Root/actions";
+import { notificationShow } from "../Root/actions";
 import AuthRequireBanner from "../../components/banners/AuthRequireBanner";
 
 export class Activity extends React.PureComponent {
@@ -92,8 +92,6 @@ export class Activity extends React.PureComponent {
     );
   }
 
-  onSignIn = () => this.props.dispatch(signInRequest());
-
   onProblemChange = problemSolution => {
     this.setState({ problemSolution, changed: true });
     return (
@@ -156,7 +154,7 @@ export class Activity extends React.PureComponent {
 
     return (
       <Fragment>
-        <AuthRequireBanner onSignIn={this.onSignIn} open={!uid} />
+        <AuthRequireBanner open={!uid} />
         {!embedded && (
           <Breadcrumbs
             paths={[
