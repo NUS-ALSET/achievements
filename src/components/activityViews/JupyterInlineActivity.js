@@ -21,33 +21,31 @@ class JupyterInlineActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func,
+    onCommit: PropTypes.func,
     problem: PropTypes.object,
     solution: PropTypes.object,
-    readOnly : PropTypes.bool,
-    showCommitBtnOnTop : PropTypes.bool
+    readOnly: PropTypes.bool,
+    showCommitBtnOnTop: PropTypes.bool
   };
 
   state = {
     solutionJSON: false,
     showCommitBtn: false,
-    statusText : null
+    statusText: null
   };
-  componentWillReceiveProps(nextProps) {
-    if(
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (
       (nextProps.solution || {}).checked &&
-      (
-        nextProps.showCommitBtnOnTop ||
-        !(nextProps.solution || {}).failed
-        )
+      (nextProps.showCommitBtnOnTop || !(nextProps.solution || {}).failed)
     ) {
       this.setState({ showCommitBtn: true });
     } else {
       this.setState({ showCommitBtn: false });
     }
-    if(nextProps.solution.statusText){
-      this.setState({ statusText : nextProps.solution.statusText });
-    }else{
-      this.setState({ statusText : null })
+    if (nextProps.solution.statusText) {
+      this.setState({ statusText: nextProps.solution.statusText });
+    } else {
+      this.setState({ statusText: null });
     }
   }
   onSolutionRefreshClick = value => {
@@ -81,33 +79,21 @@ class JupyterInlineActivity extends React.PureComponent {
     }
     if (solution.failed) {
       return (
-        <Typography
-          variant="title"
-          gutterBottom
-          color="error"
-        >
+        <Typography color="error" gutterBottom variant="title">
           (There is something wrong with your solution...)
         </Typography>
       );
     }
     if (solution.loading) {
       return (
-        <Typography
-          variant="display2"
-          gutterBottom
-          color="textSecondary"
-        >
+        <Typography color="textSecondary" gutterBottom variant="display2">
           (Checking)
         </Typography>
       );
     }
     if (solution.checked) {
       return (
-        <Typography
-          variant="display2"
-          gutterBottom
-          color="primary"
-        >
+        <Typography color="primary" gutterBottom variant="display2">
           (Passed)
         </Typography>
       );
@@ -135,6 +121,7 @@ class JupyterInlineActivity extends React.PureComponent {
 
   render() {
     const {
+      onCommit,
       /** @type {JupyterPathProblem} */
       problem,
       solution,
@@ -143,38 +130,42 @@ class JupyterInlineActivity extends React.PureComponent {
 
     return (
       <Fragment>
-        {
-          this.state.statusText &&
-          <div style={{ textAlign : 'left',fontWeight : 'bold',paddingLeft : '10px',color : '#d2691e' }}>
-            <b>Execution Status: </b> {this.state.statusText }
+        {this.state.statusText && (
+          <div
+            style={{
+              textAlign: "left",
+              fontWeight: "bold",
+              paddingLeft: "10px",
+              color: "#d2691e"
+            }}
+          >
+            <b>Execution Status: </b> {this.state.statusText}
           </div>
-        }
-        {this.state.showCommitBtn &&
-          <div style={{ height: '20px' }}>
+        )}
+        {this.state.showCommitBtn && (
+          <div style={{ height: "20px" }}>
             <Button
               color="primary"
+              onClick={onCommit}
+              style={{ float: "right", marginBottom: "10px" }}
               variant="raised"
-              style={{ float: 'right', marginBottom: '10px' }}
-              onClick={() => this.props.onCommit()}
             >
               Commit Solution
             </Button>
           </div>
-        }
-        {(solution && (solution.json || solution.loading))
-          ? (
-            <JupyterNotebook
-              readOnly={readOnly}
-              solution={solution}
-              title={
-                <Fragment>
-                  Solution Check
-                  {this.getCalculatedSolution(solution)}
-                </Fragment>
-              }
-            />
-          )
-        : (
+        )}
+        {solution && (solution.json || solution.loading) ? (
+          <JupyterNotebook
+            readOnly={readOnly}
+            solution={solution}
+            title={
+              <Fragment>
+                Solution Check
+                {this.getCalculatedSolution(solution)}
+              </Fragment>
+            }
+          />
+        ) : (
           <JupyterNotebook
             readOnly={readOnly}
             solution={{ json: problem.problemJSON }}
@@ -184,19 +175,22 @@ class JupyterInlineActivity extends React.PureComponent {
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={this.getSolutionCode(solution, problem)}
+          onCommit={onCommit}
           persistent={true}
           readOnly={readOnly}
           richEditor={true}
           solution={false}
-          title={readOnly
-            ? "Submitted Code"
-            : (
-            <Fragment>
-              <Typography color="textSecondary">
-                Please first read the Path Activity above. Click the RUN button on the right to test your solution.
-              </Typography>
-              Edit Your Solution Here
-            </Fragment>
+          title={
+            readOnly ? (
+              "Submitted Code"
+            ) : (
+              <Fragment>
+                <Typography color="textSecondary">
+                  Please first read the Path Activity above. Click the RUN
+                  button on the right to test your solution.
+                </Typography>
+                Edit Your Solution Here
+              </Fragment>
             )
           }
         />

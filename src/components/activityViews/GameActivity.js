@@ -82,12 +82,20 @@ class GameActivity extends React.PureComponent {
     if (!problem) {
       return '';
     }
+    const levelNumber={
+      "1" : 1,
+      "2" : 2,
+      "3" : 3,
+      "Easy" : 1,
+      "Medium" : 2,
+      "Hard" : 3
+    }
     const SpecificGame = this.state.specificGame || Loading;
     return (
       <SpecificGame
         gameData={{
           playMode: problem.playMode,
-          levelsToWin: Number(problem.levelsToWin),
+          levelsToWin: levelNumber[problem.levelsToWin],
           scoreToWin: Number(problem.scoreToWin),
           gameTime: problem.gameTime,
           botsQuantities: problem.unitsPerSide,

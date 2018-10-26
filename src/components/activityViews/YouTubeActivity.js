@@ -136,7 +136,7 @@ class YouTubeActivity extends React.PureComponent {
           problem.customText && (
             <ActivityQuestion
               label={problem.customText}
-              question="customQuestion"
+              question="questionCustom"
               setAnswer={this.setAnswer}
               solution={solution}
             />

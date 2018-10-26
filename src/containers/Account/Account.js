@@ -321,7 +321,6 @@ class Account extends React.PureComponent {
                       (userAchievements || {})[externalProfileKey]
                     }
                   />
-
                   <AddProfileDialog
                     externalProfile={externalProfiles[externalProfileKey]}
                     inProgress={this.props.externalProfileInUpdate}

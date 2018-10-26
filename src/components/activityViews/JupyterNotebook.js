@@ -8,6 +8,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ReactLoadable from "react-loadable";
+import { HotKeys } from "react-hotkeys";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -40,18 +41,24 @@ class JupyterNotebook extends React.PureComponent {
   static propTypes = {
     action: PropTypes.func,
     defaultValue: PropTypes.string,
+    onCommit: PropTypes.func,
     persistent: PropTypes.bool,
     richEditor: PropTypes.bool,
     solution: PropTypes.any,
     title: PropTypes.any.isRequired,
     url: PropTypes.string,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
   };
 
   state = {
     collapsed: false,
     solution: ""
   };
+
+  defaultKeyMap = {
+    submit: ["ctrl+enter", "shift+enter"]
+  };
+  defaultHandlers = { submit: this.props.onCommit };
 
   onChange = e =>
     this.setState({ solution: (e && e.target && e.target.value) || e });
@@ -62,17 +69,71 @@ class JupyterNotebook extends React.PureComponent {
     });
   };
 
+  getEditor = () => {
+    const { action, defaultValue, onCommit, readOnly, richEditor } = this.props;
+    const editor = richEditor ? (
+      <AceEditor
+        editorProps={{ $blockScrolling: true }}
+        maxLines={20}
+        minLines={10}
+        mode="python"
+        onChange={this.onChange}
+        onLoad={editor => editor.focus()}
+        readOnly={readOnly}
+        style={{
+          width: "100%"
+        }}
+        theme="github"
+        value={this.state.solution || defaultValue || ""}
+      />
+    ) : (
+      <TextField
+        defaultValue={this.state.solution || defaultValue || ""}
+        disabled={readOnly}
+        fullWidth
+        InputLabelProps={{
+          style: {
+            top: 24,
+            left: 24
+          }
+        }}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              {APP_SETTING.isSuggesting ? (
+                <IconButton onClick={() => action(this.state.solution)}>
+                  <RefreshIcon />
+                </IconButton>
+              ) : (
+                <Button
+                  color="primary"
+                  onClick={() => action(this.state.solution)}
+                  style={{
+                    marginBottom: 4
+                  }}
+                >
+                  Run
+                </Button>
+              )}
+            </InputAdornment>
+          )
+        }}
+        label="Enter the url to your public solution on Colab"
+        onChange={this.onChange}
+        style={{ padding: 24, position: "relative" }}
+      />
+    );
+    return onCommit ? (
+      <HotKeys handlers={this.defaultHandlers} keyMap={this.defaultKeyMap}>
+        {editor}
+      </HotKeys>
+    ) : (
+      editor
+    );
+  };
+
   render() {
-    const {
-      action,
-      defaultValue,
-      persistent,
-      richEditor,
-      solution,
-      title,
-      url,
-      readOnly
-    } = this.props;
+    const { action, persistent, richEditor, solution, title, url } = this.props;
     return (
       <Paper style={{ margin: "24px 2px" }}>
         <Typography
@@ -100,7 +161,7 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
           {persistent ? (
-            (APP_SETTING.isSuggesting ? (
+            APP_SETTING.isSuggesting ? (
               <IconButton
                 onClick={() => action(this.state.solution)}
                 style={{
@@ -113,12 +174,8 @@ class JupyterNotebook extends React.PureComponent {
             ) : (
               <Button
                 color="primary"
+                disabled={!(this.state.solution && action && richEditor)}
                 onClick={() => action(this.state.solution)}
-                disabled={!(
-                  this.state.solution &&
-                  action &&
-                  richEditor
-                )}
                 style={{
                   position: "absolute",
                   top: 4,
@@ -127,7 +184,7 @@ class JupyterNotebook extends React.PureComponent {
               >
                 Run
               </Button>
-            ))
+            )
           ) : (
             <IconButton
               onClick={this.onSwitchCollapse}
@@ -142,56 +199,9 @@ class JupyterNotebook extends React.PureComponent {
         </Typography>
         <br />
         {solution !== null &&
+          // FIXIT: cleanup this >_<
           action &&
-          (richEditor ? (
-            <AceEditor
-              editorProps={{ $blockScrolling: true }}
-              maxLines={20}
-              minLines={10}
-              mode="python"
-              onChange={this.onChange}
-              onLoad={editor => editor.focus()}
-              readOnly={readOnly}
-              theme="github"
-              value={this.state.solution || defaultValue || ""}
-            />
-          ) : (
-            <TextField
-              defaultValue={this.state.solution || defaultValue || ""}
-              disabled={readOnly}
-              fullWidth
-              InputLabelProps={{
-                style: {
-                  top: 24,
-                  left: 24
-                }
-              }}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {APP_SETTING.isSuggesting ? (
-                      <IconButton onClick={() => action(this.state.solution)}>
-                        <RefreshIcon />
-                      </IconButton>
-                    ) : (
-                      <Button
-                        color="primary"
-                        onClick={() => action(this.state.solution)}
-                        style={{
-                          marginBottom: 4
-                        }}
-                      >
-                        Run
-                      </Button>
-                    )}
-                  </InputAdornment>
-                )
-              }}
-              label="Enter the url to your public solution on Colab"
-              onChange={this.onChange}
-              style={{ padding: 24, position: "relative" }}
-            />
-          ))}
+          this.getEditor()}
         {solution &&
           solution.json && (
             <Collapse collapsedHeight="10px" in={!this.state.collapsed}>

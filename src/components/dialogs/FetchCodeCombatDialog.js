@@ -1,9 +1,10 @@
 /**
  * @file Copied from AddProfileDialog container module
  */
+/* eslint-disable react/no-unescaped-entities */
 
 import PropTypes from "prop-types";
-import React, {Fragment} from "react";
+import React, { Fragment } from "react";
 
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Button from "@material-ui/core/Button";
@@ -47,58 +48,53 @@ class FetchCodeCombatDialog extends React.PureComponent {
 
     return (
       <Dialog onClose={onClose} open={this.props.open}>
-        {login
-          ? (
-            <Fragment>
-              <DialogTitle>Fetch {externalProfile.name} Profile</DialogTitle>
-              <DialogContent>
-                <Typography variant="body2" gutterBottom>
-                  1. Confirm Your CodeCombat Profile
-                </Typography>
-                <Typography variant="subheading" gutterBottom>
-                  <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  2. Make sure you are logged in to CodeCombat
-                </Typography>
-                <img
-                  src={CodeCombatLogin}
-                  alt="CodeCombatLogin"
-                  style={{maxHeight: 110}}
-                  align="center"
-                />
-                <Typography variant="body2" gutterBottom>
-                  3. Click Fetch
-                </Typography>
-              </DialogContent>
-            </Fragment>
-          )
-          :(
-            <Fragment>
-              <DialogTitle>{externalProfile.name} Profile Not Set Up</DialogTitle>
-              <DialogContent>
-                <Typography variant="body2" gutterBottom>
-                  Click "SET UP PROFILE" to add your CodeCombat profile
-                </Typography>
-                <Typography variant="caption" gutterBottom>
-                  Set up the profile at our Profile page
-                </Typography>
-              </DialogContent>
-            </Fragment>
-          )
-        }
+        {login ? (
+          <Fragment>
+            <DialogTitle>Fetch {externalProfile.name} Profile</DialogTitle>
+            <DialogContent>
+              <Typography gutterBottom variant="body2">
+                1. Confirm Your CodeCombat Profile
+              </Typography>
+              <Typography gutterBottom variant="subheading">
+                <a href={url} rel="noopener noreferrer" target="_blank">
+                  {url}
+                </a>
+              </Typography>
+              <Typography gutterBottom variant="body2">
+                2. Make sure you are logged in to CodeCombat
+              </Typography>
+              <img
+                align="center"
+                alt="CodeCombatLogin"
+                src={CodeCombatLogin}
+                style={{ maxHeight: 110 }}
+              />
+              <Typography gutterBottom variant="body2">
+                3. Click Fetch
+              </Typography>
+            </DialogContent>
+          </Fragment>
+        ) : (
+          <Fragment>
+            <DialogTitle>{externalProfile.name} Profile Not Set Up</DialogTitle>
+            <DialogContent>
+              <Typography gutterBottom variant="body2">
+                Click "SET UP PROFILE" to add your CodeCombat profile
+              </Typography>
+              <Typography gutterBottom variant="caption">
+                Set up the profile at our Profile page
+              </Typography>
+            </DialogContent>
+          </Fragment>
+        )}
         <DialogActions>
           <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            onClick={this.onGotoLink}
-            variant="outlined"
-            color="primary"
-          >
+          <Button color="primary" onClick={this.onGotoLink} variant="outlined">
             Set Up Profile
           </Button>
-          {login &&
+          {login && (
             <Button
               color="primary"
               disabled={inProgress}
@@ -117,7 +113,7 @@ class FetchCodeCombatDialog extends React.PureComponent {
                 />
               )}
             </Button>
-          }
+          )}
         </DialogActions>
       </Dialog>
     );

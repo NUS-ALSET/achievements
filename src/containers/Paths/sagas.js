@@ -18,16 +18,24 @@ import {
 } from "../Path/actions";
 
 export function* loginHandler(action) {
+  const authorized = yield select(state => state.paths.gapiAuthorized);
+
+  if (authorized) {
+    return;
+  }
+
   // Auth GAPI to download files from google drive
   yield call([pathsService, pathsService.auth]);
   yield put(pathGAPIAuthorized(true));
 
-  const joinedPaths = yield call(
-    [pathsService, pathsService.fetchJoinedPaths],
-    action.auth.uid
-  );
+  if (action.auth && action.auth.uid) {
+    const joinedPaths = yield call(
+      [pathsService, pathsService.fetchJoinedPaths],
+      action.auth.uid
+    );
 
-  yield put(pathsJoinedFetchSuccess(joinedPaths));
+    yield put(pathsJoinedFetchSuccess(joinedPaths));
+  }
 }
 
 export function* pathsOpenHandler() {
@@ -84,6 +92,9 @@ export function* pathActivityChangeRequestHandler(action) {
 export default [
   function* watchLogin() {
     yield takeLatest("@@reactReduxFirebase/LOGIN", loginHandler);
+  },
+  function* watchLoad() {
+    yield takeLatest("@@reactReduxFirebase/AUTH_EMPTY_CHANGE", loginHandler);
   },
   function* watchPathsOpen() {
     yield takeLatest(PATHS_OPEN, pathsOpenHandler);

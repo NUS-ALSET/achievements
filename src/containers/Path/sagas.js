@@ -1,4 +1,4 @@
-import { call, put, select, take, takeLatest } from "redux-saga/effects";
+import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
@@ -22,9 +22,14 @@ import {
   pathToggleJoinStatusRequest,
   pathToggleJoinStatusSuccess,
   fetchGithubFilesLoading,
-  fetchGithubFilesError
+  fetchGithubFilesError,
+  PATH_ACTIVITY_CODECOMBAT_OPEN,
+  pathActivityCodeCombatDialogShow,
+  pathProfileDialogShow,
+  PATH_CLOSE_DIALOG,
+  pathCloseDialog
 } from "./actions";
-import { pathsService } from "../../services/paths";
+import { ACTIVITY_TYPES, pathsService } from "../../services/paths";
 import {
   PATH_ACTIVITY_DELETE_REQUEST,
   PATH_ACTIVITY_MOVE_REQUEST,
@@ -36,6 +41,16 @@ import {
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
 import { codeCombatProfileSelector, pathActivitiesSelector } from "./selectors";
+import {
+  EXTERNAL_PROFILE_REFRESH_FAIL,
+  EXTERNAL_PROFILE_REFRESH_SUCCESS,
+  externalProfileRefreshRequest
+} from "../Account/actions";
+import {
+  problemSolutionSubmitFail,
+  problemSolutionSubmitSuccess
+} from "../Activity/actions";
+import { accountService } from "../../services/account";
 
 export function* pathActivityOpenHandler(action) {
   const data = yield select(state => ({
@@ -225,6 +240,88 @@ export function* pathRemoveCollaboratorRequestHandler(action) {
   }
 }
 
+export function* pathActivityCodeCombatOpenHandler(action) {
+  try {
+    const data = yield select(state => ({
+      uid: state.firebase.auth.uid,
+      activity: state.firebase.data.activities[action.activityId],
+      achievements: state.firebase.data.userAchievements
+    }));
+
+    if (!action.codeCombatProfile) {
+      yield put(pathProfileDialogShow());
+    } else {
+      yield put(
+        externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
+      );
+    }
+    const result = yield race({
+      skip: take(PATH_CLOSE_DIALOG),
+      success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
+      fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
+    });
+    if (result.success) {
+      // FIXIT: cleanup this
+      if (data.activity.type === ACTIVITY_TYPES.profile.id) {
+        yield call(
+          [pathsService, pathsService.submitSolution],
+          data.uid,
+          {
+            ...data.activity,
+            path: action.pathId,
+            problemId: action.activityId
+          },
+          "Completed"
+        );
+        yield put(
+          problemSolutionSubmitSuccess(
+            action.pathId,
+            action.activityId,
+            "Completed"
+          )
+        );
+        yield put(pathCloseDialog());
+        return;
+      }
+      const levelsData = yield call(accountService.fetchAchievements, data.uid);
+      if (levelsData && levelsData.achievements[data.activity.level]) {
+        yield call(
+          [pathsService, pathsService.submitSolution],
+          data.uid,
+          {
+            ...data.activity,
+            path: action.pathId,
+            problemId: action.activityId
+          },
+          "Completed"
+        );
+        yield put(
+          problemSolutionSubmitSuccess(
+            action.pathId,
+            action.activityId,
+            "Completed"
+          )
+        );
+        yield put(pathCloseDialog());
+      } else {
+        yield put(
+          pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
+        );
+      }
+    }
+  } catch (err) {
+    yield put(notificationShow(err.message));
+    yield put(
+      problemSolutionSubmitFail(
+        action.pathId,
+        action.activityId,
+        "Completed",
+        err.message
+      )
+    );
+  }
+}
+
 export function* pathRefreshSolutionsRequestHandler(action) {
   try {
     const data = yield select(state => ({
@@ -313,6 +410,12 @@ export default [
     yield takeLatest(
       PATH_REMOVE_COLLABORATOR_REQUEST,
       pathRemoveCollaboratorRequestHandler
+    );
+  },
+  function* watchPathActivityCodeCombatOpen() {
+    yield takeLatest(
+      PATH_ACTIVITY_CODECOMBAT_OPEN,
+      pathActivityCodeCombatOpenHandler
     );
   },
   function* watchPathRefreshSolutionsRequest() {

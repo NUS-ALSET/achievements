@@ -83,7 +83,7 @@ const GameActivity = ({activity, onFieldChange}) => (
           {level: 2, label: "Medium"},
           {level: 3, label: "Hard"}
          ].map(key => (
-          <MenuItem key={key.level} value={key.label}>
+          <MenuItem key={key.level} value={key.level}>
             {key.label}
           </MenuItem>
         ))}

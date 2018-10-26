@@ -3,12 +3,14 @@ import {
   NOTIFICATION_HIDE,
   NOTIFICATION_SHOW,
   SHOW_ACCEPT_EULA_DIALOG,
-  SIGN_OUT_SUCCESS
+  SIGN_OUT_SUCCESS,
+  VERSION_CHANGE
 } from "./actions";
 
 export const root = (
   state = {
     requireAcceptEULA: false,
+    needRefresh: false,
     notification: {
       show: false,
       message: ""
@@ -31,6 +33,11 @@ export const root = (
       return {
         ...state,
         requireAcceptEULA: false
+      };
+    case VERSION_CHANGE:
+      return {
+        ...state,
+        needRefresh: action.needRefresh
       };
     case NOTIFICATION_SHOW:
       return {

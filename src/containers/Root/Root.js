@@ -12,19 +12,21 @@ import NotificationArea from "../../components/NotificationArea";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import sagas from "./sagas";
+import RefreshPageDialog from "../../components/dialogs/RefreshPageDialog";
 
 class Root extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func,
     auth: PropTypes.object,
-    firebase: PropTypes.object,
-    users: PropTypes.object,
-    requireAcceptEULA: PropTypes.bool.isRequired,
-    notification: PropTypes.object.isRequired,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
-    ])
+    ]),
+    dispatch: PropTypes.func,
+    firebase: PropTypes.object,
+    notification: PropTypes.object.isRequired,
+    requireAcceptEULA: PropTypes.bool.isRequired,
+    requireRefresh: PropTypes.bool,
+    users: PropTypes.object
   };
 
   handleNotificationClose = () => {
@@ -40,7 +42,12 @@ class Root extends React.PureComponent {
   };
 
   render() {
-    const { requireAcceptEULA, notification, children } = this.props;
+    const {
+      children,
+      notification,
+      requireAcceptEULA,
+      requireRefresh
+    } = this.props;
 
     return (
       <Fragment>
@@ -49,6 +56,7 @@ class Root extends React.PureComponent {
           onSignOut={this.onSignOut}
           open={requireAcceptEULA}
         />
+        <RefreshPageDialog open={requireRefresh} />
         <NotificationArea
           handleClose={this.handleNotificationClose}
           message={notification.message}
@@ -65,6 +73,7 @@ sagaInjector.inject(sagas);
 const mapStateToProps = state => ({
   users: state.firebase.data.users,
   auth: state.firebase.auth,
+  requireRefresh: state.root.needRefresh,
   requireAcceptEULA: state.root.requireAcceptEULA,
   notification: state.root.notification
 });

@@ -106,9 +106,24 @@ export class AccountService {
   }
 
   watchProfileRefresh(uid, externalProfileId) {
-    return firebase.watchEvent(
-      "value",
-      `/userAchievements/${uid}/${externalProfileId}`
+    const now = new Date().getTime();
+    return new Promise(resolve =>
+      firebase
+        .database()
+        .ref(`/userAchievements/${uid}/${externalProfileId}`)
+        .on("value", snap => {
+          if (
+            snap.val() &&
+            snap.val().lastUpdate &&
+            snap.val().lastUpdate > now
+          ) {
+            firebase
+              .database()
+              .ref(`/userAchievements/${uid}/${externalProfileId}`)
+              .off();
+            resolve(snap.val());
+          }
+        })
     );
   }
 
@@ -124,6 +139,14 @@ export class AccountService {
       serviceId: login,
       uid: uid
     });
+  }
+
+  fetchAchievements(uid) {
+    return firebase
+      .database()
+      .ref(`/userAchievements/${uid}/CodeCombat`)
+      .once("value")
+      .then(snap => snap.val());
   }
 
   fetchJoinedPaths(uid) {
@@ -272,6 +295,7 @@ export class AccountService {
     if (config.githubAccessToken) {
       jestUpdates.githubAccessToken = config.githubAccessToken;
     }
+
     // FIXIT: should update it with one write but it's not too often procedure
     // so, it could be little unoptimized
     return Promise.all([
@@ -295,6 +319,18 @@ export class AccountService {
       .database()
       .ref(`/users/${uid}/${field}`)
       .set(data);
+  }
+
+  watchVersionChange(callback) {
+    firebase
+      .database()
+      .ref("/config/version")
+      .on("value", snap => callback({ version: snap.val() }));
+    return () =>
+      firebase
+        .database()
+        .ref("/config/version")
+        .off();
   }
 }
 

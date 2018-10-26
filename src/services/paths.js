@@ -196,7 +196,7 @@ export class PathsService {
             return pathProblem;
         }
       })
-      .catch(err => console.error(err.stack, err.message));
+      .catch(err => console.error(err.stack, err.message) || false);
   }
 
   fetchPathProgress(solverId, pathOwner, pathId) {
@@ -509,7 +509,7 @@ export class PathsService {
                   owner: uid,
                   taskKey: answerKey,
                   problem: pathProblem.problemId,
-                  solution: json
+                  solution: JSON.stringify(json)
                 });
             });
           }
@@ -535,6 +535,7 @@ export class PathsService {
     };
     if (typeof solution === "object") {
       solution.updatedAt = Date.now();
+      solution.version = process.env.REACT_APP_VERSION;
     }
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
@@ -570,7 +571,7 @@ export class PathsService {
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(solution);
+              .set(JSON.stringify(solution));
           }
           default:
             break;

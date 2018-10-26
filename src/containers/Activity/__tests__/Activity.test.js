@@ -5,7 +5,6 @@ import { createShallow } from "@material-ui/core/test-utils";
 import Button from "@material-ui/core/Button";
 
 import { Activity } from "../Activity";
-import ActivityView from "../../../components/activityViews/ActivityView";
 
 describe("<Activity>", () => {
   let shallow;
@@ -26,8 +25,9 @@ describe("<Activity>", () => {
           }
         }}
         pathProblem={{}}
+        uid={"test"}
       >
-      {()=>{}}
+        {() => {}}
       </Activity>
     );
 
@@ -43,12 +43,13 @@ describe("<Activity>", () => {
         match={{
           params: {
             pathId: "testPath",
-            problemId: "testProblem",
+            problemId: "testProblem"
           }
         }}
         pathProblem={{}}
+        uid={"test"}
       >
-      {()=>{}}
+        {() => {}}
       </Activity>
     );
 

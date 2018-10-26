@@ -1,4 +1,5 @@
 import { APP_SETTING } from "../../achievementsApp/config";
+import compareVersions from "compare-versions";
 import {
   DISPLAY_NAME_UPDATE_REQUEST,
   EXTERNAL_PROFILE_REFRESH_REQUEST,
@@ -23,13 +24,45 @@ import {
   accountFetchPaths
 } from "./actions";
 import { accountService } from "../../services/account";
-import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
-import { delay } from "redux-saga";
+import {
+  call,
+  put,
+  race,
+  select,
+  spawn,
+  take,
+  takeLatest
+} from "redux-saga/effects";
+import { delay, eventChannel } from "redux-saga";
 import { push } from "connected-react-router";
-import { notificationShow } from "../Root/actions";
+import { notificationShow, versionChange } from "../Root/actions";
+
+function createVersionWatcherChannel() {
+  return eventChannel(emit =>
+    accountService.watchVersionChange(version => emit(version))
+  );
+}
+
+let versionWatcherChannel;
+
+export function* versionChangeHandler() {
+  versionWatcherChannel = yield call(createVersionWatcherChannel);
+  while (true) {
+    const { version } = yield take(versionWatcherChannel);
+    yield put(
+      versionChange(
+        version && compareVersions(version, process.env.REACT_APP_VERSION) === 1
+      )
+    );
+  }
+}
 
 export function* signInHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
+
+  if (!versionWatcherChannel) {
+    yield spawn(versionChangeHandler);
+  }
 
   try {
     if (uid) {
@@ -142,7 +175,7 @@ export function* externalProfileRefreshRequestHandler(action) {
         `Refreshing ${action.externalProfileType} Achievements...`
       )
     );
-    const { timedOut } = yield race({
+    const result = yield race({
       response: call(
         [accountService, accountService.watchProfileRefresh],
         uid,
@@ -151,7 +184,7 @@ export function* externalProfileRefreshRequestHandler(action) {
       timedOut: call(delay, APP_SETTING.defaultTimeout)
     });
 
-    if (timedOut) {
+    if (result.timedOut) {
       const error = "Profile refresh timed out";
       yield put(
         externalProfileRefreshFail(
@@ -163,12 +196,14 @@ export function* externalProfileRefreshRequestHandler(action) {
       return yield put(notificationShow(error));
     }
 
-    yield put(
-      externalProfileRefreshSuccess(
-        action.externalProfileId,
-        action.externalProfileType
-      )
-    );
+    if (result.response) {
+      yield put(
+        externalProfileRefreshSuccess(
+          action.externalProfileId,
+          action.externalProfileType
+        )
+      );
+    }
   } catch (err) {
     yield put(
       externalProfileRefreshFail(

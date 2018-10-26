@@ -4,7 +4,7 @@
  * @created 24.02.18
  */
 
-import React from "react";
+import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Avatar from "@material-ui/core/Avatar";
@@ -27,6 +27,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 class ControlAssistantsDialog extends React.Component {
   static propTypes = {
     assistants: PropTypes.any,
+    isOwner: PropTypes.bool,
     newAssistant: PropTypes.any,
     onAddAssistant: PropTypes.func.isRequired,
     onAssistantKeyChange: PropTypes.func.isRequired,
@@ -55,12 +56,13 @@ class ControlAssistantsDialog extends React.Component {
 
   render() {
     const {
-      open,
       assistants,
+      isOwner,
       newAssistant,
       onAddAssistant,
       onClose,
       onRemoveAssistant,
+      open,
       target
     } = this.props;
     let keyInputMessage = "Enter User key";
@@ -77,24 +79,28 @@ class ControlAssistantsDialog extends React.Component {
       <Dialog onClose={onClose} open={open}>
         <DialogTitle>Control Assistants</DialogTitle>
         <DialogContent>
-          <TextField
-            helperText={keyInputMessage}
-            label="New Assistant Key"
-            onChange={this.onKeyChange}
-            style={{
-              width: 240,
-              marginRight: 8,
-              marginBottom: 8,
-              top: 4
-            }}
-          />
-          <Button
-            disabled={!newAssistant}
-            onClick={() => onAddAssistant(target, newAssistant.id)}
-            variant="raised"
-          >
-            Add
-          </Button>
+          {isOwner && (
+            <Fragment>
+              <TextField
+                helperText={keyInputMessage}
+                label="New Assistant Key"
+                onChange={this.onKeyChange}
+                style={{
+                  width: 240,
+                  marginRight: 8,
+                  marginBottom: 8,
+                  top: 4
+                }}
+              />
+              <Button
+                disabled={!newAssistant}
+                onClick={() => onAddAssistant(target, newAssistant.id)}
+                variant="raised"
+              >
+                Add
+              </Button>
+            </Fragment>
+          )}
           <List
             style={{
               maxHeight: 320,
@@ -108,13 +114,15 @@ class ControlAssistantsDialog extends React.Component {
                     <Avatar src={assistant.photoURL || ""} />
                   </ListItemIcon>
                   <ListItemText primary={assistant.displayName || ""} />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      onClick={() => onRemoveAssistant(target, assistant.id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
+                  {isOwner && (
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        onClick={() => onRemoveAssistant(target, assistant.id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  )}
                 </ListItem>
               ))
             ) : (
@@ -124,7 +132,7 @@ class ControlAssistantsDialog extends React.Component {
         </DialogContent>
         <DialogActions>
           <Button color="primary" onClick={onClose} variant="raised">
-            Commit
+            {isOwner ? "Commit" : "Close"}
           </Button>
         </DialogActions>
       </Dialog>

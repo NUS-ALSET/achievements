@@ -3,7 +3,10 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  */
 
-import { courseJoinedFetchSuccess } from "../containers/Courses/actions";
+import {
+  courseAssistantFetchSuccess,
+  courseJoinedFetchSuccess
+} from "../containers/Courses/actions";
 import { externalProfileRefreshRequest } from "../containers/Account/actions";
 import {
   coursePasswordEnterFail,
@@ -111,44 +114,65 @@ export class CoursesService {
 
   /**
    * This method should be invoked at login. It add listener for
-   * `/studentJoinedCourses` and fetches received courses
+   * `/studentJoinedCourses` and `/courseAssistants` and fetches received courses
    * @returns {*}
    */
   watchJoinedCourses() {
     if (!this.getUser("uid")) {
       return Promise.resolve();
     }
-    return (
-      firebase
-        .database()
-        .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
-
-        // Firebase `on('value')` doesn't return promise
-        .on("value", courses =>
-          // So, we catch errors here
-          Promise.all(
-            Object.keys(courses.val() || {}).map(courseId =>
-              firebase
-                .database()
-                .ref(`/courses/${courseId}`)
-                .once("value")
-                .then(course => ({
-                  ...course.val(),
-                  courseId
-                }))
+    firebase
+      .database()
+      .ref("/courseAssistants")
+      .orderByChild(this.getUser("uid"))
+      .equalTo(true)
+      .on("value", snap =>
+        Promise.all(
+          Object.keys(snap.val() || {}).map(id =>
+            firebase
+              .database()
+              .ref(`/courses/${id}`)
+              .once("value")
+              .then(snap => ({ [id]: snap.val() }))
+          )
+        )
+          .then(courses =>
+            this.store.dispatch(
+              courseAssistantFetchSuccess(Object.assign({}, ...courses))
             )
           )
-            .then(courses => {
-              const map = {};
-              courses.forEach(course => {
-                map[course.courseId] = course;
-                return true;
-              });
-              this.store.dispatch(courseJoinedFetchSuccess(map));
-            })
-            .catch(err => console.error(err.message))
+          .catch(err => console.error(err))
+      );
+    firebase
+      .database()
+      .ref(`/studentJoinedCourses/${this.getUser("uid")}`)
+
+      // Firebase `on('value')` doesn't return promise
+      .on("value", courses =>
+        // So, we catch errors here
+        Promise.all(
+          Object.keys(courses.val() || {}).map(courseId =>
+            firebase
+              .database()
+              .ref(`/courses/${courseId}`)
+              .once("value")
+              .then(course => ({
+                ...course.val(),
+                courseId
+              }))
+          )
         )
-    );
+          .then(courses => {
+            const map = {};
+            courses.forEach(course => {
+              map[course.courseId] = course;
+              return true;
+            });
+            this.store.dispatch(courseJoinedFetchSuccess(map));
+          })
+          .catch(err => console.error(err.message))
+      );
+    return Promise.resolve();
   }
 
   validateNewCourse(courseData) {
@@ -477,9 +501,12 @@ export class CoursesService {
               });
           });
         }
-        let completed= true;
-        if(((assignment || {}).problemJSON || {}).type==='game' && value.result!=='WON'){
-          completed=false;
+        let completed = true;
+        if (
+          ((assignment || {}).problemJSON || {}).type === "game" &&
+          value.result !== "WON"
+        ) {
+          completed = false;
         }
         if (userId && assignment.path && assignment.problem) {
           firebase
@@ -866,6 +893,7 @@ export class CoursesService {
                   .then(response => {
                     const userInfo = response;
 
+                    /*
                     firebase
                       .ref(`/userAchievements/${id}`)
                       .on("value", achievements =>
@@ -874,6 +902,7 @@ export class CoursesService {
                           achievements: achievements.val()
                         })
                       );
+                      */
 
                     return Object.assign(
                       {
