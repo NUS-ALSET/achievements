@@ -79,7 +79,7 @@ class JupyterInlineActivity extends React.PureComponent {
     }
     if (solution.failed) {
       return (
-        <Typography color="error" gutterBottom variant="title">
+        <Typography color="error" gutterBottom variant="h6">
           (There is something wrong with your solution...)
         </Typography>
       );
