@@ -384,11 +384,17 @@ export class PathsService {
         .ref("/activities")
         .push().key;
     const ref = firebase.database().ref(`/activities/${key}`);
-    if (problemInfo.id) {
-      delete problemInfo.id;
-      next = ref.update(problemInfo);
+    let info = {};
+    for (let infoKey in problemInfo) {
+      if (problemInfo[infoKey] !== undefined) {
+        info[infoKey] = problemInfo[infoKey];
+      }
+    }
+    if (info.id) {
+      delete info.id;
+      next = ref.update(info);
     } else {
-      next = ref.set(problemInfo);
+      next = ref.set(info);
     }
     return next
       .then(
