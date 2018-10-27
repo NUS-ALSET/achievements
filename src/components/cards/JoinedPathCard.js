@@ -31,7 +31,7 @@ class JoinedPathCard extends React.PureComponent {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography className={classes.card} variant="title">
+          <Typography className={classes.card} variant="h6">
             {name}
           </Typography>
           <Typography>{solutions} achievements</Typography>
