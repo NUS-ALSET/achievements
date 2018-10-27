@@ -54,7 +54,7 @@ class GameActivity extends React.PureComponent {
     const { problem = {} } = props;
     switch (problem.game) {
       case 'passenger-picker': {
-        import('../games/passenger-picker/src/component')
+        import('../games/passenger-pickup/src/component')
           .then(({ Game }) => {
             this.setState({ specificGame: Game })
           })

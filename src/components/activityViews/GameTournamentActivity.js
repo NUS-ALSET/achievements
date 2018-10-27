@@ -52,7 +52,7 @@ class GameTournamentActivity extends React.PureComponent {
     const { problem = {} } = props;
     switch (problem.game) {
       case 'passenger-picker': {
-        import('../games/passenger-picker/src/component')
+        import('../games/passenger-pickup/src/component')
           .then(({ Game }) => {
             this.setState({ specificGame: Game })
           })
@@ -94,7 +94,7 @@ class GameTournamentActivity extends React.PureComponent {
           scoreToWin: Number(problem.scoreToWin),
           gameTime: problem.gameTime,
           botsQuantities: problem.unitsPerSide,
-          gameType: problem.type,
+          gameType: 'gameTournament'//problem.type,
         }}
         tournament
         botsQuantity={botsQuantity}
