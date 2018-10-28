@@ -32,7 +32,7 @@ class SignInDialog extends React.PureComponent {
         </DialogContent>
         <DialogActions>
           <Button color="primary" onClick={onSignInClick} variant="raised">
-            Accept
+            Sign in
           </Button>
         </DialogActions>
       </Dialog>

@@ -58,7 +58,8 @@ class JupyterNotebook extends React.PureComponent {
   defaultKeyMap = {
     submit: ["ctrl+enter", "shift+enter"]
   };
-  defaultHandlers = { submit: this.props.onCommit };
+
+  onAction = () => this.props.action(this.state.solution);
 
   onChange = e =>
     this.setState({ solution: (e && e.target && e.target.value) || e });
@@ -70,7 +71,7 @@ class JupyterNotebook extends React.PureComponent {
   };
 
   getEditor = () => {
-    const { action, defaultValue, onCommit, readOnly, richEditor } = this.props;
+    const { action, defaultValue, readOnly, richEditor } = this.props;
     const editor = richEditor ? (
       <AceEditor
         editorProps={{ $blockScrolling: true }}
@@ -101,7 +102,7 @@ class JupyterNotebook extends React.PureComponent {
           endAdornment: (
             <InputAdornment position="end">
               {APP_SETTING.isSuggesting ? (
-                <IconButton onClick={() => action(this.state.solution)}>
+                <IconButton onClick={this.onAction}>
                   <RefreshIcon />
                 </IconButton>
               ) : (
@@ -123,8 +124,8 @@ class JupyterNotebook extends React.PureComponent {
         style={{ padding: 24, position: "relative" }}
       />
     );
-    return onCommit ? (
-      <HotKeys handlers={this.defaultHandlers} keyMap={this.defaultKeyMap}>
+    return action ? (
+      <HotKeys handlers={{ submit: this.onAction }} keyMap={this.defaultKeyMap}>
         {editor}
       </HotKeys>
     ) : (
