@@ -339,6 +339,8 @@ function getStudentPathProgress(member, targetAssignments, pathsData) {
           value ||
           /^\s*(\d+)\s*\/\s*(\d+)\s*$/.exec(solution.value || "") ||
           [];
+
+        solution.value = solution.value.replace(" /", " of ");
         result.totalSolutions += Number(value[1] || 0);
         result.lastSolutionTime = Math.max(
           result.lastSolutionTime,
