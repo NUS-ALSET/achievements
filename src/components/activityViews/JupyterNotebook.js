@@ -203,10 +203,7 @@ class JupyterNotebook extends React.PureComponent {
           )}
         </Typography>
         <br />
-        {solution !== null &&
-          // FIXIT: cleanup this >_<
-          action &&
-          this.getEditor()}
+        {solution !== null && action && this.getEditor()}
         {solution &&
           solution.json && (
             <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
