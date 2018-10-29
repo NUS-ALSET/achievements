@@ -2,7 +2,12 @@
  * @file Root container Root module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  */
-import { acceptEulaRequest, notificationHide, signOutRequest } from "./actions";
+import {
+  acceptEulaRequest,
+  notificationHide,
+  signInRequest,
+  signOutRequest
+} from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { firebaseConnect } from "react-redux-firebase";
@@ -13,25 +18,26 @@ import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import sagas from "./sagas";
 import RefreshPageDialog from "../../components/dialogs/RefreshPageDialog";
+import SignInDialog from "../../components/dialogs/SignInDialog";
 
 class Root extends React.PureComponent {
   static propTypes = {
-    auth: PropTypes.object,
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node
     ]),
     dispatch: PropTypes.func,
-    firebase: PropTypes.object,
     notification: PropTypes.object.isRequired,
     requireAcceptEULA: PropTypes.bool.isRequired,
     requireRefresh: PropTypes.bool,
-    users: PropTypes.object
+    requireSignIn: PropTypes.bool
   };
 
   handleNotificationClose = () => {
     this.props.dispatch(notificationHide());
   };
+
+  onSignIn = () => this.props.dispatch(signInRequest());
 
   onSignOut = () => {
     this.props.dispatch(signOutRequest());
@@ -46,7 +52,8 @@ class Root extends React.PureComponent {
       children,
       notification,
       requireAcceptEULA,
-      requireRefresh
+      requireRefresh,
+      requireSignIn
     } = this.props;
 
     return (
@@ -57,6 +64,7 @@ class Root extends React.PureComponent {
           open={requireAcceptEULA}
         />
         <RefreshPageDialog open={requireRefresh} />
+        <SignInDialog onSignInClick={this.onSignIn} open={requireSignIn} />
         <NotificationArea
           handleClose={this.handleNotificationClose}
           message={notification.message}
@@ -71,10 +79,10 @@ class Root extends React.PureComponent {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
-  users: state.firebase.data.users,
   auth: state.firebase.auth,
   requireRefresh: state.root.needRefresh,
   requireAcceptEULA: state.root.requireAcceptEULA,
+  requireSignIn: state.root.requireSignIn,
   notification: state.root.notification
 });
 
@@ -83,7 +91,6 @@ export default compose(
     // Pretty dirty hack to get data fetching only after login
     (ownProps, store) =>
       !store.getState().firebase.auth.isEmpty && [
-        "blacklistActions",
         `/users/${store.getState().firebase.auth.uid}`
       ]
   ),
