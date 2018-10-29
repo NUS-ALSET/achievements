@@ -1,0 +1,97 @@
+<script src="./code/control.js"></script>
+<script src="./code/level1.js"></script>
+<script src="./code/level3.js"></script>
+<script src="./code/simulation.js"></script>
+<p id="score1"></p>
+<p id="score2"></p>
+<canvas id="game1" style="border: 1px solid #000" width="500" height="500"></canvas>
+<canvas id="game2" style="border: 1px solid #000" width="500" height="500"></canvas>
+<script>
+  var config = {
+    "width": 500,
+    "height": 500,
+    "minPassengers": 10,
+    "maxPassengers": 20,
+    "time": 90,
+    "speed": 1,
+    "playerSize": 20,
+    "roadWidth": 30,
+    "passengerSize": 20,
+    "player1StartingPoint": { "x": 5, "y": 5 },
+    "player2StartingPoint": { "x": 30, "y": 5 },
+    "player1StartingDirection": "right",
+    "player2StartingDirection": "down"
+  };
+  var game = new Simulation(config, level3, level1);
+
+  var canvas1 = document.getElementById("game1");
+  var canvas2 = document.getElementById("game2");
+  const ctx1 = canvas1.getContext('2d');
+  const ctx2 = canvas2.getContext('2d');
+
+  var timeId = setInterval(() => {
+    var info = game.simulate();
+    ctx1.clearRect(0, 0, canvas1.width, canvas1.height);
+    ctx2.clearRect(0, 0, canvas2.width, canvas2.height);
+
+    var botSize = config.playerSize;
+    var passengerSize = config.passengerSize;
+    var roadWidth = config.roadWidth;
+    var bot1_1 = info.bots[0][0];
+    var bot1_2 = info.bots[0][1];
+
+    var bot2_1 = info.bots[1][0];
+    var bot2_2 = info.bots[1][1];
+    info.collectives[0].forEach(collective => {
+      ctx1.fillStyle = "rgba(0, 0, 0, 0.5)";
+      ctx1.fillRect(collective.x, collective.y, botSize, botSize);
+    });
+    info.collectives[1].forEach(collective => {
+      ctx2.fillStyle = "rgba(0, 0, 0, 0.5)";
+      ctx2.fillRect(collective.x, collective.y, botSize, botSize);
+    });
+
+
+    document.getElementById("score1").innerText = "Player 1 score: " + info.player1;
+    document.getElementById("score2").innerText = "Player 2 score: " + info.player2;
+
+
+    info.map.forEach(mapRow => {
+      mapRow.forEach(mapCell => {
+        if (mapCell) {
+          ctx1.fillStyle = "rgba(0, 0, 0, 0.5)";
+          ctx1.fillRect(mapCell.x * roadWidth, mapCell.y * roadWidth, roadWidth, roadWidth);
+          ctx2.fillStyle = "rgba(0, 0, 0, 0.5)";
+          ctx2.fillRect(mapCell.x * roadWidth, mapCell.y * roadWidth, roadWidth, roadWidth);
+        }
+      });
+    });
+    if (bot1_1.passenger) {
+      ctx1.fillStyle = "#21CCF1";
+      ctx1.fillRect(bot1_1.passenger.takeofX, bot1_1.passenger.takeofY, passengerSize, passengerSize);
+    }
+    if (bot1_2.passenger) {
+      ctx1.fillStyle = "#2FCC01";
+      ctx1.fillRect(bot1_2.passenger.takeofX, bot1_2.passenger.takeofY, passengerSize, passengerSize);
+    }
+    if (bot2_1.passenger) {
+      ctx2.fillStyle = "#21CCF1";
+      ctx2.fillRect(bot2_1.passenger.takeofX, bot2_1.passenger.takeofY, passengerSize, passengerSize);
+    }
+    if (bot2_2.passenger) {
+      ctx2.fillStyle = "#2FCC01";
+      ctx2.fillRect(bot2_2.passenger.takeofX, bot2_2.passenger.takeofY, passengerSize, passengerSize);
+    }
+    ctx1.fillStyle = "#FF0000";
+    ctx1.fillRect(bot1_1.x, bot1_1.y, botSize, botSize);
+
+    ctx1.fillStyle = "#00FF00";
+    ctx1.fillRect(bot1_2.x, bot1_2.y, botSize, botSize);
+
+    ctx2.fillStyle = "#0000FF";
+    ctx2.fillRect(bot2_1.x, bot2_1.y, botSize, botSize);
+
+    ctx2.fillStyle = "#000000";
+    ctx2.fillRect(bot2_2.x, bot2_2.y, botSize, botSize);
+  }, 10);
+</script>
