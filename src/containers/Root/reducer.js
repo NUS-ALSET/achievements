@@ -3,6 +3,8 @@ import {
   NOTIFICATION_HIDE,
   NOTIFICATION_SHOW,
   SHOW_ACCEPT_EULA_DIALOG,
+  SIGN_IN_REQUIRE,
+  SIGN_IN_SUCCESS,
   SIGN_OUT_SUCCESS,
   VERSION_CHANGE
 } from "./actions";
@@ -10,6 +12,7 @@ import {
 export const root = (
   state = {
     requireAcceptEULA: false,
+    requireSignIn: false,
     needRefresh: false,
     notification: {
       show: false,
@@ -33,6 +36,16 @@ export const root = (
       return {
         ...state,
         requireAcceptEULA: false
+      };
+    case SIGN_IN_SUCCESS:
+      return {
+        ...state,
+        requireSignIn: false
+      };
+    case SIGN_IN_REQUIRE:
+      return {
+        ...state,
+        requireSignIn: true
       };
     case VERSION_CHANGE:
       return {

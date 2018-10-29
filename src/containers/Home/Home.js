@@ -51,7 +51,7 @@ class Home extends React.PureComponent {
   render() {
     return (
       <Fragment>
-        <Typography style={{ marginBottom: 4 }} variant="title">
+        <Typography style={{ marginBottom: 4 }} variant="h6">
           Next steps on your current path
         </Typography>
         <Paper style={{ padding: 4 }}>
@@ -73,7 +73,7 @@ class Home extends React.PureComponent {
             ))}
           </GridList>
         </Paper>
-        <Typography style={{ margin: "40px 0 4px 0" }} variant="title">
+        <Typography style={{ margin: "40px 0 4px 0" }} variant="h6">
           Your next python skills
         </Typography>
         <Paper style={{ padding: 4 }}>
@@ -93,7 +93,7 @@ class Home extends React.PureComponent {
             ))}
           </GridList>
         </Paper>
-        <Typography style={{ margin: "40px 0 4px 0" }} variant="title">
+        <Typography style={{ margin: "40px 0 4px 0" }} variant="h6">
           Your next YouTube videos
         </Typography>
         <Paper style={{ padding: 4 }}>

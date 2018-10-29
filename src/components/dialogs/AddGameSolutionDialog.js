@@ -82,7 +82,7 @@ class AddGameSolutionDialog extends React.PureComponent {
     render() {
         const {
             // onClose, onCommit, taskId, solution
-            open, classes, problem, readOnly } = this.props;
+            open, classes, problem, readOnly, ...rest } = this.props;
 
         if (!(["game", "gameTournament"]).includes((problem || {}).type)) {
             return "";
@@ -103,16 +103,17 @@ class AddGameSolutionDialog extends React.PureComponent {
                             <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
-                            <Typography variant="title" color="inherit" className={classes.flex}>
+                            <Typography variant="h6" color="inherit" className={classes.flex}>
                                 {heading} {readOnly ? '( Read Only )' : ''}
                             </Typography>
-                            <Typography variant="title" color="inherit">
+                            <Typography variant="h6" color="inherit">
                             </Typography>
                         </Toolbar>
                     </AppBar>
                     {open && problem &&
                         <GameActivity
-                            {...this.props}
+                            {...rest}
+                            problem={problem}
                         />
                     }
                 </Dialog>
