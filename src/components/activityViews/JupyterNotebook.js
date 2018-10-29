@@ -59,7 +59,11 @@ class JupyterNotebook extends React.PureComponent {
     submit: ["ctrl+enter", "shift+enter"]
   };
 
-  onAction = () => this.props.action(this.state.solution);
+  onAction = () =>
+    this.state.solution &&
+    this.props.action &&
+    this.props.richEditor &&
+    this.props.action(this.state.solution);
 
   onChange = e =>
     this.setState({ solution: (e && e.target && e.target.value) || e });
@@ -176,7 +180,7 @@ class JupyterNotebook extends React.PureComponent {
               <Button
                 color="primary"
                 disabled={!(this.state.solution && action && richEditor)}
-                onClick={() => action(this.state.solution)}
+                onClick={this.onAction}
                 style={{
                   position: "absolute",
                   top: 4,
@@ -199,10 +203,7 @@ class JupyterNotebook extends React.PureComponent {
           )}
         </Typography>
         <br />
-        {solution !== null &&
-          // FIXIT: cleanup this >_<
-          action &&
-          this.getEditor()}
+        {solution !== null && action && this.getEditor()}
         {solution &&
           solution.json && (
             <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
