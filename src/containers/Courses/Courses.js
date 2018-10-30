@@ -120,7 +120,7 @@ class Courses extends React.Component {
               aria-label="Add"
               color="primary"
               onClick={() => this.showNewCourseDialog()}
-              variant="raised"
+              variant="contained"
             >
               Add new course
             </Button>

@@ -32,7 +32,11 @@ class RefreshPageDialog extends React.PureComponent {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={this.onAcceptClick} variant="raised">
+          <Button
+            color="primary"
+            onClick={this.onAcceptClick}
+            variant="contained"
+          >
             Accept
           </Button>
         </DialogActions>

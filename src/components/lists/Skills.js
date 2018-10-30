@@ -72,7 +72,7 @@ function Skills(props) {
   return (
     <div className={classes.root}>
       {Object.keys(skills || {}).length>0 &&
-        <Typography variant="subheading" className={classes.heading1}>
+        <Typography variant="subtitle1" className={classes.heading1}>
           Skills
           <Divider />
         </Typography>

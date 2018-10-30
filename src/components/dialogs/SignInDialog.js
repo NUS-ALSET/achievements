@@ -31,7 +31,11 @@ class SignInDialog extends React.PureComponent {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={onSignInClick} variant="raised">
+          <Button
+            color="primary"
+            onClick={onSignInClick}
+            variant="contained"
+          >
             Sign in
           </Button>
         </DialogActions>

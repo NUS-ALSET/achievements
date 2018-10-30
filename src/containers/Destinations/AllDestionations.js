@@ -14,12 +14,12 @@ function AllDestinations(props) {
   const { destinations = [] , dispatch} = props;
   return (
     <div>
-      <Typography variant="display2">All Destinations</Typography>
+      <Typography variant="h3">All Destinations</Typography>
       {
         isLoaded(destinations)
         ? destinations.length > 0
             ? <Destinations destinations={destinations} dispatch={dispatch}/>
-            : <Typography variant="display1">No Destination</Typography>
+            : <Typography variant="h4">No Destination</Typography>
         
         :  <div style={{
             display: "flex",

@@ -104,13 +104,13 @@ class PathsTable extends React.PureComponent {
                 ) : (
                   <TableCell>
                     <Link className={classes.link} to={`/paths/${path.id}`}>
-                      <Button variant="raised">Open</Button>
+                      <Button variant="contained">Open</Button>
                     </Link>
                     {owner && (
                       <Button
                         className={classes.button}
                         onClick={() => this.onEditClick(path)}
-                        variant="raised"
+                        variant="contained"
                       >
                         Edit
                       </Button>

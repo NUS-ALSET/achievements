@@ -76,7 +76,11 @@ class MoveStudentDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.onCommit} variant="raised">
+          <Button
+            color="primary"
+            onClick={this.onCommit}
+            variant="contained"
+          >
             Commit
           </Button>
         </DialogActions>

@@ -76,7 +76,7 @@ class Cohorts extends React.PureComponent {
             <Button
               color="primary"
               onClick={this.props.onAddCohortClick}
-              variant="raised"
+              variant="contained"
             >
               Add New Cohort
             </Button>

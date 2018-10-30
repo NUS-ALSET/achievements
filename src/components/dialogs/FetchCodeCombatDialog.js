@@ -52,15 +52,15 @@ class FetchCodeCombatDialog extends React.PureComponent {
           <Fragment>
             <DialogTitle>Fetch {externalProfile.name} Profile</DialogTitle>
             <DialogContent>
-              <Typography gutterBottom variant="body2">
+              <Typography gutterBottom variant="body1">
                 1. Confirm Your CodeCombat Profile
               </Typography>
-              <Typography gutterBottom variant="subheading">
+              <Typography gutterBottom variant="subtitle1">
                 <a href={url} rel="noopener noreferrer" target="_blank">
                   {url}
                 </a>
               </Typography>
-              <Typography gutterBottom variant="body2">
+              <Typography gutterBottom variant="body1">
                 2. Make sure you are logged in to CodeCombat
               </Typography>
               <img
@@ -69,7 +69,7 @@ class FetchCodeCombatDialog extends React.PureComponent {
                 src={CodeCombatLogin}
                 style={{ maxHeight: 110 }}
               />
-              <Typography gutterBottom variant="body2">
+              <Typography gutterBottom variant="body1">
                 3. Click Fetch
               </Typography>
             </DialogContent>
@@ -78,7 +78,7 @@ class FetchCodeCombatDialog extends React.PureComponent {
           <Fragment>
             <DialogTitle>{externalProfile.name} Profile Not Set Up</DialogTitle>
             <DialogContent>
-              <Typography gutterBottom variant="body2">
+              <Typography gutterBottom variant="body1">
                 Click "SET UP PROFILE" to add your CodeCombat profile
               </Typography>
               <Typography gutterBottom variant="caption">
@@ -99,7 +99,7 @@ class FetchCodeCombatDialog extends React.PureComponent {
               color="primary"
               disabled={inProgress}
               onClick={this.onCommit}
-              variant="raised"
+              variant="contained"
             >
               Fetch
               {inProgress && (

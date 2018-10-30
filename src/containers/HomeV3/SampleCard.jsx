@@ -103,7 +103,7 @@ class SampleCard extends React.PureComponent {
               }
           }>
           <Typography
-            variant="headline"
+            variant="h5"
             component="p"
             style={video
               ? {

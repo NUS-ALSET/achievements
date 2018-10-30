@@ -175,7 +175,7 @@ class AddCohortDialog extends React.PureComponent {
             color="primary"
             disabled={!this.state.isCorrectInput}
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>

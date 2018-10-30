@@ -48,7 +48,7 @@ const AnalysisDialog = (props) => {
         
         {
           solution.solutionURL
-          && <Typography variant="subheading" >
+          && <Typography variant="subtitle1" >
               Solution URL : <a href={solution.solutionURL} target="__blank">{ solution.solutionURL }</a>
             </Typography>
         }
@@ -56,7 +56,7 @@ const AnalysisDialog = (props) => {
           activityId 
           && isLoaded(solution) 
           && Object.keys(finalSkills).length===0 
-          && <Typography variant="subheading" className={classes.message}>
+          && <Typography variant="subtitle1" className={classes.message}>
               { solution.errorMsg ? `Code Analysis Error : ${solution.errorMsg}` : 'Not Analysied yet!'}
             </Typography>
         }

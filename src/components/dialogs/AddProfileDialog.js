@@ -64,7 +64,7 @@ class AddProfileDialog extends React.PureComponent {
       <Dialog onClose={onClose} open={this.props.open}>
         <DialogTitle>Set Up {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
-          <Typography variant="body2" gutterBottom>
+          <Typography variant="body1" gutterBottom>
             1. Register or Login with CodeCombat.com
           </Typography>
           <img
@@ -73,7 +73,7 @@ class AddProfileDialog extends React.PureComponent {
             style={{ maxHeight: 110 }}
             align="center"
           />
-          <Typography variant="subheading" gutterBottom>
+          <Typography variant="subtitle1" gutterBottom>
             <a
               href="https://codecombat.com/home"
               target="_blank"
@@ -82,7 +82,7 @@ class AddProfileDialog extends React.PureComponent {
               https://codecombat.com/home
             </a>
           </Typography>
-          <Typography variant="body2" gutterBottom>
+          <Typography variant="body1" gutterBottom>
             2. Enter your CodeCombat username:
           </Typography>
           <TextField
@@ -98,7 +98,7 @@ class AddProfileDialog extends React.PureComponent {
             }}
             value={login}
           />
-          <Typography variant="subheading" gutterBottom>
+          <Typography variant="subtitle1" gutterBottom>
             <a href={url} target="_blank" rel="noopener noreferrer">
               {url}
             </a>
@@ -112,7 +112,7 @@ class AddProfileDialog extends React.PureComponent {
             color="primary"
             disabled={inProgress}
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
             {inProgress && (
