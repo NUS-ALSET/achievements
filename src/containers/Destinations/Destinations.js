@@ -59,17 +59,17 @@ function Destinations(props) {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <div style={{ display : 'flex', flexDirection : "column", width : '100%'}}>
-              <Typography className={classes.heading} variant={'subheading'}>
+              <Typography className={classes.heading} variant="subtitle1">
                 Updated On  : {dest.value.updatedOn}
               </Typography>
-              <Typography className={classes.heading} variant={'subheading'}>
+              <Typography className={classes.heading} variant="subtitle1">
                 Source Type  : {(dest.value.sourceType || '')}
               </Typography>
               
               {
                 Object.keys(dest.value.skills || {}).length > 0
                   ? <Skills skills={dest.value.skills}  />
-                  : <Typography className={classes.heading} variant={'display2'}>No Skills.</Typography>
+                  : <Typography className={classes.heading} variant='h3'>No Skills.</Typography>
               }
               </div>
             </ExpansionPanelDetails>

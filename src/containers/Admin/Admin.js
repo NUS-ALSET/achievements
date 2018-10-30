@@ -110,7 +110,7 @@ class Admin extends React.PureComponent {
       <Paper className={classes.section}>
         <Grid container spacing={24}>
           <Grid item xs={12}>
-            <Typography variant="headline" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               Admin Page
             </Typography>
             <Typography gutterBottom>
@@ -192,7 +192,7 @@ class Admin extends React.PureComponent {
               color="primary"
               fullWidth
               onClick={this.commit}
-              variant="raised"
+              variant="contained"
             >
               UPDATE
             </Button>

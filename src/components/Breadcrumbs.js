@@ -78,13 +78,13 @@ class Breadcrumbs extends React.PureComponent {
                   className={classes.breadcrumbAction}
                   key={action.label}
                   onClick={action.handler}
-                  variant="raised"
+                  variant="contained"
                 >
                   {action.label}
                 </Button>
               ))
             ) : (
-              <Button onClick={action.handler} variant="raised">
+              <Button onClick={action.handler} variant="contained">
                 {action.label}
               </Button>
             )}

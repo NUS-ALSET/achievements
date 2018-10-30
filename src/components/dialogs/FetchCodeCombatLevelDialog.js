@@ -84,7 +84,7 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
           <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button color="primary" onClick={this.goToLevel} variant="raised">
+          <Button color="primary" onClick={this.goToLevel} variant="contained">
             Go to level
           </Button>
         </DialogActions>

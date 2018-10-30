@@ -40,7 +40,7 @@ class ConfirmEULADialog extends React.PureComponent {
           <Button color="secondary" onClick={onSignOut}>
             Sign out
           </Button>
-          <Button color="primary" onClick={onAcceptEULA} variant="raised">
+          <Button color="primary" onClick={onAcceptEULA} variant="contained">
             Accept
           </Button>
         </DialogActions>

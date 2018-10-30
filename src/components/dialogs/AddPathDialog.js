@@ -134,7 +134,7 @@ class AddPathDialog extends React.PureComponent {
             disabled={!this.state.isCorrectInput}
             color="primary"
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>

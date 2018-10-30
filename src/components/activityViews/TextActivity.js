@@ -25,7 +25,7 @@ class TextActivity extends React.PureComponent {
 
     return (
       <Fragment>
-        <Typography align="left" gutterBottom variant="headline">
+        <Typography align="left" gutterBottom variant="h5">
           {problem.question}
         </Typography>
         <TextField

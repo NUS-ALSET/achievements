@@ -209,7 +209,7 @@ export class Activity extends React.PureComponent {
                 color="primary"
                 disabled={this.state.disabledCommitBtn}
                 onClick={this.onCommit}
-                variant="raised"
+                variant="contained"
               >
                 Commit
               </Button>
