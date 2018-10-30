@@ -336,7 +336,7 @@ export class Path extends React.Component {
               <Button
                 color="primary"
                 onClick={this.onAddActivityClick}
-                variant="raised"
+                variant="contained"
               >
                 Add Activity
               </Button>
@@ -346,7 +346,7 @@ export class Path extends React.Component {
                   onClick={() =>
                     onShowCollaboratorsClick(pathActivities.path.id)
                   }
-                  variant="raised"
+                  variant="contained"
                 >
                   Collaborators
                 </Button>

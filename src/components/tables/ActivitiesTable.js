@@ -182,7 +182,7 @@ class ActivitiesTable extends React.PureComponent {
                         onClick={() =>
                           this.openAnalysisDialog(activity.id, activity.name)
                         }
-                        variant="raised"
+                        variant="contained"
                         className={classes.button}
                       >
                         <Timeline />
@@ -193,7 +193,7 @@ class ActivitiesTable extends React.PureComponent {
                   <Button
                     disabled={activity.id === pendingActivityId}
                     onClick={() => onOpenActivity(activity)}
-                    variant="raised"
+                    variant="contained"
                   >
                     {activity.type === ACTIVITY_TYPES.codeCombat.id
                       ? "Fetch"
@@ -215,7 +215,7 @@ class ActivitiesTable extends React.PureComponent {
                       className={classes.button}
                       id={activity.id}
                       onClick={() => this.selectActivity(activity)}
-                      variant="raised"
+                      variant="contained"
                     >
                       More
                     </Button>
@@ -238,7 +238,7 @@ class ActivitiesTable extends React.PureComponent {
               onClick={() =>
                 this.selectActivity() || onEditActivity(this.state.activity)
               }
-              variant="raised"
+              variant="contained"
             >
               Edit
             </MenuItem>
@@ -251,7 +251,7 @@ class ActivitiesTable extends React.PureComponent {
                   this.state.activity.path
                 )
               }
-              variant="raised"
+              variant="contained"
             >
               Delete
             </MenuItem>
@@ -263,7 +263,7 @@ class ActivitiesTable extends React.PureComponent {
                     this.selectActivity() ||
                     onMoveActivity(this.state.activity, "up")
                   }
-                  variant="raised"
+                  variant="contained"
                 >
                   Move Up
                 </MenuItem>
@@ -276,7 +276,7 @@ class ActivitiesTable extends React.PureComponent {
                     this.selectActivity() ||
                     onMoveActivity(this.state.activity, "down")
                   }
-                  variant="raised"
+                  variant="contained"
                 >
                   Move Down
                 </MenuItem>

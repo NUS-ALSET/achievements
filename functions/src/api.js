@@ -3,6 +3,8 @@ const admin = require("firebase-admin");
 exports.handler = function api(token, data) {
   return Promise.resolve().then(() => {
     let supportedDatatypes = [
+      "activities", 
+      "completedActivities",
       "users",
       "cohorts",
       "courses",

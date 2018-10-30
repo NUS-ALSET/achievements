@@ -46,7 +46,7 @@ function InteractiveList(props) {
   const dense = true;
   return (
     <Grid>
-      <Typography variant="title" className={classes.heading1}>
+      <Typography variant="h6" className={classes.heading1}>
         {name}
       </Typography>
       <div className={classes.demo}>

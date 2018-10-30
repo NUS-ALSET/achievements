@@ -69,6 +69,11 @@ export const versionChange = needRefresh => ({
   needRefresh
 });
 
+export const SIGN_IN_REQUIRE = "SIGN_IN_REQUIRE";
+export const signInRequire = () => ({
+  type: SIGN_IN_REQUIRE
+});
+
 // constants
 export const SOLUTION_PRIVATE_LINK = "PRIVATE_LINK";
 export const SOLUTION_MODIFIED_TESTS = "MODIFIED_TESTS";

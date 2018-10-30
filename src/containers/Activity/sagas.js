@@ -133,9 +133,13 @@ export function* problemInitRequestHandler(action) {
 }
 
 export function* problemSolveUpdateHandler(action) {
-  const fileId = yield call(pathsService.getFileId, action.fileId);
+  const uid = yield select(state => state.firebase.auth.uid);
 
-  yield put(problemSolutionRefreshRequest(action.problemId, fileId));
+  if (uid) {
+    const fileId = yield call(pathsService.getFileId, action.fileId);
+
+    yield put(problemSolutionRefreshRequest(action.problemId, fileId));
+  }
 }
 
 export function* problemSolutionRefreshRequestHandler(action) {

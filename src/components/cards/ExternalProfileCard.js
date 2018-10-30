@@ -40,7 +40,7 @@ class ExternalProfileCard extends React.Component {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography className={classes.card} variant="title">
+          <Typography className={classes.card} variant="h6">
             {externalProfile.name}
           </Typography>
           {userAchievements ? (

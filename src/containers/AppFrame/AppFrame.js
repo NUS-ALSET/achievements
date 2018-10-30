@@ -199,7 +199,7 @@ class AppFrame extends React.Component {
                   className={classes.appBarTitle}
                   color="inherit"
                   noWrap
-                  variant="title"
+                  variant="h6"
                 >
                   Achievements
                 </Typography>

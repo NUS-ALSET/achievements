@@ -10,7 +10,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 
 const styles = {
-  root : {},
   verticalMiddle: {
     width: '100%', marginTop: '45vh', textAlign: 'center'
   }
