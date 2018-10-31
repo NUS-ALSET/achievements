@@ -516,4 +516,4 @@ Passenger.prototype.setRandomPos = function(arr, width){
     this.takeofX = this.takeofX*width;
     this.takeofY = this.takeofY*width;
 }
-module.exports = Simulation;
+export default Simulation;
