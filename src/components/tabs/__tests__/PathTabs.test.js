@@ -21,9 +21,9 @@ describe("<PathTabs>", () => {
   it("should change tab", () => {
     const wrapper = shallow(<PathTabs dispatch={mockDispatch} myPaths={{}} />);
 
-    expect(wrapper.state("currentTab"), 0);
+    expect(wrapper.state("currentTab")).toEqual(0);
     wrapper.find(Tabs).simulate("change", {}, 1);
-    expect(wrapper.state("currentTab"), 1);
+    expect(wrapper.state("currentTab")).toEqual(1);
   });
 
   it("should render correct paths", () => {
