@@ -339,7 +339,8 @@
         "$studentKey": {
           ".write": "auth != null && (
               $studentKey == auth.uid ||
-              root.child('courses/' + $courseKey + '/owner').val() == auth.uid
+              root.child('courses/' + $courseKey + '/owner').val() == auth.uid  ||
+              root.child('/courseAssistants/' + $courseKey + '/' + auth.uid).val() == true
             ) &&
             root.child('coursePasswords/' + $courseKey).exists() &&
             (root.child('coursePasswords/' + $courseKey).val() == newData.val() || !newData.exists())"
@@ -356,7 +357,8 @@
               root.child('studentCoursePasswords/' + $courseKey).exists() &&
               root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
             ) || (
-              root.child('courses/' + $courseKey + '/owner').val() == auth.uid
+              root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
+              root.child('/courseAssistants/' + $courseKey + '/' + auth.uid).val() == true
             ))"
         }
       }
