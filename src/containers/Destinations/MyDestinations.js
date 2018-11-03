@@ -15,12 +15,12 @@ function MyDestinations(props) {
 
   return (
     <div>
-      <Typography variant="display1">My Destinations</Typography> 
+      <Typography variant="h4">My Destinations</Typography>
       {
         isLoaded(destinations)
         ? destinations.length > 0
             ? <Destinations destinations={destinations} dispatch={dispatch} />
-            : <Typography variant="display2">No Destination</Typography>
+            : <Typography variant="h3">No Destination</Typography>
         
         :  <div style={{
             display: "flex",

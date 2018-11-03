@@ -33,7 +33,7 @@ class DeleteConfirmationDialog extends React.PureComponent {
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button color="secondary" onClick={onCommit} variant="raised">
+          <Button color="secondary" onClick={onCommit} variant="contained">
             Delete
           </Button>
         </DialogActions>

@@ -175,7 +175,7 @@ export class AddCourseDialog extends React.Component {
             }
             color="primary"
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>

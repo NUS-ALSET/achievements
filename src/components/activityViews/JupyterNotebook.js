@@ -145,7 +145,7 @@ class JupyterNotebook extends React.PureComponent {
           style={{
             position: "relative"
           }}
-          variant="headline"
+          variant="h5"
         >
           <span>{title}</span>
           {url && (

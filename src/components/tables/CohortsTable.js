@@ -55,7 +55,7 @@ class CohortsTable extends React.PureComponent {
                 <TableCell>{cohort.instructorName}</TableCell>
                 <TableCell>
                   <Link className={classes.link} to={`/cohorts/${cohort.id}`}>
-                    <Button className={classes.button} variant="raised">
+                    <Button className={classes.button} variant="contained">
                       View
                     </Button>
                   </Link>
@@ -64,12 +64,12 @@ class CohortsTable extends React.PureComponent {
                       <Button
                         className={classes.button}
                         onClick={() => onEditCohortClick(cohort)}
-                        variant="raised"
+                        variant="contained"
                       >
                         Edit
                       </Button>
                       {/* Not implemented yet */ false && (
-                        <Button className={classes.button} variant="raised">
+                        <Button className={classes.button} variant="contained">
                           Delete
                         </Button>
                       )}

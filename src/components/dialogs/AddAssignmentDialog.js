@@ -338,7 +338,7 @@ class AddAssignmentDialog extends React.PureComponent {
             color="primary"
             disabled={!this.state.isCorrectInput_Name}
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>

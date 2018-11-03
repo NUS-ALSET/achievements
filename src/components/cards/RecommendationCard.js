@@ -155,7 +155,7 @@ class RecommendationCard extends React.PureComponent {
                     }
                   : {}
               }
-              variant="headline"
+              variant="h5"
             >
               {activity.name}
             </Typography>

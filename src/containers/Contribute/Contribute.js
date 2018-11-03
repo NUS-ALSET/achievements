@@ -34,7 +34,7 @@ function Contribute(props) {
       <main>
         <div className={classes.mainDiv}>
           <div className={classes.mainContent}>
-            <Typography variant="display1" align="center" color="textPrimary" gutterBottom>
+            <Typography variant="h4" align="center" color="textPrimary" gutterBottom>
               Contribute
             </Typography>
             <Typography variant="h6" align="center" color="textSecondary" paragraph>

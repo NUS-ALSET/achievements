@@ -226,20 +226,20 @@ class AddActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <Typography
-              variant="body2"
+              variant="body1"
               gutterBottom
             >
               Jupyter Notebook Activity
             </Typography>
             <Typography
-              variant="body1"
+              variant="body2"
               gutterBottom
             >
               A type of activity that requires the students to submit the python solution for a single code box in a Jupyter notebook. The solution should ensure that any relevant assertions/testing in the notebook pass.
             </Typography>
             <br />
             <Typography
-              variant="body2"
+              variant="body1"
               gutterBottom
             >
               Step 1: Get the Shareable Link from Google Colab ipynb
@@ -267,7 +267,7 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
             <Typography
-              variant="body2"
+              variant="body1"
               gutterBottom
               style={{marginTop:30}}
             >
@@ -296,7 +296,7 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
             />
             <Typography
-              variant="body2"
+              variant="body1"
               gutterBottom
               style={{marginTop:30}}
             >
@@ -405,12 +405,12 @@ class AddActivityDialog extends React.PureComponent {
                 <Typography
                   gutterBottom
                   style={{ margin: "12px 0px" }}
-                  variant="body2"
+                  variant="body1"
                 >
                   <CheckBoxIcon style={{ float: "left" }} />
                   Check files to allow write access for users.
                 </Typography>
-                <Typography gutterBottom variant="body2">
+                <Typography gutterBottom variant="body1">
                   {this.fetchedGithubURL && (
                     <LinkIcon style={{ float: "left" }} />
                   )}
@@ -607,7 +607,7 @@ class AddActivityDialog extends React.PureComponent {
                 !(this.state.files && this.state.files.length > 0))
             }
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>

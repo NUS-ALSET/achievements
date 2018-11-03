@@ -13,7 +13,9 @@ import "brace/mode/python";
 import "brace/theme/github";
 
 class AceEditor extends React.PureComponent {
-  static propTypes = ReactAce.propTypes;
+  /* Using propTypes from another component is not safe because they may be removed in production builds
+   */
+  // static propTypes = ReactAce.propTypes;
 
   render() {
     const { ...props } = this.props;

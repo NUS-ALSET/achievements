@@ -30,7 +30,7 @@ class Recommendations extends React.PureComponent {
           style={{
             marginLeft: 4
           }}
-          variant="headline"
+          variant="h5"
         >
           {title}
         </Typography>

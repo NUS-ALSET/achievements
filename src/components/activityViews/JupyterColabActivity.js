@@ -75,7 +75,7 @@ class JupyterColabActivity extends React.PureComponent {
           <div style={{ height: '20px' }}>
             <Button
               color="primary"
-              variant="raised"
+              variant="contained"
               style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
             >

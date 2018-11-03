@@ -118,14 +118,14 @@ class InstructorTabs extends React.PureComponent {
                   className={classes.buttonAction}
                   color="primary"
                   onClick={this.onAddAssignmentClick}
-                  variant="raised"
+                  variant="contained"
                 >
                   Add assignment
                 </Button>
                 <Button
                   className={classes.buttonAction}
                   onClick={this.assignmentsAssistantsShowRequest}
-                  variant="raised"
+                  variant="contained"
                 >
                   Assistants
                 </Button>

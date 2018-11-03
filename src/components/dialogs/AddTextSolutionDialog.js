@@ -94,7 +94,7 @@ class AddTextSolutionDialog extends React.PureComponent {
                 isCorrectInput: false
               });
             }}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>

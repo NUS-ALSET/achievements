@@ -129,7 +129,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
                             : !isEmpty(problemSolution)
                           : problemSolution)}
                         onClick={submitHandler}
-                        variant="raised"
+                        variant="contained"
                       >
                         Commit
                       </Button>

@@ -107,7 +107,7 @@ class CoursesTable extends React.PureComponent {
                           className={classes.link}
                           to={`/courses/${course.id}`}
                         >
-                          <Button className={classes.button} variant="raised">
+                          <Button className={classes.button} variant="contained">
                             View
                           </Button>
                         </Link>
@@ -116,14 +116,14 @@ class CoursesTable extends React.PureComponent {
                             <Button
                               className={classes.button}
                               onClick={() => this.onEditCourseClick(course)}
-                              variant="raised"
+                              variant="contained"
                             >
                               Edit
                             </Button>
                             <Button
                               className={classes.button}
                               onClick={() => this.onDeleteCourseClick(course)}
-                              variant="raised"
+                              variant="contained"
                             >
                               Delete
                             </Button>

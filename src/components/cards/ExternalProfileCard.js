@@ -105,7 +105,7 @@ class ExternalProfileCard extends React.Component {
               <Button
                 color="primary"
                 onClick={() => addExternalProfileRequest(externalProfile)}
-                variant="raised"
+                variant="contained"
               >
                 Add Profile
               </Button>

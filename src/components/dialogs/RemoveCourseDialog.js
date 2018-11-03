@@ -37,7 +37,7 @@ class RemoveCourseDialog extends React.PureComponent {
           <Button
             color="secondary"
             onClick={() => onCommit(course)}
-            variant="raised"
+            variant="contained"
           >
             Delete
           </Button>
