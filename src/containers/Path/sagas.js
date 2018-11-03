@@ -1,4 +1,5 @@
 import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
+import firebase from "firebase";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
@@ -27,7 +28,9 @@ import {
   pathActivityCodeCombatDialogShow,
   pathProfileDialogShow,
   PATH_CLOSE_DIALOG,
-  pathCloseDialog
+  pathCloseDialog,
+  PATH_OPEN_JEST_SOLUTION_DIALOG,
+  pathOpenSolutionDialog
 } from "./actions";
 import { ACTIVITY_TYPES, pathsService } from "../../services/paths";
 import {
@@ -239,7 +242,33 @@ export function* pathRemoveCollaboratorRequestHandler(action) {
     yield put(notificationShow(err.message));
   }
 }
-
+  /**
+   * Jest Activity Open Action
+   */
+export function* pathActivityJestOpenHandler(action) {
+  const {pathId, activityInfo} = action;
+  try {
+    let files = [];
+    yield firebase.ref(`/activityData/${activityInfo.id}`)
+        .once("value", snapshot => {
+          files = snapshot.val().files;
+    });
+    if (files.length) {
+      activityInfo.files = files;
+    }
+    yield put(pathOpenSolutionDialog(pathId, activityInfo));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+    yield put(
+      problemSolutionSubmitFail(
+        pathId,
+        activityInfo.id,
+        "Completed",
+        err.message
+      )
+    );
+  }
+}
 export function* pathActivityCodeCombatOpenHandler(action) {
   try {
     const data = yield select(state => ({
@@ -416,6 +445,15 @@ export default [
     yield takeLatest(
       PATH_ACTIVITY_CODECOMBAT_OPEN,
       pathActivityCodeCombatOpenHandler
+    );
+  },
+  /**
+   * Watch Jest Activity Open Action
+   */
+  function* watchPathActivityJestOpen() {
+    yield takeLatest(
+      PATH_OPEN_JEST_SOLUTION_DIALOG,
+      pathActivityJestOpenHandler
     );
   },
   function* watchPathRefreshSolutionsRequest() {
