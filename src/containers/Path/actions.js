@@ -10,6 +10,12 @@ export const pathOpenSolutionDialog = (pathId, problemInfo) => ({
   pathId,
   problemInfo
 });
+export const PATH_OPEN_JEST_SOLUTION_DIALOG = "PATH_OPEN_JEST_SOLUTION_DIALOG";
+export const pathOpenJestSolutionDialog = (pathId, activityInfo) => ({
+  type: PATH_OPEN_JEST_SOLUTION_DIALOG,
+  pathId,
+  activityInfo
+});
 
 export const PATH_CLOSE_DIALOG = "PATH_CLOSE_DIALOG";
 export const pathCloseDialog = () => ({
@@ -149,7 +155,7 @@ export const pathActivityOpen = (pathId, problemId) => ({
 
 export const PATH_PROFILE_DIALOG_SHOW = "PATH_PROFILE_DIALOG_SHOW";
 export const pathProfileDialogShow = () => ({
-  type: PATH_PROFILE_DIALOG_SHOW,
+  type: PATH_PROFILE_DIALOG_SHOW
 
 });
 
