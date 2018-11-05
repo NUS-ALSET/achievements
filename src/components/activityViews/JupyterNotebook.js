@@ -8,7 +8,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ReactLoadable from "react-loadable";
-import { HotKeys } from "react-hotkeys";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -55,10 +54,6 @@ class JupyterNotebook extends React.PureComponent {
     solution: ""
   };
 
-  defaultKeyMap = {
-    submit: ["ctrl+enter", "shift+enter"]
-  };
-
   onAction = () =>
     this.state.solution &&
     this.props.action &&
@@ -76,8 +71,28 @@ class JupyterNotebook extends React.PureComponent {
 
   getEditor = () => {
     const { action, defaultValue, readOnly, richEditor } = this.props;
-    const editor = richEditor ? (
+    return richEditor ? (
       <AceEditor
+        commands={[
+          {
+            name: "submit",
+            bindKey: {
+              win: "Shift-Enter",
+              mac: "Shift-Enter",
+              lin: "Shift-Enter"
+            },
+            exec: this.onAction
+          },
+          {
+            name: "alt-submit",
+            bindKey: {
+              win: "Ctrl-Enter",
+              mac: "Ctrl-Enter",
+              lin: "Ctrl-Enter"
+            },
+            exec: this.onAction
+          }
+        ]}
         editorProps={{ $blockScrolling: true }}
         maxLines={20}
         minLines={10}
@@ -127,13 +142,6 @@ class JupyterNotebook extends React.PureComponent {
         onChange={this.onChange}
         style={{ padding: 24, position: "relative" }}
       />
-    );
-    return action ? (
-      <HotKeys handlers={{ submit: this.onAction }} keyMap={this.defaultKeyMap}>
-        {editor}
-      </HotKeys>
-    ) : (
-      editor
     );
   };
 

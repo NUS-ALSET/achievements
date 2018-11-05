@@ -82,7 +82,7 @@ const mapStateToProps = state => ({
   auth: state.firebase.auth,
   requireRefresh: state.root.needRefresh,
   requireAcceptEULA: state.root.requireAcceptEULA,
-  requireSignIn: state.root.requireSignIn,
+  requireSignIn: !state.firebase.auth.uid && state.root.requireSignIn,
   notification: state.root.notification
 });
 

@@ -363,7 +363,7 @@ export class PathsService {
     let solutionURL = null;
 
     this.validateProblem(problemInfo);
-
+ 
     if (
       [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(
         problemInfo.type
@@ -376,6 +376,15 @@ export class PathsService {
     if (pathId) {
       problemInfo.path = pathId;
     }
+    /*
+      Jest Activity
+    */
+    let jestFiles = [];
+    const {type, version, files} = problemInfo;
+    if (ACTIVITY_TYPES.jest.id === type && version >= 1) {
+      jestFiles = files;
+      delete problemInfo.files;
+    }
 
     const key =
       problemInfo.id ||
@@ -386,7 +395,10 @@ export class PathsService {
     const ref = firebase.database().ref(`/activities/${key}`);
     let info = {};
     for (let infoKey in problemInfo) {
-      if (problemInfo[infoKey] !== undefined) {
+      if (
+        problemInfo.hasOwnProperty(infoKey) &&
+        problemInfo[infoKey] !== undefined
+      ) {
         info[infoKey] = problemInfo[infoKey];
       }
     }
@@ -410,6 +422,18 @@ export class PathsService {
         if (solutionURL) {
           this.fetchFile(this.getFileId(solutionURL)).then(json => {
             this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
+          });
+        }
+        /*
+          Update to activityData if Jest Activity
+        */
+        if (jestFiles.length && info.version >= 1) {
+          const ref = firebase.database().ref(`/activityData/${key}`);
+          const {path, owner} = info;
+          ref.set({
+            files: jestFiles,
+            path,
+            owner
           });
         }
         return key;
@@ -552,7 +576,12 @@ export class PathsService {
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set("Completed");
+              .set({
+                completed: true,
+                updatedAt: {
+                  ".sv": "timestamp"
+                }
+              });
           case ACTIVITY_TYPES.text.id:
           case ACTIVITY_TYPES.jest.id:
           case ACTIVITY_TYPES.profile.id:
@@ -571,13 +600,23 @@ export class PathsService {
                 firebase
                   .database()
                   .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-                  .set(solution)
+                  .set({
+                    updatedAt: {
+                      ".sv": "timestamp"
+                    },
+                    solution
+                  })
               );
           case ACTIVITY_TYPES.jupyterInline.id: {
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(JSON.stringify(solution));
+              .set({
+                updatedAt: {
+                  ".sv": "timestamp"
+                },
+                solution: JSON.stringify(solution)
+              });
           }
           default:
             break;
@@ -591,7 +630,9 @@ export class PathsService {
               pathProblem.problemId
             }`
           )
-          .set(true)
+          .set({
+            ".sv": "timestamp"
+          })
       );
   }
 
@@ -914,7 +955,7 @@ export class PathsService {
 
   /**
    * @param {String} uid
-   * @param {IPathActivities} pathActivities
+   * @param {Object} pathActivities
    * @param {Object} codeCombatProfile
    */
   refreshPathSolutions(uid, pathActivities, codeCombatProfile) {
