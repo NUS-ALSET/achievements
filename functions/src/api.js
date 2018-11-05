@@ -20,7 +20,8 @@ exports.handler = function api(token, data) {
       "problemSkills",
       "userRecommendations",
       "featureProblemPercentiles",
-      "featureRanking"
+      "featureRanking",
+      "moreProblemsRequests"
     ];
     if (!supportedDatatypes.includes(data)) {
       return "Unsupported data type " + data;

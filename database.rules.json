@@ -21,6 +21,22 @@
         "
       }
     },
+    "activityData": {
+      ".read": "auth != null",
+      "$activityKey": {
+        ".read": "auth != null",
+        ".write": "auth != null &&
+          !newData.exists() || (
+            root.child('paths/' + newData.child('path').val()).exists() && (
+              root.child('paths/' + newData.child('path').val() +
+                '/owner').val() == auth.uid ||
+              root.child('pathAssistants/' + newData.child('path').val() +
+                '/' + auth.uid).exists()
+            )
+          )
+        "
+      }
+    },
     "activityExampleSolutions": {
       "$activityKey": {
       ".write": "auth != null && root.child('/activities/' + $activityKey + '/owner').val() == auth.uid",
@@ -339,7 +355,8 @@
         "$studentKey": {
           ".write": "auth != null && (
               $studentKey == auth.uid ||
-              root.child('courses/' + $courseKey + '/owner').val() == auth.uid
+              root.child('courses/' + $courseKey + '/owner').val() == auth.uid  ||
+              root.child('/courseAssistants/' + $courseKey + '/' + auth.uid).val() == true
             ) &&
             root.child('coursePasswords/' + $courseKey).exists() &&
             (root.child('coursePasswords/' + $courseKey).val() == newData.val() || !newData.exists())"
@@ -356,7 +373,8 @@
               root.child('studentCoursePasswords/' + $courseKey).exists() &&
               root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
             ) || (
-              root.child('courses/' + $courseKey + '/owner').val() == auth.uid
+              root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
+              root.child('/courseAssistants/' + $courseKey + '/' + auth.uid).val() == true
             ))"
         }
       }
