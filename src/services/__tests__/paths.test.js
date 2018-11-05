@@ -192,7 +192,9 @@ describe("Paths service tests", () => {
         .returns({
           set: data => {
             spy();
-            expect(data).toBe(true);
+            expect(data).toEqual({
+              ".sv": "timestamp"
+            });
           }
         });
       firebase.refStub
