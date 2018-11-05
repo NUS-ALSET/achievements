@@ -16,7 +16,7 @@ export const APP_SETTING = {
   },
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,
-  defaultTimeout: 6000,
+  defaultTimeout: 12000,
   isSuggesting: window.location.href.includes("isSuggesting=true"),
   GITHUB_BASE_URL: "https://github.com/",
   AWS_SERVER_URL:
