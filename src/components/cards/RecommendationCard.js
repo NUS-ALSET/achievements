@@ -142,7 +142,6 @@ class RecommendationCard extends React.PureComponent {
             }
           >
             <Typography
-              component="p"
               style={
                 video
                   ? {
@@ -151,15 +150,15 @@ class RecommendationCard extends React.PureComponent {
                       height: 25,
                       position: "absolute",
                       bottom: 60,
-                      fontSize: 20
+                      fontSize: 15
                     }
                   : {}
               }
-              variant="h5"
+              variant="subtitle1"
             >
               {activity.name}
             </Typography>
-            <Typography component="p">{subHeading || description}</Typography>
+            <Typography variant="caption">{subHeading || description}</Typography>
           </CardContent>
           <CardActions>
             <Button color="primary" size="small">
