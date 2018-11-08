@@ -24,7 +24,6 @@ def check_proc_status(p):
         else:
             stdout, stderr = p.communicate()
             out = stdout.decode('ascii')
-            print(stderr, "baby")
             if stderr == b'':
                 err = "No Error"
             else:
@@ -36,7 +35,7 @@ def check_proc_status(p):
 print("########## Step 0 check working dir ##########")
 if os.path.exists('./.travis.yml'):
     if os.path.isdir('./.git'):
-        print("Currently at, ", os.getcwd())
+        print("Currently at ", os.getcwd())
 else:
     print("please change to the correct achievements main dir")
     sys.exit()
@@ -121,4 +120,4 @@ os.chdir('./build')
 server_address = ('', 8000)
 httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
 print("Now open server with localhost:8000")
-httpd.server_forever()
+httpd.serve_forever()
