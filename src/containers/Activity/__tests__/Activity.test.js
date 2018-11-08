@@ -5,6 +5,7 @@ import { createShallow } from "@material-ui/core/test-utils";
 import Button from "@material-ui/core/Button";
 
 import { Activity } from "../Activity";
+import ActivityView from "../../../components/activityViews/ActivityView";
 
 describe("<Activity>", () => {
   let shallow;
@@ -26,14 +27,12 @@ describe("<Activity>", () => {
         }}
         pathProblem={{}}
         uid={"test"}
-      >
-        {() => {}}
-      </Activity>
+      />
     );
 
-    expect(wrapper.state("problemSolution"), {});
-    wrapper.find(Button).simulate("problem-change", "test");
-    expect(wrapper.state("problemSolution"), "test");
+    expect(wrapper.state("problemSolution")).toEqual({});
+    wrapper.find(ActivityView).simulate("problemChange", "test");
+    expect(wrapper.state("problemSolution")).toEqual("test");
   });
 
   it("should dispatch problemSolutionSubmitRequest", () => {

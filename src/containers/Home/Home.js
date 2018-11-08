@@ -51,14 +51,14 @@ class Home extends React.PureComponent {
   render() {
     return (
       <Fragment>
-        <Typography style={{ marginBottom: 4 }} variant="title">
+        <Typography style={{ marginBottom: 4 }} variant="h6">
           Next steps on your current path
         </Typography>
         <Paper style={{ padding: 4 }}>
           <GridList cellHeight={200} cols={5} spacing={4}>
             {recsMock.paths.map((data, index) => (
               <GridListTile cols={index ? 1 : 2} key={index}>
-                <Typography align="center" variant="headline">
+                <Typography align="center" variant="h5">
                   {data}
                 </Typography>
                 <GridListTileBar
@@ -73,14 +73,14 @@ class Home extends React.PureComponent {
             ))}
           </GridList>
         </Paper>
-        <Typography style={{ margin: "40px 0 4px 0" }} variant="title">
+        <Typography style={{ margin: "40px 0 4px 0" }} variant="h6">
           Your next python skills
         </Typography>
         <Paper style={{ padding: 4 }}>
           <GridList cellHeight={200} cols={5} padding={20} spacing={1}>
             {recsMock.python.map((data, index) => (
               <GridListTile cols={index ? 1 : 2} key={index}>
-                <Typography variant="headline">{data}</Typography>
+                <Typography variant="h5">{data}</Typography>
                 <GridListTileBar
                   actionIcon={
                     <IconButton>
@@ -93,7 +93,7 @@ class Home extends React.PureComponent {
             ))}
           </GridList>
         </Paper>
-        <Typography style={{ margin: "40px 0 4px 0" }} variant="title">
+        <Typography style={{ margin: "40px 0 4px 0" }} variant="h6">
           Your next YouTube videos
         </Typography>
         <Paper style={{ padding: 4 }}>

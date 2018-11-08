@@ -88,7 +88,6 @@ class AddGameSolutionDialog extends React.PureComponent {
         const { 
             // onClose, onCommit, taskId, solution
             open, classes, problem, readOnly } = this.props;
-            console.log('props', this.props);
 
         return (
             <div>
@@ -104,10 +103,10 @@ class AddGameSolutionDialog extends React.PureComponent {
                             <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
                                 <CloseIcon />
                             </IconButton>
-                            <Typography variant="title" color="inherit" className={classes.flex}>
+                            <Typography variant="h6" color="inherit" className={classes.flex}>
                                 {problem && problem.name} {readOnly ? '( Read Only )' : ''}
                             </Typography>
-                            <Typography variant="title" color="inherit">
+                            <Typography variant="h6" color="inherit">
                                 {/* ALSET Editor */}
                             </Typography>
                             {/* { problem && 

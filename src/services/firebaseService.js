@@ -1,7 +1,7 @@
 import firebase from "firebase";
 import { notificationShow, notificationHide } from "../containers/Root/actions";
 
-const ONE_SECOND = 1000;
+const PROCESS_STOP_TIME = 5000;
 
 class FirebaseService {
   constructor() {
@@ -31,8 +31,8 @@ class FirebaseService {
       this.dispatch(notificationShow(`${this.processName} Timeout`));
       setTimeout(() => {
         cb();
-      }, ONE_SECOND);
-    }, this.stopAfter * ONE_SECOND);
+      }, PROCESS_STOP_TIME);
+    }, this.stopAfter * PROCESS_STOP_TIME);
   }
 
   clearTimer() {
@@ -101,7 +101,7 @@ class FirebaseService {
               setTimeout(() => {
                 this.deleteTask(taskKey);
                 reject(value.error);
-              }, ONE_SECOND);
+              }, PROCESS_STOP_TIME);
             }
           });
         });

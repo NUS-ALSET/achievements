@@ -4,22 +4,23 @@ import CodeCombatLevels from "./CodeCombatLevels";
 export const APP_SETTING = {
   drawerWidth: 250,
   CodeCombatLevels: CodeCombatLevels,
-  games : {
-    "passenger-picker" : {
-      "id" : "passenger-picker",
-      "name" : "Passenger Pick-up"
+  games: {
+    "passenger-picker": {
+      id: "passenger-picker",
+      name: "Passenger Pick-up"
     },
-    "squad" : {
-      "id" : "squad",
-      "name" : "Squad"
+    squad: {
+      id: "squad",
+      name: "Squad"
     }
   },
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,
-  defaultTimeout: 6000,
+  defaultTimeout: 12000,
   isSuggesting: window.location.href.includes("isSuggesting=true"),
-  GITHUB_BASE_URL: 'https://github.com/',
-  AWS_SERVER_URL: 'https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest',
+  GITHUB_BASE_URL: "https://github.com/",
+  AWS_SERVER_URL:
+    "https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest"
 };
 
 // Initialize Firebase

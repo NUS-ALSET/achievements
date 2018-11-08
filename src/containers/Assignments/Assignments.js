@@ -191,7 +191,7 @@ class Assignments extends React.Component {
                 <Button
                   color="primary"
                   onClick={this.submitPassword}
-                  variant="raised"
+                  variant="contained"
                 >
                   Submit
                 </Button>

@@ -95,7 +95,7 @@ class ControlAssistantsDialog extends React.Component {
               <Button
                 disabled={!newAssistant}
                 onClick={() => onAddAssistant(target, newAssistant.id)}
-                variant="raised"
+                variant="contained"
               >
                 Add
               </Button>
@@ -131,7 +131,7 @@ class ControlAssistantsDialog extends React.Component {
           </List>
         </DialogContent>
         <DialogActions>
-          <Button color="primary" onClick={onClose} variant="raised">
+          <Button color="primary" onClick={onClose} variant="contained">
             {isOwner ? "Commit" : "Close"}
           </Button>
         </DialogActions>

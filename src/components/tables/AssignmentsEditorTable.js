@@ -185,25 +185,25 @@ class AssignmentsEditorTable extends React.Component {
                 </TableCell>
                 <TableCell>{assignment.details}</TableCell>
                 <TableCell>
-                  <IconButton>
-                    <EditIcon
-                      onClick={() => this.onEditAssignmentClick(assignment)}
-                    />
+                  <IconButton
+                    onClick={() => this.onEditAssignmentClick(assignment)}
+                  >
+                    <EditIcon />
                   </IconButton>
-                  <IconButton>
-                    <DeleteIcon
-                      onClick={() => this.onDeleteAssignmentClick(assignment)}
-                    />
+                  <IconButton
+                    onClick={() => this.onDeleteAssignmentClick(assignment)}
+                  >
+                    <DeleteIcon />
                   </IconButton>
-                  <IconButton>
-                    <ExpandLessIcon
-                      onClick={() => this.onReorderClick(assignment, false)}
-                    />
+                  <IconButton
+                    onClick={() => this.onReorderClick(assignment, false)}
+                  >
+                    <ExpandLessIcon />
                   </IconButton>
-                  <IconButton>
-                    <ExpandMoreIcon
-                      onClick={() => this.onReorderClick(assignment, true)}
-                    />
+                  <IconButton
+                    onClick={() => this.onReorderClick(assignment, true)}
+                  >
+                    <ExpandMoreIcon />
                   </IconButton>
                 </TableCell>
               </TableRow>

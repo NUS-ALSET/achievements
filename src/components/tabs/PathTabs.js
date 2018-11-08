@@ -98,7 +98,7 @@ class PathTabs extends React.Component {
               style={{
                 margin: 4
               }}
-              variant="raised"
+              variant="contained"
             >
               Add Path
             </Button>

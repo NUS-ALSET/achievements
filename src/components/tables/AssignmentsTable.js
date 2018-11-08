@@ -585,7 +585,7 @@ class AssignmentsTable extends React.PureComponent {
                               style={{
                                 marginLeft: 4
                               }}
-                              variant="raised"
+                              variant="contained"
                             >
                               {studentInfo.solutions[assignment.id]
                                 ? "Update"

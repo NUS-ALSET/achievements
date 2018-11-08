@@ -39,7 +39,7 @@ class ProfileActivity extends React.PureComponent {
     const url = `${externalProfile.url}/user/${this.state.login || solution.value}`;
     return (
       <Fragment>
-        <Typography align="left" gutterBottom variant="headline">
+        <Typography align="left" gutterBottom variant="h5">
           {problem.question}
         </Typography>
         <div>

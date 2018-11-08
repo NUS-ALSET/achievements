@@ -1,4 +1,44 @@
 {
+  "dungeons-of-kithgard" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_1.png",
+    "id" : "dungeons-of-kithgard",
+    "name" : "Dungeon 001 Dungeons of Kithgard",
+    "url" : "http://codecombat.com/play/level/dungeons-of-kithgard"
+  },
+  "gems-in-the-deep" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_2.png",
+    "id" : "gems-in-the-deep",
+    "name" : "Dungeon 002 Gems in the Deep",
+    "url" : "http://codecombat.com/play/level/gems-in-the-deep"
+  },
+  "shadow-guard" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_3.png",
+    "id" : "shadow-guard",
+    "name" : "Dungeon 003 Shadow Guard",
+    "url" : "http://codecombat.com/play/level/shadow-guard"
+  },
+  "enemy-mine" : {
+    "campaign" : "dungeon",
+    "id" : "enemy-mine",
+    "name" : "Dungeon 004 Enemy Mine",
+    "url" : "https://codecombat.com/play/level/enemy-mine"
+  },
+  "true-names" : {
+    "campaign" : "dungeon",
+    "iconUrl" : "/assets/icons/commanding_followers_5.png",
+    "id" : "true-names",
+    "name" : "Dungeon 005 True Names",
+    "url" : "http://codecombat.com/play/level/true-names"
+  },
+  "cell-commentary" : {
+    "campaign" : "dungeon",
+    "id" : "cell-commentary",
+    "name" : "Dungeon 006 Cell Commentary",
+    "url" : "http://codecombat.com/play/level/cell-commentary"
+  },
   "a-mayhem-of-munchkins" : {
     "campaign" : "dungeon",
     "iconUrl" : "/assets/icons/taunt_blank.png",
@@ -73,12 +113,6 @@
     "id" : "cavern-survival",
     "name" : "Cavern Survival",
     "url" : "http://codecombat.com/play/level/cavern-survival"
-  },
-  "cell-commentary" : {
-    "campaign" : "dungeon",
-    "id" : "cell-commentary",
-    "name" : "Cell Commentary",
-    "url" : "http://codecombat.com/play/level/cell-commentary"
   },
   "clash-of-clones" : {
     "campaign" : "desert",
@@ -241,13 +275,6 @@
     "name" : "Dueling Grounds",
     "url" : "http://codecombat.com/play/level/dueling-grounds"
   },
-  "dungeons-of-kithgard" : {
-    "campaign" : "dungeon",
-    "iconUrl" : "/assets/icons/commanding_followers_1.png",
-    "id" : "dungeons-of-kithgard",
-    "name" : "Dungeons of Kithgard",
-    "url" : "http://codecombat.com/play/level/dungeons-of-kithgard"
-  },
   "dust" : {
     "campaign" : "desert",
     "iconUrl" : "/assets/icons/commanding_followers_blank.png",
@@ -260,11 +287,6 @@
     "id" : "endangered-burl",
     "name" : "Endangered Burl",
     "url" : "http://codecombat.com/play/level/endangered-burl"
-  },
-  "enemy-mine" : {
-    "id" : "enemy-mine",
-    "name" : "Enemy Mine",
-    "url" : "https://codecombat.com/play/level/enemy-mine"
   },
   "fire-dancing" : {
     "campaign" : "dungeon",
@@ -293,13 +315,6 @@
     "id" : "forgetful-gemsmith",
     "name" : "Forgetful Gemsmith",
     "url" : "http://codecombat.com/play/level/forgetful-gemsmith"
-  },
-  "gems-in-the-deep" : {
-    "campaign" : "dungeon",
-    "iconUrl" : "/assets/icons/commanding_followers_2.png",
-    "id" : "gems-in-the-deep",
-    "name" : "Gems in the Deep",
-    "url" : "http://codecombat.com/play/level/gems-in-the-deep"
   },
   "gems-or-death" : {
     "campaign" : "forest",
@@ -677,13 +692,6 @@
     "name" : "Sarven Treasure",
     "url" : "http://codecombat.com/play/level/sarven-treasure"
   },
-  "shadow-guard" : {
-    "campaign" : "dungeon",
-    "iconUrl" : "/assets/icons/commanding_followers_3.png",
-    "id" : "shadow-guard",
-    "name" : "Shadow Guard",
-    "url" : "http://codecombat.com/play/level/shadow-guard"
-  },
   "shield-rush" : {
     "campaign" : "forest",
     "iconUrl" : "/assets/icons/taunt_9.png",
@@ -884,13 +892,6 @@
     "id" : "touch-of-death",
     "name" : "Touch of Death",
     "url" : "http://codecombat.com/play/level/touch-of-death"
-  },
-  "true-names" : {
-    "campaign" : "dungeon",
-    "iconUrl" : "/assets/icons/commanding_followers_5.png",
-    "id" : "true-names",
-    "name" : "True Names",
-    "url" : "http://codecombat.com/play/level/true-names"
   },
   "village-guard" : {
     "campaign" : "forest",

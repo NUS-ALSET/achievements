@@ -34,10 +34,10 @@ function Contribute(props) {
       <main>
         <div className={classes.mainDiv}>
           <div className={classes.mainContent}>
-            <Typography variant="display1" align="center" color="textPrimary" gutterBottom>
+            <Typography variant="h4" align="center" color="textPrimary" gutterBottom>
               Contribute
             </Typography>
-            <Typography variant="title" align="center" color="textSecondary" paragraph>
+            <Typography variant="h6" align="center" color="textSecondary" paragraph>
               NUS ALSET Achievements is an open development hosted on GitHub
             </Typography>
             <p style={{textAlign: "center"}}>

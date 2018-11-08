@@ -43,7 +43,8 @@ import {
   pathShowCollaboratorsDialog,
   pathToggleJoinStatusRequest,
   fetchGithubFiles,
-  pathActivityCodeCombatOpen
+  pathActivityCodeCombatOpen,
+  pathOpenJestSolutionDialog
 } from "./actions";
 import {
   pathActivityChangeRequest,
@@ -110,7 +111,8 @@ export class Path extends React.Component {
     pendingActivityId: PropTypes.string,
     pendingProfileUpdate: PropTypes.bool,
     ui: PropTypes.any,
-    uid: PropTypes.string
+    uid: PropTypes.string,
+    openJestActivity: PropTypes.func
   };
 
   state = {
@@ -135,7 +137,8 @@ export class Path extends React.Component {
       onOpenSolution,
       onActivityCodeCombatOpen,
       onPushPath,
-      pathActivities
+      pathActivities,
+      openJestActivity
     } = this.props;
     this.setState(() => ({
       botsQuantity: activity.unitsPerSide
@@ -157,6 +160,13 @@ export class Path extends React.Component {
         onPushPath(
           `/paths/${pathActivities.path.id}/activities/${activity.id}`
         );
+        break;
+      case ACTIVITY_TYPES.jest.id:
+        if (activity.version >= 1) {
+          openJestActivity(pathActivities.path.id, activity);
+        } else {
+          onOpenSolution(pathActivities.path.id, activity);
+        }
         break;
       default:
         onOpenSolution(pathActivities.path.id, activity);
@@ -193,7 +203,6 @@ export class Path extends React.Component {
     const activity = pathActivities.activities.find(
       activity => activity.id === activityId
     );
-
     onActivitySolutionSubmit(
       pathActivities.path.id,
       { ...activity, problemId: activity.id },
@@ -336,7 +345,7 @@ export class Path extends React.Component {
               <Button
                 color="primary"
                 onClick={this.onAddActivityClick}
-                variant="raised"
+                variant="contained"
               >
                 Add Activity
               </Button>
@@ -346,7 +355,7 @@ export class Path extends React.Component {
                   onClick={() =>
                     onShowCollaboratorsClick(pathActivities.path.id)
                   }
-                  variant="raised"
+                  variant="contained"
                 >
                   Collaborators
                 </Button>
@@ -520,7 +529,8 @@ const mapDispatchToProps = {
   onRemoveAssistant: pathRemoveCollaboratorRequest,
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
-  fetchGithubFiles: fetchGithubFiles
+  fetchGithubFiles: fetchGithubFiles,
+  openJestActivity: pathOpenJestSolutionDialog
 };
 
 export default compose(

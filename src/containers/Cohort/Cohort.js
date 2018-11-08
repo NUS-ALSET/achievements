@@ -186,7 +186,7 @@ class Cohort extends React.PureComponent {
                 <Button
                   className={classes.toolbarItem}
                   onClick={this.addCourse}
-                  variant="raised"
+                  variant="contained"
                 >
                   Add
                 </Button>
@@ -197,7 +197,7 @@ class Cohort extends React.PureComponent {
                 <Button
                   className={classes.toolbarItem}
                   onClick={this.recalculate}
-                  variant="raised"
+                  variant="contained"
                 >
                   Recalculate
                 </Button>
@@ -205,7 +205,7 @@ class Cohort extends React.PureComponent {
                   <Button
                     className={classes.toolbarButton}
                     onClick={this.showAssistantsDialog}
-                    variant="raised"
+                    variant="contained"
                   >
                     Collaborators
                   </Button>

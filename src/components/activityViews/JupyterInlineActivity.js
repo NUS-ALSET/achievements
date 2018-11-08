@@ -79,21 +79,21 @@ class JupyterInlineActivity extends React.PureComponent {
     }
     if (solution.failed) {
       return (
-        <Typography color="error" gutterBottom variant="title">
+        <Typography color="error" gutterBottom variant="h6">
           (There is something wrong with your solution...)
         </Typography>
       );
     }
     if (solution.loading) {
       return (
-        <Typography color="textSecondary" gutterBottom variant="display2">
+        <Typography color="textSecondary" gutterBottom variant="h3">
           (Checking)
         </Typography>
       );
     }
     if (solution.checked) {
       return (
-        <Typography color="primary" gutterBottom variant="display2">
+        <Typography color="primary" gutterBottom variant="h3">
           (Passed)
         </Typography>
       );
@@ -148,7 +148,7 @@ class JupyterInlineActivity extends React.PureComponent {
               color="primary"
               onClick={onCommit}
               style={{ float: "right", marginBottom: "10px" }}
-              variant="raised"
+              variant="contained"
             >
               Commit Solution
             </Button>

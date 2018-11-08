@@ -28,25 +28,25 @@ function ViewDestination(props) {
   const { classes, destination ={} } = props;
   return (
     <div className={classes.root}>
-    <Typography className={classes.heading} variant={'display1'}>
+    <Typography className={classes.heading} variant="h4">
       Destination : 
     </Typography>
-    <Typography className={classes.heading} style={{ marginTop : '30px'}} variant={'subheading'}>
+    <Typography className={classes.heading} style={{ marginTop : '30px'}} variant="subtitle1">
       Name : {destination.title}
     </Typography>
-    <Typography className={classes.heading} variant={'subheading'}>
+    <Typography className={classes.heading} variant="subtitle1">
       Updated On  : {destination.updatedOn}
     </Typography>
-    <Typography className={classes.heading} variant={'subheading'}>
+    <Typography className={classes.heading} variant="subtitle1">
       Source Type  : {(destination.sourceType || '')}
     </Typography>
-    <Typography className={classes.heading} variant={'subheading'}>
+    <Typography className={classes.heading} variant="subtitle1">
       Skills : 
     </Typography>
       {
         Object.keys(destination.skills || {}).length > 0 
         ?  <Skills  skills={destination.skills} />
-        : <Typography className={classes.heading} variant={'title'}>No Skills.</Typography>
+        : <Typography className={classes.heading} variant="h6">No Skills.</Typography>
       }
     </div>
   );

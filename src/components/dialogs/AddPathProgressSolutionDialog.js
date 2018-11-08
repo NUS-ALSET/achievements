@@ -118,7 +118,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
             Go to Path
           </Button>
           {(pathProgress && totalActivities && pathProgress.solutions) &&
-            <Button color="primary" onClick={this.onCommit} variant="raised">
+            <Button color="primary" onClick={this.onCommit} variant="contained">
               Update Progress
             </Button>
           }

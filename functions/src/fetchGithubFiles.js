@@ -158,10 +158,10 @@ class GithubCodeHandler {
       this.setState({
         files: this.state.files
           .map(f => ({
-            path: f.path.replace(
+            path: this.state.repoDetails.folderPath ? f.path.replace(
               `${this.state.repoDetails.folderPath.slice(1)}/`,
               ""
-            ),
+            ) : f.path,
             readOnly: true,
             type: f.type,
             code: typeof f.code === 'string' ? f.code : JSON.stringify(f.code, null, '\t')

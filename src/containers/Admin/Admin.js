@@ -110,7 +110,7 @@ class Admin extends React.PureComponent {
       <Paper className={classes.section}>
         <Grid container spacing={24}>
           <Grid item xs={12}>
-            <Typography variant="headline" gutterBottom>
+            <Typography variant="h5" gutterBottom>
               Admin Page
             </Typography>
             <Typography gutterBottom>
@@ -120,7 +120,7 @@ class Admin extends React.PureComponent {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="title" gutterBottom>
+            <Typography variant="h6" gutterBottom>
               Remote URLs used
             </Typography>
             <FormControl
@@ -157,7 +157,7 @@ class Admin extends React.PureComponent {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="title" gutterBottom>
+            <Typography variant="h6" gutterBottom>
               Control recommendations to display at Home
             </Typography>
             <FormControl className={classes.formControl} component="fieldset">
@@ -192,7 +192,7 @@ class Admin extends React.PureComponent {
               color="primary"
               fullWidth
               onClick={this.commit}
-              variant="raised"
+              variant="contained"
             >
               UPDATE
             </Button>

@@ -24,8 +24,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
 import isEqual from "lodash/isEqual";
-import { notificationShow } from "../Root/actions";
-import AuthRequireBanner from "../../components/banners/AuthRequireBanner";
+import { notificationShow, signInRequire } from "../Root/actions";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
@@ -93,6 +92,9 @@ export class Activity extends React.PureComponent {
   }
 
   onProblemChange = problemSolution => {
+    if (!this.props.uid && Object.keys(problemSolution).length !== 0) {
+      this.props.dispatch(signInRequire());
+    }
     this.setState({ problemSolution, changed: true });
     return (
       this.props.onProblemChange && this.props.onProblemChange(problemSolution)
@@ -154,7 +156,6 @@ export class Activity extends React.PureComponent {
 
     return (
       <Fragment>
-        <AuthRequireBanner open={!uid} />
         {!embedded && (
           <Breadcrumbs
             paths={[
@@ -184,7 +185,7 @@ export class Activity extends React.PureComponent {
             onCommit={this.onCommit}
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
             pathProblem={pathProblem}
-            readOnly={readOnly || !uid}
+            readOnly={readOnly}
             showCommitBtnOnTop={showCommitBtnOnTop}
             solution={solution}
             style={{
@@ -208,7 +209,7 @@ export class Activity extends React.PureComponent {
                 color="primary"
                 disabled={this.state.disabledCommitBtn}
                 onClick={this.onCommit}
-                variant="raised"
+                variant="contained"
               >
                 Commit
               </Button>

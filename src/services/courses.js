@@ -516,7 +516,11 @@ export class CoursesService {
                 assignment.problem
               }`
             )
-            .set(completed);
+            .set(
+              completed && {
+                ".sv": "timestamp"
+              }
+            );
         }
         return res;
       });

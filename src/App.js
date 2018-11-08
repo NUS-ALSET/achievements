@@ -30,7 +30,9 @@ const theme = createMuiTheme({
     }
   },
   typography: {
-    htmlFontSize: 14
+    htmlFontSize: 14,
+    // Migration to typography v2
+    useNextVariants: true
   }
 });
 

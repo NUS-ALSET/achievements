@@ -1,11 +1,11 @@
 /**
- * @file RefreshPageDialog component module
+ * @file SignInDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
- * @created 20.10.18
+ * @created 28.10.18
  */
 
-import PropTypes from "prop-types";
 import React from "react";
+import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -14,30 +14,29 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 
-class RefreshPageDialog extends React.PureComponent {
+class SignInDialog extends React.PureComponent {
   static propTypes = {
+    onSignInClick: PropTypes.func,
     open: PropTypes.bool.isRequired
   };
 
-  onAcceptClick = () => window.location.reload(true);
-
   render() {
-    const { open } = this.props;
+    const { onSignInClick, open } = this.props;
     return (
       <Dialog open={open}>
-        <DialogTitle>Refresh Request</DialogTitle>
+        <DialogTitle>Sign in Request</DialogTitle>
         <DialogContent>
           <Typography>
-            New version of this page was deployed. Refresh page, please
+            To save your work on this activity, please log in
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button
             color="primary"
-            onClick={this.onAcceptClick}
+            onClick={onSignInClick}
             variant="contained"
           >
-            Accept
+            Sign in
           </Button>
         </DialogActions>
       </Dialog>
@@ -45,4 +44,4 @@ class RefreshPageDialog extends React.PureComponent {
   }
 }
 
-export default RefreshPageDialog;
+export default SignInDialog;

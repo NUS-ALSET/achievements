@@ -8,7 +8,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 import ReactLoadable from "react-loadable";
-import { HotKeys } from "react-hotkeys";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -55,10 +54,11 @@ class JupyterNotebook extends React.PureComponent {
     solution: ""
   };
 
-  defaultKeyMap = {
-    submit: ["ctrl+enter", "shift+enter"]
-  };
-  defaultHandlers = { submit: this.props.onCommit };
+  onAction = () =>
+    this.state.solution &&
+    this.props.action &&
+    this.props.richEditor &&
+    this.props.action(this.state.solution);
 
   onChange = e =>
     this.setState({ solution: (e && e.target && e.target.value) || e });
@@ -70,9 +70,29 @@ class JupyterNotebook extends React.PureComponent {
   };
 
   getEditor = () => {
-    const { action, defaultValue, onCommit, readOnly, richEditor } = this.props;
-    const editor = richEditor ? (
+    const { action, defaultValue, readOnly, richEditor } = this.props;
+    return richEditor ? (
       <AceEditor
+        commands={[
+          {
+            name: "submit",
+            bindKey: {
+              win: "Shift-Enter",
+              mac: "Shift-Enter",
+              lin: "Shift-Enter"
+            },
+            exec: this.onAction
+          },
+          {
+            name: "alt-submit",
+            bindKey: {
+              win: "Ctrl-Enter",
+              mac: "Ctrl-Enter",
+              lin: "Ctrl-Enter"
+            },
+            exec: this.onAction
+          }
+        ]}
         editorProps={{ $blockScrolling: true }}
         maxLines={20}
         minLines={10}
@@ -101,7 +121,7 @@ class JupyterNotebook extends React.PureComponent {
           endAdornment: (
             <InputAdornment position="end">
               {APP_SETTING.isSuggesting ? (
-                <IconButton onClick={() => action(this.state.solution)}>
+                <IconButton onClick={this.onAction}>
                   <RefreshIcon />
                 </IconButton>
               ) : (
@@ -123,13 +143,6 @@ class JupyterNotebook extends React.PureComponent {
         style={{ padding: 24, position: "relative" }}
       />
     );
-    return onCommit ? (
-      <HotKeys handlers={this.defaultHandlers} keyMap={this.defaultKeyMap}>
-        {editor}
-      </HotKeys>
-    ) : (
-      editor
-    );
   };
 
   render() {
@@ -140,7 +153,7 @@ class JupyterNotebook extends React.PureComponent {
           style={{
             position: "relative"
           }}
-          variant="headline"
+          variant="h5"
         >
           <span>{title}</span>
           {url && (
@@ -175,7 +188,7 @@ class JupyterNotebook extends React.PureComponent {
               <Button
                 color="primary"
                 disabled={!(this.state.solution && action && richEditor)}
-                onClick={() => action(this.state.solution)}
+                onClick={this.onAction}
                 style={{
                   position: "absolute",
                   top: 4,
@@ -198,10 +211,7 @@ class JupyterNotebook extends React.PureComponent {
           )}
         </Typography>
         <br />
-        {solution !== null &&
-          // FIXIT: cleanup this >_<
-          action &&
-          this.getEditor()}
+        {solution !== null && action && this.getEditor()}
         {solution &&
           solution.json && (
             <Collapse collapsedHeight="10px" in={!this.state.collapsed}>

@@ -226,34 +226,34 @@ class AddActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <Typography
-              variant="body2"
               gutterBottom
+              variant="body2"
             >
               Jupyter Notebook Activity
             </Typography>
             <Typography
-              variant="body1"
               gutterBottom
+              variant="body1"
             >
               A type of activity that requires the students to submit the python solution for a single code box in a Jupyter notebook. The solution should ensure that any relevant assertions/testing in the notebook pass.
             </Typography>
             <br />
             <Typography
-              variant="body2"
               gutterBottom
+              variant="body2"
             >
               Step 1: Get the Shareable Link from Google Colab ipynb
             </Typography>
-            <img src={JupyterNotebookStep1} alt="JupyterNotebookStep1" />
+            <img alt="JupyterNotebookStep1" src={JupyterNotebookStep1} />
             <a
               href="https://colab.research.google.com/drive/1Rx_oOoslo2bbT7CY6nXmWuwzJXootjzA"
               rel="noopener noreferrer"
               target="_blank"
             >
               <Typography
-                variant="caption"
-                gutterBottom
                 align="center"
+                gutterBottom
+                variant="caption"
               >
                 Sample Google Colab ipynb Link
               </Typography>
@@ -261,28 +261,28 @@ class AddActivityDialog extends React.PureComponent {
             <TextField
               defaultValue={activity && activity.problemURL}
               fullWidth
-              label="Google Colab ipynb URL for this Activity"
               helperText="Make sure the ipynb's Link Sharing is on"
+              label="Google Colab ipynb URL for this Activity"
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
             <Typography
-              variant="body2"
               gutterBottom
               style={{marginTop:30}}
+              variant="body2"
             >
               Step 2: Get the Shareable Link of the Solution Notebook
             </Typography>
-            <img src={JupyterNotebookStep2} alt="JupyterNotebookStep2" />
+            <img alt="JupyterNotebookStep2" src={JupyterNotebookStep2} />
             <a
               href="https://colab.research.google.com/drive/1k-Q9j1AGx3MmQ9xxATlXXggwKo5CGC7C"
               rel="noopener noreferrer"
               target="_blank"
             >
               <Typography
-                variant="caption"
-                gutterBottom
                 align="center"
+                gutterBottom
+                variant="caption"
               >
                 Sample Solution Google Colab ipynb Link
               </Typography>
@@ -290,15 +290,15 @@ class AddActivityDialog extends React.PureComponent {
             <TextField
               defaultValue={(activityExampleSolution || {}).solutionURL || ""}
               fullWidth
-              label="Another Google Colab ipynb URL for the Solution"
               helperText="just a sample solution from you is ok"
+              label="Another Google Colab ipynb URL for the Solution"
               margin="dense"
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
             />
             <Typography
-              variant="body2"
               gutterBottom
               style={{marginTop:30}}
+              variant="body2"
             >
               Step 3: Select code block for solution input
             </Typography>
@@ -318,17 +318,17 @@ class AddActivityDialog extends React.PureComponent {
             <TextField
               defaultValue={activity && activity.youtubeURL}
               fullWidth
+              helperText="The URL should be a clean '?v=<id>', without time start or playlist info (for example, 'https://www.youtube.com/watch?v=ZK3O402wf1c')"
               label="YouTube URL"
               margin="dense"
-              helperText="The URL should be a clean '?v=<id>', without time start or playlist info (for example, 'https://www.youtube.com/watch?v=ZK3O402wf1c')"
               onChange={e => this.onFieldChange("youtubeURL", e.target.value)}
             />
             <FormControl
               component="fieldset"
+              required
               style={{
                 marginTop: 24
               }}
-              required
             >
               <FormLabel component="legend">Follow Up Questions</FormLabel>
               <FormHelperText>
@@ -485,7 +485,7 @@ class AddActivityDialog extends React.PureComponent {
         frozen: 1
       };
     }
-    if (field === "type" && value === 'game') {
+    if (field === "type" && value === "game") {
       state = { ...gameDefaultData };
     }
     if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
@@ -505,7 +505,7 @@ class AddActivityDialog extends React.PureComponent {
         });
       } else {
         this.setState({
-          isCorrectInput: false,
+          isCorrectInput: false
         });
       }
     }
@@ -524,7 +524,8 @@ class AddActivityDialog extends React.PureComponent {
         type,
         name,
         githubURL: this.fetchedGithubURL,
-        files: this.state.files
+        files: this.state.files,
+        version: 1
       });
     } else {
       this.props.onCommit(
@@ -566,8 +567,8 @@ class AddActivityDialog extends React.PureComponent {
         >
           <TextField
             autoFocus
-            fullWidth
             error={!this.state.isCorrectInput}
+            fullWidth
             helperText={this.state.isCorrectInput
               ? ""
               : "Name should not be empty or too long or have invalid characters"}
@@ -624,9 +625,9 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default compose(
-  firebaseConnect((ownProps, store) => {
-    if(!['jupyter','jupyterInline'].includes((ownProps.activity || {}).type)){
-      return false; 
+  firebaseConnect((ownProps) => {
+    if (!["jupyter","jupyterInline"].includes((ownProps.activity || {}).type)){
+      return false;
     }
     return [
       `/activityExampleSolutions/${ownProps.activity.id}`,
