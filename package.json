@@ -2,7 +2,7 @@
   "name": "achievements",
   "description": "nus alset achievements web app",
   "version": "0.0.38",
-  "repository": "https://github.com/NUS-ALSET",
+  "repository": "https://github.com/NUS-ALSET/achievements",
   "dependencies": {
     "@material-ui/core": "3.4.0",
     "@material-ui/icons": "^3.0.1",
@@ -88,6 +88,7 @@
     "eslint": "eslint --fix src",
     "prettier": "prettier --write src/**/*.{js,ts}",
     "lint": "./scripts/lint.sh",
-    "windows-lint": "./scripts/lint.bat"
+    "windows-lint": "./scripts/lint.bat",
+    "check-prod": "python3 ./scripts/prod-deploy.py"
   }
 }
