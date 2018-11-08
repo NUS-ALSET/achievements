@@ -40,7 +40,30 @@ else:
     print("please change to the correct achievements main dir")
     sys.exit()
 
-# Step 1: remove node_modules/
+# Step 1: git pull and merge
+print("########## Step 3 git ##########")
+
+merge_time = datetime.now().strftime('%Y-%m-%d %H:%M')
+
+commd_merge = ['git',
+              'merge',
+              'master',
+              '-m',
+              'preparing for %s deployment' %merge_time
+              ]
+
+proc_git_m = subprocess.Popen(
+                 commd_merge,
+                 stdout=subprocess.PIPE,
+                 stderr=subprocess.PIPE
+             )
+
+(git_out, git_err) = check_proc_status(proc_git_m)
+print("git merge output:\n", git_out)
+print("git merge error:\n", git_err)
+
+
+# Step 2: remove node_modules/
 print("########## Step 1 clean up ##########")
 
 nm_path = "node_modules/"
@@ -53,7 +76,7 @@ if os.path.isdir(nm_path):
         print(e)
 
 
-# Step 2: remove npm/yarn lock files
+# Step 3: remove npm/yarn lock files
 print("########## Step 2 some more clean up ##########")
 
 lock_files = ["package-lock.json", "yarn.lock"]
@@ -63,26 +86,6 @@ for f in lock_files:
         os.remove(f)
         print("{} removed".format(f))
 
-
-# Step 3: git merge
-print("########## Step 3 git ##########")
-
-merge_time = datetime.now().strftime('%Y-%m-%d %H:%M')
-commd = ['git',
-        'merge',
-        'master',
-        '-m',
-        'preparing for %s deployment' %merge_time
-        ]
-proc_git = subprocess.Popen(
-            commd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
-
-(git_out, git_err) = check_proc_status(proc_git)
-print("git merge output:\n", git_out)
-print("git merge error:\n", git_err)
 
 
 # Step 4: yarn install
