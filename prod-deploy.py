@@ -33,7 +33,7 @@ def check_proc_status(p):
 
 # Step 0: check whether at achievements dir
 print("########## Step 0 check working dir ##########")
-if os.path.exists('./.travis.yml'):
+if os.path.isdir('./public'):
     if os.path.isdir('./.git'):
         print("Currently at ", os.getcwd())
 else:
