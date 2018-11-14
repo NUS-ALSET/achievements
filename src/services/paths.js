@@ -363,7 +363,7 @@ export class PathsService {
     let solutionURL = null;
 
     this.validateProblem(problemInfo);
- 
+
     if (
       [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(
         problemInfo.type
@@ -380,7 +380,7 @@ export class PathsService {
       Jest Activity
     */
     let jestFiles = [];
-    const {type, version, files} = problemInfo;
+    const { type, version, files } = problemInfo;
     if (ACTIVITY_TYPES.jest.id === type && version >= 1) {
       jestFiles = files;
       delete problemInfo.files;
@@ -429,7 +429,7 @@ export class PathsService {
         */
         if (jestFiles.length && info.version >= 1) {
           const ref = firebase.database().ref(`/activityData/${key}`);
-          const {path, owner} = info;
+          const { path, owner } = info;
           ref.set({
             files: jestFiles,
             path,
@@ -539,7 +539,8 @@ export class PathsService {
                   owner: uid,
                   taskKey: answerKey,
                   problem: pathProblem.problemId,
-                  solution: JSON.stringify(json)
+                  solution: JSON.stringify(json),
+                  open: pathProblem.openTime
                 });
             });
           }

@@ -7,12 +7,20 @@ const jupyterLambdaProcessor =
   "/prod/notebook_runner";
 
 const executeJupyterSolution = (data, taskKey, owner) => {
-  return admin
-    .database()
-    .ref("/config/jupyterLambdaProcessor")
-    .once("value")
-    .then(lambdaProcessor => lambdaProcessor.val())
-    .then(lambdaProcessor =>
+  let activity;
+  return Promise.all([
+    admin
+      .database()
+      .ref("/config/jupyterLambdaProcessor")
+      .once("value")
+      .then(lambdaProcessor => lambdaProcessor.val()),
+    admin
+      .database()
+      .ref(`/activities/${data.problem}`)
+      .once("value")
+      .then(snap => (activity = snap.val()))
+  ])
+    .then(([lambdaProcessor]) =>
       axios({
         url: lambdaProcessor || jupyterLambdaProcessor,
         method: "post",
@@ -27,20 +35,58 @@ const executeJupyterSolution = (data, taskKey, owner) => {
           owner: owner,
           solution: JSON.stringify(response.data.ipynb)
         })
+        .then(() => response.data.ipynb)
     )
-    .catch(err => {
-      return (
-        console.error(err.message) ||
-        admin
-          .database()
-          .ref(`/jupyterSolutionsQueue/responses/${taskKey}`)
-          .set(false)
-      );
+    .then(solution => {
+      let solutionFailed = false;
+      solution.cells.slice(-Number(activity.frozen)).forEach(cell => {
+        solutionFailed =
+          solutionFailed || !!(cell.outputs && cell.outputs.join("").trim());
+        return true;
+      });
+      return admin
+        .database()
+        .ref("/analytics/jupyterSolutions")
+        .push({
+          time: {
+            ".sv": "timestamp"
+          },
+          userKey: owner,
+          activityKey: data.problem,
+          open: data.open || 0,
+          completed: Number(!solutionFailed)
+        });
     })
+    .catch(() =>
+      admin
+        .database()
+        .ref("/analytics/jupyterSolutions")
+        .push({
+          time: {
+            ".sv": "timestamp"
+          },
+          userKey: owner,
+          activityKey: data.problem,
+          open: data.open,
+          completed: 0
+        })
+        .then(() =>
+          admin
+            .database()
+            .ref(`/jupyterSolutionsQueue/responses/${taskKey}`)
+            .set(false)
+        )
+    )
     .then(() =>
       admin
         .database()
         .ref(`/jupyterSolutionsQueue/answers/${taskKey}`)
+        .remove()
+    )
+    .then(() =>
+      admin
+        .database()
+        .ref(`/jupyterSolutionsQueue/tasks/${taskKey}`)
         .remove()
     );
 };

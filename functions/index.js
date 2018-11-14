@@ -45,7 +45,7 @@ exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
   .onWrite(change => {
     const data = change.after.val();
-    if(data){
+    if (data) {
       return githubTrigger.handler(data, data.taskKey, data.owner);
     }
     return Promise.resolve();
