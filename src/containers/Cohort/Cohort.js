@@ -154,7 +154,7 @@ class Cohort extends React.PureComponent {
             marginLeft: 30
           }}
         >
-          Cohort Description: {cohort.description || "None provided"}
+          {cohort.description || "No description"}
         </Typography>
         {[USER_STATUSES.owner, USER_STATUSES.assistant].includes(
           currentUser.status
