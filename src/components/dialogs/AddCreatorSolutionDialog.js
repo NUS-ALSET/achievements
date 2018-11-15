@@ -1,7 +1,7 @@
 /**
- * @file AddTextSolutionDialog container module
+ * @file AddCreatorSolutionDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
- * @created 07.02.18
+ * @created 15.11.18
  */
 
 import Button from "@material-ui/core/Button";
@@ -10,22 +10,14 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import MenuItem from "@material-ui/core/MenuItem";
 import PropTypes from "prop-types";
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 
-// RegExp rules
-import { NoStartWhiteSpace, KeyboardInputs } from "../regexp-rules/RegExpRules";
-
-/* AddTextSolutionDialog is currently used for:
- * ASSIGNMENTS_TYPES.TeamFormation.id,
- * ASSIGNMENTS_TYPES.TeamText.id,
- * ASSIGNMENTS_TYPES.Text.id
- * so only allow for printable characters as input
- */
-
-class AddTextSolutionDialog extends React.PureComponent {
+class AddCreatorSolutionDialog extends React.PureComponent {
   static propTypes = {
+    pathsData: PropTypes.any,
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
@@ -34,50 +26,39 @@ class AddTextSolutionDialog extends React.PureComponent {
   };
 
   state = {
-    solution: "",
-    // validate inputs
-    isCorrectInput: false
+    path: "",
+    solution: ""
   };
 
-  onChangeSolution = event => {
-    // validate inputs
-    if (
-      KeyboardInputs.test(event.target.value) &&
-      NoStartWhiteSpace.test(event.target.value)
-    ) {
-      this.setState({
-        isCorrectInput: true,
-        solution: event.target.value.trim()
-      });
-    } else {
-      this.setState({
-        isCorrectInput: false
-      });
-    }
-  };
+  onChange = name => e => this.setState({ [name]: e.target.value });
 
   render() {
-    const { onClose, onCommit, open, solution, taskId } = this.props;
+    const { onClose, onCommit, open, pathsData, solution, taskId } = this.props;
 
     return (
       <Dialog onClose={onClose} open={open}>
-        <DialogTitle>Text Solution</DialogTitle>
+        <DialogTitle>Creator Solution</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
-            defaultValue={(solution && solution.value) || ""}
-            error={!this.state.isCorrectInput}
+            defaultValue={(solution && solution.path) || ""}
             fullWidth
-            helperText={
-              this.state.isCorrectInput
-                ? ""
-                : "input should not be empty or have invalid characters"
-            }
-            label="Solution"
-            onChange={this.onChangeSolution}
+            label="Path"
+            onChange={this.onChange("path")}
+            select
             style={{
               width: 320
             }}
+          >
+            {pathsData.paths.map(pathInfo => (
+              <MenuItem key={pathInfo.id} value={pathInfo.id}>{pathInfo.caption}</MenuItem>
+            ))}
+          </TextField>
+          <TextField
+            defaultValue={(solution && solution.activity) || ""}
+            fullWidth
+            label="Activity"
+            onChange={this.onChange("activity")}
           />
         </DialogContent>
         <DialogActions>
@@ -103,4 +84,4 @@ class AddTextSolutionDialog extends React.PureComponent {
   }
 }
 
-export default AddTextSolutionDialog;
+export default AddCreatorSolutionDialog;
