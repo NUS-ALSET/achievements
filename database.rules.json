@@ -97,7 +97,6 @@
     },
     "cohorts": {
       ".read": true,
-      ".write": false,
       ".indexOn": ["owner", "isPublic"],
       "$cohortKey": {
         ".write": "auth != null &&
@@ -261,7 +260,7 @@
     },
     "logged_events": {
       ".read": "auth != null",
-      ".write": "auth != null",
+      ".write": "auth != null && newData.exists() && !data.exists()",
       ".indexOn": ["createdAt", "type"]
     },
     "moreProblemsRequests": {
