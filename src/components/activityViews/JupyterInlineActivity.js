@@ -29,10 +29,12 @@ class JupyterInlineActivity extends React.PureComponent {
   };
 
   state = {
+    open: 0,
     solutionJSON: false,
     showCommitBtn: false,
     statusText: null
   };
+
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (
       (nextProps.solution || {}).checked &&
@@ -48,6 +50,13 @@ class JupyterInlineActivity extends React.PureComponent {
       this.setState({ statusText: null });
     }
   }
+
+  componentDidMount() {
+    this.setState({
+      open: new Date().getTime()
+    });
+  }
+
   onSolutionRefreshClick = value => {
     const { dispatch, onChange, problem } = this.props;
 
@@ -69,7 +78,12 @@ class JupyterInlineActivity extends React.PureComponent {
     }
 
     return dispatch(
-      problemSolveUpdate(problem.pathId, problem.problemId, solutionJSON)
+      problemSolveUpdate(
+        problem.pathId,
+        problem.problemId,
+        solutionJSON,
+        this.state.open
+      )
     );
   };
 
