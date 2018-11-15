@@ -654,18 +654,14 @@ class AssignmentsTable extends React.PureComponent {
                     </ListItemIcon>
                     <ListItemText>Remove student from course</ListItemText>
                   </MenuItem>
-                  <MenuItem>
+                  <MenuItem
+                    component={Link}
+                    to={`/profile/${currentStudent.id}`}
+                  >
                     <ListItemIcon>
                       <TagFacesIcon />
                     </ListItemIcon>
-                    <ListItemText>
-                      <Link
-                        className={classes.link}
-                        to={`/profile/${currentStudent.id}`}
-                      >
-                        Open profile link
-                      </Link>
-                    </ListItemText>
+                    <ListItemText>Open profile link</ListItemText>
                   </MenuItem>
                 </MenuList>
               </ClickAwayListener>
