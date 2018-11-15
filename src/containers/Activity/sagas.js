@@ -138,7 +138,9 @@ export function* problemSolveUpdateHandler(action) {
   if (uid) {
     const fileId = yield call(pathsService.getFileId, action.fileId);
 
-    yield put(problemSolutionRefreshRequest(action.problemId, fileId));
+    yield put(
+      problemSolutionRefreshRequest(action.problemId, fileId, action.openTime)
+    );
   }
 }
 
@@ -148,12 +150,15 @@ export function* problemSolutionRefreshRequestHandler(action) {
     pathProblem: state.problem.pathProblem
   }));
 
+  data.pathProblem.openTime = action.openTime;
+
   switch (data.pathProblem.type) {
     case ACTIVITY_TYPES.text.id:
     case ACTIVITY_TYPES.jupyterInline.id:
       if (typeof action.fileId !== "object") {
         return yield put(
           problemSolutionRefreshSuccess(action.problemId, {
+            open: action.open,
             json: data.pathProblem.solutionJSON
           })
         );
@@ -218,7 +223,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
 
       solution.cells.slice(-data.pathProblem.frozen).forEach(cell => {
         solutionFailed =
-          solutionFailed || (!!cell.outputs && cell.outputs.join("").trim());
+          solutionFailed || !!(cell.outputs && cell.outputs.join("").trim());
         return true;
       });
 

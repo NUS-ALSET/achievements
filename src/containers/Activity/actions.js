@@ -40,11 +40,12 @@ export const problemFinalize = () => ({
 });
 
 export const PROBLEM_SOLVE_UPDATE = "PROBLEM_SOLVE_UPDATE";
-export const problemSolveUpdate = (pathId, problemId, fileId) => ({
+export const problemSolveUpdate = (pathId, problemId, fileId, openTime) => ({
   type: PROBLEM_SOLVE_UPDATE,
   pathId,
   problemId,
-  fileId
+  fileId,
+  openTime
 });
 
 export const PROBLEM_SOLVE_SUCCESS = "PROBLEM_SOLVE_SUCCESS";
@@ -56,10 +57,11 @@ export const problemSolveSuccess = (problemId, solutionKey) => ({
 
 export const PROBLEM_SOLUTION_REFRESH_REQUEST =
   "PROBLEM_SOLUTION_REFRESH_REQUEST";
-export const problemSolutionRefreshRequest = (problemId, fileId) => ({
+export const problemSolutionRefreshRequest = (problemId, fileId, openTime) => ({
   type: PROBLEM_SOLUTION_REFRESH_REQUEST,
   problemId,
-  fileId
+  fileId,
+  openTime
 });
 
 export const PROBLEM_SOLUTION_REFRESH_SUCCESS =
