@@ -15,9 +15,15 @@ import PropTypes from "prop-types";
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 
+const styles = {
+  minWidthEditor: {
+    minWidth: 320
+  }
+};
+
 class AddCreatorSolutionDialog extends React.PureComponent {
   static propTypes = {
-    pathsData: PropTypes.any,
+    pathsInfo: PropTypes.any,
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
@@ -26,14 +32,23 @@ class AddCreatorSolutionDialog extends React.PureComponent {
   };
 
   state = {
-    path: "",
-    solution: ""
+    solution: {
+      path: "",
+      activity: ""
+    }
   };
 
-  onChange = name => e => this.setState({ [name]: e.target.value });
+  onChange = name => e =>
+    this.setState({
+      solution: { ...this.state.solution, [name]: e.target.value }
+    });
 
   render() {
-    const { onClose, onCommit, open, pathsData, solution, taskId } = this.props;
+    const { onClose, onCommit, open, pathsInfo, solution, taskId } = this.props;
+    const stateSolution = this.state.solution;
+    const pathActivities =
+      (pathsInfo || []).find(path => path.id === stateSolution.path) || {};
+    const activities = pathActivities.activities || [];
 
     return (
       <Dialog onClose={onClose} open={open}>
@@ -41,25 +56,38 @@ class AddCreatorSolutionDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
-            defaultValue={(solution && solution.path) || ""}
             fullWidth
             label="Path"
             onChange={this.onChange("path")}
             select
-            style={{
-              width: 320
-            }}
+            style={styles.minWidthEditor}
+            value={stateSolution.path || (solution && solution.path) || ""}
           >
-            {pathsData.paths.map(pathInfo => (
-              <MenuItem key={pathInfo.id} value={pathInfo.id}>{pathInfo.caption}</MenuItem>
-            ))}
+            {pathsInfo
+              .filter(
+                pathInfo => pathInfo.activities && pathInfo.activities.length
+              )
+              .map(pathInfo => (
+                <MenuItem key={pathInfo.id} value={pathInfo.id}>
+                  {pathInfo.name}
+                </MenuItem>
+              ))}
           </TextField>
           <TextField
-            defaultValue={(solution && solution.activity) || ""}
             fullWidth
             label="Activity"
             onChange={this.onChange("activity")}
-          />
+            select
+            value={
+              stateSolution.activity || (solution && solution.activity) || ""
+            }
+          >
+            {activities.map(activity => (
+              <MenuItem key={activity.id} value={activity.id}>
+                {activity.name}
+              </MenuItem>
+            ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={onClose}>
@@ -67,13 +95,8 @@ class AddCreatorSolutionDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            disabled={!this.state.isCorrectInput}
-            onClick={() => {
-              onCommit((this.state.solution || "").trim(), taskId);
-              this.setState({
-                isCorrectInput: false
-              });
-            }}
+            disabled={!(stateSolution.path && stateSolution.activity)}
+            onClick={() => onCommit(stateSolution, taskId)}
             variant="contained"
           >
             Commit

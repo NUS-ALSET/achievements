@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * @file PathDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
@@ -60,16 +61,18 @@ const gameDefaultData = {
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
+    activityExampleSolution: PropTypes.any,
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     pathId: PropTypes.string.isRequired,
-    paths: PropTypes.array,
-    activity: PropTypes.object,
+    pathsInfo: PropTypes.any,
+    activity: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     uid: PropTypes.string.isRequired,
     // temporary remove isRequired for fetchGithubFiles
     fetchGithubFiles: PropTypes.func,
-    fetchGithubFilesStatus: PropTypes.string
+    fetchGithubFilesStatus: PropTypes.string,
+    restrictedType: PropTypes.oneOf([...Object.keys(ACTIVITY_TYPES), false])
   };
 
   state = {
@@ -141,16 +144,20 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   getTypeSpecificElements() {
-    let { activity, activityExampleSolution } = this.props;
+    let { activity, activityExampleSolution, restrictedType } = this.props;
+    const type =
+      restrictedType ||
+      this.state.type ||
+      (activity && activity.type) ||
+      "text";
     if (
-      ["jupyter", "jupyterInline"].includes((activity || {}).type) &&
+      ["jupyter", "jupyterInline"].includes(type) &&
       !isLoaded(activityExampleSolution)
     ) {
       return "";
     }
-    console.log("activity", (activity || {}).id);
     activity = Object.assign(activity || {}, this.state);
-    switch (this.state.type || (activity && activity.type) || "text") {
+    switch (type) {
       case ACTIVITY_TYPES.text.id:
         return (
           <TextField
@@ -393,45 +400,46 @@ class AddActivityDialog extends React.PureComponent {
                 value={activity.githubURL || ""}
               />
             </FormControl>
-            {this.state.files && this.state.files.length > 0 && (
-              <Fragment>
-                <Typography
-                  gutterBottom
-                  style={{ margin: "12px 0px" }}
-                  variant="body2"
-                >
-                  <CheckBoxIcon style={{ float: "left" }} />
-                  Check files to allow write access for users.
-                </Typography>
-                <Typography gutterBottom variant="body2">
-                  {this.fetchedGithubURL && (
-                    <LinkIcon style={{ float: "left" }} />
+            {this.state.files &&
+              this.state.files.length > 0 && (
+                <Fragment>
+                  <Typography
+                    gutterBottom
+                    style={{ margin: "12px 0px" }}
+                    variant="body2"
+                  >
+                    <CheckBoxIcon style={{ float: "left" }} />
+                    Check files to allow write access for users.
+                  </Typography>
+                  <Typography gutterBottom variant="body2">
+                    {this.fetchedGithubURL && (
+                      <LinkIcon style={{ float: "left" }} />
+                    )}
+                    &nbsp;
+                    {this.fetchedGithubURL}
+                  </Typography>
+                  {this.state.files.map(
+                    file =>
+                      file.type === "file" && (
+                        <ListItem
+                          button
+                          dense
+                          key={file.path}
+                          role={undefined}
+                          style={{ padding: "0px 25px" }}
+                        >
+                          <Checkbox
+                            checked={!file.readOnly}
+                            disableRipple
+                            onChange={() => this.handleReadOnlyFiles(file.path)}
+                            tabIndex={-1}
+                          />
+                          <ListItemText primary={file.path} />
+                        </ListItem>
+                      )
                   )}
-                  &nbsp;
-                  {this.fetchedGithubURL}
-                </Typography>
-                {this.state.files.map(
-                  file =>
-                    file.type === "file" && (
-                      <ListItem
-                        button
-                        dense
-                        key={file.path}
-                        role={undefined}
-                        style={{ padding: "0px 25px" }}
-                      >
-                        <Checkbox
-                          checked={!file.readOnly}
-                          disableRipple
-                          onChange={() => this.handleReadOnlyFiles(file.path)}
-                          tabIndex={-1}
-                        />
-                        <ListItemText primary={file.path} />
-                      </ListItem>
-                    )
-                )}
-              </Fragment>
-            )}
+                </Fragment>
+              )}
           </Fragment>
         );
       case ACTIVITY_TYPES.gameTournament.id:
@@ -494,8 +502,9 @@ class AddActivityDialog extends React.PureComponent {
 
   handleReadOnlyFiles = filePath => {
     this.setState(() => ({
-      files: this.state.files.map(file =>
-        file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
+      files: this.state.files.map(
+        file =>
+          file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
       )
     }));
   };
@@ -506,6 +515,11 @@ class AddActivityDialog extends React.PureComponent {
     this.setState({ files: [] });
     this.props.fetchGithubFiles(this.state.githubURL);
   };
+
+  onPathChange = e =>
+    this.setState({
+      path: e.target.value
+    });
 
   onFieldChange = (field, value) => {
     const { activity } = this.props;
@@ -558,7 +572,7 @@ class AddActivityDialog extends React.PureComponent {
     const activity = { ...this.props.activity };
     if (this.state.type === ACTIVITY_TYPES.jest.id) {
       const { type, name } = this.state;
-      this.props.onCommit(this.props.pathId, {
+      this.props.onCommit(this.props.pathId || this.state.path, {
         ...activity,
         type,
         name,
@@ -568,7 +582,7 @@ class AddActivityDialog extends React.PureComponent {
       });
     } else {
       this.props.onCommit(
-        this.props.pathId,
+        this.props.pathId || this.state.path,
         Object.assign(activity || {}, this.state, {
           type: this.state.type || (activity && activity.type) || "text"
         })
@@ -587,13 +601,13 @@ class AddActivityDialog extends React.PureComponent {
       key => this.setState({ [key]: undefined }) || true
     );
     this.setState({
-      type: "text",
+      type: this.props.restrictedType || "text",
       isCorrectInput: false
     });
   };
 
   render() {
-    const { activity, open } = this.props;
+    const { activity, open, pathId, pathsInfo, restrictedType } = this.props;
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -604,6 +618,23 @@ class AddActivityDialog extends React.PureComponent {
             width: "100%"
           }}
         >
+          {!pathId && (
+            <TextField
+              fullWidth
+              label="Path"
+              margin={"dense"}
+              onChange={this.onPathChange}
+              required
+              select
+              value={this.state.path || ""}
+            >
+              {pathsInfo.map(pathInfo => (
+                <MenuItem key={pathInfo.id} value={pathInfo.id}>
+                  {pathInfo.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
           <TextField
             autoFocus
             error={!this.state.isCorrectInput}
@@ -624,8 +655,14 @@ class AddActivityDialog extends React.PureComponent {
             label="Type"
             margin="dense"
             onChange={e => this.onFieldChange("type", e.target.value)}
+            readOnly={!!restrictedType}
             select
-            value={this.state.type || (activity && activity.type) || "text"}
+            value={
+              restrictedType ||
+              this.state.type ||
+              (activity && activity.type) ||
+              "text"
+            }
           >
             {Object.keys(ACTIVITY_TYPES).map(key => (
               <MenuItem key={key} value={key}>
@@ -649,7 +686,7 @@ class AddActivityDialog extends React.PureComponent {
                 !(this.state.files && this.state.files.length > 0))
             }
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>

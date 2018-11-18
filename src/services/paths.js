@@ -123,14 +123,15 @@ export class PathsService {
    */
   fetchPathProblem(pathId, activitiyId) {
     return Promise.resolve()
-      .then(() =>
-        pathId[0] === "-"
-          ? firebase
-              .database()
-              .ref(`/paths/${pathId}`)
-              .once("value")
-              .then(pathSnapshot => pathSnapshot.val() || {})
-          : { owner: pathId, name: "Default" }
+      .then(
+        () =>
+          pathId[0] === "-"
+            ? firebase
+                .database()
+                .ref(`/paths/${pathId}`)
+                .once("value")
+                .then(pathSnapshot => pathSnapshot.val() || {})
+            : { owner: pathId, name: "Default" }
       )
       .then(pathInfo =>
         firebase
@@ -361,6 +362,7 @@ export class PathsService {
         break;
       case ACTIVITY_TYPES.creator.id:
       case ACTIVITY_TYPES.educator.id:
+        if (!problemInfo.targetType) throw new Error("Missing Target Type");
         break;
       default:
         throw new Error("Invalid  problem type");
@@ -530,12 +532,15 @@ export class PathsService {
                     .database()
                     .ref(`${answerPath}${answerKey}`)
                     .remove()
-                    .then(() =>
-                      response.val()
-                        ? resolve(JSON.parse(response.val().solution))
-                        : reject(
-                            new Error("Failing - Unable execute your solution")
-                          )
+                    .then(
+                      () =>
+                        response.val()
+                          ? resolve(JSON.parse(response.val().solution))
+                          : reject(
+                              new Error(
+                                "Failing - Unable execute your solution"
+                              )
+                            )
                     );
                 });
 
@@ -552,6 +557,34 @@ export class PathsService {
             });
           }
           break;
+        case ACTIVITY_TYPES.creator.id:
+        case ACTIVITY_TYPES.educator.id:
+          return firebase
+            .database()
+            .ref(`/activities/${solution.activity}/type`)
+            .once("value")
+            .then(snap => {
+              if (snap.val() !== pathProblem.targetType) {
+                throw new Error("Wrong Type of provided activity");
+              }
+            })
+            .then(
+              () =>
+                pathProblem.type === ACTIVITY_TYPES.educator.id &&
+                firebase
+                  .database()
+                  .ref(`/problemSolutions/${solution.activity}`)
+                  .once("value")
+                  .then(snap => {
+                    if (
+                      Object.keys(snap.val() || {}).length < pathProblem.count
+                    ) {
+                      throw new Error(
+                        "Provided activity contains fewer solutions"
+                      );
+                    }
+                  })
+            );
         default:
           return true;
       }
@@ -626,6 +659,13 @@ export class PathsService {
                 solution: JSON.stringify(solution)
               });
           }
+          case ACTIVITY_TYPES.creator.id:
+          case ACTIVITY_TYPES.educator.id:
+            return firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set(solution);
+
           default:
             break;
         }
@@ -647,10 +687,13 @@ export class PathsService {
   saveGivenSkillInProblem(solution, activityId, uid, solutionURL, pathId) {
     // comment out any lines that start with !
     const editableBlockCode = solution.cells
-      .map(c =>
-        c.cell_type === "code"
-          ? c.source.map(line => (line[0] === "!" ? `#${line}` : line)).join("")
-          : ""
+      .map(
+        c =>
+          c.cell_type === "code"
+            ? c.source
+                .map(line => (line[0] === "!" ? `#${line}` : line))
+                .join("")
+            : ""
       )
       .join("");
     const data = {
@@ -744,19 +787,20 @@ export class PathsService {
       .then(snapshot => snapshot.val())
       .then(paths =>
         Promise.all(
-          Object.keys(paths || {}).map(id =>
-            paths[id]
-              ? firebase
-                  .database()
-                  .ref(`/paths/${id}`)
-                  .once("value")
-                  .then(snapshot => ({ id, ...snapshot.val() }))
-                  .then(path =>
-                    this.fetchPathProgress(uid, path.owner, path.id).then(
-                      solutions => Object.assign(path, solutions)
+          Object.keys(paths || {}).map(
+            id =>
+              paths[id]
+                ? firebase
+                    .database()
+                    .ref(`/paths/${id}`)
+                    .once("value")
+                    .then(snapshot => ({ id, ...snapshot.val() }))
+                    .then(path =>
+                      this.fetchPathProgress(uid, path.owner, path.id).then(
+                        solutions => Object.assign(path, solutions)
+                      )
                     )
-                  )
-              : Promise.resolve(false)
+                : Promise.resolve(false)
           )
         ).then(paths =>
           Object.assign({}, ...paths.map(path => ({ [path.id]: path })))
@@ -1053,6 +1097,51 @@ export class PathsService {
         reject();
       }
     });
+  }
+
+  /**
+   *
+   * @param {String} uid
+   * @param {Object} [options]
+   * @param {Boolean} [options.withActivities]
+   *
+   */
+  fetchOwnPaths(uid, options = {}) {
+    return firebase
+      .database()
+      .ref("/paths")
+      .orderByChild("owner")
+      .equalTo(uid)
+      .once("value")
+      .then(snap => snap.val() || {})
+      .then(
+        paths =>
+          options.withActivities
+            ? Promise.all(
+                Object.keys(paths || {}).map(pathKey =>
+                  firebase
+                    .database()
+                    .ref("/activities")
+                    .orderByChild("path")
+                    .equalTo(pathKey)
+                    .once("value")
+                    .then(snap => snap.val() || {})
+                    .then(activities => ({
+                      id: pathKey,
+                      name: paths[pathKey].name,
+                      activities: Object.keys(activities).map(activityKey => ({
+                        id: activityKey,
+                        name: activities[activityKey].name,
+                        type: activities[activityKey].type
+                      }))
+                    }))
+                )
+              )
+            : Object.keys(paths).map(pathKey => ({
+                id: pathKey,
+                name: paths[pathKey].name
+              }))
+      );
   }
 }
 

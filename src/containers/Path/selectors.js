@@ -85,9 +85,13 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.gameTournament.id:
       return "Tournament Activity";
     case ACTIVITY_TYPES.creator.id:
-      return "Creator Activity";
+      return `Create ${
+        (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
+      } Activity`;
     case ACTIVITY_TYPES.educator.id:
-      return "Educator Activity";
+      return `Educate ${
+        (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
+      } Activity`;
     default:
       return "Usual activity";
   }
@@ -107,8 +111,13 @@ export const pathActivitiesSelector = createSelector(
         solved: solutions[path.id] && solutions[path.id][id]
       }))
       .filter(problem => problem.path === path.id)
-      .sort((a, b) =>
-        a.orderIndex === b.orderIndex ? 0 : a.orderIndex < b.orderIndex ? -1 : 1
+      .sort(
+        (a, b) =>
+          a.orderIndex === b.orderIndex
+            ? 0
+            : a.orderIndex < b.orderIndex
+              ? -1
+              : 1
       )
   })
 );

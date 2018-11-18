@@ -23,7 +23,7 @@ export const activity = shape({
   orderIndex: number,
   owner: string,
   path: string,
-  solved: bool,
+  solved: oneOfType([bool, number]),
   type: string
 });
 

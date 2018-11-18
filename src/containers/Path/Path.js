@@ -74,6 +74,7 @@ import { Typography } from "@material-ui/core";
 import RequestMorePathContentDialog from "../../components/dialogs/RequestMorePathContentDialog";
 import FetchCodeCombatLevelDialog from "../../components/dialogs/FetchCodeCombatLevelDialog";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
+import AddCreatorSolutionDialog from "../../components/dialogs/AddCreatorSolutionDialog";
 
 const styles = theme => ({
   toolbarButton: {
@@ -286,6 +287,20 @@ export class Path extends React.Component {
     const allFinished =
       (pathActivities.activities || []).filter(problem => problem.solved)
         .length === (pathActivities.activities || []).length;
+    const hasActivities =
+      ui.dialog.pathsInfo &&
+      ui.dialog.pathsInfo.filter(
+        pathInfo => pathInfo.activities && pathInfo.activities.length
+      ).length;
+    // Flag that used for creator and educator activities to force
+    // AddActivityDialog to create new activity of required type instead of
+    // editing existing activity
+    // FIXIT: move it into selectors
+    const isCreatorActivity =
+      ui.dialog.value &&
+      ui.dialog.value.owner !== uid &&
+      ui.dialog.value.type === ACTIVITY_TYPES.creator.id;
+
     let pathName, pathDesc;
 
     if (match.params.pathId[0] !== "-") {
@@ -407,6 +422,22 @@ export class Path extends React.Component {
           problem={ui.dialog.value}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
+        <AddCreatorSolutionDialog
+          onClose={onCloseDialog}
+          onCommit={this.onTextSolutionSubmit}
+          open={
+            !!(
+              ["creatorSolution", "educatorSolution"].includes(
+                ui.dialog.type
+              ) &&
+              ui.dialog.pathsInfo &&
+              hasActivities
+            )
+          }
+          pathsInfo={ui.dialog.pathsInfo || []}
+          solution={ui.dialog.solution}
+          taskId={ui.dialog.value && ui.dialog.value.id}
+        />
         <FetchCodeCombatDialog
           currentUserId={uid}
           defaultValue={(codeCombatProfile && codeCombatProfile.id) || ""}
@@ -448,13 +479,28 @@ export class Path extends React.Component {
           uid={uid}
         />
         <AddActivityDialog
-          activity={ui.dialog.value}
+          activity={!isCreatorActivity && ui.dialog.value}
           fetchGithubFiles={fetchGithubFiles}
           fetchGithubFilesStatus={ui.fetchGithubFilesStatus}
           onClose={onCloseDialog}
           onCommit={this.onActivityChangeRequest}
-          open={ui.dialog.type === "ProblemChange"}
-          pathId={(pathActivities.path && pathActivities.path.id) || ""}
+          open={
+            ui.dialog.type === "ProblemChange" ||
+            !!(
+              ["creatorSolution", "educatorSolution"].includes(
+                ui.dialog.type
+              ) &&
+              ui.dialog.pathsInfo &&
+              !hasActivities
+            )
+          }
+          pathId={
+            ["creatorSolution", "educatorSolution"].includes(ui.dialog.type)
+              ? ""
+              : (pathActivities.path && pathActivities.path.id) || ""
+          }
+          pathsInfo={ui.dialog.pathsInfo || []}
+          restrictedType={isCreatorActivity && ui.dialog.value.targetType}
           uid={uid || "Anonymous"}
         />
         <DeleteConfirmationDialog
@@ -471,6 +517,7 @@ export class Path extends React.Component {
         />
         <ControlAssistantsDialog
           assistants={ui.dialog.assistants}
+          isOwner={pathStatus === PATH_STATUS_OWNER}
           newAssistant={ui.dialog.newAssistant}
           onAddAssistant={onAddAssistant}
           onAssistantKeyChange={onAssistantKeyChange}

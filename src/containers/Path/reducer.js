@@ -11,7 +11,8 @@ import {
   FETCH_GITHUB_FILES_SUCCESS,
   PATH_ACTIVITY_CODECOMBAT_OPEN,
   PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW,
-  PATH_PROFILE_DIALOG_SHOW
+  PATH_PROFILE_DIALOG_SHOW,
+  FETCH_MY_PATHS_ACTIVITIES
 } from "./actions";
 import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
@@ -233,6 +234,17 @@ export const path = (
         ui: {
           ...state.ui,
           fetchGithubFilesStatus: "ERROR"
+        }
+      };
+    case FETCH_MY_PATHS_ACTIVITIES:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            ...state.ui.dialog,
+            pathsInfo: action.pathsInfo
+          }
         }
       };
     default:
