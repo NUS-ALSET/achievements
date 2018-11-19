@@ -260,7 +260,7 @@
     },
     "logged_events": {
       ".read": "auth != null",
-      ".write": "auth != null && newData.exists() && !data.exists()",
+      ".write": "auth != null && newData.exists()",
       ".indexOn": ["createdAt", "type"]
     },
     "moreProblemsRequests": {
@@ -305,6 +305,7 @@
     },
     "problemSolutions": {
       "$activityKey": {
+        ".read": "auth != null",
         "$userKey": {
           ".read": "auth != null",
           ".write": "auth != null && auth.uid == $userKey"

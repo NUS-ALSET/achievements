@@ -83,7 +83,15 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.jest.id:
       return "Jest Activity";
     case ACTIVITY_TYPES.gameTournament.id:
-      return 'Tournament Activity'
+      return "Tournament Activity";
+    case ACTIVITY_TYPES.creator.id:
+      return `Create ${
+        (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
+      } Activity`;
+    case ACTIVITY_TYPES.educator.id:
+      return `Educate ${
+        (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
+      } Activity`;
     default:
       return "Usual activity";
   }
