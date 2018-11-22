@@ -51,7 +51,7 @@ const urls = {
 };
 const jestConfig = {
   awsJestRunnerServerURL: "Jest Runner url",
-  githubAccessToken: "GithHub Access Token"
+  githubAccessToken: "GitHub Access Token"
 };
 
 class Admin extends React.PureComponent {
