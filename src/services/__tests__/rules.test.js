@@ -1,9 +1,16 @@
 import assert from "assert";
-import targaryen from "targaryen";
+import targaryen from "targaryen/plugins/jest";
 import json from "firebase-json";
 import { getTestState } from "../../../tests/fixtures/getState";
 
-const rulesTest = json.loadSync("./database.rules.json");
+// This command allows you put newlines and comments in your rules.
+const rules = json.loadSync("./database.rules.json");
+
+expect.extend({
+  toAllowRead: targaryen.toAllowRead,
+  toAllowUpdate: targaryen.toAllowUpdate,
+  toAllowWrite: targaryen.toAllowWrite
+});
 
 describe("security rules tests", () => {
   let database;
@@ -11,13 +18,41 @@ describe("security rules tests", () => {
 
   beforeEach(() => {
     data = getTestState({}).firebase.data;
-    database = targaryen.database(rulesTest, data);
+    database = targaryen.getDatabase(rules, data);
   });
 
-  it("should disallow write blacklistActions", () => {
-    const { permitted } = database.write("/blacklistActions", true);
+  describe("activities tests", () => {
+    it("should only allow auth user to view activities", () => {
+      expect(database.as(null)).not.toAllowRead("/activities");
+    });
 
-    assert.strictEqual(permitted, false);
+    it("should only allow auth user to access activityData node", () => {
+      expect(database.as(null)).not.toAllowRead("/activityData");
+    });
+
+    it("should allow assistant write to activities", () => {
+      const { permitted } = database
+        .as({ uid: "abcTestAssistant1" })
+        .write("/activities/abcTestActivitiyId", {
+          path: "abcTestPathId"
+        });
+
+      assert.strictEqual(permitted, true);
+    });
+  });
+
+  describe("blacklistActions rules", () => {
+    it("should disallow write blacklistActions", () => {
+      const { permitted } = database.write("/blacklistActions", true);
+
+      expect(permitted).toEqual(false);
+    });
+
+    it("should allow read blacklistActions", () => {
+      const { permitted } = database.read("/blacklistActions", true);
+
+      expect(permitted).toEqual(true);
+    });
   });
 
   describe("courses rules", () => {
@@ -164,18 +199,6 @@ describe("security rules tests", () => {
         .as({ uid: "abcTestUser1" })
         .write("/solutions/abcTestCourseId/abcTestUser1/abcTestAssignmentId", {
           foo: "bar"
-        });
-
-      assert.strictEqual(permitted, true);
-    });
-  });
-
-  describe("activities tests", () => {
-    it("should allow assistant write to activities", () => {
-      const { permitted } = database
-        .as({ uid: "abcTestAssistant1" })
-        .write("/activities/abcTestActivitiyId", {
-          path: "abcTestPathId"
         });
 
       assert.strictEqual(permitted, true);
