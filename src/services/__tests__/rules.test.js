@@ -3,27 +3,106 @@ import targaryen from "targaryen/plugins/jest";
 import json from "firebase-json";
 import { getTestState } from "../../../tests/fixtures/getState";
 
+
 // This command allows you put newlines and comments in your rules.
 const rules = json.loadSync("./database.rules.json");
-
 expect.extend({
   toAllowRead: targaryen.toAllowRead,
   toAllowUpdate: targaryen.toAllowUpdate,
   toAllowWrite: targaryen.toAllowWrite
 });
 
+let isEmulating = false; // or some ENV variable
+
+if (isEmulating) {
+  const firebase = require('@firebase/testing');
+  const fs = require('fs');
+
+  /*
+   * ============
+   *    Setup
+   * ============
+   */
+
+  // this sample test.js needs the 9000 database serve to work
+  // so should first firebase serve --only database
+  const databaseName = 'achievements-emulator';
+
+  const rules = fs.readFileSync('database.rules.json', 'utf8');
+
+  /**
+   * Creates a new app with authentication data matching the input.
+   *
+   * @param {object} auth the object to use for authentication (typically {uid: some-uid})
+   * @return {object} the app.
+   */
+  function authedApp(auth) {
+    return firebase.initializeTestApp({
+      databaseName: databaseName,
+      auth: { uid: "alice" },
+    }).database();
+  }
+
+  /**
+   * Creates a new admin app.
+   *
+   * @return {object} the app.
+   */
+  function adminApp() {
+    return firebase.initializeAdminApp({databaseName: databaseName}).database();
+  }
+}
+
 describe("security rules tests", () => {
   let database;
   let data;
 
-  beforeEach(() => {
-    data = getTestState({}).firebase.data;
-    database = targaryen.getDatabase(rules, data);
-  });
+  if (isEmulating) {
+    /*
+     * ============
+     *  Test Cases
+     * ============
+     */
+    beforeAll(async () => {
+      // Set database rules before running these tests
+      await firebase.loadDatabaseRules({
+        databaseName: databaseName,
+        rules: rules,
+      });
+    });
+
+    beforeEach(async () => {
+      // Clear the database between tests
+      await adminApp().ref().set(null);
+    });
+
+    afterAll(async () => {
+      // Close any open apps
+      await Promise.all(firebase.apps().map((app) => app.delete()));
+    });
+  } else {
+    beforeEach(() => {
+      data = getTestState({}).firebase.data;
+      database = targaryen.getDatabase(rules, data);
+    });
+  }
 
   describe("activities tests", () => {
-    it("should only allow auth user to view activities", () => {
+    it("should only allow auth user to view activities", async () => {
       expect(database.as(null)).not.toAllowRead("/activities");
+      if (isEmulating) {
+        const alice = authedApp({uid: 'alice'});
+        const bob = authedApp({uid: 'bob'});
+        const noone = authedApp(null);
+
+        await adminApp().ref('activities/').set({
+          id: 'L8jkji8uxkjwU',
+        });
+
+        await firebase.assertSucceeds(alice.ref('activities/').once('value'));
+        await firebase.assertSucceeds(bob.ref('activities/').once('value'));
+        await firebase.assertFails(noone.ref('activities/').once('value'));
+      }
     });
 
     it("should only allow auth user to access activityData node", () => {
