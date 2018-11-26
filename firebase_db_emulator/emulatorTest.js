@@ -217,7 +217,7 @@ describe('A logged in user', () => {
     const alice = authedApp({uid: 'alice'});
     const childNodes = [
       "activities",
-      "activityData", // Do we really need to let developers download every child?
+      // "activityData", we do not allow read for all data in activityData Nov 26 2018
       "cohortCourses",
       "cohorts",     // This is needed to search for public cohorts.
       "courseAssistants",
