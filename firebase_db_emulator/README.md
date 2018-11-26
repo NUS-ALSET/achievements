@@ -23,6 +23,15 @@ Start the database emulator **(and leave it running during the tests!!!)**
 ```
 firebase serve --only database
 ```
+## npm script commands
+
+```
+  "scripts": {
+    "start": "firebase setup:emulators:database && firebase serve --only database",
+    "test": "mocha ./emulatorTest.js",
+    "coverage": "node ./run_coverage_report.js"
+  },
+```
 
 ## Running the tests
 
