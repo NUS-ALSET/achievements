@@ -12,6 +12,23 @@ function analyze(data){
     let percent = 100*covered/(covered+uncovered)
     console.log(percent.toFixed(2),"percent coverage")
 }
+function saveReport(data){
+  const fs = require('fs');
+  let highlighting = `
+  span[title=""] {
+    background-color: yellow;
+  }
+  `
+  let newData = data.replace("<style>", "<style>"+highlighting);
+  fs.writeFile("./securityRulesCoverage.html", newData, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("Security rules coverage report saved as securityRulesCoverage.html.");
+});
+
+}
 http.get(url, (resp) => {
   let data = '';
 
@@ -24,6 +41,7 @@ http.get(url, (resp) => {
   resp.on('end', () => {
     //console.log(data);
     analyze(data)
+    saveReport(data)
   });
 
 }).on("error", (err) => {
