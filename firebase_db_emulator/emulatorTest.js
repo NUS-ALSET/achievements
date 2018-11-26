@@ -426,6 +426,48 @@ describe('A logged in user', () => {
   });
 });
 
+describe('Config rules', () => {
+  it("should allow non-logged users to read defaultRecommendations", async () => {
+    const noone = authedApp(null);
+    // Add additional tests here.
+    await firebase.assertSucceeds(noone.ref('/config/defaultRecommendations').once('value'));
+  });
+
+  it("should allow non-logged users to read config version", async () => {
+    const noone = authedApp(null);
+    // Add additional tests here.k
+    await firebase.assertSucceeds(noone.ref('/config/version').once('value'));
+  });
+});
+
+describe('cohortAssistant Rules', () => {
+  it("should allow cohort owner to add cohort assistant", async () => {
+    const alice = authedApp({uid: 'alice'});
+    // Add additional tests here.
+    // first create a cohort1 under cohort as alice
+    await firebase.assertSucceeds(alice.ref('/cohorts/cohort1').set({owner: 'alice'}));
+    // alice is the cohort owner of cohort1
+    await firebase.assertSucceeds(alice.ref('/cohortAssistants/cohort1').set({"bob": true}));
+  });
+});
+
+describe('cohortCourses rules', () => {
+  it("should allow cohort owner to add courses to a cohort", async () => {
+    const alice = authedApp({uid: 'alice'});
+    const bob = authedApp({uid: "bob"});
+    // first create a cohort1 under cohort as alice
+    await firebase.assertSucceeds(alice.ref('/cohorts/cohort1').set({owner: 'alice'}));
+    await firebase.assertSucceeds(alice.ref('/courses/course1').set({owner: 'alice'}));
+    // alice is the cohort owner of cohort1
+    // alice is also the course owner of course1
+    await firebase.assertSucceeds(alice.ref('/cohortCourses/cohort1/course1').set({"name": "Alice Course 1"}));
+    // alice now made bob an assistant to cohort1
+    await firebase.assertSucceeds(alice.ref('/cohortAssistants/cohort1').set({"bob": true}));
+    await firebase.assertSucceeds(bob.ref('/cohortCourses/cohort1/course1').set({"name": "Alice Course 1"}));
+  });
+});
+
+/* This is a template for future tests */
 describe('Activities rules', () => {
   it('should .....', async () => {
     const alice = authedApp({uid: 'alice'});
