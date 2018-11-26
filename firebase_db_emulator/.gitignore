@@ -1,0 +1,8 @@
+**/secrets.json
+**/firebase-debug.log
+**/firestore-debug.log
+**/package-lock.json
+**/node_modules
+**/bower_components
+**/*.bak
+.idea
