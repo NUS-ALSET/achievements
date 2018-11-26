@@ -1,0 +1,13 @@
+{
+  "name": "database-emulator-javascript-quickstart",
+  "version": "1.0.1",
+  "description": "Real Time Database emulator testing",
+  "scripts": {
+    "start": "firebase setup:emulators:database && firebase serve --only database",
+    "test": "mocha ./emulatorTest.js"
+  },
+  "devDependencies": {
+    "@firebase/testing": "0.3.0",
+    "mocha": "4.1.0"
+  }
+}
