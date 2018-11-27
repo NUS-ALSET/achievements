@@ -5,5 +5,5 @@
 **/node_modules
 **/bower_components
 **/*.bak
-./securityRulesCoverage.html
+securityRulesCoverage.html
 .idea
