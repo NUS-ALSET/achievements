@@ -67,6 +67,7 @@ const allAchievementsNodes = [
   "apiTracking",
   "api_tokens",
   "assignments",
+  "blacklistActions",
   "cohortAssistants",
   "cohortCourses",
   "cohortRecalculateQueue",
@@ -109,17 +110,17 @@ const allAchievementsNodes = [
 ];
 
   describe('Non-logged in user', () => {
-    it('should be able to read ALL of the data for certain nodes', async () => {
-      const noone = authedApp(null);
-      const childNodes = [
+    const NonLoggedAccessNodes = [
         "blacklistActions",
         "cohortCourses",
         "cohorts",
         "paths",
         "profileData",
         "users"
-      ];
-      for (let childNode of childNodes) {
+    ];
+    it('should be able to read ALL of the data for certain nodes', async () => {
+      const noone = authedApp(null);
+      for (let childNode of NonLoggedAccessNodes) {
         let location = childNode+'/'
         await firebase.assertSucceeds(noone.ref(location).once('value'));
       }
@@ -139,38 +140,10 @@ const allAchievementsNodes = [
 
     it('should NOT be able to read all the data for certain nodes', async () => {
       const noone = authedApp(null);
-      const childNodes = [
-      "activities",
-      "activityData",
-      "activityExampleSolutions",
-      "admins",
-      "analytics",
-      "analyze",
-      "api_tokens",
-      "apiTracking",
-      "assignments",
-      "cohortRecalculateQueue",
-      "config",
-      "courseAssistants",
-      "courseMembers",
-      "coursePasswords",
-      "courses",
-      "destinations",
-      "logged_events",
-      "moreProblemsRequests",
-      "pathAssistants",
-      "problems",
-      "problemSolutions",
-      "solutions",
-      "studentCoursePasswords",
-      "studentJoinedCourses",
-      "studentJoinedPaths",
-      "userAchievements",
-      "userRecommendations",
-      "usersPrivate",
-      "visibleSolutions",]
+      const childNodes = allAchievementsNodes.filter(item => (
+              !NonLoggedAccessNodes.includes(item)
+            ));
       for (let childNode of childNodes) {
-        //console.log(childNode);
         let location = childNode+'/'
         await firebase.assertFails(noone.ref(location).once('value'));
       }
@@ -178,43 +151,7 @@ const allAchievementsNodes = [
 
     it('should NOT be able to write data to any node', async () => {
       const noone = authedApp(null);
-      const childNodes = [
-        "activityData",
-        "activityExampleSolutions",
-        "admins",
-        "analytics",
-        "analyze",
-        "api_tokens",
-        "apiTracking",
-        "assignments",
-        "blackListActions",
-        "cohortAssistants",
-        "cohortCourses",
-        "cohortRecalculateQueue",
-        "cohorts",
-        "completedActivities",
-        "config",
-        "courseAssistants",
-        "courseMembers",
-        "coursePasswords",
-        "courses",
-        "destinations",
-        "logged_events",
-        "moreProblemsRequests",
-        "pathAssistants",
-        "paths",
-        "problems",
-        "problemSolutions",
-        "solutions",
-        "studentCoursePasswords",
-        "studentJoinedCourses",
-        "studentJoinedPaths",
-        "userAchievements",
-        "userRecommendations",
-        "users",
-        "usersPrivate",
-        "visibleSolutions"]
-      for (let childNode of childNodes) {
+      for (let childNode of allAchievementsNodes) {
         //console.log(childNode);
         let location = childNode+'/';
         await firebase.assertFails(noone.ref(location).set("SOME_DATA"));
