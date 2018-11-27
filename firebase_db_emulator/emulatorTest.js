@@ -56,15 +56,17 @@ after(async () => {
   await Promise.all(firebase.apps().map((app) => app.delete()));
 });
 
-let allAchievementsNodes = ["activityData",
+// all achievements-dev db notes as of Nov 27th 2018
+const allAchievementsNodes = [
+  "activities",
+  "activityData",
   "activityExampleSolutions",
   "admins",
   "analytics",
   "analyze",
-  "api_tokens",
   "apiTracking",
+  "api_tokens",
   "assignments",
-  "blackListActions",
   "cohortAssistants",
   "cohortCourses",
   "cohortRecalculateQueue",
@@ -76,49 +78,60 @@ let allAchievementsNodes = ["activityData",
   "coursePasswords",
   "courses",
   "destinations",
+  "featureProblemPercentiles",
+  "featureRanking",
+  "fetchGithubFilesQueue",
+  "fetchGithubFilesQueue-temp",
+  "jupyterSolutionAnalysisQueue",
+  "jupyterSolutionsQueue",
   "logged_events",
+  "lti",
   "moreProblemsRequests",
+  "outgoingRequestsQueue",
   "pathAssistants",
   "paths",
-  "problems",
+  "problemCodingSkills",
+  "problemSkills",
   "problemSolutions",
+  "problems",
+  "profileData",
   "solutions",
   "studentCoursePasswords",
   "studentJoinedCourses",
   "studentJoinedPaths",
   "userAchievements",
+  "userCodingSkills",
   "userRecommendations",
+  "userSkills",
   "users",
   "usersPrivate",
   "visibleSolutions"
-  ]
+];
 
-  describe('A non-logged in user', () => {
-    it('should be able to read all of the data for certain nodes', async () => {
+  describe('Non-logged in user', () => {
+    it('should be able to read ALL of the data for certain nodes', async () => {
       const noone = authedApp(null);
       const childNodes = [
-      "cohortCourses",
-      "cohorts",
-      "paths",
-      "users"
-      ]
+        "blacklistActions",
+        "cohortCourses",
+        "cohorts",
+        "paths",
+        "profileData",
+        "users"
+      ];
       for (let childNode of childNodes) {
-        //console.log(childNode);
-        let location = childNode+'/'//+'alice';
+        let location = childNode+'/'
         await firebase.assertSucceeds(noone.ref(location).once('value'));
-        let someChild = childNode+'/'+'someChildNode';
-        await firebase.assertSucceeds(noone.ref(someChild).once('value'));
       }
     });
 
-    it('should be able to read specific child nodes for certain root nodes', async () => {
+    it('should be able to read child nodes for certain root nodes', async () => {
       const noone = authedApp(null);
       const childNodes = [
-      "cohortAssistants",
-      "completedActivities"
-      ]
+        "cohortAssistants",
+        "completedActivities"
+      ];
       for (let childNode of childNodes) {
-        //console.log(childNode);
         let location = childNode+'/'+'someChildNode';
         await firebase.assertSucceeds(noone.ref(location).once('value'));
       }
@@ -136,7 +149,6 @@ let allAchievementsNodes = ["activityData",
       "api_tokens",
       "apiTracking",
       "assignments",
-      "blackListActions",
       "cohortRecalculateQueue",
       "config",
       "courseAssistants",
@@ -212,7 +224,7 @@ let allAchievementsNodes = ["activityData",
     });
   });
 
-describe('A logged in user', () => {
+describe('Logged in user', () => {
   it('should be able to read all the data for certain nodes', async () => {
     const alice = authedApp({uid: 'alice'});
     const childNodes = [
