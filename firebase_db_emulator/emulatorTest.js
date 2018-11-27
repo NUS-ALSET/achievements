@@ -203,28 +203,14 @@ describe('Logged in user', () => {
     }
   });
 
-  it('should NOT be able to read all or specific nodes', async () => {
+  it('should NOT be able to read the nodes or their childNodes other than LoggedAccessRootNodes/LoggedAccessChildNodes', async () => {
     const alice = authedApp({uid: 'alice'});
-    const childNodes = [
-    "activityExampleSolutions",
-    "analyze",
-    "api_tokens",
-    "apiTracking",
-    "assignments",
-    "blackListActions",
-    "config",
-    "coursePasswords",
-    "moreProblemsRequests",
-    "problems",
-    "solutions",
-    "studentCoursePasswords",
-    "studentJoinedCourses",
-    "userRecommendations",
-    "usersPrivate",
-    "visibleSolutions"
-    ]
-    for (let childNode of childNodes) {
-      //console.log(childNode);
+    const DeniedReadForLoggedNodes = allAchievementsNodes.filter(item => (
+      !NonLoggedAccessNodes.includes(item) &&
+      !LoggedAccessRootNodes.includes(item) &&
+      !LoggedAccessChildNodes.includes(item)
+    ));
+    for (let childNode of DeniedReadForLoggedNodes) {
       let entireNode = childNode+'/';
       let specificChild = childNode+'/'+'someNode';
       await firebase.assertFails(alice.ref(entireNode).once('value'));
@@ -235,7 +221,6 @@ describe('Logged in user', () => {
   it('should NOT be able to overwrite entire nodes of any root nodes', async () => {
     const alice = authedApp({uid: 'alice'});
     for (let childNode of allAchievementsNodes) {
-      console.log(childNode);
       let location = childNode+'/';
       await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
     }
