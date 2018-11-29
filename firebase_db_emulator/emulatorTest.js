@@ -67,6 +67,7 @@ const allAchievementsNodes = [
   "apiTracking",
   "api_tokens",
   "assignments",
+  "blacklistActions",
   "cohortAssistants",
   "cohortCourses",
   "cohortRecalculateQueue",
@@ -108,236 +109,123 @@ const allAchievementsNodes = [
   "visibleSolutions"
 ];
 
-  describe('Non-logged in user', () => {
-    it('should be able to read ALL of the data for certain nodes', async () => {
-      const noone = authedApp(null);
-      const childNodes = [
-        "blacklistActions",
-        "cohortCourses",
-        "cohorts",
-        "paths",
-        "profileData",
-        "users"
-      ];
-      for (let childNode of childNodes) {
-        let location = childNode+'/'
-        await firebase.assertSucceeds(noone.ref(location).once('value'));
-      }
-    });
+// root nodes that any non-logged in user can access/read
+const NonLoggedAccessNodes = [
+  "blacklistActions",
+  "cohortCourses",
+  "cohorts", // This is needed to search for public cohorts.
+  "paths", // This is needed to search for public paths.
+  "profileData",
+  "users" // Why let everyone download all users?
+];
 
-    it('should be able to read child nodes for certain root nodes', async () => {
-      const noone = authedApp(null);
-      const childNodes = [
-        "cohortAssistants",
-        "completedActivities"
-      ];
-      for (let childNode of childNodes) {
-        let location = childNode+'/'+'someChildNode';
-        await firebase.assertSucceeds(noone.ref(location).once('value'));
-      }
-    });
+// root nodes that Logged users can read all data
+const LoggedAccessRootNodes = [
+  "activities",
+  "courseAssistants",
+  "courseMembers",
+  "courses",
+  "destinations",
+  "logged_events", // Do we need to let developers download every child?
+  "userAchievements"
+];
 
-    it('should NOT be able to read all the data for certain nodes', async () => {
-      const noone = authedApp(null);
-      const childNodes = [
-      "activities",
-      "activityData",
-      "activityExampleSolutions",
-      "admins",
-      "analytics",
-      "analyze",
-      "api_tokens",
-      "apiTracking",
-      "assignments",
-      "cohortRecalculateQueue",
-      "config",
-      "courseAssistants",
-      "courseMembers",
-      "coursePasswords",
-      "courses",
-      "destinations",
-      "logged_events",
-      "moreProblemsRequests",
-      "pathAssistants",
-      "problems",
-      "problemSolutions",
-      "solutions",
-      "studentCoursePasswords",
-      "studentJoinedCourses",
-      "studentJoinedPaths",
-      "userAchievements",
-      "userRecommendations",
-      "usersPrivate",
-      "visibleSolutions",]
-      for (let childNode of childNodes) {
-        //console.log(childNode);
-        let location = childNode+'/'
-        await firebase.assertFails(noone.ref(location).once('value'));
-      }
-    });
+// root nodes' childNodes that logged users can read
+const LoggedAccessChildNodes = [
+  "activityData",
+  "admins",
+  "cohortAssistants",
+  "cohortRecalculateQueue",
+  "completedActivities",
+  "pathAssistants",
+  "problemSolutions",
+  "studentJoinedPaths"
+];
 
-    it('should NOT be able to write data to any node', async () => {
-      const noone = authedApp(null);
-      const childNodes = [
-        "activityData",
-        "activityExampleSolutions",
-        "admins",
-        "analytics",
-        "analyze",
-        "api_tokens",
-        "apiTracking",
-        "assignments",
-        "blackListActions",
-        "cohortAssistants",
-        "cohortCourses",
-        "cohortRecalculateQueue",
-        "cohorts",
-        "completedActivities",
-        "config",
-        "courseAssistants",
-        "courseMembers",
-        "coursePasswords",
-        "courses",
-        "destinations",
-        "logged_events",
-        "moreProblemsRequests",
-        "pathAssistants",
-        "paths",
-        "problems",
-        "problemSolutions",
-        "solutions",
-        "studentCoursePasswords",
-        "studentJoinedCourses",
-        "studentJoinedPaths",
-        "userAchievements",
-        "userRecommendations",
-        "users",
-        "usersPrivate",
-        "visibleSolutions"]
-      for (let childNode of childNodes) {
-        //console.log(childNode);
-        let location = childNode+'/';
-        await firebase.assertFails(noone.ref(location).set("SOME_DATA"));
-        location = childNode+'/'+'someChildNode';
-        await firebase.assertFails(noone.ref(location).set("SOME_DATA"));
-      }
-    });
+
+describe('Non-logged in user', () => {
+  it('should be able to read ALL of the data for NonLoggedAccessNodes', async () => {
+    const noone = authedApp(null);
+    for (let childNode of NonLoggedAccessNodes) {
+      let location = childNode+'/'
+      await firebase.assertSucceeds(noone.ref(location).once('value'));
+    }
   });
 
-describe('Logged in user', () => {
-  it('should be able to read all the data for certain nodes', async () => {
-    const alice = authedApp({uid: 'alice'});
+  it('should be able to read child nodes for certain root nodes', async () => {
+    const noone = authedApp(null);
     const childNodes = [
-      "activities",
-      // "activityData", we do not allow read for all data in activityData Nov 26 2018
-      "cohortCourses",
-      "cohorts",     // This is needed to search for public cohorts.
-      "courseAssistants",
-      "courseMembers",
-      "courses",
-      "destinations",
-      "logged_events", // Do we need to let developers download every child? 
-      "paths",  // This is needed to search for public paths. 
-      "userAchievements",
-      "users", // Why do developers need to download all users?
-    ]
+      "cohortAssistants",
+      "completedActivities"
+    ];
     for (let childNode of childNodes) {
-      //console.log(childNode);
+      let location = childNode+'/'+'someChildNode';
+      await firebase.assertSucceeds(noone.ref(location).once('value'));
+    }
+  });
+
+  it('should NOT be able to read all the data for nodes other than the NonLoggedAccessNodes', async () => {
+    const noone = authedApp(null);
+    const needAuthAccess = allAchievementsNodes.filter(item => (
+      !NonLoggedAccessNodes.includes(item)
+    ));
+    for (let childNode of needAuthAccess) {
+      let location = childNode+'/'
+      await firebase.assertFails(noone.ref(location).once('value'));
+    }
+  });
+
+  it('should NOT be able to write data to any node', async () => {
+    const noone = authedApp(null);
+    for (let childNode of allAchievementsNodes) {
+      let location = childNode+'/';
+      await firebase.assertFails(noone.ref(location).set("SOME_DATA"));
+      location = childNode+'/'+'someChildNode';
+      await firebase.assertFails(noone.ref(location).set("SOME_DATA"));
+    }
+  });
+});
+
+describe('Logged in user', () => {
+  it('should be able to read all the data for LoggedAccessRootNodes', async () => {
+    const alice = authedApp({uid: 'alice'});
+    for (let childNode of LoggedAccessRootNodes) {
       let location = childNode+'/'
       await firebase.assertSucceeds(alice.ref(location).once('value'));
     }
   });
+
   it('should be able to read specific child data for certain nodes', async () => {
     const alice = authedApp({uid: 'alice'});
-    const childNodes = [
-      "admins",
-      "cohortAssistants",
-      "cohortRecalculateQueue",
-      "completedActivities",
-      "pathAssistants",
-      "problemSolutions",
-      "studentJoinedPaths"
-    ]
-    for (let childNode of childNodes) {
-      //console.log(childNode);
+    for (let childNode of LoggedAccessChildNodes) {
       let location = childNode+'/'+'someNode';
       await firebase.assertSucceeds(alice.ref(location).once('value'));
     }
   });
 
-  it('should NOT be able to read all or specific nodes', async () => {
+  it('should NOT be able to read the nodes or their childNodes other than LoggedAccessRootNodes/LoggedAccessChildNodes', async () => {
     const alice = authedApp({uid: 'alice'});
-    const childNodes = [
-    "activityExampleSolutions",
-    "analytics",
-    "analyze",
-    "api_tokens",
-    "apiTracking",
-    "assignments",
-    "blackListActions",
-    "config",
-    "coursePasswords",
-    "moreProblemsRequests",
-    "problems",
-    "solutions",
-    "studentCoursePasswords",
-    "studentJoinedCourses",
-    "userRecommendations",
-    "usersPrivate",
-    "visibleSolutions"
-    ]
-    for (let childNode of childNodes) {
-      //console.log(childNode);
+    const DeniedReadForLoggedNodes = allAchievementsNodes.filter(item => (
+      !NonLoggedAccessNodes.includes(item) &&
+      !LoggedAccessRootNodes.includes(item) &&
+      !LoggedAccessChildNodes.includes(item)
+    ));
+    for (let childNode of DeniedReadForLoggedNodes) {
       let entireNode = childNode+'/';
       let specificChild = childNode+'/'+'someNode';
       await firebase.assertFails(alice.ref(entireNode).once('value'));
       await firebase.assertFails(alice.ref(specificChild).once('value'));
     }
   });
-  it('should NOT be able to overwrite entire nodes', async () => {
+
+  it('should NOT be able to overwrite entire nodes of any root nodes', async () => {
     const alice = authedApp({uid: 'alice'});
-    const childNodes = [
-      "activityData",
-      "activityExampleSolutions",
-      "admins",
-      "analytics",
-      "analyze",
-      "api_tokens",
-      "apiTracking",
-      "assignments",
-      "blackListActions",
-      "cohortAssistants",
-      "cohortCourses",
-      "cohortRecalculateQueue",
-      "cohorts",
-      "completedActivities",
-      "config",
-      "courseAssistants",
-      "courseMembers",
-      "coursePasswords",
-      "courses",
-      "destinations",
-      //"logged_events", // Issue: Anyone can overwrite all logs. 
-      "moreProblemsRequests",
-      "pathAssistants",
-      "paths",
-      "problems",
-      "problemSolutions",
-      "solutions",
-      "studentCoursePasswords",
-      "studentJoinedCourses",
-      "studentJoinedPaths",
-      "userAchievements",
-      "userRecommendations",
-      "users",
-      "usersPrivate",
-      "visibleSolutions"]
-    for (let childNode of childNodes) {
-      //console.log(childNode);
+    for (let childNode of allAchievementsNodes) {
       let location = childNode+'/';
-      await firebase.assertFails(alice.ref(location).set("SOME_DATA"));      
+      await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
     }
   });
+
   it('should NOT be able to overwrite random child nodes', async () => {
     const alice = authedApp({uid: 'alice'});
     const childNodes = [
