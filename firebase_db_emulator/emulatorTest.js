@@ -56,6 +56,12 @@ after(async () => {
   await Promise.all(firebase.apps().map((app) => app.delete()));
 });
 
+// mock users
+const alice = authedApp({uid: "alice"});
+const bob = authedApp({uid: "bob"});
+const mahler = authedApp({uid: "mahler"});
+const noone = authedApp(null);
+
 // all achievements-dev db notes as of Nov 27th 2018
 const allAchievementsNodes = [
   "activities",
@@ -153,7 +159,6 @@ const UserOverWritableNodes = [
 
 describe('Non-logged in user', () => {
   it('should be able to read ALL of the data for NonLoggedAccessNodes', async () => {
-    const noone = authedApp(null);
     for (let childNode of NonLoggedAccessNodes) {
       let location = childNode+'/'
       await firebase.assertSucceeds(noone.ref(location).once('value'));
@@ -161,7 +166,6 @@ describe('Non-logged in user', () => {
   });
 
   it('should be able to read child nodes for certain root nodes', async () => {
-    const noone = authedApp(null);
     const childNodes = [
       "cohortAssistants",
       "completedActivities"
@@ -173,7 +177,6 @@ describe('Non-logged in user', () => {
   });
 
   it('should NOT be able to read all the data for nodes other than the NonLoggedAccessNodes', async () => {
-    const noone = authedApp(null);
     const needAuthAccess = allAchievementsNodes.filter(item => (
       !NonLoggedAccessNodes.includes(item)
     ));
@@ -184,7 +187,6 @@ describe('Non-logged in user', () => {
   });
 
   it('should NOT be able to write data to any node', async () => {
-    const noone = authedApp(null);
     for (let childNode of allAchievementsNodes) {
       let location = childNode+'/';
       await firebase.assertFails(noone.ref(location).set("SOME_DATA"));
@@ -196,7 +198,6 @@ describe('Non-logged in user', () => {
 
 describe('Logged in user', () => {
   it('should be able to read all the data for LoggedAccessRootNodes', async () => {
-    const alice = authedApp({uid: 'alice'});
     for (let childNode of LoggedAccessRootNodes) {
       let location = childNode+'/'
       await firebase.assertSucceeds(alice.ref(location).once('value'));
@@ -204,7 +205,6 @@ describe('Logged in user', () => {
   });
 
   it('should be able to read specific child data for certain nodes', async () => {
-    const alice = authedApp({uid: 'alice'});
     for (let childNode of LoggedAccessChildNodes) {
       let location = childNode+'/'+'someNode';
       await firebase.assertSucceeds(alice.ref(location).once('value'));
@@ -212,7 +212,6 @@ describe('Logged in user', () => {
   });
 
   it('should NOT be able to read nodes or childNodes other than LoggedAccessRootNodes/LoggedAccessChildNodes', async () => {
-    const alice = authedApp({uid: 'alice'});
     const DeniedReadForLoggedNodes = allAchievementsNodes.filter(item => (
       !NonLoggedAccessNodes.includes(item) &&
       !LoggedAccessRootNodes.includes(item) &&
@@ -227,7 +226,6 @@ describe('Logged in user', () => {
   });
 
   it('should NOT be able to overwrite entire nodes of any root nodes', async () => {
-    const alice = authedApp({uid: 'alice'});
     for (let childNode of allAchievementsNodes) {
       let location = childNode+'/';
       await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
@@ -235,7 +233,6 @@ describe('Logged in user', () => {
   });
 
   it('should NOT be able to overwrite random child nodes', async () => {
-    const alice = authedApp({uid: 'alice'});
     for (let childNode of allAchievementsNodes) {
       location = childNode+'/'+'someRandomChildNode';
       await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
@@ -243,7 +240,6 @@ describe('Logged in user', () => {
   });
 
   it('should NOT be able to overwrite a child node for their userId', async () => {
-    const alice = authedApp({uid: 'alice'});
     const childNodes = allAchievementsNodes.filter(item =>
       !UserOverWritableNodes.includes(item)
     );
@@ -254,7 +250,6 @@ describe('Logged in user', () => {
   });
 
   it('should be able to overwrite a child node for their userId ie UserOverWritableNodes', async () => {
-    const alice = authedApp({uid: 'alice'});
     for (let childNode of UserOverWritableNodes) {
       location = childNode+'/'+'alice';
       await firebase.assertSucceeds(alice.ref(location).set("SOME_DATA"));
@@ -262,23 +257,132 @@ describe('Logged in user', () => {
   });
 });
 
+// =====================
+// Individual Root Nodes
+// =====================
+
+describe('Activities rules', () => {
+  it('anyone can read activities from public path', async () => {
+    // public path
+    await adminApp().ref('/paths/ourPath1').set({
+      name: 'our Path1',
+      isPublic: true,
+    });
+    // non-public path
+    await adminApp().ref('/paths/ourPath2').set({
+      name: 'our Path2',
+      isPublic: false,
+    });
+    await adminApp().ref('/activities/activity1').set({
+      name: 'jupyter activity1',
+      path: 'ourPath1'
+    });
+    await adminApp().ref('/activities/activity2').set({
+      name: 'youtube activity1',
+      path: 'ourPath2'
+    });
+    await firebase.assertSucceeds(noone.ref('/activities/activity1').once("value"));
+    await firebase.assertFails(noone.ref('/activities/activity2').once("value"));
+  });
+});
+
+// ActivityData looks like specifically for githubURL based activities
+describe('ActivityData rules', () => {
+  it('only logged in users that met requirements have write access', async () => {
+    await firebase.assertFails(noone.ref('/activityData/activity1').set({"name": "bob"}));
+    await firebase.assertFails(alice.ref('/activityData/activity1').set({"name": "bob"}));
+  });
+});
+
+describe('Assignments rules', () => {
+  it('course owner can read and write assignments', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    await firebase.assertFails(noone.ref('/assignments/ourCourse1').once("value"));
+    await firebase.assertSucceeds(alice.ref('/assignments/ourCourse1').once("value"));
+    await firebase.assertSucceeds(alice.ref('/assignments/ourCourse1').set({name: "updated version of course1"}));
+  });
+
+  it('course assistants can read and write assignments', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    // create some courses assistants
+    await adminApp().ref('/courseAssistants/ourCourse1').set({
+      "mahler": true
+    });
+    await firebase.assertSucceeds(mahler.ref('/assignments/ourCourse1').once("value"));
+    await firebase.assertSucceeds(mahler.ref('/assignments/ourCourse1').set({name: "updated version of course1"}));
+  });
+
+  it('course members can only read the assignments', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    // create some courses members
+    await adminApp().ref('/courseMembers/ourCourse1').set({
+      "bob": true
+    });
+    await firebase.assertSucceeds(bob.ref('/assignments/ourCourse1').once("value"));
+  });
+});
+
+describe('courseMembers rules', () => {
+  it('course owner and assistants can set up a course under the courseMembers node', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    // create some courses assistants
+    await adminApp().ref('/courseAssistants/ourCourse1').set({
+      "mahler": true
+    });
+    await firebase.assertSucceeds(alice.ref('/courseMembers/ourCourse1').set(true));
+    await firebase.assertSucceeds(mahler.ref('/courseMembers/ourCourse1').set(true));
+  });
+
+  it('logged-in users can add themselves to a course as courseMembers if they know the password to that course', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    await adminApp().ref('/studentCoursePasswords/ourCourse1/someuid').set({"uid": "test123"});
+    await adminApp().ref('/studentCoursePasswords').set({
+      "ourcourse2": {
+        "uid": "test123"
+      }
+    });
+
+    await firebase.assertFails(noone.ref('/courseMembers/ourCourse1/mahler').set(true));
+    // bob should not be able to add mahler
+    await firebase.assertFails(bob.ref('/courseMembers/ourCourse1/mahler').set(true));
+    // mahler should be able to add himself
+    // ???await firebase.assertFails(mahler.ref('/courseMembers/ourCourse1/mahler').set(true));
+  });
+});
+
 describe('Config rules', () => {
   it("should allow non-logged users to read defaultRecommendations", async () => {
-    const noone = authedApp(null);
     // Add additional tests here.
     await firebase.assertSucceeds(noone.ref('/config/defaultRecommendations').once('value'));
   });
 
   it("should allow non-logged users to read config version", async () => {
-    const noone = authedApp(null);
-    // Add additional tests here.k
     await firebase.assertSucceeds(noone.ref('/config/version').once('value'));
   });
 });
 
 describe('cohortAssistant Rules', () => {
   it("should allow cohort owner to add cohort assistant", async () => {
-    const alice = authedApp({uid: 'alice'});
     // Add additional tests here.
     // first create a cohort1 under cohort as alice
     await firebase.assertSucceeds(alice.ref('/cohorts/cohort1').set({owner: 'alice'}));
@@ -289,8 +393,6 @@ describe('cohortAssistant Rules', () => {
 
 describe('cohortCourses rules', () => {
   it("should allow cohort owner to add courses to a cohort", async () => {
-    const alice = authedApp({uid: 'alice'});
-    const bob = authedApp({uid: "bob"});
     // first create a cohort1 under cohort as alice
     await firebase.assertSucceeds(alice.ref('/cohorts/cohort1').set({owner: 'alice'}));
     await firebase.assertSucceeds(alice.ref('/courses/course1').set({owner: 'alice'}));
@@ -302,17 +404,6 @@ describe('cohortCourses rules', () => {
     await firebase.assertSucceeds(bob.ref('/cohortCourses/cohort1/course1').set({"name": "Alice Course 1"}));
   });
 });
-
-/* This is a template for future tests */
-describe('Activities rules', () => {
-  it('should .....', async () => {
-    const alice = authedApp({uid: 'alice'});
-    // Add additional tests here.
-  });
-});
-
-// Add write nodes
-
 
 
 /*
