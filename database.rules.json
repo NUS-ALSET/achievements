@@ -148,10 +148,9 @@
       "$courseKey": {
         ".read": "auth != null &&
           root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
-        ".write": "auth != null && (
-          !root.child('courses/' + $courseKey).exists() ||
+        ".write": "auth != null &&
           root.child('courses/' + $courseKey).exists() &&
-          root.child('courses/' + $courseKey + '/owner').val() == auth.uid)"
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid"
       }
     },
     "courseAssistants": {
@@ -250,7 +249,7 @@
     "logged_events": {
       ".read": "auth != null",
       "$loggedeventKey": {
-        ".write": "auth != null && !data.exists() && newData.exists()"
+        ".write": "auth != null && !root.child('logged_events/' + $loggedeventKey).exists() && !data.exists() && newData.exists() && newData.child('uid').val() == auth.uid"
       },
       ".indexOn": ["createdAt", "type"]
     },

@@ -142,6 +142,14 @@ const LoggedAccessChildNodes = [
   "studentJoinedPaths"
 ];
 
+// root nodes that logged users can overwrite
+const UserOverWritableNodes = [
+  "completedActivities", // Users can write their own completed activities
+  "userAchievements",    // Users can write their own achievements nodes
+  "users",               // Users can update their own users node
+  "usersPrivate",        // Users can update their own usersPrivate node
+];
+
 
 describe('Non-logged in user', () => {
   it('should be able to read ALL of the data for NonLoggedAccessNodes', async () => {
@@ -203,7 +211,7 @@ describe('Logged in user', () => {
     }
   });
 
-  it('should NOT be able to read the nodes or their childNodes other than LoggedAccessRootNodes/LoggedAccessChildNodes', async () => {
+  it('should NOT be able to read nodes or childNodes other than LoggedAccessRootNodes/LoggedAccessChildNodes', async () => {
     const alice = authedApp({uid: 'alice'});
     const DeniedReadForLoggedNodes = allAchievementsNodes.filter(item => (
       !NonLoggedAccessNodes.includes(item) &&
@@ -228,100 +236,28 @@ describe('Logged in user', () => {
 
   it('should NOT be able to overwrite random child nodes', async () => {
     const alice = authedApp({uid: 'alice'});
-    const childNodes = [
-      "activityData",
-      "activityExampleSolutions",
-      "admins",
-      "analytics",
-      "analyze",
-      "api_tokens",
-      "apiTracking",
-      "assignments",
-      "blackListActions",
-      "cohortAssistants",
-      "cohortCourses",
-      "cohortRecalculateQueue",
-      "cohorts",
-      "completedActivities",
-      "config",
-      "courseAssistants",
-      "courseMembers",
-      //"coursePasswords", You can write a password if the course does not exist yet.
-      "courses",
-      "destinations",
-      //"logged_events", // Issue: Anyone can overwrite all logs.
-      "moreProblemsRequests",
-      "pathAssistants",
-      "paths",
-      "problems",
-      "problemSolutions",
-      "solutions",
-      "studentCoursePasswords",
-      "studentJoinedCourses",
-      "studentJoinedPaths",
-      "userAchievements",
-      "userRecommendations",
-      "users",
-      "usersPrivate",
-      "visibleSolutions"]
-    for (let childNode of childNodes) {
-      //console.log(childNode);
+    for (let childNode of allAchievementsNodes) {
       location = childNode+'/'+'someRandomChildNode';
       await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
     }
   });
 
-  it('should be able to overwrite a child node for their userId', async () => {
-    const alice = authedApp({uid: 'alice'});
-    const childNodes = [
-      "completedActivities", // Users can write their own completed activities
-      "coursePasswords",     // A user can write a password if the course does not exist yet.
-      "logged_events",       // Issue: Anyone can overwrite all logs.
-      "userAchievements",    // Users can write their own achievements nodes
-      "users",               // Users can update their own users node
-      "usersPrivate",        // Users can update their own usersPrivate node
-    ]
-    for (let childNode of childNodes) {
-      //console.log(childNode);
-      location = childNode+'/'+'alice';
-      await firebase.assertSucceeds(alice.ref(location).set("SOME_DATA"));
-    }
-  });
   it('should NOT be able to overwrite a child node for their userId', async () => {
     const alice = authedApp({uid: 'alice'});
-    const childNodes = [
-      "activityData",
-      "activityExampleSolutions",
-      "admins",
-      "analytics",
-      "analyze",
-      "api_tokens",
-      "apiTracking",
-      "assignments",
-      "blackListActions",
-      "cohortAssistants",
-      "cohortCourses",
-      "cohorts",
-      "config",
-      "courseAssistants",
-      "courseMembers",
-      "courses",
-      "destinations",
-      "moreProblemsRequests",
-      "pathAssistants",
-      "paths",
-      "problems",
-      "problemSolutions",
-      "solutions",
-      "studentCoursePasswords",
-      "studentJoinedCourses",
-      "studentJoinedPaths",
-      "userRecommendations",
-      "visibleSolutions"]
+    const childNodes = allAchievementsNodes.filter(item =>
+      !UserOverWritableNodes.includes(item)
+    );
     for (let childNode of childNodes) {
-      //console.log(childNode);
       location = childNode+'/'+'alice';
       await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
+    }
+  });
+
+  it('should be able to overwrite a child node for their userId ie UserOverWritableNodes', async () => {
+    const alice = authedApp({uid: 'alice'});
+    for (let childNode of UserOverWritableNodes) {
+      location = childNode+'/'+'alice';
+      await firebase.assertSucceeds(alice.ref(location).set("SOME_DATA"));
     }
   });
 });
