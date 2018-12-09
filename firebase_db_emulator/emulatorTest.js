@@ -334,53 +334,6 @@ describe('Assignments rules', () => {
   });
 });
 
-describe('courseMembers rules', () => {
-  it('course owner and assistants can set up a course under the courseMembers node', async () => {
-    // create some courses
-    await adminApp().ref('/courses/ourCourse1').set({
-      name: "our course1",
-      owner: "alice"
-    });
-    // create some courses assistants
-    await adminApp().ref('/courseAssistants/ourCourse1').set({
-      "mahler": true
-    });
-    await firebase.assertSucceeds(alice.ref('/courseMembers/ourCourse1').set(true));
-    await firebase.assertSucceeds(mahler.ref('/courseMembers/ourCourse1').set(true));
-  });
-
-  it('logged-in users can add themselves to a course as courseMembers if they know the password to that course', async () => {
-    // create some courses
-    await adminApp().ref('/courses/ourCourse1').set({
-      name: "our course1",
-      owner: "alice"
-    });
-    await adminApp().ref('/studentCoursePasswords/ourCourse1/someuid').set({"uid": "test123"});
-    await adminApp().ref('/studentCoursePasswords').set({
-      "ourcourse2": {
-        "uid": "test123"
-      }
-    });
-
-    await firebase.assertFails(noone.ref('/courseMembers/ourCourse1/mahler').set(true));
-    // bob should not be able to add mahler
-    await firebase.assertFails(bob.ref('/courseMembers/ourCourse1/mahler').set(true));
-    // mahler should be able to add himself
-    // ???await firebase.assertFails(mahler.ref('/courseMembers/ourCourse1/mahler').set(true));
-  });
-});
-
-describe('Config rules', () => {
-  it("should allow non-logged users to read defaultRecommendations", async () => {
-    // Add additional tests here.
-    await firebase.assertSucceeds(noone.ref('/config/defaultRecommendations').once('value'));
-  });
-
-  it("should allow non-logged users to read config version", async () => {
-    await firebase.assertSucceeds(noone.ref('/config/version').once('value'));
-  });
-});
-
 describe('cohortAssistant Rules', () => {
   it("should allow cohort owner to add cohort assistant", async () => {
     // Add additional tests here.
@@ -404,6 +357,175 @@ describe('cohortCourses rules', () => {
     await firebase.assertSucceeds(bob.ref('/cohortCourses/cohort1/course1').set({"name": "Alice Course 1"}));
   });
 });
+
+describe('Config rules', () => {
+  it("should allow non-logged users to read defaultRecommendations", async () => {
+    // Add additional tests here.
+    await firebase.assertSucceeds(noone.ref('/config/defaultRecommendations').once('value'));
+  });
+
+  it("should allow non-logged users to read config version", async () => {
+    await firebase.assertSucceeds(noone.ref('/config/version').once('value'));
+  });
+});
+
+describe('courseMembers rules', () => {
+  it('course owner and assistants can set up a course under the courseMembers node', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    // create some courses assistants
+    await adminApp().ref('/courseAssistants/ourCourse1').set({
+      "mahler": true
+    });
+    await firebase.assertSucceeds(alice.ref('/courseMembers/ourCourse1').set(true));
+    await firebase.assertSucceeds(mahler.ref('/courseMembers/ourCourse1').set(true));
+  });
+
+  it('logged-in users can add themselves to a course as courseMembers if they know the password to that course', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    await adminApp().ref('/courses/ourCourse2').set({
+      name: "our course2",
+      owner: "bob"
+    });
+    await adminApp().ref('/studentCoursePasswords/').set({"ourCourse1": "hello"});
+    await adminApp().ref('/studentCoursePasswords/ourCourse1/someuid').set({"uid": "test123"});
+    await adminApp().ref('/studentCoursePasswords/').set({
+      "ourCourse2": {
+        "mahler": "test123"
+      }
+    });
+
+    await firebase.assertFails(noone.ref('/courseMembers/ourCourse1/mahler').set(true));
+    // bob should not be able to add mahler
+    await firebase.assertFails(bob.ref('/courseMembers/ourCourse1/mahler').set(true));
+    // mahler should be able to add himself
+    await firebase.assertFails(mahler.ref('/courseMembers/ourCourse1/mahler').set({"mahler": "test123"}));
+    await firebase.assertSucceeds(mahler.ref('/courseMembers/ourCourse2/mahler').set({"mahler": "test123"}));
+  });
+});
+
+describe('coursePasswords rules', () => {
+  it('only the course owner can set the course password', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    await adminApp().ref('/courses/ourCourse2').set({
+      name: "our course2",
+      owner: "bob"
+    });
+
+    await firebase.assertFails(mahler.ref('coursePasswords/ourCourse1').set({pwd:'SOMEPWD'}));
+    await firebase.assertSucceeds(alice.ref('coursePasswords/ourCourse1').set({pwd:'SOMEPWD'}));
+  });
+});
+
+describe('courseAssistants rules', () => {
+  it('only logged in users can access the courseKeys', async () => {
+    await firebase.assertFails(noone.ref('courseAssistants/ourCourse1').once('value'));
+    await firebase.assertSucceeds(bob.ref('courseAssistants/ourCourse1').once('value'));
+  });
+});
+
+describe('courses rules', () => {
+  it('only logged in users can access the courseKeys', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+
+    await firebase.assertFails(noone.ref('courses/ourCourse1').once('value'));
+    await firebase.assertSucceeds(bob.ref('courses/ourCourse1').once('value'));
+  });
+});
+
+
+describe('secrets node rules', () => {
+  it('only admin can access the secrets node', async () => {
+    // create some admin user
+    await adminApp().ref('/admins/alice').set({
+      uid: "alice"
+    });
+
+    await firebase.assertFails(bob.ref('/secrets').once('value'));
+    await firebase.assertSucceeds(alice.ref('/secrets').once('value'));
+  });
+});
+
+describe('solutions rules', () => {
+  it('userKey under courseKey can only be accessed by the user or the course owner', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    // create some courses members
+    await adminApp().ref('/courseMembers/ourCourse1').set({
+      "bob": true,
+      "mahler": true
+    });
+
+    await firebase.assertFails(noone.ref('/solutions/ourCourse1/bob').once('value'));
+    await firebase.assertSucceeds(bob.ref('/solutions/ourCourse1/bob').once('value'));
+    await firebase.assertFails(mahler.ref('/solutions/ourCourse1/bob').once('value'));
+    await firebase.assertSucceeds(alice.ref('/solutions/ourCourse1/bob').once('value'));
+  });
+
+  it('userKey under courseKey can only be edited by the user or the course owner', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    // create some courses members
+    await adminApp().ref('/courseMembers/ourCourse1').set({
+      "bob": true,
+      "mahler": true
+    });
+
+    await firebase.assertFails(noone.ref('/solutions/ourCourse1/bob').set({name: "SOME_DATA"}));
+    await firebase.assertSucceeds(bob.ref('/solutions/ourCourse1/bob').set({name: "SOME_DATA"}));
+    await firebase.assertFails(mahler.ref('/solutions/ourCourse1/bob').set({name: "SOME_DATA"}));
+  });
+});
+
+describe('studentJoinedCourses rules', () => {
+  it('student under that course or course owner/assistants can edit the courseKey', async () => {
+    // create some courses
+    await adminApp().ref('/courses/ourCourse1').set({
+      name: "our course1",
+      owner: "alice"
+    });
+    await adminApp().ref('/courseAssistants/ourCourse1').set({
+      "mahler": true
+    });
+    // create some courses members
+    await adminApp().ref('/courseMembers/ourCourse1').set({
+      "bob": true,
+      "mahler": true
+    });
+    await adminApp().ref('/studentCoursePasswords/ourCourse1').set({
+      "bob": true,
+      "mahler": true
+    });
+
+    await firebase.assertFails(noone.ref('/studentJoinedCourses/bob/ourCourse1/').set({ course: "calculus2" }));
+    await firebase.assertSucceeds(bob.ref('/studentJoinedCourses/bob/ourCourse1/').set({ course: "calculus2" }));
+
+    await firebase.assertSucceeds(alice.ref('/studentJoinedCourses/bob/ourCourse1/').set({ course: "calculus2" }));
+    await firebase.assertSucceeds(mahler.ref('/studentJoinedCourses/bob/ourCourse1/').set({ course: "calculus2" }));
+  });
+});
+
 
 
 /*
