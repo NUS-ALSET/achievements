@@ -406,6 +406,7 @@ const mapDispatchToProps = {
   externalProfileRemoveDialogShow,
   externalProfileRemoveRequest,
   externalProfileUpdateRequest,
+  notificationShow,
   profileUpdateDataRequest
 };
 
