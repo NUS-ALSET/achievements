@@ -13,8 +13,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 
-import { addCohortRequest } from "../../containers/Cohorts/actions";
-
 // RegExp rules
 import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
 import PathsSelector from "../selectors/PathsSelector";
@@ -22,7 +20,7 @@ import PathsSelector from "../selectors/PathsSelector";
 class AddCohortDialog extends React.PureComponent {
   static propTypes = {
     cohort: PropTypes.object,
-    dispatch: PropTypes.func.isRequired,
+    onAddCohortRequest: PropTypes.func.isRequired,
     onCloseAddCohortDialg: PropTypes.func.isRequired,
     myPaths: PropTypes.object,
     open: PropTypes.bool.isRequired,
@@ -101,16 +99,14 @@ class AddCohortDialog extends React.PureComponent {
   };
 
   onCommit = () => {
-    const { cohort, dispatch } = this.props;
-    dispatch(
-      addCohortRequest({
-        ...cohort,
-        name: this.state.cohortName,
-        description: this.state.cohortDescription,
-        threshold: Number(this.state.threshold || cohort.threshold || 1),
-        paths: this.getPaths()
-      })
-    );
+    const { cohort, onAddCohortRequest } = this.props;
+    onAddCohortRequest({
+      ...cohort,
+      name: this.state.cohortName,
+      description: this.state.cohortDescription,
+      threshold: Number(this.state.threshold || cohort.threshold || 1),
+      paths: this.getPaths()
+    });
     // reset the disable of commit button
     this.resetState();
   };
