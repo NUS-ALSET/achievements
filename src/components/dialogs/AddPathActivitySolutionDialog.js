@@ -92,52 +92,52 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
             {readOnly ? 'Student ' : 'Edit '}
             Assignment Solution {readOnly ? '( Read Only) ' : ''}
           </DialogTitle>
-            <Activity
-              embedded={true}
-              inDialog={true}
-              onProblemChange={this.onProblemChange}
-              pathProblem={pathProblem}
-              solution={solution}
-              onCommit={this.onCommitClick}
-              onClose={this.onClose}
-              readOnly={readOnly}
-              showCommitBtnOnTop={true}
-            >
-              {(activityView, submitHandler, props) => (
-                <Fragment>
-                  <DialogContent
-                    style={{
-                      overflowX: "hidden"
-                    }}
-                  >
-                    {activityView(props)}
-                  </DialogContent>
-                  <DialogActions>
-                    <Button color="secondary" onClick={this.onClose}>
-                      {readOnly ? 'Close' : 'Cancel'}
+          <Activity
+            embedded={true}
+            inDialog={true}
+            onProblemChange={this.onProblemChange}
+            pathProblem={pathProblem}
+            solution={solution}
+            onCommit={this.onCommitClick}
+            onClose={this.onClose}
+            readOnly={readOnly}
+            showCommitBtnOnTop={true}
+          >
+            {(activityView, submitHandler, props) => (
+              <Fragment>
+                <DialogContent
+                  style={{
+                    overflowX: "hidden"
+                  }}
+                >
+                  {activityView(props)}
+                </DialogContent>
+                <DialogActions>
+                  <Button color="secondary" onClick={this.onClose}>
+                    {readOnly ? 'Close' : 'Cancel'}
+                  </Button>
+                  {/* TODO: refactor =>
+                  the problemSolution state seems to be shared among multiple activities
+                  listed in the same course page */}
+                  {!readOnly && !['jupyter','jupyterInline'].includes((props.pathProblem || {}).type) &&
+                    <Button
+                      color="primary"
+                      disabled={!(
+                        typeof problemSolution==='object'
+                        ? problemSolution.hasOwnProperty('value')
+                          ? problemSolution.value.trim()
+                          : !isEmpty(problemSolution)
+                        : problemSolution)}
+                      onClick={submitHandler}
+                      variant="contained"
+                    >
+                      Commit
                     </Button>
-                    {/* TODO: refactor =>
-                    the problemSolution state seems to be shared among multiple activities
-                    listed in the same course page */}
-                    {!readOnly && !['jupyter','jupyterInline'].includes((props.pathProblem || {}).type) &&
-                      <Button
-                        color="primary"
-                        disabled={!(
-                          typeof problemSolution==='object'
-                          ? problemSolution.hasOwnProperty('value')
-                            ? problemSolution.value.trim()
-                            : !isEmpty(problemSolution)
-                          : problemSolution)}
-                        onClick={submitHandler}
-                        variant="contained"
-                      >
-                        Commit
-                      </Button>
-                    }
-                  </DialogActions>
-                </Fragment>
-              )}
-            </Activity>
+                  }
+                </DialogActions>
+              </Fragment>
+            )}
+          </Activity>
         </Dialog>
       </Fragment>
     );
