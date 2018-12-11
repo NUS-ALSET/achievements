@@ -13,7 +13,9 @@ import {
   externalProfileDialogHide,
   externalProfileDialogShow,
   externalProfileRefreshRequest,
+  externalProfileRemoveDialogHide,
   externalProfileRemoveDialogShow,
+  externalProfileRemoveRequest,
   externalProfileUpdateRequest,
   profileUpdateDataRequest
 } from "./actions";
@@ -62,7 +64,20 @@ class Account extends React.PureComponent {
     achievementsRefreshingInProgress: PropTypes.bool,
     auth: PropTypes.object,
     classes: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
+
+    accountOpen: PropTypes.func,
+    displayNameEditToggle: PropTypes.func,
+    displayNameUpdateRequest: PropTypes.func,
+    externalProfileDialogHide: PropTypes.func,
+    externalProfileDialogShow: PropTypes.func,
+    externalProfileRefreshRequest: PropTypes.func,
+    externalProfileRemoveDialogHide: PropTypes.func,
+    externalProfileRemoveDialogShow: PropTypes.func,
+    externalProfileRemoveRequest: PropTypes.func,
+    externalProfileUpdateRequest: PropTypes.func,
+    profileUpdateDataRequest: PropTypes.func,
+
+    notificationShow: PropTypes.func,
     displayNameEdit: PropTypes.bool,
     externalProfileInUpdate: PropTypes.bool,
     externalProfiles: PropTypes.object,
@@ -82,30 +97,26 @@ class Account extends React.PureComponent {
   };
 
   componentDidMount() {
-    this.props.dispatch(accountOpen(this.props.match.params.accountId));
+    this.props.accountOpen(this.props.match.params.accountId);
   }
 
   addExternalProfileRequest = externalProfile => {
-    this.props.dispatch(externalProfileDialogShow(externalProfile));
+    this.props.externalProfileDialogShow(externalProfile);
   };
   refreshAchievementsRequest = externalProfile => {
-    const { userAchievements, dispatch } = this.props;
+    const { userAchievements, externalProfileRefreshRequest } = this.props;
 
-    dispatch(
-      externalProfileRefreshRequest(
-        userAchievements[externalProfile.id].id,
-        externalProfile.id
-      )
+    externalProfileRefreshRequest(
+      userAchievements[externalProfile.id].id,
+      externalProfile.id
     );
   };
   removeExternalProfileRequest = externalProfile => {
-    const { userAchievements, dispatch } = this.props;
+    const { userAchievements, externalProfileRemoveDialogShow} = this.props;
 
-    dispatch(
-      externalProfileRemoveDialogShow(
-        userAchievements[externalProfile.id].id,
-        externalProfile.id
-      )
+    externalProfileRemoveDialogShow(
+      userAchievements[externalProfile.id].id,
+      externalProfile.id
     );
     // this.showConfirmation(
     //   `Are you sure you want to remove ${externalProfile.name} profile?`
@@ -123,28 +134,28 @@ class Account extends React.PureComponent {
         newDisplayName: this.props.userName
       });
     }
-    this.props.dispatch(displayNameEditToggle(status));
+    this.props.displayNameEditToggle(status);
   };
 
   closeExternalProfileDialog = () => {
-    this.props.dispatch(externalProfileDialogHide());
+    this.props.externalProfileDialogHide();
   };
 
   updateDisplayName = () =>
-    this.props.dispatch(displayNameUpdateRequest(this.state.newDisplayName));
+    this.props.displayNameUpdateRequest(this.state.newDisplayName);
 
   catchReturn = event => event.key === "Enter" && this.updateDisplayName();
 
   changeDisplayName = event =>
     this.setState({ newDisplayName: event.target.value });
 
-  showError = error => this.props.dispatch(notificationShow(error));
+  showError = error => this.props.notificationShow(error);
   onProfileUpdate = profile => {
-    this.props.dispatch(externalProfileUpdateRequest(profile, "CodeCombat"));
+    this.props.externalProfileUpdateRequest(profile, "CodeCombat");
   };
 
   onProfileDataUpdate = (field, value) =>
-    this.props.dispatch(profileUpdateDataRequest(field, value));
+    this.props.profileUpdateDataRequest(field, value);
 
   render() {
     const {
@@ -152,8 +163,9 @@ class Account extends React.PureComponent {
       auth,
       classes,
       displayNameEdit,
-      dispatch,
       externalProfiles,
+      externalProfileRemoveDialogHide,
+      externalProfileRemoveRequest,
       joinedPaths,
       match,
       profileData,
@@ -343,8 +355,9 @@ class Account extends React.PureComponent {
           </Grid>
         </Grid>
         <RemoveExternalProfileDialog
-          dispatch={dispatch}
           externalProfileId={removeRequest.id}
+          externalProfileRemoveDialogHide={externalProfileRemoveDialogHide}
+          externalProfileRemoveRequest={externalProfileRemoveRequest}
           externalProfileType={removeRequest.type}
           open={removeRequest.actual}
         />
@@ -382,6 +395,20 @@ const mapStateToProps = (state, ownProps) => ({
   userName: getDisplayName(state, ownProps)
 });
 
+const mapDispatchToProps = {
+  accountOpen,
+  displayNameEditToggle,
+  displayNameUpdateRequest,
+  externalProfileDialogHide,
+  externalProfileDialogShow,
+  externalProfileRefreshRequest,
+  externalProfileRemoveDialogHide,
+  externalProfileRemoveDialogShow,
+  externalProfileRemoveRequest,
+  externalProfileUpdateRequest,
+  profileUpdateDataRequest
+};
+
 export default compose(
   withRouter,
   firebaseConnect((ownProps, store) => [
@@ -392,5 +419,5 @@ export default compose(
     `/userAchievements/${store.getState().firebase.auth.uid}`
   ]),
   withStyles(styles),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Account);
