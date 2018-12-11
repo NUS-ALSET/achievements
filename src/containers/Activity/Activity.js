@@ -1,5 +1,4 @@
 /**
- * @file Problem container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 04.03.18
  */
@@ -29,7 +28,15 @@ import { notificationShow, signInRequire } from "../Root/actions";
 export class Activity extends React.PureComponent {
   static propTypes = {
     children: PropTypes.any,
+
+    externalProfileUpdateRequest: PropTypes.func,
+    notificationShow: PropTypes.func,
+    problemFinalize: PropTypes.func,
+    problemInitRequest: PropTypes.func,
+    problemSolutionSubmitRequest: PropTypes.func,
+    signInRequire: PropTypes.func,
     dispatch: PropTypes.func,
+
     embedded: PropTypes.bool,
     match: PropTypes.object,
     onCommit: PropTypes.func,
@@ -53,12 +60,15 @@ export class Activity extends React.PureComponent {
   };
 
   componentDidMount() {
-    if (this.props.match.params.pathId && this.props.match.params.problemId) {
-      this.props.dispatch(
-        problemInitRequest(
-          this.props.match.params.pathId,
-          this.props.match.params.problemId
-        )
+    const {
+      match,
+      problemInitRequest
+    } = this.props;
+
+    if (match.params.pathId && match.params.problemId) {
+      problemInitRequest(
+        match.params.pathId,
+        match.params.problemId
       );
     }
   }
@@ -83,17 +93,15 @@ export class Activity extends React.PureComponent {
     }
   }
   componentWillUnmount() {
-    this.props.dispatch(
-      problemFinalize(
-        this.props.match.params.pathId,
-        this.props.match.params.problemId
-      )
+    problemFinalize(
+      this.props.match.params.pathId,
+      this.props.match.params.problemId
     );
   }
 
   onProblemChange = problemSolution => {
     if (!this.props.uid && Object.keys(problemSolution).length !== 0) {
-      this.props.dispatch(signInRequire());
+      this.props.signInRequire();
     }
     this.setState({ problemSolution, changed: true });
     return (
@@ -102,34 +110,36 @@ export class Activity extends React.PureComponent {
   };
   onCommit = () => {
     if (this.state.changed) {
-      this.props.dispatch(
-        problemSolutionSubmitRequest(
-          this.props.match.params.pathId,
-          this.props.match.params.problemId,
-          this.state.problemSolution
-        )
+      problemSolutionSubmitRequest(
+        this.props.match.params.pathId,
+        this.props.match.params.problemId,
+        this.state.problemSolution
       );
     } else {
-      this.props.dispatch(notificationShow("Nothing changed"));
+      this.props.notificationShow("Nothing changed");
     }
   };
 
   propsCommit = data => {
-    if (this.props.readOnly) {
+    const {
+      externalProfileUpdateRequest,
+      pathProblem,
+      readOnly,
+      onCommit
+    } = this.props;
+    if (readOnly) {
       return;
     }
     if (
-      this.props.pathProblem.type === "profile" &&
+      pathProblem.type === "profile" &&
       !(data && data.type === "SOLUTION")
     ) {
-      this.props.dispatch(
-        externalProfileUpdateRequest(
-          this.state.problemSolution.value,
-          "CodeCombat"
-        )
+      externalProfileUpdateRequest(
+        this.state.problemSolution.value,
+        "CodeCombat"
       );
     } else {
-      this.props.onCommit(data);
+      onCommit(data);
     }
   };
 
@@ -241,6 +251,16 @@ const mapStateToProps = (state, ownProps) => ({
   userAchievements: state.firebase.data.myAchievements || {}
 });
 
+const mapDispatchToProps = dispatch => ({
+  externalProfileUpdateRequest: (...args) => dispatch(externalProfileUpdateRequest(...args)),
+  notificationShow: (...args) => dispatch(notificationShow(...args)),
+  problemFinalize: (...args) => dispatch(problemFinalize(...args)),
+  problemInitRequest: (...args) => dispatch(problemInitRequest(...args)),
+  problemSolutionSubmitRequest: (...args) => dispatch(problemSolutionSubmitRequest(...args)),
+  signInRequire: (...args) => dispatch(signInRequire(...args)),
+  dispatch
+});
+
 export default compose(
   withRouter,
   firebaseConnect((ownProps, store) => {
@@ -268,5 +288,5 @@ export default compose(
           ]
     );
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Activity);

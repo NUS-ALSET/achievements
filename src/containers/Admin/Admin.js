@@ -57,7 +57,7 @@ const jestConfig = {
 class Admin extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
-    dispatch: PropTypes.func,
+    adminUpdateConfigRequest: PropTypes.func,
     config: PropTypes.object,
     isAdmin: PropTypes.bool
   };
@@ -86,7 +86,7 @@ class Admin extends React.PureComponent {
     });
 
   commit = () => {
-    this.props.dispatch(adminUpdateConfigRequest(this.state));
+    this.props.adminUpdateConfigRequest(this.state);
   };
 
   render() {
@@ -228,5 +228,10 @@ export default compose(
     ];
   }),
   withStyles(styles),
-  connect(mapStateToProps)
+  connect(
+    mapStateToProps,
+    {
+      adminUpdateConfigRequest
+    }
+  )
 )(Admin);

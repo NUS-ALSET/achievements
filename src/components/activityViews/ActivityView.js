@@ -14,8 +14,8 @@ import JupyterProblem from "./JupyterColabActivity";
 import JupyterInlineProblem from "./JupyterInlineActivity";
 import YouTubeProblem from "./YouTubeActivity";
 
-import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog"
-import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog"
+import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog";
+import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog";
 
 const views = {
   text: TextActivity,
