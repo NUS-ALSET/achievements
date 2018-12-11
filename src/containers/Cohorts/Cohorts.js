@@ -19,6 +19,7 @@ import CohortsTable from "../../components/tables/CohortsTable";
 import {
   addCohortDialogShow,
   addCohortDialogHide,
+  addCohortRequest,
   cohortsChangeTab
 } from "./actions";
 import AddCohortDialog from "../../components/dialogs/AddCohortDialog";
@@ -44,18 +45,19 @@ class Cohorts extends React.PureComponent {
     onAddCohortClick: PropTypes.func.isRequired,
     onEditCohortClick: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired,
-    onCloseAddCohortDialg: PropTypes.func.isRequired
+    onCloseAddCohortDialg: PropTypes.func.isRequired,
+    onAddCohortRequest: PropTypes.func.isRequired
   };
 
   render() {
     const {
-      dispatch,
       ui,
       myCohorts,
       myPaths,
       publicCohorts,
       publicPaths,
       currentUser,
+      onAddCohortRequest,
       onEditCohortClick,
       onCloseAddCohortDialg
     } = this.props;
@@ -104,8 +106,8 @@ class Cohorts extends React.PureComponent {
         />
         <AddCohortDialog
           cohort={ui.dialog.cohort}
-          dispatch={dispatch}
           myPaths={myPaths}
+          onAddCohortRequest={onAddCohortRequest}
           onCloseAddCohortDialg={onCloseAddCohortDialg}
           open={ui.dialog && ui.dialog.type === "addCohort"}
           publicPaths={publicPaths}
@@ -131,13 +133,13 @@ const mapStateToProps = state => ({
   }
 });
 
-const mapDispatchToProps = dispatch => ({
-  onAddCohortClick: () => dispatch(addCohortDialogShow()),
-  onChangeTab: (e, tabIndex) => dispatch(cohortsChangeTab(tabIndex)),
-  onEditCohortClick: cohort => dispatch(addCohortDialogShow(cohort)),
-  onCloseAddCohortDialg: () => dispatch(addCohortDialogHide()),
-  dispatch
-});
+const mapDispatchToProps = {
+  onAddCohortClick: addCohortDialogShow,
+  onChangeTab: cohortsChangeTab,
+  onEditCohortClick: addCohortDialogShow,
+  onCloseAddCohortDialg: addCohortDialogHide,
+  onAddCohortRequest: addCohortRequest
+};
 
 export default compose(
   firebaseConnect((ownProps, store) => {
