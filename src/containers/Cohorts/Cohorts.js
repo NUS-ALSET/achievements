@@ -16,7 +16,11 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 
 import CohortsTable from "../../components/tables/CohortsTable";
-import { addCohortDialogShow, cohortsChangeTab } from "./actions";
+import {
+  addCohortDialogShow,
+  addCohortDialogHide,
+  cohortsChangeTab
+} from "./actions";
 import AddCohortDialog from "../../components/dialogs/AddCohortDialog";
 
 import { sagaInjector } from "../../services/saga";
@@ -39,7 +43,8 @@ class Cohorts extends React.PureComponent {
 
     onAddCohortClick: PropTypes.func.isRequired,
     onEditCohortClick: PropTypes.func.isRequired,
-    onChangeTab: PropTypes.func.isRequired
+    onChangeTab: PropTypes.func.isRequired,
+    onCloseAddCohortDialg: PropTypes.func.isRequired
   };
 
   render() {
@@ -51,7 +56,8 @@ class Cohorts extends React.PureComponent {
       publicCohorts,
       publicPaths,
       currentUser,
-      onEditCohortClick
+      onEditCohortClick,
+      onCloseAddCohortDialg
     } = this.props;
     let cohorts;
 
@@ -100,6 +106,7 @@ class Cohorts extends React.PureComponent {
           cohort={ui.dialog.cohort}
           dispatch={dispatch}
           myPaths={myPaths}
+          onCloseAddCohortDialg={onCloseAddCohortDialg}
           open={ui.dialog && ui.dialog.type === "addCohort"}
           publicPaths={publicPaths}
         />
@@ -128,6 +135,7 @@ const mapDispatchToProps = dispatch => ({
   onAddCohortClick: () => dispatch(addCohortDialogShow()),
   onChangeTab: (e, tabIndex) => dispatch(cohortsChangeTab(tabIndex)),
   onEditCohortClick: cohort => dispatch(addCohortDialogShow(cohort)),
+  onCloseAddCohortDialg: () => dispatch(addCohortDialogHide()),
   dispatch
 });
 

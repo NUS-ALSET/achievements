@@ -12,10 +12,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
-import {
-  addCohortDialogHide,
-  addCohortRequest
-} from "../../containers/Cohorts/actions";
+
+import { addCohortRequest } from "../../containers/Cohorts/actions";
 
 // RegExp rules
 import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
@@ -25,6 +23,7 @@ class AddCohortDialog extends React.PureComponent {
   static propTypes = {
     cohort: PropTypes.object,
     dispatch: PropTypes.func.isRequired,
+    onCloseAddCohortDialg: PropTypes.func.isRequired,
     myPaths: PropTypes.object,
     open: PropTypes.bool.isRequired,
     publicPaths: PropTypes.object
@@ -98,7 +97,7 @@ class AddCohortDialog extends React.PureComponent {
 
   onClose = () => {
     this.resetState();
-    this.props.dispatch(addCohortDialogHide());
+    this.props.onCloseAddCohortDialg();
   };
 
   onCommit = () => {
