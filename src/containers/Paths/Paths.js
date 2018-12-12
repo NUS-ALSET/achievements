@@ -23,6 +23,7 @@ import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { pathsOpen } from "./actions";
 import PathsTable from "../../components/tables/PathsTable";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 export class Paths extends React.PureComponent {
   static propTypes = {
@@ -34,7 +35,8 @@ export class Paths extends React.PureComponent {
     problems: PropTypes.array,
     ui: PropTypes.object,
     // FIXIT: figure out correct type
-    uid: PropTypes.any
+    uid: PropTypes.any,
+    fetchedPaths: PropTypes.bool
   };
 
   componentDidMount() {
@@ -42,27 +44,34 @@ export class Paths extends React.PureComponent {
   }
 
   render() {
-    const { dispatch, myPaths, joinedPaths, publicPaths, ui, uid } = this.props;
+    const { dispatch, myPaths, joinedPaths, publicPaths, ui, uid, fetchedPaths } = this.props;
 
     return (
       <Fragment>
         <Breadcrumbs paths={[{ label: "Paths" }]} />
-        {uid ? (
+        {!fetchedPaths ? (
           <Fragment>
-            <PathTabs
-              dispatch={dispatch}
-              joinedPaths={joinedPaths}
-              myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
-              publicPaths={publicPaths}
-            />
-            <AddPathDialog
-              dispatch={dispatch}
-              open={ui.dialog.type === "PathChange"}
-              path={ui.dialog.value}
-            />
+            Loading Paths...
+            <LinearProgress />
           </Fragment>
         ) : (
-          <PathsTable dispatch={dispatch} paths={publicPaths || {}} />
+          uid ? (
+            <Fragment>
+              <PathTabs
+                dispatch={dispatch}
+                joinedPaths={joinedPaths}
+                myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+                publicPaths={publicPaths}
+              />
+              <AddPathDialog
+                dispatch={dispatch}
+                open={ui.dialog.type === "PathChange"}
+                path={ui.dialog.value}
+              />
+            </Fragment>
+          ) : (
+            <PathsTable dispatch={dispatch} paths={publicPaths || {}} />
+          )
         )}
       </Fragment>
     );
@@ -78,7 +87,8 @@ const mapStateToProps = state => ({
   myPaths: state.firebase.data.myPaths,
   publicPaths: state.firebase.data.publicPaths,
   joinedPaths: state.paths.joinedPaths,
-  problems: getProblems(state)
+  problems: getProblems(state),
+  fetchedPaths: state.paths.fetchedPaths
 });
 
 export default compose(

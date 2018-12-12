@@ -156,9 +156,6 @@ class JupyterInlineActivity extends React.PureComponent {
             <b>Execution Status: </b> {this.state.statusText}
           </div>
         )}
-        {/* BUG1: when visiting inline activity from another activity,
-        the nextProps.solution.checked is True */}
-        {/* BUG2: React complains about updating unmounted element, please fix */}
         {this.state.showCommitBtn && (
           <div style={{ height: "20px" }}>
             <Button
