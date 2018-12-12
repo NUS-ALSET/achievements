@@ -47,7 +47,8 @@ class Courses extends React.Component {
     firebase: PropTypes.object,
     instructorName: PropTypes.string,
     ownerId: PropTypes.string,
-    currentTab: PropTypes.number
+    currentTab: PropTypes.number,
+    fetchedCourses: PropTypes.bool
   };
 
   onDeleteCourseClick = courseId => {
@@ -86,7 +87,8 @@ class Courses extends React.Component {
       currentTab,
       publicCourses,
       myCourses,
-      joinedCourses
+      joinedCourses,
+      fetchedCourses
     } = this.props;
     let courses;
 
@@ -156,6 +158,7 @@ class Courses extends React.Component {
         </Tabs>
         <CoursesTable
           courses={courses || {}}
+          fetchedCourses={fetchedCourses}
           dispatch={dispatch}
           onDeleteCourseClick={this.onDeleteCourseClick}
           ownerId={ownerId}
@@ -189,6 +192,7 @@ const mapStateToProps = state => ({
   myCourses: state.firebase.data.myCourses,
   publicCourses: state.firebase.data.publicCourses,
   joinedCourses: state.courses.joinedCourses,
+  fetchedCourses: state.courses.fetchedCourses,
   instructorName: state.firebase.auth.displayName,
   ownerId: state.firebase.auth.uid,
   dialog: state.courses.dialog,

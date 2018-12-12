@@ -13,6 +13,7 @@ import TableRow from "@material-ui/core/TableRow";
 import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -36,7 +37,8 @@ class CoursesTable extends React.PureComponent {
     courses: PropTypes.any.isRequired,
     dispatch: PropTypes.func.isRequired,
     onDeleteCourseClick: PropTypes.func.isRequired,
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    fetchedCourses: PropTypes.bool
   };
 
   onDeleteCourseClick = course =>
@@ -46,6 +48,16 @@ class CoursesTable extends React.PureComponent {
 
   render() {
     const { classes, courses, ownerId } = this.props;
+
+    if (!this.props.fetchedCourses) {
+      return (
+        <Fragment>
+          <br />
+          <br />
+          <LinearProgress />
+        </Fragment>
+      );
+    }
 
     return (
       <Table>

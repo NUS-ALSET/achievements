@@ -18,7 +18,8 @@ export const courses = (
       name: "",
       password: ""
     },
-    removingCourse: false
+    removingCourse: false,
+    fetchedCourses: false
   },
   action
 ) => {
@@ -69,7 +70,8 @@ export const courses = (
     case COURSE_JOINED_FETCH_SUCCESS:
       return {
         ...state,
-        joinedCourses: action.courses
+        joinedCourses: action.courses,
+        fetchedCourses: true
       };
     default:
       return state;
