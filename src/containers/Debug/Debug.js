@@ -5,12 +5,12 @@ import { compose } from "redux";
 import { firebaseConnect } from "react-redux-firebase";
 
 class Debug extends React.PureComponent {
-    constructor(props){
-        super(props);
-    }
+    // constructor(props){
+    //     super(props);
+    // }
 
     render(){
-        return(
+        return (
             <Fragment>
                 <h1>Hello There!</h1>
                 <div>Shhh... This is a hidden route! ;) </div>
@@ -31,11 +31,11 @@ export default compose(
     firebaseConnect((ownProps, store) => {
       const state = store.getState();
       const firebaseAuth = state.firebase.auth;
-  
+
       if (!firebaseAuth.uid) {
         return [];
       }
-  
+
       return [
         {
           path: "/debug",
