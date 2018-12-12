@@ -47,6 +47,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
+//Test
+import Debug from "../Debug/Debug";
+
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
  * Routes are passed as props to be rendered within this component*/
@@ -261,6 +264,7 @@ class AppFrame extends React.Component {
               <Route component={Path} exact path="/paths/:pathId" />
               <Route component={AllDestinations} exact path="/destinations" />
               <Route component={MyDestinations} exact path="/my-destinations" />
+              <Route component={Debug} exact path="/debug" />
               <Route
                 component={ViewDestination}
                 exact
