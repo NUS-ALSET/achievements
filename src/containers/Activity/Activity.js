@@ -93,7 +93,7 @@ export class Activity extends React.PureComponent {
     }
   }
   componentWillUnmount() {
-    problemFinalize(
+    this.props.problemFinalize(
       this.props.match.params.pathId,
       this.props.match.params.problemId
     );
@@ -110,7 +110,7 @@ export class Activity extends React.PureComponent {
   };
   onCommit = () => {
     if (this.state.changed) {
-      problemSolutionSubmitRequest(
+      this.props.problemSolutionSubmitRequest(
         this.props.match.params.pathId,
         this.props.match.params.problemId,
         this.state.problemSolution
