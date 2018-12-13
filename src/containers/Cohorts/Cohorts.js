@@ -133,13 +133,14 @@ const mapStateToProps = state => ({
   }
 });
 
-const mapDispatchToProps = {
-  onAddCohortClick: addCohortDialogShow,
-  onChangeTab: cohortsChangeTab,
-  onEditCohortClick: addCohortDialogShow,
-  onCloseAddCohortDialg: addCohortDialogHide,
-  onAddCohortRequest: addCohortRequest
-};
+// need the e in onChangeTab for event logging to work
+const mapDispatchToProps = dispatch => ({
+  onAddCohortClick: () => dispatch(addCohortDialogShow()),
+  onChangeTab: (e, tabIndex) => dispatch(cohortsChangeTab(tabIndex)),
+  onEditCohortClick: cohort => dispatch(addCohortDialogShow(cohort)),
+  onCloseAddCohortDialg: () => dispatch(addCohortDialogHide()),
+  onAddCohortRequest: (cohortData) => dispatch(addCohortRequest(cohortData))
+});
 
 export default compose(
   firebaseConnect((ownProps, store) => {
