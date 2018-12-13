@@ -8,7 +8,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
-import { firebaseConnect, isLoaded } from "react-redux-firebase";
+import { firebaseConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { connect } from "react-redux";
 
@@ -150,12 +150,13 @@ class AddActivityDialog extends React.PureComponent {
       this.state.type ||
       (activity && activity.type) ||
       "text";
-    if (
+    console.error("type is: ", type)
+    /*if (
       ["jupyter", "jupyterInline"].includes(type) &&
       !isLoaded(activityExampleSolution)
     ) {
       return "";
-    }
+    }*/
     activity = Object.assign(activity || {}, this.state);
     switch (type) {
       case ACTIVITY_TYPES.text.id:
