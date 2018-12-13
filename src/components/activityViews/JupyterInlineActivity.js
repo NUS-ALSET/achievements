@@ -34,19 +34,22 @@ class JupyterInlineActivity extends React.PureComponent {
     statusText: null
   };
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (
-      (nextProps.solution || {}).checked &&
-      (!(nextProps.solution || {}).failed)
-    ) {
-      this.setState({ showCommitBtn: true });
-    } else {
-      this.setState({ showCommitBtn: false });
-    }
-    if (nextProps.solution.statusText) {
-      this.setState({ statusText: nextProps.solution.statusText });
-    } else {
-      this.setState({ statusText: null });
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.solution !== prevProps.solution) {
+      if (
+        (this.props.solution || {}).checked &&
+        (!(this.props.solution || {}).failed)
+      ) {
+        this.setState({ showCommitBtn: true });
+      } else {
+        this.setState({ showCommitBtn: false });
+      }
+      if (this.props.solution.statusText) {
+        this.setState({ statusText: this.props.solution.statusText });
+      } else {
+        this.setState({ statusText: null });
+      }
     }
   }
 
