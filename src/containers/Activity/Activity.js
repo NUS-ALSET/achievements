@@ -45,7 +45,6 @@ export class Activity extends React.PureComponent {
     pathProblem: PropTypes.any,
     readOnly: PropTypes.bool,
     solution: PropTypes.any,
-    showCommitBtnOnTop: PropTypes.bool,
     uid: PropTypes.string
   };
 
@@ -151,7 +150,6 @@ export class Activity extends React.PureComponent {
       pathProblem,
       solution,
       readOnly,
-      showCommitBtnOnTop,
       uid
     } = this.props;
     if (!pathProblem) {
@@ -196,7 +194,6 @@ export class Activity extends React.PureComponent {
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
             pathProblem={pathProblem}
             readOnly={readOnly}
-            showCommitBtnOnTop={showCommitBtnOnTop}
             solution={solution}
             style={{
               paddingBottom: 20,
