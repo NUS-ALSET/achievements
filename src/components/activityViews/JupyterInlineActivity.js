@@ -24,8 +24,7 @@ class JupyterInlineActivity extends React.PureComponent {
     onCommit: PropTypes.func,
     problem: PropTypes.object,
     solution: PropTypes.object,
-    readOnly: PropTypes.bool,
-    showCommitBtnOnTop: PropTypes.bool
+    readOnly: PropTypes.bool
   };
 
   state = {
@@ -38,7 +37,7 @@ class JupyterInlineActivity extends React.PureComponent {
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (
       (nextProps.solution || {}).checked &&
-      (nextProps.showCommitBtnOnTop || !(nextProps.solution || {}).failed)
+      (!(nextProps.solution || {}).failed)
     ) {
       this.setState({ showCommitBtn: true });
     } else {

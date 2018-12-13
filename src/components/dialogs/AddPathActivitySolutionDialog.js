@@ -84,7 +84,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           classes={{
             paper: pathProblem ? classes.dialog : classes.loading
           }}
-          fullWidth
+          fullScreen
           onClose={this.onClose}
           open={open}
         >
@@ -101,7 +101,6 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
             onCommit={this.onCommitClick}
             onClose={this.onClose}
             readOnly={readOnly}
-            showCommitBtnOnTop={true}
           >
             {(activityView, submitHandler, props) => (
               <Fragment>
@@ -113,9 +112,6 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
                   {activityView(props)}
                 </DialogContent>
                 <DialogActions>
-                  <Button color="secondary" onClick={this.onClose}>
-                    {readOnly ? 'Close' : 'Cancel'}
-                  </Button>
                   {/* TODO: refactor =>
                   the problemSolution state seems to be shared among multiple activities
                   listed in the same course page */}
@@ -138,6 +134,9 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
               </Fragment>
             )}
           </Activity>
+          <Button color="secondary" onClick={this.onClose}>
+            {readOnly ? 'Close' : 'Cancel'}
+          </Button>
         </Dialog>
       </Fragment>
     );

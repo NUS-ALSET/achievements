@@ -72,6 +72,11 @@ class PathsTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
+          {!Object.keys(paths).length &&
+            <TableRow>
+              <TableCell colSpan={3}>Empty</TableCell>
+            </TableRow>
+          }
           {Object.keys(paths)
             .filter(id => paths[id])
             .map(id => ({ ...paths[id], id }))

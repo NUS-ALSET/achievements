@@ -17,28 +17,24 @@ class JupyterColabActivity extends React.PureComponent {
     onChange: PropTypes.func,
     problem: PropTypes.object.isRequired,
     solution: PropTypes.object,
-    readOnly : PropTypes.bool,
-    showCommitBtnOnTop : PropTypes.bool
+    readOnly : PropTypes.bool
   };
   state = {
     showCommitBtn: false,
     statusText : null
   };
   componentWillReceiveProps(nextProps) {
-    if(
-      (nextProps.solution || {}).checked && 
-      (
-        nextProps.showCommitBtnOnTop ||
-        !(nextProps.solution || {}).failed
-        )
+    if (
+      (nextProps.solution || {}).checked &&
+      (!(nextProps.solution || {}).failed)
     ) {
       this.setState({ showCommitBtn: true });
     } else {
       this.setState({ showCommitBtn: false });
     }
-    if(nextProps.solution.statusText){
+    if (nextProps.solution.statusText){
       this.setState({ statusText : nextProps.solution.statusText });  
-    }else{
+    } else {
       this.setState({ statusText : null })
     }
   }

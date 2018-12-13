@@ -34,8 +34,7 @@ class ActivityView extends React.PureComponent {
     pathProblem: PropTypes.any,
     onProblemChange: PropTypes.func.isRequired,
     solution: PropTypes.any,
-    readOnly : PropTypes.bool,
-    showCommitBtnOnTop : PropTypes.bool
+    readOnly : PropTypes.bool
   };
   state={
     open : true
@@ -69,7 +68,6 @@ class ActivityView extends React.PureComponent {
       pathProblem,
       solution,
       readOnly,
-      showCommitBtnOnTop,
       userAchievements
     } = this.props;
     let SpecificView = views[pathProblem.type];
@@ -100,7 +98,6 @@ class ActivityView extends React.PureComponent {
           onClose={onClose}
           onCommit={onCommit}
           readOnly={readOnly}
-          showCommitBtnOnTop={showCommitBtnOnTop}
           {...extraProps}
         />
       </div>
