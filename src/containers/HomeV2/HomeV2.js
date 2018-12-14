@@ -8,10 +8,7 @@ import { connect } from "react-redux";
 import RecommendationsListCard from "../../components/cards/RecommendationsListCard";
 import ContentLoader from "./ContentLoader";
 import sagas from "./sagas";
-import {
-  homeOpenRecommendation,
-  updateRecommendation
-} from "./actions";
+import { homeOpenRecommendation, updateRecommendation } from "./actions";
 import { sagaInjector } from "../../services/saga";
 
 const temporaryRecommendationsKinds = [
@@ -90,7 +87,7 @@ export class HomeV2 extends React.Component {
       activityId,
       pathId
     );
-  componentDidMount(){
+  componentDidMount() {
     this.props.updateRecommendation();
   }
   render() {
@@ -189,5 +186,8 @@ export default compose(
       }
     ];
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(HomeV2);

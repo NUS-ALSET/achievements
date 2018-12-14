@@ -5,7 +5,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-
 const Loading = () => {
   return "Loading...";
 };
@@ -33,37 +32,36 @@ class GameTournamentActivity extends React.PureComponent {
   };
 
   handleSubmit = solution => {
-
     if (this.props.onChange) {
       this.props.onCommit({ type: "SOLUTION", solution });
     } else {
       this.props.onCommit(solution, this.props.taskId);
     }
-  }
-  selectGame = (props) => {
+  };
+  selectGame = props => {
     const { problem = {} } = props;
     switch (problem.game) {
       case "passenger-picker": {
-        import("../games/passenger-picker/src/component")
-          .then(({ Game }) => {
-            this.setState({ specificGame: Game });
-          });
+        import("../games/passenger-picker/src/component").then(({ Game }) => {
+          this.setState({ specificGame: Game });
+        });
         break;
       }
       case "squad": {
-        import("../games/squad")
-          .then(({ Game }) => {
-            this.setState({ specificGame: Game });
-          });
+        import("../games/squad").then(({ Game }) => {
+          this.setState({ specificGame: Game });
+        });
         break;
       }
       default: {
         this.setState({ specificGame: Game404 });
       }
     }
-  }
+  };
   render() {
-    const { problem, botsQuantity
+    const {
+      problem,
+      botsQuantity
       // solution, readOnly, onCommit, taskId
     } = this.props;
     if (!problem) {

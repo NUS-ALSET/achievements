@@ -40,7 +40,6 @@ const styles = theme => ({
   }
 });
 
-
 function InteractiveList(props) {
   const { classes, data, name } = props;
   const dense = true;
@@ -51,43 +50,36 @@ function InteractiveList(props) {
       </Typography>
       <div className={classes.demo}>
         <List dense={dense}>
-          {Object.keys(data).map(key =>
+          {Object.keys(data).map(key => (
             <ListItem key={key}>
-              <ListItemText
-                primary={key}
-              />
+              <ListItemText primary={key} />
             </ListItem>
-          )
-          }
+          ))}
         </List>
       </div>
     </Grid>
   );
 }
 
-
-
 function Skills(props) {
   const { classes, skills } = props;
   return (
     <div className={classes.root}>
-      {Object.keys(skills || {}).length>0 &&
+      {Object.keys(skills || {}).length > 0 && (
         <Typography className={classes.heading1} variant="subtitle1">
           Skills
           <Divider />
         </Typography>
-      }
+      )}
       <Grid container justify="space-around" spacing={8}>
-        {
-          Object.keys(skills || {}).map(key =>
-            <InteractiveList
-              classes={classes}
-              data={skills[key]}
-              key={key}
-              name={key}
-            />
-          )
-        }
+        {Object.keys(skills || {}).map(key => (
+          <InteractiveList
+            classes={classes}
+            data={skills[key]}
+            key={key}
+            name={key}
+          />
+        ))}
       </Grid>
     </div>
   );
@@ -96,7 +88,5 @@ function Skills(props) {
 Skills.propTypes = {
   classes: PropTypes.object.isRequired
 };
-
-
 
 export default withStyles(styles)(Skills);

@@ -40,11 +40,7 @@ class RequestMorePathContentDialog extends React.PureComponent {
           <Button color="secondary" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            color="primary"
-            onClick={this.onConfirm}
-            variant="contained"
-          >
+          <Button color="primary" onClick={this.onConfirm} variant="contained">
             Confirm
           </Button>
         </DialogActions>

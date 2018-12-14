@@ -39,7 +39,7 @@ class JupyterInlineActivity extends React.PureComponent {
     if (this.props.solution !== prevProps.solution) {
       if (
         (this.props.solution || {}).checked &&
-        (!(this.props.solution || {}).failed)
+        !(this.props.solution || {}).failed
       ) {
         this.setState({ showCommitBtn: true });
       } else {

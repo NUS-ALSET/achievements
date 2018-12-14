@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import React, { Fragment } from "react";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import PropTypes from "prop-types";
@@ -8,11 +8,12 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { APP_SETTING } from "../../achievementsApp/config";
 import Input from "@material-ui/core/Input";
 
-
-const GameActivity = ({activity, onFieldChange}) => (
+const GameActivity = ({ activity, onFieldChange }) => (
   <Fragment>
     <FormControl fullWidth margin="normal">
-      <InputLabel htmlFor="select-games" shrink>Select Game</InputLabel>
+      <InputLabel htmlFor="select-games" shrink>
+        Select Game
+      </InputLabel>
       <Select
         input={<Input id="select-games" />}
         margin="none"
@@ -35,7 +36,9 @@ const GameActivity = ({activity, onFieldChange}) => (
       </Select>
     </FormControl>
     <FormControl fullWidth margin="normal">
-      <InputLabel htmlFor="select-mode" shrink>Select Play Mode</InputLabel>
+      <InputLabel htmlFor="select-mode" shrink>
+        Select Play Mode
+      </InputLabel>
       <Select
         input={<Input id="select-mode" />}
         margin="none"
@@ -51,9 +54,9 @@ const GameActivity = ({activity, onFieldChange}) => (
         value={activity.playMode}
       >
         {[
-          { mode : "manual control", label : "Manual Control" },
-          { mode : "custom code", label : "Custom Code" }
-         ].map(key => (
+          { mode: "manual control", label: "Manual Control" },
+          { mode: "custom code", label: "Custom Code" }
+        ].map(key => (
           <MenuItem key={key.mode} value={key.mode}>
             {key.label}
           </MenuItem>
@@ -79,10 +82,10 @@ const GameActivity = ({activity, onFieldChange}) => (
         value={activity.levelsToWin}
       >
         {[
-          {level: 1, label: "Easy"},
-          {level: 2, label: "Medium"},
-          {level: 3, label: "Hard"}
-         ].map(key => (
+          { level: 1, label: "Easy" },
+          { level: 2, label: "Medium" },
+          { level: 3, label: "Hard" }
+        ].map(key => (
           <MenuItem key={key.level} value={key.level}>
             {key.label}
           </MenuItem>

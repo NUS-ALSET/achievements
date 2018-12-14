@@ -10,8 +10,7 @@ import Typography from "@material-ui/core/Typography";
 
 import { AccountService } from "../../services/account";
 
-
-const externalProfile={
+const externalProfile = {
   url: "https://codecombat.com",
   id: "CodeCombat"
 };
@@ -22,41 +21,50 @@ class ProfileActivity extends React.PureComponent {
     problem: PropTypes.object,
     solution: PropTypes.object,
     userAchievements: PropTypes.object,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
   };
   state = {
     login: ""
   };
   onProfileChange = e => {
-    const login =  AccountService.processProfile(externalProfile.id, e.target.value);
+    const login = AccountService.processProfile(
+      externalProfile.id,
+      e.target.value
+    );
     this.setState({ login });
-    this.props.onChange({value : login});
+    this.props.onChange({ value: login });
   };
 
   render() {
-    const { problem, solution, userAchievements, readOnly} = this.props;
-    const userName = userAchievements && userAchievements.CodeCombat && userAchievements.CodeCombat.id  ? userAchievements.CodeCombat.id : solution.value;
-    const url = `${externalProfile.url}/user/${this.state.login || solution.value}`;
+    const { problem, solution, userAchievements, readOnly } = this.props;
+    const userName =
+      userAchievements &&
+      userAchievements.CodeCombat &&
+      userAchievements.CodeCombat.id
+        ? userAchievements.CodeCombat.id
+        : solution.value;
+    const url = `${externalProfile.url}/user/${this.state.login ||
+      solution.value}`;
     return (
       <Fragment>
         <Typography align="left" gutterBottom variant="h5">
           {problem.question}
         </Typography>
         <div>
-            <a href={url}>{url}</a>
+          <a href={url}>{url}</a>
         </div>
-          <TextField
-            autoFocus
-            disabled={readOnly}
-            fullWidth
-            label="Profile"
-            onChange={this.onProfileChange}
-            onKeyPress={this.catchReturn}
-            style={{
-              marginBottom: 4
-            }}
-            value={this.state.login || (userName)}
-          />
+        <TextField
+          autoFocus
+          disabled={readOnly}
+          fullWidth
+          label="Profile"
+          onChange={this.onProfileChange}
+          onKeyPress={this.catchReturn}
+          style={{
+            marginBottom: 4
+          }}
+          value={this.state.login || userName}
+        />
       </Fragment>
     );
   }

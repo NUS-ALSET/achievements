@@ -72,19 +72,16 @@ class PathsTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!Object.keys(paths).length &&
+          {!Object.keys(paths).length && (
             <TableRow>
               <TableCell colSpan={3}>Empty</TableCell>
             </TableRow>
-          }
+          )}
           {Object.keys(paths)
             .filter(id => paths[id])
             .map(id => ({ ...paths[id], id }))
             .map(path => (
-              <TableRow
-                hover
-                key={path.id}
-              >
+              <TableRow hover key={path.id}>
                 <TableCell>{path.name}</TableCell>
                 {!owner && (
                   <TableCell>

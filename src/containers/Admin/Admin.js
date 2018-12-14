@@ -114,9 +114,16 @@ class Admin extends React.PureComponent {
               Admin Page
             </Typography>
             <Typography gutterBottom>
-              You are able to see this '/admin' page because you have been granted admin rights in our Firebase.<br />
-              <b>With great power comes great responsibility.</b><br />
-              Please do not delete ANYTHING in Firebase. Since the database is "schema-less", we may not know how the code is using different nodes and where the code is expecting certain properties to exist. If you need to repeatedly delete some data (activities, paths, courses), we should create a feature in the code to do that.
+              You are able to see this '/admin' page because you have been
+              granted admin rights in our Firebase.
+              <br />
+              <b>With great power comes great responsibility.</b>
+              <br />
+              Please do not delete ANYTHING in Firebase. Since the database is
+              "schema-less", we may not know how the code is using different
+              nodes and where the code is expecting certain properties to exist.
+              If you need to repeatedly delete some data (activities, paths,
+              courses), we should create a feature in the code to do that.
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -128,9 +135,7 @@ class Admin extends React.PureComponent {
               component="fieldset"
               fullWidth
             >
-              <FormLabel component="legend">
-                Edit URLs
-              </FormLabel>
+              <FormLabel component="legend">Edit URLs</FormLabel>
               <br />
               <FormGroup>
                 {Object.keys(urls).map(url => (

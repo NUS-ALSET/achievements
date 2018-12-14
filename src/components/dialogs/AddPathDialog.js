@@ -21,11 +21,7 @@ import {
 } from "../../containers/Paths/actions";
 
 // RegExp rules
-import {
-  AddName,
-  NoStartWhiteSpace
-} from "../regexp-rules/RegExpRules";
-
+import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
 
 // this component is when click "Add Path" or "Edit Path"
 class AddPathDialog extends React.PureComponent {
@@ -58,10 +54,7 @@ class AddPathDialog extends React.PureComponent {
       });
     }
     if (field === "name") {
-      if (
-        AddName.test(value) &&
-        NoStartWhiteSpace.test(value)
-      ) {
+      if (AddName.test(value) && NoStartWhiteSpace.test(value)) {
         this.setState({
           isCorrectInput: true,
           [field]: value.trim()
@@ -72,7 +65,7 @@ class AddPathDialog extends React.PureComponent {
         });
       }
     } else {
-      this.setState({ [field] : value.trim() });
+      this.setState({ [field]: value.trim() });
     }
   };
 
@@ -110,9 +103,11 @@ class AddPathDialog extends React.PureComponent {
             defaultValue={path && path.name}
             error={!this.state.isCorrectInput}
             fullWidth
-            helperText={this.state.isCorrectInput
-              ? ""
-              : "input should not be empty, too long or have invalid characters"}
+            helperText={
+              this.state.isCorrectInput
+                ? ""
+                : "input should not be empty, too long or have invalid characters"
+            }
             label="Path name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}

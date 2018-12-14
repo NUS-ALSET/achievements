@@ -37,9 +37,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     const { pathProgress, activityPath } = this.props;
     const totalActivities = Number(activityPath.totalActivities);
 
-    if (
-      !(pathProgress && totalActivities && pathProgress.solutions)
-    ) {
+    if (!(pathProgress && totalActivities && pathProgress.solutions)) {
       return "none";
     }
     return `${pathProgress.solutions} of ${totalActivities}`;
@@ -49,13 +47,12 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
     const { pathProgress, activityPath } = this.props;
     const totalActivities = Number(activityPath.totalActivities);
 
-    if (
-      !(pathProgress && totalActivities && pathProgress.solutions)
-    ) {
+    if (!(pathProgress && totalActivities && pathProgress.solutions)) {
       return `Your have no progress at this "${activityPath.name}" path`;
     }
-    return `You have completed ${pathProgress.solutions} of the ${
-    totalActivities} activities on the "${activityPath.name}" path.
+    return `You have completed ${
+      pathProgress.solutions
+    } of the ${totalActivities} activities on the "${activityPath.name}" path.
     Your progress is ${this.getProgress()}.`;
   };
 
@@ -81,11 +78,7 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
   };
 
   render() {
-    const {
-      open,
-      pathProgress,
-      activityPath
-    } = this.props;
+    const { open, pathProgress, activityPath } = this.props;
 
     const totalActivities = Number(activityPath.totalActivities);
 
@@ -110,46 +103,28 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            color="primary"
-            onClick={this.onGotoLink}
-            variant="outlined"
-          >
+          <Button color="primary" onClick={this.onGotoLink} variant="outlined">
             Go to Path
           </Button>
-          {(pathProgress && totalActivities && pathProgress.solutions) &&
+          {pathProgress && totalActivities && pathProgress.solutions && (
             <Button color="primary" onClick={this.onCommit} variant="contained">
               Update Progress
             </Button>
-          }
+          )}
         </DialogActions>
       </Dialog>
     );
   }
 }
 
-
 const mapStateToProps = (state, ownProps) => ({
-  activityPath: (
-    (
-      state.firebase.data.paths ||
-      {}
-    )[
-      (
-        ownProps.assignment ||
-        {}
-      ).path
-    ] ||
-    {}
-  )
+  activityPath:
+    (state.firebase.data.paths || {})[(ownProps.assignment || {}).path] || {}
 });
 
-
 export default compose(
-  firebaseConnect( (ownProps, store) => (
-    ownProps.assignment
-      ? [`/paths/${ownProps.assignment.path}`]
-      : []
-  )),
+  firebaseConnect((ownProps, store) =>
+    ownProps.assignment ? [`/paths/${ownProps.assignment.path}`] : []
+  ),
   connect(mapStateToProps)
 )(AddPathProgressSolutionDialog);

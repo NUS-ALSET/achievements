@@ -8,10 +8,11 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 
-
 const styles = {
   verticalMiddle: {
-    width: "100%", marginTop: "45vh", textAlign: "center"
+    width: "100%",
+    marginTop: "45vh",
+    textAlign: "center"
   }
 };
 
@@ -42,37 +43,35 @@ class GameActivity extends React.PureComponent {
   };
 
   handleSubmit = solution => {
-
     if (this.props.onChange) {
       this.props.onCommit({ type: "SOLUTION", solution });
     } else {
       this.props.onCommit(solution, this.props.taskId);
     }
-  }
-  selectGame = (props) => {
+  };
+  selectGame = props => {
     const { problem = {} } = props;
     switch (problem.game) {
       case "passenger-picker": {
-        import("../games/passenger-picker/src/component")
-          .then(({ Game }) => {
-            this.setState({ specificGame: Game });
-          });
+        import("../games/passenger-picker/src/component").then(({ Game }) => {
+          this.setState({ specificGame: Game });
+        });
         break;
       }
       case "squad": {
-        import("../games/squad")
-          .then(({ Game }) => {
-            this.setState({ specificGame: Game });
-          });
+        import("../games/squad").then(({ Game }) => {
+          this.setState({ specificGame: Game });
+        });
         break;
       }
       default: {
         this.setState({ specificGame: Game404 });
       }
     }
-  }
+  };
   render() {
-    const { problem,
+    const {
+      problem,
       classes,
       solution,
       displayName
@@ -81,13 +80,13 @@ class GameActivity extends React.PureComponent {
     if (!problem) {
       return "";
     }
-    const levelNumber={
-      "1" : 1,
-      "2" : 2,
-      "3" : 3,
-      "Easy" : 1,
-      "Medium" : 2,
-      "Hard" : 3
+    const levelNumber = {
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      Easy: 1,
+      Medium: 2,
+      Hard: 3
     };
     const SpecificGame = this.state.specificGame || Loading;
     return (
@@ -104,27 +103,25 @@ class GameActivity extends React.PureComponent {
         onCommit={this.handleSubmit} // default false
         playAsPlayer2={problem.playAsPlayer2}
         player1Data={{
-          pyCode : (solution || {}).pyCode || "" ,
-          jsCode : (solution || {}).jsCode || ""
+          pyCode: (solution || {}).pyCode || "",
+          jsCode: (solution || {}).jsCode || ""
         }}
-        playersName = {{
-          player1 : problem.playAsPlayer2 ? "Bot" : displayName,
-          player2 : !problem.playAsPlayer2 ? "Bot" : displayName
+        playersName={{
+          player1: problem.playAsPlayer2 ? "Bot" : displayName,
+          player2: !problem.playAsPlayer2 ? "Bot" : displayName
         }}
       />
     );
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
-    displayName : state.firebase.auth.displayName || ""
+    displayName: state.firebase.auth.displayName || ""
   };
 };
 
 export default compose(
   withStyles(styles),
-  connect(
-    mapStateToProps,
-  )
+  connect(mapStateToProps)
 )(GameActivity);

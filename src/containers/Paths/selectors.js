@@ -15,10 +15,9 @@ export const getProblems = state => {
   );
   return Object.keys(problemsMap)
     .map(id => ({ ...problemsMap[id], id }))
-    .filter(
-      problem =>
-        state.paths.selectedPathId
-          ? problem.path === state.paths.selectedPathId
-          : !problem.path
+    .filter(problem =>
+      state.paths.selectedPathId
+        ? problem.path === state.paths.selectedPathId
+        : !problem.path
     );
 };

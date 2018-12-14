@@ -46,11 +46,7 @@ class RemoveExternalProfileDialog extends React.PureComponent {
           <Button color="primary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            color="secondary"
-            onClick={this.onCommit}
-            variant="contained"
-          >
+          <Button color="secondary" onClick={this.onCommit} variant="contained">
             Disconnect
           </Button>
         </DialogActions>

@@ -26,7 +26,7 @@ const Card = () => (
     speed={2}
     width={100}
   >
-    <rect height="175" rx="1" ry="1" width="272" x='0' y="0" />
+    <rect height="175" rx="1" ry="1" width="272" x="0" y="0" />
   </ReactContentLoader>
 );
 
@@ -53,7 +53,7 @@ const styles = theme => ({
     height: "150px",
     width: "272px",
     marginLeft: "9px",
-    display : "inline-block"
+    display: "inline-block"
   }
 });
 
@@ -62,23 +62,24 @@ function ContentLoader(props) {
   const cardsInCarousel = [3, 5, 4];
   return (
     <div>
-      {Array(3).fill(0).map((s, index) =>
-        <Paper className={classes.root} elevation={1} key={index}>
-          <div className={classes.header}>
-            <Header />
-          </div>
-          <div className={classes.container}>
-            {
-              Array(cardsInCarousel[index]).fill(0).map((c, index) =>
-                <div className={classes.card} key={index}>
-                  <Card />
-                </div>
-              )
-            }
-          </div>
-        </Paper>
-      )
-      }
+      {Array(3)
+        .fill(0)
+        .map((s, index) => (
+          <Paper className={classes.root} elevation={1} key={index}>
+            <div className={classes.header}>
+              <Header />
+            </div>
+            <div className={classes.container}>
+              {Array(cardsInCarousel[index])
+                .fill(0)
+                .map((c, index) => (
+                  <div className={classes.card} key={index}>
+                    <Card />
+                  </div>
+                ))}
+            </div>
+          </Paper>
+        ))}
     </div>
   );
 }
@@ -88,4 +89,3 @@ ContentLoader.propTypes = {
 };
 
 export default withStyles(styles)(ContentLoader);
-

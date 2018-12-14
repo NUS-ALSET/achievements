@@ -48,6 +48,5 @@ describe("<Path>", () => {
     );
 
     expect(wrapper.find(Button).length).toBe(0);
-
   });
 });

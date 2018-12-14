@@ -25,7 +25,6 @@ const styles = theme => ({
   }
 });
 
-
 function Contribute(props) {
   const { classes } = props;
 
@@ -34,13 +33,23 @@ function Contribute(props) {
       <main>
         <div className={classes.mainDiv}>
           <div className={classes.mainContent}>
-            <Typography align="center" color="textPrimary" gutterBottom variant="h4">
+            <Typography
+              align="center"
+              color="textPrimary"
+              gutterBottom
+              variant="h4"
+            >
               Contribute
             </Typography>
-            <Typography align="center" color="textSecondary" paragraph variant="h6">
+            <Typography
+              align="center"
+              color="textSecondary"
+              paragraph
+              variant="h6"
+            >
               NUS ALSET Achievements is an open development hosted on GitHub
             </Typography>
-            <p style={{textAlign: "center"}}>
+            <p style={{ textAlign: "center" }}>
               <a
                 href="https://travis-ci.org/NUS-ALSET/achievements"
                 rel="noopener noreferrer"
@@ -70,7 +79,8 @@ function Contribute(props) {
               >
                 <img
                   alt="Waffle.io - Columns and their card count"
-                  src="https://badge.waffle.io/NUS-ALSET/achievements.svg?columns=all"/>
+                  src="https://badge.waffle.io/NUS-ALSET/achievements.svg?columns=all"
+                />
               </a>
               &nbsp;
               <a
@@ -106,10 +116,7 @@ function Contribute(props) {
                     rel="noopener noreferrer"
                     target="_blank"
                   >
-                    <Button
-                      color="primary"
-                      variant="contained"
-                    >
+                    <Button color="primary" variant="contained">
                       <GithubIcon className={classes.leftIcon} />
                       Our GitHub
                     </Button>

@@ -17,18 +17,18 @@ class JupyterColabActivity extends React.PureComponent {
     onChange: PropTypes.func,
     problem: PropTypes.object.isRequired,
     solution: PropTypes.object,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
   };
   state = {
     showCommitBtn: false,
-    statusText : null
+    statusText: null
   };
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
     if (this.props.solution !== prevProps.solution) {
       if (
         (this.props.solution || {}).checked &&
-        (!(this.props.solution || {}).failed)
+        !(this.props.solution || {}).failed
       ) {
         this.setState({ showCommitBtn: true });
       } else {
@@ -63,14 +63,20 @@ class JupyterColabActivity extends React.PureComponent {
 
     return (
       <Fragment>
-        {
-          this.state.statusText &&
-          <div style={{ textAlign : "left",fontWeight : "bold",paddingLeft : "10px",color : "#d2691e" }}>
-            <b>Execution Status: </b> {this.state.statusText }
+        {this.state.statusText && (
+          <div
+            style={{
+              textAlign: "left",
+              fontWeight: "bold",
+              paddingLeft: "10px",
+              color: "#d2691e"
+            }}
+          >
+            <b>Execution Status: </b> {this.state.statusText}
           </div>
-        }
+        )}
 
-        {this.state.showCommitBtn &&
+        {this.state.showCommitBtn && (
           <div style={{ height: "20px" }}>
             <Button
               color="primary"
@@ -81,7 +87,7 @@ class JupyterColabActivity extends React.PureComponent {
               Commit
             </Button>
           </div>
-        }
+        )}
 
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
@@ -91,16 +97,15 @@ class JupyterColabActivity extends React.PureComponent {
           solution={solution}
           title="Calculated Solution"
         />
-        {solution &&
-          solution.provided && (
-            <JupyterNotebook
-              readOnly={readOnly}
-              solution={{
-                json: solution.provided
-              }}
-              title="Provided Solution"
-            />
-          )}
+        {solution && solution.provided && (
+          <JupyterNotebook
+            readOnly={readOnly}
+            solution={{
+              json: solution.provided
+            }}
+            title="Provided Solution"
+          />
+        )}
         <JupyterNotebook
           readOnly={readOnly}
           solution={{ json: problem.problemJSON }}

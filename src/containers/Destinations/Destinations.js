@@ -28,11 +28,14 @@ const styles = theme => ({
   }
 });
 
-function copyToClipBoard(event, destinationId, dispatch){
+function copyToClipBoard(event, destinationId, dispatch) {
   event.preventDefault();
   event.stopPropagation();
   const inputEl = document.createElement("input");
-  inputEl.setAttribute("value",`${window.location.origin}/#/destinations/${destinationId}`);
+  inputEl.setAttribute(
+    "value",
+    `${window.location.origin}/#/destinations/${destinationId}`
+  );
   document.body.appendChild(inputEl);
   inputEl.focus();
   inputEl.select();
@@ -42,39 +45,58 @@ function copyToClipBoard(event, destinationId, dispatch){
 }
 
 function Destinations(props) {
-  const { classes, destinations = [],dispatch } = props;
+  const { classes, destinations = [], dispatch } = props;
   return (
     <div className={classes.root}>
-      {
-        destinations.map((dest, index) =>
-          <ExpansionPanel key={dest.key}>
-            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
-                <Link to={`/destinations/${dest.key}`}>
-                  <Typography className={classes.heading}>{dest.value.title}</Typography>
-                </Link>
-                <Button className={classes.button} onClick={(e)=>copyToClipBoard(e, dest.key, dispatch)}>Copy Link</Button>
-
-              </div>
-            </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
-              <div style={{ display : "flex", flexDirection : "column", width : "100%"}}>
+      {destinations.map((dest, index) => (
+        <ExpansionPanel key={dest.key}>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "space-between"
+              }}
+            >
+              <Link to={`/destinations/${dest.key}`}>
+                <Typography className={classes.heading}>
+                  {dest.value.title}
+                </Typography>
+              </Link>
+              <Button
+                className={classes.button}
+                onClick={e => copyToClipBoard(e, dest.key, dispatch)}
+              >
+                Copy Link
+              </Button>
+            </div>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%"
+              }}
+            >
               <Typography className={classes.heading} variant="subtitle1">
-                Updated On  : {dest.value.updatedOn}
+                Updated On : {dest.value.updatedOn}
               </Typography>
               <Typography className={classes.heading} variant="subtitle1">
-                Source Type  : {(dest.value.sourceType || "")}
+                Source Type : {dest.value.sourceType || ""}
               </Typography>
 
-              {
-                Object.keys(dest.value.skills || {}).length > 0
-                  ? <Skills skills={dest.value.skills}  />
-                  : <Typography className={classes.heading} variant='h3'>No Skills.</Typography>
-              }
-              </div>
-            </ExpansionPanelDetails>
-          </ExpansionPanel>
-        )}
+              {Object.keys(dest.value.skills || {}).length > 0 ? (
+                <Skills skills={dest.value.skills} />
+              ) : (
+                <Typography className={classes.heading} variant="h3">
+                  No Skills.
+                </Typography>
+              )}
+            </div>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
+      ))}
     </div>
   );
 }
@@ -83,7 +105,5 @@ Destinations.propTypes = {
   classes: PropTypes.object.isRequired,
   destinations: PropTypes.array
 };
-
-
 
 export default withStyles(styles)(Destinations);
