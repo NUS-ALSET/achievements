@@ -8,7 +8,6 @@ import {
   notificationShow
 } from "../containers/Root/actions";
 
-import { fetchPublicPathActiviesSuccess } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 const NOT_FOUND_ERROR = 404;
@@ -1034,45 +1033,6 @@ export class PathsService {
       }
     }
     return Promise.all(actions);
-  }
-
-  fetchPublicPathActivies(uid, publicPaths, completedActivities) {
-    return new Promise(resolve => {
-      const completedActivitiesIds = [];
-      (completedActivities[uid] || []).forEach(path => {
-        Object.keys(path.value).forEach(key => {
-          completedActivitiesIds.push(key);
-        });
-      });
-      const publicPathActivities = [];
-      const promises = publicPaths
-        .filter(path => path.value.owner !== uid)
-        .map(path =>
-          firebase
-            .database()
-            .ref("activities")
-            .orderByChild("path")
-            .equalTo(path.key)
-            .once("value")
-        );
-      Promise.all(promises).then(data => {
-        data.forEach(snapshots => {
-          snapshots.forEach(snap => {
-            publicPathActivities.push({
-              key: snap.key,
-              value: snap.val()
-            });
-          });
-        });
-        const unsolvedPublicActivities = publicPathActivities.filter(
-          activity => !completedActivitiesIds.includes(activity.key)
-        );
-        this.dispatch(
-          fetchPublicPathActiviesSuccess({ unsolvedPublicActivities })
-        );
-        resolve();
-      });
-    });
   }
 
   fetchGithubFiles(uid, githubURL) {

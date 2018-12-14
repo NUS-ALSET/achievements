@@ -6,8 +6,7 @@ import {
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_REFRESH_SUCCESS,
-  PROBLEM_SOLUTION_EXECUTION_STATUS,
-  FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS
+  PROBLEM_SOLUTION_EXECUTION_STATUS
 } from "./actions";
 
 export const problem = (
@@ -79,12 +78,6 @@ export const problem = (
           loading: false,
           failed: true
         }
-      };
-    case FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS:
-      return {
-        ...state,
-        unsolvedPublicActivities: action.payload.unsolvedPublicActivities || [],
-        publicActivitiesFetched: true
       };
     default:
       return state;
