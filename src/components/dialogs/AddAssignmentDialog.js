@@ -50,7 +50,7 @@ class AddAssignmentDialog extends React.PureComponent {
 
   state = {
     // Name of Assignment cannot be nonsense or empty spaces
-    isCorrectInput_Name: true
+    isCorrectInput_Name: false
   };
 
   updateField = field => e => {
@@ -102,6 +102,13 @@ class AddAssignmentDialog extends React.PureComponent {
       this.updateField("questionType")({
         target: { value: assignment.questionType }
       });
+    }
+    if (open !== prevProps.open) {
+      if (!open) {
+        this.setState({
+          isCorrectInput_Name: false
+        });
+      }
     }
   }
 
