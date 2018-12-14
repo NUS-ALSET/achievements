@@ -39,7 +39,7 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
         </ListSubheader>}
       onClick={onRequestClose}
     >
-      {/* enable Home highlight for homev2 homev3 */}
+      {/* enable Home highlight for homev2 */}
       <MenuItem
         component={Link}
         to="/"
