@@ -82,44 +82,53 @@ class AddActivityDialog extends React.PureComponent {
 
   fetchedGithubURL = "";
 
-  componentWillReceiveProps(nextProps) {
-    if ((nextProps.fetchGithubFilesStatus || "").length > 0) {
+  componentDidUpdate(prevProps) {
+    const {
+      activity,
+      fetchGithubFilesStatus,
+      open
+    } = this.props;
+
+    if ((fetchGithubFilesStatus || "").length > 0) {
       this.handelfetchGithubFilesStatus(
-        nextProps.fetchGithubFilesStatus,
-        nextProps.activity
+        fetchGithubFilesStatus,
+        activity
       );
       return;
     }
-    if ((this.props || {}).open !== nextProps.open) {
+    if ((prevProps || {}).open !== open) {
       this.resetState();
     }
-    if (nextProps.activity) {
+    if (activity) {
       let state = {};
       if (
-        nextProps.activity.name &&
-        AddName.test(nextProps.activity.name) &&
-        NoStartWhiteSpace.test(nextProps.activity.name)
+        activity.name &&
+        AddName.test(activity.name) &&
+        NoStartWhiteSpace.test(activity.name)
       ) {
         this.setState({ isCorrectInput: true });
       }
       if (
-        [ACTIVITY_TYPES.jupyterInline.id, ACTIVITY_TYPES.jupyter.id].includes(
-          nextProps.activity.type
+        [
+          ACTIVITY_TYPES.jupyterInline.id,
+          ACTIVITY_TYPES.jupyter.id
+        ].includes(
+          activity.type
         )
       ) {
         state = {
-          code: nextProps.activity.code || 1,
-          frozen: nextProps.activity.frozen || 1
+          code: activity.code || 1,
+          frozen: activity.frozen || 1
         };
-      } else if (nextProps.activity.type === ACTIVITY_TYPES.jest.id) {
+      } else if (activity.type === ACTIVITY_TYPES.jest.id) {
         state = {
-          githubURL: nextProps.activity.githubURL || "",
-          files: nextProps.activity.files || []
+          githubURL: activity.githubURL || "",
+          files: activity.files || []
         };
-        this.fetchedGithubURL = nextProps.activity.githubURL || "";
+        this.fetchedGithubURL = activity.githubURL || "";
       }
       this.setState({
-        ...nextProps.activity,
+        ...activity,
         ...state
       });
     }
@@ -150,7 +159,6 @@ class AddActivityDialog extends React.PureComponent {
       this.state.type ||
       (activity && activity.type) ||
       "text";
-    console.error("type is: ", type);
     /* if (
       ["jupyter", "jupyterInline"].includes(type) &&
       !isLoaded(activityExampleSolution)

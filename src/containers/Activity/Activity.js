@@ -66,25 +66,32 @@ export class Activity extends React.PureComponent {
     }
   }
 
-  // Renamed via https://reactjs.org/docs/react-component.html#unsafe_componentwillreceiveprops
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
+  componentDidUpdate(prevProps) {
+    const {
+      pathProblem,
+      solution
+    } = this.props;
+    if (!isEqual(pathProblem, prevProps.pathProblem)) {
       this.onProblemChange({});
     }
-    if (
-      !["jupyter", "jupyterInline"].includes((nextProps.pathProblem || {}).type)
-    ) {
-      this.setState({ disabledCommitBtn: false });
-    } else if (
-      (nextProps.solution || {}).checked &&
-      !(nextProps.solution || {}).failed &&
-      (nextProps.solution || {}).json
-    ) {
-      this.setState({ disabledCommitBtn: false });
-    } else {
-      this.setState({ disabledCommitBtn: true });
+    if (pathProblem !== prevProps.pathProblem) {
+      if (
+        !["jupyter", "jupyterInline"].includes((pathProblem || {}).type)
+      ) {
+        this.setState({ disabledCommitBtn: false });
+      } else if (
+        (solution || {}).checked &&
+        !(solution || {}).failed &&
+        (solution || {}).json
+      ) {
+        this.setState({ disabledCommitBtn: false });
+      } else {
+        this.setState({ disabledCommitBtn: true });
+      }
     }
   }
+
+
   componentWillUnmount() {
     this.props.problemFinalize(
       this.props.match.params.pathId,
