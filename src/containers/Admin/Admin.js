@@ -110,7 +110,7 @@ class Admin extends React.PureComponent {
       <Paper className={classes.section}>
         <Grid container spacing={24}>
           <Grid item xs={12}>
-            <Typography variant="h5" gutterBottom>
+            <Typography gutterBottom variant="h5">
               Admin Page
             </Typography>
             <Typography gutterBottom>
@@ -120,7 +120,7 @@ class Admin extends React.PureComponent {
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>
+            <Typography gutterBottom variant="h6">
               Remote URLs used
             </Typography>
             <FormControl
@@ -157,7 +157,7 @@ class Admin extends React.PureComponent {
             </FormControl>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>
+            <Typography gutterBottom variant="h6">
               Control recommendations to display at Home
             </Typography>
             <FormControl className={classes.formControl} component="fieldset">

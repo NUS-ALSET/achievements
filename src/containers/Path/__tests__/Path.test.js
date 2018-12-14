@@ -21,6 +21,7 @@ describe("<Path>", () => {
   it("should generate Path container", () => {
     const wrapper = shallow(
       <Path
+        classes={{}}
         match={{
           params: {
             pathId: "testPath"
@@ -43,7 +44,6 @@ describe("<Path>", () => {
           dialog: false
         }}
         uid="testUser"
-        classes={{}}
       />
     );
 

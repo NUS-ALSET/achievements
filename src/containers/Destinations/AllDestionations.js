@@ -1,17 +1,17 @@
 
-import React from 'react';
+import React from "react";
 
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { firebaseConnect, isLoaded } from "react-redux-firebase";
-import Typography from '@material-ui/core/Typography';
+import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 
-import Destinations from './Destinations';
+import Destinations from "./Destinations";
 
 function AllDestinations(props) {
-  const { destinations = [] , dispatch} = props;
+  const { destinations = [] , dispatch } = props;
   return (
     <div>
       <Typography variant="h3">All Destinations</Typography>
@@ -20,7 +20,7 @@ function AllDestinations(props) {
         ? destinations.length > 0
             ? <Destinations destinations={destinations} dispatch={dispatch}/>
             : <Typography variant="h4">No Destination</Typography>
-        
+
         :  <div style={{
             display: "flex",
             flexDirection: "column",
@@ -32,10 +32,10 @@ function AllDestinations(props) {
         <CircularProgress size={50} />
       </div>
       }
-      
+
 
     </div>
-  )
+  );
 
 
 }
@@ -48,7 +48,7 @@ const mapStateToProps = state => ({
 export default compose(
   connect(mapStateToProps),
   firebaseConnect((ownProps, store) => {
-    return [`/destinations`];
+    return ["/destinations"];
   })
 )(AllDestinations);
 

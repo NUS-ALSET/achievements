@@ -3,28 +3,28 @@
  * @created 30.08.18
  */
 
-import React from 'react';
-import { Link } from "react-router-dom"
+import React from "react";
+import { Link } from "react-router-dom";
 
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import Button from '@material-ui/core/Button';
+import PropTypes from "prop-types";
+import { withStyles } from "@material-ui/core/styles";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import Button from "@material-ui/core/Button";
 
-import { notificationShow } from '../Root/actions';
+import { notificationShow } from "../Root/actions";
 import Skills from "../../components/lists/Skills";
 
 const styles = theme => ({
   root: {
-    width: '100%',
+    width: "100%"
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
+    fontWeight: theme.typography.fontWeightRegular
   }
 });
 
@@ -32,13 +32,13 @@ function copyToClipBoard(event, destinationId, dispatch){
   event.preventDefault();
   event.stopPropagation();
   const inputEl = document.createElement("input");
-  inputEl.setAttribute('value',`${window.location.origin}/#/destinations/${destinationId}`)
+  inputEl.setAttribute("value",`${window.location.origin}/#/destinations/${destinationId}`);
   document.body.appendChild(inputEl);
   inputEl.focus();
   inputEl.select();
   document.execCommand("copy");
   document.body.removeChild(inputEl);
-  dispatch(notificationShow(`Link Copied`))
+  dispatch(notificationShow("Link Copied"));
 }
 
 function Destinations(props) {
@@ -49,23 +49,23 @@ function Destinations(props) {
         destinations.map((dest, index) =>
           <ExpansionPanel key={dest.key}>
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <div style={{ width: '100%', display: 'flex', justifyContent: "space-between" }}>
+              <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
                 <Link to={`/destinations/${dest.key}`}>
                   <Typography className={classes.heading}>{dest.value.title}</Typography>
                 </Link>
                 <Button className={classes.button} onClick={(e)=>copyToClipBoard(e, dest.key, dispatch)}>Copy Link</Button>
-              
+
               </div>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <div style={{ display : 'flex', flexDirection : "column", width : '100%'}}>
+              <div style={{ display : "flex", flexDirection : "column", width : "100%"}}>
               <Typography className={classes.heading} variant="subtitle1">
                 Updated On  : {dest.value.updatedOn}
               </Typography>
               <Typography className={classes.heading} variant="subtitle1">
-                Source Type  : {(dest.value.sourceType || '')}
+                Source Type  : {(dest.value.sourceType || "")}
               </Typography>
-              
+
               {
                 Object.keys(dest.value.skills || {}).length > 0
                   ? <Skills skills={dest.value.skills}  />

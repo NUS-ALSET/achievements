@@ -150,8 +150,8 @@ class AddActivityDialog extends React.PureComponent {
       this.state.type ||
       (activity && activity.type) ||
       "text";
-    console.error("type is: ", type)
-    /*if (
+    console.error("type is: ", type);
+    /* if (
       ["jupyter", "jupyterInline"].includes(type) &&
       !isLoaded(activityExampleSolution)
     ) {

@@ -6,29 +6,29 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 // import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
-import GameActivity from '../activityViews/GameActivity'
-import { APP_SETTING } from '../../achievementsApp/config';
+import Dialog from "@material-ui/core/Dialog";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import Slide from "@material-ui/core/Slide";
+import GameActivity from "../activityViews/GameActivity";
+import { APP_SETTING } from "../../achievementsApp/config";
 
 const styles = {
     root: {
-        backgroundColor: '#252a31'
+        backgroundColor: "#252a31"
     },
     appBar: {
-        position: 'relative',
+        position: "relative"
     },
     flex: {
         flex: 1,
-        textTransform: 'capitalize'
-    },
+        textTransform: "capitalize"
+    }
 };
 
 function Transition(props) {
@@ -49,7 +49,7 @@ class AddGameSolutionDialog extends React.PureComponent {
 
     state = {
         solution: null,
-        open: true,
+        open: true
     };
 
     onChangeSolution = event => {
@@ -71,12 +71,12 @@ class AddGameSolutionDialog extends React.PureComponent {
             solvedFiles : solution.files.filter(f=>!f.readOnly),
             testResult : solution.output
         };
-        if(this.props.onChange){
-            this.props.onCommit({ type : 'SOLUTION', solution : finalSolution});
-        }else{
+        if (this.props.onChange){
+            this.props.onCommit({ type : "SOLUTION", solution : finalSolution});
+        } else {
             this.props.onCommit(this.props.taskId, finalSolution );
         }
-        this.setState({ open : false})
+        this.setState({ open : false});
         this.handleClose();
     }
     render() {
@@ -87,26 +87,26 @@ class AddGameSolutionDialog extends React.PureComponent {
         if (!(["game", "gameTournament"]).includes((problem || {}).type)) {
             return "";
         }
-        const heading = `${APP_SETTING.games[(problem || {}).game].name || ""} Game Level${problem.levelsToWin} ${problem.unitsPerSide === 1 ? 'Single Unit' : `${problem.unitsPerSide} Units`} ${problem.playMode}`
+        const heading = `${APP_SETTING.games[(problem || {}).game].name || ""} Game Level${problem.levelsToWin} ${problem.unitsPerSide === 1 ? "Single Unit" : `${problem.unitsPerSide} Units`} ${problem.playMode}`;
 
         return (
             <div>
                 <Dialog
-                    fullScreen
-                    open={open}
-                    onClose={this.handleClose}
-                    TransitionComponent={Transition}
                     className={classes.root}
+                    fullScreen
+                    onClose={this.handleClose}
+                    open={open}
+                    TransitionComponent={Transition}
                 >
                     <AppBar className={classes.appBar}>
                         <Toolbar>
-                            <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
+                            <IconButton aria-label="Close" color="inherit" onClick={this.handleClose}>
                                 <CloseIcon />
                             </IconButton>
-                            <Typography variant="h6" color="inherit" className={classes.flex}>
-                                {heading} {readOnly ? '( Read Only )' : ''}
+                            <Typography className={classes.flex} color="inherit" variant="h6">
+                                {heading} {readOnly ? "( Read Only )" : ""}
                             </Typography>
-                            <Typography variant="h6" color="inherit">
+                            <Typography color="inherit" variant="h6">
                             </Typography>
                         </Toolbar>
                     </AppBar>

@@ -1,17 +1,17 @@
-import React from 'react';
+import React from "react";
 
 class Ouptut extends React.Component {
     constructor() {
         super();
-        this.state = {}
+        this.state = {};
     }
     render() {
         const { output , isSubmitted=false} = this.props;
         return (
             <div id="result-div">
-                <div className="wrap p-10" style={{height:'71px'}}>
-                    <h2>{isSubmitted ? 'Submitted Result' : 'Test Result' }</h2>
-                    <div id="result-status" className="status">
+                <div className="wrap p-10" style={{height:"71px"}}>
+                    <h2>{isSubmitted ? "Submitted Result" : "Test Result" }</h2>
+                    <div className="status" id="result-status">
                        {output.numFailedTests>0 && <span className="error"> {output.numFailedTests} ❌</span>}
                         <span className="success"> {output.numPassedTests} ✅</span>
                     </div>
@@ -24,16 +24,16 @@ class Ouptut extends React.Component {
                                     <div key={(rIndex + 1) * (1 + index)}>
                                         <div className="log">
 
-                                            <div className="log-status" style={{ color: result.status === 'failed' ? 'red' : 'green' }}>
-                                                {index + 1}  
+                                            <div className="log-status" style={{ color: result.status === "failed" ? "red" : "green" }}>
+                                                {index + 1}
                                             </div>
 
-                                            <div className="log-describe" style={{ color: result.status === 'failed' ? 'red' : 'green' }}>
-                                                {result.ancestorTitles && result.ancestorTitles.length ? result.ancestorTitles.reduce((a, b) => a + ' ' + b) : ''}
+                                            <div className="log-describe" style={{ color: result.status === "failed" ? "red" : "green" }}>
+                                                {result.ancestorTitles && result.ancestorTitles.length ? result.ancestorTitles.reduce((a, b) => a + " " + b) : ""}
                                             </div>
 
                                             <div className="log-expect">
-                                                {result.title || 'Not described'}
+                                                {result.title || "Not described"}
                                             </div>
 
                                             <div className="log-time">
@@ -45,19 +45,19 @@ class Ouptut extends React.Component {
                                             <div className="log-err console">
                                                 <pre>{result.failureMessages}</pre>
                                             </div>}
-                                    </div>)
-                            })
+                                    </div>);
+                            });
                         })
                     }
                 </div>
                 {
                     <div className="mainWrap">
-                        <h4 style={{ color: 'white', padding: '11px' }}>Complete Logs </h4>
+                        <h4 style={{ color: "white", padding: "11px" }}>Complete Logs </h4>
                         {
                             output.testResults.map((r, rIndex) => {
                                 return (r.failureMessage && r.failureMessage.length > 0 &&
-                                    <pre key={rIndex + 1} className="console" id="result-text">{r.failureMessage}</pre>
-                                )
+                                    <pre className="console" id="result-text" key={rIndex + 1}>{r.failureMessage}</pre>
+                                );
                             })
                         }
                         {

@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 import Divider from "@material-ui/core/Divider";
 // for highlight the selected tab in drawer with Menu
-import MenuList from '@material-ui/core/MenuList';
+import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 // list does not support selected link natively...
-import ListSubheader from '@material-ui/core/ListSubheader';
+import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -27,25 +27,25 @@ import Security from "@material-ui/icons/Security";
 // for Github icon
 import GithubIcon from "./icons/GithubIcon";
 
-import Typography from '@material-ui/core/Typography';
+import Typography from "@material-ui/core/Typography";
 
 
 const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
   <Fragment>
     <MenuList
+      onClick={onRequestClose}
       subheader={
         <ListSubheader component="div">
           Explore Path Activities
         </ListSubheader>}
-      onClick={onRequestClose}
     >
       {/* enable Home highlight for homev2 */}
       <MenuItem
         component={Link}
-        to="/"
         selected={"/" === location.pathname
           || (/^\/home/).test(location.pathname)
         }
+        to="/"
       >
         <ListItem>
           <ListItemIcon>
@@ -61,8 +61,8 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {/* the Paths tab will be highlighted if URL starts with "/paths" */}
       <MenuItem
         component={Link}
-        to="/paths"
         selected={(/^\/paths/).test(location.pathname)}
+        to="/paths"
       >
         <ListItem>
           <ListItemIcon>
@@ -78,17 +78,17 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
     <Divider />
 
     <MenuList
+      onClick={onRequestClose}
       subheader={
         <ListSubheader component="div">
           Education in Classes
         </ListSubheader>}
-      onClick={onRequestClose}
     >
       {/* the Courses tab will be highlighted if URL starts with "/courses" */}
       <MenuItem
         component={Link}
-        to="/courses"
         selected={(/^\/courses/).test(location.pathname)}
+        to="/courses"
       >
         <ListItem>
           <ListItemIcon>
@@ -102,8 +102,8 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {/* the Cohorts tab will be highlighted if URL starts with "/cohorts" */}
       <MenuItem
         component={Link}
-        to="/cohorts"
         selected={(/^\/cohorts/).test(location.pathname)}
+        to="/cohorts"
       >
         <ListItem>
           <ListItemIcon>
@@ -122,8 +122,8 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {/* the Profile tab will be highlighted if URL starts with "/profile" */}
       <MenuItem
         component={Link}
-        to={`/profile/${userId || "non-logged"}`}
         selected={(/^\/profile/).test(location.pathname)}
+        to={`/profile/${userId || "non-logged"}`}
       >
         <ListItem>
           <ListItemIcon>
@@ -137,8 +137,8 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {isAdmin && (
         <MenuItem
           component={Link}
-          to={`/admin`}
           selected={(/^\/admin/).test(location.pathname)}
+          to={"/admin"}
         >
           <ListItem>
             <ListItemIcon>
@@ -159,8 +159,8 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
     >
       <MenuItem
         component={Link}
-        to="/contribute"
         selected={"/contribute" === location.pathname}
+        to="/contribute"
       >
         <ListItem>
           <ListItemIcon>
@@ -176,13 +176,13 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       style={{
         position:"fixed",
         bottom: 0,
-        width: 230,
+        width: 230
       }}
     >
       <Typography
-        variant="caption"
-        gutterBottom
         align="center"
+        gutterBottom
+        variant="caption"
       >
         &#169; 2018 NUS-ALSET
       </Typography>

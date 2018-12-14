@@ -45,7 +45,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-//Test
+// Test
 import Debug from "../Debug/Debug";
 
 /* this AppFrame is the main framework of our UI,

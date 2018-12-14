@@ -75,7 +75,7 @@ export class AddCourseDialog extends React.Component {
           isCorrectInput_Name: false
         });
       }
-    }else if (field === "password") {
+    } else if (field === "password") {
       // password does not allow spaces anywhere
       if (
         CoursePswRule.test(value) &&
@@ -90,9 +90,9 @@ export class AddCourseDialog extends React.Component {
           isCorrectInput_Psw: false
         });
       }
-    }else{
+    } else {
       this.setState({
-        [field]: value.trim(),
+        [field]: value.trim()
       });
     }
   };
@@ -134,22 +134,22 @@ export class AddCourseDialog extends React.Component {
         <DialogContent>
           <TextField
             autoFocus
+            defaultValue={course && course.name}
             error={!this.state.isCorrectInput_Name}
+            fullWidth
             helperText={this.state.isCorrectInput_Name
               ? ""
               : "Name cannot be empty or too long or have invalid characters"}
-            defaultValue={course && course.name}
-            fullWidth
             label="Course name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
             required
           />
           <TextField
-            error={!this.state.isCorrectInput_Psw}
-            helperText={helperTextPsw}
             defaultValue={course && course.password}
+            error={!this.state.isCorrectInput_Psw}
             fullWidth
+            helperText={helperTextPsw}
             label="Password"
             margin="dense"
             onChange={e => this.onFieldChange("password", e.target.value)}
@@ -169,11 +169,11 @@ export class AddCourseDialog extends React.Component {
             Cancel
           </Button>
           <Button
+            color="primary"
             disabled={
               !this.state.isCorrectInput_Name ||
               !this.state.isCorrectInput_Psw
             }
-            color="primary"
             onClick={this.onCommit}
             variant="contained"
           >

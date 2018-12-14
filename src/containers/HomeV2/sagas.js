@@ -9,7 +9,7 @@ function* updateRecommendationRequestHandler() {
     const userId = yield select(state => state.firebase.auth.uid);
       yield call(accountService.authTimeUpdate, userId);
 
-    }catch (err) {
+    } catch (err) {
     console.error(err);
   }
 }

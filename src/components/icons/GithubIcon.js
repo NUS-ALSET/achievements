@@ -4,8 +4,8 @@
 // @flow
 /* eslint-disable max-len */
 
-import React from 'react';
-import SvgIcon from '@material-ui/core/SvgIcon';
+import React from "react";
+import SvgIcon from "@material-ui/core/SvgIcon";
 
 function GithubIcon(props) {
   return (

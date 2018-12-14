@@ -6,26 +6,26 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 // import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
-import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
-import GameActivity from '../activityViews/GameTournamentActivity'
+import Dialog from "@material-ui/core/Dialog";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
+import CloseIcon from "@material-ui/icons/Close";
+import Slide from "@material-ui/core/Slide";
+import GameActivity from "../activityViews/GameTournamentActivity";
 const styles = {
     root: {
-        backgroundColor: '#252a31'
+        backgroundColor: "#252a31"
     },
     appBar: {
-        position: 'relative',
+        position: "relative"
     },
     flex: {
-        flex: 1,
-    },
+        flex: 1
+    }
 };
 
 function Transition(props) {
@@ -48,8 +48,8 @@ class AddGameSolutionDialog extends React.PureComponent {
         solution: null,
         open: true,
         player1Data: {
-            levelsToWin : 'level1',
-            playMode : 'manual control'
+            levelsToWin : "level1",
+            playMode : "manual control"
         }
     };
 
@@ -63,10 +63,10 @@ class AddGameSolutionDialog extends React.PureComponent {
     };
 
     handleClose = () => {
-        this.setState({ open: false, 
+        this.setState({ open: false,
             player1Data: {
-                levelsToWin : 'level2',
-                playMode : 'automatic control'
+                levelsToWin : "level2",
+                playMode : "automatic control"
             } });
         this.props.onClose();
     };
@@ -76,47 +76,47 @@ class AddGameSolutionDialog extends React.PureComponent {
             solvedFiles : solution.files.filter(f=>!f.readOnly),
             testResult : solution.output
         };
-        if(this.props.onChange){
-            this.props.onCommit({ type : 'SOLUTION', solution : finalSolution});
-        }else{
+        if (this.props.onChange){
+            this.props.onCommit({ type : "SOLUTION", solution : finalSolution});
+        } else {
             this.props.onCommit(this.props.taskId, finalSolution );
         }
-        this.setState({ open : false})
-        this.handleClose();     
+        this.setState({ open : false});
+        this.handleClose();
     }
     render() {
-        const { 
+        const {
             // onClose, onCommit, taskId, solution
             open, classes, problem, readOnly } = this.props;
 
         return (
             <div>
                 <Dialog
-                    fullScreen
-                    open={open}
-                    onClose={this.handleClose}
-                    TransitionComponent={Transition}
                     className={classes.root}
+                    fullScreen
+                    onClose={this.handleClose}
+                    open={open}
+                    TransitionComponent={Transition}
                 >
                     <AppBar className={classes.appBar}>
                         <Toolbar>
-                            <IconButton color="inherit" onClick={this.handleClose} aria-label="Close">
+                            <IconButton aria-label="Close" color="inherit" onClick={this.handleClose}>
                                 <CloseIcon />
                             </IconButton>
-                            <Typography variant="h6" color="inherit" className={classes.flex}>
-                                {problem && problem.name} {readOnly ? '( Read Only )' : ''}
+                            <Typography className={classes.flex} color="inherit" variant="h6">
+                                {problem && problem.name} {readOnly ? "( Read Only )" : ""}
                             </Typography>
-                            <Typography variant="h6" color="inherit">
+                            <Typography color="inherit" variant="h6">
                                 {/* ALSET Editor */}
                             </Typography>
-                            {/* { problem && 
+                            {/* { problem &&
                             <Tooltip title="Open in Codesandbox">
                             Something here
                             </Tooltip>
                             } */}
                         </Toolbar>
                     </AppBar>
-                    {open && problem && 
+                    {open && problem &&
                         <GameActivity
                             {...this.props}
                             player1Data={this.state.player1Data}

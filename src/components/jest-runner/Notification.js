@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
 class Notification extends React.Component {
     constructor() {
         super();
         this.state = {
             hide: true
-        }
+        };
         this.timer = null;
     }
     componentWillReceiveProps(nextProps) {
@@ -13,10 +13,10 @@ class Notification extends React.Component {
         this.clearTimer();
         this.timer=setTimeout(() => {
             this.setState({ hide: true });
-        }, 3000)
+        }, 3000);
     }
     clearTimer=()=>{
-        if(this.timer){
+        if (this.timer){
             window.clearTimeout(this.timer);
         }
     }
@@ -24,11 +24,11 @@ class Notification extends React.Component {
         this.clearTimer();
     }
     render() {
-        return this.state.hide ? '' :
+        return this.state.hide ? "" :
             (<div className="notification">
                 {this.props.message}
             </div>
-            )
+            );
     }
 }
 

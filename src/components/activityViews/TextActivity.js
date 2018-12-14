@@ -31,11 +31,11 @@ class TextActivity extends React.PureComponent {
         <TextField
           autoFocus
           defaultValue={(solution && solution.value) || ""}
+          disabled={readOnly}
           fullWidth
           label="Solution"
           multiline
           onChange={this.onChangeSolution}
-          disabled={readOnly}
           style={{
             marginBottom: 4
           }}

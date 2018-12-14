@@ -13,7 +13,7 @@ import { AccountService } from "../../services/account";
 
 const externalProfile={
   url: "https://codecombat.com",
-  id: "CodeCombat",
+  id: "CodeCombat"
 };
 
 class ProfileActivity extends React.PureComponent {
@@ -28,7 +28,7 @@ class ProfileActivity extends React.PureComponent {
     login: ""
   };
   onProfileChange = e => {
-    const login =  AccountService.processProfile(externalProfile.id, e.target.value)
+    const login =  AccountService.processProfile(externalProfile.id, e.target.value);
     this.setState({ login });
     this.props.onChange({value : login});
   };
@@ -47,15 +47,15 @@ class ProfileActivity extends React.PureComponent {
         </div>
           <TextField
             autoFocus
-            value={this.state.login || (userName)}
+            disabled={readOnly}
             fullWidth
             label="Profile"
             onChange={this.onProfileChange}
             onKeyPress={this.catchReturn}
-            disabled={readOnly}
             style={{
               marginBottom: 4
             }}
+            value={this.state.login || (userName)}
           />
       </Fragment>
     );

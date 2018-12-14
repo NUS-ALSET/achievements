@@ -38,7 +38,7 @@ class AddPathDialog extends React.PureComponent {
   state = {
     name: "",
     // validate inputs
-    isCorrectInput: false,
+    isCorrectInput: false
   };
 
   removeEmpty = value =>
@@ -71,8 +71,8 @@ class AddPathDialog extends React.PureComponent {
           isCorrectInput: false
         });
       }
-    }else{
-      this.setState({ [field] : value.trim() })
+    } else {
+      this.setState({ [field] : value.trim() });
     }
   };
 
@@ -100,19 +100,19 @@ class AddPathDialog extends React.PureComponent {
   render() {
     const { path, open } = this.props;
     return (
-      <Dialog onClose={this.onClose} open={open} maxWidth={"sm"} fullWidth>
+      <Dialog fullWidth maxWidth={"sm"} onClose={this.onClose} open={open}>
         <DialogTitle>
           {path && path.id ? "Edit Path" : "Add New Path"}
         </DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
-            error={!this.state.isCorrectInput}
             defaultValue={path && path.name}
+            error={!this.state.isCorrectInput}
+            fullWidth
             helperText={this.state.isCorrectInput
               ? ""
               : "input should not be empty, too long or have invalid characters"}
-            fullWidth
             label="Path name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
@@ -120,9 +120,9 @@ class AddPathDialog extends React.PureComponent {
           />
           <TextField
             defaultValue={path && path.description}
+            fullWidth
             label="Description"
             margin="dense"
-            fullWidth
             onChange={e => this.onFieldChange("description", e.target.value)}
           />
         </DialogContent>
@@ -131,8 +131,8 @@ class AddPathDialog extends React.PureComponent {
             Cancel
           </Button>
           <Button
-            disabled={!this.state.isCorrectInput}
             color="primary"
+            disabled={!this.state.isCorrectInput}
             onClick={this.onCommit}
             variant="contained"
           >

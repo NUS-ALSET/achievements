@@ -46,13 +46,13 @@ class ActivityView extends React.PureComponent {
   componentWillReceiveProps(nextProps){
     this.setState({ open : true});
     if (
-      this.props.pathProblem.type==='profile' &&
+      this.props.pathProblem.type==="profile" &&
       this.props.userAchievements &&
       this.props.userAchievements.CodeCombat &&
       this.props.userAchievements.CodeCombat.id
     ) {
       this.props.onCommit({
-        type : 'SOLUTION',
+        type : "SOLUTION",
         solution : {
           value : this.props.userAchievements.CodeCombat.id
         }
@@ -71,11 +71,11 @@ class ActivityView extends React.PureComponent {
       userAchievements
     } = this.props;
     let SpecificView = views[pathProblem.type];
-    const extraProps=['jest','jestInline','game']
+    const extraProps=["jest","jestInline","game"]
       .includes(pathProblem.type)
         ? {
           onClose: this.handleClose,
-          open: this.state.open,
+          open: this.state.open
         }
         : {};
     if (!SpecificView) {
@@ -92,12 +92,12 @@ class ActivityView extends React.PureComponent {
         <SpecificView
           dispatch={dispatch}
           onChange={onProblemChange}
-          problem={pathProblem}
-          solution={solution}
-          userAchievements={userAchievements}
           onClose={onClose}
           onCommit={onCommit}
+          problem={pathProblem}
           readOnly={readOnly}
+          solution={solution}
+          userAchievements={userAchievements}
           {...extraProps}
         />
       </div>

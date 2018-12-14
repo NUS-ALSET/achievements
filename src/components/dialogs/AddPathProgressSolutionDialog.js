@@ -111,9 +111,9 @@ class AddPathProgressSolutionDialog extends React.PureComponent {
             Cancel
           </Button>
           <Button
+            color="primary"
             onClick={this.onGotoLink}
             variant="outlined"
-            color="primary"
           >
             Go to Path
           </Button>

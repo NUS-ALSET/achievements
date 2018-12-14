@@ -64,48 +64,48 @@ class JupyterColabActivity extends React.PureComponent {
     return (
       <Fragment>
         {
-          this.state.statusText && 
-          <div style={{ textAlign : 'left',fontWeight : 'bold',paddingLeft : '10px',color : '#d2691e' }}>
+          this.state.statusText &&
+          <div style={{ textAlign : "left",fontWeight : "bold",paddingLeft : "10px",color : "#d2691e" }}>
             <b>Execution Status: </b> {this.state.statusText }
           </div>
         }
-        
+
         {this.state.showCommitBtn &&
-          <div style={{ height: '20px' }}>
+          <div style={{ height: "20px" }}>
             <Button
               color="primary"
-              variant="contained"
-              style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
+              style={{ float: "right", marginBottom: "10px" }}
+              variant="contained"
             >
               Commit
             </Button>
           </div>
         }
-        
+
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={solution && solution.id}
           persistent={true}
-          solution={solution}
           readOnly={readOnly}
+          solution={solution}
           title="Calculated Solution"
         />
         {solution &&
           solution.provided && (
             <JupyterNotebook
+              readOnly={readOnly}
               solution={{
                 json: solution.provided
               }}
               title="Provided Solution"
-              readOnly={readOnly}
             />
           )}
         <JupyterNotebook
+          readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
           title="Problem"
           url={problem.problemColabURL}
-          readOnly={readOnly}
         />
       </Fragment>
     );

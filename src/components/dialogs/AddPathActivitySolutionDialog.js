@@ -66,7 +66,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
   };
 
   onCommitClick = (data=null) => {
-    const solution = (data && data.type==='SOLUTION'
+    const solution = (data && data.type==="SOLUTION"
       ? data.solution
       : this.state.problemSolution
     );
@@ -89,18 +89,18 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           open={open}
         >
           <DialogTitle>
-            {readOnly ? 'Student ' : 'Edit '}
-            Assignment Solution {readOnly ? '( Read Only) ' : ''}
+            {readOnly ? "Student " : "Edit "}
+            Assignment Solution {readOnly ? "( Read Only) " : ""}
           </DialogTitle>
           <Activity
             embedded={true}
             inDialog={true}
+            onClose={this.onClose}
+            onCommit={this.onCommitClick}
             onProblemChange={this.onProblemChange}
             pathProblem={pathProblem}
-            solution={solution}
-            onCommit={this.onCommitClick}
-            onClose={this.onClose}
             readOnly={readOnly}
+            solution={solution}
           >
             {(activityView, submitHandler, props) => (
               <Fragment>
@@ -115,12 +115,12 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
                   {/* TODO: refactor =>
                   the problemSolution state seems to be shared among multiple activities
                   listed in the same course page */}
-                  {!readOnly && !['jupyter','jupyterInline'].includes((props.pathProblem || {}).type) &&
+                  {!readOnly && !["jupyter","jupyterInline"].includes((props.pathProblem || {}).type) &&
                     <Button
                       color="primary"
                       disabled={!(
-                        typeof problemSolution==='object'
-                        ? problemSolution.hasOwnProperty('value')
+                        typeof problemSolution==="object"
+                        ? problemSolution.hasOwnProperty("value")
                           ? problemSolution.value.trim()
                           : !isEmpty(problemSolution)
                         : problemSolution)}
@@ -135,7 +135,7 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
             )}
           </Activity>
           <Button color="secondary" onClick={this.onClose}>
-            {readOnly ? 'Close' : 'Cancel'}
+            {readOnly ? "Close" : "Cancel"}
           </Button>
         </Dialog>
       </Fragment>

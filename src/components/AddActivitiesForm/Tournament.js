@@ -1,7 +1,7 @@
-import React, {Fragment} from 'react';
+import React, {Fragment} from "react";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -12,7 +12,7 @@ import Input from "@material-ui/core/Input";
 const TournamentActivity = ({activity, onFieldChange}) => (
     <Fragment>
         <FormControl fullWidth margin="normal">
-            <InputLabel shrink htmlFor="select-games">Select Game</InputLabel>
+            <InputLabel htmlFor="select-games" shrink>Select Game</InputLabel>
             <Select
                 input={<Input id="select-games" />}
                 margin="none"
@@ -36,45 +36,45 @@ const TournamentActivity = ({activity, onFieldChange}) => (
         </FormControl>
 
         <TextField
-            value={activity.unitsPerSide}
+            defaultValue="1"
             fullWidth
-            type="number"
             label="Number of Units for Each Player"
             margin="dense"
-            defaultValue="1"
             onChange={e => onFieldChange("unitsPerSide", e.target.value)}
+            type="number"
+            value={activity.unitsPerSide}
         />
         <TextField
-            value={activity.gameTime}
+            defaultValue="60"
             fullWidth
             label="Select Game Time (sec)"
             margin="dense"
-            type="number"
-            defaultValue="60"
             onChange={e => onFieldChange("gameTime", Number(e.target.value))}
+            type="number"
+            value={activity.gameTime}
         />
         <TextField
-            value={activity.minimumGameScore}
+            defaultValue="1"
             fullWidth
             label="Score How Many Points to Win a Single Game"
             margin="dense"
-            type="number"
-            defaultValue="1"
             onChange={e => onFieldChange("minimumGameScore", e.target.value)}
+            type="number"
+            value={activity.minimumGameScore}
         />
         <TextField
-            value={activity.minimumTournamentScore}
+            defaultValue="1"
             fullWidth
             label="Minimum tournament score needed to pass"
             margin="dense"
-            type="number"
-            defaultValue="1"
             onChange={e => onFieldChange("minimumTournamentScore", e.target.value)}
+            type="number"
+            value={activity.minimumTournamentScore}
         />
     </Fragment>
 );
 TournamentActivity.propTypes = {
     activity: PropTypes.objectOf(Object).isRequired,
-    onFieldChange: PropTypes.func.isRequired,
-}
+    onFieldChange: PropTypes.func.isRequired
+};
 export default TournamentActivity;

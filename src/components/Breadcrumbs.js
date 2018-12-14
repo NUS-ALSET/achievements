@@ -58,8 +58,8 @@ class Breadcrumbs extends React.PureComponent {
             ) : (
               <Fragment key={index}>
                 <Button
-                  size="small"
                   component={Link}
+                  size="small"
                   to={pathInfo.link}
                 >
                   <Typography className={classes.breadcrumbText}>
