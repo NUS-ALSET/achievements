@@ -71,24 +71,26 @@ export class Activity extends React.PureComponent {
       pathProblem,
       solution
     } = this.props;
-
     if (!isEqual(pathProblem, prevProps.pathProblem)) {
       this.onProblemChange({});
     }
-    if (
-      !["jupyter", "jupyterInline"].includes((pathProblem || {}).type)
-    ) {
-      this.setState({ disabledCommitBtn: false });
-    } else if (
-      (solution || {}).checked &&
-      !(solution || {}).failed &&
-      (solution || {}).json
-    ) {
-      this.setState({ disabledCommitBtn: false });
-    } else {
-      this.setState({ disabledCommitBtn: true });
+    if (pathProblem !== prevProps.pathProblem) {
+      if (
+        !["jupyter", "jupyterInline"].includes((pathProblem || {}).type)
+      ) {
+        this.setState({ disabledCommitBtn: false });
+      } else if (
+        (solution || {}).checked &&
+        !(solution || {}).failed &&
+        (solution || {}).json
+      ) {
+        this.setState({ disabledCommitBtn: false });
+      } else {
+        this.setState({ disabledCommitBtn: true });
+      }
     }
   }
+
 
   componentWillUnmount() {
     this.props.problemFinalize(
