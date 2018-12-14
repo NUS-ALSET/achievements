@@ -91,15 +91,16 @@ class AddAssignmentDialog extends React.PureComponent {
     });
   };
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
+    const { open, assignment } = this.props;
     if (
-      !this.props.open &&
-      nextProps.open &&
-      nextProps.assignment &&
-      nextProps.assignment.questionType
+      !prevProps.open &&
+      open &&
+      assignment &&
+      assignment.questionType
     ) {
       this.updateField("questionType")({
-        target: { value: nextProps.assignment.questionType }
+        target: { value: assignment.questionType }
       });
     }
   }

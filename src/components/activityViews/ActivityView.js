@@ -43,7 +43,11 @@ class ActivityView extends React.PureComponent {
     this.setState({ open: false });
     this.props.onClose();
   };
+  // TODO: this lifecycle method needs to
+  // 1. rewrite to componentDidupdate
+  // 2. implement a compare of props and updates
   componentWillReceiveProps(nextProps) {
+    // this will call setState needlessly
     this.setState({ open: true });
     if (
       this.props.pathProblem.type === "profile" &&
