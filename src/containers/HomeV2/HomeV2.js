@@ -8,7 +8,10 @@ import { connect } from "react-redux";
 import RecommendationsListCard from "../../components/cards/RecommendationsListCard";
 import ContentLoader from "./ContentLoader";
 import sagas from "./sagas";
-import { homeOpenRecommendation, updateRecommendation } from "./actions";
+import {
+  homeOpenRecommendation,
+  updateRecommendation
+} from "./actions";
 import { sagaInjector } from "../../services/saga";
 
 const temporaryRecommendationsKinds = [
@@ -36,7 +39,9 @@ export class HomeV2 extends React.Component {
     dispatch: PropTypes.func,
     userRecommendations: PropTypes.any,
     uid: PropTypes.string,
-    auth: PropTypes.object
+    auth: PropTypes.object,
+    homeOpenRecommendation: PropTypes.func,
+    updateRecommendation: PropTypes.func
   };
 
   reformatRecommendation = (recommendations, recommendationKey = "") => {
@@ -62,33 +67,31 @@ export class HomeV2 extends React.Component {
   };
 
   onRecommendationClick = recommendationType => (activityId, pathId) =>
-    this.props.dispatch(
-      homeOpenRecommendation(
-        recommendationType,
+    this.props.homeOpenRecommendation(
+      recommendationType,
 
-        /* Reduce userRecommendations to format
-         ```
-         {
-           <recommendationsKey1>: [<activityKey1>, <activityKey2>, ...],
-           <recommendationsKey2>: [<activityKey1>, <activityKey2>, ...],
-           ...
-         }
-         ```
-         */
-        JSON.stringify(
-          Object.assign(
-            {},
-            ...Object.keys(this.props.userRecommendations || {}).map(key => ({
-              [key]: Object.keys(this.props.userRecommendations[key])
-            }))
-          )
-        ),
-        activityId,
-        pathId
-      )
+      /* Reduce userRecommendations to format
+        ```
+        {
+          <recommendationsKey1>: [<activityKey1>, <activityKey2>, ...],
+          <recommendationsKey2>: [<activityKey1>, <activityKey2>, ...],
+          ...
+        }
+        ```
+        */
+      JSON.stringify(
+        Object.assign(
+          {},
+          ...Object.keys(this.props.userRecommendations || {}).map(key => ({
+            [key]: Object.keys(this.props.userRecommendations[key])
+          }))
+        )
+      ),
+      activityId,
+      pathId
     );
   componentDidMount(){
-    this.props.dispatch(updateRecommendation());
+    this.props.updateRecommendation();
   }
   render() {
     const { userRecommendations } = this.props;
@@ -160,6 +163,11 @@ const mapStateToProps = state => ({
   auth: state.firebase.auth
 });
 
+const mapDispatchToProps = {
+  homeOpenRecommendation,
+  updateRecommendation
+};
+
 export default compose(
   firebaseConnect((ownProps, store) => {
     const state = store.getState();
@@ -181,5 +189,5 @@ export default compose(
       }
     ];
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(HomeV2);
