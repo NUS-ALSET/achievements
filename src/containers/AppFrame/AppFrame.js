@@ -14,7 +14,6 @@ import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
 
 // for Routes
-// import Home from "../Home/AltHome";
 // TODO: both account/ and profile/ point to this Account component
 // need to figure out why need both?
 import Account from "../../containers/Account/Account";
@@ -32,7 +31,6 @@ import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
-import HomeV3 from "../HomeV3/HomeV3";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -254,7 +252,6 @@ class AppFrame extends React.Component {
             />
             <main className={classes.content}>
               <Route component={HomeV2} exact path="(/|/home)" />
-              <Route component={HomeV3} exact path="/homev3" />
               <Route component={Admin} exact path="/admin" />
               <Route component={Courses} exact path="/courses" />
               <Route component={Assignments} exact path="/courses/:courseId" />
