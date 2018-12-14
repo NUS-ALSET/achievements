@@ -1,6 +1,6 @@
 /* eslint-disable */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
 export default class Sprite extends Component {
   static propTypes = {
@@ -21,7 +21,7 @@ export default class Sprite extends Component {
     offset: [0, 0],
     onPlayStateChanged: () => {},
     repeat: true,
-    src: '',
+    src: "",
     state: 0,
     steps: [],
     ticksPerFrame: 4,
@@ -108,7 +108,7 @@ export default class Sprite extends Component {
     const top = this.props.offset[1] + state * tileHeight;
 
     return {
-      position: 'absolute',
+      position: "absolute",
       transform: `translate(-${left}px, -${top}px)`
     };
   }
@@ -117,11 +117,11 @@ export default class Sprite extends Component {
     return {
       height: this.props.tileHeight,
       width: this.props.tileWidth,
-      overflow: 'hidden',
-      position: 'relative',
+      overflow: "hidden",
+      position: "relative",
       transform: `scale(${this.props.scale || this.context.scale})`,
-      transformOrigin: 'top left',
-      imageRendering: 'pixelated'
+      transformOrigin: "top left",
+      imageRendering: "pixelated"
     };
   }
 

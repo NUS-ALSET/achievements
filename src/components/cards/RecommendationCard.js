@@ -158,7 +158,9 @@ class RecommendationCard extends React.PureComponent {
             >
               {activity.name}
             </Typography>
-            <Typography variant="caption">{subHeading || description}</Typography>
+            <Typography variant="caption">
+              {subHeading || description}
+            </Typography>
           </CardContent>
           <CardActions>
             <Button color="primary" size="small">

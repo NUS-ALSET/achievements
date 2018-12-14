@@ -15,13 +15,13 @@ class TextActivity extends React.PureComponent {
     onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
     solution: PropTypes.object,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
   };
 
   onChangeSolution = e => this.props.onChange({ value: e.target.value });
 
   render() {
-    const { problem, solution,readOnly } = this.props;
+    const { problem, solution, readOnly } = this.props;
 
     return (
       <Fragment>
@@ -31,11 +31,11 @@ class TextActivity extends React.PureComponent {
         <TextField
           autoFocus
           defaultValue={(solution && solution.value) || ""}
+          disabled={readOnly}
           fullWidth
           label="Solution"
           multiline
           onChange={this.onChangeSolution}
-          disabled={readOnly}
           style={{
             marginBottom: 4
           }}

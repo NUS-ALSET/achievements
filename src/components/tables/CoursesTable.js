@@ -119,7 +119,10 @@ class CoursesTable extends React.PureComponent {
                           className={classes.link}
                           to={`/courses/${course.id}`}
                         >
-                          <Button className={classes.button} variant="contained">
+                          <Button
+                            className={classes.button}
+                            variant="contained"
+                          >
                             View
                           </Button>
                         </Link>

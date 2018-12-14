@@ -150,8 +150,8 @@ class AddActivityDialog extends React.PureComponent {
       this.state.type ||
       (activity && activity.type) ||
       "text";
-    console.error("type is: ", type)
-    /*if (
+    console.error("type is: ", type);
+    /* if (
       ["jupyter", "jupyterInline"].includes(type) &&
       !isLoaded(activityExampleSolution)
     ) {
@@ -401,46 +401,45 @@ class AddActivityDialog extends React.PureComponent {
                 value={activity.githubURL || ""}
               />
             </FormControl>
-            {this.state.files &&
-              this.state.files.length > 0 && (
-                <Fragment>
-                  <Typography
-                    gutterBottom
-                    style={{ margin: "12px 0px" }}
-                    variant="body2"
-                  >
-                    <CheckBoxIcon style={{ float: "left" }} />
-                    Check files to allow write access for users.
-                  </Typography>
-                  <Typography gutterBottom variant="body2">
-                    {this.fetchedGithubURL && (
-                      <LinkIcon style={{ float: "left" }} />
-                    )}
-                    &nbsp;
-                    {this.fetchedGithubURL}
-                  </Typography>
-                  {this.state.files.map(
-                    file =>
-                      file.type === "file" && (
-                        <ListItem
-                          button
-                          dense
-                          key={file.path}
-                          role={undefined}
-                          style={{ padding: "0px 25px" }}
-                        >
-                          <Checkbox
-                            checked={!file.readOnly}
-                            disableRipple
-                            onChange={() => this.handleReadOnlyFiles(file.path)}
-                            tabIndex={-1}
-                          />
-                          <ListItemText primary={file.path} />
-                        </ListItem>
-                      )
+            {this.state.files && this.state.files.length > 0 && (
+              <Fragment>
+                <Typography
+                  gutterBottom
+                  style={{ margin: "12px 0px" }}
+                  variant="body2"
+                >
+                  <CheckBoxIcon style={{ float: "left" }} />
+                  Check files to allow write access for users.
+                </Typography>
+                <Typography gutterBottom variant="body2">
+                  {this.fetchedGithubURL && (
+                    <LinkIcon style={{ float: "left" }} />
                   )}
-                </Fragment>
-              )}
+                  &nbsp;
+                  {this.fetchedGithubURL}
+                </Typography>
+                {this.state.files.map(
+                  file =>
+                    file.type === "file" && (
+                      <ListItem
+                        button
+                        dense
+                        key={file.path}
+                        role={undefined}
+                        style={{ padding: "0px 25px" }}
+                      >
+                        <Checkbox
+                          checked={!file.readOnly}
+                          disableRipple
+                          onChange={() => this.handleReadOnlyFiles(file.path)}
+                          tabIndex={-1}
+                        />
+                        <ListItemText primary={file.path} />
+                      </ListItem>
+                    )
+                )}
+              </Fragment>
+            )}
           </Fragment>
         );
       case ACTIVITY_TYPES.gameTournament.id:
@@ -503,9 +502,8 @@ class AddActivityDialog extends React.PureComponent {
 
   handleReadOnlyFiles = filePath => {
     this.setState(() => ({
-      files: this.state.files.map(
-        file =>
-          file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
+      files: this.state.files.map(file =>
+        file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
       )
     }));
   };

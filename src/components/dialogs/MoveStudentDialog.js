@@ -65,22 +65,20 @@ class MoveStudentDialog extends React.PureComponent {
             select
             value={this.state.targetCourse}
           >
-            {courses.filter(course => course.id !== courseId).map(course => (
-              <MenuItem key={course.id} value={course.id}>
-                {course.name}
-              </MenuItem>
-            ))}
+            {courses
+              .filter(course => course.id !== courseId)
+              .map(course => (
+                <MenuItem key={course.id} value={course.id}>
+                  {course.name}
+                </MenuItem>
+              ))}
           </TextField>
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            color="primary"
-            onClick={this.onCommit}
-            variant="contained"
-          >
+          <Button color="primary" onClick={this.onCommit} variant="contained">
             Commit
           </Button>
         </DialogActions>

@@ -491,14 +491,13 @@ class AssignmentsTable extends React.PureComponent {
               return (
                 <TableRow key={studentInfo.id}>
                   <TableCell className={classes.nowrap}>
-                    {isInstructor &&
-                      currentUser.isAssistant && (
-                        <IconButton
-                          onClick={e => this.onShowStudentMenu(studentInfo, e)}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                      )}
+                    {isInstructor && currentUser.isAssistant && (
+                      <IconButton
+                        onClick={e => this.onShowStudentMenu(studentInfo, e)}
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                    )}
                     <Tooltip
                       classes={{ tooltip: classes.noWrapTooltip }}
                       PopperProps={{ style: { pointerEvents: "none" } }}

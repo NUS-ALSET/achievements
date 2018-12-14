@@ -62,10 +62,7 @@ export class AddCourseDialog extends React.Component {
       });
     }
     if (field === "name") {
-      if (
-        AddName.test(value) &&
-        NoStartWhiteSpace.test(value)
-      ) {
+      if (AddName.test(value) && NoStartWhiteSpace.test(value)) {
         this.setState({
           isCorrectInput_Name: true,
           [field]: value.trim()
@@ -75,12 +72,9 @@ export class AddCourseDialog extends React.Component {
           isCorrectInput_Name: false
         });
       }
-    }else if (field === "password") {
+    } else if (field === "password") {
       // password does not allow spaces anywhere
-      if (
-        CoursePswRule.test(value) &&
-        NoStartWhiteSpace.test(value)
-      ) {
+      if (CoursePswRule.test(value) && NoStartWhiteSpace.test(value)) {
         this.setState({
           isCorrectInput_Psw: true,
           [field]: value.trim()
@@ -90,9 +84,9 @@ export class AddCourseDialog extends React.Component {
           isCorrectInput_Psw: false
         });
       }
-    }else{
+    } else {
       this.setState({
-        [field]: value.trim(),
+        [field]: value.trim()
       });
     }
   };
@@ -116,13 +110,15 @@ export class AddCourseDialog extends React.Component {
       if (this.state.isCorrectInput_Psw) {
         helperTextPsw = "Leave it blank to keep existing password";
       } else {
-        helperTextPsw = "Password (2-16 length) should not have spaces or invalid characters";
+        helperTextPsw =
+          "Password (2-16 length) should not have spaces or invalid characters";
       }
     } else {
       if (this.state.isCorrectInput_Psw) {
         helperTextPsw = "";
       } else {
-        helperTextPsw = "Password (2-16 length) should not have spaces or invalid characters";
+        helperTextPsw =
+          "Password (2-16 length) should not have spaces or invalid characters";
       }
     }
 
@@ -134,22 +130,24 @@ export class AddCourseDialog extends React.Component {
         <DialogContent>
           <TextField
             autoFocus
-            error={!this.state.isCorrectInput_Name}
-            helperText={this.state.isCorrectInput_Name
-              ? ""
-              : "Name cannot be empty or too long or have invalid characters"}
             defaultValue={course && course.name}
+            error={!this.state.isCorrectInput_Name}
             fullWidth
+            helperText={
+              this.state.isCorrectInput_Name
+                ? ""
+                : "Name cannot be empty or too long or have invalid characters"
+            }
             label="Course name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
             required
           />
           <TextField
-            error={!this.state.isCorrectInput_Psw}
-            helperText={helperTextPsw}
             defaultValue={course && course.password}
+            error={!this.state.isCorrectInput_Psw}
             fullWidth
+            helperText={helperTextPsw}
             label="Password"
             margin="dense"
             onChange={e => this.onFieldChange("password", e.target.value)}
@@ -169,11 +167,10 @@ export class AddCourseDialog extends React.Component {
             Cancel
           </Button>
           <Button
-            disabled={
-              !this.state.isCorrectInput_Name ||
-              !this.state.isCorrectInput_Psw
-            }
             color="primary"
+            disabled={
+              !this.state.isCorrectInput_Name || !this.state.isCorrectInput_Psw
+            }
             onClick={this.onCommit}
             variant="contained"
           >

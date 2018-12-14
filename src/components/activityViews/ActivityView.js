@@ -19,12 +19,12 @@ import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog";
 
 const views = {
   text: TextActivity,
-  profile : ProfileActivity,
+  profile: ProfileActivity,
   jupyter: JupyterProblem,
   jupyterInline: JupyterInlineProblem,
   youtube: YouTubeProblem,
-  jest : AddJestSolutionDialog,
-  game :AddGameSolutionDialog
+  jest: AddJestSolutionDialog,
+  game: AddGameSolutionDialog
 };
 
 class ActivityView extends React.PureComponent {
@@ -34,27 +34,27 @@ class ActivityView extends React.PureComponent {
     pathProblem: PropTypes.any,
     onProblemChange: PropTypes.func.isRequired,
     solution: PropTypes.any,
-    readOnly : PropTypes.bool
+    readOnly: PropTypes.bool
   };
-  state={
-    open : true
+  state = {
+    open: true
   };
-  handleClose=()=>{
-    this.setState({ open : false});
+  handleClose = () => {
+    this.setState({ open: false });
     this.props.onClose();
   };
-  componentWillReceiveProps(nextProps){
-    this.setState({ open : true});
+  componentWillReceiveProps(nextProps) {
+    this.setState({ open: true });
     if (
-      this.props.pathProblem.type==='profile' &&
+      this.props.pathProblem.type === "profile" &&
       this.props.userAchievements &&
       this.props.userAchievements.CodeCombat &&
       this.props.userAchievements.CodeCombat.id
     ) {
       this.props.onCommit({
-        type : 'SOLUTION',
-        solution : {
-          value : this.props.userAchievements.CodeCombat.id
+        type: "SOLUTION",
+        solution: {
+          value: this.props.userAchievements.CodeCombat.id
         }
       });
     }
@@ -71,13 +71,12 @@ class ActivityView extends React.PureComponent {
       userAchievements
     } = this.props;
     let SpecificView = views[pathProblem.type];
-    const extraProps=['jest','jestInline','game']
-      .includes(pathProblem.type)
-        ? {
+    const extraProps = ["jest", "jestInline", "game"].includes(pathProblem.type)
+      ? {
           onClose: this.handleClose,
-          open: this.state.open,
+          open: this.state.open
         }
-        : {};
+      : {};
     if (!SpecificView) {
       // noinspection JSUnusedAssignment
       SpecificView = <div>Wrong problem type</div>;
@@ -92,12 +91,12 @@ class ActivityView extends React.PureComponent {
         <SpecificView
           dispatch={dispatch}
           onChange={onProblemChange}
-          problem={pathProblem}
-          solution={solution}
-          userAchievements={userAchievements}
           onClose={onClose}
           onCommit={onCommit}
+          problem={pathProblem}
           readOnly={readOnly}
+          solution={solution}
+          userAchievements={userAchievements}
           {...extraProps}
         />
       </div>
