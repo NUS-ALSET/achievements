@@ -47,6 +47,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 // Test
 import Debug from "../Debug/Debug";
+import Shun from "../TechnicalInterview/Shun";
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -262,6 +263,7 @@ class AppFrame extends React.Component {
               <Route component={AllDestinations} exact path="/destinations" />
               <Route component={MyDestinations} exact path="/my-destinations" />
               <Route component={Debug} exact path="/debug" />
+              <Route component={Shun} exact path="/shun" />
               <Route
                 component={ViewDestination}
                 exact
