@@ -55,23 +55,29 @@ export const cohortCourseRecalculateFail = (cohortId, courseId) => ({
 });
 
 export const COHORT_COURSE_UPDATE_REQUEST = "COHORT_COURSE_UPDATE_REQUEST";
-export const cohortCourseUpdateRequest = (cohortId, courseId, kind  ) => ({
+export const cohortCourseUpdateRequest = (cohortId, courseId, kind) => ({
   type: COHORT_COURSE_UPDATE_REQUEST,
-  cohortId, courseId, kind
+  cohortId,
+  courseId,
+  kind
 });
 
 export const COHORT_COURSE_UPDATE_SUCCESS = "COHORT_COURSE_UPDATE_SUCCESS";
 export const cohortCourseUpdateSuccess = (cohortId, courseId, kind) => ({
   type: COHORT_COURSE_UPDATE_SUCCESS,
-  cohortId, courseId, kind
+  cohortId,
+  courseId,
+  kind
 });
 
 export const COHORT_COURSE_UPDATE_FAIL = "COHORT_COURSE_UPDATE_FAIL";
 export const cohortCourseUpdateFail = (cohortId, courseId, kind, reason) => ({
   type: COHORT_COURSE_UPDATE_FAIL,
-  cohortId, courseId, kind, reason
+  cohortId,
+  courseId,
+  kind,
+  reason
 });
-
 
 export const COHORT_OPEN_ASSISTANTS_DIALOG = "COHORT_OPEN_ASSISTANTS_DIALOG";
 export const cohortOpenAssistantsDialog = cohortId => ({

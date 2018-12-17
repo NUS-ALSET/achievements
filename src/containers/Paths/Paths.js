@@ -44,7 +44,15 @@ export class Paths extends React.PureComponent {
   }
 
   render() {
-    const { dispatch, myPaths, joinedPaths, publicPaths, ui, uid, fetchedPaths } = this.props;
+    const {
+      dispatch,
+      myPaths,
+      joinedPaths,
+      publicPaths,
+      ui,
+      uid,
+      fetchedPaths
+    } = this.props;
 
     return (
       <Fragment>
@@ -54,24 +62,22 @@ export class Paths extends React.PureComponent {
             Loading Paths...
             <LinearProgress />
           </Fragment>
+        ) : uid ? (
+          <Fragment>
+            <PathTabs
+              dispatch={dispatch}
+              joinedPaths={joinedPaths}
+              myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+              publicPaths={publicPaths}
+            />
+            <AddPathDialog
+              dispatch={dispatch}
+              open={ui.dialog.type === "PathChange"}
+              path={ui.dialog.value}
+            />
+          </Fragment>
         ) : (
-          uid ? (
-            <Fragment>
-              <PathTabs
-                dispatch={dispatch}
-                joinedPaths={joinedPaths}
-                myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
-                publicPaths={publicPaths}
-              />
-              <AddPathDialog
-                dispatch={dispatch}
-                open={ui.dialog.type === "PathChange"}
-                path={ui.dialog.value}
-              />
-            </Fragment>
-          ) : (
-            <PathsTable dispatch={dispatch} paths={publicPaths || {}} />
-          )
+          <PathsTable dispatch={dispatch} paths={publicPaths || {}} />
         )}
       </Fragment>
     );

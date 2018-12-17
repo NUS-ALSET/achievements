@@ -8,7 +8,6 @@ import {
   notificationShow
 } from "../containers/Root/actions";
 
-import { fetchPublicPathActiviesSuccess } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 const NOT_FOUND_ERROR = 404;
@@ -123,15 +122,14 @@ export class PathsService {
    */
   fetchPathProblem(pathId, activitiyId) {
     return Promise.resolve()
-      .then(
-        () =>
-          pathId[0] === "-"
-            ? firebase
-                .database()
-                .ref(`/paths/${pathId}`)
-                .once("value")
-                .then(pathSnapshot => pathSnapshot.val() || {})
-            : { owner: pathId, name: "Default" }
+      .then(() =>
+        pathId[0] === "-"
+          ? firebase
+              .database()
+              .ref(`/paths/${pathId}`)
+              .once("value")
+              .then(pathSnapshot => pathSnapshot.val() || {})
+          : { owner: pathId, name: "Default" }
       )
       .then(pathInfo =>
         firebase
@@ -532,15 +530,12 @@ export class PathsService {
                     .database()
                     .ref(`${answerPath}${answerKey}`)
                     .remove()
-                    .then(
-                      () =>
-                        response.val()
-                          ? resolve(JSON.parse(response.val().solution))
-                          : reject(
-                              new Error(
-                                "Failing - Unable execute your solution"
-                              )
-                            )
+                    .then(() =>
+                      response.val()
+                        ? resolve(JSON.parse(response.val().solution))
+                        : reject(
+                            new Error("Failing - Unable execute your solution")
+                          )
                     );
                 });
 
@@ -687,13 +682,10 @@ export class PathsService {
   saveGivenSkillInProblem(solution, activityId, uid, solutionURL, pathId) {
     // comment out any lines that start with !
     const editableBlockCode = solution.cells
-      .map(
-        c =>
-          c.cell_type === "code"
-            ? c.source
-                .map(line => (line[0] === "!" ? `#${line}` : line))
-                .join("")
-            : ""
+      .map(c =>
+        c.cell_type === "code"
+          ? c.source.map(line => (line[0] === "!" ? `#${line}` : line)).join("")
+          : ""
       )
       .join("");
     const data = {
@@ -787,20 +779,19 @@ export class PathsService {
       .then(snapshot => snapshot.val())
       .then(paths =>
         Promise.all(
-          Object.keys(paths || {}).map(
-            id =>
-              paths[id]
-                ? firebase
-                    .database()
-                    .ref(`/paths/${id}`)
-                    .once("value")
-                    .then(snapshot => ({ id, ...snapshot.val() }))
-                    .then(path =>
-                      this.fetchPathProgress(uid, path.owner, path.id).then(
-                        solutions => Object.assign(path, solutions)
-                      )
+          Object.keys(paths || {}).map(id =>
+            paths[id]
+              ? firebase
+                  .database()
+                  .ref(`/paths/${id}`)
+                  .once("value")
+                  .then(snapshot => ({ id, ...snapshot.val() }))
+                  .then(path =>
+                    this.fetchPathProgress(uid, path.owner, path.id).then(
+                      solutions => Object.assign(path, solutions)
                     )
-                : Promise.resolve(false)
+                  )
+              : Promise.resolve(false)
           )
         ).then(paths =>
           Object.assign({}, ...paths.map(path => ({ [path.id]: path })))
@@ -1036,45 +1027,6 @@ export class PathsService {
     return Promise.all(actions);
   }
 
-  fetchPublicPathActivies(uid, publicPaths, completedActivities) {
-    return new Promise(resolve => {
-      const completedActivitiesIds = [];
-      (completedActivities[uid] || []).forEach(path => {
-        Object.keys(path.value).forEach(key => {
-          completedActivitiesIds.push(key);
-        });
-      });
-      const publicPathActivities = [];
-      const promises = publicPaths
-        .filter(path => path.value.owner !== uid)
-        .map(path =>
-          firebase
-            .database()
-            .ref("activities")
-            .orderByChild("path")
-            .equalTo(path.key)
-            .once("value")
-        );
-      Promise.all(promises).then(data => {
-        data.forEach(snapshots => {
-          snapshots.forEach(snap => {
-            publicPathActivities.push({
-              key: snap.key,
-              value: snap.val()
-            });
-          });
-        });
-        const unsolvedPublicActivities = publicPathActivities.filter(
-          activity => !completedActivitiesIds.includes(activity.key)
-        );
-        this.dispatch(
-          fetchPublicPathActiviesSuccess({ unsolvedPublicActivities })
-        );
-        resolve();
-      });
-    });
-  }
-
   fetchGithubFiles(uid, githubURL) {
     return new Promise((resolve, reject) => {
       const githubBaseURL = "https://github.com/";
@@ -1114,33 +1066,32 @@ export class PathsService {
       .equalTo(uid)
       .once("value")
       .then(snap => snap.val() || {})
-      .then(
-        paths =>
-          options.withActivities
-            ? Promise.all(
-                Object.keys(paths || {}).map(pathKey =>
-                  firebase
-                    .database()
-                    .ref("/activities")
-                    .orderByChild("path")
-                    .equalTo(pathKey)
-                    .once("value")
-                    .then(snap => snap.val() || {})
-                    .then(activities => ({
-                      id: pathKey,
-                      name: paths[pathKey].name,
-                      activities: Object.keys(activities).map(activityKey => ({
-                        id: activityKey,
-                        name: activities[activityKey].name,
-                        type: activities[activityKey].type
-                      }))
+      .then(paths =>
+        options.withActivities
+          ? Promise.all(
+              Object.keys(paths || {}).map(pathKey =>
+                firebase
+                  .database()
+                  .ref("/activities")
+                  .orderByChild("path")
+                  .equalTo(pathKey)
+                  .once("value")
+                  .then(snap => snap.val() || {})
+                  .then(activities => ({
+                    id: pathKey,
+                    name: paths[pathKey].name,
+                    activities: Object.keys(activities).map(activityKey => ({
+                      id: activityKey,
+                      name: activities[activityKey].name,
+                      type: activities[activityKey].type
                     }))
-                )
+                  }))
               )
-            : Object.keys(paths).map(pathKey => ({
-                id: pathKey,
-                name: paths[pathKey].name
-              }))
+            )
+          : Object.keys(paths).map(pathKey => ({
+              id: pathKey,
+              name: paths[pathKey].name
+            }))
       );
   }
 }

@@ -1,15 +1,15 @@
 /* eslint-disable */
-import React , { Fragment }from 'react';
-import App from './view/App.js';
-import Tournament from './simulation/tournament';
+import React, { Fragment } from "react";
+import App from "./view/App.js";
+import Tournament from "./simulation/tournament";
 
-const Game = (props) =>{
+const Game = props => {
   return (
     <Fragment>
-      <Tournament/>
-    < App {...props}/>
+      <Tournament />
+      <App {...props} />
     </Fragment>
-  )
-}
+  );
+};
 
-export { Game }
+export { Game };

@@ -12,8 +12,7 @@ export const homeOpenRecommendation = (
   pathId
 });
 
-
 export const UPDATE_RECOMMENDATION = "UPDATE_RECOMMENDATION";
 export const updateRecommendation = () => ({
-  type : UPDATE_RECOMMENDATION
-})
+  type: UPDATE_RECOMMENDATION
+});

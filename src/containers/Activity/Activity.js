@@ -59,38 +59,39 @@ export class Activity extends React.PureComponent {
   };
 
   componentDidMount() {
-    const {
-      match,
-      problemInitRequest
-    } = this.props;
+    const { match, problemInitRequest } = this.props;
 
     if (match.params.pathId && match.params.problemId) {
-      problemInitRequest(
-        match.params.pathId,
-        match.params.problemId
-      );
+      problemInitRequest(match.params.pathId, match.params.problemId);
     }
   }
 
-  // Renamed via https://reactjs.org/docs/react-component.html#unsafe_componentwillreceiveprops
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
+  componentDidUpdate(prevProps) {
+    const {
+      pathProblem,
+      solution
+    } = this.props;
+    if (!isEqual(pathProblem, prevProps.pathProblem)) {
       this.onProblemChange({});
     }
-    if (
-      !["jupyter", "jupyterInline"].includes((nextProps.pathProblem || {}).type)
-    ) {
-      this.setState({ disabledCommitBtn: false });
-    } else if (
-      (nextProps.solution || {}).checked &&
-      !(nextProps.solution || {}).failed &&
-      (nextProps.solution || {}).json
-    ) {
-      this.setState({ disabledCommitBtn: false });
-    } else {
-      this.setState({ disabledCommitBtn: true });
+    if (pathProblem !== prevProps.pathProblem) {
+      if (
+        !["jupyter", "jupyterInline"].includes((pathProblem || {}).type)
+      ) {
+        this.setState({ disabledCommitBtn: false });
+      } else if (
+        (solution || {}).checked &&
+        !(solution || {}).failed &&
+        (solution || {}).json
+      ) {
+        this.setState({ disabledCommitBtn: false });
+      } else {
+        this.setState({ disabledCommitBtn: true });
+      }
     }
   }
+
+
   componentWillUnmount() {
     this.props.problemFinalize(
       this.props.match.params.pathId,
@@ -129,10 +130,7 @@ export class Activity extends React.PureComponent {
     if (readOnly) {
       return;
     }
-    if (
-      pathProblem.type === "profile" &&
-      !(data && data.type === "SOLUTION")
-    ) {
+    if (pathProblem.type === "profile" && !(data && data.type === "SOLUTION")) {
       externalProfileUpdateRequest(
         this.state.problemSolution.value,
         "CodeCombat"
@@ -201,27 +199,25 @@ export class Activity extends React.PureComponent {
             }}
           />
         )}
-        {!readOnly &&
-          uid &&
-          !embedded && (
-            <div
-              style={{
-                bottom: 0,
-                display: "flex",
-                justifyContent: "flex-end",
-                position: "relative"
-              }}
+        {!readOnly && uid && !embedded && (
+          <div
+            style={{
+              bottom: 0,
+              display: "flex",
+              justifyContent: "flex-end",
+              position: "relative"
+            }}
+          >
+            <Button
+              color="primary"
+              disabled={this.state.disabledCommitBtn}
+              onClick={this.onCommit}
+              variant="contained"
             >
-              <Button
-                color="primary"
-                disabled={this.state.disabledCommitBtn}
-                onClick={this.onCommit}
-                variant="contained"
-              >
-                Commit
-              </Button>
-            </div>
-          )}
+              Commit
+            </Button>
+          </div>
+        )}
       </Fragment>
     );
   }
@@ -249,11 +245,13 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  externalProfileUpdateRequest: (...args) => dispatch(externalProfileUpdateRequest(...args)),
+  externalProfileUpdateRequest: (...args) =>
+    dispatch(externalProfileUpdateRequest(...args)),
   notificationShow: (...args) => dispatch(notificationShow(...args)),
   problemFinalize: (...args) => dispatch(problemFinalize(...args)),
   problemInitRequest: (...args) => dispatch(problemInitRequest(...args)),
-  problemSolutionSubmitRequest: (...args) => dispatch(problemSolutionSubmitRequest(...args)),
+  problemSolutionSubmitRequest: (...args) =>
+    dispatch(problemSolutionSubmitRequest(...args)),
   signInRequire: (...args) => dispatch(signInRequire(...args)),
   dispatch
 });
@@ -285,5 +283,8 @@ export default compose(
           ]
     );
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Activity);

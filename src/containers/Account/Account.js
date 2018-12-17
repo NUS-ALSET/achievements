@@ -112,7 +112,7 @@ class Account extends React.PureComponent {
     );
   };
   removeExternalProfileRequest = externalProfile => {
-    const { userAchievements, externalProfileRemoveDialogShow} = this.props;
+    const { userAchievements, externalProfileRemoveDialogShow } = this.props;
 
     externalProfileRemoveDialogShow(
       userAchievements[externalProfile.id].id,
@@ -420,5 +420,8 @@ export default compose(
     `/userAchievements/${store.getState().firebase.auth.uid}`
   ]),
   withStyles(styles),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Account);

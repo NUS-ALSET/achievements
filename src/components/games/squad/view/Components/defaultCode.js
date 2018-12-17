@@ -1,11 +1,11 @@
 /* eslint-disable */
-export const defaultPythonCodeFunction=`import random
+export const defaultPythonCodeFunction = `import random
 def getPlayersCommands(world):
   foo = ['RIGHT', 'LEFT', 'UP','DOWN']
   result = random.choice(foo)
   print(result)
   return result`;
-  export const defaultJavascriptFunctionCode = `function getPlayersCommands(world) {
+export const defaultJavascriptFunctionCode = `function getPlayersCommands(world) {
 	var player = world.player;
 	var closestGem = false;
 	/*world.collectives.forEach(stone => {

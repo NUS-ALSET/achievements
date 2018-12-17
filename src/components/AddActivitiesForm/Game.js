@@ -1,18 +1,19 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from "react";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import { APP_SETTING } from "../../achievementsApp/config";
 import Input from "@material-ui/core/Input";
 
-
-const GameActivity = ({activity, onFieldChange}) => (
+const GameActivity = ({ activity, onFieldChange }) => (
   <Fragment>
     <FormControl fullWidth margin="normal">
-      <InputLabel shrink htmlFor="select-games">Select Game</InputLabel>
+      <InputLabel htmlFor="select-games" shrink>
+        Select Game
+      </InputLabel>
       <Select
         input={<Input id="select-games" />}
         margin="none"
@@ -35,7 +36,9 @@ const GameActivity = ({activity, onFieldChange}) => (
       </Select>
     </FormControl>
     <FormControl fullWidth margin="normal">
-      <InputLabel shrink htmlFor="select-mode">Select Play Mode</InputLabel>
+      <InputLabel htmlFor="select-mode" shrink>
+        Select Play Mode
+      </InputLabel>
       <Select
         input={<Input id="select-mode" />}
         margin="none"
@@ -51,9 +54,9 @@ const GameActivity = ({activity, onFieldChange}) => (
         value={activity.playMode}
       >
         {[
-          { mode : 'manual control', label : 'Manual Control' },
-          { mode : 'custom code', label : 'Custom Code' }
-         ].map(key => (
+          { mode: "manual control", label: "Manual Control" },
+          { mode: "custom code", label: "Custom Code" }
+        ].map(key => (
           <MenuItem key={key.mode} value={key.mode}>
             {key.label}
           </MenuItem>
@@ -61,7 +64,7 @@ const GameActivity = ({activity, onFieldChange}) => (
       </Select>
     </FormControl>
     <FormControl fullWidth margin="normal">
-      <InputLabel shrink htmlFor="select-level">
+      <InputLabel htmlFor="select-level" shrink>
         Select Bot Opponent
       </InputLabel>
       <Select
@@ -79,10 +82,10 @@ const GameActivity = ({activity, onFieldChange}) => (
         value={activity.levelsToWin}
       >
         {[
-          {level: 1, label: "Easy"},
-          {level: 2, label: "Medium"},
-          {level: 3, label: "Hard"}
-         ].map(key => (
+          { level: 1, label: "Easy" },
+          { level: 2, label: "Medium" },
+          { level: 3, label: "Hard" }
+        ].map(key => (
           <MenuItem key={key.level} value={key.level}>
             {key.label}
           </MenuItem>
@@ -90,36 +93,36 @@ const GameActivity = ({activity, onFieldChange}) => (
       </Select>
     </FormControl>
     <TextField
-      value={activity.unitsPerSide}
+      defaultValue="1"
       fullWidth
-      type="number"
       label="Number of Units for Control"
       margin="dense"
-      defaultValue="1"
       onChange={e => onFieldChange("unitsPerSide", e.target.value)}
+      type="number"
+      value={activity.unitsPerSide}
     />
     <TextField
-      value={activity.scoreToWin}
+      defaultValue="1"
       fullWidth
       label="Score How Many Points to Win"
       margin="dense"
-      type="number"
-      defaultValue="1"
       onChange={e => onFieldChange("scoreToWin", e.target.value)}
+      type="number"
+      value={activity.scoreToWin}
     />
     <TextField
-      value={activity.gameTime}
+      defaultValue="60"
       fullWidth
       label="Select Game Time (sec)"
       margin="dense"
-      type="number"
-      defaultValue="60"
       onChange={e => onFieldChange("gameTime", Number(e.target.value))}
+      type="number"
+      value={activity.gameTime}
     />
   </Fragment>
 );
 GameActivity.propTypes = {
   activity: PropTypes.objectOf(Object).isRequired,
-  onFieldChange: PropTypes.func.isRequired,
-}
+  onFieldChange: PropTypes.func.isRequired
+};
 export default GameActivity;

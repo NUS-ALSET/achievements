@@ -1,22 +1,22 @@
 /* eslint-disable */
-import React, { Component } from 'react';
-import Sprite from './Sprite';
-import { observer } from 'mobx-react';
-import img from '../../../assets/sprites/black-car-sprite.png';
+import React, { Component } from "react";
+import Sprite from "./Sprite";
+import { observer } from "mobx-react";
+import img from "../../../assets/sprites/black-car-sprite.png";
 
 class BlackCar extends Component {
   getAnimationState() {
     switch (this.props.store.direction[this.props.gameId][this.props.charId]) {
-      case 'up':
+      case "up":
         this.animState = 2;
         break;
-      case 'down':
+      case "down":
         this.animState = 0;
         break;
-      case 'left':
+      case "left":
         this.animState = 3;
         break;
-      case 'right':
+      case "right":
         this.animState = 1;
         break;
       default:
@@ -26,19 +26,23 @@ class BlackCar extends Component {
   }
   getWrapperStyles() {
     this.getAnimationState();
-    var targetX = this.props.store.position[this.props.gameId][this.props.charId].x*this.props.scale;
-    var targetY = this.props.store.position[this.props.gameId][this.props.charId].y*this.props.scale;
+    var targetX =
+      this.props.store.position[this.props.gameId][this.props.charId].x *
+      this.props.scale;
+    var targetY =
+      this.props.store.position[this.props.gameId][this.props.charId].y *
+      this.props.scale;
     return {
-      position: 'absolute',
+      position: "absolute",
       transform: `translate(${targetX}px, ${targetY}px)`,
-      transformOrigin: 'left top',
-      width:'20px',
-      height:'20px'
+      transformOrigin: "left top",
+      width: "20px",
+      height: "20px"
     };
   }
   render() {
     return (
-      <div id={'character'} style={this.getWrapperStyles()}>
+      <div id={"character"} style={this.getWrapperStyles()}>
         <Sprite
           repeat={true}
           tileWidth={100}
@@ -46,7 +50,7 @@ class BlackCar extends Component {
           src={img}
           ticksPerFrame={4}
           state={this.animState}
-          scale={(this.props.size/100)*this.props.scale}
+          scale={(this.props.size / 100) * this.props.scale}
           steps={[0, 0, 0, 0]}
         />
       </div>
