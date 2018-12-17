@@ -119,7 +119,7 @@ class RecommendationsListCard extends React.PureComponent {
       case "Jupyter Notebook Activities With Solved Skills":
         return "What are solved skills? to enhance their existing knowledge?";
       case "YouTube Video Activities":
-        return "Recommended because you have not watched these videos";
+        return "Welcome back !! Recommended because you have not watched these videos";
       default:
         return "";
     }
