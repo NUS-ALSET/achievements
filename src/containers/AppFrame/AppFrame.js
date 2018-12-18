@@ -45,7 +45,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-
 // Idea lab for trial
 import FetchDataDemo from "../IdeaLab/FetchDataDemo";
 import Brenda from "../IdeaLab/Brenda/Brenda";
@@ -266,7 +265,11 @@ class AppFrame extends React.Component {
               <Route component={AllDestinations} exact path="/destinations" />
               <Route component={MyDestinations} exact path="/my-destinations" />
               <Route component={FetchDataDemo} exact path="/fetchdatademo" />
-              <Route component={fusionChartDemo} exact path="/fusionChartDemo" />
+              <Route
+                component={fusionChartDemo}
+                exact
+                path="/fusionChartDemo"
+              />
               <Route
                 component={ViewDestination}
                 exact

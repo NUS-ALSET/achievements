@@ -12,21 +12,17 @@ class FetchDataDemo extends React.PureComponent {
   };
 
   render() {
-    const {
-      dummyData,
-      moreProbRequestsData
-     } = this.props;
+    const { dummyData, moreProbRequestsData } = this.props;
     return (
       <Fragment>
         {dummyData ? (
           <Fragment>
             <h1>Fetched data from Firebase /analytics node</h1>
             <ul>
-              {Object.keys(dummyData)
-                .map(item => (
-                  <li key={item}>
-                    {item}: {dummyData[item]}
-                  </li>
+              {Object.keys(dummyData).map(item => (
+                <li key={item}>
+                  {item}: {dummyData[item]}
+                </li>
               ))}
             </ul>
           </Fragment>
@@ -40,11 +36,11 @@ class FetchDataDemo extends React.PureComponent {
           <Fragment>
             <h1>Fetched data from Firebase /moreProblemsRequests node</h1>
             <ul>
-              {Object.keys(moreProbRequestsData)
-                .map(item => (
-                  <li key={item}>
-                    {moreProbRequestsData[item].path}: {moreProbRequestsData[item].activityCount}
-                  </li>
+              {Object.keys(moreProbRequestsData).map(item => (
+                <li key={item}>
+                  {moreProbRequestsData[item].path}:{" "}
+                  {moreProbRequestsData[item].activityCount}
+                </li>
               ))}
             </ul>
           </Fragment>
@@ -58,7 +54,6 @@ class FetchDataDemo extends React.PureComponent {
     );
   }
 }
-
 
 const mapStateToProps = state => ({
   dummyData: state.firebase.data.dummyData,
