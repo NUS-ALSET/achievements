@@ -1,8 +1,4 @@
 import React, { Fragment } from "react";
-import { connect } from "react-redux";
-import { compose } from "redux";
-
-import { firebaseConnect } from "react-redux-firebase";
 
 // Charting packages from fusionChart
 import FusionCharts from 'fusioncharts';
