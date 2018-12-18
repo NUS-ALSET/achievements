@@ -1,29 +1,42 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
+import PropTypes from "prop-types";
 
 import { firebaseConnect } from "react-redux-firebase";
 
 class Debug extends React.PureComponent {
-  // constructor(props){
-  //     super(props);
-  // }
+  static propTypes = {
+    dummyData: PropTypes.object
+  };
 
   render() {
-    return (
-      <Fragment>
-        <h1>Hello There!</h1>
-        <div>Shhh... This is a hidden route! ;) </div>
-      </Fragment>
-    );
+    const { dummyData } = this.props;
+    if (dummyData) {
+      return (
+        <Fragment>
+          <h1>Fetched data from Firebase "/analytics" node</h1>
+          <ul>
+            {Object.keys(dummyData)
+              .map(item => (
+                <li key={item}>
+                  {item}: {dummyData[item]}
+                </li>
+            ))}
+          </ul>
+        </Fragment>
+      );
+    }
+    return <h1>fetching from "/analytics/chartData</h1>;
   }
 }
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
-  completedActivities: state.firebase.ordered.completedActivities,
-  publicPaths: state.firebase.ordered.publicPaths,
-  unsolvedPublicActivities: state.problem.unsolvedPublicActivities || [],
-  publicActivitiesFetched: state.problem.publicActivitiesFetched
+  // completedActivities: state.firebase.ordered.completedActivities,
+  // publicPaths: state.firebase.ordered.publicPaths,
+  // unsolvedPublicActivities: state.problem.unsolvedPublicActivities || [],
+  // publicActivitiesFetched: state.problem.publicActivitiesFetched,
+  dummyData: state.firebase.data.dummyData
 });
 
 export default compose(
@@ -37,9 +50,8 @@ export default compose(
 
     return [
       {
-        path: "/debug",
-        storeAs: "myDebug",
-        queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
+        path: "/analytics/chartData",
+        storeAs: "dummyData"
       }
     ];
   }),
