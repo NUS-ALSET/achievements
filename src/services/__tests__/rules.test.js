@@ -290,4 +290,20 @@ describe("security rules tests", () => {
       assert.strictEqual(permitted, true);
     });
   });
+
+  describe("moreProblemsRequests rules", () => {
+    it("should not allow non-logged user to read", () => {
+      const { permitted } = database.read("/moreProblemsRequests", true);
+
+      expect(permitted).toEqual(false);
+    });
+  });
+
+  describe("analytics rules", () => {
+    it("should allow any user to read", () => {
+      const { permitted } = database.read("/analytics", true);
+
+      expect(permitted).toEqual(true);
+    });
+  });
 });
