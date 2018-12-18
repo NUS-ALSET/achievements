@@ -15,7 +15,7 @@ class Debug extends React.PureComponent {
     if (dummyData) {
       return (
         <Fragment>
-          <h1>Fetched data from Firebase "/analytics" node</h1>
+          <h1>Fetched data from Firebase /analytics node</h1>
           <ul>
             {Object.keys(dummyData)
               .map(item => (
@@ -27,27 +27,15 @@ class Debug extends React.PureComponent {
         </Fragment>
       );
     }
-    return <h1>fetching from "/analytics/chartData</h1>;
+    return <h1>fetching from /analytics/chartData</h1>;
   }
 }
 const mapStateToProps = state => ({
-  uid: state.firebase.auth.uid,
-  // completedActivities: state.firebase.ordered.completedActivities,
-  // publicPaths: state.firebase.ordered.publicPaths,
-  // unsolvedPublicActivities: state.problem.unsolvedPublicActivities || [],
-  // publicActivitiesFetched: state.problem.publicActivitiesFetched,
   dummyData: state.firebase.data.dummyData
 });
 
 export default compose(
-  firebaseConnect((ownProps, store) => {
-    const state = store.getState();
-    const firebaseAuth = state.firebase.auth;
-
-    if (!firebaseAuth.uid) {
-      return [];
-    }
-
+  firebaseConnect(() => {
     return [
       {
         path: "/analytics/chartData",
