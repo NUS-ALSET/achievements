@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 import { firebaseConnect } from "react-redux-firebase";
 
-class Debug extends React.PureComponent {
+class FetchDataDemo extends React.PureComponent {
   static propTypes = {
     dummyData: PropTypes.object
   };
@@ -44,4 +44,4 @@ export default compose(
     ];
   }),
   connect(mapStateToProps)
-)(Debug);
+)(FetchDataDemo);
