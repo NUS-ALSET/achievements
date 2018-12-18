@@ -9,15 +9,15 @@ import Typography from "@material-ui/core/Typography";
 
 const styles = theme => ({
   root: {
-    width: "90%",
+    width: "90%"
   },
   button: {
-    marginRight: theme.spacing.unit,
+    marginRight: theme.spacing.unit
   },
   instructions: {
     marginTop: theme.spacing.unit,
-    marginBottom: theme.spacing.unit,
-  },
+    marginBottom: theme.spacing.unit
+  }
 });
 
 function getSteps() {
@@ -40,7 +40,7 @@ function getStepContent(step) {
 class HorizontalLinearStepper extends React.Component {
   state = {
     activeStep: 0,
-    skipped: new Set(),
+    skipped: new Set()
   };
 
   isStepOptional = step => {
@@ -56,13 +56,13 @@ class HorizontalLinearStepper extends React.Component {
     }
     this.setState({
       activeStep: activeStep + 1,
-      skipped,
+      skipped
     });
   };
 
   handleBack = () => {
     this.setState(state => ({
-      activeStep: state.activeStep - 1,
+      activeStep: state.activeStep - 1
     }));
   };
 
@@ -86,7 +86,7 @@ class HorizontalLinearStepper extends React.Component {
 
   handleReset = () => {
     this.setState({
-      activeStep: 0,
+      activeStep: 0
     });
   };
 
@@ -107,7 +107,9 @@ class HorizontalLinearStepper extends React.Component {
             const props = {};
             const labelProps = {};
             if (this.isStepOptional(index)) {
-              labelProps.optional = <Typography variant="caption">Optional</Typography>;
+              labelProps.optional = (
+                <Typography variant="caption">Optional</Typography>
+              );
             }
             if (this.isStepSkipped(index)) {
               props.completed = false;
@@ -131,7 +133,9 @@ class HorizontalLinearStepper extends React.Component {
             </div>
           ) : (
             <div>
-              <Typography className={classes.instructions}>{getStepContent(activeStep)}</Typography>
+              <Typography className={classes.instructions}>
+                {getStepContent(activeStep)}
+              </Typography>
               <div>
                 <Button
                   disabled={activeStep === 0}
@@ -168,7 +172,7 @@ class HorizontalLinearStepper extends React.Component {
 }
 
 HorizontalLinearStepper.propTypes = {
-  classes: PropTypes.object,
+  classes: PropTypes.object
 };
 
 export default withStyles(styles)(HorizontalLinearStepper);
