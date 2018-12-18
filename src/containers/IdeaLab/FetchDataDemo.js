@@ -7,7 +7,8 @@ import { firebaseConnect } from "react-redux-firebase";
 
 class FetchDataDemo extends React.PureComponent {
   static propTypes = {
-    dummyData: PropTypes.object
+    dummyData: PropTypes.object,
+    moreProbRequestsData: PropTypes.object
   };
 
   render() {
