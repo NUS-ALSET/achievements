@@ -12,7 +12,9 @@ import {
   assignmentAddAssistantRequest,
   assignmentsSolutionsRefreshRequest,
   assignmentsShowHiddenToggle,
-  assignmentRemoveAssistantRequest
+  assignmentRemoveAssistantRequest,
+  assignmentsAssistantsShowRequest,
+  assignmentShowAddDialog
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -49,6 +51,8 @@ import { courseInfo } from "../../types/index";
 class Assignments extends React.Component {
   static propTypes = {
     auth: PropTypes.object,
+    assignmentsAssistantsShowRequest: PropTypes.func,
+    assignmentShowAddDialog: PropTypes.func,
     dispatch: PropTypes.func,
     classes: PropTypes.any,
     course: courseInfo,
@@ -204,7 +208,16 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const { ui, auth, dispatch, course, currentUser, readOnly } = this.props;
+    const {
+      ui,
+      auth,
+      assignmentsAssistantsShowRequest,
+      assignmentShowAddDialog,
+      dispatch,
+      course,
+      currentUser,
+      readOnly
+    } = this.props;
 
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
@@ -222,6 +235,8 @@ class Assignments extends React.Component {
           course={course}
           currentUser={currentUser}
           dispatch={dispatch}
+          handleAddAssignmentDialog={assignmentShowAddDialog}
+          handleShowAssistants={assignmentsAssistantsShowRequest}
           handleTabChange={this.handleTabChange}
           paths={[]}
           problems={[]}
@@ -380,6 +395,16 @@ const mapStateToProps = (state, ownProps) => ({
   readOnly: state.problem && state.problem.readOnly
 });
 
+const mapDispatchToProps = dispatch => ({
+  assignmentsAssistantsShowRequest: courseId => (
+    dispatch(assignmentsAssistantsShowRequest(courseId))
+  ),
+  assignmentShowAddDialog: () => (
+    dispatch(assignmentShowAddDialog())
+  ),
+  dispatch
+});
+
 export default compose(
   withRouter,
   firebaseConnect((ownProps, store) => {
@@ -400,5 +425,5 @@ export default compose(
       `/assignments/${courseId}`
     ];
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Assignments);

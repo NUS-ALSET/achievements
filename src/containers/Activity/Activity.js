@@ -245,14 +245,26 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  externalProfileUpdateRequest: (...args) =>
-    dispatch(externalProfileUpdateRequest(...args)),
-  notificationShow: (...args) => dispatch(notificationShow(...args)),
-  problemFinalize: (...args) => dispatch(problemFinalize(...args)),
-  problemInitRequest: (...args) => dispatch(problemInitRequest(...args)),
-  problemSolutionSubmitRequest: (...args) =>
-    dispatch(problemSolutionSubmitRequest(...args)),
-  signInRequire: (...args) => dispatch(signInRequire(...args)),
+  externalProfileUpdateRequest: (externalProfileId, externalProfileType) =>
+    dispatch(
+      externalProfileUpdateRequest(externalProfileId, externalProfileType)
+    ),
+  notificationShow: (message) => dispatch(notificationShow(message)),
+  problemFinalize: () => dispatch(problemFinalize()),
+  problemInitRequest: (
+    pathId,
+    problemId,
+    solution,
+    readOnly
+  ) => dispatch(problemInitRequest(
+    pathId,
+    problemId,
+    solution,
+    readOnly
+  )),
+  problemSolutionSubmitRequest: (pathId, problemId, payload) =>
+    dispatch(problemSolutionSubmitRequest(pathId, problemId, payload)),
+  signInRequire: () => dispatch(signInRequire()),
   dispatch
 });
 
