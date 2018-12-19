@@ -21,7 +21,6 @@ import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { pathDialogShow } from "../../containers/Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 const styles = theme => ({
@@ -36,12 +35,12 @@ const styles = theme => ({
 class PathsTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
     owner: PropTypes.bool,
-    paths: PropTypes.object.isRequired
+    paths: PropTypes.object.isRequired,
+    pathDialogShow: PropTypes.func.isRequired
   };
 
-  onEditClick = path => this.props.dispatch(pathDialogShow(path));
+  onEditClick = pathInfo => this.props.pathDialogShow(pathInfo);
 
   render() {
     const { classes, owner, paths } = this.props;

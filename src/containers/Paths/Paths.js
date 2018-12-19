@@ -21,7 +21,7 @@ import sagas from "./sagas";
 import { getProblems } from "./selectors";
 import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { pathsOpen } from "./actions";
+import { pathsOpen, pathDialogShow } from "./actions";
 import PathsTable from "../../components/tables/PathsTable";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
@@ -36,11 +36,13 @@ class Paths extends React.PureComponent {
     ui: PropTypes.object,
     // FIXIT: figure out correct type
     uid: PropTypes.any,
-    fetchedPaths: PropTypes.bool
+    fetchedPaths: PropTypes.bool,
+    pathsOpen: PropTypes.func,
+    pathDialogShow: PropTypes.func
   };
 
   componentDidMount() {
-    this.props.dispatch(pathsOpen());
+    this.props.pathsOpen();
   }
 
   render() {
@@ -51,7 +53,8 @@ class Paths extends React.PureComponent {
       publicPaths,
       ui,
       uid,
-      fetchedPaths
+      fetchedPaths,
+      pathDialogShow
     } = this.props;
 
     return (
@@ -65,7 +68,7 @@ class Paths extends React.PureComponent {
         ) : uid ? (
           <Fragment>
             <PathTabs
-              dispatch={dispatch}
+              pathDialogShow={pathDialogShow}
               joinedPaths={joinedPaths}
               myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
               publicPaths={publicPaths}
@@ -77,7 +80,10 @@ class Paths extends React.PureComponent {
             />
           </Fragment>
         ) : (
-          <PathsTable dispatch={dispatch} paths={publicPaths || {}} />
+          <PathsTable
+            pathDialogShow={pathDialogShow}
+            paths={publicPaths || {}}
+          />
         )}
       </Fragment>
     );
@@ -95,6 +101,16 @@ const mapStateToProps = state => ({
   joinedPaths: state.paths.joinedPaths,
   problems: getProblems(state),
   fetchedPaths: state.paths.fetchedPaths
+});
+
+const mapDispatchToProps = dispatch => ({
+  pathsOpen: () => dispatch(
+    pathsOpen()
+  ),
+  pathDialogShow: (pathInfo) => dispatch(
+    pathDialogShow(pathInfo)
+  ),
+  dispatch
 });
 
 export default compose(
@@ -119,5 +135,5 @@ export default compose(
           ]
     );
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Paths);
