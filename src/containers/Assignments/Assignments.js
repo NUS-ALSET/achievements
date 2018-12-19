@@ -56,7 +56,10 @@ class Assignments extends React.Component {
     dispatch: PropTypes.func,
     classes: PropTypes.any,
     course: courseInfo,
+    courseAssignmentsOpen: PropTypes.func,
+    courseAssignmentsClose: PropTypes.func,
     currentUser: PropTypes.object.isRequired,
+    assignmentSwitchTab: PropTypes.func,
     // Required only for password setting. Probably should be changed
     firebase: PropTypes.any,
     match: PropTypes.object,
@@ -68,19 +71,19 @@ class Assignments extends React.Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(
-      courseAssignmentsOpen(this.props.match.params.courseId)
+    this.props.courseAssignmentsOpen(
+      this.props.match.params.courseId
     );
   }
 
   componentWillUnmount() {
-    this.props.dispatch(
-      courseAssignmentsClose(this.props.match.params.courseId)
+    this.props.courseAssignmentsClose(
+      this.props.match.params.courseId
     );
   }
 
   handleTabChange = (event, tabIndex) => {
-    this.props.dispatch(assignmentSwitchTab(tabIndex));
+    this.props.assignmentSwitchTab(tabIndex);
   };
 
   handlePasswordChange = event =>
@@ -401,6 +404,15 @@ const mapDispatchToProps = dispatch => ({
   ),
   assignmentShowAddDialog: () => (
     dispatch(assignmentShowAddDialog())
+  ),
+  assignmentSwitchTab: (tabIndex) => dispatch(
+    assignmentSwitchTab(tabIndex)
+  ),
+  courseAssignmentsOpen: (courseId) => dispatch(
+    courseAssignmentsOpen(courseId)
+  ),
+  courseAssignmentsClose: (courseId) => dispatch(
+    courseAssignmentsClose(courseId)
   ),
   dispatch
 });

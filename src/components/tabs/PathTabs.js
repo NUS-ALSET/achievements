@@ -16,7 +16,6 @@ import Zoom from "@material-ui/core/Zoom";
 import AddIcon from "@material-ui/icons/Add";
 
 import PathsTable from "../../components/tables/PathsTable";
-import { pathDialogShow } from "../../containers/Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 const PATHS_TAB_JOINED = 0;
@@ -25,7 +24,7 @@ const PATHS_TAB_PUBLIC = 2;
 
 class PathTabs extends React.Component {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    pathDialogShow: PropTypes.func.isRequired,
     paths: PropTypes.object,
     myPaths: PropTypes.object.isRequired,
     publicPaths: PropTypes.object,
@@ -39,7 +38,7 @@ class PathTabs extends React.Component {
   onAddPathClick = () => {
     this.setState({ currentTab: PATHS_TAB_OWNED });
 
-    this.props.dispatch(pathDialogShow());
+    this.props.pathDialogShow();
   };
 
   handleTabChange = (event, tabIndex) => {
@@ -47,7 +46,7 @@ class PathTabs extends React.Component {
   };
 
   render() {
-    const { dispatch, joinedPaths, myPaths, publicPaths } = this.props;
+    const { pathDialogShow, joinedPaths, myPaths, publicPaths } = this.props;
     let paths;
 
     switch (this.state.currentTab) {
@@ -117,8 +116,8 @@ class PathTabs extends React.Component {
           <Tab label="Public Paths" />
         </Tabs>
         <PathsTable
-          dispatch={dispatch}
           owner={this.state.currentTab === PATHS_TAB_OWNED}
+          pathDialogShow={pathDialogShow}
           paths={paths}
         />
       </Fragment>
