@@ -11,6 +11,7 @@ import { cohort } from "../containers/Cohort/reducer";
 import { path } from "../containers/Path/reducer";
 import { paths } from "../containers/Paths/reducer";
 import { problem } from "../containers/Activity/reducer";
+import { fetchDataDemo } from "../containers/IdeaLab/reducer";
 
 export default combineReducers({
   firebase,
@@ -23,5 +24,6 @@ export default combineReducers({
   cohort,
   path,
   paths,
-  problem
+  problem,
+  fetchDataDemo
 });
