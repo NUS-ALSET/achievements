@@ -30,7 +30,7 @@ describe("<PathsTable>", () => {
 
     const wrapper = shallow(
       <PathsTable
-        dispatch={mockDispatch}
+        pathDialogShow={mockDispatch}
         paths={{
           test1: {
             name: "test 1"
@@ -51,8 +51,8 @@ describe("<PathsTable>", () => {
 
     const wrapper = shallow(
       <PathsTable
-        dispatch={mockDispatch}
         owner={true}
+        pathDialogShow={mockDispatch}
         paths={{ test1: { name: "test 1" } }}
       />
     );
@@ -79,7 +79,7 @@ describe("<PathsTable>", () => {
 
     const wrapper = shallow(
       <PathsTable
-        dispatch={mockDispatch}
+        pathDialogShow={mockDispatch}
         paths={{ test1: { name: "test 1" } }}
       />
     );
