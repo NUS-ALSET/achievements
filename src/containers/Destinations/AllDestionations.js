@@ -8,7 +8,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Destinations from "./Destinations";
 
-function AllDestinations(props) {
+// duplicate code for *Destinations.js
+const AllDestinations = (props) => {
   const { destinations = [], dispatch } = props;
   return (
     <div>
