@@ -25,7 +25,7 @@ import { pathsOpen } from "./actions";
 import PathsTable from "../../components/tables/PathsTable";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
-export class Paths extends React.PureComponent {
+class Paths extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     myPaths: PropTypes.object,
