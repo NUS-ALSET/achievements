@@ -19,7 +19,7 @@ describe("<PathTabs>", () => {
   });
 
   it("should change tab", () => {
-    const wrapper = shallow(<PathTabs dispatch={mockDispatch} myPaths={{}} />);
+    const wrapper = shallow(<PathTabs pathDialogShow={mockDispatch} myPaths={{}} />);
 
     expect(wrapper.state("currentTab")).toEqual(0);
     wrapper.find(Tabs).simulate("change", {}, 1);
@@ -32,7 +32,7 @@ describe("<PathTabs>", () => {
     const publicPaths = { cafe: "babe" };
     let wrapper = shallow(
       <PathTabs
-        dispatch={mockDispatch}
+        pathDialogShow={mockDispatch}
         joinedPaths={joinedPaths}
         myPaths={myPaths}
         publicPaths={publicPaths}
@@ -56,7 +56,7 @@ describe("<PathTabs>", () => {
   });
 
   it("should throw error", () => {
-    const wrapper = shallow(<PathTabs dispatch={mockDispatch} myPaths={{}} />);
+    const wrapper = shallow(<PathTabs pathDialogShow={mockDispatch} myPaths={{}} />);
 
     expect(() => wrapper.setState({ currentTab: 3 })).toThrow(
       "Wrong tab index"
@@ -64,7 +64,7 @@ describe("<PathTabs>", () => {
   });
 
   it("should dispatch action", () => {
-    const wrapper = shallow(<PathTabs dispatch={mockDispatch} myPaths={{}} />);
+    const wrapper = shallow(<PathTabs pathDialogShow={mockDispatch} myPaths={{}} />);
 
     wrapper.find(Button).simulate("click");
     expect(

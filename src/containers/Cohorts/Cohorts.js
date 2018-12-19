@@ -139,7 +139,7 @@ const mapDispatchToProps = dispatch => ({
   onChangeTab: (e, tabIndex) => dispatch(cohortsChangeTab(tabIndex)),
   onEditCohortClick: cohort => dispatch(addCohortDialogShow(cohort)),
   onCloseAddCohortDialg: () => dispatch(addCohortDialogHide()),
-  onAddCohortRequest: (cohortData) => dispatch(addCohortRequest(cohortData))
+  onAddCohortRequest: cohortData => dispatch(addCohortRequest(cohortData))
 });
 
 export default compose(

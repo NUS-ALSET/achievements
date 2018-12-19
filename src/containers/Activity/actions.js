@@ -161,17 +161,3 @@ export const problemSolutionSubmitFail = (
   payload,
   reason
 });
-
-// actions for homeV3 page
-
-export const FETCH_PUBLIC_PATH_ACTIVITIES = "FETCH_PUBLIC_PATH_ACTIVITIES";
-export const fetchPublicPathActivies = () => ({
-  type: FETCH_PUBLIC_PATH_ACTIVITIES
-});
-
-export const FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS =
-  "FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS";
-export const fetchPublicPathActiviesSuccess = payload => ({
-  type: FETCH_PUBLIC_PATH_ACTIVITIES_SUCCESS,
-  payload
-});

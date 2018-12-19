@@ -107,40 +107,35 @@ class YouTubeActivity extends React.PureComponent {
           }
           videoId={problem.youtubeURL.replace(/.*=/, "")}
         />
-        {solution !== null &&
-          problem.questionAfter && (
-            <ActivityQuestion
-              question="questionAfter"
-              setAnswer={this.setAnswer}
-              solution={solution}
-            />
-          )}
-        {solution !== null &&
-          problem.questionAnswer && (
-            <ActivityQuestion
-              question="questionAnswer"
-              setAnswer={this.setAnswer}
-              solution={solution}
-            />
-          )}
-        {solution !== null &&
-          problem.topics && (
-            <ActivityQuestion
-              question="topics"
-              setAnswer={this.setAnswer}
-              solution={solution}
-            />
-          )}
-        {solution !== null &&
-          problem.questionCustom &&
-          problem.customText && (
-            <ActivityQuestion
-              label={problem.customText}
-              question="questionCustom"
-              setAnswer={this.setAnswer}
-              solution={solution}
-            />
-          )}
+        {solution !== null && problem.questionAfter && (
+          <ActivityQuestion
+            question="questionAfter"
+            setAnswer={this.setAnswer}
+            solution={solution}
+          />
+        )}
+        {solution !== null && problem.questionAnswer && (
+          <ActivityQuestion
+            question="questionAnswer"
+            setAnswer={this.setAnswer}
+            solution={solution}
+          />
+        )}
+        {solution !== null && problem.topics && (
+          <ActivityQuestion
+            question="topics"
+            setAnswer={this.setAnswer}
+            solution={solution}
+          />
+        )}
+        {solution !== null && problem.questionCustom && problem.customText && (
+          <ActivityQuestion
+            label={problem.customText}
+            question="questionCustom"
+            setAnswer={this.setAnswer}
+            solution={solution}
+          />
+        )}
       </Fragment>
     );
   }

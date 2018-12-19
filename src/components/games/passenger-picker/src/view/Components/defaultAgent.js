@@ -5,7 +5,7 @@ def getPlayersCommands(world):
   result = random.choice(foo)
   print(result)
 	return result`;
-	
+
 export const agentJavascriptFunctionCode = `function getPlayersCommands(world) {
 	var findShortestPath = function(arr, pointA, pointB, charId){
 		var heuristic = function (a,b){

@@ -25,10 +25,7 @@ import GroupIcon from "@material-ui/icons/Group";
 import AssignmentsEditorTable from "../tables/AssignmentsEditorTable";
 import AssignmentsTable from "../tables/AssignmentsTable";
 import DeleteAssignmentDialog from "../dialogs/DeleteAssignmentDialog";
-import {
-  assignmentsAssistantsShowRequest,
-  assignmentShowAddDialog
-} from "../../containers/Assignments/actions";
+
 
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
@@ -49,7 +46,8 @@ class InstructorTabs extends React.PureComponent {
     match: PropTypes.object.isRequired,
     paths: PropTypes.array,
     problems: PropTypes.array,
-
+    handleAddAssignmentDialog: PropTypes.func,
+    handleShowAssistants: PropTypes.func,
     dispatch: PropTypes.func.isRequired,
     closeDialog: PropTypes.func.isRequired,
     handleTabChange: PropTypes.func.isRequired
@@ -63,7 +61,9 @@ class InstructorTabs extends React.PureComponent {
       ui,
       currentUser,
       dispatch,
-      closeDialog
+      closeDialog,
+      handleAddAssignmentDialog,
+      handleShowAssistants
     } = this.props;
 
     switch (ui.currentTab) {
@@ -85,7 +85,7 @@ class InstructorTabs extends React.PureComponent {
                 <Zoom in={true} unmountOnExit>
                   <Button
                     color="primary"
-                    onClick={() => this.onAddAssignmentClick()}
+                    onClick={() => handleAddAssignmentDialog()}
                     style={{
                       backfaceVisibility: "hidden",
                       position: "fixed",
@@ -99,7 +99,10 @@ class InstructorTabs extends React.PureComponent {
                 </Zoom>
                 <Zoom in={true} unmountOnExit>
                   <Button
-                    onClick={this.assignmentsAssistantsShowRequest}
+                    onClick={
+                      () => handleShowAssistants(
+                        this.props.match.params.courseId
+                    )}
                     style={{
                       backfaceVisibility: "hidden",
                       position: "fixed",
@@ -117,14 +120,17 @@ class InstructorTabs extends React.PureComponent {
                 <Button
                   className={classes.buttonAction}
                   color="primary"
-                  onClick={this.onAddAssignmentClick}
+                  onClick={() => handleAddAssignmentDialog()}
                   variant="contained"
                 >
                   Add assignment
                 </Button>
                 <Button
                   className={classes.buttonAction}
-                  onClick={this.assignmentsAssistantsShowRequest}
+                  onClick={
+                    () => handleShowAssistants(
+                      this.props.match.params.courseId
+                  )}
                   variant="contained"
                 >
                   Assistants
@@ -157,12 +163,6 @@ class InstructorTabs extends React.PureComponent {
         return <div>Something goes wrong</div>;
     }
   }
-
-  onAddAssignmentClick = () => this.props.dispatch(assignmentShowAddDialog());
-  assignmentsAssistantsShowRequest = () =>
-    this.props.dispatch(
-      assignmentsAssistantsShowRequest(this.props.match.params.courseId)
-    );
 
   render() {
     const { ui, handleTabChange } = this.props;

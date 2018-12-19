@@ -212,18 +212,17 @@ class JupyterNotebook extends React.PureComponent {
         </Typography>
         <br />
         {solution !== null && action && this.getEditor()}
-        {solution &&
-          solution.json && (
-            <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
-              <div
-                style={{
-                  textAlign: "left"
-                }}
-              >
-                <NotebookPreview notebook={solution.json} />
-              </div>
-            </Collapse>
-          )}
+        {solution && solution.json && (
+          <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
+            <div
+              style={{
+                textAlign: "left"
+              }}
+            >
+              <NotebookPreview notebook={solution.json} />
+            </div>
+          </Collapse>
+        )}
         {solution && solution.loading && <CircularProgress />}
       </Paper>
     );

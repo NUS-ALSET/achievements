@@ -82,44 +82,53 @@ class AddActivityDialog extends React.PureComponent {
 
   fetchedGithubURL = "";
 
-  componentWillReceiveProps(nextProps) {
-    if ((nextProps.fetchGithubFilesStatus || "").length > 0) {
+  componentDidUpdate(prevProps) {
+    const {
+      activity,
+      fetchGithubFilesStatus,
+      open
+    } = this.props;
+
+    if ((fetchGithubFilesStatus || "").length > 0) {
       this.handelfetchGithubFilesStatus(
-        nextProps.fetchGithubFilesStatus,
-        nextProps.activity
+        fetchGithubFilesStatus,
+        activity
       );
       return;
     }
-    if ((this.props || {}).open !== nextProps.open) {
+    if ((prevProps || {}).open !== open) {
       this.resetState();
     }
-    if (nextProps.activity) {
+    if (activity) {
       let state = {};
       if (
-        nextProps.activity.name &&
-        AddName.test(nextProps.activity.name) &&
-        NoStartWhiteSpace.test(nextProps.activity.name)
+        activity.name &&
+        AddName.test(activity.name) &&
+        NoStartWhiteSpace.test(activity.name)
       ) {
         this.setState({ isCorrectInput: true });
       }
       if (
-        [ACTIVITY_TYPES.jupyterInline.id, ACTIVITY_TYPES.jupyter.id].includes(
-          nextProps.activity.type
+        [
+          ACTIVITY_TYPES.jupyterInline.id,
+          ACTIVITY_TYPES.jupyter.id
+        ].includes(
+          activity.type
         )
       ) {
         state = {
-          code: nextProps.activity.code || 1,
-          frozen: nextProps.activity.frozen || 1
+          code: activity.code || 1,
+          frozen: activity.frozen || 1
         };
-      } else if (nextProps.activity.type === ACTIVITY_TYPES.jest.id) {
+      } else if (activity.type === ACTIVITY_TYPES.jest.id) {
         state = {
-          githubURL: nextProps.activity.githubURL || "",
-          files: nextProps.activity.files || []
+          githubURL: activity.githubURL || "",
+          files: activity.files || []
         };
-        this.fetchedGithubURL = nextProps.activity.githubURL || "";
+        this.fetchedGithubURL = activity.githubURL || "";
       }
       this.setState({
-        ...nextProps.activity,
+        ...activity,
         ...state
       });
     }
@@ -150,8 +159,7 @@ class AddActivityDialog extends React.PureComponent {
       this.state.type ||
       (activity && activity.type) ||
       "text";
-    console.error("type is: ", type)
-    /*if (
+    /* if (
       ["jupyter", "jupyterInline"].includes(type) &&
       !isLoaded(activityExampleSolution)
     ) {
@@ -401,46 +409,45 @@ class AddActivityDialog extends React.PureComponent {
                 value={activity.githubURL || ""}
               />
             </FormControl>
-            {this.state.files &&
-              this.state.files.length > 0 && (
-                <Fragment>
-                  <Typography
-                    gutterBottom
-                    style={{ margin: "12px 0px" }}
-                    variant="body2"
-                  >
-                    <CheckBoxIcon style={{ float: "left" }} />
-                    Check files to allow write access for users.
-                  </Typography>
-                  <Typography gutterBottom variant="body2">
-                    {this.fetchedGithubURL && (
-                      <LinkIcon style={{ float: "left" }} />
-                    )}
-                    &nbsp;
-                    {this.fetchedGithubURL}
-                  </Typography>
-                  {this.state.files.map(
-                    file =>
-                      file.type === "file" && (
-                        <ListItem
-                          button
-                          dense
-                          key={file.path}
-                          role={undefined}
-                          style={{ padding: "0px 25px" }}
-                        >
-                          <Checkbox
-                            checked={!file.readOnly}
-                            disableRipple
-                            onChange={() => this.handleReadOnlyFiles(file.path)}
-                            tabIndex={-1}
-                          />
-                          <ListItemText primary={file.path} />
-                        </ListItem>
-                      )
+            {this.state.files && this.state.files.length > 0 && (
+              <Fragment>
+                <Typography
+                  gutterBottom
+                  style={{ margin: "12px 0px" }}
+                  variant="body2"
+                >
+                  <CheckBoxIcon style={{ float: "left" }} />
+                  Check files to allow write access for users.
+                </Typography>
+                <Typography gutterBottom variant="body2">
+                  {this.fetchedGithubURL && (
+                    <LinkIcon style={{ float: "left" }} />
                   )}
-                </Fragment>
-              )}
+                  &nbsp;
+                  {this.fetchedGithubURL}
+                </Typography>
+                {this.state.files.map(
+                  file =>
+                    file.type === "file" && (
+                      <ListItem
+                        button
+                        dense
+                        key={file.path}
+                        role={undefined}
+                        style={{ padding: "0px 25px" }}
+                      >
+                        <Checkbox
+                          checked={!file.readOnly}
+                          disableRipple
+                          onChange={() => this.handleReadOnlyFiles(file.path)}
+                          tabIndex={-1}
+                        />
+                        <ListItemText primary={file.path} />
+                      </ListItem>
+                    )
+                )}
+              </Fragment>
+            )}
           </Fragment>
         );
       case ACTIVITY_TYPES.gameTournament.id:
@@ -503,9 +510,8 @@ class AddActivityDialog extends React.PureComponent {
 
   handleReadOnlyFiles = filePath => {
     this.setState(() => ({
-      files: this.state.files.map(
-        file =>
-          file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
+      files: this.state.files.map(file =>
+        file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
       )
     }));
   };

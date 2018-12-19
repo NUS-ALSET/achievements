@@ -21,11 +21,11 @@ import sagas from "./sagas";
 import { getProblems } from "./selectors";
 import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { pathsOpen } from "./actions";
+import { pathsOpen, pathDialogShow } from "./actions";
 import PathsTable from "../../components/tables/PathsTable";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
-export class Paths extends React.PureComponent {
+class Paths extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
     myPaths: PropTypes.object,
@@ -36,15 +36,26 @@ export class Paths extends React.PureComponent {
     ui: PropTypes.object,
     // FIXIT: figure out correct type
     uid: PropTypes.any,
-    fetchedPaths: PropTypes.bool
+    fetchedPaths: PropTypes.bool,
+    pathsOpen: PropTypes.func,
+    pathDialogShow: PropTypes.func
   };
 
   componentDidMount() {
-    this.props.dispatch(pathsOpen());
+    this.props.pathsOpen();
   }
 
   render() {
-    const { dispatch, myPaths, joinedPaths, publicPaths, ui, uid, fetchedPaths } = this.props;
+    const {
+      dispatch,
+      myPaths,
+      joinedPaths,
+      publicPaths,
+      ui,
+      uid,
+      fetchedPaths,
+      pathDialogShow
+    } = this.props;
 
     return (
       <Fragment>
@@ -54,24 +65,25 @@ export class Paths extends React.PureComponent {
             Loading Paths...
             <LinearProgress />
           </Fragment>
+        ) : uid ? (
+          <Fragment>
+            <PathTabs
+              pathDialogShow={pathDialogShow}
+              joinedPaths={joinedPaths}
+              myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+              publicPaths={publicPaths}
+            />
+            <AddPathDialog
+              dispatch={dispatch}
+              open={ui.dialog.type === "PathChange"}
+              path={ui.dialog.value}
+            />
+          </Fragment>
         ) : (
-          uid ? (
-            <Fragment>
-              <PathTabs
-                dispatch={dispatch}
-                joinedPaths={joinedPaths}
-                myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
-                publicPaths={publicPaths}
-              />
-              <AddPathDialog
-                dispatch={dispatch}
-                open={ui.dialog.type === "PathChange"}
-                path={ui.dialog.value}
-              />
-            </Fragment>
-          ) : (
-            <PathsTable dispatch={dispatch} paths={publicPaths || {}} />
-          )
+          <PathsTable
+            pathDialogShow={pathDialogShow}
+            paths={publicPaths || {}}
+          />
         )}
       </Fragment>
     );
@@ -89,6 +101,16 @@ const mapStateToProps = state => ({
   joinedPaths: state.paths.joinedPaths,
   problems: getProblems(state),
   fetchedPaths: state.paths.fetchedPaths
+});
+
+const mapDispatchToProps = dispatch => ({
+  pathsOpen: () => dispatch(
+    pathsOpen()
+  ),
+  pathDialogShow: (pathInfo) => dispatch(
+    pathDialogShow(pathInfo)
+  ),
+  dispatch
 });
 
 export default compose(
@@ -113,5 +135,5 @@ export default compose(
           ]
     );
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Paths);

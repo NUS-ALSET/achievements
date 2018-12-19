@@ -294,14 +294,13 @@ export const assignments = (
     case COURSE_MEMBER_ACHIEVEMENTS_REFETCH: {
       return {
         ...state,
-        courseMembers: state.courseMembers.map(
-          courseMember =>
-            courseMember.id === action.studentId
-              ? {
-                  ...courseMember,
-                  achievements: action.achievements
-                }
-              : courseMember
+        courseMembers: state.courseMembers.map(courseMember =>
+          courseMember.id === action.studentId
+            ? {
+                ...courseMember,
+                achievements: action.achievements
+              }
+            : courseMember
         )
       };
     }

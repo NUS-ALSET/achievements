@@ -20,7 +20,9 @@ describe("<AddPathDialog>", () => {
   //   expect(wrapper).toMatchSnapshot();
   // });
   it("should remove empty", () => {
-    const wrapper = shallow(<AddPathDialog dispatch={mockSnapshot} open={true} />);
+    const wrapper = shallow(
+      <AddPathDialog dispatch={mockSnapshot} open={true} />
+    );
 
     expect(wrapper.instance().removeEmpty({ name: "" })).toEqual({});
     expect(wrapper.instance().removeEmpty({ name: "test" })).toEqual({
@@ -29,7 +31,9 @@ describe("<AddPathDialog>", () => {
   });
 
   it("should dispatch `pathChangeRequest` for new path", () => {
-    const wrapper = shallow(<AddPathDialog dispatch={mockSnapshot} open={true} />);
+    const wrapper = shallow(
+      <AddPathDialog dispatch={mockSnapshot} open={true} />
+    );
     const commitButton = wrapper.find(Button).at(1);
 
     commitButton.simulate("click");

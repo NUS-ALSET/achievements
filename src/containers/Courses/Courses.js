@@ -158,8 +158,8 @@ class Courses extends React.Component {
         </Tabs>
         <CoursesTable
           courses={courses || {}}
-          fetchedCourses={fetchedCourses}
           dispatch={dispatch}
+          fetchedCourses={fetchedCourses}
           onDeleteCourseClick={this.onDeleteCourseClick}
           ownerId={ownerId}
         />

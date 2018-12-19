@@ -47,6 +47,9 @@
         ".read": "auth != null"
       }
     },
+    "analytics": {
+      ".read": true
+    },
     "assignments": {
       "$courseKey": {
         ".read": "auth != null && root.child('courses/' + $courseKey).exists() &&
@@ -254,6 +257,7 @@
       ".indexOn": ["createdAt", "type"]
     },
     "moreProblemsRequests": {
+      ".read": "auth != null",
       "$requestKey": {
         ".write": "auth != null &&
           newData.child('sender').exists() &&

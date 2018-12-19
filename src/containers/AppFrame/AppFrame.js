@@ -14,7 +14,6 @@ import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
 
 // for Routes
-// import Home from "../Home/AltHome";
 // TODO: both account/ and profile/ point to this Account component
 // need to figure out why need both?
 import Account from "../../containers/Account/Account";
@@ -32,7 +31,6 @@ import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
-import HomeV3 from "../HomeV3/HomeV3";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -47,9 +45,10 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
-//Test
-import Debug from "../Debug/Debug";
-import Brenda from "../Brenda/Brenda";
+// Idea lab for trial
+import FetchDataDemo from "../IdeaLab/FetchDataDemo";
+import Brenda from "../IdeaLab/Brenda/Brenda";
+import fusionChartDemo from "../IdeaLab/Ben/fusionChartDemo";
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -255,7 +254,6 @@ class AppFrame extends React.Component {
             />
             <main className={classes.content}>
               <Route component={HomeV2} exact path="(/|/home)" />
-              <Route component={HomeV3} exact path="/homev3" />
               <Route component={Admin} exact path="/admin" />
               <Route component={Courses} exact path="/courses" />
               <Route component={Assignments} exact path="/courses/:courseId" />
@@ -266,7 +264,12 @@ class AppFrame extends React.Component {
               <Route component={Brenda} exact path="/brenda" />
               <Route component={AllDestinations} exact path="/destinations" />
               <Route component={MyDestinations} exact path="/my-destinations" />
-              <Route component={Debug} exact path="/debug" />
+              <Route component={FetchDataDemo} exact path="/fetchdatademo" />
+              <Route
+                component={fusionChartDemo}
+                exact
+                path="/fusionChartDemo"
+              />
               <Route
                 component={ViewDestination}
                 exact

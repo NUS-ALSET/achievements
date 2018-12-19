@@ -12,7 +12,9 @@ import {
   assignmentAddAssistantRequest,
   assignmentsSolutionsRefreshRequest,
   assignmentsShowHiddenToggle,
-  assignmentRemoveAssistantRequest
+  assignmentRemoveAssistantRequest,
+  assignmentsAssistantsShowRequest,
+  assignmentShowAddDialog
 } from "./actions";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -49,10 +51,15 @@ import { courseInfo } from "../../types/index";
 class Assignments extends React.Component {
   static propTypes = {
     auth: PropTypes.object,
+    assignmentsAssistantsShowRequest: PropTypes.func,
+    assignmentShowAddDialog: PropTypes.func,
     dispatch: PropTypes.func,
     classes: PropTypes.any,
     course: courseInfo,
+    courseAssignmentsOpen: PropTypes.func,
+    courseAssignmentsClose: PropTypes.func,
     currentUser: PropTypes.object.isRequired,
+    assignmentSwitchTab: PropTypes.func,
     // Required only for password setting. Probably should be changed
     firebase: PropTypes.any,
     match: PropTypes.object,
@@ -64,19 +71,19 @@ class Assignments extends React.Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(
-      courseAssignmentsOpen(this.props.match.params.courseId)
+    this.props.courseAssignmentsOpen(
+      this.props.match.params.courseId
     );
   }
 
   componentWillUnmount() {
-    this.props.dispatch(
-      courseAssignmentsClose(this.props.match.params.courseId)
+    this.props.courseAssignmentsClose(
+      this.props.match.params.courseId
     );
   }
 
   handleTabChange = (event, tabIndex) => {
-    this.props.dispatch(assignmentSwitchTab(tabIndex));
+    this.props.assignmentSwitchTab(tabIndex);
   };
 
   handlePasswordChange = event =>
@@ -204,7 +211,16 @@ class Assignments extends React.Component {
   }
 
   render() {
-    const { ui, auth, dispatch, course, currentUser, readOnly } = this.props;
+    const {
+      ui,
+      auth,
+      assignmentsAssistantsShowRequest,
+      assignmentShowAddDialog,
+      dispatch,
+      course,
+      currentUser,
+      readOnly
+    } = this.props;
 
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
@@ -222,6 +238,8 @@ class Assignments extends React.Component {
           course={course}
           currentUser={currentUser}
           dispatch={dispatch}
+          handleAddAssignmentDialog={assignmentShowAddDialog}
+          handleShowAssistants={assignmentsAssistantsShowRequest}
           handleTabChange={this.handleTabChange}
           paths={[]}
           problems={[]}
@@ -380,6 +398,25 @@ const mapStateToProps = (state, ownProps) => ({
   readOnly: state.problem && state.problem.readOnly
 });
 
+const mapDispatchToProps = dispatch => ({
+  assignmentsAssistantsShowRequest: courseId => (
+    dispatch(assignmentsAssistantsShowRequest(courseId))
+  ),
+  assignmentShowAddDialog: () => (
+    dispatch(assignmentShowAddDialog())
+  ),
+  assignmentSwitchTab: (tabIndex) => dispatch(
+    assignmentSwitchTab(tabIndex)
+  ),
+  courseAssignmentsOpen: (courseId) => dispatch(
+    courseAssignmentsOpen(courseId)
+  ),
+  courseAssignmentsClose: (courseId) => dispatch(
+    courseAssignmentsClose(courseId)
+  ),
+  dispatch
+});
+
 export default compose(
   withRouter,
   firebaseConnect((ownProps, store) => {
@@ -400,5 +437,5 @@ export default compose(
       `/assignments/${courseId}`
     ];
   }),
-  connect(mapStateToProps)
+  connect(mapStateToProps, mapDispatchToProps)
 )(Assignments);

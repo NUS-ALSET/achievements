@@ -111,13 +111,8 @@ export const pathActivitiesSelector = createSelector(
         solved: solutions[path.id] && solutions[path.id][id]
       }))
       .filter(problem => problem.path === path.id)
-      .sort(
-        (a, b) =>
-          a.orderIndex === b.orderIndex
-            ? 0
-            : a.orderIndex < b.orderIndex
-              ? -1
-              : 1
+      .sort((a, b) =>
+        a.orderIndex === b.orderIndex ? 0 : a.orderIndex < b.orderIndex ? -1 : 1
       )
   })
 );

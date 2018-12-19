@@ -472,13 +472,12 @@ export class CoursesService {
             }
           }).then(jsonValue => {
             const editableBlockCode = jsonValue.cells
-              .map(
-                c =>
-                  c.cell_type === "code"
-                    ? c.source
-                        .map(line => (line[0] === "!" ? `#${line}` : line))
-                        .join("")
-                    : ""
+              .map(c =>
+                c.cell_type === "code"
+                  ? c.source
+                      .map(line => (line[0] === "!" ? `#${line}` : line))
+                      .join("")
+                  : ""
               )
               .join("");
             const data = {
