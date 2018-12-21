@@ -49,6 +49,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import FetchDataDemo from "../IdeaLab/FetchDataDemo";
 import Brenda from "../IdeaLab/Brenda/Brenda";
 import fusionChartDemo from "../IdeaLab/Ben/fusionChartDemo";
+import ZiYun from "../Idealab/ZiYun/ZiYun";
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -265,6 +266,7 @@ class AppFrame extends React.Component {
               <Route component={AllDestinations} exact path="/destinations" />
               <Route component={MyDestinations} exact path="/my-destinations" />
               <Route component={FetchDataDemo} exact path="/fetchdatademo" />
+              <Route component={ZiYun} exact path="/ziyun" />
               <Route
                 component={fusionChartDemo}
                 exact
