@@ -169,6 +169,21 @@ class AppFrame extends React.Component {
     this.props.dispatch(signOutRequest());
   };
 
+  getDynamicPathTitle = () => {
+    if (!this.props.history.location.pathname) {
+      return "Achievements";
+    }
+    const dynamicPathname = this.props.history.location.pathname;
+    if (dynamicPathname === "/") {
+      return "Achievements";
+    }
+    const dynamicPathTitle = dynamicPathname
+      .replace(/^\//, "")
+      .replace(/\b[a-z]/g, name => name.toUpperCase())
+      .replace(/[/].*/, "");
+    return dynamicPathTitle;
+  };
+
   render() {
     const {
       anchorElId,
@@ -204,7 +219,7 @@ class AppFrame extends React.Component {
                   noWrap
                   variant="h6"
                 >
-                  Achievements
+                  {this.getDynamicPathTitle()}
                 </Typography>
 
                 {userId ? (
