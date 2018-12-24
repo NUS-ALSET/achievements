@@ -60,31 +60,47 @@ class Paths extends React.PureComponent {
     return (
       <Fragment>
         <Breadcrumbs paths={[{ label: "Paths" }]} />
-        {!fetchedPaths ? (
-          <Fragment>
-            Loading Paths...
-            <LinearProgress />
-          </Fragment>
-        ) : uid ? (
-          <Fragment>
-            <PathTabs
-              pathDialogShow={pathDialogShow}
-              joinedPaths={joinedPaths}
-              myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
-              publicPaths={publicPaths}
-            />
-            <AddPathDialog
-              dispatch={dispatch}
-              open={ui.dialog.type === "PathChange"}
-              path={ui.dialog.value}
-            />
-          </Fragment>
-        ) : (
-          <PathsTable
-            pathDialogShow={pathDialogShow}
-            paths={publicPaths || {}}
-          />
-        )}
+        {uid
+          ? (
+            !fetchedPaths
+            ? (
+              <Fragment>
+                Loading Paths...
+                <LinearProgress />
+              </Fragment>
+            )
+            : (
+              <Fragment>
+                <PathTabs
+                  pathDialogShow={pathDialogShow}
+                  joinedPaths={joinedPaths}
+                  myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+                  publicPaths={publicPaths}
+                />
+                <AddPathDialog
+                  dispatch={dispatch}
+                  open={ui.dialog.type === "PathChange"}
+                  path={ui.dialog.value}
+                />
+              </Fragment>
+            )
+          )
+          : (
+            !publicPaths
+            ? (
+              <Fragment>
+                Loading Paths...
+                <LinearProgress />
+              </Fragment>
+            )
+            : (
+              <PathsTable
+                pathDialogShow={pathDialogShow}
+                paths={publicPaths || {}}
+              />
+            )
+          )
+        }
       </Fragment>
     );
   }
