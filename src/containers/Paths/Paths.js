@@ -36,7 +36,6 @@ class Paths extends React.PureComponent {
     ui: PropTypes.object,
     // FIXIT: figure out correct type
     uid: PropTypes.any,
-    fetchedPaths: PropTypes.bool,
     pathsOpen: PropTypes.func,
     pathDialogShow: PropTypes.func
   };
@@ -53,7 +52,6 @@ class Paths extends React.PureComponent {
       publicPaths,
       ui,
       uid,
-      fetchedPaths,
       pathDialogShow
     } = this.props;
 
@@ -62,10 +60,10 @@ class Paths extends React.PureComponent {
         <Breadcrumbs paths={[{ label: "Paths" }]} />
         {uid
           ? (
-            !fetchedPaths
+            !joinedPaths
             ? (
               <Fragment>
-                Loading Paths...
+                Loading Your Paths...
                 <LinearProgress />
               </Fragment>
             )
@@ -89,7 +87,7 @@ class Paths extends React.PureComponent {
             !publicPaths
             ? (
               <Fragment>
-                Loading Paths...
+                Loading Public Paths...
                 <LinearProgress />
               </Fragment>
             )
@@ -115,8 +113,7 @@ const mapStateToProps = state => ({
   myPaths: state.firebase.data.myPaths,
   publicPaths: state.firebase.data.publicPaths,
   joinedPaths: state.paths.joinedPaths,
-  problems: getProblems(state),
-  fetchedPaths: state.paths.fetchedPaths
+  problems: getProblems(state)
 });
 
 const mapDispatchToProps = dispatch => ({

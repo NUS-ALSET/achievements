@@ -21,8 +21,7 @@ export const paths = (
       dialog: {
         type: ""
       }
-    },
-    fetchedPaths: false
+    }
   },
   action
 ) => {
@@ -57,8 +56,7 @@ export const paths = (
     case PATHS_JOINED_FETCH_SUCCESS: {
       return {
         ...state,
-        joinedPaths: action.paths,
-        fetchedPaths: true
+        joinedPaths: action.paths
       };
     }
     case PATH_TOGGLE_JOIN_STATUS_REQUEST:
