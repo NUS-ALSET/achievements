@@ -3,7 +3,8 @@ import {
   LOGIN_DEAUTHENTICATION,
   LOGIN_MENU_CLOSE,
   LOGIN_MENU_OPEN,
-  MAIN_DRAWER_TOGGLE
+  MAIN_DRAWER_TOGGLE,
+  GET_DYNAMIC_PATHTITLE
 } from "./actions";
 
 export const appFrame = (
@@ -13,7 +14,8 @@ export const appFrame = (
       displayName: ""
     },
     dropdownAnchorElId: false,
-    mainDrawerOpen: false
+    mainDrawerOpen: false,
+    dynamicPathTitle: ""
   },
   action
 ) => {
@@ -49,6 +51,19 @@ export const appFrame = (
         ...state,
         mainDrawerOpen:
           action.status === undefined ? !state.mainDrawerOpen : action.status
+      };
+    case GET_DYNAMIC_PATHTITLE:
+      return {
+          ...state,
+          dynamicPathTitle:
+            action.pathname
+              ? action.pathname === "/"
+                ? "Achievements"
+                : action.pathname
+                  .replace(/^\//, "")
+                  .replace(/\b[a-z]/g, name => name.toUpperCase())
+                  .replace(/[/].*/, "")
+              : "getting the title"
       };
     default:
       return state;

@@ -4,7 +4,12 @@ import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import { ConnectedRouter as Router } from "connected-react-router";
 
-import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
+import {
+  loginMenuClose,
+  loginMenuOpen,
+  mainDrawerToggle,
+  getDynamicPathtitle
+} from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
 
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -125,24 +130,23 @@ class AppFrame extends React.Component {
     mainDrawerOpen: PropTypes.bool,
     isAdmin: PropTypes.bool,
     userName: PropTypes.string,
-    userId: PropTypes.string
+    userId: PropTypes.string,
+    routerPathname: PropTypes.string,
+    dynamicPathTitle: PropTypes.string
   };
 
-  shouldComponentUpdate(newProps) {
-    const fields = [
-      "anchorElId",
-      "mainDrawerOpen",
-      "isAdmin",
-      "userName",
-      "userId"
-    ];
+  componentDidMount() {
+    this.props.dispatch(getDynamicPathtitle(
+      this.props.history.location.pathname
+    ));
+  }
 
-    for (const field of fields) {
-      if (this.props[field] !== newProps[field]) {
-        return true;
-      }
+  componentDidUpdate(prevProps) {
+    if (prevProps.routerPathname !== this.props.routerPathname) {
+      this.props.dispatch(getDynamicPathtitle(
+        this.props.history.location.pathname
+      ));
     }
-    return false;
   }
 
   handleDrawerClose = () => {
@@ -167,21 +171,6 @@ class AppFrame extends React.Component {
 
   handleLogout = () => {
     this.props.dispatch(signOutRequest());
-  };
-
-  getDynamicPathTitle = () => {
-    if (!this.props.history.location.pathname) {
-      return "Achievements";
-    }
-    const dynamicPathname = this.props.history.location.pathname;
-    if (dynamicPathname === "/") {
-      return "Achievements";
-    }
-    const dynamicPathTitle = dynamicPathname
-      .replace(/^\//, "")
-      .replace(/\b[a-z]/g, name => name.toUpperCase())
-      .replace(/[/].*/, "");
-    return dynamicPathTitle;
   };
 
   render() {
@@ -219,7 +208,7 @@ class AppFrame extends React.Component {
                   noWrap
                   variant="h6"
                 >
-                  {this.getDynamicPathTitle()}
+                  {this.props.dynamicPathTitle}
                 </Typography>
 
                 {userId ? (
@@ -314,6 +303,8 @@ const mapStateToProps = state => ({
   mainDrawerOpen: state.appFrame.mainDrawerOpen,
   userName: state.firebase.auth.displayName,
   userId: state.firebase.auth.uid,
-  isAdmin: state.account.isAdmin
+  isAdmin: state.account.isAdmin,
+  dynamicPathTitle: state.appFrame.dynamicPathTitle,
+  routerPathname: state.router.location.pathname
 });
 export default withStyles(styles)(connect(mapStateToProps)(AppFrame));
