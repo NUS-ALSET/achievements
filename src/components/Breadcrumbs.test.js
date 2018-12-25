@@ -1,7 +1,7 @@
 import React from "react";
 import { createMount } from "@material-ui/core/test-utils";
 import Button from "@material-ui/core/Button";
-import Breadcrumbs from "../Breadcrumbs";
+import Breadcrumbs from "./Breadcrumbs";
 
 describe("<Breadcrumbs>", () => {
   let mount;
