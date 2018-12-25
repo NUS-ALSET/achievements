@@ -1,7 +1,7 @@
 import React from "react";
 import NotificationArea from "./NotificationArea";
 import IconButton from "@material-ui/core/IconButton";
-import Enzyme, { shallow, render, mount } from "enzyme";
+import { shallow, mount } from "enzyme";
 import sinon from "sinon";
 
 describe("<NotificationArea>", () => {
