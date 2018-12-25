@@ -2,9 +2,9 @@
 
 import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
-import Recommendations from "../Recommendations";
+import Recommendations from "./Recommendations";
 
-import PathCard from "../cards/PathCard";
+import PathCard from "./cards/PathCard";
 
 describe("<Recommendations/>", () => {
   let shallow;
