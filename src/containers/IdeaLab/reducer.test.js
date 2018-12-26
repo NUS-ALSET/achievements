@@ -1,7 +1,6 @@
-import { fetchDataDemo } from "./reducer"
+import { fetchDataDemo as reducer } from "./reducer"
 import * as actions from "./actions"
 
-let reducer = fetchDataDemo
 
 describe("FetchDataDemo reducer", () => {
   it("should return the initial state when initialize store", () => {

@@ -1,8 +1,6 @@
-import { appFrame, initialState } from "./reducer"
+import { appFrame as reducer, initialState } from "./reducer"
 import * as actions from "./actions"
 
-
-let reducer = appFrame
 
 describe("AppFrame reducer", () => {
   it("should return the initial state when initialize store", () => {
