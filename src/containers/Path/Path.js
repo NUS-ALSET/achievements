@@ -9,12 +9,10 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
 
-import { APP_SETTING } from "../../achievementsApp/config";
-
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Button from "@material-ui/core/Button";
-import Fab from "@material-ui/core/Fab";
+
 import Toolbar from "@material-ui/core/Toolbar";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
@@ -55,7 +53,6 @@ import {
 } from "../Paths/actions";
 import AddActivityDialog from "../../components/dialogs/AddActivityDialog";
 
-import AddIcon from "@material-ui/icons/Add";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
@@ -356,41 +353,27 @@ export class Path extends React.Component {
           Path Description: {pathDesc}
         </Typography>
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
-          (!APP_SETTING.isSuggesting ? (
-            <Toolbar>
-              <Button
-                color="primary"
-                onClick={this.onAddActivityClick}
-                variant="contained"
-              >
-                Add Activity
-              </Button>
-              {pathStatus === PATH_STATUS_OWNER && (
-                <Button
-                  className={classes.toolbarButton}
-                  onClick={() =>
-                    onShowCollaboratorsClick(pathActivities.path.id)
-                  }
-                  variant="contained"
-                >
-                  Collaborators
-                </Button>
-              )}
-            </Toolbar>
-          ) : (
-            <Fab
-              aria-label="Add"
+          <Toolbar>
+            <Button
               color="primary"
               onClick={this.onAddActivityClick}
-              style={{
-                position: "fixed",
-                bottom: 20,
-                right: 20
-              }}
+              variant="contained"
             >
-              <AddIcon />
-            </Fab>
-          ))}
+              Add Activity
+            </Button>
+            {pathStatus === PATH_STATUS_OWNER && (
+              <Button
+                className={classes.toolbarButton}
+                onClick={() =>
+                  onShowCollaboratorsClick(pathActivities.path.id)
+                }
+                variant="contained"
+              >
+                Collaborators
+              </Button>
+            )}
+          </Toolbar>
+        }
         <AddTextSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}

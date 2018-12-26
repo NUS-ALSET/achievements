@@ -12,7 +12,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 
 import SearchIcon from "@material-ui/icons/Search";
@@ -21,14 +20,11 @@ import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { APP_SETTING } from "../../achievementsApp/config";
 
-const styles = theme => ({
+
+const styles = () => ({
   link: {
     textDecoration: "none"
-  },
-  button: {
-    margin: theme.spacing.unit
   }
 });
 
@@ -63,7 +59,7 @@ class PathsTable extends React.PureComponent {
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
-                width: APP_SETTING.isSuggesting ? 150 : 360
+                width: 150
               }}
             >
               Actions
@@ -89,35 +85,18 @@ class PathsTable extends React.PureComponent {
                       : "not joined"}
                   </TableCell>
                 )}
-                {APP_SETTING.isSuggesting ? (
-                  <TableCell>
-                    <Link className={classes.link} to={`/paths/${path.id}`}>
-                      <IconButton>
-                        <SearchIcon />
-                      </IconButton>
-                    </Link>
-                    {owner && (
-                      <IconButton onClick={() => this.onEditClick(path)}>
-                        <EditIcon />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                ) : (
-                  <TableCell>
-                    <Link className={classes.link} to={`/paths/${path.id}`}>
-                      <Button variant="contained">Open</Button>
-                    </Link>
-                    {owner && (
-                      <Button
-                        className={classes.button}
-                        onClick={() => this.onEditClick(path)}
-                        variant="contained"
-                      >
-                        Edit
-                      </Button>
-                    )}
-                  </TableCell>
-                )}
+                <TableCell>
+                  <Link className={classes.link} to={`/paths/${path.id}`}>
+                    <IconButton>
+                      <SearchIcon />
+                    </IconButton>
+                  </Link>
+                  {owner && (
+                    <IconButton onClick={() => this.onEditClick(path)}>
+                      <EditIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>

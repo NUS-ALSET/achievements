@@ -35,10 +35,8 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import DeleteIcon from "@material-ui/icons/Delete";
-import DoneIcon from "@material-ui/icons/Done";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import RemoveRedEye from "@material-ui/icons/RemoveRedEye";
-import SendIcon from "@material-ui/icons/Send";
 import TagFacesIcon from "@material-ui/icons/TagFaces";
 import Timeline from "@material-ui/icons/Timeline";
 import UserSwitch from "mdi-react/AccountSwitchIcon";
@@ -46,7 +44,6 @@ import UserSwitch from "mdi-react/AccountSwitchIcon";
 import { AccountService } from "../../services/account";
 import { YOUTUBE_QUESTIONS } from "../../services/paths";
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
-import { APP_SETTING } from "../../achievementsApp/config";
 import AnalysisDialog from "../dialogs/AnalysisDialog";
 import { courseInfo } from "../../types";
 
@@ -185,13 +182,7 @@ class AssignmentsTable extends React.PureComponent {
     const result = (solution && solution.value) || "";
 
     if (!solution) {
-      return owner && APP_SETTING.isSuggesting ? (
-        <IconButton onClick={() => this.onSubmitClick(assignment)}>
-          <SendIcon />
-        </IconButton>
-      ) : (
-        ""
-      );
+      return owner && ("");
     }
 
     switch (assignment.questionType) {
@@ -205,18 +196,7 @@ class AssignmentsTable extends React.PureComponent {
             rel="noopener noreferrer"
             target="_blank"
           >
-            {APP_SETTING.isSuggesting ? (
-              <IconButton
-                onClick={() =>
-                  owner &&
-                  this.onSubmitClick(assignment, solutions[assignment.id])
-                }
-              >
-                <DoneIcon />
-              </IconButton>
-            ) : (
-              result
-            )}
+            {result}
           </a>
         ) : (
           undefined
@@ -239,28 +219,8 @@ class AssignmentsTable extends React.PureComponent {
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  {APP_SETTING.isSuggesting ? (
-                    <IconButton
-                      onClick={() =>
-                        owner &&
-                        this.onSubmitClick(assignment, solutions[assignment.id])
-                      }
-                    >
-                      <DoneIcon />
-                    </IconButton>
-                  ) : (
-                    result || "COMPLETED"
-                  )}
+                  {result || "COMPLETED"}
                 </a>
-              ) : APP_SETTING.isSuggesting ? (
-                <IconButton
-                  onClick={() =>
-                    owner &&
-                    this.onSubmitClick(assignment, solutions[assignment.id])
-                  }
-                >
-                  <DoneIcon />
-                </IconButton>
               ) : (
                 result
               )}
@@ -285,17 +245,7 @@ class AssignmentsTable extends React.PureComponent {
         );
 
       default:
-        return APP_SETTING.isSuggesting ? (
-          <IconButton
-            onClick={() =>
-              owner && this.onSubmitClick(assignment, solutions[assignment.id])
-            }
-          >
-            <DoneIcon />
-          </IconButton>
-        ) : (
-          result
-        );
+        return result;
     }
   }
 
@@ -449,15 +399,13 @@ class AssignmentsTable extends React.PureComponent {
                       assignment.progress +
                       " students submitted)" || ""}
                   </div>
-                  {!APP_SETTING.isSuggesting && (
-                    <div>
-                      {assignment.deadline &&
-                        `Deadline in ${distanceInWords(
-                          assignment.deadline,
-                          new Date()
-                        )}`}
-                    </div>
-                  )}
+                  <div>
+                    {assignment.deadline &&
+                      `Deadline in ${distanceInWords(
+                        assignment.deadline,
+                        new Date()
+                      )}`}
+                  </div>
                 </TableCell>
               ))}
               {course.watchSeveralPaths && (
@@ -573,24 +521,23 @@ class AssignmentsTable extends React.PureComponent {
                           )}
 
                         {studentInfo.id === currentUser.id &&
-                          (!APP_SETTING.isSuggesting && (
-                            <Button
-                              onClick={() =>
-                                this.onSubmitClick(
-                                  assignment,
-                                  studentInfo.solutions[assignment.id]
-                                )
-                              }
-                              style={{
-                                marginLeft: 4
-                              }}
-                              variant="contained"
-                            >
-                              {studentInfo.solutions[assignment.id]
-                                ? "Update"
-                                : "Submit"}
-                            </Button>
-                          ))}
+                          <Button
+                            onClick={() =>
+                              this.onSubmitClick(
+                                assignment,
+                                studentInfo.solutions[assignment.id]
+                              )
+                            }
+                            style={{
+                              marginLeft: 4
+                            }}
+                            variant="contained"
+                          >
+                            {studentInfo.solutions[assignment.id]
+                              ? "Update"
+                              : "Submit"}
+                          </Button>
+                        }
                       </Fragment>
                     </TableCell>
                   ))}
