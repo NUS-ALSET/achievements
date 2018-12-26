@@ -1,16 +1,16 @@
-import React from 'react';
+import React from "react";
 import YouTubeActivity from "./YouTubeActivity";
-import { shallow } from 'enzyme';
+import { shallow } from "enzyme";
 
-describe('<YouTubeActivity />', () => {
+describe("<YouTubeActivity />", () => {
   let props = {
     dispatch: jest.fn(),
     onChange: jest.fn(),
-    problem: {youtubeURL: "lalala"},
+    problem: { youtubeURL: "lalala" },
     solution: "somthing"
   };
 
-  it('renders without crashing', () => {
+  it("renders without crashing", () => {
     shallow(<YouTubeActivity {...props} />);
   });
 });

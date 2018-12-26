@@ -182,7 +182,7 @@ class AssignmentsTable extends React.PureComponent {
     const result = (solution && solution.value) || "";
 
     if (!solution) {
-      return owner && ("");
+      return owner && "";
     }
 
     switch (assignment.questionType) {
@@ -520,7 +520,7 @@ class AssignmentsTable extends React.PureComponent {
                             </Fragment>
                           )}
 
-                        {studentInfo.id === currentUser.id &&
+                        {studentInfo.id === currentUser.id && (
                           <Button
                             onClick={() =>
                               this.onSubmitClick(
@@ -537,7 +537,7 @@ class AssignmentsTable extends React.PureComponent {
                               ? "Update"
                               : "Submit"}
                           </Button>
-                        }
+                        )}
                       </Fragment>
                     </TableCell>
                   ))}

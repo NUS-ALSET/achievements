@@ -31,7 +31,7 @@ class FetchDataDemo extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (prevProps.analyticsData !== this.props.analyticsData) {
-        this.props.initAnalyticsData(this.props.analyticsData);
+      this.props.initAnalyticsData(this.props.analyticsData);
     }
   }
 
@@ -67,8 +67,8 @@ class FetchDataDemo extends React.PureComponent {
           <Fragment>
             <h1>Fetched data from Firebase /analytics/jupyterSolutions node</h1>
             <Button
-              aria-owns={anchorEl ? 'simple-menu' : undefined}
               aria-haspopup="true"
+              aria-owns={anchorEl ? "simple-menu" : undefined}
               color="primary"
               onClick={this.handleClick}
               variant="contained"
@@ -76,10 +76,10 @@ class FetchDataDemo extends React.PureComponent {
               Select PathKey to fetch from jupyterSolutions
             </Button>
             <Menu
-              id="simple-menu"
               anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
+              id="simple-menu"
               onClose={this.handleClose}
+              open={Boolean(anchorEl)}
             >
               <MenuItem
                 onClick={() => {
@@ -109,15 +109,17 @@ class FetchDataDemo extends React.PureComponent {
                 pathKey3: -LLd7A7XpcbQiQ9pzAIX
               </MenuItem>
             </Menu>
-            <h2>data with pathKey = {jupyterAnalyticsPathKey || "show all"}:</h2>
+            <h2>
+              data with pathKey = {jupyterAnalyticsPathKey || "show all"}:
+            </h2>
             <hr />
             <ul>
-              {filteredAnalytics && Object.keys(filteredAnalytics)
-                .map(item => (
+              {filteredAnalytics &&
+                Object.keys(filteredAnalytics).map(item => (
                   <li key={item}>
                     jupyterSolutions ID: {filteredAnalytics[item]}
                   </li>
-              ))}
+                ))}
             </ul>
           </Fragment>
         ) : (
@@ -140,17 +142,13 @@ class FetchDataDemo extends React.PureComponent {
               ))}
             </ul>
           </Fragment>
+        ) : auth.isEmpty ? (
+          <h1>only logged users can access /moreProblemsRequests</h1>
         ) : (
-          auth.isEmpty ? (
-            <h1>
-              only logged users can access /moreProblemsRequests
-            </h1>
-          ) : (
-            <Fragment>
-              <h1>fetching from /moreProblemsRequests</h1>
-              <h2>...</h2>
-            </Fragment>
-          )
+          <Fragment>
+            <h1>fetching from /moreProblemsRequests</h1>
+            <h2>...</h2>
+          </Fragment>
         )}
       </Fragment>
     );
@@ -192,5 +190,8 @@ export default compose(
           ]
     );
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(FetchDataDemo);

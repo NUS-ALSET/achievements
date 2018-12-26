@@ -15,7 +15,6 @@ import Zoom from "@material-ui/core/Zoom";
 import AddIcon from "@material-ui/icons/Add";
 import PathsTable from "../../components/tables/PathsTable";
 
-
 const PATHS_TAB_JOINED = 0;
 const PATHS_TAB_OWNED = 1;
 const PATHS_TAB_PUBLIC = 2;

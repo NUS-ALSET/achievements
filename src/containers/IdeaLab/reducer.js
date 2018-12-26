@@ -24,11 +24,8 @@ export const fetchDataDemo = (state = initialState, action) => {
     case FILTER_ANALYTICSDATA:
       return {
         ...state,
-        filteredAnalytics: (
-          Object.keys(action.analyticsData)
-            .filter(
-              item => action.analyticsData[item].pathKey === action.pathKey
-            )
+        filteredAnalytics: Object.keys(action.analyticsData).filter(
+          item => action.analyticsData[item].pathKey === action.pathKey
         )
       };
     default:

@@ -9,12 +9,10 @@ import React, { Fragment } from "react";
 
 import { withRouter } from "react-router-dom";
 
-
 import Fab from "@material-ui/core/Fab";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import Zoom from "@material-ui/core/Zoom";
-
 
 import AddIcon from "@material-ui/icons/Add";
 import GroupIcon from "@material-ui/icons/Group";
@@ -23,11 +21,9 @@ import AssignmentsEditorTable from "../tables/AssignmentsEditorTable";
 import AssignmentsTable from "../tables/AssignmentsTable";
 import DeleteAssignmentDialog from "../dialogs/DeleteAssignmentDialog";
 
-
 const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
-
 
 class InstructorTabs extends React.PureComponent {
   static propTypes = {
@@ -87,10 +83,9 @@ class InstructorTabs extends React.PureComponent {
             </Zoom>
             <Zoom in={true} unmountOnExit>
               <Fab
-                onClick={
-                  () => handleShowAssistants(
-                    this.props.match.params.courseId
-                )}
+                onClick={() =>
+                  handleShowAssistants(this.props.match.params.courseId)
+                }
                 style={{
                   backfaceVisibility: "hidden",
                   position: "fixed",

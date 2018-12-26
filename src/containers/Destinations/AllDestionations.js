@@ -9,7 +9,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Destinations from "./Destinations";
 
 // duplicate code for *Destinations.js
-const AllDestinations = (props) => {
+const AllDestinations = props => {
   const { destinations = [], dispatch } = props;
   return (
     <div>
@@ -36,7 +36,7 @@ const AllDestinations = (props) => {
       )}
     </div>
   );
-}
+};
 
 const mapStateToProps = state => ({
   destinations: state.firebase.ordered.destinations || []

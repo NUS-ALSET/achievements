@@ -71,15 +71,11 @@ class Assignments extends React.Component {
   };
 
   componentDidMount() {
-    this.props.courseAssignmentsOpen(
-      this.props.match.params.courseId
-    );
+    this.props.courseAssignmentsOpen(this.props.match.params.courseId);
   }
 
   componentWillUnmount() {
-    this.props.courseAssignmentsClose(
-      this.props.match.params.courseId
-    );
+    this.props.courseAssignmentsClose(this.props.match.params.courseId);
   }
 
   handleTabChange = (event, tabIndex) => {
@@ -399,21 +395,13 @@ const mapStateToProps = (state, ownProps) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  assignmentsAssistantsShowRequest: courseId => (
-    dispatch(assignmentsAssistantsShowRequest(courseId))
-  ),
-  assignmentShowAddDialog: () => (
-    dispatch(assignmentShowAddDialog())
-  ),
-  assignmentSwitchTab: (tabIndex) => dispatch(
-    assignmentSwitchTab(tabIndex)
-  ),
-  courseAssignmentsOpen: (courseId) => dispatch(
-    courseAssignmentsOpen(courseId)
-  ),
-  courseAssignmentsClose: (courseId) => dispatch(
-    courseAssignmentsClose(courseId)
-  ),
+  assignmentsAssistantsShowRequest: courseId =>
+    dispatch(assignmentsAssistantsShowRequest(courseId)),
+  assignmentShowAddDialog: () => dispatch(assignmentShowAddDialog()),
+  assignmentSwitchTab: tabIndex => dispatch(assignmentSwitchTab(tabIndex)),
+  courseAssignmentsOpen: courseId => dispatch(courseAssignmentsOpen(courseId)),
+  courseAssignmentsClose: courseId =>
+    dispatch(courseAssignmentsClose(courseId)),
   dispatch
 });
 
@@ -437,5 +425,8 @@ export default compose(
       `/assignments/${courseId}`
     ];
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Assignments);

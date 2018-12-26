@@ -9,7 +9,7 @@ export const initialState = {
   dropdownAnchorElId: false,
   mainDrawerOpen: false,
   dynamicPathTitle: ""
-}
+};
 
 export const appFrame = (state = initialState, action) => {
   switch (action.type) {
@@ -31,16 +31,15 @@ export const appFrame = (state = initialState, action) => {
       };
     case GET_DYNAMIC_PATHTITLE:
       return {
-          ...state,
-          dynamicPathTitle:
-            action.pathname
-              ? action.pathname === "/"
-                ? "Achievements"
-                : action.pathname
-                  .replace(/^\//, "")
-                  .replace(/\b[a-z]/g, name => name.toUpperCase())
-                  .replace(/[/].*/, "")
-              : "getting the title"
+        ...state,
+        dynamicPathTitle: action.pathname
+          ? action.pathname === "/"
+            ? "Achievements"
+            : action.pathname
+                .replace(/^\//, "")
+                .replace(/\b[a-z]/g, name => name.toUpperCase())
+                .replace(/[/].*/, "")
+          : "getting the title"
       };
     default:
       return state;

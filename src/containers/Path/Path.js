@@ -352,7 +352,7 @@ export class Path extends React.Component {
         >
           Path Description: {pathDesc}
         </Typography>
-        {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
+        {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) && (
           <Toolbar>
             <Button
               color="primary"
@@ -364,16 +364,14 @@ export class Path extends React.Component {
             {pathStatus === PATH_STATUS_OWNER && (
               <Button
                 className={classes.toolbarButton}
-                onClick={() =>
-                  onShowCollaboratorsClick(pathActivities.path.id)
-                }
+                onClick={() => onShowCollaboratorsClick(pathActivities.path.id)}
                 variant="contained"
               >
                 Collaborators
               </Button>
             )}
           </Toolbar>
-        }
+        )}
         <AddTextSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}

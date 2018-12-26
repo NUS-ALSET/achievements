@@ -16,7 +16,7 @@ export const mainDrawerToggle = status => ({
 });
 
 export const GET_DYNAMIC_PATHTITLE = "GET_DYNAMIC_PATHTITLE";
-export const getDynamicPathtitle = (pathname) => ({
+export const getDynamicPathtitle = pathname => ({
   type: GET_DYNAMIC_PATHTITLE,
   pathname
 });

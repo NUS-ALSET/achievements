@@ -10,34 +10,35 @@ import { connect } from "react-redux";
 
 import { firebaseConnect } from "react-redux-firebase";
 
-// import Button from "@material-ui/core/Button";
-// import Grid from "@material-ui/core/Grid";
 import PropTypes from "prop-types";
 
 import AddPathDialog from "../../components/dialogs/AddPathDialog";
 
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
-import { getProblems } from "./selectors";
 import PathTabs from "../../components/tabs/PathTabs";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { pathsOpen, pathDialogShow } from "./actions";
+import {
+  pathChangeRequest,
+  pathDialogHide,
+  pathDialogShow,
+  pathsOpen
+} from "./actions";
 import PathsTable from "../../components/tables/PathsTable";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 class Paths extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func,
     myPaths: PropTypes.object,
     joinedPaths: PropTypes.object,
     publicPaths: PropTypes.object,
-    selectedPathId: PropTypes.string,
-    problems: PropTypes.array,
     ui: PropTypes.object,
-    // FIXIT: figure out correct type
-    uid: PropTypes.any,
-    pathsOpen: PropTypes.func,
-    pathDialogShow: PropTypes.func
+    uid: PropTypes.string,
+
+    pathsOpen: PropTypes.func.isRequired,
+    pathDialogShow: PropTypes.func,
+    pathChangeRequest: PropTypes.func,
+    pathDialogHide: PropTypes.func
   };
 
   componentDidMount() {
@@ -46,7 +47,8 @@ class Paths extends React.PureComponent {
 
   render() {
     const {
-      dispatch,
+      pathChangeRequest,
+      pathDialogHide,
       myPaths,
       joinedPaths,
       publicPaths,
@@ -58,47 +60,39 @@ class Paths extends React.PureComponent {
     return (
       <Fragment>
         <Breadcrumbs paths={[{ label: "Paths" }]} />
-        {uid
-          ? (
-            !joinedPaths
-            ? (
-              <Fragment>
-                Loading Your Paths...
-                <LinearProgress />
-              </Fragment>
-            )
-            : (
-              <Fragment>
-                <PathTabs
-                  pathDialogShow={pathDialogShow}
-                  joinedPaths={joinedPaths}
-                  myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
-                  publicPaths={publicPaths}
-                />
-                <AddPathDialog
-                  dispatch={dispatch}
-                  open={ui.dialog.type === "PathChange"}
-                  path={ui.dialog.value}
-                />
-              </Fragment>
-            )
-          )
-          : (
-            !publicPaths
-            ? (
-              <Fragment>
-                Loading Public Paths...
-                <LinearProgress />
-              </Fragment>
-            )
-            : (
-              <PathsTable
+        {uid ? (
+          !joinedPaths ? (
+            <Fragment>
+              Loading Your Paths...
+              <LinearProgress />
+            </Fragment>
+          ) : (
+            <Fragment>
+              <PathTabs
+                joinedPaths={joinedPaths}
+                myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
                 pathDialogShow={pathDialogShow}
-                paths={publicPaths || {}}
+                publicPaths={publicPaths}
               />
-            )
+              <AddPathDialog
+                open={ui.dialog.type === "PathChange"}
+                path={ui.dialog.value}
+                pathChangeRequest={pathChangeRequest}
+                pathDialogHide={pathDialogHide}
+              />
+            </Fragment>
           )
-        }
+        ) : !publicPaths ? (
+          <Fragment>
+            Loading Public Paths...
+            <LinearProgress />
+          </Fragment>
+        ) : (
+          <PathsTable
+            pathDialogShow={pathDialogShow}
+            paths={publicPaths || {}}
+          />
+        )}
       </Fragment>
     );
   }
@@ -109,26 +103,20 @@ sagaInjector.inject(sagas);
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
   ui: state.paths.ui,
-  selectedPathId: state.paths.selectedPathId,
   myPaths: state.firebase.data.myPaths,
   publicPaths: state.firebase.data.publicPaths,
-  joinedPaths: state.paths.joinedPaths,
-  problems: getProblems(state)
+  joinedPaths: state.paths.joinedPaths
 });
 
 const mapDispatchToProps = dispatch => ({
-  pathsOpen: () => dispatch(
-    pathsOpen()
-  ),
-  pathDialogShow: (pathInfo) => dispatch(
-    pathDialogShow(pathInfo)
-  ),
-  dispatch
+  pathsOpen: () => dispatch(pathsOpen()),
+  pathDialogShow: pathInfo => dispatch(pathDialogShow(pathInfo)),
+  pathChangeRequest: pathInfo => dispatch(pathChangeRequest(pathInfo)),
+  pathDialogHide: () => dispatch(pathDialogHide())
 });
 
 export default compose(
   firebaseConnect((ownProps, store) => {
-    // I didn't find way to test this
     const firebaseAuth = store.getState().firebase.auth;
     return [
       {
@@ -148,5 +136,8 @@ export default compose(
           ]
     );
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Paths);

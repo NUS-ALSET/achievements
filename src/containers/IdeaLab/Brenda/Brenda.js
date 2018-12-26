@@ -127,7 +127,7 @@ class HorizontalLinearStepper extends React.Component {
               <Typography className={classes.instructions}>
                 All steps completed - you&apos;re finished
               </Typography>
-              <Button onClick={this.handleReset} className={classes.button}>
+              <Button className={classes.button} onClick={this.handleReset}>
                 Reset
               </Button>
             </div>
@@ -138,27 +138,27 @@ class HorizontalLinearStepper extends React.Component {
               </Typography>
               <div>
                 <Button
+                  className={classes.button}
                   disabled={activeStep === 0}
                   onClick={this.handleBack}
-                  className={classes.button}
                 >
                   Back
                 </Button>
                 {this.isStepOptional(activeStep) && (
                   <Button
-                    variant="contained"
+                    className={classes.button}
                     color="primary"
                     onClick={this.handleSkip}
-                    className={classes.button}
+                    variant="contained"
                   >
                     Skip
                   </Button>
                 )}
                 <Button
-                  variant="contained"
+                  className={classes.button}
                   color="primary"
                   onClick={this.handleNext}
-                  className={classes.button}
+                  variant="contained"
                 >
                   {activeStep === steps.length - 1 ? "Finish" : "Next"}
                 </Button>
