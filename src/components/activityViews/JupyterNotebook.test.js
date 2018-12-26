@@ -6,7 +6,7 @@ import TextField from "@material-ui/core/TextField";
 
 import sinon from "sinon";
 
-import JupyterNotebook from "../JupyterNotebook";
+import JupyterNotebook from "./JupyterNotebook";
 
 describe("<JupyterNotebook>", () => {
   let spy;
