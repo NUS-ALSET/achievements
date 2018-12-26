@@ -60,7 +60,7 @@
     "targaryen": "^3.1.0"
   },
   "scripts": {
-    "analyze": "source-map-explorer build/static/js/main.*",
+    "analyze": "source-map-explorer build/static/js/8.*",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "CI=true react-scripts test --env=jsdom",
