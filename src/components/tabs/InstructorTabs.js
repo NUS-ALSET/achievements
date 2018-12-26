@@ -9,16 +9,12 @@ import React, { Fragment } from "react";
 
 import { withRouter } from "react-router-dom";
 
-import withStyles from "@material-ui/core/styles/withStyles";
 
 import Fab from "@material-ui/core/Fab";
-import Button from "@material-ui/core/Button";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
-import Toolbar from "@material-ui/core/Toolbar";
 import Zoom from "@material-ui/core/Zoom";
 
-import { APP_SETTING } from "../../achievementsApp/config";
 
 import AddIcon from "@material-ui/icons/Add";
 import GroupIcon from "@material-ui/icons/Group";
@@ -32,11 +28,6 @@ const INSTRUCTOR_TAB_ASSIGNMENTS = 0;
 const INSTRUCTOR_TAB_EDIT = 1;
 const INSTRUCTOR_TAB_VIEW = 2;
 
-const styles = theme => ({
-  buttonAction: {
-    marginRight: theme.spacing.unit
-  }
-});
 
 class InstructorTabs extends React.PureComponent {
   static propTypes = {
@@ -57,7 +48,6 @@ class InstructorTabs extends React.PureComponent {
   getInstructorTab() {
     /** @type AssignmentProps */
     const {
-      classes,
       course,
       ui,
       currentUser,
@@ -81,61 +71,36 @@ class InstructorTabs extends React.PureComponent {
       case INSTRUCTOR_TAB_EDIT:
         return (
           <Fragment>
-            {APP_SETTING.isSuggesting ? (
-              <Fragment>
-                <Zoom in={true} unmountOnExit>
-                  <Fab
-                    color="primary"
-                    onClick={() => handleAddAssignmentDialog()}
-                    style={{
-                      backfaceVisibility: "hidden",
-                      position: "fixed",
-                      bottom: 20,
-                      right: 20
-                    }}
-                  >
-                    <AddIcon />
-                  </Fab>
-                </Zoom>
-                <Zoom in={true} unmountOnExit>
-                  <Fab
-                    onClick={
-                      () => handleShowAssistants(
-                        this.props.match.params.courseId
-                    )}
-                    style={{
-                      backfaceVisibility: "hidden",
-                      position: "fixed",
-                      bottom: 80,
-                      right: 20
-                    }}
-                  >
-                    <GroupIcon />
-                  </Fab>
-                </Zoom>
-              </Fragment>
-            ) : (
-              <Toolbar>
-                <Button
-                  className={classes.buttonAction}
-                  color="primary"
-                  onClick={() => handleAddAssignmentDialog()}
-                  variant="contained"
-                >
-                  Add assignment
-                </Button>
-                <Button
-                  className={classes.buttonAction}
-                  onClick={
-                    () => handleShowAssistants(
-                      this.props.match.params.courseId
-                  )}
-                  variant="contained"
-                >
-                  Assistants
-                </Button>
-              </Toolbar>
-            )}
+            <Zoom in={true} unmountOnExit>
+              <Fab
+                color="primary"
+                onClick={() => handleAddAssignmentDialog()}
+                style={{
+                  backfaceVisibility: "hidden",
+                  position: "fixed",
+                  bottom: 20,
+                  right: 20
+                }}
+              >
+                <AddIcon />
+              </Fab>
+            </Zoom>
+            <Zoom in={true} unmountOnExit>
+              <Fab
+                onClick={
+                  () => handleShowAssistants(
+                    this.props.match.params.courseId
+                )}
+                style={{
+                  backfaceVisibility: "hidden",
+                  position: "fixed",
+                  bottom: 80,
+                  right: 20
+                }}
+              >
+                <GroupIcon />
+              </Fab>
+            </Zoom>
             <AssignmentsEditorTable
               assignments={course.assignments || {}}
               dispatch={dispatch}
@@ -185,4 +150,4 @@ class InstructorTabs extends React.PureComponent {
   }
 }
 
-export default withStyles(styles)(withRouter(InstructorTabs));
+export default withRouter(InstructorTabs);

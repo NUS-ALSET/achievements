@@ -1,24 +1,17 @@
 import {
-  LOGIN_AUTHENTICATION,
-  LOGIN_DEAUTHENTICATION,
   LOGIN_MENU_CLOSE,
   LOGIN_MENU_OPEN,
   MAIN_DRAWER_TOGGLE,
   GET_DYNAMIC_PATHTITLE
 } from "./actions";
 
-export const appFrame = (
-  state = {
-    user: {
-      id: "",
-      displayName: ""
-    },
-    dropdownAnchorElId: false,
-    mainDrawerOpen: false,
-    dynamicPathTitle: ""
-  },
-  action
-) => {
+export const initialState = {
+  dropdownAnchorElId: false,
+  mainDrawerOpen: false,
+  dynamicPathTitle: ""
+}
+
+export const appFrame = (state = initialState, action) => {
   switch (action.type) {
     case LOGIN_MENU_OPEN:
       return {
@@ -29,22 +22,6 @@ export const appFrame = (
       return {
         ...state,
         dropdownAnchorElId: false
-      };
-    case LOGIN_AUTHENTICATION:
-      return {
-        ...state,
-        user: {
-          id: action.userId,
-          displayName: action.displayName
-        }
-      };
-    case LOGIN_DEAUTHENTICATION:
-      return {
-        ...state,
-        user: {
-          id: "",
-          displayName: ""
-        }
       };
     case MAIN_DRAWER_TOGGLE:
       return {
