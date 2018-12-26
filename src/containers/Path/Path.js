@@ -14,6 +14,7 @@ import { APP_SETTING } from "../../achievementsApp/config";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import Toolbar from "@material-ui/core/Toolbar";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
@@ -377,7 +378,7 @@ export class Path extends React.Component {
               )}
             </Toolbar>
           ) : (
-            <Button
+            <Fab
               aria-label="Add"
               color="primary"
               onClick={this.onAddActivityClick}
@@ -386,10 +387,9 @@ export class Path extends React.Component {
                 bottom: 20,
                 right: 20
               }}
-              variant="fab"
             >
               <AddIcon />
-            </Button>
+            </Fab>
           ))}
         <AddTextSolutionDialog
           onClose={onCloseDialog}

@@ -11,7 +11,7 @@ import withWidth from "@material-ui/core/withWidth";
 
 import Carousel from "nuka-carousel";
 
-import Button from "@material-ui/core/Button/Button";
+import Fab from "@material-ui/core/Fab";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader/CardHeader";
@@ -171,19 +171,18 @@ class RecommendationsListCard extends React.PureComponent {
                 0
               );
               return (
-                <Button
+                <Fab
                   aria-label="prevSlide"
-                  mini
                   onClick={() => goToSlide(previousSlideIndex)}
+                  size="small"
                   style={
                     currentSlide !== 0
                       ? { visibility: "visible", left: "-22px" }
                       : { visibility: "hidden" }
                   }
-                  variant="fab"
                 >
                   <KeyboardArrowLeftIcon />
-                </Button>
+                </Fab>
               );
             }}
             renderCenterRightControls={({ currentSlide, goToSlide }) => {
@@ -192,20 +191,19 @@ class RecommendationsListCard extends React.PureComponent {
                   ? currentSlide + (data.length % itemsPerSlide)
                   : currentSlide + itemsPerSlide;
               return (
-                <Button
+                <Fab
                   aria-label="nexSlide"
-                  mini
                   onClick={() => goToSlide(nextSlideIndex)}
+                  size="small"
                   style={
                     data.length < itemsPerSlide ||
                     currentSlide >= data.length - itemsPerSlide
                       ? { visibility: "hidden" }
                       : { visibility: "visible", right: "-20px" }
                   }
-                  variant="fab"
                 >
                   <KeyboardArrowRightIcon />
-                </Button>
+                </Fab>
               );
             }}
             slidesToShow={itemsPerSlide}
