@@ -11,6 +11,7 @@ import { withRouter } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
+import Fab from "@material-ui/core/Fab";
 import Button from "@material-ui/core/Button";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
@@ -83,7 +84,7 @@ class InstructorTabs extends React.PureComponent {
             {APP_SETTING.isSuggesting ? (
               <Fragment>
                 <Zoom in={true} unmountOnExit>
-                  <Button
+                  <Fab
                     color="primary"
                     onClick={() => handleAddAssignmentDialog()}
                     style={{
@@ -92,13 +93,12 @@ class InstructorTabs extends React.PureComponent {
                       bottom: 20,
                       right: 20
                     }}
-                    variant="fab"
                   >
                     <AddIcon />
-                  </Button>
+                  </Fab>
                 </Zoom>
                 <Zoom in={true} unmountOnExit>
-                  <Button
+                  <Fab
                     onClick={
                       () => handleShowAssistants(
                         this.props.match.params.courseId
@@ -109,10 +109,9 @@ class InstructorTabs extends React.PureComponent {
                       bottom: 80,
                       right: 20
                     }}
-                    variant="fab"
                   >
                     <GroupIcon />
-                  </Button>
+                  </Fab>
                 </Zoom>
               </Fragment>
             ) : (

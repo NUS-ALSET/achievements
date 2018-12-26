@@ -8,6 +8,7 @@ import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -76,7 +77,7 @@ class PathTabs extends React.Component {
       <Fragment>
         {APP_SETTING.isSuggesting ? (
           <Zoom in={this.state.currentTab === PATHS_TAB_OWNED} unmountOnExit>
-            <Button
+            <Fab
               color="primary"
               onClick={this.onAddPathClick}
               style={{
@@ -84,10 +85,9 @@ class PathTabs extends React.Component {
                 bottom: 20,
                 right: 20
               }}
-              variant="fab"
             >
               <AddIcon />
-            </Button>
+            </Fab>
           </Zoom>
         ) : (
           <Toolbar>

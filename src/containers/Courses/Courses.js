@@ -11,6 +11,7 @@ import { firebaseConnect } from "react-redux-firebase";
 import { sagaInjector } from "../../services/saga";
 import AddCourseDialog from "../../components/dialogs/AddCourseDialog";
 import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import CoursesTable from "../../components/tables/CoursesTable";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -129,7 +130,7 @@ class Courses extends React.Component {
           </Toolbar>
         ) : (
           <Zoom in={currentTab === COURSE_TAB_OWNED}>
-            <Button
+            <Fab
               aria-label="Add"
               color="primary"
               onClick={() => this.showNewCourseDialog()}
@@ -138,10 +139,9 @@ class Courses extends React.Component {
                 bottom: 20,
                 right: 20
               }}
-              variant="fab"
             >
               <AddIcon />
-            </Button>
+            </Fab>
           </Zoom>
         )}
         <Tabs

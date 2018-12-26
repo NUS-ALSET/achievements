@@ -1,16 +1,16 @@
 import React, { Fragment } from "react";
 
-// Charting packages from fusionChart
-import FusionCharts from "fusioncharts";
-import Charts from "fusioncharts/fusioncharts.charts";
-import powerCharts from "fusioncharts/fusioncharts.powercharts";
-import ReactFC from "react-fusioncharts";
-import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
+// code-spliting
+import ReactLoadable from "react-loadable";
 
 import Button from "@material-ui/core/Button";
 import { Typography } from "@material-ui/core";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
-ReactFC.fcRoot(FusionCharts, Charts, powerCharts, FusionTheme);
+const ReactFCLoad = ReactLoadable({
+  loader: () => import("./ReactFCLoad"),
+  loading: () => <LinearProgress />
+});
 
 class fusionChartDemo extends React.PureComponent {
   state = {
@@ -42,14 +42,14 @@ class fusionChartDemo extends React.PureComponent {
           This is the main chart. Useful to compare statistics across all
           activities
         </Typography>
-        <ReactFC {...chartConfigs} />
+        <ReactFCLoad {...chartConfigs} />
 
         <Typography variant="h5">
           Secondary chart. Allow users to view their charts activity by activity
           to reduce cluttering.
         </Typography>
         {/*Object must be placed here to force re-render*/}
-        <ReactFC
+        <ReactFCLoad
           {...{
             type: "boxandwhisker2d",
             width: "50%",
