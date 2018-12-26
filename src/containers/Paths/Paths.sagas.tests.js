@@ -2,8 +2,8 @@
 import { runSaga } from "redux-saga";
 import sinon from "sinon";
 
-import { pathActivityChangeRequestHandler } from "../sagas";
-import { pathsService } from "../../../services/paths";
+import { pathActivityChangeRequestHandler } from "./sagas";
+import { pathsService } from "../../services/paths";
 
 describe("Paths sagas", () => {
   let dispatched;
