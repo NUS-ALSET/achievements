@@ -19,8 +19,6 @@ import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
 
 // for Routes
-// TODO: both account/ and profile/ point to this Account component
-// need to figure out why need both?
 import Account from "../../containers/Account/Account";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
