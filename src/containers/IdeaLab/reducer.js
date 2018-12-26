@@ -4,13 +4,12 @@ import {
   FILTER_ANALYTICSDATA
 } from "./actions";
 
-export const fetchDataDemo = (
-  state = {
-    jupyterAnalyticsPathKey: "",
-    filteredAnalytics: []
-  },
-  action
-) => {
+const initialState = {
+  jupyterAnalyticsPathKey: "",
+  filteredAnalytics: []
+};
+
+export const fetchDataDemo = (state = initialState, action) => {
   switch (action.type) {
     case CHANGE_PATH_KEY_JUPSOL:
       return {

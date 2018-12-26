@@ -47,10 +47,7 @@
       2,
       "double"
     ],
-    "semi": [
-      2,
-      "always"
-    ],
+    "semi": 0,
     "no-mixed-operators": [
       2,
       {
