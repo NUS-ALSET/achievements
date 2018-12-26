@@ -58,47 +58,38 @@ class Paths extends React.PureComponent {
     return (
       <Fragment>
         <Breadcrumbs paths={[{ label: "Paths" }]} />
-        {uid
-          ? (
-            !joinedPaths
-            ? (
-              <Fragment>
-                Loading Your Paths...
-                <LinearProgress />
-              </Fragment>
-            )
-            : (
-              <Fragment>
-                <PathTabs
-                  pathDialogShow={pathDialogShow}
-                  joinedPaths={joinedPaths}
-                  myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
-                  publicPaths={publicPaths}
-                />
-                <AddPathDialog
-                  dispatch={dispatch}
-                  open={ui.dialog.type === "PathChange"}
-                  path={ui.dialog.value}
-                />
-              </Fragment>
-            )
-          )
-          : (
-            !publicPaths
-            ? (
-              <Fragment>
-                Loading Public Paths...
-                <LinearProgress />
-              </Fragment>
-            )
-            : (
-              <PathsTable
+        {uid ? (
+          !joinedPaths ? (
+            <Fragment>
+              Loading Your Paths...
+              <LinearProgress />
+            </Fragment>
+          ) : (
+            <Fragment>
+              <PathTabs
+                joinedPaths={joinedPaths}
+                myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
                 pathDialogShow={pathDialogShow}
-                paths={publicPaths || {}}
+                publicPaths={publicPaths}
               />
-            )
+              <AddPathDialog
+                dispatch={dispatch}
+                open={ui.dialog.type === "PathChange"}
+                path={ui.dialog.value}
+              />
+            </Fragment>
           )
-        }
+        ) : !publicPaths ? (
+          <Fragment>
+            Loading Public Paths...
+            <LinearProgress />
+          </Fragment>
+        ) : (
+          <PathsTable
+            pathDialogShow={pathDialogShow}
+            paths={publicPaths || {}}
+          />
+        )}
       </Fragment>
     );
   }
@@ -117,12 +108,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  pathsOpen: () => dispatch(
-    pathsOpen()
-  ),
-  pathDialogShow: (pathInfo) => dispatch(
-    pathDialogShow(pathInfo)
-  ),
+  pathsOpen: () => dispatch(pathsOpen()),
+  pathDialogShow: pathInfo => dispatch(pathDialogShow(pathInfo)),
   dispatch
 });
 
@@ -148,5 +135,8 @@ export default compose(
           ]
     );
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Paths);

@@ -48,7 +48,7 @@ class fusionChartDemo extends React.PureComponent {
           Secondary chart. Allow users to view their charts activity by activity
           to reduce cluttering.
         </Typography>
-        {/*Object must be placed here to force re-render*/}
+        {/* Object must be placed here to force re-render*/}
         <ReactFCLoad
           {...{
             type: "boxandwhisker2d",
@@ -75,14 +75,14 @@ class fusionChartDemo extends React.PureComponent {
         />
         <br />
 
-        {/*Button at the bottom of the page for users to cycle through their box and whiskers*/}
+        {/* Button at the bottom of the page for users to cycle through their box and whiskers*/}
         <Typography variant="h6">
           <Button
-            size="small"
-            disabled={this.state.actIndex === 0}
-            variant="outlined"
             color="primary"
+            disabled={this.state.actIndex === 0}
             onClick={this.updateActIndex(false)}
+            size="small"
+            variant="outlined"
           >
             {" "}
             Previous activity{" "}
@@ -93,11 +93,11 @@ class fusionChartDemo extends React.PureComponent {
           } `}
 
           <Button
-            size="small"
-            disabled={this.state.actIndex === 7}
-            variant="outlined"
             color="secondary"
+            disabled={this.state.actIndex === 7}
             onClick={this.updateActIndex(true)}
+            size="small"
+            variant="outlined"
           >
             {" "}
             Next activity{" "}
@@ -147,7 +147,7 @@ const myDataSource = {
   chart: {
     caption: "Intro to React",
     subcaption: "Time taken to solve each activity",
-    toolTipBgAlpha: "100", //Opacity of tooltip
+    toolTipBgAlpha: "100", // Opacity of tooltip
     sshowvalues: "0",
     palettecolors: "#5D62B5, #979AD0",
     yaxisname: "Time (mins)",

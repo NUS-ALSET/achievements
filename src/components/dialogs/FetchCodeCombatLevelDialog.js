@@ -14,7 +14,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
 
-
 class FetchCodeCombatLevelDialog extends React.PureComponent {
   static propTypes = {
     activity: PropTypes.any,

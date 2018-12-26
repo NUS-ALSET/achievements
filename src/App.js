@@ -48,11 +48,9 @@ class App extends React.Component {
   render() {
     return (
       <ErrorBoundary
-        render={() =>
-          <div>
-            An error occurred in this page, please go back and refresh
-          </div>
-        }
+        render={() => (
+          <div>An error occurred in this page, please go back and refresh</div>
+        )}
       >
         <MuiThemeProvider theme={theme}>
           <CssBaseline />

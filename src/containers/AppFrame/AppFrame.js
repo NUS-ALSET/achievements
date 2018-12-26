@@ -134,16 +134,16 @@ class AppFrame extends React.Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(getDynamicPathtitle(
-      this.props.history.location.pathname
-    ));
+    this.props.dispatch(
+      getDynamicPathtitle(this.props.history.location.pathname)
+    );
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.routerPathname !== this.props.routerPathname) {
-      this.props.dispatch(getDynamicPathtitle(
-        this.props.history.location.pathname
-      ));
+      this.props.dispatch(
+        getDynamicPathtitle(this.props.history.location.pathname)
+      );
     }
   }
 

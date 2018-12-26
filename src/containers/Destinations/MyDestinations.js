@@ -36,7 +36,7 @@ const MyDestinations = props => {
       )}
     </div>
   );
-}
+};
 
 const mapStateToProps = state => ({
   destinations: state.firebase.ordered.myDestinations || []

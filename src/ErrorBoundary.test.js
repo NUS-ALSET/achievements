@@ -26,13 +26,7 @@ it("ErrorBoundary HOC should catches error and renders message", () => {
   // stop error within from logging error to console
   pauseErrorLogging(() => {
     const wrapper = mount(
-      <ErrorBoundary
-        render={() =>
-          <div>
-            test error message
-          </div>
-        }
-      >
+      <ErrorBoundary render={() => <div>test error message</div>}>
         <Child />
       </ErrorBoundary>
     );

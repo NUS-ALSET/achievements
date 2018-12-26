@@ -63,11 +63,7 @@ class CoursesTable extends React.PureComponent {
           <TableRow>
             <TableCell>Course name</TableCell>
             <TableCell>Instructor</TableCell>
-            <TableCell
-              style={{ width: 200 }}
-            >
-              Actions
-            </TableCell>
+            <TableCell style={{ width: 200 }}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

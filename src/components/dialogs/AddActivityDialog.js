@@ -83,17 +83,10 @@ class AddActivityDialog extends React.PureComponent {
   fetchedGithubURL = "";
 
   componentDidUpdate(prevProps) {
-    const {
-      activity,
-      fetchGithubFilesStatus,
-      open
-    } = this.props;
+    const { activity, fetchGithubFilesStatus, open } = this.props;
 
     if ((fetchGithubFilesStatus || "").length > 0) {
-      this.handelfetchGithubFilesStatus(
-        fetchGithubFilesStatus,
-        activity
-      );
+      this.handelfetchGithubFilesStatus(fetchGithubFilesStatus, activity);
       return;
     }
     if ((prevProps || {}).open !== open) {
@@ -109,10 +102,7 @@ class AddActivityDialog extends React.PureComponent {
         this.setState({ isCorrectInput: true });
       }
       if (
-        [
-          ACTIVITY_TYPES.jupyterInline.id,
-          ACTIVITY_TYPES.jupyter.id
-        ].includes(
+        [ACTIVITY_TYPES.jupyterInline.id, ACTIVITY_TYPES.jupyter.id].includes(
           activity.type
         )
       ) {
