@@ -177,7 +177,7 @@ class RecommendationsListCard extends React.PureComponent {
                   size="small"
                   style={
                     currentSlide !== 0
-                      ? { visibility: "visible", left: "-22px" }
+                      ? { visibility: "visible", left: "-12px" }
                       : { visibility: "hidden" }
                   }
                 >
@@ -199,7 +199,7 @@ class RecommendationsListCard extends React.PureComponent {
                     data.length < itemsPerSlide ||
                     currentSlide >= data.length - itemsPerSlide
                       ? { visibility: "hidden" }
-                      : { visibility: "visible", right: "-20px" }
+                      : { visibility: "visible", right: "-12px" }
                   }
                 >
                   <KeyboardArrowRightIcon />
