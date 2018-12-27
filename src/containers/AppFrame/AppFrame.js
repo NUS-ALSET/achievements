@@ -12,8 +12,6 @@ import {
 } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
 
-import { APP_SETTING } from "../../achievementsApp/config";
-
 // for Drawer and AppBar
 import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
@@ -93,12 +91,12 @@ const styles = theme => ({
   appBar: {
     [theme.breakpoints.up("lg")]: {
       // up.lg = large or more, 1280px or larger
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
+      width: `calc(100% - ${theme.drawerWidth}px)`
     }
   },
   drawer: {
     [theme.breakpoints.up("lg")]: {
-      width: APP_SETTING.drawerWidth
+      width: theme.drawerWidth
     }
   },
   content: {
@@ -107,7 +105,7 @@ const styles = theme => ({
     height: "calc(100% - 56px)",
     marginTop: 56,
     [theme.breakpoints.up("lg")]: {
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
+      width: `calc(100% - ${theme.drawerWidth}px)`
     },
     [theme.breakpoints.up("sm")]: {
       height: "calc(100% - 64px)",
