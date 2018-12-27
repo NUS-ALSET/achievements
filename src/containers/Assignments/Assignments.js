@@ -8,6 +8,8 @@ import {
   coursePasswordEnterSuccess,
   courseAssignmentsClose,
   courseAssignmentsOpen,
+  courseRemoveStudentRequest,
+  courseMoveStudentRequest,
   assignmentAssistantKeyChange,
   assignmentAddAssistantRequest,
   assignmentsSolutionsRefreshRequest,
@@ -53,6 +55,9 @@ class Assignments extends React.Component {
     auth: PropTypes.object,
     assignmentsAssistantsShowRequest: PropTypes.func,
     assignmentShowAddDialog: PropTypes.func,
+    assignmentCloseDialog: PropTypes.func,
+    courseRemoveStudentRequest: PropTypes.func,
+    courseMoveStudentRequest: PropTypes.func,
     dispatch: PropTypes.func,
     classes: PropTypes.any,
     course: courseInfo,
@@ -139,14 +144,14 @@ class Assignments extends React.Component {
   };
 
   closeDialog = () => {
-    this.props.dispatch(assignmentCloseDialog());
+    this.props.assignmentCloseDialog();
   };
 
   commitTextSolution = (solution, taskId) => {
     const { course, dispatch } = this.props;
 
     dispatch(assignmentSolutionRequest(course.id, taskId, solution));
-    dispatch(assignmentCloseDialog());
+    assignmentCloseDialog();
   };
 
   refreshProfileSolutions = () =>
@@ -212,6 +217,9 @@ class Assignments extends React.Component {
       auth,
       assignmentsAssistantsShowRequest,
       assignmentShowAddDialog,
+      assignmentCloseDialog,
+      courseRemoveStudentRequest,
+      courseMoveStudentRequest,
       dispatch,
       course,
       currentUser,
@@ -293,13 +301,15 @@ class Assignments extends React.Component {
           courseId={course.id}
           courseMemberId={ui && ui.dialog && ui.dialog.studentId}
           courseMemberName={ui && ui.dialog && ui.dialog.studentName}
-          dispatch={dispatch}
+          handleCloseDialog={assignmentCloseDialog}
+          handleRemoveStudentRequest={courseRemoveStudentRequest}
           open={ui.dialog && ui.dialog.type === "RemoveStudent"}
         />
         <MoveStudentDialog
           courseId={course.id}
           courses={(ui.dialog && ui.dialog.courses) || []}
-          dispatch={dispatch}
+          handleCloseDialog={assignmentCloseDialog}
+          handleMOVEStudentRequest={courseMoveStudentRequest}
           open={ui.dialog && ui.dialog.type === "MoveStudent"}
           studentId={ui && ui.dialog && ui.dialog.studentId}
           studentName={ui && ui.dialog && ui.dialog.studentName}
@@ -398,10 +408,22 @@ const mapDispatchToProps = dispatch => ({
   assignmentsAssistantsShowRequest: courseId =>
     dispatch(assignmentsAssistantsShowRequest(courseId)),
   assignmentShowAddDialog: () => dispatch(assignmentShowAddDialog()),
+  assignmentCloseDialog: () => dispatch(assignmentCloseDialog()),
   assignmentSwitchTab: tabIndex => dispatch(assignmentSwitchTab(tabIndex)),
   courseAssignmentsOpen: courseId => dispatch(courseAssignmentsOpen(courseId)),
   courseAssignmentsClose: courseId =>
     dispatch(courseAssignmentsClose(courseId)),
+  courseRemoveStudentRequest: (courseId, studentId) =>
+    dispatch(courseRemoveStudentRequest(courseId, studentId)),
+  courseMoveStudentRequest: (
+    sourceCourseId,
+    targetCourseId,
+    studentId
+  ) => dispatch(courseMoveStudentRequest(
+    sourceCourseId,
+    targetCourseId,
+    studentId
+  )),
   dispatch
 });
 
