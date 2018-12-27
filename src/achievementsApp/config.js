@@ -2,7 +2,6 @@ import firebase from "firebase";
 import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {
-  drawerWidth: 250,
   CodeCombatLevels: CodeCombatLevels,
   games: {
     "passenger-picker": {

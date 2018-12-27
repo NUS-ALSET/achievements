@@ -20,6 +20,7 @@ import { firebaseService } from "./services/firebaseService";
 const history = createHashHistory();
 const store = configureStore(undefined, history);
 const theme = createMuiTheme({
+  drawerWidth: 250,
   palette: {
     primary: {
       // deepblue
