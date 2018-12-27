@@ -27,7 +27,6 @@ const INSTRUCTOR_TAB_VIEW = 2;
 
 class InstructorTabs extends React.PureComponent {
   static propTypes = {
-    classes: PropTypes.object.isRequired,
     ui: PropTypes.object,
     course: PropTypes.object,
     currentUser: PropTypes.object,
