@@ -1,6 +1,7 @@
 import cloneDeep from "lodash/cloneDeep";
 import each from "lodash/each";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/database";
 import { ASSIGNMENTS_TYPES, coursesService } from "./courses";
 
 export class SolutionsService {

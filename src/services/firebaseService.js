@@ -1,4 +1,6 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
 import { notificationShow, notificationHide } from "../containers/Root/actions";
 
 const PROCESS_STOP_TIME = 5000;
