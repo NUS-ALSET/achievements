@@ -23,8 +23,7 @@ class FetchDataDemo extends React.PureComponent {
     filteredAnalytics: PropTypes.array,
     initAnalyticsData: PropTypes.func,
     jupyterAnalyticsPathKey: PropTypes.string,
-    moreProbRequestsData: PropTypes.object,
-    activitiesData: PropTypes.object
+    moreProbRequestsData: PropTypes.object
   };
   state = {
     anchorEl: null
@@ -59,8 +58,7 @@ class FetchDataDemo extends React.PureComponent {
       analyticsData,
       filteredAnalytics,
       jupyterAnalyticsPathKey,
-      moreProbRequestsData,
-      activitiesData
+      moreProbRequestsData
     } = this.props;
 
     return (
@@ -119,7 +117,7 @@ class FetchDataDemo extends React.PureComponent {
               {filteredAnalytics &&
                 Object.keys(filteredAnalytics).map(item => (
                   <li key={item}>
-                    jupyterSolutions ID: {activitiesData[analyticsData[filteredAnalytics[item]].activityKey].name}
+                    jupyterSolutions ID: {filteredAnalytics[item]}
                   </li>
                 ))}
             </ul>
@@ -162,8 +160,7 @@ const mapStateToProps = state => ({
   analyticsData: state.firebase.data.analyticsData,
   filteredAnalytics: state.fetchDataDemo.filteredAnalytics,
   jupyterAnalyticsPathKey: state.fetchDataDemo.jupyterAnalyticsPathKey,
-  moreProbRequestsData: state.firebase.data.moreProbRequestsData,
-  activitiesData: state.firebase.data.activitiesData
+  moreProbRequestsData: state.firebase.data.moreProbRequestsData
 });
 
 const mapDispatchToProps = {
@@ -181,24 +178,17 @@ export default compose(
         path: "/analytics/jupyterSolutions",
         storeAs: "analyticsData"
       }
-    ]
-      .concat(
-        firebaseAuth.isEmpty
-          ? []
-          : [
-              {
-                path: "/moreProblemsRequests",
-                storeAs: "moreProbRequestsData",
-                queryParams: ["orderByChild=requestTime"]
-              }
-            ]
-      )
-      .concat([
-        {
-          path: "/activities",
-          storeAs: "activitiesData"
-        }
-      ]);
+    ].concat(
+      firebaseAuth.isEmpty
+        ? []
+        : [
+            {
+              path: "/moreProblemsRequests",
+              storeAs: "moreProbRequestsData",
+              queryParams: ["orderByChild=requestTime"]
+            }
+          ]
+    );
   }),
   connect(
     mapStateToProps,

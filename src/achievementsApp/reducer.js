@@ -12,7 +12,6 @@ import { path } from "../containers/Path/reducer";
 import { paths } from "../containers/Paths/reducer";
 import { problem } from "../containers/Activity/reducer";
 import { fetchDataDemo } from "../containers/IdeaLab/reducer";
-import { fusionChartDemo } from "../containers/IdeaLab/Ben/reducer";
 
 export default combineReducers({
   firebase,
@@ -26,6 +25,5 @@ export default combineReducers({
   path,
   paths,
   problem,
-  fetchDataDemo,
-  fusionChartDemo
+  fetchDataDemo
 });
