@@ -93,12 +93,7 @@ class AddAssignmentDialog extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     const { open, assignment } = this.props;
-    if (
-      !prevProps.open &&
-      open &&
-      assignment &&
-      assignment.questionType
-    ) {
+    if (!prevProps.open && open && assignment && assignment.questionType) {
       this.updateField("questionType")({
         target: { value: assignment.questionType }
       });

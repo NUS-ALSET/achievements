@@ -4,18 +4,19 @@ import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import { ConnectedRouter as Router } from "connected-react-router";
 
-import { loginMenuClose, loginMenuOpen, mainDrawerToggle } from "./actions";
+import {
+  loginMenuClose,
+  loginMenuOpen,
+  mainDrawerToggle,
+  getDynamicPathtitle
+} from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
-
-import { APP_SETTING } from "../../achievementsApp/config";
 
 // for Drawer and AppBar
 import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
 
 // for Routes
-// TODO: both account/ and profile/ point to this Account component
-// need to figure out why need both?
 import Account from "../../containers/Account/Account";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
@@ -90,12 +91,12 @@ const styles = theme => ({
   appBar: {
     [theme.breakpoints.up("lg")]: {
       // up.lg = large or more, 1280px or larger
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
+      width: `calc(100% - ${theme.drawerWidth}px)`
     }
   },
   drawer: {
     [theme.breakpoints.up("lg")]: {
-      width: APP_SETTING.drawerWidth
+      width: theme.drawerWidth
     }
   },
   content: {
@@ -104,7 +105,7 @@ const styles = theme => ({
     height: "calc(100% - 56px)",
     marginTop: 56,
     [theme.breakpoints.up("lg")]: {
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
+      width: `calc(100% - ${theme.drawerWidth}px)`
     },
     [theme.breakpoints.up("sm")]: {
       height: "calc(100% - 64px)",
@@ -125,24 +126,23 @@ class AppFrame extends React.Component {
     mainDrawerOpen: PropTypes.bool,
     isAdmin: PropTypes.bool,
     userName: PropTypes.string,
-    userId: PropTypes.string
+    userId: PropTypes.string,
+    routerPathname: PropTypes.string,
+    dynamicPathTitle: PropTypes.string
   };
 
-  shouldComponentUpdate(newProps) {
-    const fields = [
-      "anchorElId",
-      "mainDrawerOpen",
-      "isAdmin",
-      "userName",
-      "userId"
-    ];
+  componentDidMount() {
+    this.props.dispatch(
+      getDynamicPathtitle(this.props.history.location.pathname)
+    );
+  }
 
-    for (const field of fields) {
-      if (this.props[field] !== newProps[field]) {
-        return true;
-      }
+  componentDidUpdate(prevProps) {
+    if (prevProps.routerPathname !== this.props.routerPathname) {
+      this.props.dispatch(
+        getDynamicPathtitle(this.props.history.location.pathname)
+      );
     }
-    return false;
   }
 
   handleDrawerClose = () => {
@@ -169,21 +169,6 @@ class AppFrame extends React.Component {
     this.props.dispatch(signOutRequest());
   };
 
-  getDynamicPathTitle = () => {
-    if (!this.props.history.location.pathname) {
-      return "Achievements";
-    }
-    const dynamicPathname = this.props.history.location.pathname;
-    if (dynamicPathname === "/") {
-      return "Achievements";
-    }
-    const dynamicPathTitle = dynamicPathname
-      .replace(/^\//, "")
-      .replace(/\b[a-z]/g, name => name.toUpperCase())
-      .replace(/[/].*/, "");
-    return dynamicPathTitle;
-  };
-
   render() {
     const {
       anchorElId,
@@ -200,7 +185,7 @@ class AppFrame extends React.Component {
           <div className={classes.appFrame}>
             <AppBar
               className={classes.appBar}
-              color={APP_SETTING.isSuggesting ? "inherit" : "primary"}
+              color="primary"
               onClose={this.handleDrawerClose}
             >
               <Toolbar>
@@ -219,7 +204,7 @@ class AppFrame extends React.Component {
                   noWrap
                   variant="h6"
                 >
-                  {this.getDynamicPathTitle()}
+                  {this.props.dynamicPathTitle}
                 </Typography>
 
                 {userId ? (
@@ -314,6 +299,8 @@ const mapStateToProps = state => ({
   mainDrawerOpen: state.appFrame.mainDrawerOpen,
   userName: state.firebase.auth.displayName,
   userId: state.firebase.auth.uid,
-  isAdmin: state.account.isAdmin
+  isAdmin: state.account.isAdmin,
+  dynamicPathTitle: state.appFrame.dynamicPathTitle,
+  routerPathname: state.router.location.pathname
 });
 export default withStyles(styles)(connect(mapStateToProps)(AppFrame));

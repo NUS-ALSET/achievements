@@ -7,7 +7,7 @@ export const changePathKeyJupSol = pathKey => ({
   pathKey
 });
 
-export const initAnalyticsData = (analyticsData) => ({
+export const initAnalyticsData = analyticsData => ({
   type: INIT_ANALYTICSDATA,
   analyticsData
 });

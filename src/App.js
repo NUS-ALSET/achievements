@@ -1,5 +1,6 @@
 import React from "react";
 import { createHashHistory } from "history";
+import ErrorBoundary from "./ErrorBoundary";
 
 import AppFrame from "./containers/AppFrame/AppFrame";
 import Root from "./containers/Root/Root";
@@ -19,6 +20,7 @@ import { firebaseService } from "./services/firebaseService";
 const history = createHashHistory();
 const store = configureStore(undefined, history);
 const theme = createMuiTheme({
+  drawerWidth: 250,
   palette: {
     primary: {
       // deepblue
@@ -46,15 +48,20 @@ class App extends React.Component {
   // thanks to React context.
   render() {
     return (
-      <MuiThemeProvider theme={theme}>
-        {/* CssBaseline normalize a consistent CSS baseline across browsers. */}
-        <CssBaseline />
-        <Provider store={store}>
-          <Root>
-            <AppFrame history={history} />
-          </Root>
-        </Provider>
-      </MuiThemeProvider>
+      <ErrorBoundary
+        render={() => (
+          <div>An error occurred in this page, please go back and refresh</div>
+        )}
+      >
+        <MuiThemeProvider theme={theme}>
+          <CssBaseline />
+          <Provider store={store}>
+            <Root>
+              <AppFrame history={history} />
+            </Root>
+          </Provider>
+        </MuiThemeProvider>
+      </ErrorBoundary>
     );
   }
 }

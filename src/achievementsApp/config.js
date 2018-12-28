@@ -2,7 +2,6 @@ import firebase from "firebase";
 import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {
-  drawerWidth: 250,
   CodeCombatLevels: CodeCombatLevels,
   games: {
     "passenger-picker": {
@@ -17,7 +16,6 @@ export const APP_SETTING = {
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,
   defaultTimeout: 12000,
-  isSuggesting: window.location.href.includes("isSuggesting=true"),
   GITHUB_BASE_URL: "https://github.com/",
   AWS_SERVER_URL:
     "https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest"

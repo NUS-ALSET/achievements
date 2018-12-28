@@ -67,17 +67,12 @@ export class Activity extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const {
-      pathProblem,
-      solution
-    } = this.props;
+    const { pathProblem, solution } = this.props;
     if (!isEqual(pathProblem, prevProps.pathProblem)) {
       this.onProblemChange({});
     }
     if (pathProblem !== prevProps.pathProblem) {
-      if (
-        !["jupyter", "jupyterInline"].includes((pathProblem || {}).type)
-      ) {
+      if (!["jupyter", "jupyterInline"].includes((pathProblem || {}).type)) {
         this.setState({ disabledCommitBtn: false });
       } else if (
         (solution || {}).checked &&
@@ -90,7 +85,6 @@ export class Activity extends React.PureComponent {
       }
     }
   }
-
 
   componentWillUnmount() {
     this.props.problemFinalize(
@@ -249,19 +243,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(
       externalProfileUpdateRequest(externalProfileId, externalProfileType)
     ),
-  notificationShow: (message) => dispatch(notificationShow(message)),
+  notificationShow: message => dispatch(notificationShow(message)),
   problemFinalize: () => dispatch(problemFinalize()),
-  problemInitRequest: (
-    pathId,
-    problemId,
-    solution,
-    readOnly
-  ) => dispatch(problemInitRequest(
-    pathId,
-    problemId,
-    solution,
-    readOnly
-  )),
+  problemInitRequest: (pathId, problemId, solution, readOnly) =>
+    dispatch(problemInitRequest(pathId, problemId, solution, readOnly)),
   problemSolutionSubmitRequest: (pathId, problemId, payload) =>
     dispatch(problemSolutionSubmitRequest(pathId, problemId, payload)),
   signInRequire: () => dispatch(signInRequire()),

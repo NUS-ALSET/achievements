@@ -16,12 +16,8 @@ import {
   filterAnalyticsData
 } from "./actions";
 
-// Charting packages from fusionChart
-import FusionCharts from "fusioncharts";
-import Charts from "fusioncharts/fusioncharts.charts";
-import powerCharts from "fusioncharts/fusioncharts.powercharts";
-import ReactFC from "react-fusioncharts";
-import FusionTheme from "fusioncharts/themes/fusioncharts.theme.fusion";
+// code-spliting
+import ReactLoadable from "react-loadable";
 
 ReactFC.fcRoot(FusionCharts, Charts, powerCharts, FusionTheme);
 

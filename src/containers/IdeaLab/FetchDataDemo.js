@@ -69,8 +69,8 @@ class FetchDataDemo extends React.PureComponent {
           <Fragment>
             <h1>Fetched data from Firebase /analytics/jupyterSolutions node</h1>
             <Button
-              aria-owns={anchorEl ? "simple-menu" : undefined}
               aria-haspopup="true"
+              aria-owns={anchorEl ? "simple-menu" : undefined}
               color="primary"
               onClick={this.handleClick}
               variant="contained"
@@ -78,10 +78,10 @@ class FetchDataDemo extends React.PureComponent {
               Select PathKey to fetch from jupyterSolutions
             </Button>
             <Menu
-              id="simple-menu"
               anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
+              id="simple-menu"
               onClose={this.handleClose}
+              open={Boolean(anchorEl)}
             >
               <MenuItem
                 onClick={() => {
@@ -116,7 +116,7 @@ class FetchDataDemo extends React.PureComponent {
             </h2>
             <hr />
             <ul>
-              {filteredAnalytics && activitiesData && 
+              {filteredAnalytics &&
                 Object.keys(filteredAnalytics).map(item => (
                   <li key={item}>
                     jupyterSolutions ID: {activitiesData[analyticsData[filteredAnalytics[item]].activityKey].name}
@@ -140,26 +140,6 @@ class FetchDataDemo extends React.PureComponent {
                 <li key={item}>
                   {moreProbRequestsData[item].path}:{" "}
                   {moreProbRequestsData[item].activityCount}
-                </li>
-              ))}
-            </ul>
-          </Fragment>
-        ) : auth.isEmpty ? (
-          <h1>only logged users can access /moreProblemsRequests</h1>
-        ) : (
-          <Fragment>
-            <h1>fetching from /moreProblemsRequests</h1>
-            <h2>...</h2>
-          </Fragment>
-        )}
-        {activitiesData ? (
-          <Fragment>
-            <h1>Fetched data from Firebase /moreProblemsRequests node</h1>
-            <ul>
-              <li>moreProblemsRequests ID: activityCount</li>
-              {Object.keys(activitiesData).map(item => (
-                <li key={item}>{activitiesData[item].name}
-                  {item}
                 </li>
               ))}
             </ul>
