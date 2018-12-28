@@ -6,9 +6,7 @@ import {
   COURSE_NEW_DIALOG_CHANGE,
   COURSE_NEW_REQUEST
 } from "../containers/Courses/actions";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/database";
+import firebase from "firebase";
 
 export class ActionsService {
   consumerKey = undefined;

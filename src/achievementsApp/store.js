@@ -4,7 +4,7 @@ import thunk from "redux-thunk";
 import { reactReduxFirebase } from "react-redux-firebase";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { sagaInjector, sagaMiddleware } from "../services/saga";
-import firebase from "firebase/app";
+import firebase from "firebase";
 import logger from "redux-logger";
 import rootReducer from "./reducer";
 

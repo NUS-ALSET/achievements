@@ -18,9 +18,7 @@ import { firebaseService } from "./firebaseService";
 import { pathsService } from "./paths";
 
 import each from "lodash/each";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/database";
+import firebase from "firebase";
 import { APP_SETTING } from "../achievementsApp/config";
 
 const ERROR_TIMEOUT = 6000;

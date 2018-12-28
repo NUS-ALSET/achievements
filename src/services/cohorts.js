@@ -1,5 +1,4 @@
-import firebase from "firebase/app";
-import "firebase/database";
+import firebase from "firebase";
 import { ASSIGNMENTS_TYPES } from "./courses";
 
 class CohortsService {

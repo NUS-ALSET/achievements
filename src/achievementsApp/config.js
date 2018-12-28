@@ -1,5 +1,4 @@
-import firebase from "firebase/app";
-import "firebase/auth";
+import firebase from "firebase";
 import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {

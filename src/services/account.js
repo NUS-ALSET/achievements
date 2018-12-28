@@ -3,9 +3,7 @@
  */
 
 import { authProvider } from "../achievementsApp/config";
-import firebase from "firebase/app";
-import "firebase/auth";
-import "firebase/database";
+import firebase from "firebase";
 
 export class AccountService {
   static isAdmin = false;

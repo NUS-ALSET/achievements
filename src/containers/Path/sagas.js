@@ -1,6 +1,5 @@
 import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
-import firebase from "firebase/app";
-import "firebase/database";
+import firebase from "firebase";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
