@@ -23,7 +23,8 @@ class FetchDataDemo extends React.PureComponent {
     filteredAnalytics: PropTypes.array,
     initAnalyticsData: PropTypes.func,
     jupyterAnalyticsPathKey: PropTypes.string,
-    moreProbRequestsData: PropTypes.object
+    moreProbRequestsData: PropTypes.object,
+    activitiesData: PropTypes.object
   };
   state = {
     anchorEl: null
@@ -31,7 +32,7 @@ class FetchDataDemo extends React.PureComponent {
 
   componentDidUpdate(prevProps) {
     if (prevProps.analyticsData !== this.props.analyticsData) {
-        this.props.initAnalyticsData(this.props.analyticsData);
+      this.props.initAnalyticsData(this.props.analyticsData);
     }
   }
 
@@ -58,7 +59,8 @@ class FetchDataDemo extends React.PureComponent {
       analyticsData,
       filteredAnalytics,
       jupyterAnalyticsPathKey,
-      moreProbRequestsData
+      moreProbRequestsData,
+      activitiesData
     } = this.props;
 
     return (
@@ -67,7 +69,7 @@ class FetchDataDemo extends React.PureComponent {
           <Fragment>
             <h1>Fetched data from Firebase /analytics/jupyterSolutions node</h1>
             <Button
-              aria-owns={anchorEl ? 'simple-menu' : undefined}
+              aria-owns={anchorEl ? "simple-menu" : undefined}
               aria-haspopup="true"
               color="primary"
               onClick={this.handleClick}
@@ -109,15 +111,17 @@ class FetchDataDemo extends React.PureComponent {
                 pathKey3: -LLd7A7XpcbQiQ9pzAIX
               </MenuItem>
             </Menu>
-            <h2>data with pathKey = {jupyterAnalyticsPathKey || "show all"}:</h2>
+            <h2>
+              data with pathKey = {jupyterAnalyticsPathKey || "show all"}:
+            </h2>
             <hr />
             <ul>
-              {filteredAnalytics && Object.keys(filteredAnalytics)
-                .map(item => (
+              {filteredAnalytics && activitiesData && 
+                Object.keys(filteredAnalytics).map(item => (
                   <li key={item}>
-                    jupyterSolutions ID: {filteredAnalytics[item]}
+                    jupyterSolutions ID: {activitiesData[analyticsData[filteredAnalytics[item]].activityKey].name}
                   </li>
-              ))}
+                ))}
             </ul>
           </Fragment>
         ) : (
@@ -140,17 +144,33 @@ class FetchDataDemo extends React.PureComponent {
               ))}
             </ul>
           </Fragment>
+        ) : auth.isEmpty ? (
+          <h1>only logged users can access /moreProblemsRequests</h1>
         ) : (
-          auth.isEmpty ? (
-            <h1>
-              only logged users can access /moreProblemsRequests
-            </h1>
-          ) : (
-            <Fragment>
-              <h1>fetching from /moreProblemsRequests</h1>
-              <h2>...</h2>
-            </Fragment>
-          )
+          <Fragment>
+            <h1>fetching from /moreProblemsRequests</h1>
+            <h2>...</h2>
+          </Fragment>
+        )}
+        {activitiesData ? (
+          <Fragment>
+            <h1>Fetched data from Firebase /moreProblemsRequests node</h1>
+            <ul>
+              <li>moreProblemsRequests ID: activityCount</li>
+              {Object.keys(activitiesData).map(item => (
+                <li key={item}>{activitiesData[item].name}
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </Fragment>
+        ) : auth.isEmpty ? (
+          <h1>only logged users can access /moreProblemsRequests</h1>
+        ) : (
+          <Fragment>
+            <h1>fetching from /moreProblemsRequests</h1>
+            <h2>...</h2>
+          </Fragment>
         )}
       </Fragment>
     );
@@ -162,7 +182,8 @@ const mapStateToProps = state => ({
   analyticsData: state.firebase.data.analyticsData,
   filteredAnalytics: state.fetchDataDemo.filteredAnalytics,
   jupyterAnalyticsPathKey: state.fetchDataDemo.jupyterAnalyticsPathKey,
-  moreProbRequestsData: state.firebase.data.moreProbRequestsData
+  moreProbRequestsData: state.firebase.data.moreProbRequestsData,
+  activitiesData: state.firebase.data.activitiesData
 });
 
 const mapDispatchToProps = {
@@ -180,17 +201,27 @@ export default compose(
         path: "/analytics/jupyterSolutions",
         storeAs: "analyticsData"
       }
-    ].concat(
-      firebaseAuth.isEmpty
-        ? []
-        : [
-            {
-              path: "/moreProblemsRequests",
-              storeAs: "moreProbRequestsData",
-              queryParams: ["orderByChild=requestTime"]
-            }
-          ]
-    );
+    ]
+      .concat(
+        firebaseAuth.isEmpty
+          ? []
+          : [
+              {
+                path: "/moreProblemsRequests",
+                storeAs: "moreProbRequestsData",
+                queryParams: ["orderByChild=requestTime"]
+              }
+            ]
+      )
+      .concat([
+        {
+          path: "/activities",
+          storeAs: "activitiesData"
+        }
+      ]);
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(FetchDataDemo);
