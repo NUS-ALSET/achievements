@@ -6,7 +6,7 @@ import { connectRouter, routerMiddleware } from "connected-react-router";
 import { sagaInjector, sagaMiddleware } from "../services/saga";
 import logger from "redux-logger";
 import rootReducer from "./reducer";
-import firebaseConfig from "./config";
+import { firebaseConfig } from "./config";
 
 
 // react-redux-firebase config
