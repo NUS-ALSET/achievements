@@ -17,6 +17,7 @@ import { pathsService } from "./services/paths";
 import { historyService } from "./services/history";
 import { firebaseService } from "./services/firebaseService";
 
+
 const history = createHashHistory();
 const store = configureStore(undefined, history);
 const theme = createMuiTheme({
