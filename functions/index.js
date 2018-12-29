@@ -1,10 +1,11 @@
 /* eslint-disable no-magic-numbers */
 
+// Import the Firebase SDK for Google Cloud Functions.
 const functions = require("firebase-functions");
+// Import the Firebase Admin SDK.
 const admin = require("firebase-admin");
 
 const checkToken = require("./src/utils/checkToken");
-
 const api = require("./src/api");
 const ltiLogin = require("./src/ltiLogin");
 const profileTriggers = require("./src/updateProfile");
@@ -30,6 +31,7 @@ const profilesRefreshApproach =
   "none";
 const ERROR_500 = 500;
 
+// initialize the Firebase Admin SDK
 admin.initializeApp();
 
 exports.handleNewProblemSolution =
