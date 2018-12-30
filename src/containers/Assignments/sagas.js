@@ -430,12 +430,24 @@ export function* assignmentAddAssistantRequestHandler(action) {
       state => state.assignments.dialog.assistants
     );
 
+    const ownerUID = yield select(
+      state => state.firebase.auth.uid
+    );
+
+    if (ownerUID === action.assistantId) {
+      let error = "Cannot add self as assistant";
+      yield put(
+        assignmentAddAssistantFail(action.courseId, action.assistantId, error)
+      );
+      return yield put(notificationShow(error));
+    }
+
     if (
       existingAssistants.filter(
         assistant => assistant.id === action.assistantId
       ).length
     ) {
-      const error = "Assistant already assigned";
+      let error = "Assistant already assigned";
       yield put(
         assignmentAddAssistantFail(action.courseId, action.assistantId, error)
       );
