@@ -25,7 +25,8 @@ class PathTabs extends React.Component {
     paths: PropTypes.object,
     myPaths: PropTypes.object.isRequired,
     publicPaths: PropTypes.object,
-    joinedPaths: PropTypes.object
+    joinedPaths: PropTypes.object,
+    uid: PropTypes.string
   };
 
   state = {
@@ -43,7 +44,13 @@ class PathTabs extends React.Component {
   };
 
   render() {
-    const { pathDialogShow, joinedPaths, myPaths, publicPaths } = this.props;
+    const {
+      pathDialogShow,
+      joinedPaths,
+      myPaths,
+      publicPaths,
+      uid
+    } = this.props;
     let paths;
 
     switch (this.state.currentTab) {
@@ -97,9 +104,10 @@ class PathTabs extends React.Component {
           <Tab label="Public Paths" />
         </Tabs>
         <PathsTable
-          owner={this.state.currentTab === PATHS_TAB_OWNED}
           pathDialogShow={pathDialogShow}
           paths={paths}
+          uid={uid}
+          viewCreatedTab={this.state.currentTab === PATHS_TAB_OWNED}
         />
       </Fragment>
     );
