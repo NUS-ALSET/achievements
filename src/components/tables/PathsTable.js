@@ -30,22 +30,23 @@ const styles = () => ({
 class PathsTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    owner: PropTypes.bool,
+    viewCreatedTab: PropTypes.bool,
     paths: PropTypes.object.isRequired,
-    pathDialogShow: PropTypes.func.isRequired
+    pathDialogShow: PropTypes.func.isRequired,
+    uid: PropTypes.string
   };
 
   onEditClick = pathInfo => this.props.pathDialogShow(pathInfo);
 
   render() {
-    const { classes, owner, paths } = this.props;
+    const { classes, viewCreatedTab, paths, uid } = this.props;
 
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Path name</TableCell>
-            {!owner && (
+            {!viewCreatedTab && (
               <TableCell
                 style={{
                   // eslint-disable-next-line no-magic-numbers
@@ -77,11 +78,14 @@ class PathsTable extends React.PureComponent {
             .map(path => (
               <TableRow hover key={path.id}>
                 <TableCell>{path.name}</TableCell>
-                {!owner && (
+                {!viewCreatedTab && (
                   <TableCell>
                     {path.solutions !== undefined && path.totalActivities
                       ? `${path.solutions} of ${path.totalActivities}`
-                      : "not joined"}
+                      : path.owner === uid
+                        ? "owner"
+                        : "not joined"
+                    }
                   </TableCell>
                 )}
                 <TableCell>
@@ -90,7 +94,7 @@ class PathsTable extends React.PureComponent {
                       <SearchIcon />
                     </IconButton>
                   </Link>
-                  {owner && (
+                  {viewCreatedTab && (
                     <IconButton onClick={() => this.onEditClick(path)}>
                       <EditIcon />
                     </IconButton>

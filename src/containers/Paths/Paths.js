@@ -73,6 +73,7 @@ class Paths extends React.PureComponent {
                 myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
                 pathDialogShow={pathDialogShow}
                 publicPaths={publicPaths}
+                uid={uid}
               />
               <AddPathDialog
                 open={ui.dialog.type === "PathChange"}
