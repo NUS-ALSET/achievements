@@ -185,6 +185,10 @@ class Account extends React.PureComponent {
     }
 
     const isOwner = auth.uid === match.params.accountId;
+    const displayName = isOwner ||
+      (user.showDisplayName || user.showDisplayName === undefined)
+        ? userName
+        : "Hidden"
 
     return (
       <Fragment>
@@ -197,6 +201,13 @@ class Account extends React.PureComponent {
                 title={this.props.userName}
               />
               <CardContent>
+                <Typography
+                  style={{
+                    fontSize: 12
+                  }}
+                >
+                  User ID: {match.params.accountId}
+                </Typography>
                 {isOwner && displayNameEdit ? (
                   <Fragment>
                     <TextField
@@ -215,20 +226,17 @@ class Account extends React.PureComponent {
                   </Fragment>
                 ) : (
                   <Fragment>
-                    <Typography
+                    <TextField
+                      autoFocus
+                      defaultValue={displayName}
+                      InputProps={{
+                        readOnly: true
+                      }}
+                      label="Display Name"
                       style={{
-                        marginTop: 20,
-                        display: "inline-block",
-                        fontSize: 16,
                         width: "calc(100% - 48px)"
                       }}
-                    >
-                      {isOwner ||
-                      (user.showDisplayName ||
-                        user.showDisplayName === undefined)
-                        ? userName
-                        : "Hidden"}
-                    </Typography>
+                    />
                     {isOwner && (
                       <IconButton
                         onClick={() => this.toggleDisplayNameEdit(true)}
