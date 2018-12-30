@@ -65,7 +65,7 @@ class ControlAssistantsDialog extends React.Component {
       open,
       target
     } = this.props;
-    let keyInputMessage = "Enter User key";
+    let keyInputMessage = "Enter the User ID";
 
     if (this.state.newAssistantKey) {
       if (newAssistant) {
@@ -83,7 +83,7 @@ class ControlAssistantsDialog extends React.Component {
             <Fragment>
               <TextField
                 helperText={keyInputMessage}
-                label="New Assistant Key"
+                label="New Assistant's User ID"
                 onChange={this.onKeyChange}
                 style={{
                   width: 240,
