@@ -1,6 +1,5 @@
 import { actionsService } from "../services/actions";
 import { applyMiddleware, compose, createStore } from "redux";
-import thunk from "redux-thunk";
 import { reactReduxFirebase } from "react-redux-firebase";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { sagaInjector, sagaMiddleware } from "../services/saga";
@@ -24,7 +23,6 @@ const createStoreWithFirebase = compose(
 
 export const configureStore = (preloadedState, history) => {
   const middlewares = [
-    thunk,
     sagaMiddleware,
     logger,
     routerMiddleware(history),
