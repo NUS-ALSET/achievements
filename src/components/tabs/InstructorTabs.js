@@ -74,7 +74,8 @@ class InstructorTabs extends React.PureComponent {
                   backfaceVisibility: "hidden",
                   position: "fixed",
                   bottom: 20,
-                  right: 20
+                  right: 20,
+                  zIndex: 10
                 }}
               >
                 <AddIcon />
@@ -89,7 +90,8 @@ class InstructorTabs extends React.PureComponent {
                   backfaceVisibility: "hidden",
                   position: "fixed",
                   bottom: 80,
-                  right: 20
+                  right: 20,
+                  zIndex: 10
                 }}
               >
                 <GroupIcon />
