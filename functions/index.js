@@ -215,9 +215,9 @@ exports.handleUserAuth = functions.database
 
 exports.addActivityDestination = functions.database
   .ref("/activities/{activityId}")
-  .onCreate((sanpshot, context) => {
+  .onCreate((snapshot, context) => {
     const { activityId } = context.params;
-    const activity = sanpshot.val();
+    const activity = snapshot.val();
     const acceptedAcyivitiesTypes = ["jupyter", "jupyterInline"];
     if (acceptedAcyivitiesTypes.includes(activity.type)) {
       return addDestination(activity.name, activity.owner, activityId);
@@ -227,9 +227,9 @@ exports.addActivityDestination = functions.database
 
 exports.addPathDestination = functions.database
   .ref("/paths/{pathId}")
-  .onCreate((sanpshot, context) => {
+  .onCreate((snapshot, context) => {
     const { pathId } = context.params;
-    const path = sanpshot.val();
+    const path = snapshot.val();
     return addDestination(path.name, path.owner, pathId, true);
   });
 

@@ -10,7 +10,7 @@ import { firebaseConfig } from "./config";
 
 // react-redux-firebase config
 const rrfConfig = {
-  userProfile: "courseMembers",
+  userProfile: "courseMembers", // firebase root where user profiles are stored
   profileParamsToPopulate: ["members:users"]
 };
 
