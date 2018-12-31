@@ -209,14 +209,11 @@ export function* updateNewAssignmentFieldHandler(action) {
           [pathsService, pathsService.fetchPaths],
           data.uid
         );
-        console.log("Step 1 done");
         yield put(assignmentPathsFetchSuccess(paths));
         updatedFields.path = assignment.path || data.uid;
-        console.log("Step 2 done");
 
         if (!data.manualUpdates.details) {
           updatedFields.details = `${location}#/paths/${updatedFields.path}`;
-          console.log("Step 3 done");
         }
       } else if (
         [
@@ -247,8 +244,7 @@ export function* updateNewAssignmentFieldHandler(action) {
           data.paths.myPaths,
           data.paths.publicPaths
         );
-        const path = (paths[action.value] && paths[action.value].name) || {};
-        updatedFields.name = `Path progress for ${path.name || "Some path"}`;
+        updatedFields.name = `Path progress for ${paths[data.assignment.path].name || "..."}`;
       }
 
       updatedFields.pathActivity = "";
