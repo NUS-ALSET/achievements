@@ -19,12 +19,6 @@ export const signInSuccess = () => ({
   type: SIGN_IN_SUCCESS
 });
 
-export const SIGN_IN_FAIL = "SIGN_IN_FAIL";
-export const signInFail = error => ({
-  type: SIGN_IN_FAIL,
-  error
-});
-
 export const SIGN_OUT_REQUEST = "SIGN_OUT_REQUEST";
 export const signOutRequest = () => ({
   type: SIGN_OUT_REQUEST
