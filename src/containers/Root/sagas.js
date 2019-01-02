@@ -1,13 +1,13 @@
 import {
   ACCEPT_EULA_REQUEST,
   NOTIFICATION_SHOW,
+  notificationShow,
   SIGN_IN_REQUEST,
   SIGN_OUT_REQUEST,
   acceptEulaFail,
   acceptEulaSuccess,
   notificationHide,
   showAcceptEulaDialog,
-  signInFail,
   signInSuccess,
   signOutSuccess
 } from "./actions";
@@ -20,8 +20,10 @@ function* handleSignInRequest() {
   try {
     yield call(accountService.signIn);
     yield put(signInSuccess());
+    yield put(notificationShow("Successfully signed in"))
   } catch (err) {
-    yield put(signInFail(err.message));
+    yield put(notificationShow("Failed to sign in"));
+    console.error("signed in error: ", err)
   }
 }
 
@@ -33,8 +35,15 @@ function* handleFirebaseSignIn() {
 }
 
 function* handleSignOut() {
-  yield call(accountService.signOut);
-  yield put(signOutSuccess());
+  try {
+    yield call(accountService.signOut);
+    yield put(signOutSuccess());
+    yield put(notificationShow("You have signed out"))
+  } catch (err) {
+    yield put(notificationShow("Failed to sign out"));
+    console.error("signed out error: ", err)
+  }
+
 }
 
 function* autoHideNotification() {
@@ -48,6 +57,8 @@ function* handleAcceptEULARequest() {
     yield put(acceptEulaSuccess());
   } catch (err) {
     yield put(acceptEulaFail(err.message));
+    yield put(notificationShow("Failed to accept EULA request"));
+    console.error("EULA error: ", err)
   }
 }
 

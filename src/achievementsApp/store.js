@@ -24,9 +24,9 @@ const createStoreWithFirebase = compose(
 export const configureStore = (preloadedState, history) => {
   const middlewares = [
     sagaMiddleware,
-    logger,
     routerMiddleware(history),
-    actionsService.catchAction
+    actionsService.catchAction,
+    logger
   ];
   const store = createStoreWithFirebase(
     connectRouter(history)(rootReducer),
@@ -35,7 +35,9 @@ export const configureStore = (preloadedState, history) => {
       applyMiddleware(...middlewares)
     )
   );
-  sagaInjector.injections.map(injection => sagaMiddleware.run(injection));
+  sagaInjector.injections.map(injection =>
+    sagaMiddleware.run(injection)
+  );
 
   return store;
 };
