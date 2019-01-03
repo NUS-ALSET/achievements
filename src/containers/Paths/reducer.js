@@ -4,7 +4,8 @@ import {
   PATH_GAPI_AUTHORIZED,
   PATH_ACTIVITY_DIALOG_SHOW,
   PATH_SELECT,
-  PATHS_JOINED_FETCH_SUCCESS
+  PATHS_JOINED_FETCH_SUCCESS,
+  PATH_TAB_SWITCH
 } from "./actions";
 import {
   PATH_CLOSE_DIALOG,
@@ -16,6 +17,7 @@ import {
 export const paths = (
   state = {
     selectedPathId: "",
+    currentPathTab: 0,
     joinedPaths: {},
     ui: {
       dialog: {
@@ -111,6 +113,11 @@ export const paths = (
       return {
         ...state,
         selectedPathId: action.pathId
+      };
+    case PATH_TAB_SWITCH:
+      return {
+        ...state,
+        currentPathTab: action.tabIndex
       };
     default:
       return state;
