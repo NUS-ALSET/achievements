@@ -45,7 +45,7 @@ function* versionChangeHandler() {
   }
 }
 
-function* handleSignInRequest() {
+export function* handleSignInRequest() {
   try {
     yield call(accountService.signIn);
     yield put(signInSuccess());
