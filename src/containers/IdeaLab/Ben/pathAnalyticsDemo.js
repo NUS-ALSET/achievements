@@ -25,7 +25,7 @@ const ReactFCLoad = ReactLoadable({
   loading: () => <LinearProgress />
 });
 
-class fusionChartDemo extends React.PureComponent {
+class pathAnalyticsDemo extends React.PureComponent {
   static propTypes = {
     analyticsData: PropTypes.object,
     changePathKeyJupSol: PropTypes.func,
@@ -39,7 +39,8 @@ class fusionChartDemo extends React.PureComponent {
     anchorEl: null,
     loading: true,
     timeTakenArray: [],
-    numAttemptsArray: []
+    numAttemptsArray: [],
+    userProgressArray: []
   };
 
   componentDidUpdate(prevProps) {
@@ -95,6 +96,104 @@ class fusionChartDemo extends React.PureComponent {
     }
   };
 
+  processDataUserProgress = (
+    analyticsData,
+    filteredAnalytics,
+    activitiesData
+  ) => {
+    let filteredProm = Promise.resolve(filteredAnalytics);
+    let analyticsProm = Promise.resolve(analyticsData);
+    let activitiesProm = Promise.resolve(activitiesData);
+    let thisVar = this;
+    Promise.all([filteredProm, analyticsProm, activitiesProm]).then(function([
+      filteredResponse,
+      analyticsResponse,
+      activitiesResponse
+    ]) {
+      if (activitiesResponse && analyticsResponse && filteredResponse) {
+        let arrayUserKey = Object.keys(filteredResponse)
+          .map(item => ({
+            value: [
+              analyticsResponse[filteredResponse[item]].userKey,
+              activitiesResponse[
+                analyticsResponse[filteredResponse[item]].activityKey
+              ].name,
+              analyticsResponse[filteredResponse[item]].time,
+              activitiesResponse[
+                analyticsResponse[filteredResponse[item]].activityKey
+              ].orderIndex,
+              analyticsResponse[filteredResponse[item]].pathKey
+            ]
+          }))
+          .sort((a, b) => a.value[3] - b.value[3]);
+
+        let arrayByActivity = Array.from(
+          new Set(arrayUserKey.map(item => item.value[1]))
+        ).map(label => arrayUserKey.filter(item => item.value[1] === label));
+
+        let currDateUnix = new Date().getTime();
+        let finalArray = [[], [], [], []];
+        arrayByActivity.map(el => {
+          let allTime = [];
+          let lastWeek = [];
+          let twoWeek = [];
+          let threeWeek = [];
+          el.map(elem => {
+            if (!allTime.includes(elem.value[0])) {
+              allTime.push(elem.value[0]);
+            }
+            if (
+              currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 &&
+              !lastWeek.includes(elem.value[0])
+            ) {
+              lastWeek.push(elem.value[0]);
+            }
+            if (
+              currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 * 2 &&
+              !twoWeek.includes(elem.value[0])
+            ) {
+              twoWeek.push(elem.value[0]);
+            }
+            if (
+              currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 * 3 &&
+              !threeWeek.includes(elem.value[0])
+            ) {
+              threeWeek.push(elem.value[0]);
+            }
+            return elem;
+          });
+          finalArray[0].push(allTime.length);
+          finalArray[1].push(lastWeek.length);
+          finalArray[2].push(twoWeek.length);
+          finalArray[3].push(threeWeek.length);
+          return finalArray;
+        });
+
+        thisVar.setState({
+          userProgressArray: [
+            {
+              seriesname: "All Time",
+              data: finalArray[0].toString()
+            },
+            {
+              seriesname: "Since Last Week",
+              data: finalArray[1].toString()
+            },
+            {
+              seriesname: "Since 2 Weeks Ago",
+              data: finalArray[2].toString()
+            },
+            {
+              seriesname: "Since 3 Weeks Ago",
+              data: finalArray[3].toString()
+            }
+          ],
+          loading: false
+        });
+      }
+    });
+  };
+
   processDataTime = (analyticsData, filteredAnalytics, activitiesData) => {
     let filteredProm = Promise.resolve(filteredAnalytics);
     let analyticsProm = Promise.resolve(analyticsData);
@@ -106,16 +205,21 @@ class fusionChartDemo extends React.PureComponent {
       activitiesResponse
     ]) {
       if (activitiesResponse && analyticsResponse && filteredResponse) {
-        let myArray = Object.keys(filteredResponse).map(item => ({
-          value: [
-            (analyticsResponse[filteredResponse[item]].time -
-              analyticsResponse[filteredResponse[item]].open) /
-              60000,
-            activitiesResponse[
-              analyticsResponse[filteredResponse[item]].activityKey
-            ].name
-          ]
-        }));
+        let myArray = Object.keys(filteredResponse)
+          .map(item => ({
+            value: [
+              (analyticsResponse[filteredResponse[item]].time -
+                analyticsResponse[filteredResponse[item]].open) /
+                60000,
+              activitiesResponse[
+                analyticsResponse[filteredResponse[item]].activityKey
+              ].name,
+              activitiesResponse[
+                analyticsResponse[filteredResponse[item]].activityKey
+              ].orderIndex
+            ]
+          }))
+          .sort((a, b) => a.value[2] - b.value[2]);
         thisVar.setState({
           timeTakenArray: Array.from(
             new Set(myArray.map(item => item.value[1]))
@@ -160,9 +264,13 @@ class fusionChartDemo extends React.PureComponent {
               analyticsResponse[filteredResponse[item]].userKey,
               activitiesResponse[
                 analyticsResponse[filteredResponse[item]].activityKey
-              ].name
+              ].name,
+              activitiesResponse[
+                analyticsResponse[filteredResponse[item]].activityKey
+              ].orderIndex
             ]
-          }));
+          }))
+          .sort((a, b) => a.value[3] - b.value[3]);
 
         let arrayByActivity = Array.from(
           new Set(arrayCompletedZero.map(item => item.value[2]))
@@ -208,7 +316,13 @@ class fusionChartDemo extends React.PureComponent {
   };
 
   render() {
-    const { anchorEl, loading, timeTakenArray, numAttemptsArray } = this.state;
+    const {
+      anchorEl,
+      loading,
+      timeTakenArray,
+      numAttemptsArray,
+      userProgressArray
+    } = this.state;
     const {
       analyticsData,
       filteredAnalytics,
@@ -229,13 +343,13 @@ class fusionChartDemo extends React.PureComponent {
                   color="error"
                   style={{ marginLeft: 10, flexDirection: "column" }}
                 >
-                  time taken
+                  user progression
                 </Typography>
                 <Typography
                   variant="h5"
                   style={{ marginLeft: 10, flexDirection: "column" }}
                 >
-                  taken to solve Jupyter Notebook Activities
+                  along Jupyter Notebook Activities
                 </Typography>
               </div>
 
@@ -280,6 +394,193 @@ class fusionChartDemo extends React.PureComponent {
                   }}
                 >
                   pathKey3: -LLd7A7XpcbQiQ9pzAIX
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-LT0hGj19DXTh4WvJYiI");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-LT0hGj19DXTh4WvJYiI");
+                  }}
+                >
+                  pathKey4: -LT0hGj19DXTh4WvJYiI
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-L9JVgROKkDUhZs08WWp");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-L9JVgROKkDUhZs08WWp");
+                  }}
+                >
+                  pathKey5: -L9JVgROKkDUhZs08WWp
+                </MenuItem>
+              </Menu>
+              <hr />
+
+              {loading ? (
+                this.processDataUserProgress(
+                  analyticsData,
+                  filteredAnalytics,
+                  activitiesData
+                )
+              ) : (
+                <ReactFCLoad
+                  {...{
+                    type: "zoomline",
+                    width: "100%",
+                    height: 550,
+                    dataFormat: "json",
+                    dataSource: {
+                      chart: {
+                        caption: "Jupyter Notebook Activities",
+                        subcaption: "Number of unique users along a path",
+                        yaxisname: "Unique Users",
+                        xaxisname: "Activitiy",
+                        pixelsPerPoint: "0",
+                        pixelsPerLabel: "30",
+                        lineThickness: "1",
+                        compactdatamode: "1",
+                        dataseparator: ",",
+                        labelHeight: "30",
+                        theme: "fusion"
+                      },
+                      categories: [
+                        {
+                          category:
+                            filteredAnalytics &&
+                            activitiesData &&
+                            analyticsData &&
+                            Array.from(
+                              new Set(
+                                Object.keys(filteredAnalytics)
+                                  .sort(
+                                    (a, b) =>
+                                      activitiesData[
+                                        analyticsData[filteredAnalytics[a]]
+                                          .activityKey
+                                      ].orderIndex -
+                                      activitiesData[
+                                        analyticsData[filteredAnalytics[b]]
+                                          .activityKey
+                                      ].orderIndex
+                                  )
+                                  .map(item => ({
+                                    label:
+                                      activitiesData[
+                                        analyticsData[filteredAnalytics[item]]
+                                          .activityKey
+                                      ].name
+                                  }))
+                                  .map(s => s.label)
+                              )
+                            ).map(label => ({
+                              label: label
+                            }))
+                        }
+                      ],
+                      dataset: userProgressArray
+                    }
+                  }}
+                />
+              )}
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Typography variant="h5">
+                Fetching from /analytics/jupyterSolutions
+              </Typography>
+              <Typography variant="h6">
+                Data with pathKey = {jupyterAnalyticsPathKey}:
+              </Typography>
+              <Typography variant="h6">Loading...</Typography>
+            </Fragment>
+          )}
+        </Fragment>
+
+        <br />
+        <hr />
+        <hr />
+
+        <Fragment>
+          {analyticsData ? (
+            <Fragment>
+              <div style={{ display: "flex" }}>
+                <Typography variant="h5" style={{ flexDirection: "column" }}>
+                  Analysis of
+                </Typography>
+                <Typography
+                  variant="h5"
+                  color="error"
+                  style={{ marginLeft: 10, flexDirection: "column" }}
+                >
+                  time taken
+                </Typography>
+                <Typography
+                  variant="h5"
+                  style={{ marginLeft: 10, flexDirection: "column" }}
+                >
+                  to solve Jupyter Notebook Activities
+                </Typography>
+              </div>
+
+              <Button
+                aria-haspopup="true"
+                aria-owns={anchorEl ? "simple-menu" : undefined}
+                color="primary"
+                onClick={this.handleClick}
+                variant="contained"
+              >
+                Select PathKey to fetch from jupyterSolutions
+              </Button>
+              <Menu
+                anchorEl={anchorEl}
+                id="simple-menu"
+                onClose={this.handleClose}
+                open={Boolean(anchorEl)}
+              >
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-LIHcRLK2Ql9Fva5uERe");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-LIHcRLK2Ql9Fva5uERe");
+                  }}
+                >
+                  pathKey1: -LIHcRLK2Ql9Fva5uERe
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-LMfAB4SNR25AyoFLmN5");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-LMfAB4SNR25AyoFLmN5");
+                  }}
+                >
+                  pathKey2: -LMfAB4SNR25AyoFLmN5
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-LLd7A7XpcbQiQ9pzAIX");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-LLd7A7XpcbQiQ9pzAIX");
+                  }}
+                >
+                  pathKey3: -LLd7A7XpcbQiQ9pzAIX
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-LT0hGj19DXTh4WvJYiI");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-LT0hGj19DXTh4WvJYiI");
+                  }}
+                >
+                  pathKey4: -LT0hGj19DXTh4WvJYiI
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-L9JVgROKkDUhZs08WWp");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-L9JVgROKkDUhZs08WWp");
+                  }}
+                >
+                  pathKey5: -L9JVgROKkDUhZs08WWp
                 </MenuItem>
               </Menu>
               <hr />
@@ -330,6 +631,17 @@ class fusionChartDemo extends React.PureComponent {
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)
+                                  .sort(
+                                    (a, b) =>
+                                      activitiesData[
+                                        analyticsData[filteredAnalytics[a]]
+                                          .activityKey
+                                      ].orderIndex -
+                                      activitiesData[
+                                        analyticsData[filteredAnalytics[b]]
+                                          .activityKey
+                                      ].orderIndex
+                                  )
                                   .map(item => ({
                                     label:
                                       activitiesData[
@@ -390,7 +702,7 @@ class fusionChartDemo extends React.PureComponent {
                   variant="h5"
                   style={{ marginLeft: 10, flexDirection: "column" }}
                 >
-                  taken to solve Jupyter Notebook Activities
+                  to solve Jupyter Notebook Activities
                 </Typography>
               </div>
 
@@ -435,6 +747,24 @@ class fusionChartDemo extends React.PureComponent {
                   }}
                 >
                   pathKey3: -LLd7A7XpcbQiQ9pzAIX
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-LT0hGj19DXTh4WvJYiI");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-LT0hGj19DXTh4WvJYiI");
+                  }}
+                >
+                  pathKey4: -LT0hGj19DXTh4WvJYiI
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    this.handleChangeKey("-L9JVgROKkDUhZs08WWp");
+                    this.handleClose();
+                    this.filterByPathKey(analyticsData, "-L9JVgROKkDUhZs08WWp");
+                  }}
+                >
+                  pathKey5: -L9JVgROKkDUhZs08WWp
                 </MenuItem>
               </Menu>
               <hr />
@@ -485,6 +815,17 @@ class fusionChartDemo extends React.PureComponent {
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)
+                                  .sort(
+                                    (a, b) =>
+                                      activitiesData[
+                                        analyticsData[filteredAnalytics[a]]
+                                          .activityKey
+                                      ].orderIndex -
+                                      activitiesData[
+                                        analyticsData[filteredAnalytics[b]]
+                                          .activityKey
+                                      ].orderIndex
+                                  )
                                   .map(item => ({
                                     label:
                                       activitiesData[
@@ -546,16 +887,15 @@ export default compose(
       {
         path: "/analytics/jupyterSolutions",
         storeAs: "analyticsData"
-      }
-    ].concat([
+      },
       {
         path: "/activities",
         storeAs: "activitiesData"
       }
-    ]);
+    ];
   }),
   connect(
     mapStateToProps,
     mapDispatchToProps
   )
-)(fusionChartDemo);
+)(pathAnalyticsDemo);
