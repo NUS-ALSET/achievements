@@ -26,21 +26,17 @@ class PathTabs extends React.Component {
     myPaths: PropTypes.object.isRequired,
     publicPaths: PropTypes.object,
     joinedPaths: PropTypes.object,
-    uid: PropTypes.string
-  };
-
-  state = {
-    currentTab: 0
+    uid: PropTypes.string,
+    currentPathTab: PropTypes.number,
+    handleSwitchPathTab: PropTypes.func
   };
 
   onAddPathClick = () => {
-    this.setState({ currentTab: PATHS_TAB_OWNED });
-
     this.props.pathDialogShow();
   };
 
   handleTabChange = (event, tabIndex) => {
-    this.setState({ currentTab: tabIndex });
+    this.props.handleSwitchPathTab(tabIndex);
   };
 
   render() {
@@ -49,11 +45,12 @@ class PathTabs extends React.Component {
       joinedPaths,
       myPaths,
       publicPaths,
-      uid
+      uid,
+      currentPathTab
     } = this.props;
     let paths;
 
-    switch (this.state.currentTab) {
+    switch (currentPathTab) {
       case PATHS_TAB_PUBLIC:
         paths = publicPaths;
 
@@ -78,7 +75,7 @@ class PathTabs extends React.Component {
 
     return (
       <Fragment>
-        <Zoom in={this.state.currentTab === PATHS_TAB_OWNED} unmountOnExit>
+        <Zoom in={currentPathTab === PATHS_TAB_OWNED} unmountOnExit>
           <Fab
             color="primary"
             onClick={this.onAddPathClick}
@@ -97,7 +94,7 @@ class PathTabs extends React.Component {
           indicatorColor="primary"
           onChange={this.handleTabChange}
           textColor="primary"
-          value={this.state.currentTab}
+          value={currentPathTab}
         >
           <Tab label="Joined Paths" />
           <Tab label="Created Paths" />
@@ -107,7 +104,7 @@ class PathTabs extends React.Component {
           pathDialogShow={pathDialogShow}
           paths={paths}
           uid={uid}
-          viewCreatedTab={this.state.currentTab === PATHS_TAB_OWNED}
+          viewCreatedTab={currentPathTab === PATHS_TAB_OWNED}
         />
       </Fragment>
     );
