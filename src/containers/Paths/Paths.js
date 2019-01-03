@@ -22,7 +22,8 @@ import {
   pathChangeRequest,
   pathDialogHide,
   pathDialogShow,
-  pathsOpen
+  pathsOpen,
+  switchPathTab
 } from "./actions";
 import PathsTable from "../../components/tables/PathsTable";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -38,7 +39,9 @@ class Paths extends React.PureComponent {
     pathsOpen: PropTypes.func.isRequired,
     pathDialogShow: PropTypes.func,
     pathChangeRequest: PropTypes.func,
-    pathDialogHide: PropTypes.func
+    pathDialogHide: PropTypes.func,
+    handleSwitchPathTab: PropTypes.func,
+    currentPathTab: PropTypes.number
   };
 
   componentDidMount() {
@@ -54,7 +57,9 @@ class Paths extends React.PureComponent {
       publicPaths,
       ui,
       uid,
-      pathDialogShow
+      pathDialogShow,
+      currentPathTab,
+      handleSwitchPathTab
     } = this.props;
 
     return (
@@ -69,6 +74,8 @@ class Paths extends React.PureComponent {
           ) : (
             <Fragment>
               <PathTabs
+                currentPathTab={currentPathTab}
+                handleSwitchPathTab={handleSwitchPathTab}
                 joinedPaths={joinedPaths}
                 myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
                 pathDialogShow={pathDialogShow}
@@ -106,14 +113,16 @@ const mapStateToProps = state => ({
   ui: state.paths.ui,
   myPaths: state.firebase.data.myPaths,
   publicPaths: state.firebase.data.publicPaths,
-  joinedPaths: state.paths.joinedPaths
+  joinedPaths: state.paths.joinedPaths,
+  currentPathTab: state.paths.currentPathTab
 });
 
 const mapDispatchToProps = dispatch => ({
   pathsOpen: () => dispatch(pathsOpen()),
   pathDialogShow: pathInfo => dispatch(pathDialogShow(pathInfo)),
   pathChangeRequest: pathInfo => dispatch(pathChangeRequest(pathInfo)),
-  pathDialogHide: () => dispatch(pathDialogHide())
+  pathDialogHide: () => dispatch(pathDialogHide()),
+  handleSwitchPathTab: tabIndex => dispatch(switchPathTab(tabIndex))
 });
 
 export default compose(

@@ -9,14 +9,43 @@ import {
   notificationHide,
   showAcceptEulaDialog,
   signInSuccess,
-  signOutSuccess
+  signOutSuccess,
+  versionChange
 } from "./actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 import { accountService } from "../../services/account";
-import { call, put, takeLatest } from "redux-saga/effects";
-import { delay } from "redux-saga";
+import {
+  call,
+  put,
+  take,
+  takeLatest,
+  spawn
+} from "redux-saga/effects";
+import { delay, eventChannel } from "redux-saga";
+import compareVersions from "compare-versions";
 
-function* handleSignInRequest() {
+
+const createVersionWatcherChannel = () => {
+  return eventChannel(emit =>
+    accountService.watchVersionChange(version => emit(version))
+  );
+}
+
+let versionWatcherChannel;
+
+function* versionChangeHandler() {
+  versionWatcherChannel = yield call(createVersionWatcherChannel);
+  while (true) {
+    const { version } = yield take(versionWatcherChannel);
+    yield put(
+      versionChange(
+        version && compareVersions(version, process.env.REACT_APP_VERSION) === 1
+      )
+    );
+  }
+}
+
+export function* handleSignInRequest() {
   try {
     yield call(accountService.signIn);
     yield put(signInSuccess());
@@ -28,6 +57,9 @@ function* handleSignInRequest() {
 }
 
 function* handleFirebaseSignIn() {
+  if (!versionWatcherChannel) {
+    yield spawn(versionChangeHandler);
+  }
   const isAgreedEULA = yield call(accountService.checkEULAAgreement);
   if (!isAgreedEULA) {
     yield put(showAcceptEulaDialog());
