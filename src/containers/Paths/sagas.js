@@ -69,7 +69,6 @@ export function* pathActivityChangeRequestHandler(action) {
       [pathsService, pathsService.validateProblem],
       action.activityInfo
     );
-    yield put(pathDialogHide());
     const key = yield call(
       [pathsService, pathsService.problemChange],
       uid,

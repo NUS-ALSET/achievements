@@ -50,7 +50,6 @@ describe("Paths sagas", () => {
     ).done;
 
     expect(dispatchedActions).toEqual([
-      { type: PATH_DIALOG_HIDE },
       {
         type: PATH_ACTIVITY_CHANGE_SUCCESS,
         pathId: mockPathId,
