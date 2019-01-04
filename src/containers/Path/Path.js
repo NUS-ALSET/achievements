@@ -33,7 +33,7 @@ import {
 } from "./selectors";
 import {
   pathAddCollaboratorRequest,
-  pathCloseDialog,
+  closeActivityDialog,
   pathMoreProblemsRequest,
   pathOpen,
   pathOpenSolutionDialog,
@@ -540,7 +540,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = {
   onAddAssistant: pathAddCollaboratorRequest,
   onAssistantKeyChange: assignmentAssistantKeyChange,
-  onCloseDialog: pathCloseDialog,
+  onCloseDialog: closeActivityDialog,
   onNotification: notificationShow,
   onOpen: pathOpen,
   onShowCollaboratorsClick: pathShowCollaboratorsDialog,

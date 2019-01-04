@@ -14,7 +14,7 @@ import { pathsService } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import {
   PATH_TOGGLE_JOIN_STATUS_SUCCESS,
-  pathCloseDialog
+  closeActivityDialog
 } from "../Path/actions";
 
 export function* loginHandler(action) {
@@ -80,7 +80,7 @@ export function* pathActivityChangeRequestHandler(action) {
       pathProblemChangeSuccess(action.pathId, action.activityInfo, key)
     );
     yield put(notificationShow("Problem Saved"));
-    yield put(pathCloseDialog());
+    yield put(closeActivityDialog());
   } catch (err) {
     yield put(
       pathActivityChangeFail(action.pathId, action.activityInfo, err.message)

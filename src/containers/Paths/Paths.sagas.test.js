@@ -9,7 +9,7 @@ import {
 import { pathActivityChangeRequestHandler } from "./sagas";
 import { pathsService } from "../../services/paths";
 import { NOTIFICATION_SHOW } from "../Root/actions";
-import { PATH_CLOSE_DIALOG } from "../Path/actions";
+import { CLOSE_ACTIITY_DIALOG } from "../Path/actions";
 
 describe("Paths sagas", () => {
   it("pathActivityChangeRequestHandler should handle PATH_ACTIVITY_CHANGE_REQUEST", async () => {
@@ -61,7 +61,7 @@ describe("Paths sagas", () => {
         type: NOTIFICATION_SHOW,
         message: "Problem Saved"
       },
-      { type: PATH_CLOSE_DIALOG }
+      { type: CLOSE_ACTIITY_DIALOG }
     ]);
   });
 
