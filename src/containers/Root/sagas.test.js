@@ -35,7 +35,7 @@ describe("Root sagas", () => {
     accountService.signOut = jest.fn(() => Promise.resolve());
 
     const fakeStore = {
-        dispatch: action => dispatchedActions.push(action),
+      dispatch: action => dispatchedActions.push(action)
     };
 
     await runSaga(
