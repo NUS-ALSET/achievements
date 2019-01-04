@@ -1,13 +1,14 @@
-import { handleSignInRequest } from "./sagas"
+import {
+  handleSignInRequest,
+  handleSignOut
+ } from "./sagas"
 import * as actions from "./actions"
 import { put, call } from "redux-saga/effects"
 import assert from "assert"
 import { accountService } from "../../services/account"
+import { runSaga } from "redux-saga";
 
 
-/* Although it may be useful to test each step of a saga, in practise this makes for brittle tests. 
- * Instead, it may be preferable to run the whole saga and assert that the expected effects have occurred.
- */
 describe("Root sagas", () => {
   it("handle sign-in request", () => {
     const generator = handleSignInRequest()
@@ -25,6 +26,31 @@ describe("Root sagas", () => {
       generator.next().value,
       put(actions.notificationShow("Successfully signed in")),
       "it should wait for notificationShow action"
+    )
+  })
+
+  it("handle sign-out request", async () => {
+    const dispatchedActions = [];
+
+    accountService.signOut = jest.fn(() => Promise.resolve());
+
+    const fakeStore = {
+      dispatch: action => dispatchedActions.push(action)
+    };
+
+    await runSaga(
+      fakeStore,
+      handleSignOut
+    ).done;
+
+    expect(dispatchedActions).toEqual(
+      [
+        { type: "SIGN_OUT_SUCCESS" },
+        {
+          type: "NOTIFICATION_SHOW",
+          message: "You have signed out"
+        }
+      ]
     )
   })
 })

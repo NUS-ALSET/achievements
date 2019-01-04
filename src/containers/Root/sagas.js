@@ -45,6 +45,16 @@ function* versionChangeHandler() {
   }
 }
 
+function* handleFirebaseSignIn() {
+  if (!versionWatcherChannel) {
+    yield spawn(versionChangeHandler);
+  }
+  const isAgreedEULA = yield call(accountService.checkEULAAgreement);
+  if (!isAgreedEULA) {
+    yield put(showAcceptEulaDialog());
+  }
+}
+
 export function* handleSignInRequest() {
   try {
     yield call(accountService.signIn);
@@ -56,17 +66,8 @@ export function* handleSignInRequest() {
   }
 }
 
-function* handleFirebaseSignIn() {
-  if (!versionWatcherChannel) {
-    yield spawn(versionChangeHandler);
-  }
-  const isAgreedEULA = yield call(accountService.checkEULAAgreement);
-  if (!isAgreedEULA) {
-    yield put(showAcceptEulaDialog());
-  }
-}
 
-function* handleSignOut() {
+export function* handleSignOut() {
   try {
     yield call(accountService.signOut);
     yield put(signOutSuccess());
