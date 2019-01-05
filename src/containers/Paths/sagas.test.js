@@ -2,14 +2,13 @@
 import { runSaga } from "redux-saga";
 import {
   PATH_ACTIVITY_CHANGE_REQUEST,
-  PATH_DIALOG_HIDE,
   PATH_ACTIVITY_CHANGE_SUCCESS,
   PATH_ACTIVITY_CHANGE_FAIL
 } from "./actions";
 import { pathActivityChangeRequestHandler } from "./sagas";
 import { pathsService } from "../../services/paths";
 import { NOTIFICATION_SHOW } from "../Root/actions";
-import { CLOSE_ACTIITY_DIALOG } from "../Path/actions";
+import { CLOSE_ACTIVITY_DIALOG } from "../Path/actions";
 
 describe("Paths sagas", () => {
   it("pathActivityChangeRequestHandler should handle PATH_ACTIVITY_CHANGE_REQUEST", async () => {
@@ -60,7 +59,7 @@ describe("Paths sagas", () => {
         type: NOTIFICATION_SHOW,
         message: "Problem Saved"
       },
-      { type: CLOSE_ACTIITY_DIALOG }
+      { type: CLOSE_ACTIVITY_DIALOG }
     ]);
   });
 

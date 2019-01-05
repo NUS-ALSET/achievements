@@ -17,9 +17,9 @@ export const pathOpenJestSolutionDialog = (pathId, activityInfo) => ({
   activityInfo
 });
 
-export const CLOSE_ACTIITY_DIALOG = "CLOSE_ACTIVITY_DIALOG";
+export const CLOSE_ACTIVITY_DIALOG = "CLOSE_ACTIVITY_DIALOG";
 export const closeActivityDialog = () => ({
-  type: CLOSE_ACTIITY_DIALOG
+  type: CLOSE_ACTIVITY_DIALOG
 });
 
 // In fact, it only fetches existance of solution, should be renamed?
