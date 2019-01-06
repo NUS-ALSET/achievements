@@ -27,7 +27,7 @@ import {
   PATH_ACTIVITY_CODECOMBAT_OPEN,
   pathActivityCodeCombatDialogShow,
   pathProfileDialogShow,
-  CLOSE_ACTIITY_DIALOG,
+  CLOSE_ACTIVITY_DIALOG,
   closeActivityDialog,
   PATH_OPEN_JEST_SOLUTION_DIALOG,
   pathOpenSolutionDialog,
@@ -288,7 +288,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       );
     }
     const result = yield race({
-      skip: take(CLOSE_ACTIITY_DIALOG),
+      skip: take(CLOSE_ACTIVITY_DIALOG),
       success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
       fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
     });

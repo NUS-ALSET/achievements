@@ -82,43 +82,44 @@ class AddActivityDialog extends React.PureComponent {
 
   fetchedGithubURL = "";
 
-  componentDidUpdate(prevProps) {
-    const { activity, fetchGithubFilesStatus, open } = this.props;
-
-    if ((fetchGithubFilesStatus || "").length > 0) {
-      this.handelfetchGithubFilesStatus(fetchGithubFilesStatus, activity);
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if ((nextProps.fetchGithubFilesStatus || "").length > 0) {
+      this.handelfetchGithubFilesStatus(
+        nextProps.fetchGithubFilesStatus,
+        nextProps.activity
+      );
       return;
     }
-    if ((prevProps || {}).open !== open) {
+    if ((this.props || {}).open !== nextProps.open) {
       this.resetState();
     }
-    if (activity) {
+    if (nextProps.activity) {
       let state = {};
       if (
-        activity.name &&
-        AddName.test(activity.name) &&
-        NoStartWhiteSpace.test(activity.name)
+        nextProps.activity.name &&
+        AddName.test(nextProps.activity.name) &&
+        NoStartWhiteSpace.test(nextProps.activity.name)
       ) {
         this.setState({ isCorrectInput: true });
       }
       if (
         [ACTIVITY_TYPES.jupyterInline.id, ACTIVITY_TYPES.jupyter.id].includes(
-          activity.type
+          nextProps.activity.type
         )
       ) {
         state = {
-          code: activity.code || 1,
-          frozen: activity.frozen || 1
+          code: nextProps.activity.code || 1,
+          frozen: nextProps.activity.frozen || 1
         };
-      } else if (activity.type === ACTIVITY_TYPES.jest.id) {
+      } else if (nextProps.activity.type === ACTIVITY_TYPES.jest.id) {
         state = {
-          githubURL: activity.githubURL || "",
-          files: activity.files || []
+          githubURL: nextProps.activity.githubURL || "",
+          files: nextProps.activity.files || []
         };
-        this.fetchedGithubURL = activity.githubURL || "";
+        this.fetchedGithubURL = nextProps.activity.githubURL || "";
       }
       this.setState({
-        ...activity,
+        ...nextProps.activity,
         ...state
       });
     }

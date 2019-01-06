@@ -8,7 +8,7 @@ import {
   PATH_TAB_SWITCH
 } from "./actions";
 import {
-  CLOSE_ACTIITY_DIALOG,
+  CLOSE_ACTIVITY_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_FAIL,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   PATH_TOGGLE_JOIN_STATUS_SUCCESS
@@ -34,7 +34,7 @@ export const paths = (
         ...state,
         gapiAuthorized: action.status
       };
-    case CLOSE_ACTIITY_DIALOG:
+    case CLOSE_ACTIVITY_DIALOG:
       return {
         ...state,
         ui: {
