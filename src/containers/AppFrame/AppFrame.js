@@ -125,7 +125,6 @@ class AppFrame extends React.Component {
     history: PropTypes.any,
     mainDrawerOpen: PropTypes.bool,
     isAdmin: PropTypes.bool,
-    userName: PropTypes.string,
     userId: PropTypes.string,
     routerPathname: PropTypes.string,
     dynamicPathTitle: PropTypes.string
@@ -175,8 +174,7 @@ class AppFrame extends React.Component {
       classes,
       history,
       isAdmin,
-      userId,
-      userName
+      userId
     } = this.props;
 
     return (
@@ -281,9 +279,9 @@ class AppFrame extends React.Component {
                 path="/paths/:pathId/activities/:problemId"
               />
               <Route
+                component={Account}
                 exact
                 path="/(account|profile)/:accountId"
-                render={() => <Account userName={userName} />}
               />
               <Route component={Contribute} exact path="/contribute" />
             </main>
@@ -297,7 +295,6 @@ class AppFrame extends React.Component {
 const mapStateToProps = state => ({
   anchorElId: state.appFrame.dropdownAnchorElId,
   mainDrawerOpen: state.appFrame.mainDrawerOpen,
-  userName: state.firebase.auth.displayName,
   userId: state.firebase.auth.uid,
   isAdmin: state.account.isAdmin,
   dynamicPathTitle: state.appFrame.dynamicPathTitle,

@@ -88,7 +88,7 @@ class Account extends React.PureComponent {
     showDialog: PropTypes.bool.isRequired,
     user: PropTypes.object,
     uid: PropTypes.string,
-    userName: PropTypes.string,
+    displayName: PropTypes.string,
     userAchievements: PropTypes.object
   };
 
@@ -131,7 +131,7 @@ class Account extends React.PureComponent {
   toggleDisplayNameEdit = status => {
     if (status) {
       this.setState({
-        newDisplayName: this.props.userName
+        newDisplayName: this.props.displayName
       });
     }
     this.props.displayNameEditToggle(status);
@@ -172,7 +172,7 @@ class Account extends React.PureComponent {
       userAchievements,
       removeRequest,
       user,
-      userName
+      displayName
     } = this.props;
 
     // taken from Courses.js, display if not logged in
@@ -185,10 +185,10 @@ class Account extends React.PureComponent {
     }
 
     const isOwner = auth.uid === match.params.accountId;
-    const displayName = isOwner ||
+    const OwnerDisplayName = isOwner ||
       (user.showDisplayName || user.showDisplayName === undefined)
-        ? userName
-        : "Hidden"
+        ? displayName
+        : "(Hidden by the user)"
 
     return (
       <Fragment>
@@ -198,7 +198,7 @@ class Account extends React.PureComponent {
               <CardMedia
                 image={user && user.photoURL}
                 style={{ height: 240 }}
-                title={this.props.userName}
+                title="UserPhoto"
               />
               <CardContent>
                 <Typography
@@ -212,7 +212,7 @@ class Account extends React.PureComponent {
                   <Fragment>
                     <TextField
                       autoFocus
-                      defaultValue={userName}
+                      defaultValue={OwnerDisplayName}
                       label="Display Name"
                       onChange={this.changeDisplayName}
                       onKeyPress={this.catchReturn}
@@ -228,7 +228,7 @@ class Account extends React.PureComponent {
                   <Fragment>
                     <TextField
                       autoFocus
-                      defaultValue={displayName}
+                      defaultValue={OwnerDisplayName}
                       InputProps={{
                         readOnly: true
                       }}
@@ -400,7 +400,7 @@ const mapStateToProps = (state, ownProps) => ({
   userAchievements: (state.firebase.data.userAchievements || {})[
     ownProps.match.params.accountId || state.firebase.auth.uid
   ],
-  userName: getDisplayName(state, ownProps)
+  displayName: getDisplayName(state, ownProps)
 });
 
 const mapDispatchToProps = {
