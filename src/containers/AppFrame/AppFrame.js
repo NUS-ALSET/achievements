@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter as Router } from "connected-react-router";
 
 import {
@@ -51,9 +51,14 @@ import FetchDataDemo from "../IdeaLab/FetchDataDemo";
 import Brenda from "../IdeaLab/Brenda/Brenda";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
 
+
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
  * Routes are passed as props to be rendered within this component*/
+
+const NoMatch = ({ location }) => (
+  <h3>No page found for <code>{location.pathname}</code></h3>
+)
 
 const styles = theme => ({
   "@global": {
@@ -251,39 +256,42 @@ class AppFrame extends React.Component {
               userId={userId}
             />
             <main className={classes.content}>
-              <Route component={HomeV2} exact path="(/|/home)" />
-              <Route component={Admin} exact path="/admin" />
-              <Route component={Courses} exact path="/courses" />
-              <Route component={Assignments} exact path="/courses/:courseId" />
-              <Route component={Cohorts} exact path="/cohorts" />
-              <Route component={Cohort} exact path="/cohorts/:cohortId" />
-              <Route component={Paths} exact path="/paths" />
-              <Route component={Path} exact path="/paths/:pathId" />
-              <Route component={Brenda} exact path="/brenda" />
-              <Route component={AllDestinations} exact path="/destinations" />
-              <Route component={MyDestinations} exact path="/my-destinations" />
-              <Route component={FetchDataDemo} exact path="/fetchdatademo" />
-              <Route
-                component={pathAnalyticsDemo}
-                exact
-                path="/pathAnalyticsDemo"
-              />
-              <Route
-                component={ViewDestination}
-                exact
-                path="/destinations/:destinationId"
-              />
-              <Route
-                component={Activity}
-                exact
-                path="/paths/:pathId/activities/:problemId"
-              />
-              <Route
-                component={Account}
-                exact
-                path="/(account|profile)/:accountId"
-              />
-              <Route component={Contribute} exact path="/contribute" />
+              <Switch>
+                <Route component={HomeV2} exact path="(/|/home)" />
+                <Route component={Admin} exact path="/admin" />
+                <Route component={Courses} exact path="/courses" />
+                <Route component={Assignments} exact path="/courses/:courseId" />
+                <Route component={Cohorts} exact path="/cohorts" />
+                <Route component={Cohort} exact path="/cohorts/:cohortId" />
+                <Route component={Paths} exact path="/paths" />
+                <Route component={Path} exact path="/paths/:pathId" />
+                <Route component={Brenda} exact path="/brenda" />
+                <Route component={AllDestinations} exact path="/destinations" />
+                <Route component={MyDestinations} exact path="/my-destinations" />
+                <Route component={FetchDataDemo} exact path="/fetchdatademo" />
+                <Route
+                  component={pathAnalyticsDemo}
+                  exact
+                  path="/pathAnalyticsDemo"
+                />
+                <Route
+                  component={ViewDestination}
+                  exact
+                  path="/destinations/:destinationId"
+                />
+                <Route
+                  component={Activity}
+                  exact
+                  path="/paths/:pathId/activities/:problemId"
+                />
+                <Route
+                  component={Account}
+                  exact
+                  path="/(account|profile)/:accountId"
+                />
+                <Route component={Contribute} exact path="/contribute" />
+                <Route component={NoMatch} />
+              </Switch>
             </main>
           </div>
         </div>
