@@ -7,7 +7,7 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import ReactLoadable from "react-loadable";
+import Loadable from "react-loadable";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -23,12 +23,12 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 
-const AceEditor = ReactLoadable({
+const AceEditor = Loadable({
   loader: () => import("../AceEditor"),
   loading: () => <LinearProgress />
 });
 
-const NotebookPreview = ReactLoadable({
+const NotebookPreview = Loadable({
   loader: () => import("@nteract/notebook-preview"),
   loading: () => <LinearProgress />
 });
