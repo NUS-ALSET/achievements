@@ -4,7 +4,7 @@ import { compose } from "redux";
 import PropTypes from "prop-types";
 
 // code-spliting
-import ReactLoadable from "react-loadable";
+import Loadable from "react-loadable";
 
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
@@ -20,7 +20,7 @@ import {
   filterAnalyticsData
 } from "../actions";
 
-const ReactFCLoad = ReactLoadable({
+const ReactFCLoad = Loadable({
   loader: () => import("./ReactFCLoad"),
   loading: () => <LinearProgress />
 });

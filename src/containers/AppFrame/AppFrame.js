@@ -27,7 +27,7 @@ import Courses from "../Courses/Courses";
 import Path from "../Path/Path";
 import Paths from "../Paths/Paths";
 import Contribute from "../Contribute/Contribute";
-import AllDestinations from "../Destinations/AllDestionations";
+import AllDestinations from "../Destinations/AllDestinations";
 import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
 // HomeV2 to test the kyGUI for Home Recommendation
