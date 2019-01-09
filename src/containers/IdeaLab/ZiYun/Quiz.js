@@ -1,39 +1,12 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
+import { Typography } from "@material-ui/core";
+import Grid from '@material-ui/core/Grid';
 
 class Quiz extends Component { 
     state = {
         index: 0,
-        questions: [{
-            question: 'How many times do you use Achievements per week?',
-            options: [
-                'true', 
-                'false', 
-                'increasing', 
-                'decreasing', 
-                'larger', 
-                'smaller', 
-                'frequently', 
-                'rarely'
-            ],
-            correct: 6,
-            answer: false},
-            {
-                question: 'How many times do you use Facebook per week?',
-                options: [
-                    'true', 
-                    'false', 
-                    'increasing', 
-                    'decreasing', 
-                    'larger', 
-                    'smaller', 
-                    'frequently', 
-                    'rarely'
-                ],
-                correct: 4,
-                answer: false}
-        ]
     }
     increment = (index) => {
         //console.log(index);
@@ -45,13 +18,31 @@ class Quiz extends Component {
         //console.log("rendered Quiz");
         return (
             <div>
+                
+                    { this.state.index<this.props.questions.length &&
+                    <Grid container spacing={40} alignItems={'center'} 
+                    justify={'space-between'}>
+                        <Grid item xs={2}>
+                            <Typography variant={'h6'}> Question {this.state.index + 1}: </Typography>
+                        </Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={2}></Grid>
+                        <Grid item xs={2}>
+                            <StyledButton style={{width: 100, background: '#19237E', color: 'white', margin: '0 4 0 4'}}
+                            onClick={() => {this.props.edit(true)}}
+                            >
+                                Edit</StyledButton>
+                        </Grid>
+                    </Grid>
+                    }
+                
                 <div>
-                    { this.state.index<this.state.questions.length &&
-                    <h3> Question {this.state.index + 1}: </h3>}
-                </div>
-                <div>
-                    <AnswerContainer questions={(this.state.index<this.state.questions.length) ? (this.state.questions[this.state.index]): (null) } 
-                    index={this.state.index} increment={this.increment}/>
+                    <AnswerContainer 
+                        questions={(this.state.index<this.props.questions.length) ? (this.props.questions[this.state.index]): (null) } 
+                        index={this.state.index} 
+                        increment={this.increment} 
+                        total={this.props.questions.length} />
+                    
                 </div>
             </div>
         )
@@ -66,7 +57,7 @@ class Answer extends Component {
         //e.persist();
         //console.log(this.props.value)
         this.props.clicked(this.props._id);
-        if (this.props._id === this.props.correct){
+        if (this.props.value === this.props.correct){
             console.log(this.props.value, 'is the correct answer.');
             this.setState({
                 color: '#58D68D' // green
@@ -126,7 +117,7 @@ class AnswerContainer extends Component {
             <div>
             { questions && 
                 <div>
-                <h3> { questions.question } </h3>
+                <Typography variant={'subtitle1'}> { questions.question } </Typography>
                 { questions.options.map(function(obj, i) {
                     return (
                         <div key={i}>
@@ -138,9 +129,14 @@ class AnswerContainer extends Component {
                         </div>
                     )
                 }, this) }
-                {this.state.answer &&
+                {(this.state.answer && index<this.props.total-1) &&
                     <StyledButton style={{width: 120, background: '#19237E', color: 'white'}}
                     onClick={() => {this.props.increment(index+1); this.resetState()}}>Continue</StyledButton>
+                }
+                {
+                    (this.state.answer && index===this.props.total-1) &&
+                    <StyledButton style={{width: 120, background: '#19237E', color: 'white'}}
+                    >Submit</StyledButton>
                 }
                 </div>
             }
