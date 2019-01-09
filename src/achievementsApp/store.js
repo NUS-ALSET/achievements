@@ -3,7 +3,6 @@ import { applyMiddleware, compose, createStore } from "redux";
 import { reactReduxFirebase } from "react-redux-firebase";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { sagaInjector, sagaMiddleware } from "../services/saga";
-import logger from "redux-logger";
 import rootReducer from "./reducer";
 import { firebaseConfig } from "./config";
 
@@ -25,8 +24,7 @@ export const configureStore = (preloadedState, history) => {
   const middlewares = [
     sagaMiddleware,
     routerMiddleware(history),
-    actionsService.catchAction,
-    logger
+    actionsService.catchAction
   ];
   const store = createStoreWithFirebase(
     connectRouter(history)(rootReducer),

@@ -69,7 +69,8 @@ class Assignments extends React.Component {
     firebase: PropTypes.any,
     match: PropTypes.object,
     readOnly: PropTypes.bool,
-    ui: PropTypes.object.isRequired
+    ui: PropTypes.object.isRequired,
+    fieldAutoUpdated: PropTypes.bool
   };
   state = {
     password: ""
@@ -223,7 +224,8 @@ class Assignments extends React.Component {
       dispatch,
       course,
       currentUser,
-      readOnly
+      readOnly,
+      fieldAutoUpdated
     } = this.props;
 
     if (auth.isEmpty) {
@@ -377,6 +379,7 @@ class Assignments extends React.Component {
           assignment={ui.dialog && ui.dialog.value}
           course={course}
           dispatch={dispatch}
+          fieldAutoUpdated={fieldAutoUpdated}
           open={ui.dialog && ui.dialog.type === "AddAssignment"}
           paths={(ui.dialog && ui.dialog.paths) || {}}
           teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
@@ -401,7 +404,8 @@ const mapStateToProps = (state, ownProps) => ({
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
   assistants: state.assignments.assistants,
-  readOnly: state.problem && state.problem.readOnly
+  readOnly: state.problem && state.problem.readOnly,
+  fieldAutoUpdated: state.assignments.fieldAutoUpdated
 });
 
 const mapDispatchToProps = dispatch => ({
