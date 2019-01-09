@@ -45,7 +45,8 @@ class AddAssignmentDialog extends React.PureComponent {
       myPaths: PropTypes.object,
       publicPaths: PropTypes.object
     }),
-    activities: PropTypes.arrayOf(entityInfo).isRequired
+    activities: PropTypes.arrayOf(entityInfo).isRequired,
+    fieldAutoUpdated: PropTypes.bool
   };
 
   state = {
@@ -92,7 +93,7 @@ class AddAssignmentDialog extends React.PureComponent {
   };
 
   componentDidUpdate(prevProps) {
-    const { open, assignment } = this.props;
+    const { open, assignment, fieldAutoUpdated } = this.props;
     if (!prevProps.open && open && assignment && assignment.questionType) {
       this.updateField("questionType")({
         target: { value: assignment.questionType }
@@ -102,6 +103,13 @@ class AddAssignmentDialog extends React.PureComponent {
       if (!open) {
         this.setState({
           isCorrectInput_Name: false
+        });
+      }
+    }
+    if (fieldAutoUpdated !== prevProps.fieldAutoUpdated) {
+      if (fieldAutoUpdated) {
+        this.setState({
+          isCorrectInput_Name: true
         });
       }
     }

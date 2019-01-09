@@ -55,8 +55,8 @@ import {
   ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
   assignmentsSolutionsRefreshSuccess,
   assignmentsSolutionsRefreshFail,
-  coursePathsFetchSuccess
-  // ASSIGNMENTS_TEST_SOMETHING (do we still need this?)
+  coursePathsFetchSuccess,
+  enableCommitAfterAutofill
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -245,6 +245,7 @@ export function* updateNewAssignmentFieldHandler(action) {
           data.paths.publicPaths
         );
         updatedFields.name = `Path progress for ${paths[data.assignment.path].name || "..."}`;
+        yield put(enableCommitAfterAutofill())
       }
 
       updatedFields.pathActivity = "";
@@ -267,6 +268,7 @@ export function* updateNewAssignmentFieldHandler(action) {
       }
       if (!data.manualUpdates.name && activity) {
         updatedFields.name = activity.name;
+        yield put(enableCommitAfterAutofill())
       }
 
       break;
