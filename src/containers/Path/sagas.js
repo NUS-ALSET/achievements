@@ -27,8 +27,8 @@ import {
   PATH_ACTIVITY_CODECOMBAT_OPEN,
   pathActivityCodeCombatDialogShow,
   pathProfileDialogShow,
-  PATH_CLOSE_DIALOG,
-  pathCloseDialog,
+  CLOSE_ACTIVITY_DIALOG,
+  closeActivityDialog,
   PATH_OPEN_JEST_SOLUTION_DIALOG,
   pathOpenSolutionDialog,
   PATH_OPEN_SOLUTION_DIALOG,
@@ -288,7 +288,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       );
     }
     const result = yield race({
-      skip: take(PATH_CLOSE_DIALOG),
+      skip: take(CLOSE_ACTIVITY_DIALOG),
       success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
       fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
     });
@@ -312,7 +312,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             "Completed"
           )
         );
-        yield put(pathCloseDialog());
+        yield put(closeActivityDialog());
         return;
       }
       const levelsData = yield call(accountService.fetchAchievements, data.uid);
@@ -334,7 +334,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             "Completed"
           )
         );
-        yield put(pathCloseDialog());
+        yield put(closeActivityDialog());
       } else {
         yield put(
           pathActivityCodeCombatDialogShow(action.pathId, action.activityId)

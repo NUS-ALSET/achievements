@@ -12,7 +12,6 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 
 import SearchIcon from "@material-ui/icons/Search";
@@ -21,36 +20,33 @@ import EditIcon from "@material-ui/icons/Edit";
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { APP_SETTING } from "../../achievementsApp/config";
 
-const styles = theme => ({
+const styles = () => ({
   link: {
     textDecoration: "none"
-  },
-  button: {
-    margin: theme.spacing.unit
   }
 });
 
 class PathsTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    owner: PropTypes.bool,
+    viewCreatedTab: PropTypes.bool,
     paths: PropTypes.object.isRequired,
-    pathDialogShow: PropTypes.func.isRequired
+    pathDialogShow: PropTypes.func.isRequired,
+    uid: PropTypes.string
   };
 
   onEditClick = pathInfo => this.props.pathDialogShow(pathInfo);
 
   render() {
-    const { classes, owner, paths } = this.props;
+    const { classes, viewCreatedTab, paths, uid } = this.props;
 
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell>Path name</TableCell>
-            {!owner && (
+            {!viewCreatedTab && (
               <TableCell
                 style={{
                   // eslint-disable-next-line no-magic-numbers
@@ -63,7 +59,7 @@ class PathsTable extends React.PureComponent {
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
-                width: APP_SETTING.isSuggesting ? 150 : 360
+                width: 150
               }}
             >
               Actions
@@ -82,42 +78,28 @@ class PathsTable extends React.PureComponent {
             .map(path => (
               <TableRow hover key={path.id}>
                 <TableCell>{path.name}</TableCell>
-                {!owner && (
+                {!viewCreatedTab && (
                   <TableCell>
                     {path.solutions !== undefined && path.totalActivities
                       ? `${path.solutions} of ${path.totalActivities}`
-                      : "not joined"}
+                      : path.owner === uid
+                        ? "owner"
+                        : "not joined"
+                    }
                   </TableCell>
                 )}
-                {APP_SETTING.isSuggesting ? (
-                  <TableCell>
-                    <Link className={classes.link} to={`/paths/${path.id}`}>
-                      <IconButton>
-                        <SearchIcon />
-                      </IconButton>
-                    </Link>
-                    {owner && (
-                      <IconButton onClick={() => this.onEditClick(path)}>
-                        <EditIcon />
-                      </IconButton>
-                    )}
-                  </TableCell>
-                ) : (
-                  <TableCell>
-                    <Link className={classes.link} to={`/paths/${path.id}`}>
-                      <Button variant="contained">Open</Button>
-                    </Link>
-                    {owner && (
-                      <Button
-                        className={classes.button}
-                        onClick={() => this.onEditClick(path)}
-                        variant="contained"
-                      >
-                        Edit
-                      </Button>
-                    )}
-                  </TableCell>
-                )}
+                <TableCell>
+                  <Link className={classes.link} to={`/paths/${path.id}`}>
+                    <IconButton>
+                      <SearchIcon />
+                    </IconButton>
+                  </Link>
+                  {viewCreatedTab && (
+                    <IconButton onClick={() => this.onEditClick(path)}>
+                      <EditIcon />
+                    </IconButton>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
         </TableBody>

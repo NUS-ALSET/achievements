@@ -14,14 +14,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
-import {
-  assignmentCloseDialog,
-  courseMoveStudentRequest
-} from "../../containers/Assignments/actions";
+
 
 class MoveStudentDialog extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    handleCloseDialog: PropTypes.func,
+    handleMOVEStudentRequest: PropTypes.func,
     open: PropTypes.bool.isRequired,
     courseId: PropTypes.string.isRequired,
     courses: PropTypes.array.isRequired,
@@ -35,16 +33,14 @@ class MoveStudentDialog extends React.PureComponent {
 
   onCourseSelect = e => this.setState({ targetCourse: e.target.value });
   onClose = () => {
-    this.props.dispatch(assignmentCloseDialog());
+    this.props.handleCloseDialog();
     this.setState({ targetCourse: "" });
   };
   onCommit = () =>
-    this.props.dispatch(
-      courseMoveStudentRequest(
-        this.props.courseId,
-        this.state.targetCourse,
-        this.props.studentId
-      )
+    this.props.handleMOVEStudentRequest(
+      this.props.courseId,
+      this.state.targetCourse,
+      this.props.studentId
     );
 
   render() {

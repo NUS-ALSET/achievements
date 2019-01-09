@@ -209,14 +209,11 @@ export function* updateNewAssignmentFieldHandler(action) {
           [pathsService, pathsService.fetchPaths],
           data.uid
         );
-        console.log("Step 1 done");
         yield put(assignmentPathsFetchSuccess(paths));
         updatedFields.path = assignment.path || data.uid;
-        console.log("Step 2 done");
 
         if (!data.manualUpdates.details) {
           updatedFields.details = `${location}#/paths/${updatedFields.path}`;
-          console.log("Step 3 done");
         }
       } else if (
         [
@@ -247,8 +244,7 @@ export function* updateNewAssignmentFieldHandler(action) {
           data.paths.myPaths,
           data.paths.publicPaths
         );
-        const path = (paths[action.value] && paths[action.value].name) || {};
-        updatedFields.name = `Path progress for ${path.name || "Some path"}`;
+        updatedFields.name = `Path progress for ${paths[data.assignment.path].name || "..."}`;
       }
 
       updatedFields.pathActivity = "";
@@ -430,12 +426,24 @@ export function* assignmentAddAssistantRequestHandler(action) {
       state => state.assignments.dialog.assistants
     );
 
+    const ownerUID = yield select(
+      state => state.firebase.auth.uid
+    );
+
+    if (ownerUID === action.assistantId) {
+      let error = "Cannot add self as assistant";
+      yield put(
+        assignmentAddAssistantFail(action.courseId, action.assistantId, error)
+      );
+      return yield put(notificationShow(error));
+    }
+
     if (
       existingAssistants.filter(
         assistant => assistant.id === action.assistantId
       ).length
     ) {
-      const error = "Assistant already assigned";
+      let error = "Assistant already assigned";
       yield put(
         assignmentAddAssistantFail(action.courseId, action.assistantId, error)
       );
