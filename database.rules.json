@@ -48,7 +48,10 @@
       }
     },
     "analytics": {
-      ".read": true
+      ".read": true,
+      "CRUDdemo": {
+        ".write": true
+      }
     },
     "assignments": {
       "$courseKey": {
