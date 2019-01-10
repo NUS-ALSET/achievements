@@ -50,7 +50,9 @@
     "analytics": {
       ".read": true,
       "CRUDdemo": {
-        ".write": true
+        "$uidKey": {
+          ".write": "auth.uid == $uidKey"
+        }
       }
     },
     "assignments": {
