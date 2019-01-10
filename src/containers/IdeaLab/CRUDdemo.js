@@ -26,7 +26,8 @@ class CRUDdemo extends React.Component {
     initAnalyticsData: PropTypes.func,
     jupyterAnalyticsPathKey: PropTypes.string,
     moreProbRequestsData: PropTypes.object,
-    createToCRUDdemo: PropTypes.func
+    createToCRUDdemo: PropTypes.func,
+    CRUDdemoData: PropTypes.object
   };
 
   state = {
@@ -68,6 +69,7 @@ class CRUDdemo extends React.Component {
     const {
       auth,
       analyticsData,
+      CRUDdemoData,
       filteredAnalytics,
       jupyterAnalyticsPathKey,
       moreProbRequestsData
@@ -100,6 +102,22 @@ class CRUDdemo extends React.Component {
         />
         <hr />
         <h1>2. Read</h1>
+        <h3>Here is the data of /analytics/CRUDdemo as read in real-time:</h3>
+        <ul>
+          <li><b>=== user ID: stored data ===</b></li>
+          {CRUDdemoData
+            ? (
+              Object.keys(CRUDdemoData).map(item => (
+                <li key={item}>
+                  {item}: {CRUDdemoData[item]}
+                </li>
+              ))
+            )
+            : (
+              "loading..."
+            )
+          }
+        </ul>
         {analyticsData ? (
           <Fragment>
             <h1>Fetched data from Firebase /analytics/jupyterSolutions node</h1>
@@ -198,6 +216,7 @@ sagaInjector.inject(sagas);
 const mapStateToProps = state => ({
   auth: state.firebase.auth,
   analyticsData: state.firebase.data.analyticsData,
+  CRUDdemoData: state.firebase.data.CRUDdemoData,
   filteredAnalytics: state.CRUDdemo.filteredAnalytics,
   jupyterAnalyticsPathKey: state.CRUDdemo.jupyterAnalyticsPathKey,
   moreProbRequestsData: state.firebase.data.moreProbRequestsData
@@ -215,6 +234,10 @@ export default compose(
     const firebaseAuth = store.getState().firebase.auth;
 
     return [
+      {
+        path: "/analytics/CRUDdemo",
+        storeAs: "CRUDdemoData"
+      },
       {
         path: "/analytics/jupyterSolutions",
         storeAs: "analyticsData"
