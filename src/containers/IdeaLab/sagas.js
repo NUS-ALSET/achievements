@@ -14,6 +14,7 @@ export function* handleCreateRequest(action) {
   try {
     yield put(notificationShow("Received the command to Create to CRUDdemo node"))
     yield delay(APP_SETTING.defaultTimeout);
+    // eslint-disable-next-line
     yield put(notificationShow(`will now write ${action.solution} to \analytics\CRUDdemo node`))
     yield call(_CRUDdemoService.WriteToCRUDdemo, action.solution)
     yield put(actions.createValueSuccess())
