@@ -9,7 +9,7 @@ const initialState = {
   filteredAnalytics: []
 };
 
-export const fetchDataDemo = (state = initialState, action) => {
+export const CRUDdemo = (state = initialState, action) => {
   switch (action.type) {
     case CHANGE_PATH_KEY_JUPSOL:
       return {

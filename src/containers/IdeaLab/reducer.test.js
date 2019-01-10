@@ -1,7 +1,7 @@
-import { fetchDataDemo as reducer } from "./reducer";
+import { CRUDdemo as reducer } from "./reducer";
 import * as actions from "./actions";
 
-describe("FetchDataDemo reducer", () => {
+describe("CRUDdemo reducer", () => {
   it("should return the initial state when initialize store", () => {
     expect(reducer(undefined, {})).toEqual({
       jupyterAnalyticsPathKey: "",

@@ -870,8 +870,8 @@ class pathAnalyticsDemo extends React.PureComponent {
 
 const mapStateToProps = state => ({
   analyticsData: state.firebase.data.analyticsData,
-  filteredAnalytics: state.fetchDataDemo.filteredAnalytics,
-  jupyterAnalyticsPathKey: state.fetchDataDemo.jupyterAnalyticsPathKey,
+  filteredAnalytics: state.CRUDdemo.filteredAnalytics,
+  jupyterAnalyticsPathKey: state.CRUDdemo.jupyterAnalyticsPathKey,
   activitiesData: state.firebase.data.activitiesData
 });
 

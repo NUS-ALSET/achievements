@@ -48,7 +48,12 @@
       }
     },
     "analytics": {
-      ".read": true
+      ".read": true,
+      "CRUDdemo": {
+        "$uidKey": {
+          ".write": "auth.uid == $uidKey"
+        }
+      }
     },
     "assignments": {
       "$courseKey": {
