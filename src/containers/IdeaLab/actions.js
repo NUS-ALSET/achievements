@@ -2,6 +2,7 @@ export const CHANGE_PATH_KEY_JUPSOL = "CHANGE_PATH_KEY_JUPSOL";
 export const INIT_ANALYTICSDATA = "INIT_ANALYTICSDATA";
 export const FILTER_ANALYTICSDATA = "FILTER_ANALYTICSDATA";
 export const CREATE_TO_CRUD_DEMO = "CREATE_TO_CRUD_DEMO"
+export const DELETE_TO_CRUD_DEMO = "DELETE_TO_CRUD_DEMO"
 
 export const changePathKeyJupSol = pathKey => ({
   type: CHANGE_PATH_KEY_JUPSOL,
@@ -26,4 +27,12 @@ export const createToCRUDdemo = (solution) => ({
 
 export const createValueSuccess = () => ({
   type: "CRUDdemo/CREATE_VALUE_SUCCESS"
+})
+
+export const deleteCRUDdemoData = () => ({
+  type: DELETE_TO_CRUD_DEMO
+})
+
+export const deleteValueSuccess = () => ({
+  type: "CRUDdemo/DELETE_VALUE_SUCCESS"
 })

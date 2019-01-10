@@ -27,7 +27,8 @@ class CRUDdemo extends React.Component {
     jupyterAnalyticsPathKey: PropTypes.string,
     moreProbRequestsData: PropTypes.object,
     createToCRUDdemo: PropTypes.func,
-    CRUDdemoData: PropTypes.object
+    CRUDdemoData: PropTypes.object,
+    deleteCRUDdemoData: PropTypes.func
   };
 
   state = {
@@ -64,6 +65,11 @@ class CRUDdemo extends React.Component {
     })
     this.props.createToCRUDdemo(solution)
   }
+
+  deleteCRUDdemoData = () => {
+    this.props.deleteCRUDdemoData()
+  }
+
   render() {
     const { anchorEl } = this.state;
     const {
@@ -77,7 +83,7 @@ class CRUDdemo extends React.Component {
 
     return (
       <Fragment>
-        <h1>1. Create</h1>
+        <h1>1. Create/Update</h1>
         <Button
           color="primary"
           onClick={() =>
@@ -101,7 +107,7 @@ class CRUDdemo extends React.Component {
           taskId={"dummyId"}
         />
         <hr />
-        <h1>2. Read</h1>
+        <h1>2. Read/Delete</h1>
         <h3>Here is the data of /analytics/CRUDdemo as read in real-time:</h3>
         <ul>
           <li><b>=== user ID: stored data ===</b></li>
@@ -110,6 +116,11 @@ class CRUDdemo extends React.Component {
               Object.keys(CRUDdemoData).map(item => (
                 <li key={item}>
                   {item}: {CRUDdemoData[item]}
+                  {item === auth.uid &&
+                    <button onClick={this.deleteCRUDdemoData}>
+                      Delete my data
+                    </button>
+                  }
                 </li>
               ))
             )
@@ -226,7 +237,8 @@ const mapDispatchToProps = {
   changePathKeyJupSol: actions.changePathKeyJupSol,
   initAnalyticsData: actions.initAnalyticsData,
   filterAnalyticsData: actions.filterAnalyticsData,
-  createToCRUDdemo: actions.createToCRUDdemo
+  createToCRUDdemo: actions.createToCRUDdemo,
+  deleteCRUDdemoData: actions.deleteCRUDdemoData
 };
 
 export default compose(

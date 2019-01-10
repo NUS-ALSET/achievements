@@ -6,7 +6,8 @@ class CRUDdemoService {
     if (!firebase.auth()) {
       throw new Error("Not logged in");
     }
-    firebase.set(
+    firebase
+    .set(
       `/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`,
       value
     )
@@ -15,6 +16,13 @@ class CRUDdemoService {
     .ref(`/analytics/CRUDdemo`)
     .once("value")
     .then(snap => snap.val() || {}) */
+  }
+
+  DeleteCRUDdemoData() {
+    firebase
+      .database()
+      .ref(`/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`)
+      .remove()
   }
 }
 
