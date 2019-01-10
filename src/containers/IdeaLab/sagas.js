@@ -11,10 +11,15 @@ import { notificationShow } from "../Root/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 // worker saga
-export function* handleCreateRequest() {
-  yield put(notificationShow("Received the command to Create to CRUDdemo node"))
-  yield delay(APP_SETTING.defaultTimeout);
-  yield put(notificationShow("you still there?"));
+export function* handleCreateRequest(action) {
+  try {
+    yield put(notificationShow("Received the command to Create to CRUDdemo node"))
+    yield delay(APP_SETTING.defaultTimeout);
+    yield put(notificationShow(`will now write ${action.solution} to \analytics\CRUDdemo node`))
+  } catch (err) {
+    yield put(notificationShow("Failed to create to CRUDdemo"));
+    console.error("CRUDdemo error: ", err)
+  }
 }
 
 // watcher saga

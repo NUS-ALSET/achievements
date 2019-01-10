@@ -19,6 +19,7 @@ export const filterAnalyticsData = (analyticsData, pathKey) => ({
   pathKey
 });
 
-export const createToCRUDdemo = () => ({
-  type: CREATE_TO_CRUD_DEMO
+export const createToCRUDdemo = (solution) => ({
+  type: CREATE_TO_CRUD_DEMO,
+  solution
 })

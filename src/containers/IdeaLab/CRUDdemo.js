@@ -56,12 +56,12 @@ class CRUDdemo extends React.Component {
     this.props.filterAnalyticsData(analyticsData, pathKey);
   };
 
-  CreateToCRUDdemo = () => {
-    console.log("trigger create crud demo write")
+  CreateToCRUDdemo = (solution) => {
+    console.log("trigger create crud demo write", solution)
     this.setState({
       CreateDialogOpen: false
     })
-    this.props.createToCRUDdemo()
+    this.props.createToCRUDdemo(solution)
   }
   render() {
     const { anchorEl } = this.state;
@@ -75,6 +75,7 @@ class CRUDdemo extends React.Component {
 
     return (
       <Fragment>
+        <h1>1. Create</h1>
         <Button
           color="primary"
           onClick={() =>
@@ -97,6 +98,8 @@ class CRUDdemo extends React.Component {
           solution={"some default value"}
           taskId={"dummyId"}
         />
+        <hr />
+        <h1>2. Read</h1>
         {analyticsData ? (
           <Fragment>
             <h1>Fetched data from Firebase /analytics/jupyterSolutions node</h1>
