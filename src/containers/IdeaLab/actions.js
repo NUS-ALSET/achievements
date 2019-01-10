@@ -23,3 +23,7 @@ export const createToCRUDdemo = (solution) => ({
   type: CREATE_TO_CRUD_DEMO,
   solution
 })
+
+export const createValueSuccess = () => ({
+  type: "CRUDdemo/CREATE_VALUE_SUCCESS"
+})
