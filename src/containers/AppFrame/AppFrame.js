@@ -47,7 +47,7 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 // Idea lab for trial
-import FetchDataDemo from "../IdeaLab/FetchDataDemo";
+import CRUDdemo from "../IdeaLab/CRUDdemo";
 import Brenda from "../IdeaLab/Brenda/Brenda";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
 
@@ -268,7 +268,7 @@ class AppFrame extends React.Component {
                 <Route component={Brenda} exact path="/brenda" />
                 <Route component={AllDestinations} exact path="/destinations" />
                 <Route component={MyDestinations} exact path="/my-destinations" />
-                <Route component={FetchDataDemo} exact path="/fetchdatademo" />
+                <Route component={CRUDdemo} exact path="/CRUDdemo" />
                 <Route
                   component={pathAnalyticsDemo}
                   exact

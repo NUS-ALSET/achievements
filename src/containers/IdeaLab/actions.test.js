@@ -1,6 +1,6 @@
 import * as actions from "./actions";
 
-describe("fetchDataDemo container", () => {
+describe("CRUDdemo container", () => {
   it("has an action to change pathKey", () => {
     const pathKey = "123";
     const expectedAction = {
