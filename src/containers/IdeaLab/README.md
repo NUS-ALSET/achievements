@@ -128,6 +128,42 @@ In order for us to write to the `/analytics/CRUDdemo/${firebase.auth().currentUs
 
 The changes in the database.rules.json have to be merged to the dev repo for the Firebase cloud to take effect.
 
-### Step 8: Connect Redux to Firebase
+### Step 8: Connect Firebase data to Redux store
+
+The libary that allows us to easily connect to the Firebase database and carry out the CRUD actions is:
+```javascript
+import { firebaseConnect } from "react-redux-firebase";
+```
+
+The connection to the Firebase database is via a web-socket, so users do not have to refresh or reload the page to see any update from the Firebase data.
+
+We can tell the React component which slice of the Firebase database we want to connect to and listen for the real-time updates. For example, if we want to read the data under the Firebase node `/analytics/CRUDdemo`, the code in CRUDdemo is written as:
+```javascript
+  // /src/containers/IdeaLab/CRUDdemo.js
+  firebaseConnect((ownProps, store) => {
+    const firebaseAuth = store.getState().firebase.auth;
+    return [
+      {
+        path: "/analytics/CRUDdemo",
+        storeAs: "CRUDdemoData"
+      }
+    ]
+```
+
+The data retrieved from Firebase database is stored as `CRUDdemoData`, which is then passed to the Redux store:
+```javascript
+// /src/containers/IdeaLab/CRUDdemo.js
+const mapStateToProps = state => ({
+  ...
+  CRUDdemoData: state.firebase.data.CRUDdemoData,
+  ...
+});
+```
+
+### Step 9: Read the data from Redux store
+
+
+
+
 
 
