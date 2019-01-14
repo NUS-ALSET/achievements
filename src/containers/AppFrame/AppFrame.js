@@ -50,6 +50,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import CRUDdemo from "../IdeaLab/CRUDdemo";
 import Brenda from "../IdeaLab/Brenda/Brenda";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
+import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills"
 
 
 /* this AppFrame is the main framework of our UI,
@@ -269,6 +270,11 @@ class AppFrame extends React.Component {
                 <Route component={AllDestinations} exact path="/destinations" />
                 <Route component={MyDestinations} exact path="/my-destinations" />
                 <Route component={CRUDdemo} exact path="/CRUDdemo" />
+                <Route
+                  component={userDemonstratedPythonSkills}
+                  exact
+                  path="/userDemonstratedPythonSkills"
+                />
                 <Route
                   component={pathAnalyticsDemo}
                   exact
