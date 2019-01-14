@@ -58,7 +58,14 @@
         ".read": true
       },
       "prototyping":{
-        ".read": false
+        "userDemonstratedPythonSkills": {
+        	"totalSkillsSet": {
+            ".read": "auth != null"
+          },
+          "$uidKey": {
+            ".read": "auth.uid == $uidKey"
+          }
+        }
       }
     },
     "assignments": {
