@@ -56,7 +56,7 @@ sagaInjector.inject(sagas);
 
 The watcher saga is setup to look out for any specified action, and bring in the worker saga to follow up with the actions:
 ```javascript
-  // /src/containers/IdeaLab/actions.js
+  // /src/containers/IdeaLab/sagas.js
   // watcher saga
   function* watchCreateToCRUDdemo() {
     yield takeLatest(actions.CREATE_TO_CRUD_DEMO, handleCreateRequest);
@@ -71,6 +71,7 @@ The watcher saga is setup to look out for any specified action, and bring in the
 ### Step 5: Saga worker to `put` and `call`
 `put` is Saga asking redux's `dispatch`. `call` is invoking a function, usually in our app, a utility-api-like function that connects to the Firebase.
 ```javascript
+// /src/containers/IdeaLab/sagas.js
 export function* handleCreateRequest(action) {
   try {
     yield put(notificationShow("Received the command to Create @ CRUDdemo node"))
@@ -162,7 +163,150 @@ const mapStateToProps = state => ({
 
 ### Step 9: Read the data from Redux store
 
+In the CRUDdemo example's React component, `CRUDdemoData` from `/analytics/CRUDdemo` node in Firebase is retrived as a prop from the Redux store, and rendered as a list: 
 
+```jsx
+// /src/containers/IdeaLab/CRUDdemo.js
+        <h1>2. Read/Delete</h1>
+        <h3>Here is the data of /analytics/CRUDdemo as read in real-time:</h3>
+        <ul>
+          <li><b>=== user ID: stored data ===</b></li>
+          {CRUDdemoData
+            ? (
+              Object.keys(CRUDdemoData).map(item => (
+                <li key={item}>
+                  {item}: {CRUDdemoData[item]}
+                  {item === auth.uid &&
+                    <button onClick={this.deleteCRUDdemoData}>
+                      Delete my data
+                    </button>
+                  }
+                </li>
+              ))
+            )
+            : (
+              "loading..."
+            )
+          }
+        </ul>
+```
+
+Since the connection to the Firebase is via a socket, any update in the backend server will cause the `CRUDdemoData` props to be changed, and trigger a re-render of the UI.
+
+### Step 10: Delete data action dispatched from UI
+
+As you have noticed in the React component above, there is a button to listen for click event and trigger a method `deleteCRUDdemoData`:
+```jsx
+// /src/containers/IdeaLab/CRUDdemo.js
+<button onClick={this.deleteCRUDdemoData}>
+```
+
+The method being called by the button click is:
+```javascript
+// /src/containers/IdeaLab/CRUDdemo.js
+ deleteCRUDdemoData = () => {
+    this.props.deleteCRUDdemoData()
+  }
+```
+
+So this will result in a dispatch action from the Redux store:
+```javascript
+// /src/containers/IdeaLab/CRUDdemo.js
+const mapDispatchToProps = {
+    ...
+  deleteCRUDdemoData: actions.deleteCRUDdemoData
+};
+```
+
+Now we need to set up the action creator in the `actions.js`:
+```javascript
+// /src/containers/IdeaLab/actions.js
+export const DELETE_TO_CRUD_DEMO = "DELETE_TO_CRUD_DEMO"
+
+export const deleteCRUDdemoData = () => ({
+  type: DELETE_TO_CRUD_DEMO
+})
+```
+
+### Step 11: Sagas to catch the dispatched action for deleting data
+
+So the UI has asked the Redux to dispatch an action, what do we do with the action "DELETE_TO_CRUD_DEMO"?
+
+Once again, we head to Sagas to create a pair of `watcher saga` and `worker saga`:
+
+```javascript
+// /src/containers/IdeaLab/sagas.js
+// watcher saga
+export default [
+  function* watchCreateToCRUDdemo() {
+    // from Step 4
+  },
+  function* watchDeleteToCRUDdemo() {
+    yield takeLatest(actions.DELETE_TO_CRUD_DEMO, handleDeleteRequest);
+  }
+];
+```
+
+And the worker saga to do the actual work that we want to happen with the action "DELETE_TO_CRUD_DEMO":
+```javascript
+// /src/containers/IdeaLab/sagas.js
+// worker saga
+export function* handleDeleteRequest() {
+  try {
+    yield put(notificationShow("Received the command to Delete @ CRUDdemo node"))
+    yield delay(APP_SETTING.defaultTimeout);
+    // eslint-disable-next-line
+    yield put(notificationShow(`will now delete your CRUDdemo data`))
+    yield call(_CRUDdemoService.DeleteCRUDdemoData)
+    yield put(actions.deleteValueSuccess())
+    yield delay(APP_SETTING.defaultTimeout);
+    yield put(notificationShow("Deleted successfully!!"))
+  } catch (err) {
+    yield put(notificationShow("Failed to delete your CRUDdemo data"));
+    console.error("CRUDdemo error: ", err)
+  }
+}
+```
+
+This is basically **Step 4 and Step 5** all over again.
+
+### Step 12: Same as Step 6, create a service to delete data in Firebase
+
+From the previous step's worker saga, we are calling the action from our `CRUDdemoService` to `DeleteCRUDdemoData`:
+```javascript
+// /src/containers/IdeaLab/sagas.js
+// worker saga
+export function* handleDeleteRequest() {
+  try {
+    ...
+    yield call(_CRUDdemoService.DeleteCRUDdemoData)
+    ...
+  }
+}
+```
+For the `CRUDdemo` example, the service functions are defined in the `/src/services/CRUDdemo.js` file. The function that delete `/analytics/CRUD` node of our Firebase backend is as followed, and you can also see the function that carry out the Step 6 of our tutorial:
+```javascript
+class CRUDdemoService {
+  // for Step 6
+  WriteToCRUDdemo(value) {
+    if (!firebase.auth()) {
+      throw new Error("Not logged in");
+    }
+    firebase
+    .set(
+      `/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`,
+      value
+    )
+  }
+  // for Step 12
+  DeleteCRUDdemoData() {
+    firebase
+      .database()
+      .ref(`/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`)
+      .remove()
+  }
+}
+```
 
 
 
