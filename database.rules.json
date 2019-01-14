@@ -48,11 +48,17 @@
       }
     },
     "analytics": {
-      ".read": true,
       "CRUDdemo": {
+        ".read": true,
         "$uidKey": {
           ".write": "auth.uid == $uidKey"
         }
+      },
+      "jupyterSolutions": {
+        ".read": true
+      },
+      "prototyping":{
+        ".read": false
       }
     },
     "assignments": {
