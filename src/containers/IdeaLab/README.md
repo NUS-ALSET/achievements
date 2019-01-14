@@ -2,12 +2,12 @@
 
 ## Demo Overview: 
 - Go to https://achievements-dev.firebaseapp.com/#/cruddemo (url paramter is `cruddemo` for CRUDdemo).
-- Click on the Button "Create value at /analytics/cruddemo in firebase".
-- This will open a form for you to key in whatever value you want to `Create` or `Update` to `/analytics/CRUDdemo/<your-uid>` on our dev-site's Firebase database.
+- **Create part:** Click on the Button "Create value at /analytics/cruddemo in firebase".
+- **Update part:** This will open a form for you to key in whatever value you want to `Create` or `Update` to `/analytics/CRUDdemo/<your-uid>` on our dev-site's Firebase database.
 - After you have submitted the value, the database will create or update the value accordingly.
-- The values under the `/analytics/CRUDdemo/` are displayed in the `=== user ID: stored data ===` list on the same page.
+- **Read part:** The values under the `/analytics/CRUDdemo/` are displayed in the `=== user ID: stored data ===` list on the same page.
 - You will notice your data being updated to the UI of the page in real-time (after some connection delay).
-- Your own data under your own user id can be deleted if you click on the `Delete my data` button.
+- **Delete part:** Your own data under your own user id can be deleted if you click on the `Delete my data` button.
 
 ### Step 1: Play with the CRUDdemo page
 Log in to the app (only logged in user can write to the `/analytics/CRUDdemo/` node in our database. And try to create, read, update and delete your values following the overview above.
@@ -35,6 +35,9 @@ In CRUDdemo page, we re-used a very simple dialog modal from `/src/components/di
 ### Step 3: Design the actions in redux to Create/Update data
 This is the action-creator that will dispatch the action `CREATE_TO_CRUD_DEMO` in the CRUDdemo page:
 ```javascript
+// /src/containers/IdeaLab/actions.js
+export const CREATE_TO_CRUD_DEMO = "CREATE_TO_CRUD_DEMO"
+
 export const createToCRUDdemo = (solution) => ({
   type: CREATE_TO_CRUD_DEMO,
   solution
@@ -42,10 +45,18 @@ export const createToCRUDdemo = (solution) => ({
 ```
 
 ### Step 4: Saga watcher to watch for action "CREATE_TO_CRUD_DEMO"
-Sagas will take care of the asynchronous actions like creating/updatig data on Firebase. In CRUDdemo example, the sagas are divided into **worker saga** and **watcher saga**.
+Sagas will take care of the asynchronous actions like creating/updatig data on Firebase. In CRUDdemo example, the sagas are divided into **worker saga** and **watcher saga**. The file that sets up the sagas is `/src/containers/IdeaLab/sagas.js`.
+
+To connect the route component to the Saga, you need to inject the Saga from your route to the main Saga helper:
+```javascript
+// /src/containers/IdeaLab/CRUDdemo.js
+// inject saga to the main saga
+sagaInjector.inject(sagas);
+```
 
 The watcher saga is setup to look out for any specified action, and bring in the worker saga to follow up with the actions:
 ```javascript
+  // /src/containers/IdeaLab/actions.js
   // watcher saga
   function* watchCreateToCRUDdemo() {
     yield takeLatest(actions.CREATE_TO_CRUD_DEMO, handleCreateRequest);
@@ -81,7 +92,7 @@ This worker saga can also catch failed async actions and dispatch the notificati
 ### Step 6: Build a Service to handle CRUD to Firebase
 Sagas is where asynchronous actions are handled, and Sagas will `call` useful functions from `service` folder to actually do things with Firebase database.
 
-For the `CRUDdemo` example, the service functions are defined in the `/src/services/CRUDdemo.js` file. The function that write to the `/analytics/CRUD` node is:
+For the `CRUDdemo` example, the service functions are defined in the `/src/services/CRUDdemo.js` file. The function that write to the `/analytics/CRUD` node of our Firebase backend is:
 ```javascript
   WriteToCRUDdemo(value) {
     if (!firebase.auth()) {
@@ -116,5 +127,7 @@ In order for us to write to the `/analytics/CRUDdemo/${firebase.auth().currentUs
 ```
 
 The changes in the database.rules.json have to be merged to the dev repo for the Firebase cloud to take effect.
+
+### Step 8: Connect Redux to Firebase
 
 
