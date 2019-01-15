@@ -298,4 +298,20 @@ describe("security rules tests", () => {
       expect(permitted).toEqual(false);
     });
   });
+
+  describe("analytics rules", () => {
+    it("should allow any user to read CRUDdemo data", () => {
+      const { permitted } = database.read("/analytics/CRUDdemo", true);
+
+      expect(permitted).toEqual(true);
+    });
+
+    it("should only allow users themselves to write to their data in CRUDdemo", () => {
+      const { permitted } = database
+        .as({ uid: "bobby" })
+        .write("/analytics/CRUDdemo/kris", { someData: "123" });
+
+      expect(permitted).toEqual(false);
+    });
+  });
 });
