@@ -273,7 +273,7 @@ class AppFrame extends React.Component {
                 <Route
                   component={userDemonstratedPythonSkills}
                   exact
-                  path="/userDemonstratedPythonSkills"
+                  path="/userDemonstratedPythonSkills/:accountId"
                 />
                 <Route
                   component={pathAnalyticsDemo}

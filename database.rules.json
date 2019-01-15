@@ -63,7 +63,7 @@
             ".read": "auth != null"
           },
           "$uidKey": {
-            ".read": "auth.uid == $uidKey"
+            ".read": "root.child('/admins/' + auth.uid).exists() || auth.uid == $uidKey"
           }
         }
       }
