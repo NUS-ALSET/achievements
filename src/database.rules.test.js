@@ -1,7 +1,7 @@
 import assert from "assert";
 import targaryen from "targaryen/plugins/jest";
 import json from "firebase-json";
-import { getTestState } from "../../../tests/fixtures/getState";
+import { getTestState } from "../tests/fixtures/getState";
 
 // This command allows you put newlines and comments in your rules.
 const rules = json.loadSync("./database.rules.json");
