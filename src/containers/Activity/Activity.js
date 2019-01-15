@@ -66,23 +66,24 @@ export class Activity extends React.PureComponent {
     }
   }
 
-  componentDidUpdate(prevProps) {
-    const { pathProblem, solution } = this.props;
-    if (!isEqual(pathProblem, prevProps.pathProblem)) {
+  // Renamed via https://reactjs.org/docs/react-component.html#unsafe_componentwillreceiveprops
+  // cannot use componentDidUpdate here, the state has to listen for props before render
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.pathProblem, this.props.pathProblem)) {
       this.onProblemChange({});
     }
-    if (pathProblem !== prevProps.pathProblem) {
-      if (!["jupyter", "jupyterInline"].includes((pathProblem || {}).type)) {
-        this.setState({ disabledCommitBtn: false });
-      } else if (
-        (solution || {}).checked &&
-        !(solution || {}).failed &&
-        (solution || {}).json
-      ) {
-        this.setState({ disabledCommitBtn: false });
-      } else {
-        this.setState({ disabledCommitBtn: true });
-      }
+    if (
+      !["jupyter", "jupyterInline"].includes((nextProps.pathProblem || {}).type)
+    ) {
+      this.setState({ disabledCommitBtn: false });
+    } else if (
+      (nextProps.solution || {}).checked &&
+      !(nextProps.solution || {}).failed &&
+      (nextProps.solution || {}).json
+    ) {
+      this.setState({ disabledCommitBtn: false });
+    } else {
+      this.setState({ disabledCommitBtn: true });
     }
   }
 
