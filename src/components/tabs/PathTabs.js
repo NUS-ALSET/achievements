@@ -7,17 +7,13 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
-import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Toolbar from "@material-ui/core/Toolbar";
 import Zoom from "@material-ui/core/Zoom";
 
 import AddIcon from "@material-ui/icons/Add";
-
 import PathsTable from "../../components/tables/PathsTable";
-import { pathDialogShow } from "../../containers/Paths/actions";
-import { APP_SETTING } from "../../achievementsApp/config";
 
 const PATHS_TAB_JOINED = 0;
 const PATHS_TAB_OWNED = 1;
@@ -25,32 +21,36 @@ const PATHS_TAB_PUBLIC = 2;
 
 class PathTabs extends React.Component {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    pathDialogShow: PropTypes.func.isRequired,
     paths: PropTypes.object,
     myPaths: PropTypes.object.isRequired,
     publicPaths: PropTypes.object,
-    joinedPaths: PropTypes.object
-  };
-
-  state = {
-    currentTab: 0
+    joinedPaths: PropTypes.object,
+    uid: PropTypes.string,
+    currentPathTab: PropTypes.number,
+    handleSwitchPathTab: PropTypes.func
   };
 
   onAddPathClick = () => {
-    this.setState({ currentTab: PATHS_TAB_OWNED });
-
-    this.props.dispatch(pathDialogShow());
+    this.props.pathDialogShow();
   };
 
   handleTabChange = (event, tabIndex) => {
-    this.setState({ currentTab: tabIndex });
+    this.props.handleSwitchPathTab(tabIndex);
   };
 
   render() {
-    const { dispatch, joinedPaths, myPaths, publicPaths } = this.props;
+    const {
+      pathDialogShow,
+      joinedPaths,
+      myPaths,
+      publicPaths,
+      uid,
+      currentPathTab
+    } = this.props;
     let paths;
 
-    switch (this.state.currentTab) {
+    switch (currentPathTab) {
       case PATHS_TAB_PUBLIC:
         paths = publicPaths;
 
@@ -75,51 +75,36 @@ class PathTabs extends React.Component {
 
     return (
       <Fragment>
-        {APP_SETTING.isSuggesting ? (
-          <Zoom in={this.state.currentTab === PATHS_TAB_OWNED} unmountOnExit>
-            <Button
-              color="primary"
-              onClick={this.onAddPathClick}
-              style={{
-                position: "fixed",
-                bottom: 20,
-                right: 20
-              }}
-              variant="fab"
-            >
-              <AddIcon />
-            </Button>
-          </Zoom>
-        ) : (
-          <Toolbar>
-            <Button
-              color="primary"
-              onClick={this.onAddPathClick}
-              style={{
-                margin: 4
-              }}
-              variant="contained"
-            >
-              Add Path
-            </Button>
-          </Toolbar>
-        )}
+        <Zoom in={currentPathTab === PATHS_TAB_OWNED} unmountOnExit>
+          <Fab
+            color="primary"
+            onClick={this.onAddPathClick}
+            style={{
+              position: "fixed",
+              bottom: 20,
+              right: 20
+            }}
+          >
+            <AddIcon />
+          </Fab>
+        </Zoom>
 
         <Tabs
           fullWidth
           indicatorColor="primary"
           onChange={this.handleTabChange}
           textColor="primary"
-          value={this.state.currentTab}
+          value={currentPathTab}
         >
           <Tab label="Joined Paths" />
           <Tab label="Created Paths" />
           <Tab label="Public Paths" />
         </Tabs>
         <PathsTable
-          dispatch={dispatch}
-          owner={this.state.currentTab === PATHS_TAB_OWNED}
+          pathDialogShow={pathDialogShow}
           paths={paths}
+          uid={uid}
+          viewCreatedTab={currentPathTab === PATHS_TAB_OWNED}
         />
       </Fragment>
     );

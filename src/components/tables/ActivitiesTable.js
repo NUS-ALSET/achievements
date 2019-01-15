@@ -153,12 +153,11 @@ class ActivitiesTable extends React.PureComponent {
                 </TableCell>
                 {!canChange && (
                   <TableCell>
-                    {this.getStatus(activity) &&
-                      activity.solved && (
-                        <Icon>
-                          <DoneIcon />
-                        </Icon>
-                      )}
+                    {this.getStatus(activity) && activity.solved && (
+                      <Icon>
+                        <DoneIcon />
+                      </Icon>
+                    )}
                   </TableCell>
                 )}
                 <TableCell

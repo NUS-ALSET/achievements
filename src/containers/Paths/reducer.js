@@ -4,10 +4,11 @@ import {
   PATH_GAPI_AUTHORIZED,
   PATH_ACTIVITY_DIALOG_SHOW,
   PATH_SELECT,
-  PATHS_JOINED_FETCH_SUCCESS
+  PATHS_JOINED_FETCH_SUCCESS,
+  PATH_TAB_SWITCH
 } from "./actions";
 import {
-  PATH_CLOSE_DIALOG,
+  CLOSE_ACTIVITY_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_FAIL,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   PATH_TOGGLE_JOIN_STATUS_SUCCESS
@@ -16,6 +17,7 @@ import {
 export const paths = (
   state = {
     selectedPathId: "",
+    currentPathTab: 0,
     joinedPaths: {},
     ui: {
       dialog: {
@@ -32,7 +34,7 @@ export const paths = (
         ...state,
         gapiAuthorized: action.status
       };
-    case PATH_CLOSE_DIALOG:
+    case CLOSE_ACTIVITY_DIALOG:
       return {
         ...state,
         ui: {
@@ -111,6 +113,11 @@ export const paths = (
       return {
         ...state,
         selectedPathId: action.pathId
+      };
+    case PATH_TAB_SWITCH:
+      return {
+        ...state,
+        currentPathTab: action.tabIndex
       };
     default:
       return state;

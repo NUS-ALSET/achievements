@@ -17,9 +17,9 @@ export const pathOpenJestSolutionDialog = (pathId, activityInfo) => ({
   activityInfo
 });
 
-export const PATH_CLOSE_DIALOG = "PATH_CLOSE_DIALOG";
-export const pathCloseDialog = () => ({
-  type: PATH_CLOSE_DIALOG
+export const CLOSE_ACTIVITY_DIALOG = "CLOSE_ACTIVITY_DIALOG";
+export const closeActivityDialog = () => ({
+  type: CLOSE_ACTIVITY_DIALOG
 });
 
 // In fact, it only fetches existance of solution, should be renamed?
@@ -156,9 +156,7 @@ export const pathActivityOpen = (pathId, problemId) => ({
 export const PATH_PROFILE_DIALOG_SHOW = "PATH_PROFILE_DIALOG_SHOW";
 export const pathProfileDialogShow = () => ({
   type: PATH_PROFILE_DIALOG_SHOW
-
 });
-
 
 export const PATH_ACTIVITY_CODECOMBAT_OPEN = "PATH_ACTIVITY_CODECOMBAT_OPEN";
 export const pathActivityCodeCombatOpen = (
@@ -217,4 +215,10 @@ export const fetchGithubFilesSuccess = data => ({
 export const FETCH_GITHUB_FILES_ERROR = "FETCH_GITHUB_FILES_ERROR";
 export const fetchGithubFilesError = () => ({
   type: FETCH_GITHUB_FILES_ERROR
+});
+
+export const FETCH_MY_PATHS_ACTIVITIES = "FETCH_MY_PATHS_ACTIVITIES";
+export const fetchMyPathsActivities = pathsInfo => ({
+  type: FETCH_MY_PATHS_ACTIVITIES,
+  pathsInfo
 });

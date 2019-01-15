@@ -15,10 +15,7 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 
 // RegExp rules
-import {
-  NoStartWhiteSpace,
-  KeyboardInputs
-} from "../regexp-rules/RegExpRules";
+import { NoStartWhiteSpace, KeyboardInputs } from "../regexp-rules/RegExpRules";
 
 /* AddTextSolutionDialog is currently used for:
  * ASSIGNMENTS_TYPES.TeamFormation.id,
@@ -39,7 +36,7 @@ class AddTextSolutionDialog extends React.PureComponent {
   state = {
     solution: "",
     // validate inputs
-    isCorrectInput: false,
+    isCorrectInput: false
   };
 
   onChangeSolution = event => {
@@ -50,7 +47,7 @@ class AddTextSolutionDialog extends React.PureComponent {
     ) {
       this.setState({
         isCorrectInput: true,
-        solution: event.target.value.trim(),
+        solution: event.target.value.trim()
       });
     } else {
       this.setState({
@@ -68,12 +65,14 @@ class AddTextSolutionDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
-            error={!this.state.isCorrectInput}
             defaultValue={(solution && solution.value) || ""}
-            helperText={this.state.isCorrectInput
-              ? ""
-              : "input should not be empty or have invalid characters"}
+            error={!this.state.isCorrectInput}
             fullWidth
+            helperText={
+              this.state.isCorrectInput
+                ? ""
+                : "input should not be empty or have invalid characters"
+            }
             label="Solution"
             onChange={this.onChangeSolution}
             style={{

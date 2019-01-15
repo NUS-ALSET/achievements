@@ -1,6 +1,6 @@
 import {
   PATH_ADD_COLLABORATOR_SUCCESS,
-  PATH_CLOSE_DIALOG,
+  CLOSE_ACTIVITY_DIALOG,
   PATH_COLLABORATORS_FETCH_SUCCESS,
   PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS,
   PATH_OPEN_SOLUTION_DIALOG,
@@ -11,7 +11,8 @@ import {
   FETCH_GITHUB_FILES_SUCCESS,
   PATH_ACTIVITY_CODECOMBAT_OPEN,
   PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW,
-  PATH_PROFILE_DIALOG_SHOW
+  PATH_PROFILE_DIALOG_SHOW,
+  FETCH_MY_PATHS_ACTIVITIES
 } from "./actions";
 import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
@@ -38,11 +39,12 @@ export const path = (
   action
 ) => {
   switch (action.type) {
-    case PATH_CLOSE_DIALOG:
+    case CLOSE_ACTIVITY_DIALOG:
       return {
         ...state,
         ui: {
           dialog: {
+            ...state.ui.dialog,
             type: ""
           }
         }
@@ -233,6 +235,17 @@ export const path = (
         ui: {
           ...state.ui,
           fetchGithubFilesStatus: "ERROR"
+        }
+      };
+    case FETCH_MY_PATHS_ACTIVITIES:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            ...state.ui.dialog,
+            pathsInfo: action.pathsInfo
+          }
         }
       };
     default:

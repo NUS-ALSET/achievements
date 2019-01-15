@@ -64,42 +64,42 @@ class AddProfileDialog extends React.PureComponent {
       <Dialog onClose={onClose} open={this.props.open}>
         <DialogTitle>Set Up {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
-          <Typography variant="body1" gutterBottom>
+          <Typography gutterBottom variant="body1">
             1. Register or Login with CodeCombat.com
           </Typography>
           <img
-            src={CodeCombatLogin}
-            alt="CodeCombatLogin"
-            style={{ maxHeight: 110 }}
             align="center"
+            alt="CodeCombatLogin"
+            src={CodeCombatLogin}
+            style={{ maxHeight: 110 }}
           />
-          <Typography variant="subtitle1" gutterBottom>
+          <Typography gutterBottom variant="subtitle1">
             <a
               href="https://codecombat.com/home"
-              target="_blank"
               rel="noopener noreferrer"
+              target="_blank"
             >
               https://codecombat.com/home
             </a>
           </Typography>
-          <Typography variant="body1" gutterBottom>
+          <Typography gutterBottom variant="body1">
             2. Enter your CodeCombat username:
           </Typography>
           <TextField
             autoFocus
+            helperText="we only need the URL after /user/"
             label="Profile Name"
             margin="dense"
-            placeholder="e.g. dummyuser3"
-            helperText="we only need the URL after /user/"
             onChange={this.onProfileChange}
             onKeyPress={this.catchReturn}
+            placeholder="e.g. dummyuser3"
             style={{
               width: 560
             }}
             value={login}
           />
-          <Typography variant="subtitle1" gutterBottom>
-            <a href={url} target="_blank" rel="noopener noreferrer">
+          <Typography gutterBottom variant="subtitle1">
+            <a href={url} rel="noopener noreferrer" target="_blank">
               {url}
             </a>
           </Typography>

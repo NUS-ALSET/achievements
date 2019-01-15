@@ -48,41 +48,38 @@ class Breadcrumbs extends React.PureComponent {
 
     return (
       <Toolbar>
-        <Bookmarks style={{fill: "red"}}/>
-        {paths.map(
-          (pathInfo, index) =>
-            index === paths.length - 1 ? (
-              <Typography className={classes.breadcrumbText} key={index}>
-                {pathInfo.label}
-              </Typography>
-            ) : (
-              <Fragment key={index}>
-                <Button
-                  size="small"
-                  component={Link}
-                  to={pathInfo.link}
-                >
-                  <Typography className={classes.breadcrumbText}>
-                    {pathInfo.label}
-                  </Typography>
-                </Button>
-                <ChevronRightIcon />
-              </Fragment>
-            )
+        <Bookmarks style={{ fill: "red" }} />
+        {paths.map((pathInfo, index) =>
+          index === paths.length - 1 ? (
+            <Typography className={classes.breadcrumbText} key={index}>
+              {pathInfo.label}
+            </Typography>
+          ) : (
+            <Fragment key={index}>
+              <Button component={Link} size="small" to={pathInfo.link}>
+                <Typography className={classes.breadcrumbText}>
+                  {pathInfo.label}
+                </Typography>
+              </Button>
+              <ChevronRightIcon />
+            </Fragment>
+          )
         )}
         {action && (
           <Toolbar className={classes.breadcrumbActions}>
             {Array.isArray(action) ? (
-              action.filter(action => action).map(action => (
-                <Button
-                  className={classes.breadcrumbAction}
-                  key={action.label}
-                  onClick={action.handler}
-                  variant="contained"
-                >
-                  {action.label}
-                </Button>
-              ))
+              action
+                .filter(action => action)
+                .map(action => (
+                  <Button
+                    className={classes.breadcrumbAction}
+                    key={action.label}
+                    onClick={action.handler}
+                    variant="contained"
+                  >
+                    {action.label}
+                  </Button>
+                ))
             ) : (
               <Button onClick={action.handler} variant="contained">
                 {action.label}

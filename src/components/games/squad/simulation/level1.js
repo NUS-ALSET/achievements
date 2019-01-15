@@ -1,8 +1,8 @@
 /* eslint-disable */
-var level1 =function(world){
-	var player = world.player;
-	var closestGem = false;
-	/*world.collectives.forEach(stone => {
+var level1 = function(world) {
+  var player = world.player;
+  var closestGem = false;
+  /*world.collectives.forEach(stone => {
 		if (closestGem == false) closestGem = stone;
 		else if (
 		Math.sqrt(
@@ -16,21 +16,21 @@ var level1 =function(world){
 		closestGem = stone;
 		}
 	});*/
-	closestGem = world.collectives[0];
-	if (closestGem) {
-		if (closestGem.x - player.x > 0) {
-			var direction = { left: false, right: true, up: false, down: false };
-		} else if (closestGem.x - player.x < 0) {
-			var direction = { left: true, right: false, up: false, down: false };
-		} else if (closestGem.y - player.y > 0) {
-			var direction = { left: false, right: false, up: false, down: true };
-		} else if (closestGem.y - player.y < 0) {
-			var direction = { left: false, right: false, up: true, down: false };
-		} else {
-			var direction = { left: false, right: false, up: true, down: false };
-		}
-		
-		return direction;
-	}
-}
+  closestGem = world.collectives[0];
+  if (closestGem) {
+    if (closestGem.x - player.x > 0) {
+      var direction = { left: false, right: true, up: false, down: false };
+    } else if (closestGem.x - player.x < 0) {
+      var direction = { left: true, right: false, up: false, down: false };
+    } else if (closestGem.y - player.y > 0) {
+      var direction = { left: false, right: false, up: false, down: true };
+    } else if (closestGem.y - player.y < 0) {
+      var direction = { left: false, right: false, up: true, down: false };
+    } else {
+      var direction = { left: false, right: false, up: true, down: false };
+    }
+
+    return direction;
+  }
+};
 module.exports = level1;

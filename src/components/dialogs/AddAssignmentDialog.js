@@ -45,12 +45,13 @@ class AddAssignmentDialog extends React.PureComponent {
       myPaths: PropTypes.object,
       publicPaths: PropTypes.object
     }),
-    activities: PropTypes.arrayOf(entityInfo).isRequired
+    activities: PropTypes.arrayOf(entityInfo).isRequired,
+    fieldAutoUpdated: PropTypes.bool
   };
 
   state = {
     // Name of Assignment cannot be nonsense or empty spaces
-    isCorrectInput_Name: true
+    isCorrectInput_Name: false
   };
 
   updateField = field => e => {
@@ -91,16 +92,26 @@ class AddAssignmentDialog extends React.PureComponent {
     });
   };
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (
-      !this.props.open &&
-      nextProps.open &&
-      nextProps.assignment &&
-      nextProps.assignment.questionType
-    ) {
+  componentDidUpdate(prevProps) {
+    const { open, assignment, fieldAutoUpdated } = this.props;
+    if (!prevProps.open && open && assignment && assignment.questionType) {
       this.updateField("questionType")({
-        target: { value: nextProps.assignment.questionType }
+        target: { value: assignment.questionType }
       });
+    }
+    if (open !== prevProps.open) {
+      if (!open) {
+        this.setState({
+          isCorrectInput_Name: false
+        });
+      }
+    }
+    if (fieldAutoUpdated !== prevProps.fieldAutoUpdated) {
+      if (fieldAutoUpdated) {
+        this.setState({
+          isCorrectInput_Name: true
+        });
+      }
     }
   }
 
@@ -127,7 +138,10 @@ class AddAssignmentDialog extends React.PureComponent {
               value={assignment.level || ""}
             >
               {Object.keys(APP_SETTING.CodeCombatLevels).map(id => (
-                <MenuItem key={APP_SETTING.CodeCombatLevels[id].name} value={id}>
+                <MenuItem
+                  key={APP_SETTING.CodeCombatLevels[id].name}
+                  value={id}
+                >
                   {APP_SETTING.CodeCombatLevels[id].name}
                 </MenuItem>
               ))}

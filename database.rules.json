@@ -22,7 +22,6 @@
       }
     },
     "activityData": {
-      ".read": "auth != null",
       "$activityKey": {
         ".read": "auth != null",
         ".write": "auth != null &&
@@ -44,14 +43,30 @@
       }
     },
     "admins": {
-      ".write": false,
       "$userKey": {
         ".read": "auth != null"
       }
     },
-    "api_tokens": {
-      ".read": false,
-      ".write": false
+    "analytics": {
+      "CRUDdemo": {
+        ".read": true,
+        "$uidKey": {
+          ".write": "auth.uid == $uidKey"
+        }
+      },
+      "jupyterSolutions": {
+        ".read": true
+      },
+      "prototyping":{
+        "userDemonstratedPythonSkills": {
+        	"totalSkillsSet": {
+            ".read": "auth != null"
+          },
+          "$uidKey": {
+            ".read": "auth.uid == $uidKey"
+          }
+        }
+      }
     },
     "assignments": {
       "$courseKey": {
@@ -65,12 +80,10 @@
       }
     },
     "blacklistActions": {
-      ".read": true,
-      ".write": false
+      ".read": true
     },
     "cohortCourses": {
       ".read": true,
-      ".write": false,
       "$cohortKey": {
         "$courseKey": {
           ".write": "
@@ -97,7 +110,6 @@
     },
     "cohorts": {
       ".read": true,
-      ".write": false,
       ".indexOn": ["owner", "isPublic"],
       "$cohortKey": {
         ".write": "auth != null &&
@@ -157,10 +169,9 @@
       "$courseKey": {
         ".read": "auth != null &&
           root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
-        ".write": "auth != null && (
-          !root.child('courses/' + $courseKey).exists() ||
+        ".write": "auth != null &&
           root.child('courses/' + $courseKey).exists() &&
-          root.child('courses/' + $courseKey + '/owner').val() == auth.uid)"
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid"
       }
     },
     "courseAssistants": {
@@ -224,7 +235,6 @@
       "tasks": {
         ".indexOn": ["_state"],
         "$taskKey": {
-          ".read": false,
           ".write": "auth != null && newData.child('owner').val() == auth.uid"
         }
       }
@@ -239,7 +249,6 @@
       "tasks": {
         ".indexOn": ["_state"],
         "$taskKey": {
-          ".read": false,
           ".write": "auth != null && newData.child('owner').val() == auth.uid"
         }
       }
@@ -254,17 +263,19 @@
       "tasks": {
         ".indexOn": ["_state"],
         "$taskKey": {
-          ".read": false,
           ".write": "auth != null && newData.child('owner').val() == auth.uid"
         }
       }
     },
     "logged_events": {
       ".read": "auth != null",
-      ".write": "auth != null",
+      "$loggedeventKey": {
+        ".write": "auth != null && !root.child('logged_events/' + $loggedeventKey).exists() && !data.exists() && newData.exists() && newData.child('uid').val() == auth.uid"
+      },
       ".indexOn": ["createdAt", "type"]
     },
     "moreProblemsRequests": {
+      ".read": "auth != null",
       "$requestKey": {
         ".write": "auth != null &&
           newData.child('sender').exists() &&
@@ -280,12 +291,6 @@
       "$pathKey": {
         ".read": "auth != null",
         ".write": "auth != null && auth.uid == root.child('paths/' + $pathKey + '/owner').val()"
-      }
-    },
-    "pathProblems": {
-      ".read": "auth != null",
-      "$userKey": {
-        ".write": "auth != null && auth.uid == $userKey && !newData.child('path').exists()"
       }
     },
     "paths": {
@@ -306,6 +311,7 @@
     },
     "problemSolutions": {
       "$activityKey": {
+        ".read": "auth != null",
         "$userKey": {
           ".read": "auth != null",
           ".write": "auth != null && auth.uid == $userKey"
@@ -319,7 +325,6 @@
       ".read": "auth != null && root.child('admins/' + auth.uid).exists()"
     },
     "solutions": {
-      ".read": "false",
       "$courseKey": {
         ".read": "
           auth != null && (
@@ -350,7 +355,6 @@
       }
     },
     "studentCoursePasswords": {
-      ".read": "false",
       "$courseKey": {
         "$studentKey": {
           ".write": "auth != null && (
@@ -364,7 +368,6 @@
       }
     },
     "studentJoinedCourses": {
-      ".read": false,
       "$studentKey": {
         ".read": "auth != null && auth.uid == $studentKey",
         "$courseKey": {
@@ -411,7 +414,6 @@
         "CodeCombat": {
           "achievements": {
             "$achievementId": {
-              ".write": false,
               ".validate": false
             }
           }
@@ -420,8 +422,7 @@
     },
     "userRecommendations": {
       "$userKey": {
-        ".read": "auth != null && auth.uid == $userKey",
-        ".write": false
+        ".read": "auth != null && auth.uid == $userKey"
       }
     },
     "users": {
@@ -431,14 +432,12 @@
       }
     },
     "usersPrivate": {
-      ".read": false,
       "$userKey": {
         ".read": "auth != null && auth.uid == $userKey",
         ".write": "auth != null && auth.uid == $userKey"
       }
     },
     "visibleSolutions": {
-      ".read": "false",
       "$courseKey": {
         ".read": "auth != null  &&
           (root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists() ||

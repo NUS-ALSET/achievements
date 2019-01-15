@@ -12,25 +12,23 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import PropTypes from "prop-types";
 import React from "react";
 import Typography from "@material-ui/core/Typography";
-import {
-  assignmentCloseDialog,
-  courseRemoveStudentRequest
-} from "../../containers/Assignments/actions";
+
 
 class RemoveStudentDialog extends React.PureComponent {
   static propTypes = {
     courseId: PropTypes.any,
     courseMemberId: PropTypes.any,
     courseMemberName: PropTypes.any,
-    dispatch: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired
+    open: PropTypes.bool.isRequired,
+    handleCloseDialog: PropTypes.func,
+    handleRemoveStudentRequest: PropTypes.func
   };
 
-  onClose = () => this.props.dispatch(assignmentCloseDialog());
+  onClose = () => this.props.handleCloseDialog();
 
   onCommit = () =>
-    this.props.dispatch(
-      courseRemoveStudentRequest(this.props.courseId, this.props.courseMemberId)
+    this.props.handleRemoveStudentRequest(
+      this.props.courseId, this.props.courseMemberId
     );
 
   render() {
@@ -49,11 +47,7 @@ class RemoveStudentDialog extends React.PureComponent {
           <Button color="primary" onClick={this.onClose}>
             Cancel
           </Button>
-          <Button
-            color="secondary"
-            onClick={this.onCommit}
-            variant="contained"
-          >
+          <Button color="secondary" onClick={this.onCommit} variant="contained">
             Delete
           </Button>
         </DialogActions>

@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 
 import Divider from "@material-ui/core/Divider";
 // for highlight the selected tab in drawer with Menu
-import MenuList from '@material-ui/core/MenuList';
+import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 // list does not support selected link natively...
-import ListSubheader from '@material-ui/core/ListSubheader';
+import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -27,33 +27,31 @@ import Security from "@material-ui/icons/Security";
 // for Github icon
 import GithubIcon from "./icons/GithubIcon";
 
-import Typography from '@material-ui/core/Typography';
-
+import Typography from "@material-ui/core/Typography";
 
 const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
   <Fragment>
     <MenuList
-      subheader={
-        <ListSubheader component="div">
-          Explore Path Activities
-        </ListSubheader>}
       onClick={onRequestClose}
+      subheader={
+        <ListSubheader component="div">Explore Path Activities</ListSubheader>
+      }
     >
-      {/* enable Home highlight for homev2 homev3 */}
+      {/* enable Home highlight for homev2 */}
       <MenuItem
         component={Link}
-        to="/"
-        selected={"/" === location.pathname
-          || (/^\/home/).test(location.pathname)
+        selected={
+          "/" === location.pathname || /^\/home/.test(location.pathname)
         }
+        to="/"
       >
         <ListItem>
           <ListItemIcon>
-            {("/" === location.pathname
-              || (/^\/home/).test(location.pathname)
-             )
-            ? <Whatshot style={{fill: "red"}} />
-            : <Whatshot />}
+            {"/" === location.pathname || /^\/home/.test(location.pathname) ? (
+              <Whatshot style={{ fill: "red" }} />
+            ) : (
+              <Whatshot />
+            )}
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
@@ -61,14 +59,16 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {/* the Paths tab will be highlighted if URL starts with "/paths" */}
       <MenuItem
         component={Link}
+        selected={/^\/paths/.test(location.pathname)}
         to="/paths"
-        selected={(/^\/paths/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {(/^\/paths/).test(location.pathname)
-            ? <Explore style={{fill: "red"}} />
-            : <Explore />}
+            {/^\/paths/.test(location.pathname) ? (
+              <Explore style={{ fill: "red" }} />
+            ) : (
+              <Explore />
+            )}
           </ListItemIcon>
           <ListItemText primary="Paths" />
         </ListItem>
@@ -78,23 +78,24 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
     <Divider />
 
     <MenuList
-      subheader={
-        <ListSubheader component="div">
-          Education in Classes
-        </ListSubheader>}
       onClick={onRequestClose}
+      subheader={
+        <ListSubheader component="div">Education in Classes</ListSubheader>
+      }
     >
       {/* the Courses tab will be highlighted if URL starts with "/courses" */}
       <MenuItem
         component={Link}
+        selected={/^\/courses/.test(location.pathname)}
         to="/courses"
-        selected={(/^\/courses/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {(/^\/courses/).test(location.pathname)
-            ? <Group style={{fill: "red"}} />
-            : <Group />}
+            {/^\/courses/.test(location.pathname) ? (
+              <Group style={{ fill: "red" }} />
+            ) : (
+              <Group />
+            )}
           </ListItemIcon>
           <ListItemText primary="Courses" />
         </ListItem>
@@ -102,14 +103,16 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {/* the Cohorts tab will be highlighted if URL starts with "/cohorts" */}
       <MenuItem
         component={Link}
+        selected={/^\/cohorts/.test(location.pathname)}
         to="/cohorts"
-        selected={(/^\/cohorts/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {(/^\/cohorts/).test(location.pathname)
-            ? <Domain style={{fill: "red"}} />
-            : <Domain />}
+            {/^\/cohorts/.test(location.pathname) ? (
+              <Domain style={{ fill: "red" }} />
+            ) : (
+              <Domain />
+            )}
           </ListItemIcon>
           <ListItemText primary="Cohorts" />
         </ListItem>
@@ -122,14 +125,16 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {/* the Profile tab will be highlighted if URL starts with "/profile" */}
       <MenuItem
         component={Link}
+        selected={/^\/profile/.test(location.pathname)}
         to={`/profile/${userId || "non-logged"}`}
-        selected={(/^\/profile/).test(location.pathname)}
       >
         <ListItem>
           <ListItemIcon>
-          {(/^\/profile/).test(location.pathname)
-            ? <Mood style={{fill: "red"}} />
-            : <Mood />}
+            {/^\/profile/.test(location.pathname) ? (
+              <Mood style={{ fill: "red" }} />
+            ) : (
+              <Mood />
+            )}
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItem>
@@ -137,14 +142,16 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       {isAdmin && (
         <MenuItem
           component={Link}
-          to={`/admin`}
-          selected={(/^\/admin/).test(location.pathname)}
+          selected={/^\/admin/.test(location.pathname)}
+          to={"/admin"}
         >
           <ListItem>
             <ListItemIcon>
-              {(/^\/admin/).test(location.pathname)
-                ? <Security style={{fill: "red"}} />
-                : <Security />}
+              {/^\/admin/.test(location.pathname) ? (
+                <Security style={{ fill: "red" }} />
+              ) : (
+                <Security />
+              )}
             </ListItemIcon>
             <ListItemText primary="Admin" />
           </ListItem>
@@ -154,19 +161,19 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
 
     <Divider />
 
-    <MenuList
-      onClick={onRequestClose}
-    >
+    <MenuList onClick={onRequestClose}>
       <MenuItem
         component={Link}
-        to="/contribute"
         selected={"/contribute" === location.pathname}
+        to="/contribute"
       >
         <ListItem>
           <ListItemIcon>
-          {("/contribute" === location.pathname)
-            ? <GithubIcon style={{fill: "red"}} />
-            : <GithubIcon />}
+            {"/contribute" === location.pathname ? (
+              <GithubIcon style={{ fill: "red" }} />
+            ) : (
+              <GithubIcon />
+            )}
           </ListItemIcon>
           <ListItemText primary="Contribute" />
         </ListItem>
@@ -174,17 +181,13 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
     </MenuList>
     <div
       style={{
-        position:"fixed",
+        position: "fixed",
         bottom: 0,
-        width: 230,
+        width: 230
       }}
     >
-      <Typography
-        variant="caption"
-        gutterBottom
-        align="center"
-      >
-        &#169; 2018 NUS-ALSET
+      <Typography align="center" gutterBottom variant="caption">
+        &#169; 2019 NUS-ALSET
       </Typography>
     </div>
   </Fragment>

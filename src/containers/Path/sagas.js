@@ -27,10 +27,12 @@ import {
   PATH_ACTIVITY_CODECOMBAT_OPEN,
   pathActivityCodeCombatDialogShow,
   pathProfileDialogShow,
-  PATH_CLOSE_DIALOG,
-  pathCloseDialog,
+  CLOSE_ACTIVITY_DIALOG,
+  closeActivityDialog,
   PATH_OPEN_JEST_SOLUTION_DIALOG,
-  pathOpenSolutionDialog
+  pathOpenSolutionDialog,
+  PATH_OPEN_SOLUTION_DIALOG,
+  fetchMyPathsActivities
 } from "./actions";
 import { ACTIVITY_TYPES, pathsService } from "../../services/paths";
 import {
@@ -242,17 +244,18 @@ export function* pathRemoveCollaboratorRequestHandler(action) {
     yield put(notificationShow(err.message));
   }
 }
-  /**
-   * Jest Activity Open Action
-   */
+/**
+ * Jest Activity Open Action
+ */
 export function* pathActivityJestOpenHandler(action) {
-  const {pathId, activityInfo} = action;
+  const { pathId, activityInfo } = action;
   try {
     let files = [];
-    yield firebase.ref(`/activityData/${activityInfo.id}`)
-        .once("value", snapshot => {
-          files = snapshot.val().files;
-    });
+    yield firebase
+      .ref(`/activityData/${activityInfo.id}`)
+      .once("value", snapshot => {
+        files = snapshot.val().files;
+      });
     if (files.length) {
       activityInfo.files = files;
     }
@@ -285,7 +288,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       );
     }
     const result = yield race({
-      skip: take(PATH_CLOSE_DIALOG),
+      skip: take(CLOSE_ACTIVITY_DIALOG),
       success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
       fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
     });
@@ -309,7 +312,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             "Completed"
           )
         );
-        yield put(pathCloseDialog());
+        yield put(closeActivityDialog());
         return;
       }
       const levelsData = yield call(accountService.fetchAchievements, data.uid);
@@ -331,7 +334,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             "Completed"
           )
         );
-        yield put(pathCloseDialog());
+        yield put(closeActivityDialog());
       } else {
         yield put(
           pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
@@ -348,6 +351,33 @@ export function* pathActivityCodeCombatOpenHandler(action) {
         err.message
       )
     );
+  }
+}
+
+export function* pathOpenSolutionDialogHandler(action) {
+  const problemInfo = action.problemInfo;
+  const uid = yield select(state => state.firebase.auth.uid);
+  let pathsInfo;
+
+  switch (problemInfo.type) {
+    case ACTIVITY_TYPES.creator.id:
+    case ACTIVITY_TYPES.educator.id:
+      pathsInfo = yield call(pathsService.fetchOwnPaths, uid, {
+        withActivities: true
+      });
+
+      if (pathsInfo && problemInfo.targetType) {
+        let activitiesExist = false;
+        for (const pathInfo of pathsInfo) {
+          pathInfo.activities = pathInfo.activities.filter(
+            activity => activity.type === problemInfo.targetType
+          );
+          activitiesExist = activitiesExist || pathInfo.activities.length;
+        }
+        yield put(fetchMyPathsActivities(pathsInfo));
+      }
+      break;
+    default:
   }
 }
 
@@ -447,6 +477,10 @@ export default [
       pathActivityCodeCombatOpenHandler
     );
   },
+  function* watchPathOpenSolutionDialog() {
+    yield takeLatest(PATH_OPEN_SOLUTION_DIALOG, pathOpenSolutionDialogHandler);
+  },
+
   /**
    * Watch Jest Activity Open Action
    */

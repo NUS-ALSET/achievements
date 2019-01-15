@@ -55,8 +55,8 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
     this.setState({ problemSolution });
   };
 
-  resetState=()=> {
-    this.setState({problemSolution : {}});
+  resetState = () => {
+    this.setState({ problemSolution: {} });
   };
 
   onClose = () => {
@@ -65,14 +65,12 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
     this.props.dispatch(assignmentCloseDialog());
   };
 
-  onCommitClick = (data=null) => {
-    const solution = (data && data.type==='SOLUTION'
-      ? data.solution
-      : this.state.problemSolution
-    );
-    isEmpty(solution)
-      ? this.onClose()
-      : this.props.onCommit(solution);
+  onCommitClick = (data = null) => {
+    const solution =
+      data && data.type === "SOLUTION"
+        ? data.solution
+        : this.state.problemSolution;
+    isEmpty(solution) ? this.onClose() : this.props.onCommit(solution);
   };
 
   render() {
@@ -84,60 +82,63 @@ class AddPathActivitySolutionDialog extends React.PureComponent {
           classes={{
             paper: pathProblem ? classes.dialog : classes.loading
           }}
-          fullWidth
+          fullScreen
           onClose={this.onClose}
           open={open}
         >
           <DialogTitle>
-            {readOnly ? 'Student ' : 'Edit '}
-            Assignment Solution {readOnly ? '( Read Only) ' : ''}
+            {readOnly ? "Student " : "Edit "}
+            Assignment Solution {readOnly ? "( Read Only) " : ""}
           </DialogTitle>
-            <Activity
-              embedded={true}
-              inDialog={true}
-              onProblemChange={this.onProblemChange}
-              pathProblem={pathProblem}
-              solution={solution}
-              onCommit={this.onCommitClick}
-              onClose={this.onClose}
-              readOnly={readOnly}
-              showCommitBtnOnTop={true}
-            >
-              {(activityView, submitHandler, props) => (
-                <Fragment>
-                  <DialogContent
-                    style={{
-                      overflowX: "hidden"
-                    }}
-                  >
-                    {activityView(props)}
-                  </DialogContent>
-                  <DialogActions>
-                    <Button color="secondary" onClick={this.onClose}>
-                      {readOnly ? 'Close' : 'Cancel'}
-                    </Button>
-                    {/* TODO: refactor =>
-                    the problemSolution state seems to be shared among multiple activities
-                    listed in the same course page */}
-                    {!readOnly && !['jupyter','jupyterInline'].includes((props.pathProblem || {}).type) &&
+          <Activity
+            embedded={true}
+            inDialog={true}
+            onClose={this.onClose}
+            onCommit={this.onCommitClick}
+            onProblemChange={this.onProblemChange}
+            pathProblem={pathProblem}
+            readOnly={readOnly}
+            solution={solution}
+          >
+            {(activityView, submitHandler, props) => (
+              <Fragment>
+                <DialogContent
+                  style={{
+                    overflowX: "hidden"
+                  }}
+                >
+                  {activityView(props)}
+                </DialogContent>
+                <DialogActions>
+                  {/* TODO: refactor =>
+                  the problemSolution state seems to be shared among multiple activities
+                  listed in the same course page */}
+                  {!readOnly &&
+                    !["jupyter", "jupyterInline"].includes(
+                      (props.pathProblem || {}).type
+                    ) && (
                       <Button
                         color="primary"
-                        disabled={!(
-                          typeof problemSolution==='object'
-                          ? problemSolution.hasOwnProperty('value')
-                            ? problemSolution.value.trim()
-                            : !isEmpty(problemSolution)
-                          : problemSolution)}
+                        disabled={
+                          !(typeof problemSolution === "object"
+                            ? problemSolution.hasOwnProperty("value")
+                              ? problemSolution.value.trim()
+                              : !isEmpty(problemSolution)
+                            : problemSolution)
+                        }
                         onClick={submitHandler}
                         variant="contained"
                       >
                         Commit
                       </Button>
-                    }
-                  </DialogActions>
-                </Fragment>
-              )}
-            </Activity>
+                    )}
+                </DialogActions>
+              </Fragment>
+            )}
+          </Activity>
+          <Button color="secondary" onClick={this.onClose}>
+            {readOnly ? "Close" : "Cancel"}
+          </Button>
         </Dialog>
       </Fragment>
     );

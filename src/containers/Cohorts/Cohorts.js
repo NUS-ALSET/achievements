@@ -16,7 +16,12 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 
 import CohortsTable from "../../components/tables/CohortsTable";
-import { addCohortDialogShow, cohortsChangeTab } from "./actions";
+import {
+  addCohortDialogShow,
+  addCohortDialogHide,
+  addCohortRequest,
+  cohortsChangeTab
+} from "./actions";
 import AddCohortDialog from "../../components/dialogs/AddCohortDialog";
 
 import { sagaInjector } from "../../services/saga";
@@ -39,19 +44,22 @@ class Cohorts extends React.PureComponent {
 
     onAddCohortClick: PropTypes.func.isRequired,
     onEditCohortClick: PropTypes.func.isRequired,
-    onChangeTab: PropTypes.func.isRequired
+    onChangeTab: PropTypes.func.isRequired,
+    onCloseAddCohortDialg: PropTypes.func.isRequired,
+    onAddCohortRequest: PropTypes.func.isRequired
   };
 
   render() {
     const {
-      dispatch,
       ui,
       myCohorts,
       myPaths,
       publicCohorts,
       publicPaths,
       currentUser,
-      onEditCohortClick
+      onAddCohortRequest,
+      onEditCohortClick,
+      onCloseAddCohortDialg
     } = this.props;
     let cohorts;
 
@@ -98,8 +106,9 @@ class Cohorts extends React.PureComponent {
         />
         <AddCohortDialog
           cohort={ui.dialog.cohort}
-          dispatch={dispatch}
           myPaths={myPaths}
+          onAddCohortRequest={onAddCohortRequest}
+          onCloseAddCohortDialg={onCloseAddCohortDialg}
           open={ui.dialog && ui.dialog.type === "addCohort"}
           publicPaths={publicPaths}
         />
@@ -124,11 +133,13 @@ const mapStateToProps = state => ({
   }
 });
 
+// need the e in onChangeTab for event logging to work
 const mapDispatchToProps = dispatch => ({
   onAddCohortClick: () => dispatch(addCohortDialogShow()),
   onChangeTab: (e, tabIndex) => dispatch(cohortsChangeTab(tabIndex)),
   onEditCohortClick: cohort => dispatch(addCohortDialogShow(cohort)),
-  dispatch
+  onCloseAddCohortDialg: () => dispatch(addCohortDialogHide()),
+  onAddCohortRequest: cohortData => dispatch(addCohortRequest(cohortData))
 });
 
 export default compose(

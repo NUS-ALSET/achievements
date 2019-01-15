@@ -9,11 +9,10 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
 
-import { APP_SETTING } from "../../achievementsApp/config";
-
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Button from "@material-ui/core/Button";
+
 import Toolbar from "@material-ui/core/Toolbar";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
@@ -34,7 +33,7 @@ import {
 } from "./selectors";
 import {
   pathAddCollaboratorRequest,
-  pathCloseDialog,
+  closeActivityDialog,
   pathMoreProblemsRequest,
   pathOpen,
   pathOpenSolutionDialog,
@@ -54,7 +53,6 @@ import {
 } from "../Paths/actions";
 import AddActivityDialog from "../../components/dialogs/AddActivityDialog";
 
-import AddIcon from "@material-ui/icons/Add";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
@@ -74,6 +72,7 @@ import { Typography } from "@material-ui/core";
 import RequestMorePathContentDialog from "../../components/dialogs/RequestMorePathContentDialog";
 import FetchCodeCombatLevelDialog from "../../components/dialogs/FetchCodeCombatLevelDialog";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
+import AddCreatorSolutionDialog from "../../components/dialogs/AddCreatorSolutionDialog";
 
 const styles = theme => ({
   toolbarButton: {
@@ -286,6 +285,20 @@ export class Path extends React.Component {
     const allFinished =
       (pathActivities.activities || []).filter(problem => problem.solved)
         .length === (pathActivities.activities || []).length;
+    const hasActivities =
+      ui.dialog.pathsInfo &&
+      ui.dialog.pathsInfo.filter(
+        pathInfo => pathInfo.activities && pathInfo.activities.length
+      ).length;
+    // Flag that used for creator and educator activities to force
+    // AddActivityDialog to create new activity of required type instead of
+    // editing existing activity
+    // FIXIT: move it into selectors
+    const isCreatorActivity =
+      ui.dialog.value &&
+      ui.dialog.value.owner !== uid &&
+      ui.dialog.value.type === ACTIVITY_TYPES.creator.id;
+
     let pathName, pathDesc;
 
     if (match.params.pathId[0] !== "-") {
@@ -339,43 +352,26 @@ export class Path extends React.Component {
         >
           Path Description: {pathDesc}
         </Typography>
-        {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) &&
-          (!APP_SETTING.isSuggesting ? (
-            <Toolbar>
-              <Button
-                color="primary"
-                onClick={this.onAddActivityClick}
-                variant="contained"
-              >
-                Add Activity
-              </Button>
-              {pathStatus === PATH_STATUS_OWNER && (
-                <Button
-                  className={classes.toolbarButton}
-                  onClick={() =>
-                    onShowCollaboratorsClick(pathActivities.path.id)
-                  }
-                  variant="contained"
-                >
-                  Collaborators
-                </Button>
-              )}
-            </Toolbar>
-          ) : (
+        {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) && (
+          <Toolbar>
             <Button
-              aria-label="Add"
               color="primary"
               onClick={this.onAddActivityClick}
-              style={{
-                position: "fixed",
-                bottom: 20,
-                right: 20
-              }}
-              variant="fab"
+              variant="contained"
             >
-              <AddIcon />
+              Add Activity
             </Button>
-          ))}
+            {pathStatus === PATH_STATUS_OWNER && (
+              <Button
+                className={classes.toolbarButton}
+                onClick={() => onShowCollaboratorsClick(pathActivities.path.id)}
+                variant="contained"
+              >
+                Collaborators
+              </Button>
+            )}
+          </Toolbar>
+        )}
         <AddTextSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
@@ -405,6 +401,22 @@ export class Path extends React.Component {
             ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`
           }
           problem={ui.dialog.value}
+          taskId={ui.dialog.value && ui.dialog.value.id}
+        />
+        <AddCreatorSolutionDialog
+          onClose={onCloseDialog}
+          onCommit={this.onTextSolutionSubmit}
+          open={
+            !!(
+              ["creatorSolution", "educatorSolution"].includes(
+                ui.dialog.type
+              ) &&
+              ui.dialog.pathsInfo &&
+              hasActivities
+            )
+          }
+          pathsInfo={ui.dialog.pathsInfo || []}
+          solution={ui.dialog.solution}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <FetchCodeCombatDialog
@@ -448,13 +460,28 @@ export class Path extends React.Component {
           uid={uid}
         />
         <AddActivityDialog
-          activity={ui.dialog.value}
+          activity={!isCreatorActivity && ui.dialog.value}
           fetchGithubFiles={fetchGithubFiles}
           fetchGithubFilesStatus={ui.fetchGithubFilesStatus}
           onClose={onCloseDialog}
           onCommit={this.onActivityChangeRequest}
-          open={ui.dialog.type === "ProblemChange"}
-          pathId={(pathActivities.path && pathActivities.path.id) || ""}
+          open={
+            ui.dialog.type === "ProblemChange" ||
+            !!(
+              ["creatorSolution", "educatorSolution"].includes(
+                ui.dialog.type
+              ) &&
+              ui.dialog.pathsInfo &&
+              !hasActivities
+            )
+          }
+          pathId={
+            ["creatorSolution", "educatorSolution"].includes(ui.dialog.type)
+              ? ""
+              : (pathActivities.path && pathActivities.path.id) || ""
+          }
+          pathsInfo={ui.dialog.pathsInfo || []}
+          restrictedType={isCreatorActivity && ui.dialog.value.targetType}
           uid={uid || "Anonymous"}
         />
         <DeleteConfirmationDialog
@@ -471,6 +498,7 @@ export class Path extends React.Component {
         />
         <ControlAssistantsDialog
           assistants={ui.dialog.assistants}
+          isOwner={pathStatus === PATH_STATUS_OWNER}
           newAssistant={ui.dialog.newAssistant}
           onAddAssistant={onAddAssistant}
           onAssistantKeyChange={onAssistantKeyChange}
@@ -512,7 +540,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = {
   onAddAssistant: pathAddCollaboratorRequest,
   onAssistantKeyChange: assignmentAssistantKeyChange,
-  onCloseDialog: pathCloseDialog,
+  onCloseDialog: closeActivityDialog,
   onNotification: notificationShow,
   onOpen: pathOpen,
   onShowCollaboratorsClick: pathShowCollaboratorsDialog,

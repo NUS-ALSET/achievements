@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * @file PathDialog container module
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
@@ -7,7 +8,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 
-import { firebaseConnect,isLoaded } from "react-redux-firebase";
+import { firebaseConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { connect } from "react-redux";
 
@@ -36,44 +37,42 @@ import LinkIcon from "@material-ui/icons/Link";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
-import {GameActivity, TournamentActivity} from '../AddActivitiesForm/'
+import { GameActivity, TournamentActivity } from "../AddActivitiesForm/";
 
 import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 // RegExp rules
-import {
-  AddName,
-  NoStartWhiteSpace
-} from "../regexp-rules/RegExpRules";
+import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
 
 // images for user guide in the dialog
 import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
 import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
 
-
+const DEFAULT_COUNT = 2;
 const gameDefaultData = {
-  game : 'passenger-picker',
-  scoreToWin : 10,
-  gameTime : 120,
-  unitsPerSide : 1,
-  levelsToWin : 1,
-  playMode : 'manual control'
-}
-
+  game: "passenger-picker",
+  scoreToWin: 10,
+  gameTime: 120,
+  unitsPerSide: 1,
+  levelsToWin: 1,
+  playMode: "manual control"
+};
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
+    activityExampleSolution: PropTypes.any,
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     pathId: PropTypes.string.isRequired,
-    paths: PropTypes.array,
-    activity: PropTypes.object,
+    pathsInfo: PropTypes.any,
+    activity: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     uid: PropTypes.string.isRequired,
     // temporary remove isRequired for fetchGithubFiles
     fetchGithubFiles: PropTypes.func,
-    fetchGithubFilesStatus : PropTypes.string
+    fetchGithubFilesStatus: PropTypes.string,
+    restrictedType: PropTypes.oneOf([...Object.keys(ACTIVITY_TYPES), false])
   };
 
   state = {
@@ -83,20 +82,31 @@ class AddActivityDialog extends React.PureComponent {
 
   fetchedGithubURL = "";
 
-  componentWillReceiveProps(nextProps) {
-    if((nextProps.fetchGithubFilesStatus || '').length>0){
-      this.handelfetchGithubFilesStatus(nextProps.fetchGithubFilesStatus,nextProps.activity);
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if ((nextProps.fetchGithubFilesStatus || "").length > 0) {
+      this.handelfetchGithubFilesStatus(
+        nextProps.fetchGithubFilesStatus,
+        nextProps.activity
+      );
       return;
     }
-    if((this.props || {}).open !== nextProps.open){
+    if ((this.props || {}).open !== nextProps.open) {
       this.resetState();
     }
     if (nextProps.activity) {
       let state = {};
-      if(nextProps.activity.name && AddName.test(nextProps.activity.name) && NoStartWhiteSpace.test(nextProps.activity.name)){
-        this.setState({ isCorrectInput : true})
+      if (
+        nextProps.activity.name &&
+        AddName.test(nextProps.activity.name) &&
+        NoStartWhiteSpace.test(nextProps.activity.name)
+      ) {
+        this.setState({ isCorrectInput: true });
       }
-      if ([ ACTIVITY_TYPES.jupyterInline.id ,ACTIVITY_TYPES.jupyter.id ].includes(nextProps.activity.type)){
+      if (
+        [ACTIVITY_TYPES.jupyterInline.id, ACTIVITY_TYPES.jupyter.id].includes(
+          nextProps.activity.type
+        )
+      ) {
         state = {
           code: nextProps.activity.code || 1,
           frozen: nextProps.activity.frozen || 1
@@ -115,11 +125,11 @@ class AddActivityDialog extends React.PureComponent {
     }
   }
 
-  handelfetchGithubFilesStatus = (fetchGithubFilesStatus,activity) => {
+  handelfetchGithubFilesStatus = (fetchGithubFilesStatus, activity) => {
     switch (fetchGithubFilesStatus) {
       case "SUCCESS":
         this.fetchedGithubURL = this.state.githubURL;
-        this.setState({ files : activity.files || []})
+        this.setState({ files: activity.files || [] });
         this.hideLoading();
         break;
       case "LOADING":
@@ -131,16 +141,23 @@ class AddActivityDialog extends React.PureComponent {
       default:
         this.hideLoading();
     }
-  }
+  };
 
   getTypeSpecificElements() {
-    let { activity, activityExampleSolution } = this.props;
-    if(['jupyter','jupyterInline'].includes((activity || {}).type) && !isLoaded(activityExampleSolution)){
+    let { activity, activityExampleSolution, restrictedType } = this.props;
+    const type =
+      restrictedType ||
+      this.state.type ||
+      (activity && activity.type) ||
+      "text";
+    /* if (
+      ["jupyter", "jupyterInline"].includes(type) &&
+      !isLoaded(activityExampleSolution)
+    ) {
       return "";
-    }
-    console.log('activity', (activity|| {}).id)
+    }*/
     activity = Object.assign(activity || {}, this.state);
-    switch (this.state.type || (activity && activity.type) || "text") {
+    switch (type) {
       case ACTIVITY_TYPES.text.id:
         return (
           <TextField
@@ -148,9 +165,7 @@ class AddActivityDialog extends React.PureComponent {
             label="Question"
             margin="normal"
             onChange={e => {
-              this.onFieldChange(
-                "question", e.target.value
-              )
+              this.onFieldChange("question", e.target.value);
             }}
             value={activity.question || ""}
           />
@@ -174,7 +189,10 @@ class AddActivityDialog extends React.PureComponent {
               value={activity.level || ""}
             >
               {Object.keys(APP_SETTING.CodeCombatLevels).map(id => (
-                <MenuItem key={APP_SETTING.CodeCombatLevels[id].name} value={id}>
+                <MenuItem
+                  key={APP_SETTING.CodeCombatLevels[id].name}
+                  value={id}
+                >
                   {APP_SETTING.CodeCombatLevels[id].name}
                 </MenuItem>
               ))}
@@ -203,13 +221,13 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
-              <TextField
-                defaultValue={(activityExampleSolution || {}).solutionURL || ""}
-                fullWidth
-                label="Solution Notebook URL"
-                margin="dense"
-                onChange={e => this.onFieldChange("solutionURL", e.target.value)}
-              />
+            <TextField
+              defaultValue={(activityExampleSolution || {}).solutionURL || ""}
+              fullWidth
+              label="Solution Notebook URL"
+              margin="dense"
+              onChange={e => this.onFieldChange("solutionURL", e.target.value)}
+            />
             <TextField
               defaultValue={activity && String(activity.frozen || "1")}
               fullWidth
@@ -225,23 +243,17 @@ class AddActivityDialog extends React.PureComponent {
       case ACTIVITY_TYPES.jupyterInline.id:
         return (
           <Fragment>
-            <Typography
-              gutterBottom
-              variant="body2"
-            >
+            <Typography gutterBottom variant="body2">
               Jupyter Notebook Activity
             </Typography>
-            <Typography
-              gutterBottom
-              variant="body1"
-            >
-              A type of activity that requires the students to submit the python solution for a single code box in a Jupyter notebook. The solution should ensure that any relevant assertions/testing in the notebook pass.
+            <Typography gutterBottom variant="body1">
+              A type of activity that requires the students to submit the python
+              solution for a single code box in a Jupyter notebook. The solution
+              should ensure that any relevant assertions/testing in the notebook
+              pass.
             </Typography>
             <br />
-            <Typography
-              gutterBottom
-              variant="body2"
-            >
+            <Typography gutterBottom variant="body2">
               Step 1: Get the Shareable Link from Google Colab ipynb
             </Typography>
             <img alt="JupyterNotebookStep1" src={JupyterNotebookStep1} />
@@ -250,11 +262,7 @@ class AddActivityDialog extends React.PureComponent {
               rel="noopener noreferrer"
               target="_blank"
             >
-              <Typography
-                align="center"
-                gutterBottom
-                variant="caption"
-              >
+              <Typography align="center" gutterBottom variant="caption">
                 Sample Google Colab ipynb Link
               </Typography>
             </a>
@@ -266,11 +274,7 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("problemURL", e.target.value)}
             />
-            <Typography
-              gutterBottom
-              style={{marginTop:30}}
-              variant="body2"
-            >
+            <Typography gutterBottom style={{ marginTop: 30 }} variant="body2">
               Step 2: Get the Shareable Link of the Solution Notebook
             </Typography>
             <img alt="JupyterNotebookStep2" src={JupyterNotebookStep2} />
@@ -279,11 +283,7 @@ class AddActivityDialog extends React.PureComponent {
               rel="noopener noreferrer"
               target="_blank"
             >
-              <Typography
-                align="center"
-                gutterBottom
-                variant="caption"
-              >
+              <Typography align="center" gutterBottom variant="caption">
                 Sample Solution Google Colab ipynb Link
               </Typography>
             </a>
@@ -295,11 +295,7 @@ class AddActivityDialog extends React.PureComponent {
               margin="dense"
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
             />
-            <Typography
-              gutterBottom
-              style={{marginTop:30}}
-              variant="body2"
-            >
+            <Typography gutterBottom style={{ marginTop: 30 }} variant="body2">
               Step 3: Select code block for solution input
             </Typography>
             <TextField
@@ -372,7 +368,12 @@ class AddActivityDialog extends React.PureComponent {
           </Fragment>
         );
       case ACTIVITY_TYPES.game.id:
-        return <GameActivity onFieldChange={this.onFieldChange} activity={activity} />
+        return (
+          <GameActivity
+            activity={activity}
+            onFieldChange={this.onFieldChange}
+          />
+        );
       case ACTIVITY_TYPES.jest.id:
         return (
           <Fragment>
@@ -399,8 +400,7 @@ class AddActivityDialog extends React.PureComponent {
                 value={activity.githubURL || ""}
               />
             </FormControl>
-            {this.state.files &&
-              this.state.files.length > 0 && (
+            {this.state.files && this.state.files.length > 0 && (
               <Fragment>
                 <Typography
                   gutterBottom
@@ -417,30 +417,75 @@ class AddActivityDialog extends React.PureComponent {
                   &nbsp;
                   {this.fetchedGithubURL}
                 </Typography>
-                {this.state.files.map(file =>
-                  file.type === "file" && (
-                    <ListItem
-                      button
-                      dense
-                      key={file.path}
-                      role={undefined}
-                      style={{ padding: "0px 25px" }}
-                    >
-                      <Checkbox
-                        checked={!file.readOnly}
-                        disableRipple
-                        onChange={() => this.handleReadOnlyFiles(file.path)}
-                        tabIndex={-1}
-                      />
-                      <ListItemText primary={file.path} />
-                    </ListItem>
-                ))}
+                {this.state.files.map(
+                  file =>
+                    file.type === "file" && (
+                      <ListItem
+                        button
+                        dense
+                        key={file.path}
+                        role={undefined}
+                        style={{ padding: "0px 25px" }}
+                      >
+                        <Checkbox
+                          checked={!file.readOnly}
+                          disableRipple
+                          onChange={() => this.handleReadOnlyFiles(file.path)}
+                          tabIndex={-1}
+                        />
+                        <ListItemText primary={file.path} />
+                      </ListItem>
+                    )
+                )}
               </Fragment>
             )}
           </Fragment>
         );
       case ACTIVITY_TYPES.gameTournament.id:
-        return <TournamentActivity onFieldChange={this.onFieldChange} activity={activity} />
+        return (
+          <TournamentActivity
+            activity={activity}
+            onFieldChange={this.onFieldChange}
+          />
+        );
+      case ACTIVITY_TYPES.creator.id:
+      case ACTIVITY_TYPES.educator.id:
+        return (
+          <Fragment>
+            <TextField
+              fullWidth
+              label="Type of required activity"
+              margin="dense"
+              onChange={e => this.onFieldChange("targetType", e.target.value)}
+              select
+              value={
+                this.state.targetType ||
+                (activity && activity.targetType) ||
+                "text"
+              }
+            >
+              {Object.keys(ACTIVITY_TYPES).map(key => (
+                <MenuItem key={key} value={key}>
+                  {ACTIVITY_TYPES[key].caption}
+                </MenuItem>
+              ))}
+            </TextField>
+            {activity.type === ACTIVITY_TYPES.educator.id && (
+              <TextField
+                fullWidth
+                label="Count of required solutions"
+                margin="dense"
+                onChange={e =>
+                  this.onFieldChange("count", Number(e.target.value))
+                }
+                value={
+                  this.state.count ||
+                  ((activity && activity.count) || DEFAULT_COUNT)
+                }
+              />
+            )}
+          </Fragment>
+        );
       default:
         return;
     }
@@ -456,9 +501,8 @@ class AddActivityDialog extends React.PureComponent {
 
   handleReadOnlyFiles = filePath => {
     this.setState(() => ({
-      files: this.state.files.map(
-        file =>
-          file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
+      files: this.state.files.map(file =>
+        file.path === filePath ? { ...file, readOnly: !file.readOnly } : file
       )
     }));
   };
@@ -470,6 +514,11 @@ class AddActivityDialog extends React.PureComponent {
     this.props.fetchGithubFiles(this.state.githubURL);
   };
 
+  onPathChange = e =>
+    this.setState({
+      path: e.target.value
+    });
+
   onFieldChange = (field, value) => {
     const { activity } = this.props;
     // when edit/update
@@ -479,7 +528,12 @@ class AddActivityDialog extends React.PureComponent {
       });
     }
     let state = {};
-    if (field === "type" && [ACTIVITY_TYPES.jupyterInline.id,ACTIVITY_TYPES.jupyter.id].includes(value)) {
+    if (
+      field === "type" &&
+      [ACTIVITY_TYPES.jupyterInline.id, ACTIVITY_TYPES.jupyter.id].includes(
+        value
+      )
+    ) {
       state = {
         code: 1,
         frozen: 1
@@ -488,18 +542,15 @@ class AddActivityDialog extends React.PureComponent {
     if (field === "type" && value === "game") {
       state = { ...gameDefaultData };
     }
-    if(field==="level" &&  this.state.type === ACTIVITY_TYPES.codeCombat.id){
-      state={
-        name : APP_SETTING.CodeCombatLevels[value].name,
+    if (field === "level" && this.state.type === ACTIVITY_TYPES.codeCombat.id) {
+      state = {
+        name: APP_SETTING.CodeCombatLevels[value].name,
         isCorrectInput: true
-      }
+      };
     }
     // validate name input
     if (field === "name") {
-      if (
-        AddName.test(value) &&
-        NoStartWhiteSpace.test(value)
-      ) {
+      if (AddName.test(value) && NoStartWhiteSpace.test(value)) {
         this.setState({
           isCorrectInput: true
         });
@@ -519,7 +570,7 @@ class AddActivityDialog extends React.PureComponent {
     const activity = { ...this.props.activity };
     if (this.state.type === ACTIVITY_TYPES.jest.id) {
       const { type, name } = this.state;
-      this.props.onCommit(this.props.pathId, {
+      this.props.onCommit(this.props.pathId || this.state.path, {
         ...activity,
         type,
         name,
@@ -529,7 +580,7 @@ class AddActivityDialog extends React.PureComponent {
       });
     } else {
       this.props.onCommit(
-        this.props.pathId,
+        this.props.pathId || this.state.path,
         Object.assign(activity || {}, this.state, {
           type: this.state.type || (activity && activity.type) || "text"
         })
@@ -548,13 +599,13 @@ class AddActivityDialog extends React.PureComponent {
       key => this.setState({ [key]: undefined }) || true
     );
     this.setState({
-      type: "text",
+      type: this.props.restrictedType || "text",
       isCorrectInput: false
     });
   };
 
   render() {
-    const { activity, open } = this.props;
+    const { activity, open, pathId, pathsInfo, restrictedType } = this.props;
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -565,13 +616,32 @@ class AddActivityDialog extends React.PureComponent {
             width: "100%"
           }}
         >
+          {!pathId && (
+            <TextField
+              fullWidth
+              label="Path"
+              margin={"dense"}
+              onChange={this.onPathChange}
+              required
+              select
+              value={this.state.path || ""}
+            >
+              {pathsInfo.map(pathInfo => (
+                <MenuItem key={pathInfo.id} value={pathInfo.id}>
+                  {pathInfo.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
           <TextField
             autoFocus
             error={!this.state.isCorrectInput}
             fullWidth
-            helperText={this.state.isCorrectInput
-              ? ""
-              : "Name should not be empty or too long or have invalid characters"}
+            helperText={
+              this.state.isCorrectInput
+                ? ""
+                : "Name should not be empty or too long or have invalid characters"
+            }
             label="Name"
             margin="dense"
             onChange={e => this.onFieldChange("name", e.target.value)}
@@ -583,8 +653,14 @@ class AddActivityDialog extends React.PureComponent {
             label="Type"
             margin="dense"
             onChange={e => this.onFieldChange("type", e.target.value)}
+            readOnly={!!restrictedType}
             select
-            value={this.state.type || (activity && activity.type) || "text"}
+            value={
+              restrictedType ||
+              this.state.type ||
+              (activity && activity.type) ||
+              "text"
+            }
           >
             {Object.keys(ACTIVITY_TYPES).map(key => (
               <MenuItem key={key} value={key}>
@@ -608,7 +684,7 @@ class AddActivityDialog extends React.PureComponent {
                 !(this.state.files && this.state.files.length > 0))
             }
             onClick={this.onCommit}
-            variant="raised"
+            variant="contained"
           >
             Commit
           </Button>
@@ -620,20 +696,19 @@ class AddActivityDialog extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    activityExampleSolution : (state.firebase.data.activityExampleSolutions || {})[(ownProps.activity || {}).id]
-  }
+    activityExampleSolution: (state.firebase.data.activityExampleSolutions ||
+      {})[(ownProps.activity || {}).id]
+  };
 };
 
 export default compose(
-  firebaseConnect((ownProps) => {
-    if (!["jupyter","jupyterInline"].includes((ownProps.activity || {}).type)){
+  firebaseConnect(ownProps => {
+    if (
+      !["jupyter", "jupyterInline"].includes((ownProps.activity || {}).type)
+    ) {
       return false;
     }
-    return [
-      `/activityExampleSolutions/${ownProps.activity.id}`,
-    ];
+    return [`/activityExampleSolutions/${ownProps.activity.id}`];
   }),
-  connect(
-    mapStateToProps,
-  )
+  connect(mapStateToProps)
 )(AddActivityDialog);

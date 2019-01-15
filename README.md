@@ -21,6 +21,7 @@
 Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achievements/wiki)** for information and resources on both the app usage and development guide:
 - [User Manual](https://github.com/NUS-ALSET/achievements/wiki/User-Manual) - For teachers/students
 - [Developer Guide](https://github.com/NUS-ALSET/achievements/wiki/Get-Started-With-Development) - For developers
+- [Quick-start to CRUD](https://github.com/NUS-ALSET/achievements/tree/master/src/containers/IdeaLab) - For interested developers
 
 ## Contributing :gift:
 

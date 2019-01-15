@@ -1,9 +1,11 @@
 /**
  * Service for actions with account
  */
-
-import { authProvider } from "../achievementsApp/config";
 import firebase from "firebase";
+
+const authProvider = new firebase.auth.GoogleAuthProvider();
+// authProvider.addScope("https://www.googleapis.com/auth/drive.file");
+
 
 export class AccountService {
   static isAdmin = false;

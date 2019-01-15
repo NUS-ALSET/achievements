@@ -1,38 +1,41 @@
 import { actionsService } from "../services/actions";
 import { applyMiddleware, compose, createStore } from "redux";
-import thunk from "redux-thunk";
 import { reactReduxFirebase } from "react-redux-firebase";
 import { connectRouter, routerMiddleware } from "connected-react-router";
 import { sagaInjector, sagaMiddleware } from "../services/saga";
-import firebase from "firebase";
-import logger from "redux-logger";
 import rootReducer from "./reducer";
+import { firebaseConfig } from "./config";
 
+
+// react-redux-firebase config
 const rrfConfig = {
-  userProfile: "courseMembers",
+  userProfile: "courseMembers", // firebase root where user profiles are stored
   profileParamsToPopulate: ["members:users"]
 };
 
-let composeEnhancers = compose;
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-if (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
-  composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
-}
+// Add reactReduxFirebase enhancer when making store creator
+const createStoreWithFirebase = compose(
+  reactReduxFirebase(firebaseConfig, rrfConfig)
+)(createStore);
 
-export const configureStore = (initialState, history) => {
+export const configureStore = (preloadedState, history) => {
   const middlewares = [
-    thunk,
     sagaMiddleware,
-    logger,
     routerMiddleware(history),
     actionsService.catchAction
   ];
-  const store = compose(reactReduxFirebase(firebase, rrfConfig))(createStore)(
+  const store = createStoreWithFirebase(
     connectRouter(history)(rootReducer),
-    initialState,
-    composeEnhancers(applyMiddleware(...middlewares))
+    preloadedState,
+    composeEnhancers(
+      applyMiddleware(...middlewares)
+    )
   );
-  sagaInjector.injections.map(injection => sagaMiddleware.run(injection));
+  sagaInjector.injections.map(injection =>
+    sagaMiddleware.run(injection)
+  );
 
   return store;
 };

@@ -23,7 +23,8 @@ import {
   COURSE_MY_COURSES_FETCH_SUCCESS,
   ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS,
   ASSIGNMENTS_SHOW_HIDDEN_TOGGLE,
-  COURSE_PATHS_FETCH_SUCCESS
+  COURSE_PATHS_FETCH_SUCCESS,
+  ENABLE_COMMIT_AFTER_AUTOFILL
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -48,7 +49,8 @@ export const assignments = (
     sort: {
       field: "studentName",
       direction: "asc"
-    }
+    },
+    fieldAutoUpdated: false
   },
   action
 ) => {
@@ -294,14 +296,13 @@ export const assignments = (
     case COURSE_MEMBER_ACHIEVEMENTS_REFETCH: {
       return {
         ...state,
-        courseMembers: state.courseMembers.map(
-          courseMember =>
-            courseMember.id === action.studentId
-              ? {
-                  ...courseMember,
-                  achievements: action.achievements
-                }
-              : courseMember
+        courseMembers: state.courseMembers.map(courseMember =>
+          courseMember.id === action.studentId
+            ? {
+                ...courseMember,
+                achievements: action.achievements
+              }
+            : courseMember
         )
       };
     }
@@ -347,6 +348,11 @@ export const assignments = (
         ...state,
         showHiddenAssignments: !state.showHiddenAssignments
       };
+    case ENABLE_COMMIT_AFTER_AUTOFILL:
+      return {
+        ...state,
+        fieldAutoUpdated: true
+      }
     default:
       return state;
   }

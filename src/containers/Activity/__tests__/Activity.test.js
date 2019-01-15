@@ -34,7 +34,7 @@ describe("<Activity>", () => {
     wrapper.find(ActivityView).simulate("problemChange", "test");
     expect(wrapper.state("problemSolution")).toEqual("test");
   });
-
+  /*
   it("should dispatch problemSolutionSubmitRequest", () => {
     const wrapper = shallow(
       <Activity
@@ -59,4 +59,5 @@ describe("<Activity>", () => {
 
     expect(mockDispatch.calledOnce);
   });
+  */
 });

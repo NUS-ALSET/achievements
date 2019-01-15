@@ -17,29 +17,28 @@ class JupyterColabActivity extends React.PureComponent {
     onChange: PropTypes.func,
     problem: PropTypes.object.isRequired,
     solution: PropTypes.object,
-    readOnly : PropTypes.bool,
-    showCommitBtnOnTop : PropTypes.bool
+    readOnly: PropTypes.bool
   };
   state = {
     showCommitBtn: false,
-    statusText : null
+    statusText: null
   };
-  componentWillReceiveProps(nextProps) {
-    if(
-      (nextProps.solution || {}).checked && 
-      (
-        nextProps.showCommitBtnOnTop ||
-        !(nextProps.solution || {}).failed
-        )
-    ) {
-      this.setState({ showCommitBtn: true });
-    } else {
-      this.setState({ showCommitBtn: false });
-    }
-    if(nextProps.solution.statusText){
-      this.setState({ statusText : nextProps.solution.statusText });  
-    }else{
-      this.setState({ statusText : null })
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.solution !== prevProps.solution) {
+      if (
+        (this.props.solution || {}).checked &&
+        !(this.props.solution || {}).failed
+      ) {
+        this.setState({ showCommitBtn: true });
+      } else {
+        this.setState({ showCommitBtn: false });
+      }
+      if (this.props.solution.statusText) {
+        this.setState({ statusText: this.props.solution.statusText });
+      } else {
+        this.setState({ statusText: null });
+      }
     }
   }
   onSolutionRefreshClick = solutionURL => {
@@ -64,49 +63,54 @@ class JupyterColabActivity extends React.PureComponent {
 
     return (
       <Fragment>
-        {
-          this.state.statusText && 
-          <div style={{ textAlign : 'left',fontWeight : 'bold',paddingLeft : '10px',color : '#d2691e' }}>
-            <b>Execution Status: </b> {this.state.statusText }
+        {this.state.statusText && (
+          <div
+            style={{
+              textAlign: "left",
+              fontWeight: "bold",
+              paddingLeft: "10px",
+              color: "#d2691e"
+            }}
+          >
+            <b>Execution Status: </b> {this.state.statusText}
           </div>
-        }
-        
-        {this.state.showCommitBtn &&
-          <div style={{ height: '20px' }}>
+        )}
+
+        {this.state.showCommitBtn && (
+          <div style={{ height: "20px" }}>
             <Button
               color="primary"
-              variant="contained"
-              style={{ float: 'right', marginBottom: '10px' }}
               onClick={() => this.props.onCommit()}
+              style={{ float: "right", marginBottom: "10px" }}
+              variant="contained"
             >
               Commit
             </Button>
           </div>
-        }
-        
+        )}
+
         <JupyterNotebook
           action={this.onSolutionRefreshClick}
           defaultValue={solution && solution.id}
           persistent={true}
-          solution={solution}
           readOnly={readOnly}
+          solution={solution}
           title="Calculated Solution"
         />
-        {solution &&
-          solution.provided && (
-            <JupyterNotebook
-              solution={{
-                json: solution.provided
-              }}
-              title="Provided Solution"
-              readOnly={readOnly}
-            />
-          )}
+        {solution && solution.provided && (
+          <JupyterNotebook
+            readOnly={readOnly}
+            solution={{
+              json: solution.provided
+            }}
+            title="Provided Solution"
+          />
+        )}
         <JupyterNotebook
+          readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
           title="Problem"
           url={problem.problemColabURL}
-          readOnly={readOnly}
         />
       </Fragment>
     );

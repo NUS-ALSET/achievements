@@ -10,7 +10,7 @@ import {
 import { firebaseConnect } from "react-redux-firebase";
 import { sagaInjector } from "../../services/saga";
 import AddCourseDialog from "../../components/dialogs/AddCourseDialog";
-import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 import CoursesTable from "../../components/tables/CoursesTable";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
@@ -18,13 +18,11 @@ import RemoveCourseDialog from "../../components/dialogs/RemoveCourseDialog";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import Toolbar from "@material-ui/core/Toolbar";
 import Zoom from "@material-ui/core/Zoom";
 
 import AddIcon from "@material-ui/icons/Add";
 
 import sagas from "./sagas";
-import { APP_SETTING } from "../../achievementsApp/config";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
 const COURSE_TAB_JOINED = 0;
@@ -47,7 +45,8 @@ class Courses extends React.Component {
     firebase: PropTypes.object,
     instructorName: PropTypes.string,
     ownerId: PropTypes.string,
-    currentTab: PropTypes.number
+    currentTab: PropTypes.number,
+    fetchedCourses: PropTypes.bool
   };
 
   onDeleteCourseClick = courseId => {
@@ -86,7 +85,8 @@ class Courses extends React.Component {
       currentTab,
       publicCourses,
       myCourses,
-      joinedCourses
+      joinedCourses,
+      fetchedCourses
     } = this.props;
     let courses;
 
@@ -114,34 +114,20 @@ class Courses extends React.Component {
     return (
       <Fragment>
         <Breadcrumbs paths={[{ label: "Courses" }]} />
-        {!APP_SETTING.isSuggesting ? (
-          <Toolbar>
-            <Button
-              aria-label="Add"
-              color="primary"
-              onClick={() => this.showNewCourseDialog()}
-              variant="contained"
-            >
-              Add new course
-            </Button>
-          </Toolbar>
-        ) : (
-          <Zoom in={currentTab === COURSE_TAB_OWNED}>
-            <Button
-              aria-label="Add"
-              color="primary"
-              onClick={() => this.showNewCourseDialog()}
-              style={{
-                position: "fixed",
-                bottom: 20,
-                right: 20
-              }}
-              variant="fab"
-            >
-              <AddIcon />
-            </Button>
-          </Zoom>
-        )}
+        <Zoom in={currentTab === COURSE_TAB_OWNED}>
+          <Fab
+            aria-label="Add"
+            color="primary"
+            onClick={() => this.showNewCourseDialog()}
+            style={{
+              position: "fixed",
+              bottom: 20,
+              right: 20
+            }}
+          >
+            <AddIcon />
+          </Fab>
+        </Zoom>
         <Tabs
           fullWidth
           indicatorColor="primary"
@@ -157,6 +143,7 @@ class Courses extends React.Component {
         <CoursesTable
           courses={courses || {}}
           dispatch={dispatch}
+          fetchedCourses={fetchedCourses}
           onDeleteCourseClick={this.onDeleteCourseClick}
           ownerId={ownerId}
         />
@@ -189,6 +176,7 @@ const mapStateToProps = state => ({
   myCourses: state.firebase.data.myCourses,
   publicCourses: state.firebase.data.publicCourses,
   joinedCourses: state.courses.joinedCourses,
+  fetchedCourses: state.courses.fetchedCourses,
   instructorName: state.firebase.auth.displayName,
   ownerId: state.firebase.auth.uid,
   dialog: state.courses.dialog,

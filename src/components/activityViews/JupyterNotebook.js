@@ -7,7 +7,7 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import ReactLoadable from "react-loadable";
+import Loadable from "react-loadable";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -22,16 +22,13 @@ import Typography from "@material-ui/core/Typography";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
-import RefreshIcon from "@material-ui/icons/Refresh";
 
-import { APP_SETTING } from "../../achievementsApp/config";
-
-const AceEditor = ReactLoadable({
+const AceEditor = Loadable({
   loader: () => import("../AceEditor"),
   loading: () => <LinearProgress />
 });
 
-const NotebookPreview = ReactLoadable({
+const NotebookPreview = Loadable({
   loader: () => import("@nteract/notebook-preview"),
   loading: () => <LinearProgress />
 });
@@ -120,21 +117,15 @@ class JupyterNotebook extends React.PureComponent {
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              {APP_SETTING.isSuggesting ? (
-                <IconButton onClick={this.onAction}>
-                  <RefreshIcon />
-                </IconButton>
-              ) : (
-                <Button
-                  color="primary"
-                  onClick={() => action(this.state.solution)}
-                  style={{
-                    marginBottom: 4
-                  }}
-                >
-                  Run
-                </Button>
-              )}
+              <Button
+                color="primary"
+                onClick={() => action(this.state.solution)}
+                style={{
+                  marginBottom: 4
+                }}
+              >
+                Run
+              </Button>
             </InputAdornment>
           )
         }}
@@ -174,30 +165,18 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
           {persistent ? (
-            APP_SETTING.isSuggesting ? (
-              <IconButton
-                onClick={() => action(this.state.solution)}
-                style={{
-                  position: "absolute",
-                  right: 0
-                }}
-              >
-                <RefreshIcon />
-              </IconButton>
-            ) : (
-              <Button
-                color="primary"
-                disabled={!(this.state.solution && action && richEditor)}
-                onClick={this.onAction}
-                style={{
-                  position: "absolute",
-                  top: 4,
-                  right: 4
-                }}
-              >
-                Run
-              </Button>
-            )
+            <Button
+              color="primary"
+              disabled={!(this.state.solution && action && richEditor)}
+              onClick={this.onAction}
+              style={{
+                position: "absolute",
+                top: 4,
+                right: 4
+              }}
+            >
+              Run
+            </Button>
           ) : (
             <IconButton
               onClick={this.onSwitchCollapse}
@@ -212,18 +191,17 @@ class JupyterNotebook extends React.PureComponent {
         </Typography>
         <br />
         {solution !== null && action && this.getEditor()}
-        {solution &&
-          solution.json && (
-            <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
-              <div
-                style={{
-                  textAlign: "left"
-                }}
-              >
-                <NotebookPreview notebook={solution.json} />
-              </div>
-            </Collapse>
-          )}
+        {solution && solution.json && (
+          <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
+            <div
+              style={{
+                textAlign: "left"
+              }}
+            >
+              <NotebookPreview notebook={solution.json} />
+            </div>
+          </Collapse>
+        )}
         {solution && solution.loading && <CircularProgress />}
       </Paper>
     );

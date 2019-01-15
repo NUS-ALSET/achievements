@@ -2,7 +2,6 @@ import firebase from "firebase";
 import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {
-  drawerWidth: 250,
   CodeCombatLevels: CodeCombatLevels,
   games: {
     "passenger-picker": {
@@ -16,8 +15,7 @@ export const APP_SETTING = {
   },
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,
-  defaultTimeout: 12000,
-  isSuggesting: window.location.href.includes("isSuggesting=true"),
+  defaultTimeout: 2000,
   GITHUB_BASE_URL: "https://github.com/",
   AWS_SERVER_URL:
     "https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest"
@@ -33,6 +31,4 @@ const config = {
   messagingSenderId: "829016923358"
 };
 firebase.initializeApp(config);
-
-export const authProvider = new firebase.auth.GoogleAuthProvider();
-// authProvider.addScope("https://www.googleapis.com/auth/drive.file");
+export const firebaseConfig = firebase;

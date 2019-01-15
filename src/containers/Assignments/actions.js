@@ -524,6 +524,11 @@ export const assignmentsShowHiddenToggle = courseId => ({
   courseId
 });
 
+export const ENABLE_COMMIT_AFTER_AUTOFILL = "ENABLE_COMMIT_AFTER_AUTOFILL"
+export const enableCommitAfterAutofill = () => ({
+  type: ENABLE_COMMIT_AFTER_AUTOFILL
+})
+
 /*
 export const ASSIGNMENTS_TEST_SOMETHING = "ASSIGNMENTS_TEST_SOMETHING";
 export const assignmentsTestSomething = courseId => ({

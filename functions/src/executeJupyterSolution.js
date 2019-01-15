@@ -53,6 +53,7 @@ const executeJupyterSolution = (data, taskKey, owner) => {
           },
           userKey: owner,
           activityKey: data.problem,
+          pathKey: activity.path,
           open: data.open || 0,
           completed: Number(!solutionFailed)
         });
@@ -66,6 +67,7 @@ const executeJupyterSolution = (data, taskKey, owner) => {
             ".sv": "timestamp"
           },
           userKey: owner,
+          pathKey: activity.path,
           activityKey: data.problem,
           open: data.open,
           completed: 0
