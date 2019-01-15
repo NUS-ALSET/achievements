@@ -48,10 +48,23 @@
       }
     },
     "analytics": {
-      ".read": true,
       "CRUDdemo": {
+        ".read": true,
         "$uidKey": {
           ".write": "auth.uid == $uidKey"
+        }
+      },
+      "jupyterSolutions": {
+        ".read": true
+      },
+      "prototyping":{
+        "userDemonstratedPythonSkills": {
+        	"totalSkillsSet": {
+            ".read": "auth != null"
+          },
+          "$uidKey": {
+            ".read": "auth.uid == $uidKey"
+          }
         }
       }
     },
