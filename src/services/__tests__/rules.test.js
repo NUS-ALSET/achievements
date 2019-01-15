@@ -298,12 +298,4 @@ describe("security rules tests", () => {
       expect(permitted).toEqual(false);
     });
   });
-
-  describe("analytics rules", () => {
-    it("should allow any user to read", () => {
-      const { permitted } = database.read("/analytics", true);
-
-      expect(permitted).toEqual(true);
-    });
-  });
 });
