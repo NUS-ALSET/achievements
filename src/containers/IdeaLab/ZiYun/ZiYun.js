@@ -13,18 +13,17 @@ class ZiYun extends React.PureComponent {
   state = {
     editView: false,
     questions: [{
-      question: 'How many times do you use Achievements per week?',
+      question: 'How often do you use Achievements?',
       options: [
-          'true', 
-          'false', 
-          'increasing', 
-          'decreasing', 
-          'larger', 
-          'smaller', 
-          'frequently', 
-          'rarely'
+          'everyday', 
+          '4-5 times a week', 
+          '2-3 times a week', 
+          'once a week', 
+          '2-3 times a month', 
+          'once every 2 months',
+          'less often'
       ],
-      correct: 'frequently',
+      correct: 'everyday',
       answer: false},
       {
       question: 'How many times do you use Facebook per week?',
@@ -65,6 +64,7 @@ class ZiYun extends React.PureComponent {
         { this.state.editView===true && 
           <EditQuiz 
             questions={this.state.questions} 
+            edit={this.edit}
             saved={this.saved}
           /> 
         }

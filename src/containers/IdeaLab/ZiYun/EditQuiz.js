@@ -3,6 +3,10 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { Typography, Divider, FormLabel } from "@material-ui/core";
 import { Radio, RadioGroup, FormControlLabel, FormControl } from "@material-ui/core";
+import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
+import Icon from '@material-ui/core/Icon';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const defaultOptions = [
     'true', 
@@ -218,53 +222,76 @@ class EditQuiz extends Component {
     render(){
         return (
             <Fragment>
-                <Typography variant={'h6'}>
-                    This is in edit view. Only content 
-                    creators should be able to see this.
-                </Typography>
+                
+                <Grid container spacing={40} alignItems={'center'} justify={'space-between'}>
+                    <Grid item xs={10}>
+                    <Typography variant={'h6'}>
+                        This is in edit view. Only content 
+                        creators should be able to see this.
+                    </Typography>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <StyledButton style={{width:100}} onClick={() => {this.props.edit(false)}} >Back</StyledButton>
+                    </Grid>
+                </Grid>
+
                 { this.state.prevQuestions.map(function(obj, i) {
                     return ( 
                         <div key={i}>
-                            <Question 
-                                index={i}
-                                type={"old"}
-                                question={obj.question}
-                                options={obj.options}
-                                editOpt={this.editOpt}
-                                removeOpt={this.removeOpt}
-                                addOption={this.addOption}
-                                editQuest={this.editQuest}
-                                removeQues={this.removeQues} />
-                            <RadioButtonsGroup 
-                                index={i}
-                                type={"old"}
-                                options={obj.options}
-                                correct={obj.correct}
-                                setCorrect={this.setCorrect}
-                            />
+                            <Divider />
+                            <Grid container>
+                                <Grid item xs={8}>
+                                    <Question 
+                                        index={i}
+                                        type={"old"}
+                                       question={obj.question}
+                                        options={obj.options}
+                                        editOpt={this.editOpt}
+                                        removeOpt={this.removeOpt}
+                                        addOption={this.addOption}
+                                        editQuest={this.editQuest}
+                                        removeQues={this.removeQues} />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <RadioButtonsGroup 
+                                        index={i}
+                                        type={"old"}
+                                        options={obj.options}
+                                        correct={obj.correct}
+                                        setCorrect={this.setCorrect}
+                                    />
+                                </Grid>
+                            </Grid>
                         </div>
                     )
                 }, this) }
                 { this.state.questions.map(function(obj, i) {
                     return ( 
                         <div key={i}>
-                            <Question key={i}
-                                index={i}
-                                type={"new"}
-                                question={obj.question}
-                                options={obj.options}
-                                editOpt={this.editOpt}
-                                removeOpt={this.removeOpt}
-                                addOption={this.addOption}
-                                editQuest={this.editQuest}
-                                removeQues={this.removeQues} />
-                            <RadioButtonsGroup 
-                                index={i}
-                                type={"new"}
-                                options={obj.options}
-                                correct={obj.correct}
-                                setCorrect={this.setCorrect}
-                            />
+                            <Divider />
+                            <Grid container>
+                                <Grid item xs={8}>
+                                <Question
+                                    index={i}
+                                    type={"new"}
+                                    question={obj.question}
+                                    options={obj.options}
+                                    editOpt={this.editOpt}
+                                    removeOpt={this.removeOpt}
+                                    addOption={this.addOption}
+                                    editQuest={this.editQuest}
+                                    removeQues={this.removeQues} />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <RadioButtonsGroup 
+                                        index={i}
+                                        type={"new"}
+                                        options={obj.options}
+                                        correct={obj.correct}
+                                        setCorrect={this.setCorrect}
+                                    />
+                                </Grid>
+                            </Grid>
                         </div>
                     )
                 }, this) }
@@ -273,7 +300,7 @@ class EditQuiz extends Component {
                         Add Question 
                     </StyledButton>
 
-                    <StyledButton onClick={() => {this.props.saved(this.state.prevQuestions, this.state.questions)}}> 
+                    <StyledButton style={{width:100}} onClick={() => {this.props.saved(this.state.prevQuestions, this.state.questions)}}> 
                         Save
                     </StyledButton>
                 </div>
@@ -289,38 +316,35 @@ const Question = (props) => {
     //console.log(props);
     return (
             <div> 
-                <Divider />
-                <Typography variant={'body1'}>
-                    <label>
-                        Question: 
-                        <input value={props.question}
-                            onChange={(e) => {props.editQuest(props.type, props.index, e)}} /> 
-                    </label> 
+                <TextField multiline rowsMax="5" label="Question" margin="dense"
+                    style={{margin: 5, width: 500}}
+                    value={props.question}
+                    onChange={(e) => {props.editQuest(props.type, props.index, e)}} /> 
 
-                    <Button onClick={() => {props.removeQues(props.type, props.index)}}>Remove Question</Button>
-                </Typography> 
+                <Button style={{marginTop: 20}} onClick={() => {props.removeQues(props.type, props.index)}}>Remove Question</Button>
+                 
                 <br />
 
                 {props.options.map(function(obj, i){
                     return (
                         <div key={i}>
-                            <label>
-                                <Typography variant={'body1'}> Option {i+1}: 
-                                    <input name={obj} value={obj} 
-                                    onChange={(e) => {props.editOpt(props.type, props.index, i, e)}} />
 
-                                    <Button onClick={() => props.removeOpt(props.type, props.index, i)}> 
-                                        X 
-                                    </Button>
+                            <TextField label={"Option"+(i+1)} margin="dense"
+                                name={obj} value={obj} 
+                                onChange={(e) => {props.editOpt(props.type, props.index, i, e)}} />
 
-                                    {props.options.length===i+1 && 
-                                    <Button onClick={(e) => {props.addOption(props.type, props.index)}}> 
+                            <Button style={{marginTop: 20, fontSize:24}}
+                                onClick={() => props.removeOpt(props.type, props.index, i)}> 
+                                <DeleteIcon />
+                            </Button>
+
+                            {props.options.length===i+1 && 
+                                    <Button style={{marginTop: 20, fontSize: 24}} 
+                                        onClick={(e) => {props.addOption(props.type, props.index)}}> 
                                         + 
                                     </Button>
-                                    }
+                            }
 
-                                </Typography>
-                            </label>
                         </div>
                     )
                 }, this)}
@@ -332,7 +356,7 @@ const Question = (props) => {
 class RadioButtonsGroup extends React.Component{
     render(){
         return (
-            <FormControl>
+            <FormControl style={{paddingTop: 30}}>
                 <FormLabel>Correct Answer</FormLabel>
                 <RadioGroup value={this.props.correct} 
                     onChange={(e) => this.props.setCorrect(this.props.type, this.props.index, e)} >
