@@ -91,8 +91,8 @@ class JupyterNotebook extends React.PureComponent {
           }
         ]}
         editorProps={{ $blockScrolling: true }}
-        maxLines={20}
-        minLines={10}
+        maxLines={40}
+        minLines={20}
         mode="python"
         onChange={this.onChange}
         onLoad={editor => editor.focus()}
