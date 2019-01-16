@@ -5,6 +5,7 @@ import Output from "./Output";
 import Loader from "./Loader";
 import Notification from "./Notification";
 import FileDirectory from "./FileDirectory";
+import EditIcon from "@material-ui/icons/Edit";
 
 import { APP_SETTING } from "../../achievementsApp/config";
 
@@ -163,9 +164,9 @@ class JestRunner extends React.Component {
 
               <div style={{ height: "97px" }}>
                 <p className="note">
-                  Note :Only files with{" "}
-                  <span aria-label={"Editble"} role="img">
-                    ✅
+                  Note : Only files with{" "}
+                  <span aria-label={"Editable"} role="img">
+                    <EditIcon/>
                   </span>{" "}
                   icon are editable.
                 </p>
