@@ -17,9 +17,11 @@ import { pathsService } from "./services/paths";
 import { historyService } from "./services/history";
 import { firebaseService } from "./services/firebaseService";
 
+
 const history = createHashHistory();
 const store = configureStore(undefined, history);
 const theme = createMuiTheme({
+  drawerWidth: 250,
   palette: {
     primary: {
       // deepblue
@@ -48,11 +50,9 @@ class App extends React.Component {
   render() {
     return (
       <ErrorBoundary
-        render={() =>
-          <div>
-            An error occurred in this page, please go back and refresh
-          </div>
-        }
+        render={() => (
+          <div>An error occurred in this page, please go back and refresh</div>
+        )}
       >
         <MuiThemeProvider theme={theme}>
           <CssBaseline />

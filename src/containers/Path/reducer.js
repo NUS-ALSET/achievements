@@ -1,6 +1,6 @@
 import {
   PATH_ADD_COLLABORATOR_SUCCESS,
-  PATH_CLOSE_DIALOG,
+  CLOSE_ACTIVITY_DIALOG,
   PATH_COLLABORATORS_FETCH_SUCCESS,
   PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS,
   PATH_OPEN_SOLUTION_DIALOG,
@@ -39,11 +39,12 @@ export const path = (
   action
 ) => {
   switch (action.type) {
-    case PATH_CLOSE_DIALOG:
+    case CLOSE_ACTIVITY_DIALOG:
       return {
         ...state,
         ui: {
           dialog: {
+            ...state.ui.dialog,
             type: ""
           }
         }

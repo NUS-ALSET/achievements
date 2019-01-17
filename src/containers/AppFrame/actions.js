@@ -15,20 +15,8 @@ export const mainDrawerToggle = status => ({
   status
 });
 
-export const LOGIN_AUTHENTICATION = "LOGIN_AUTHENTICATION";
-export const loginAuthentication = (userId, displayName) => ({
-  type: LOGIN_AUTHENTICATION,
-  userId,
-  displayName
-});
-
-export const LOGIN_DEAUTHENTICATION = "LOGIN_DEAUTHENTICATION";
-export const loginDeauthentication = () => ({
-  type: LOGIN_DEAUTHENTICATION
-});
-
 export const GET_DYNAMIC_PATHTITLE = "GET_DYNAMIC_PATHTITLE";
-export const getDynamicPathtitle = (pathname) => ({
+export const getDynamicPathtitle = pathname => ({
   type: GET_DYNAMIC_PATHTITLE,
   pathname
 });

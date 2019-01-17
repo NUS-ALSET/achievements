@@ -4,13 +4,12 @@ import {
   FILTER_ANALYTICSDATA
 } from "./actions";
 
-export const fetchDataDemo = (
-  state = {
-    jupyterAnalyticsPathKey: "",
-    filteredAnalytics: []
-  },
-  action
-) => {
+const initialState = {
+  jupyterAnalyticsPathKey: "",
+  filteredAnalytics: []
+};
+
+export const CRUDdemo = (state = initialState, action) => {
   switch (action.type) {
     case CHANGE_PATH_KEY_JUPSOL:
       return {
@@ -25,11 +24,8 @@ export const fetchDataDemo = (
     case FILTER_ANALYTICSDATA:
       return {
         ...state,
-        filteredAnalytics: (
-          Object.keys(action.analyticsData)
-            .filter(
-              item => action.analyticsData[item].pathKey === action.pathKey
-            )
+        filteredAnalytics: Object.keys(action.analyticsData).filter(
+          item => action.analyticsData[item].pathKey === action.pathKey
         )
       };
     default:

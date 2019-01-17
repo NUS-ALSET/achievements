@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Route } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import { ConnectedRouter as Router } from "connected-react-router";
 
 import {
@@ -12,15 +12,11 @@ import {
 } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
 
-import { APP_SETTING } from "../../achievementsApp/config";
-
 // for Drawer and AppBar
 import AppBarMenuItems from "../../components/AppBarMenuItems";
 import AppDrawer from "../../components/AppDrawer";
 
 // for Routes
-// TODO: both account/ and profile/ point to this Account component
-// need to figure out why need both?
 import Account from "../../containers/Account/Account";
 import Cohorts from "../Cohorts/Cohorts";
 import Cohort from "../Cohort/Cohort";
@@ -31,7 +27,7 @@ import Courses from "../Courses/Courses";
 import Path from "../Path/Path";
 import Paths from "../Paths/Paths";
 import Contribute from "../Contribute/Contribute";
-import AllDestinations from "../Destinations/AllDestionations";
+import AllDestinations from "../Destinations/AllDestinations";
 import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
 // HomeV2 to test the kyGUI for Home Recommendation
@@ -51,13 +47,20 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 // Idea lab for trial
-import FetchDataDemo from "../IdeaLab/FetchDataDemo";
+import CRUDdemo from "../IdeaLab/CRUDdemo";
 import Brenda from "../IdeaLab/Brenda/Brenda";
-import fusionChartDemo from "../IdeaLab/Ben/fusionChartDemo";
+import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
+import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills"
+import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity"
+
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
  * Routes are passed as props to be rendered within this component*/
+
+const NoMatch = ({ location }) => (
+  <h3>No page found for <code>{location.pathname}</code></h3>
+)
 
 const styles = theme => ({
   "@global": {
@@ -95,12 +98,12 @@ const styles = theme => ({
   appBar: {
     [theme.breakpoints.up("lg")]: {
       // up.lg = large or more, 1280px or larger
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
+      width: `calc(100% - ${theme.drawerWidth}px)`
     }
   },
   drawer: {
     [theme.breakpoints.up("lg")]: {
-      width: APP_SETTING.drawerWidth
+      width: theme.drawerWidth
     }
   },
   content: {
@@ -109,7 +112,7 @@ const styles = theme => ({
     height: "calc(100% - 56px)",
     marginTop: 56,
     [theme.breakpoints.up("lg")]: {
-      width: `calc(100% - ${APP_SETTING.drawerWidth}px)`
+      width: `calc(100% - ${theme.drawerWidth}px)`
     },
     [theme.breakpoints.up("sm")]: {
       height: "calc(100% - 64px)",
@@ -129,23 +132,22 @@ class AppFrame extends React.Component {
     history: PropTypes.any,
     mainDrawerOpen: PropTypes.bool,
     isAdmin: PropTypes.bool,
-    userName: PropTypes.string,
     userId: PropTypes.string,
     routerPathname: PropTypes.string,
     dynamicPathTitle: PropTypes.string
   };
 
   componentDidMount() {
-    this.props.dispatch(getDynamicPathtitle(
-      this.props.history.location.pathname
-    ));
+    this.props.dispatch(
+      getDynamicPathtitle(this.props.history.location.pathname)
+    );
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.routerPathname !== this.props.routerPathname) {
-      this.props.dispatch(getDynamicPathtitle(
-        this.props.history.location.pathname
-      ));
+      this.props.dispatch(
+        getDynamicPathtitle(this.props.history.location.pathname)
+      );
     }
   }
 
@@ -179,8 +181,7 @@ class AppFrame extends React.Component {
       classes,
       history,
       isAdmin,
-      userId,
-      userName
+      userId
     } = this.props;
 
     return (
@@ -189,7 +190,7 @@ class AppFrame extends React.Component {
           <div className={classes.appFrame}>
             <AppBar
               className={classes.appBar}
-              color={APP_SETTING.isSuggesting ? "inherit" : "primary"}
+              color="primary"
               onClose={this.handleDrawerClose}
             >
               <Toolbar>
@@ -257,39 +258,52 @@ class AppFrame extends React.Component {
               userId={userId}
             />
             <main className={classes.content}>
-              <Route component={HomeV2} exact path="(/|/home)" />
-              <Route component={Admin} exact path="/admin" />
-              <Route component={Courses} exact path="/courses" />
-              <Route component={Assignments} exact path="/courses/:courseId" />
-              <Route component={Cohorts} exact path="/cohorts" />
-              <Route component={Cohort} exact path="/cohorts/:cohortId" />
-              <Route component={Paths} exact path="/paths" />
-              <Route component={Path} exact path="/paths/:pathId" />
-              <Route component={Brenda} exact path="/brenda" />
-              <Route component={AllDestinations} exact path="/destinations" />
-              <Route component={MyDestinations} exact path="/my-destinations" />
-              <Route component={FetchDataDemo} exact path="/fetchdatademo" />
-              <Route
-                component={fusionChartDemo}
-                exact
-                path="/fusionChartDemo"
-              />
-              <Route
-                component={ViewDestination}
-                exact
-                path="/destinations/:destinationId"
-              />
-              <Route
-                component={Activity}
-                exact
-                path="/paths/:pathId/activities/:problemId"
-              />
-              <Route
-                exact
-                path="/(account|profile)/:accountId"
-                render={() => <Account userName={userName} />}
-              />
-              <Route component={Contribute} exact path="/contribute" />
+              <Switch>
+                <Route component={HomeV2} exact path="(/|/home)" />
+                <Route component={Admin} exact path="/admin" />
+                <Route component={Courses} exact path="/courses" />
+                <Route component={Assignments} exact path="/courses/:courseId" />
+                <Route component={Cohorts} exact path="/cohorts" />
+                <Route component={Cohort} exact path="/cohorts/:cohortId" />
+                <Route component={Paths} exact path="/paths" />
+                <Route component={Path} exact path="/paths/:pathId" />
+                <Route component={Brenda} exact path="/brenda" />
+                <Route component={AllDestinations} exact path="/destinations" />
+                <Route component={MyDestinations} exact path="/my-destinations" />
+                <Route component={CRUDdemo} exact path="/CRUDdemo" />
+                <Route
+                  component={userDemonstratedPythonSkills}
+                  exact
+                  path="/userDemonstratedPythonSkills/:accountId"
+                />
+                <Route
+                  component={pythonSkillsUsedToCompleteActivity}
+                  exact
+                  path="/pythonSkillsUsedToCompleteActivity/:problemId"
+                />
+                <Route
+                  component={pathAnalyticsDemo}
+                  exact
+                  path="/pathAnalyticsDemo"
+                />
+                <Route
+                  component={ViewDestination}
+                  exact
+                  path="/destinations/:destinationId"
+                />
+                <Route
+                  component={Activity}
+                  exact
+                  path="/paths/:pathId/activities/:problemId"
+                />
+                <Route
+                  component={Account}
+                  exact
+                  path="/(account|profile)/:accountId"
+                />
+                <Route component={Contribute} exact path="/contribute" />
+                <Route component={NoMatch} />
+              </Switch>
             </main>
           </div>
         </div>
@@ -301,7 +315,6 @@ class AppFrame extends React.Component {
 const mapStateToProps = state => ({
   anchorElId: state.appFrame.dropdownAnchorElId,
   mainDrawerOpen: state.appFrame.mainDrawerOpen,
-  userName: state.firebase.auth.displayName,
   userId: state.firebase.auth.uid,
   isAdmin: state.account.isAdmin,
   dynamicPathTitle: state.appFrame.dynamicPathTitle,

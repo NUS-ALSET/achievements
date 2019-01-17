@@ -1,23 +1,70 @@
 import React from "react";
-import { createMount } from "@material-ui/core/test-utils";
+import { shallow } from "enzyme";
 import Button from "@material-ui/core/Button";
 import Breadcrumbs from "./Breadcrumbs";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+
 
 describe("<Breadcrumbs>", () => {
-  let mount;
-  beforeEach(() => {
-    mount = createMount();
-  });
-
-  it("Should render Button into Breadcrumbs component", () => {
-    const component = mount(
-      <Breadcrumbs action={{ handler: () => {}, label: "Test" }} paths={[]} />
+  it("Should render a non-link Typography if paths is single item", () => {
+    const wrapper = shallow(
+      <Breadcrumbs
+        paths={[
+          {
+            label: "Cohorts",
+            link: "/cohorts"
+          }
+        ]}
+      />
     );
-    expect(component.find(Button).length).toEqual(1);
+    expect(wrapper.dive().find(Button).length).toEqual(0);
+    expect(wrapper.dive().find(Typography).length).toEqual(1);
   });
 
-  it("Should not render Button into Breadcrumbs component", () => {
-    const component = mount(<Breadcrumbs paths={[]} />);
-    expect(component.find(Button).length).toEqual(0);
+  it("should render a Button followed by a non-link Typography if paths contains multiple items", () => {
+    const wrapper = shallow(
+      <Breadcrumbs
+        paths={[
+          {
+            label: "Cohorts",
+            link: "/cohorts"
+          },
+          {
+            label: "cohortName"
+          }
+        ]}
+      />
+    );
+    expect(wrapper.dive().find(Button).length).toEqual(1);
+  });
+
+  it("Should render a ToolBar with Buttons for action props", () => {
+    const wrapper = shallow(
+      <Breadcrumbs
+      action={[
+        {
+          label: "Refresh",
+          handler: () => {}
+        },
+        {
+          label: "Hide closed",
+          handler: () => {}
+        }
+      ]
+      }
+      paths={[
+        {
+          label: "Courses",
+          link: "/courses"
+        },
+        {
+          label: "courseName"
+        }
+      ]}
+    />
+    );
+    expect(wrapper.dive().find(Toolbar).length).toEqual(2);
+    expect(wrapper.dive().find(Button).length).toEqual(3);
   });
 });

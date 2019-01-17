@@ -8,6 +8,8 @@ import {
   coursePasswordEnterSuccess,
   courseAssignmentsClose,
   courseAssignmentsOpen,
+  courseRemoveStudentRequest,
+  courseMoveStudentRequest,
   assignmentAssistantKeyChange,
   assignmentAddAssistantRequest,
   assignmentsSolutionsRefreshRequest,
@@ -53,6 +55,9 @@ class Assignments extends React.Component {
     auth: PropTypes.object,
     assignmentsAssistantsShowRequest: PropTypes.func,
     assignmentShowAddDialog: PropTypes.func,
+    assignmentCloseDialog: PropTypes.func,
+    courseRemoveStudentRequest: PropTypes.func,
+    courseMoveStudentRequest: PropTypes.func,
     dispatch: PropTypes.func,
     classes: PropTypes.any,
     course: courseInfo,
@@ -64,22 +69,19 @@ class Assignments extends React.Component {
     firebase: PropTypes.any,
     match: PropTypes.object,
     readOnly: PropTypes.bool,
-    ui: PropTypes.object.isRequired
+    ui: PropTypes.object.isRequired,
+    fieldAutoUpdated: PropTypes.bool
   };
   state = {
     password: ""
   };
 
   componentDidMount() {
-    this.props.courseAssignmentsOpen(
-      this.props.match.params.courseId
-    );
+    this.props.courseAssignmentsOpen(this.props.match.params.courseId);
   }
 
   componentWillUnmount() {
-    this.props.courseAssignmentsClose(
-      this.props.match.params.courseId
-    );
+    this.props.courseAssignmentsClose(this.props.match.params.courseId);
   }
 
   handleTabChange = (event, tabIndex) => {
@@ -143,14 +145,14 @@ class Assignments extends React.Component {
   };
 
   closeDialog = () => {
-    this.props.dispatch(assignmentCloseDialog());
+    this.props.assignmentCloseDialog();
   };
 
   commitTextSolution = (solution, taskId) => {
     const { course, dispatch } = this.props;
 
     dispatch(assignmentSolutionRequest(course.id, taskId, solution));
-    dispatch(assignmentCloseDialog());
+    assignmentCloseDialog();
   };
 
   refreshProfileSolutions = () =>
@@ -216,10 +218,14 @@ class Assignments extends React.Component {
       auth,
       assignmentsAssistantsShowRequest,
       assignmentShowAddDialog,
+      assignmentCloseDialog,
+      courseRemoveStudentRequest,
+      courseMoveStudentRequest,
       dispatch,
       course,
       currentUser,
-      readOnly
+      readOnly,
+      fieldAutoUpdated
     } = this.props;
 
     if (auth.isEmpty) {
@@ -297,13 +303,15 @@ class Assignments extends React.Component {
           courseId={course.id}
           courseMemberId={ui && ui.dialog && ui.dialog.studentId}
           courseMemberName={ui && ui.dialog && ui.dialog.studentName}
-          dispatch={dispatch}
+          handleCloseDialog={assignmentCloseDialog}
+          handleRemoveStudentRequest={courseRemoveStudentRequest}
           open={ui.dialog && ui.dialog.type === "RemoveStudent"}
         />
         <MoveStudentDialog
           courseId={course.id}
           courses={(ui.dialog && ui.dialog.courses) || []}
-          dispatch={dispatch}
+          handleCloseDialog={assignmentCloseDialog}
+          handleMOVEStudentRequest={courseMoveStudentRequest}
           open={ui.dialog && ui.dialog.type === "MoveStudent"}
           studentId={ui && ui.dialog && ui.dialog.studentId}
           studentName={ui && ui.dialog && ui.dialog.studentName}
@@ -371,6 +379,7 @@ class Assignments extends React.Component {
           assignment={ui.dialog && ui.dialog.value}
           course={course}
           dispatch={dispatch}
+          fieldAutoUpdated={fieldAutoUpdated}
           open={ui.dialog && ui.dialog.type === "AddAssignment"}
           paths={(ui.dialog && ui.dialog.paths) || {}}
           teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
@@ -395,25 +404,30 @@ const mapStateToProps = (state, ownProps) => ({
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
   assistants: state.assignments.assistants,
-  readOnly: state.problem && state.problem.readOnly
+  readOnly: state.problem && state.problem.readOnly,
+  fieldAutoUpdated: state.assignments.fieldAutoUpdated
 });
 
 const mapDispatchToProps = dispatch => ({
-  assignmentsAssistantsShowRequest: courseId => (
-    dispatch(assignmentsAssistantsShowRequest(courseId))
-  ),
-  assignmentShowAddDialog: () => (
-    dispatch(assignmentShowAddDialog())
-  ),
-  assignmentSwitchTab: (tabIndex) => dispatch(
-    assignmentSwitchTab(tabIndex)
-  ),
-  courseAssignmentsOpen: (courseId) => dispatch(
-    courseAssignmentsOpen(courseId)
-  ),
-  courseAssignmentsClose: (courseId) => dispatch(
-    courseAssignmentsClose(courseId)
-  ),
+  assignmentsAssistantsShowRequest: courseId =>
+    dispatch(assignmentsAssistantsShowRequest(courseId)),
+  assignmentShowAddDialog: () => dispatch(assignmentShowAddDialog()),
+  assignmentCloseDialog: () => dispatch(assignmentCloseDialog()),
+  assignmentSwitchTab: tabIndex => dispatch(assignmentSwitchTab(tabIndex)),
+  courseAssignmentsOpen: courseId => dispatch(courseAssignmentsOpen(courseId)),
+  courseAssignmentsClose: courseId =>
+    dispatch(courseAssignmentsClose(courseId)),
+  courseRemoveStudentRequest: (courseId, studentId) =>
+    dispatch(courseRemoveStudentRequest(courseId, studentId)),
+  courseMoveStudentRequest: (
+    sourceCourseId,
+    targetCourseId,
+    studentId
+  ) => dispatch(courseMoveStudentRequest(
+    sourceCourseId,
+    targetCourseId,
+    studentId
+  )),
   dispatch
 });
 
@@ -437,5 +451,8 @@ export default compose(
       `/assignments/${courseId}`
     ];
   }),
-  connect(mapStateToProps, mapDispatchToProps)
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
 )(Assignments);

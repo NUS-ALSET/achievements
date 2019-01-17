@@ -1,6 +1,6 @@
 import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
-import ActivityQuestion from "../ActivityQuestion";
+import ActivityQuestion from "./ActivityQuestion";
 import sinon from "sinon";
 
 describe("<ActivityQuestion>", () => {
