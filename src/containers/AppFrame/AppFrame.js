@@ -51,6 +51,7 @@ import CRUDdemo from "../IdeaLab/CRUDdemo";
 import Brenda from "../IdeaLab/Brenda/Brenda";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
 import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills"
+import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity"
 
 
 /* this AppFrame is the main framework of our UI,
@@ -274,6 +275,11 @@ class AppFrame extends React.Component {
                   component={userDemonstratedPythonSkills}
                   exact
                   path="/userDemonstratedPythonSkills/:accountId"
+                />
+                <Route
+                  component={pythonSkillsUsedToCompleteActivity}
+                  exact
+                  path="/pythonSkillsUsedToCompleteActivity/:problemId"
                 />
                 <Route
                   component={pathAnalyticsDemo}
