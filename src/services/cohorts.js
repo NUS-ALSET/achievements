@@ -78,7 +78,8 @@ class CohortsService {
                     .database()
                     .ref(`/paths/${pathId}`)
                     .once("value")
-                    .then(snap => snap.val())
+                    .then(snap => snap.val() || {})
+                    .then(path => ({ id: pathId, ...path }))
                 )
               )
             );

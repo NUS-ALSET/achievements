@@ -79,6 +79,12 @@ export const cohortCourseUpdateFail = (cohortId, courseId, kind, reason) => ({
   reason
 });
 
+export const COHORT_SORT_CHANGE = "COHORT_SORT_CHANGE";
+export const cohortSortChange = sortField => ({
+  type: COHORT_SORT_CHANGE,
+  sortField
+});
+
 export const COHORT_OPEN_ASSISTANTS_DIALOG = "COHORT_OPEN_ASSISTANTS_DIALOG";
 export const cohortOpenAssistantsDialog = cohortId => ({
   type: COHORT_OPEN_ASSISTANTS_DIALOG,
