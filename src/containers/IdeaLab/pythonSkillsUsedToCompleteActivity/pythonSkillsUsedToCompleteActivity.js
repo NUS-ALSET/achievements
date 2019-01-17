@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { compose } from "redux";
 import PropTypes from "prop-types";
 import { firebaseConnect } from "react-redux-firebase";
+import { Link } from "react-router-dom";
 
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
@@ -24,82 +25,54 @@ const styles = () => ({
 class pythonSkillsUsedToCompleteActivity extends React.Component {
   static propTypes = {
     auth: PropTypes.object,
-    isAdmin: PropTypes.bool,
-    userDemonstratedPythonSkills: PropTypes.object,
-    totalSkillsSet: PropTypes.object
+    pythonSkills: PropTypes.object
   }
 
   render() {
     const {
       auth,
-      isAdmin,
-      userDemonstratedPythonSkills,
-      totalSkillsSet
+      classes,
+      pythonSkills
     } = this.props;
 
-    if (auth.uid !== this.props.match.params.accountId && !isAdmin) {
+    if (!auth.uid) {
       return (
         <div>
-          Only admins can view other userDemonstratedPythonSkills
+          Please Log in to view the content of this page
         </div>
       );
     }
-    const { classes } = this.props;
 
     return (
       <Fragment>
-        <h1>User-ID: {this.props.match.params.accountId}</h1>
+        <h1>Activity Id: {this.props.match.params.problemId}</h1>
         <Grid container className={classes.root} spacing={16}>
           <Grid item xs={12}>
             <Grid container className={classes.demo} justify="center" spacing={16}>
               <Grid item>
                 <Paper className={classes.paper}>
-                  <b>Python Skills You have used:</b>
-                  <hr />
-                  <p>Python Skill : Num of Times used</p>
-                  {userDemonstratedPythonSkills
+                  {pythonSkills
                     ? (
-                      Object.keys(userDemonstratedPythonSkills).map(item => (
-                        <li key={item}>
-                          {item}: {userDemonstratedPythonSkills[item]}
-                        </li>
-                      ))
+                      <Fragment>
+                        <b>Python Skills Used to Complete This Activity:</b>
+                        <hr />
+                        <Link to={`/paths/${pythonSkills.path}/activities/${this.props.match.params.problemId}`}>
+                          Link to the Activity
+                        </Link>
+                        <p>Number of Users Completed: {pythonSkills.NumUserCompleted}</p>
+                        {console.log(pythonSkills)}
+                        <b>Python Skills Used: frequency</b>
+                        {Object.keys(pythonSkills.UsedPythonSkills).map(item => (
+                          <li key={item}>
+                            {item}: {pythonSkills.UsedPythonSkills[item]}
+                          </li>
+                        ))}
+                      </Fragment>
                     )
                     : (
                       "loading..."
                     )
                   }
-                </Paper>
-              </Grid>
-              <Grid item>
-                <Paper className={classes.paper}>
-                  <b>Available Python Skills:</b>
-                  <hr />
-                  <p>this list is not exhaustive</p>
-                  {totalSkillsSet && userDemonstratedPythonSkills
-                      ? (
-                        Object.keys(totalSkillsSet).map(item => (
-                          <li
-                            key={item}
-                            style={
-                              Object.keys(userDemonstratedPythonSkills)
-                                .includes(totalSkillsSet[item])
-                              ? ({
-                              textDecoration: "line-through"
-                              })
-                              : ({
-                                textDecoration: "none"
-                              })
-                            }
-                          >
-                            {item}: {totalSkillsSet[item]}
-                          </li>
-                        ))
-                      )
-                      : (
-                        "loading..."
-                      )
-                    }
                 </Paper>
               </Grid>
             </Grid>
@@ -112,15 +85,13 @@ class pythonSkillsUsedToCompleteActivity extends React.Component {
 
 const mapStateToProps = state => ({
   auth: state.firebase.auth,
-  isAdmin: state.firebase.data.isAdmin,
-  userDemonstratedPythonSkills: state.firebase.data.userDemonstratedPythonSkills,
-  totalSkillsSet: state.firebase.data.totalSkillsSet
+  pythonSkills: state.firebase.data.pythonSkillsUsedToCompleteActivityX
 });
 
 export default compose(
   withStyles(styles),
   firebaseConnect((ownProps, store) => {
-    const accountId = ownProps.match.params.accountId
+    const activityKey = ownProps.match.params.problemId
     const state = store.getState();
     const uid = state.firebase.auth.uid;
 
@@ -129,16 +100,8 @@ export default compose(
     }
     return [
       {
-        path: `/admins/${uid}`,
-        storeAs: "isAdmin"
-      },
-      {
-        path: `/analytics/prototyping/userDemonstratedPythonSkills/${accountId}`,
-        storeAs: "userDemonstratedPythonSkills"
-      },
-      {
-        path: "/analytics/prototyping/userDemonstratedPythonSkills/totalSkillsSet",
-        storeAs: "totalSkillsSet"
+        path: `/analytics/prototyping/pythonSkillsUsedToCompleteActivity/${activityKey}`,
+        storeAs: "pythonSkillsUsedToCompleteActivityX"
       }
     ]
   }),
