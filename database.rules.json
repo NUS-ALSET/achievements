@@ -65,6 +65,12 @@
           "$uidKey": {
             ".read": "root.child('/admins/' + auth.uid).exists() || auth.uid == $uidKey"
           }
+        },
+        "pythonSkillsUsedToCompleteActivity": {
+          "$activityKey": {
+            ".read": "auth != null",
+            ".write": "root.child('/admins/' + auth.uid).exists()"
+          }
         }
       }
     },
