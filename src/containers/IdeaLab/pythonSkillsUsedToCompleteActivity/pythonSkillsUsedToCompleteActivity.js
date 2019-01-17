@@ -21,27 +21,12 @@ const styles = () => ({
 });
 
 
-class userDemonstratedPythonSkills extends React.Component {
+class pythonSkillsUsedToCompleteActivity extends React.Component {
   static propTypes = {
     auth: PropTypes.object,
     isAdmin: PropTypes.bool,
     userDemonstratedPythonSkills: PropTypes.object,
     totalSkillsSet: PropTypes.object
-  }
-
-  reducedTotalSkillsList = () => {
-    const {
-      userDemonstratedPythonSkills,
-      totalSkillsSet
-    } = this.props
-
-    const UsedSkillsList = Object.keys(userDemonstratedPythonSkills)
-    const AllSkillsList = Object.keys(totalSkillsSet)
-      .reduce((accumulator, curr) => {
-        return accumulator.concat(totalSkillsSet[curr])
-      }, []) // array of the skills
-
-    return {AllSkillsList, UsedSkillsList}
   }
 
   render() {
@@ -160,4 +145,4 @@ export default compose(
   connect(
     mapStateToProps
   )
-)(userDemonstratedPythonSkills);
+)(pythonSkillsUsedToCompleteActivity);
