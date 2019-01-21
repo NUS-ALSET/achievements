@@ -47,7 +47,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 // Idea lab for trial
 import FetchDataDemo from "../IdeaLab/FetchDataDemo";
-import Brenda from "../IdeaLab/Brenda/Brenda";
+import Brenda from "../IdeaLab/Brenda/PathDashboard";
 import fusionChartDemo from "../IdeaLab/Ben/fusionChartDemo";
 
 /* this AppFrame is the main framework of our UI,
