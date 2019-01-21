@@ -22,6 +22,15 @@ Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achi
 - [User Manual](https://github.com/NUS-ALSET/achievements/wiki/User-Manual) - For teachers/students
 - [Developer Guide](https://github.com/NUS-ALSET/achievements/wiki/Get-Started-With-Development) - For developers
 - [Quick-start to CRUD](https://github.com/NUS-ALSET/achievements/tree/master/src/containers/IdeaLab) - For interested developers
+- **IdeasLab Hidden routes**
+  - [CRUDdemo](https://achievements-dev.firebaseapp.com/#/cruddemo)
+  - [userDemonstratedPythonSkills 1](https://achievements-dev.firebaseapp.com/#/userDemonstratedPythonSkills/I9nQZbQ5xMdklnudDqGfh1ucOZz2)
+  - [userDemonstratedPythonSkills 2](https://achievements-dev.firebaseapp.com/#/userDemonstratedPythonSkills/eVJVC9kde3QSiXAP989kivD9SZn2)
+  - [pythonSkillsUsedToCompleteActivity 1](https://achievements-dev.firebaseapp.com/#/pythonSkillsUsedToCompleteActivity/-LQDD5WH97uRniQzCgCQ)
+  - [pythonSkillsUsedToCompleteActivity 2](https://achievements-dev.firebaseapp.com/#/pythonSkillsUsedToCompleteActivity/-LMkKzS2y9I-A_e4ScmP)
+  - [pathAnalyticsDemo](https://achievements-dev.firebaseapp.com/#/pathanalyticsdemo)
+  
+  
 
 ## Contributing :gift:
 
