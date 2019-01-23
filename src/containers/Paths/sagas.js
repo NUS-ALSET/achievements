@@ -39,7 +39,7 @@ export function* loginHandler(action) {
 }
 
 export function* pathsOpenHandler() {
-  const uid = yield select(state => state.firebase.auth.uid);
+  const uid = yield select(state => ((((state || {}).firebase || {}).auth || {}).uid));
 
   if (!uid) {
     yield take(PATH_TOGGLE_JOIN_STATUS_SUCCESS);
@@ -47,7 +47,7 @@ export function* pathsOpenHandler() {
 }
 
 export function* pathChangeRequestHandler(action) {
-  const uid = yield select(state => state.firebase.auth.uid);
+  const uid = yield select(state => ((((state || {}).firebase || {}).auth || {}).uid));
   try {
     const key = yield call(
       [pathsService, pathsService.pathChange],
@@ -64,7 +64,7 @@ export function* pathChangeRequestHandler(action) {
 
 export function* pathActivityChangeRequestHandler(action) {
   try {
-    const uid = yield select(state => state.firebase.auth.uid);
+    const uid = yield select(state => ((((state || {}).firebase || {}).auth || {}).uid));
     yield call(
       [pathsService, pathsService.validateProblem],
       action.activityInfo
