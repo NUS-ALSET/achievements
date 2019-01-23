@@ -61,16 +61,19 @@ class Paths extends React.PureComponent {
       currentPathTab,
       handleSwitchPathTab
     } = this.props;
-
     return (
       <Fragment>
         <Breadcrumbs paths={[{ label: "Paths" }]} />
         {uid ? (
           !joinedPaths ? (
-            <Fragment>
-              Loading Your Paths...
-              <LinearProgress />
-            </Fragment>
+            joinedPaths === null || joinedPaths === undefined ? (
+              <p>Paths does not exist!</p>
+            ) : (
+              <Fragment>
+                Loading Your Paths...
+                <LinearProgress />
+              </Fragment>
+            )
           ) : (
             <Fragment>
               <PathTabs
@@ -91,10 +94,14 @@ class Paths extends React.PureComponent {
             </Fragment>
           )
         ) : !publicPaths ? (
-          <Fragment>
-            Loading Public Paths...
-            <LinearProgress />
-          </Fragment>
+          publicPaths === null || publicPaths === undefined ? (
+            <p>Public does not exist</p>
+          ) : (
+            <Fragment>
+              Loading Public Paths...
+              <LinearProgress />
+            </Fragment>
+          )
         ) : (
           <PathsTable
             pathDialogShow={pathDialogShow}

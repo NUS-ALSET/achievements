@@ -69,40 +69,44 @@ class JupyterNotebook extends React.PureComponent {
   getEditor = () => {
     const { action, defaultValue, readOnly, richEditor } = this.props;
     return richEditor ? (
-      <AceEditor
-        commands={[
-          {
-            name: "submit",
-            bindKey: {
-              win: "Shift-Enter",
-              mac: "Shift-Enter",
-              lin: "Shift-Enter"
+      richEditor === null || richEditor === undefined ? (
+        <p>Something went wrong!</p>
+      ) : (
+        <AceEditor
+          commands={[
+            {
+              name: "submit",
+              bindKey: {
+                win: "Shift-Enter",
+                mac: "Shift-Enter",
+                lin: "Shift-Enter"
+              },
+              exec: this.onAction
             },
-            exec: this.onAction
-          },
-          {
-            name: "alt-submit",
-            bindKey: {
-              win: "Ctrl-Enter",
-              mac: "Ctrl-Enter",
-              lin: "Ctrl-Enter"
-            },
-            exec: this.onAction
-          }
-        ]}
-        editorProps={{ $blockScrolling: true }}
-        maxLines={40}
-        minLines={20}
-        mode="python"
-        onChange={this.onChange}
-        onLoad={editor => editor.focus()}
-        readOnly={readOnly}
-        style={{
-          width: "100%"
-        }}
-        theme="github"
-        value={this.state.solution || defaultValue || ""}
-      />
+            {
+              name: "alt-submit",
+              bindKey: {
+                win: "Ctrl-Enter",
+                mac: "Ctrl-Enter",
+                lin: "Ctrl-Enter"
+              },
+              exec: this.onAction
+            }
+          ]}
+          editorProps={{ $blockScrolling: true }}
+          maxLines={40}
+          minLines={20}
+          mode="python"
+          onChange={this.onChange}
+          onLoad={editor => editor.focus()}
+          readOnly={readOnly}
+          style={{
+            width: "100%"
+          }}
+          theme="github"
+          value={this.state.solution || defaultValue || ""}
+        />
+      )
     ) : (
       <TextField
         defaultValue={this.state.solution || defaultValue || ""}

@@ -279,6 +279,9 @@ export class Path extends React.Component {
     } = this.props;
 
     if (!(pathActivities && pathActivities.path)) {
+      if (pathActivities.path === null) {
+        return <p>Path does not exist!</p>
+      }
       return <LinearProgress />;
     }
 
