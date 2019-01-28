@@ -1,16 +1,16 @@
 [
   {
-    "error": "Missing problem",
+    "error": "Missing activity",
     "problem": false
   },
   {
-    "error": "Missing problem name",
+    "error": "Missing activity name",
     "problem": {
       "type": "text"
     }
   },
   {
-    "error": "Missing problem type",
+    "error": "Missing activity type",
     "problem": {
       "name": "test"
     }
@@ -90,7 +90,7 @@
     }
   },
   {
-    "error": "Invalid  problem type",
+    "error": "Invalid activity type",
     "problem": {
       "name": "test",
       "type": "wrongType"
