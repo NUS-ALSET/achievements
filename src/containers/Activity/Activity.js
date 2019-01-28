@@ -146,6 +146,9 @@ export class Activity extends React.PureComponent {
       uid
     } = this.props;
     if (!pathProblem) {
+      if (pathProblem === null) {
+        return <p>Path does not exit!</p>
+      }
       return (
         <div
           style={{ width: "100%", textAlign: "center", padding: "20px 0px" }}
