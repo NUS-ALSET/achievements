@@ -94,8 +94,8 @@ class Paths extends React.PureComponent {
             </Fragment>
           )
         ) : !publicPaths ? (
-          publicPaths === null || publicPaths === undefined ? (
-            <p>Public does not exist</p>
+          publicPaths === null ? (
+            <p>Public does not exist!</p>
           ) : (
             <Fragment>
               Loading Public Paths...

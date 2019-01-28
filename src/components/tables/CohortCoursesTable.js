@@ -76,7 +76,9 @@ class CohortCoursesTable extends React.PureComponent {
       progress: 0,
       participants: 0
     };
-
+    if (courses.length <= 0) {
+      return <p>No Courses found for this cohort</p>
+    }
     courses.forEach(course => {
       totals.progress += course.progress;
       totals.participants += course.participants;
