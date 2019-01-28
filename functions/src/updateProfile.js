@@ -26,7 +26,7 @@ function updateProfile(data, resolve) {
               return admin
                 .database()
                 .ref(`/userAchievements/${data.uid}/${data.service}`)
-                .update(
+                .set(
                   Object.assign(
                     {
                       lastUpdate: new Date().getTime()
