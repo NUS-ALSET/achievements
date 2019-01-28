@@ -1,0 +1,87 @@
+{
+  "activities": {
+    "a1": {
+      "foo": "bar"
+    },
+    "a2": {
+      "foo": "bar"
+    },
+    "a3": {
+      "foo": "bar"
+    }
+  },
+  "something": {
+    "test": "ignore it"
+  },
+  "logged_events": {
+    "a1": {
+      "type": "test",
+      "createdAt": 1,"foo": "bar",
+      "otherActionData": {
+        "a": {
+          "b": {
+            "c": 100
+          }
+        }
+      }
+    },
+    "a11": {
+      "type": "COURSE_MEMBER_ACHIEVEMENTS_REFETCH",
+      "createdAt": 2,
+      "foo": "bar"
+    },
+    "a2": {
+      "type": "test",
+      "createdAt": 1,"foo": "bar",
+      "otherActionData": {
+        "a": {
+          "b": {
+            "c": 100
+          }
+        }
+      }
+    },
+    "a21": {
+      "type": "COURSE_MEMBER_ACHIEVEMENTS_REFETCH",
+      "createdAt": 2,
+      "foo": "bar"
+    },
+    "a3": {
+      "type": "test",
+      "createdAt": 1,"foo": "bar",
+      "otherActionData": {
+        "a": {
+          "b": {
+            "c": 100
+          }
+        }
+      }
+    },
+    "a31": {
+      "type": "COURSE_MEMBER_ACHIEVEMENTS_REFETCH",
+      "createdAt": 2,
+      "foo": "bar"
+    },
+    "a4": {
+      "type": "test",
+      "createdAt": 1,"foo": "bar",
+      "otherActionData": {
+        "a": {
+          "b": {
+            "c": 100
+          }
+        }
+      }
+    }
+
+  },
+  "last": {
+    "a1": {
+      "ignore": "that"
+    },
+    "a2": {
+      "ignore": { "that": "too" }
+    }
+
+  }
+}

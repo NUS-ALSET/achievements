@@ -27,6 +27,10 @@ export const ACTIVITY_TYPES = {
     id: "text",
     caption: "Text"
   },
+  multipleQuestion: {
+    id: "multipleQuestion",
+    caption: "Multiple-choice question"
+  },
   profile: {
     id: "profile",
     caption: "Fetch CodeCombat Profile"
@@ -305,13 +309,31 @@ export class PathsService {
   }
 
   validateProblem(problemInfo) {
-    if (!problemInfo) throw new Error("Missing problem");
+    const options = {};
+    if (!problemInfo) throw new Error("Missing activity");
     if (problemInfo.id) return;
-    if (!problemInfo.name) throw new Error("Missing problem name");
-    if (!problemInfo.type) throw new Error("Missing problem type");
+    if (!problemInfo.name) throw new Error("Missing activity name");
+    if (!problemInfo.type) throw new Error("Missing activity type");
     switch (problemInfo.type) {
       case ACTIVITY_TYPES.text.id:
         if (!problemInfo.question) throw new Error("Missing question");
+        break;
+      case ACTIVITY_TYPES.multipleQuestion.id:
+        if (!(problemInfo.options && problemInfo.options.length)) {
+          throw new Error("Missing options");
+        }
+        if (problemInfo.options.length === 1) {
+          throw new Error("At least 2 options required");
+        }
+        for (const option of problemInfo.options) {
+          if (!(option.caption && option.caption.trim())) {
+            throw new Error("Missing option text");
+          }
+          if (options[option.caption.trim()]) {
+            throw new Error("Duplicate options are forbidden");
+          }
+          options[option.caption.trim()] = true;
+        }
         break;
       case ACTIVITY_TYPES.profile.id:
         break;
@@ -363,7 +385,7 @@ export class PathsService {
         if (!problemInfo.targetType) throw new Error("Missing Target Type");
         break;
       default:
-        throw new Error("Invalid  problem type");
+        throw new Error("Invalid activity type");
     }
   }
 

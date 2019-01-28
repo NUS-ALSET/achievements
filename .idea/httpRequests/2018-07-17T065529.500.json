@@ -1,0 +1,10 @@
+{
+  "error": {
+    "code": 500,
+    "status": "INTERNAL",
+    "message": "function crashed",
+    "errors": [
+      "socket hang up"
+    ]
+  }
+}
