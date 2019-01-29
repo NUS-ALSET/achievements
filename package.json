@@ -76,5 +76,11 @@
     "lint": "./scripts/lint.sh",
     "windows-lint": "./scripts/lint.bat",
     "check-prod": "python3 ./scripts/prod-deploy.py"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
