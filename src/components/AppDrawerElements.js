@@ -187,7 +187,7 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
       }}
     >
       <Typography align="center" gutterBottom variant="caption">
-        &#169; 2018 NUS-ALSET
+        &#169; 2019 NUS-ALSET
       </Typography>
     </div>
   </Fragment>

@@ -123,3 +123,9 @@ export const pathActivityDeleteFail = (activityId, reason) => ({
   activityId,
   reason
 });
+
+export const PATH_TAB_SWITCH = "PATH_TAB_SWITCH"
+export const switchPathTab = tabIndex => ({
+  type: PATH_TAB_SWITCH,
+  tabIndex
+})

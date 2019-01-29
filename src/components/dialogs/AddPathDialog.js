@@ -15,18 +15,14 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 
-import {
-  pathChangeRequest,
-  pathDialogHide
-} from "../../containers/Paths/actions";
-
 // RegExp rules
 import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
 
 // this component is when click "Add Path" or "Edit Path"
 class AddPathDialog extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
+    pathChangeRequest: PropTypes.func,
+    pathDialogHide: PropTypes.func,
     open: PropTypes.bool.isRequired,
     path: PropTypes.object
   };
@@ -78,14 +74,12 @@ class AddPathDialog extends React.PureComponent {
 
   onClose = () => {
     this.resetState();
-    this.props.dispatch(pathDialogHide());
+    this.props.pathDialogHide();
   };
 
   onCommit = () => {
-    this.props.dispatch(
-      pathChangeRequest(
-        Object.assign(this.props.path || {}, this.removeEmpty(this.state))
-      )
+    this.props.pathChangeRequest(
+      Object.assign(this.props.path || {}, this.removeEmpty(this.state))
     );
     this.resetState();
   };
@@ -106,6 +100,7 @@ class AddPathDialog extends React.PureComponent {
             helperText={
               this.state.isCorrectInput
                 ? ""
+                // eslint-disable-next-line max-len
                 : "input should not be empty, too long or have invalid characters"
             }
             label="Path name"

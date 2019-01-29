@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 
-import { APP_SETTING } from "../achievementsApp/config";
 import AppDrawerElements from "./AppDrawerElements";
 // import the NUS ALSET Achievements Logo background image
 import AppLogo from "../assets/NUS_ALSET_Achievements_Logo.png";
@@ -19,7 +18,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = theme => ({
   someClass: {
-    width: APP_SETTING.drawerWidth,
+    width: theme.drawerWidth,
     backgroundColor: theme.palette.background.paper
   },
   anchor: {
@@ -40,6 +39,16 @@ const styles = theme => ({
 });
 
 class AppDrawer extends React.PureComponent {
+  static propTypes = {
+    classes: PropTypes.object.isRequired,
+    className: PropTypes.string,
+    isAdmin: PropTypes.bool,
+    userId: PropTypes.string,
+    mobileDrawerOpen: PropTypes.bool.isRequired,
+    onRequestClose: PropTypes.func.isRequired,
+    location: PropTypes.object
+  }
+
   render() {
     const {
       classes,
@@ -98,15 +107,6 @@ class AppDrawer extends React.PureComponent {
     );
   }
 }
-
-AppDrawer.propTypes = {
-  classes: PropTypes.object.isRequired,
-  className: PropTypes.string,
-  isAdmin: PropTypes.bool,
-  userId: PropTypes.string,
-  mobileDrawerOpen: PropTypes.bool.isRequired,
-  onRequestClose: PropTypes.func.isRequired
-};
 
 export default compose(
   withRouter,

@@ -7,7 +7,7 @@ import {
 import { accountService } from "../../services/account";
 import { notificationShow } from "../Root/actions";
 
-function* adminUpdateConfigRequestHandler(action) {
+export function* adminUpdateConfigRequestHandler(action) {
   try {
     yield call(accountService.updateAdminConfig, action.config);
     yield put(adminUpdateConfigSuccess(action.config));

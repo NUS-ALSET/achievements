@@ -1,7 +1,7 @@
 import assert from "assert";
 import targaryen from "targaryen/plugins/jest";
 import json from "firebase-json";
-import { getTestState } from "../../../tests/fixtures/getState";
+import { getTestState } from "../tests/fixtures/getState";
 
 // This command allows you put newlines and comments in your rules.
 const rules = json.loadSync("./database.rules.json");
@@ -300,10 +300,18 @@ describe("security rules tests", () => {
   });
 
   describe("analytics rules", () => {
-    it("should allow any user to read", () => {
-      const { permitted } = database.read("/analytics", true);
+    it("should allow any user to read CRUDdemo data", () => {
+      const { permitted } = database.read("/analytics/CRUDdemo", true);
 
       expect(permitted).toEqual(true);
+    });
+
+    it("should only allow users themselves to write to their data in CRUDdemo", () => {
+      const { permitted } = database
+        .as({ uid: "bobby" })
+        .write("/analytics/CRUDdemo/kris", { someData: "123" });
+
+      expect(permitted).toEqual(false);
     });
   });
 });

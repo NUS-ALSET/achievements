@@ -1,5 +1,4 @@
 import { APP_SETTING } from "../../achievementsApp/config";
-import compareVersions from "compare-versions";
 import {
   DISPLAY_NAME_UPDATE_REQUEST,
   EXTERNAL_PROFILE_REFRESH_REQUEST,
@@ -29,40 +28,17 @@ import {
   put,
   race,
   select,
-  spawn,
   take,
   takeLatest
 } from "redux-saga/effects";
-import { delay, eventChannel } from "redux-saga";
+import { delay } from "redux-saga";
 import { push } from "connected-react-router";
-import { notificationShow, versionChange } from "../Root/actions";
+import { notificationShow } from "../Root/actions";
 
-function createVersionWatcherChannel() {
-  return eventChannel(emit =>
-    accountService.watchVersionChange(version => emit(version))
-  );
-}
 
-let versionWatcherChannel;
 
-export function* versionChangeHandler() {
-  versionWatcherChannel = yield call(createVersionWatcherChannel);
-  while (true) {
-    const { version } = yield take(versionWatcherChannel);
-    yield put(
-      versionChange(
-        version && compareVersions(version, process.env.REACT_APP_VERSION) === 1
-      )
-    );
-  }
-}
-
-export function* signInHandler() {
+function* signInHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
-
-  if (!versionWatcherChannel) {
-    yield spawn(versionChangeHandler);
-  }
 
   try {
     if (uid) {
@@ -98,7 +74,7 @@ function* accountOpenHandler(action) {
   }
 }
 
-export function* externalProfileUpdateRequestHandler(action) {
+function* externalProfileUpdateRequestHandler(action) {
   try {
     let error = "";
     const uid = yield select(state => state.firebase.auth.uid);
@@ -160,7 +136,7 @@ export function* externalProfileUpdateRequestHandler(action) {
   }
 }
 
-export function* externalProfileRefreshRequestHandler(action) {
+function* externalProfileRefreshRequestHandler(action) {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
 
@@ -243,7 +219,7 @@ function* profileUpdateDataRequestHandler(action) {
   }
 }
 
-export function* displayNameUpdateRequestHandler(action) {
+function* displayNameUpdateRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
 
   try {

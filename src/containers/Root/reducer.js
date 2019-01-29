@@ -64,8 +64,8 @@ export const root = (
       return {
         ...state,
         notification: {
-          ...state.notification,
-          show: false
+          show: false,
+          message: ""
         }
       };
     default:

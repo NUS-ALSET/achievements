@@ -1,4 +1,37 @@
+import { createSelector } from "reselect";
 import { USER_STATUSES } from "../../types/constants";
+
+export const getCohort = state => state.cohort.cohort;
+
+export const getUI = state => state.cohort.ui;
+
+export const selectCohort = createSelector(getCohort, getUI, (cohort, ui) => {
+  if (cohort && ui.sortState.field !== "paths") {
+    cohort.courses = cohort.courses.sort((a, b) => {
+      let aValue = a.rank;
+      let bValue = b.rank;
+      let result = 0;
+
+      switch (ui.sortState.field) {
+        case "rank":
+        case "progress":
+        case "participants":
+        case "name":
+          aValue = a[ui.sortState.field];
+          bValue = b[ui.sortState.field];
+          break;
+        default:
+          aValue = a.pathsProgress && a.pathsProgress[ui.sortState.field];
+          bValue = b.pathsProgress && b.pathsProgress[ui.sortState.field];
+      }
+      if (aValue < bValue) result = -1;
+      if (aValue > bValue) result = 1;
+
+      return ui.sortState.direction === "asc" ? result : -result;
+    });
+  }
+  return cohort;
+});
 
 export const selectUserStatus = state => {
   const uid = state.firebase.auth.uid;
@@ -17,40 +50,4 @@ export const selectUserStatus = state => {
   }
 
   return USER_STATUSES.viewer;
-};
-
-export const selectCohort = (state, ownProps) => {
-  const cohortId = ownProps.match.params.cohortId;
-  const cohort = state.firebase.data.cohort;
-  const cohortCourses = state.firebase.data.cohortCourses;
-  const paths = state.firebase.data.paths || {};
-
-  if (!cohort) {
-    return null;
-  }
-  return {
-    id: cohortId,
-    ...cohort,
-    pathsData: (cohort.paths || []).map(id => paths[id]),
-    courses: Object.keys(cohortCourses || {})
-      .map(id => ({
-        id,
-        ...cohortCourses[id]
-      }))
-      .sort((a, b) => {
-        if (a.progress > b.progress) {
-          return -1;
-        } else if (a.progress < b.progress) {
-          return 1;
-        } else if (a.participants > b.participants) {
-          return -1;
-        } else if (a.participants < b.participants) {
-          return 1;
-        }
-        return 0;
-      })
-      .map((course, index) => {
-        return { ...course, rank: index + 1 };
-      })
-  };
 };
