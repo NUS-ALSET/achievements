@@ -25,6 +25,7 @@ const ERROR_TIMEOUT = 6000;
 const TAB_OPEN_TIMEOUT = 2000;
 const TIMEOUT_DELAY = 500;
 
+// do not remove disabled assignment types from ASSIGNMENTS_TYPES for the backward compatibility of already created problems
 export const ASSIGNMENTS_TYPES = {
   Text: {
     id: "Text",
@@ -59,6 +60,18 @@ export const ASSIGNMENTS_TYPES = {
     caption: "Path Progress"
   }
 };
+
+export const DISABLED_ASSIGNMNET_TYPES = ['Profile', 'CodeCombat', 'CodeCombat_Number'];
+
+const getEnabledAssignmnetType = ()=>{
+  const assignmentsType = JSON.parse(JSON.stringify(ASSIGNMENTS_TYPES)); // deep copy
+  DISABLED_ASSIGNMNET_TYPES.forEach(type => {
+    delete assignmentsType[type];
+  })
+  return assignmentsType;
+}
+
+export const ENABLED_ASSIGNMENTS_TYPES = getEnabledAssignmnetType()
 
 export class CoursesService {
   errorTimeout = 0;

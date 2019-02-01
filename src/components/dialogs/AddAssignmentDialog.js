@@ -4,7 +4,6 @@
  * @created 28.01.18
  */
 
-import { APP_SETTING } from "../../achievementsApp/config";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 
@@ -14,15 +13,11 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Input from "@material-ui/core/Input";
-import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 
-import { ASSIGNMENTS_TYPES } from "../../services/courses";
+import { ENABLED_ASSIGNMENTS_TYPES } from "../../services/courses";
 import {
   assignmentAddRequest,
   assignmentCloseDialog,
@@ -119,47 +114,7 @@ class AddAssignmentDialog extends React.PureComponent {
     let { activities, paths, uid } = this.props;
 
     switch (assignment.questionType) {
-      case ASSIGNMENTS_TYPES.CodeCombat.id:
-        return (
-          <FormControl fullWidth margin="normal">
-            <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
-            <Select
-              input={<Input id="select-multiple-levels" />}
-              margin="none"
-              MenuProps={{
-                PaperProps: {
-                  style: {
-                    maxHeight: 224,
-                    width: 250
-                  }
-                }
-              }}
-              onChange={this.updateField("level")}
-              value={assignment.level || ""}
-            >
-              {Object.keys(APP_SETTING.CodeCombatLevels).map(id => (
-                <MenuItem
-                  key={APP_SETTING.CodeCombatLevels[id].name}
-                  value={id}
-                >
-                  {APP_SETTING.CodeCombatLevels[id].name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        );
-      case ASSIGNMENTS_TYPES.CodeCombat_Number.id:
-        return (
-          <TextField
-            fullWidth
-            label="Levels amount"
-            margin="normal"
-            onChange={this.updateField("count")}
-            type="number"
-            value={assignment.count}
-          />
-        );
-      case ASSIGNMENTS_TYPES.PathActivity.id:
+      case ENABLED_ASSIGNMENTS_TYPES.PathActivity.id:
         /*
             <TextField
               fullWidth
@@ -219,7 +174,7 @@ class AddAssignmentDialog extends React.PureComponent {
             />
           </Fragment>
         );
-      case ASSIGNMENTS_TYPES.PathProgress.id:
+      case ENABLED_ASSIGNMENTS_TYPES.PathProgress.id:
         return (
           <PathsSelector
             allowMultiple={false}
@@ -236,7 +191,7 @@ class AddAssignmentDialog extends React.PureComponent {
     let { assignment, course, open } = this.props;
     const teamFormations = course.assignments.filter(
       assignment =>
-        assignment.questionType === ASSIGNMENTS_TYPES.TeamFormation.id
+        assignment.questionType === ENABLED_ASSIGNMENTS_TYPES.TeamFormation.id
     );
 
     assignment = assignment || {};
@@ -256,9 +211,9 @@ class AddAssignmentDialog extends React.PureComponent {
             select
             value={assignment.questionType || ""}
           >
-            {Object.keys(ASSIGNMENTS_TYPES).map(key => (
+            {Object.keys(ENABLED_ASSIGNMENTS_TYPES).map(key => (
               <MenuItem key={key} value={key}>
-                {ASSIGNMENTS_TYPES[key].caption}
+                {ENABLED_ASSIGNMENTS_TYPES[key].caption}
               </MenuItem>
             ))}
           </TextField>
