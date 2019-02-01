@@ -131,7 +131,6 @@ class Cohort extends React.PureComponent {
   render() {
     const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
     const tabIndex = this.state.tabIndex;
-
     if (!cohort) {
       return <div>Loading</div>;
     }

@@ -181,6 +181,9 @@ class Account extends React.PureComponent {
     }
 
     if (!user) {
+      if (user === null) {
+        return <p>This id <b>{match.params.accountId}</b> does not exist.</p>
+      }
       return <LinearProgress />;
     }
 

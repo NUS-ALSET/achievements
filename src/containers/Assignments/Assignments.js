@@ -231,6 +231,9 @@ class Assignments extends React.Component {
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
     } else if (!course) {
+      if (course === null) {
+        return <p>Something wrong!</p>
+      }
       return <LinearProgress />;
     }
     // Default view with password enter
