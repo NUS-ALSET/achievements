@@ -156,52 +156,70 @@ export class PathsService {
         }
         switch (pathProblem.type) {
           case "jupyter":
-          case "jupyterInline":
-            return Promise.all([
-              Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
-                fileId =>
-                  this.fetchFile(fileId).then(data => ({
-                    id: fileId,
-                    data
-                  }))
-              )
-              // Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
-              //   fileId =>
-              //     this.fetchFile(fileId).then(data => ({
-              //       id: fileId,
-              //       data
-              //     }))
-              // )
-            ])
-              .then(files =>
-                Object.assign(pathProblem, {
-                  problemColabURL: PathsService.getColabURL(files[0].id),
-                  problemJSON: files[0].data,
-                  problemFileId: files[0].id
-                  // solutionFileId: files[1].id,
-                  // solutionColabURL: PathsService.getColabURL(files[1].id),
-                  // solutionJSON: files[1].data
-                })
-              )
-              .then(() => {
-                if (
-                  pathProblem.problemJSON &&
-                  pathProblem.problemJSON.metadata
-                ) {
-                  pathProblem.problemJSON.metadata.language_info = {
-                    name: "python"
-                  };
+          case "jupyterInline": {
+              return Promise.all([
+                Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
+                  fileId => {
+                    if (pathProblem.version === 1) {
+                      return firebase
+                      .database()
+                      .ref(`/activityData/${activitiyId}`)
+                      .once("value")
+                      .then(data => {
+                        return {
+                          id: fileId,
+                          data: JSON.parse(data.val().problemData)
+                        }
+                      });
+                    } else {
+                      return this.fetchFile(fileId).then(data => ({
+                        id: fileId,
+                        data
+                      }))
+                    }
+                  }
+                )
+                // Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
+                //   fileId =>
+                //     this.fetchFile(fileId).then(data => ({
+                //       id: fileId,
+                //       data
+                //     }))
+                // )
+              ])
+                .then(files => {
+                  Object.assign(pathProblem, {
+                    problemColabURL: PathsService.getColabURL(files[0].id),
+                    problemJSON: files[0].data,
+                    problemFileId: files[0].id
+                    // solutionFileId: files[1].id,
+                    // solutionColabURL: PathsService.getColabURL(files[1].id),
+                    // solutionJSON: files[1].data
+                  })
                 }
-                if (
-                  pathProblem.solutionJSON &&
-                  pathProblem.solutionJSON.metadata
-                ) {
-                  pathProblem.solutionJSON.metadata.language_info = {
-                    name: "python"
-                  };
-                }
-                return pathProblem;
-              });
+                  
+                )
+                .then(() => {
+                  if (
+                    pathProblem.problemJSON &&
+                    pathProblem.problemJSON.metadata
+                  ) {
+                    pathProblem.problemJSON.metadata.language_info = {
+                      name: "python"
+                    };
+                  }
+                  if (
+                    pathProblem.solutionJSON &&
+                    pathProblem.solutionJSON.metadata
+                  ) {
+                    pathProblem.solutionJSON.metadata.language_info = {
+                      name: "python"
+                    };
+                  }
+                  return pathProblem;
+                });
+          }
+          
           default:
             return pathProblem;
         }
@@ -393,15 +411,16 @@ export class PathsService {
     const isNew = !problemInfo.id;
     let next;
     let solutionURL = null;
+    let problemURL = null;
 
     this.validateProblem(problemInfo);
-
     if (
       [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(
         problemInfo.type
       )
     ) {
       solutionURL = problemInfo.solutionURL;
+      problemURL = problemInfo.problemURL;
       delete problemInfo.solutionURL;
     }
     problemInfo.owner = uid;
@@ -438,6 +457,9 @@ export class PathsService {
       delete info.id;
       next = ref.update(info);
     } else {
+      if (info.type === "jupyterInline") {
+        info.version = 1;
+      }
       next = ref.set(info);
     }
     return next
@@ -456,6 +478,14 @@ export class PathsService {
             this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
           });
         }
+        if (problemURL) {
+          this.fetchFile(this.getFileId(problemURL)).then(json => {
+            /*
+              Update to activityData if Jupyter Activity
+            */
+            this.saveJupyterProblemToFirebase({json, key, info})
+          });
+        }
         /*
           Update to activityData if Jest Activity
         */
@@ -470,6 +500,20 @@ export class PathsService {
         }
         return key;
       });
+  }
+
+  saveJupyterProblemToFirebase(data) {
+    if (Object.keys(data.json).length > 0 &&
+        data.json.constructor === Object &&
+        data.info.version >= 1) {
+      const ref = firebase.database().ref(`/activityData/${data.key}`);
+      const { path, owner } = data.info;
+      ref.set({
+        problemData: JSON.stringify(data.json),
+        path,
+        owner
+      });
+    }
   }
 
   /**
