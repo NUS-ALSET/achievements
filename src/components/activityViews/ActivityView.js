@@ -27,7 +27,8 @@ const views = {
   jest: AddJestSolutionDialog,
   game: AddGameSolutionDialog,
   codeCombat : CodeCombatActivity,
-  codeCombatNumber : CodeCombatActivity
+  codeCombatNumber : CodeCombatActivity,
+  codeCombatMultiPlayerLevel: CodeCombatActivity
 };
 
 class ActivityView extends React.PureComponent {
@@ -89,7 +90,6 @@ class ActivityView extends React.PureComponent {
       return <div>Wrong problem type</div>;
     }
     
-    // debugger;
     if (!(pathProblem && solution)) {
       return <div>Loading</div>;
     }

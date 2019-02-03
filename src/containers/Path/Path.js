@@ -146,6 +146,7 @@ export class Path extends React.Component {
       case ACTIVITY_TYPES.profile.id:
       case ACTIVITY_TYPES.codeCombat.id:
       case ACTIVITY_TYPES.codeCombatNumber.id:
+      case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
         onActivityCodeCombatOpen(
           pathActivities.path.id,
           activity.id,
