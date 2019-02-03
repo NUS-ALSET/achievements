@@ -316,8 +316,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
         return;
       }
       const levelsData = yield call(accountService.fetchAchievements, data.uid);
-      debugger;
-        if(levelsData &&
+        if(levelsData && (
           (data.activity.type === ACTIVITY_TYPES.codeCombat.id
           && levelsData.achievements[data.activity.level] 
           && levelsData.achievements[data.activity.level].complete
@@ -332,7 +331,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             data.activity.type === ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id
             && levelsData.ladders
             && (levelsData.ladders[`${data.activity.level}-${data.activity.level.team}`] || {}).percentile >=data.activity.requiredPercentile          
-          )
+          ))
           ){
             yield call(
               [pathsService, pathsService.submitSolution],

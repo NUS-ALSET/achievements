@@ -90,7 +90,6 @@ class ActivityView extends React.PureComponent {
       return <div>Wrong problem type</div>;
     }
     
-    // debugger;
     if (!(pathProblem && solution)) {
       return <div>Loading</div>;
     }
