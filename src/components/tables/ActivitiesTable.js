@@ -194,7 +194,7 @@ class ActivitiesTable extends React.PureComponent {
                     onClick={() => onOpenActivity(activity)}
                     variant="contained"
                   >
-                    {activity.type === ACTIVITY_TYPES.codeCombat.id
+                    {([ACTIVITY_TYPES.codeCombat.id,ACTIVITY_TYPES.codeCombatNumber.id, ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id]).includes(activity.type)
                       ? "Fetch"
                       : "Solve"}
                     {activity.id === pendingActivityId && (

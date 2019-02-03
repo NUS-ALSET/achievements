@@ -43,6 +43,10 @@ export const ACTIVITY_TYPES = {
     id: "codeCombatNumber",
     caption: "Complete Number of CodeCombat Levels"
   },
+  codeCombatMultiPlayerLevel: {
+    id: "codeCombatMultiPlayerLevel",
+    caption: "Complete CodeCombat Multiplayer Level"
+  },
   jupyter: {
     id: "jupyter",
     caption: "Colaboratory Notebook"
@@ -76,6 +80,30 @@ export const ACTIVITY_TYPES = {
     caption: "Educator"
   }
 };
+
+export const CodeCombat_Multiplayer_Data = {
+  teams: {
+    humans: {
+      id: "humans",
+      name: "Red",
+    },
+    ogres:{
+      id: "ogres",
+      name: "Blue",
+    }
+  },
+  levels: {
+    "king-of-the-hill": {
+      id: "king-of-the-hill",
+      name: "King of the Hill"
+    },
+    "treasure-games":{
+      id: "treasure-games",
+      name: "Treasure Games"
+    }
+  },
+  rankingPercentile: [0, 10, 20, 30, 40, 50]
+}
 
 export class PathsService {
   auth() {
@@ -360,6 +388,11 @@ export class PathsService {
         break;
       case ACTIVITY_TYPES.codeCombatNumber.id:
         if (!problemInfo.count) throw new Error("Missing levels count");
+        break;
+      case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+        if(!problemInfo.team) throw new Error("Missing Multiplayer CodeCombat Team");
+        else if(!problemInfo.level) throw new Error("Missing Multiplayer CodeCombat Level");
+        else if(!problemInfo.requiredPercentile) throw new Error("Missing Multiplayer CodeCombat Percentile Required")
         break;
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.jupyterInline.id:

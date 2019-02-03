@@ -27,7 +27,8 @@ const views = {
   jest: AddJestSolutionDialog,
   game: AddGameSolutionDialog,
   codeCombat : CodeCombatActivity,
-  codeCombatNumber : CodeCombatActivity
+  codeCombatNumber : CodeCombatActivity,
+  codeCombatMultiPlayerLevel: CodeCombatActivity
 };
 
 class ActivityView extends React.PureComponent {

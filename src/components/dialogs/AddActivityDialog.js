@@ -45,7 +45,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 import { GameActivity, TournamentActivity } from "../AddActivitiesForm/";
 
-import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS } from "../../services/paths";
+import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS, CodeCombat_Multiplayer_Data } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 // RegExp rules
@@ -279,6 +279,89 @@ class AddActivityDialog extends React.PureComponent {
             type="number"
             value={activity.count}
           />
+        );
+        case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+        return (
+          <Fragment>
+            <FormControl fullWidth margin="normal">
+              <InputLabel htmlFor="select-multiplayer-team">Team</InputLabel>
+              <Select
+                input={<Input id="select-multiplayer-team" />}
+                margin="none"
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 224,
+                      width: 250
+                    }
+                  }
+                }}
+                onChange={e => this.onFieldChange("team", e.target.value)}
+                value={activity.team || ""}
+              >
+                {Object.keys(CodeCombat_Multiplayer_Data.teams).map(id => (
+                  <MenuItem
+                    key={CodeCombat_Multiplayer_Data.teams[id].id}
+                    value={id}
+                  >
+                    {CodeCombat_Multiplayer_Data.teams[id].name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <InputLabel htmlFor="select-multiplayer-level">Level</InputLabel>
+              <Select
+                input={<Input id="select-multiplayer-level" />}
+                margin="none"
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 224,
+                      width: 250
+                    }
+                  }
+                }}
+                onChange={e => this.onFieldChange("level", e.target.value)}
+                value={activity.level || ""}
+              >
+                {Object.keys(CodeCombat_Multiplayer_Data.levels).map(id => (
+                  <MenuItem
+                    key={CodeCombat_Multiplayer_Data.levels[id].id}
+                    value={id}
+                  >
+                    {CodeCombat_Multiplayer_Data.levels[id].name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl fullWidth margin="normal">
+              <InputLabel htmlFor="select-multiplayer-percentile">Percentile Required</InputLabel>
+              <Select
+                input={<Input id="select-multiplayer-percentile" />}
+                margin="none"
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 224,
+                      width: 250
+                    }
+                  }
+                }}
+                onChange={e => this.onFieldChange("requiredPercentile", e.target.value)}
+                value={activity.requiredPercentile || ""}
+              >
+                {CodeCombat_Multiplayer_Data.rankingPercentile.map(id => (
+                  <MenuItem
+                    key={id}
+                    value={id}
+                  >
+                    {id}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Fragment>
         );
       case ACTIVITY_TYPES.jupyter.id:
         return (
