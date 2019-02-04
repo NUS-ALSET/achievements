@@ -947,5 +947,131 @@
     "id" : "zoo-keeper",
     "name" : "Zoo Keeper",
     "url" : "http://codecombat.com/play/level/zoo-keeper"
+  },
+  "woodland-cubbies" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "woodland-cubbies",
+    "name" : "Woodland Cubbies",
+    "url" : "http://codecombat.com/play/level/woodland-cubbies"
+  },
+  "if-stravaganza" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "if-stravaganza",
+    "name" : "If-stravaganza",
+    "url" : "http://codecombat.com/play/level/if-stravaganza"
+  },
+  "range-finder" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "range-finder",
+    "name" : "Range Finder",
+    "url" : "http://codecombat.com/play/level/range-finder"
+  },
+  "maniac-munchkins" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "maniac-munchkins",
+    "name" : "Maniac Munchkins",
+    "url" : "http://codecombat.com/play/level/maniac-munchkins"
+  },
+  "village-rover" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "village-rover",
+    "name" : "Village Rover",
+    "url" : "http://codecombat.com/play/level/village-rover"
+  },
+  "backwoods-fork" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "backwoods-fork",
+    "name" : "Backwoods Fork",
+    "url" : "http://codecombat.com/play/level/backwoods-fork"
+  },
+  "friend-and-foe" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "friend-and-foe",
+    "name" : "Friend and Foe",
+    "url" : "http://codecombat.com/play/level/friend-and-foe"
+  },
+  "the-wizards-door" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-wizards-door",
+    "name" : "The Wizard's Door",
+    "url" : "http://codecombat.com/play/level/the-wizards-door"
+  },
+  "coincrumbs" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "coincrumbs",
+    "name" : "Coincrumbs",
+    "url" : "http://codecombat.com/play/level/coincrumbs"
+  },
+  "taunting" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "taunting",
+    "name" : "Taunting",
+    "url" : "http://codecombat.com/play/level/taunting"
+  },
+  "blind-distance" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "blind-distance",
+    "name" : "Blind Distance",
+    "url" : "http://codecombat.com/play/level/blind-distance"
+  },
+  "hit-and-freeze" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hit-and-freeze",
+    "name" : "Hit and Freeze",
+    "url" : "http://codecombat.com/play/level/hit-and-freeze"
+  },
+  "salted-earth" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "salted-earth",
+    "name" : "Salted Earth",
+    "url" : "http://codecombat.com/play/level/salted-earth"
+  },
+  "spring-thunder" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "spring-thunder",
+    "name" : "Spring Thunder",
+    "url" : "http://codecombat.com/play/level/spring-thunder"
+  },
+  "usual-day" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "usual-day",
+    "name" : "Usual Day",
+    "url" : "http://codecombat.com/play/level/usual-day"
+  },
+  "passing-through" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "passing-through",
+    "name" : "Passing Through",
+    "url" : "http://codecombat.com/play/level/passing-through"
+  },
+  "logical-path" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "logical-path",
+    "name" : "Logical Path",
+    "url" : "http://codecombat.com/play/level/logical-path"
+  },
+  "return-to-thornbush-farm" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "return-to-thornbush-farm",
+    "name" : "Return to Thornbush Farm",
+    "url" : "http://codecombat.com/play/level/return-to-thornbush-farm"
+  },
+  "the-one-wizard" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-one-wizard",
+    "name" : "The One Wizard",
+    "url" : "http://codecombat.com/play/level/the-one-wizard"
+  },
+  "operation-killdeer" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "operation-killdeer",
+    "name" : "Operation 'Killdeer'",
+    "url" : "http://codecombat.com/play/level/operation-killdeer"
+  },
+  "double-cheek" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "double-cheek",
+    "name" : "Double Cheek",
+    "url" : "http://codecombat.com/play/level/double-cheek"
   }
 }
