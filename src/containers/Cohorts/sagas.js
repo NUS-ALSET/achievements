@@ -3,7 +3,7 @@ import { ADD_COHORT_REQUEST, addCohortFail, addCohortSuccess } from "./actions";
 import { cohortsService } from "../../services/cohorts";
 import { notificationShow } from "../Root/actions";
 
-function* addCohortRequestHandler(action) {
+export function* addCohortRequestHandler(action) {
   try {
     const auth = yield select(state => state.firebase.auth);
     const cohortKey = yield call(

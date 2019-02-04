@@ -27,6 +27,10 @@ export const ACTIVITY_TYPES = {
     id: "text",
     caption: "Text"
   },
+  multipleQuestion: {
+    id: "multipleQuestion",
+    caption: "Multiple-choice question"
+  },
   profile: {
     id: "profile",
     caption: "Fetch CodeCombat Profile"
@@ -38,6 +42,10 @@ export const ACTIVITY_TYPES = {
   codeCombatNumber: {
     id: "codeCombatNumber",
     caption: "Complete Number of CodeCombat Levels"
+  },
+  codeCombatMultiPlayerLevel: {
+    id: "codeCombatMultiPlayerLevel",
+    caption: "Complete CodeCombat Multiplayer Level"
   },
   jupyter: {
     id: "jupyter",
@@ -72,6 +80,30 @@ export const ACTIVITY_TYPES = {
     caption: "Educator"
   }
 };
+
+export const CodeCombat_Multiplayer_Data = {
+  teams: {
+    humans: {
+      id: "humans",
+      name: "Red",
+    },
+    ogres:{
+      id: "ogres",
+      name: "Blue",
+    }
+  },
+  levels: {
+    "king-of-the-hill": {
+      id: "king-of-the-hill",
+      name: "King of the Hill"
+    },
+    "treasure-games":{
+      id: "treasure-games",
+      name: "Treasure Games"
+    }
+  },
+  rankingPercentile: [0, 10, 20, 30, 40, 50]
+}
 
 export class PathsService {
   auth() {
@@ -152,52 +184,70 @@ export class PathsService {
         }
         switch (pathProblem.type) {
           case "jupyter":
-          case "jupyterInline":
-            return Promise.all([
-              Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
-                fileId =>
-                  this.fetchFile(fileId).then(data => ({
-                    id: fileId,
-                    data
-                  }))
-              )
-              // Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
-              //   fileId =>
-              //     this.fetchFile(fileId).then(data => ({
-              //       id: fileId,
-              //       data
-              //     }))
-              // )
-            ])
-              .then(files =>
-                Object.assign(pathProblem, {
-                  problemColabURL: PathsService.getColabURL(files[0].id),
-                  problemJSON: files[0].data,
-                  problemFileId: files[0].id
-                  // solutionFileId: files[1].id,
-                  // solutionColabURL: PathsService.getColabURL(files[1].id),
-                  // solutionJSON: files[1].data
-                })
-              )
-              .then(() => {
-                if (
-                  pathProblem.problemJSON &&
-                  pathProblem.problemJSON.metadata
-                ) {
-                  pathProblem.problemJSON.metadata.language_info = {
-                    name: "python"
-                  };
+          case "jupyterInline": {
+              return Promise.all([
+                Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
+                  fileId => {
+                    if (pathProblem.version === 1) {
+                      return firebase
+                      .database()
+                      .ref(`/activityData/${activitiyId}`)
+                      .once("value")
+                      .then(data => {
+                        return {
+                          id: fileId,
+                          data: JSON.parse(data.val().problemData)
+                        }
+                      });
+                    } else {
+                      return this.fetchFile(fileId).then(data => ({
+                        id: fileId,
+                        data
+                      }))
+                    }
+                  }
+                )
+                // Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
+                //   fileId =>
+                //     this.fetchFile(fileId).then(data => ({
+                //       id: fileId,
+                //       data
+                //     }))
+                // )
+              ])
+                .then(files => {
+                  Object.assign(pathProblem, {
+                    problemColabURL: PathsService.getColabURL(files[0].id),
+                    problemJSON: files[0].data,
+                    problemFileId: files[0].id
+                    // solutionFileId: files[1].id,
+                    // solutionColabURL: PathsService.getColabURL(files[1].id),
+                    // solutionJSON: files[1].data
+                  })
                 }
-                if (
-                  pathProblem.solutionJSON &&
-                  pathProblem.solutionJSON.metadata
-                ) {
-                  pathProblem.solutionJSON.metadata.language_info = {
-                    name: "python"
-                  };
-                }
-                return pathProblem;
-              });
+                  
+                )
+                .then(() => {
+                  if (
+                    pathProblem.problemJSON &&
+                    pathProblem.problemJSON.metadata
+                  ) {
+                    pathProblem.problemJSON.metadata.language_info = {
+                      name: "python"
+                    };
+                  }
+                  if (
+                    pathProblem.solutionJSON &&
+                    pathProblem.solutionJSON.metadata
+                  ) {
+                    pathProblem.solutionJSON.metadata.language_info = {
+                      name: "python"
+                    };
+                  }
+                  return pathProblem;
+                });
+          }
+          
           default:
             return pathProblem;
         }
@@ -305,13 +355,31 @@ export class PathsService {
   }
 
   validateProblem(problemInfo) {
-    if (!problemInfo) throw new Error("Missing problem");
+    const options = {};
+    if (!problemInfo) throw new Error("Missing activity");
     if (problemInfo.id) return;
-    if (!problemInfo.name) throw new Error("Missing problem name");
-    if (!problemInfo.type) throw new Error("Missing problem type");
+    if (!problemInfo.name) throw new Error("Missing activity name");
+    if (!problemInfo.type) throw new Error("Missing activity type");
     switch (problemInfo.type) {
       case ACTIVITY_TYPES.text.id:
         if (!problemInfo.question) throw new Error("Missing question");
+        break;
+      case ACTIVITY_TYPES.multipleQuestion.id:
+        if (!(problemInfo.options && problemInfo.options.length)) {
+          throw new Error("Missing options");
+        }
+        if (problemInfo.options.length === 1) {
+          throw new Error("At least 2 options required");
+        }
+        for (const option of problemInfo.options) {
+          if (!(option.caption && option.caption.trim())) {
+            throw new Error("Missing option text");
+          }
+          if (options[option.caption.trim()]) {
+            throw new Error("Duplicate options are forbidden");
+          }
+          options[option.caption.trim()] = true;
+        }
         break;
       case ACTIVITY_TYPES.profile.id:
         break;
@@ -320,6 +388,11 @@ export class PathsService {
         break;
       case ACTIVITY_TYPES.codeCombatNumber.id:
         if (!problemInfo.count) throw new Error("Missing levels count");
+        break;
+      case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+        if(!problemInfo.team) throw new Error("Missing Multiplayer CodeCombat Team");
+        else if(!problemInfo.level) throw new Error("Missing Multiplayer CodeCombat Level");
+        else if(!problemInfo.requiredPercentile) throw new Error("Missing Multiplayer CodeCombat Percentile Required")
         break;
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.jupyterInline.id:
@@ -363,7 +436,7 @@ export class PathsService {
         if (!problemInfo.targetType) throw new Error("Missing Target Type");
         break;
       default:
-        throw new Error("Invalid  problem type");
+        throw new Error("Invalid activity type");
     }
   }
 
@@ -371,15 +444,16 @@ export class PathsService {
     const isNew = !problemInfo.id;
     let next;
     let solutionURL = null;
+    let problemURL = null;
 
     this.validateProblem(problemInfo);
-
     if (
       [ACTIVITY_TYPES.jupyter.id, ACTIVITY_TYPES.jupyterInline.id].includes(
         problemInfo.type
       )
     ) {
       solutionURL = problemInfo.solutionURL;
+      problemURL = problemInfo.problemURL;
       delete problemInfo.solutionURL;
     }
     problemInfo.owner = uid;
@@ -416,6 +490,9 @@ export class PathsService {
       delete info.id;
       next = ref.update(info);
     } else {
+      if (info.type === "jupyterInline") {
+        info.version = 1;
+      }
       next = ref.set(info);
     }
     return next
@@ -434,6 +511,14 @@ export class PathsService {
             this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
           });
         }
+        if (problemURL) {
+          this.fetchFile(this.getFileId(problemURL)).then(json => {
+            /*
+              Update to activityData if Jupyter Activity
+            */
+            this.saveJupyterProblemToFirebase({json, key, info})
+          });
+        }
         /*
           Update to activityData if Jest Activity
         */
@@ -448,6 +533,20 @@ export class PathsService {
         }
         return key;
       });
+  }
+
+  saveJupyterProblemToFirebase(data) {
+    if (Object.keys(data.json).length > 0 &&
+        data.json.constructor === Object &&
+        data.info.version >= 1) {
+      const ref = firebase.database().ref(`/activityData/${data.key}`);
+      const { path, owner } = data.info;
+      ref.set({
+        problemData: JSON.stringify(data.json),
+        path,
+        owner
+      });
+    }
   }
 
   /**

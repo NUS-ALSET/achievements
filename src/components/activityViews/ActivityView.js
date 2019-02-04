@@ -16,6 +16,7 @@ import YouTubeProblem from "./YouTubeActivity";
 
 import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog";
 import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog";
+import CodeCombatActivity from "./CodeCombatActivity";
 
 const views = {
   text: TextActivity,
@@ -24,7 +25,10 @@ const views = {
   jupyterInline: JupyterInlineProblem,
   youtube: YouTubeProblem,
   jest: AddJestSolutionDialog,
-  game: AddGameSolutionDialog
+  game: AddGameSolutionDialog,
+  codeCombat : CodeCombatActivity,
+  codeCombatNumber : CodeCombatActivity,
+  codeCombatMultiPlayerLevel: CodeCombatActivity
 };
 
 class ActivityView extends React.PureComponent {
@@ -83,10 +87,9 @@ class ActivityView extends React.PureComponent {
       : {};
     if (!SpecificView) {
       // noinspection JSUnusedAssignment
-      SpecificView = <div>Wrong problem type</div>;
+      return <div>Wrong problem type</div>;
     }
-
-    // debugger;
+    
     if (!(pathProblem && solution)) {
       return <div>Loading</div>;
     }

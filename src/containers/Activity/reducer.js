@@ -1,6 +1,7 @@
 import {
   PROBLEM_FINALIZE,
   PROBLEM_INIT_SUCCESS,
+  PROBLEM_INIT_FAIL,
   PROBLEM_SOLUTION_CALCULATED_WRONG,
   PROBLEM_SOLUTION_PROVIDED_SUCCESS,
   PROBLEM_SOLUTION_REFRESH_FAIL,
@@ -14,16 +15,24 @@ export const problem = (
     problemJSON: false,
     solution: null,
     unsolvedPublicActivities: [],
-    publicActivitiesFetched: false
+    publicActivitiesFetched: false,
+    error: false
   },
   action
 ) => {
   switch (action.type) {
     case PROBLEM_INIT_SUCCESS:
+    console.log('pass--', action)
       return {
         ...state,
         pathProblem: action.payload,
-        readOnly: action.readOnly
+        readOnly: action.readOnly,
+        error: false
+      };
+    case PROBLEM_INIT_FAIL:
+      return {
+        ...state,
+        error: true
       };
     case PROBLEM_FINALIZE:
       return {

@@ -16,8 +16,8 @@ import {
 import { cohortsService } from "../../services/cohorts";
 import { notificationShow } from "../Root/actions";
 
-function* cohortOpenHandle(action) {
-  let uid = yield select(state => state.firebase.auth.uid);
+export function* cohortOpenHandle(action) {
+  let uid = yield select(state => ((((state || {}).firebase || {}).auth || {}).uid));
 
   try {
     const cohortData = yield call(
@@ -35,8 +35,8 @@ function* cohortOpenHandle(action) {
   }
 }
 
-function* cohortRecalculationRequestHandler(action) {
-  let uid = yield select(state => state.firebase.auth.uid);
+export function* cohortRecalculationRequestHandler(action) {
+  let uid = yield select(state => ((((state || {}).firebase || {}).auth || {}).uid));
 
   try {
     yield call(
@@ -56,7 +56,7 @@ function* cohortRecalculationRequestHandler(action) {
   }
 }
 
-function* cohortCourseUpdateRequestHandler(action) {
+export function* cohortCourseUpdateRequestHandler(action) {
   try {
     yield call(
       [
@@ -87,7 +87,7 @@ function* cohortCourseUpdateRequestHandler(action) {
   }
 }
 
-function* cohortUpdateAssistantRequestHandler(action) {
+export function* cohortUpdateAssistantRequestHandler(action) {
   try {
     yield call(cohortsService.updateAssistants, action);
     yield put(

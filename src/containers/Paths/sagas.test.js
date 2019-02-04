@@ -20,10 +20,10 @@ describe("Paths sagas", () => {
       owner: "Kunkka",
       type: "text",
       id: "problemID076"
-    }
-    const mockUid = "someUID001"
-    const mockPathId = "somePathId009"
-    const dispatchedActions = []
+    };
+    const mockUid = "someUID001";
+    const mockPathId = "somePathId009";
+    const dispatchedActions = [];
     const fakeStore = {
       dispatch: action => dispatchedActions.push(action),
       getState: () => ({
@@ -34,19 +34,17 @@ describe("Paths sagas", () => {
           }
         }
       })
-    }
+    };
     // validateProblem only throw Error
-    pathsService.validateProblem = jest.fn(() => Promise.resolve())
-    pathsService.problemChange = jest.fn(() => Promise.resolve("activityKey002"))
-    await runSaga(
-      fakeStore,
-      pathActivityChangeRequestHandler,
-      {
-        type: PATH_ACTIVITY_CHANGE_REQUEST,
-        pathId: mockPathId,
-        activityInfo: mockActivityInfo
-      }
-    ).done;
+    pathsService.validateProblem = jest.fn(() => Promise.resolve());
+    pathsService.problemChange = jest.fn(() =>
+      Promise.resolve("activityKey002")
+    );
+    await runSaga(fakeStore, pathActivityChangeRequestHandler, {
+      type: PATH_ACTIVITY_CHANGE_REQUEST,
+      pathId: mockPathId,
+      activityInfo: mockActivityInfo
+    }).done;
 
     expect(dispatchedActions).toEqual([
       {
@@ -64,8 +62,10 @@ describe("Paths sagas", () => {
   });
 
   it("should report a issue at problem creation", async () => {
-    pathsService.validateProblem = jest.fn(() => Promise.reject({ message: "Missing problem name" }));
-    const dispatchedActions = []
+    pathsService.validateProblem = jest.fn(() =>
+      Promise.reject({ message: "Missing activity name" })
+    );
+    const dispatchedActions = [];
     await runSaga(
       {
         dispatch: action => dispatchedActions.push(action),
@@ -94,11 +94,11 @@ describe("Paths sagas", () => {
         type: PATH_ACTIVITY_CHANGE_FAIL,
         pathId: "testPath",
         activityInfo: { level: "test-level", type: "codeCombat" },
-        reason: "Missing problem name"
+        reason: "Missing activity name"
       },
       {
         type: NOTIFICATION_SHOW,
-        message: "Missing problem name"
+        message: "Missing activity name"
       }
     ]);
   });

@@ -72,6 +72,8 @@ const getActivitySelector = problem => {
       return `Finish "${problem.level}" level at CodeCombat`;
     case ACTIVITY_TYPES.codeCombatNumber.id:
       return `Finish ${problem.count} levels at CodeCombat`;
+    case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+      return `Finish "${problem.level}" level at CodeCombat`;
     case ACTIVITY_TYPES.jupyter.id:
       return "Colaboratory Notebook Activity";
     case ACTIVITY_TYPES.jupyterInline.id:
