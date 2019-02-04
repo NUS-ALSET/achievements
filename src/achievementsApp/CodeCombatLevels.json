@@ -893,6 +893,12 @@
     "name" : "Touch of Death",
     "url" : "http://codecombat.com/play/level/touch-of-death"
   },
+  "twisted-canyon" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "twisted-canyon",
+    "name" : "Twisted Canyon",
+    "url" : "http://codecombat.com/play/level/twisted-canyon"
+  },
   "village-guard" : {
     "campaign" : "forest",
     "iconUrl" : "/assets/icons/taunt_4.png",
