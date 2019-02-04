@@ -3,11 +3,15 @@ import {
   COHORT_COURSE_UPDATE_SUCCESS,
   COHORT_FETCH_SUCCESS,
   COHORT_OPEN_ASSISTANTS_DIALOG,
-  COHORT_UPDATE_ASSISTANTS_SUCCESS
+  COHORT_UPDATE_ASSISTANTS_SUCCESS,
+  COHORT_SORT_CHANGE
 } from "./actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
 
-export const cohort = (state = { ui: {} }, action) => {
+export const cohort = (
+  state = { ui: { sortState: { field: "rank", direction: "asc" } } },
+  action
+) => {
   switch (action.type) {
     case ASSIGNMENT_ASSISTANT_FOUND:
       return {
@@ -29,10 +33,22 @@ export const cohort = (state = { ui: {} }, action) => {
             }
           }
         : state;
+    case COHORT_SORT_CHANGE:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          sortState: {
+            field: action.sortField,
+            direction: state.ui.sortState.direction === "asc" ? "desc" : "asc"
+          }
+        }
+      };
     case COHORT_OPEN_ASSISTANTS_DIALOG:
       return {
         ...state,
         ui: {
+          sortState: state.ui.sortState,
           dialog: "Assistants"
         }
       };
@@ -53,7 +69,7 @@ export const cohort = (state = { ui: {} }, action) => {
         }
       };
     case COHORT_CLOSE_DIALOG:
-      return { ...state, ui: {} };
+      return { ...state, ui: { sortState: state.ui.sortState } };
     case COHORT_FETCH_SUCCESS:
       return {
         ...state,

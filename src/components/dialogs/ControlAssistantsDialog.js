@@ -126,7 +126,7 @@ class ControlAssistantsDialog extends React.Component {
                 </ListItem>
               ))
             ) : (
-              <LinearProgress />
+              assistants === null ? <p>Something wrong please try again!</p> : <LinearProgress />
             )}
           </List>
         </DialogContent>

@@ -893,6 +893,12 @@
     "name" : "Touch of Death",
     "url" : "http://codecombat.com/play/level/touch-of-death"
   },
+  "twisted-canyon" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "twisted-canyon",
+    "name" : "Twisted Canyon",
+    "url" : "http://codecombat.com/play/level/twisted-canyon"
+  },
   "village-guard" : {
     "campaign" : "forest",
     "iconUrl" : "/assets/icons/taunt_4.png",
@@ -941,5 +947,503 @@
     "id" : "zoo-keeper",
     "name" : "Zoo Keeper",
     "url" : "http://codecombat.com/play/level/zoo-keeper"
+  },
+  "woodland-cubbies" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "woodland-cubbies",
+    "name" : "Woodland Cubbies",
+    "url" : "http://codecombat.com/play/level/woodland-cubbies"
+  },
+  "if-stravaganza" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "if-stravaganza",
+    "name" : "If-stravaganza",
+    "url" : "http://codecombat.com/play/level/if-stravaganza"
+  },
+  "range-finder" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "range-finder",
+    "name" : "Range Finder",
+    "url" : "http://codecombat.com/play/level/range-finder"
+  },
+  "maniac-munchkins" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "maniac-munchkins",
+    "name" : "Maniac Munchkins",
+    "url" : "http://codecombat.com/play/level/maniac-munchkins"
+  },
+  "village-rover" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "village-rover",
+    "name" : "Village Rover",
+    "url" : "http://codecombat.com/play/level/village-rover"
+  },
+  "backwoods-fork" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "backwoods-fork",
+    "name" : "Backwoods Fork",
+    "url" : "http://codecombat.com/play/level/backwoods-fork"
+  },
+  "friend-and-foe" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "friend-and-foe",
+    "name" : "Friend and Foe",
+    "url" : "http://codecombat.com/play/level/friend-and-foe"
+  },
+  "the-wizards-door" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-wizards-door",
+    "name" : "The Wizard's Door",
+    "url" : "http://codecombat.com/play/level/the-wizards-door"
+  },
+  "coincrumbs" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "coincrumbs",
+    "name" : "Coincrumbs",
+    "url" : "http://codecombat.com/play/level/coincrumbs"
+  },
+  "taunting" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "taunting",
+    "name" : "Taunting",
+    "url" : "http://codecombat.com/play/level/taunting"
+  },
+  "blind-distance" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "blind-distance",
+    "name" : "Blind Distance",
+    "url" : "http://codecombat.com/play/level/blind-distance"
+  },
+  "hit-and-freeze" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hit-and-freeze",
+    "name" : "Hit and Freeze",
+    "url" : "http://codecombat.com/play/level/hit-and-freeze"
+  },
+  "salted-earth" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "salted-earth",
+    "name" : "Salted Earth",
+    "url" : "http://codecombat.com/play/level/salted-earth"
+  },
+  "spring-thunder" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "spring-thunder",
+    "name" : "Spring Thunder",
+    "url" : "http://codecombat.com/play/level/spring-thunder"
+  },
+  "usual-day" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "usual-day",
+    "name" : "Usual Day",
+    "url" : "http://codecombat.com/play/level/usual-day"
+  },
+  "passing-through" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "passing-through",
+    "name" : "Passing Through",
+    "url" : "http://codecombat.com/play/level/passing-through"
+  },
+  "logical-path" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "logical-path",
+    "name" : "Logical Path",
+    "url" : "http://codecombat.com/play/level/logical-path"
+  },
+  "return-to-thornbush-farm" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "return-to-thornbush-farm",
+    "name" : "Return to Thornbush Farm",
+    "url" : "http://codecombat.com/play/level/return-to-thornbush-farm"
+  },
+  "the-one-wizard" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-one-wizard",
+    "name" : "The One Wizard",
+    "url" : "http://codecombat.com/play/level/the-one-wizard"
+  },
+  "operation-killdeer" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "operation-killdeer",
+    "name" : "Operation 'Killdeer'",
+    "url" : "http://codecombat.com/play/level/operation-killdeer"
+  },
+  "double-cheek" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "double-cheek",
+    "name" : "Double Cheek",
+    "url" : "http://codecombat.com/play/level/double-cheek"
+  },
+  "dont-rush-be-quiet" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "dont-rush-be-quiet",
+    "name" : "Don't Rush, Be Quiet",
+    "url" : "http://codecombat.com/play/level/dont-rush-be-quiet"
+  },
+  "zig-zag-and-zoom" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "zig-zag-and-zoom",
+    "name" : "Zig Zag and Zoom",
+    "url" : "http://codecombat.com/play/level/zig-zag-and-zoom"
+  },
+  "cubic-minefield" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "cubic-minefield",
+    "name" : "Cubic Minefield",
+    "url" : "http://codecombat.com/play/level/cubic-minefield"
+  },
+  "tiresome-gcd" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "tiresome-gcd",
+    "name" : "Tiresome GCD",
+    "url" : "http://codecombat.com/play/level/tiresome-gcd"
+  },
+  "desert-delta" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "desert-delta",
+    "name" : "Desert Delta",
+    "url" : "http://codecombat.com/play/level/desert-delta"
+  },
+  "team-work" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "team-work",
+    "name" : "Team Work",
+    "url" : "http://codecombat.com/play/level/team-work"
+  },
+  "bank-raid" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "bank-raid",
+    "name" : "Bank Raid",
+    "url" : "http://codecombat.com/play/level/bank-raid"
+  },
+  "brittle-morale" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "brittle-morale",
+    "name" : "Brittle Morale",
+    "url" : "http://codecombat.com/play/level/brittle-morale"
+  },
+  "diamond-dozen" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "diamond-dozen",
+    "name" : "Diamond Dozen",
+    "url" : "http://codecombat.com/play/level/diamond-dozen"
+  },
+  "wishing-well" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "wishing-well",
+    "name" : "Wishing Well",
+    "url" : "http://codecombat.com/play/level/wishing-well"
+  },
+  "gas-attack" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "gas-attack",
+    "name" : "Gas Attack",
+    "url" : "http://codecombat.com/play/level/gas-attack"
+  },
+  "fair-battle" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "fair-battle",
+    "name" : "Fair Battle",
+    "url" : "http://codecombat.com/play/level/fair-battle"
+  },
+  "uneasy-truce" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "uneasy-truce",
+    "name" : "Uneasy Truce",
+    "url" : "http://codecombat.com/play/level/uneasy-truce"
+  },
+  "the-spy-among-us" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-spy-among-us",
+    "name" : "The Spy Among Us",
+    "url" : "http://codecombat.com/play/level/the-spy-among-us"
+  },
+  "ice-hunter" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "ice-hunter",
+    "name" : "Ice Hunter",
+    "url" : "http://codecombat.com/play/level/ice-hunter"
+  },
+  "aggressive-mimicry" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "aggressive-mimicry",
+    "name" : "Aggressive Mimicry",
+    "url" : "http://codecombat.com/play/level/aggressive-mimicry"
+  },
+  "loud-quietness" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "loud-quietness",
+    "name" : "Loud Quietness",
+    "url" : "http://codecombat.com/play/level/loud-quietness"
+  },
+  "convenient-enemy" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "convenient-enemy",
+    "name" : "Convenient Enemy",
+    "url" : "http://codecombat.com/play/level/convenient-enemy"
+  },
+  "flawless-pairs" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "flawless-pairs",
+    "name" : "Flawless Pairs",
+    "url" : "http://codecombat.com/play/level/flawless-pairs"
+  },
+  "flawless-pairs" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "flawless-pairs",
+    "name" : "Flawless Pairs",
+    "url" : "http://codecombat.com/play/level/flawless-pairs"
+  },
+  "cannon-landing-force" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "cannon-landing-force",
+    "name" : "Cannon Landing Force",
+    "url" : "http://codecombat.com/play/level/cannon-landing-force"
+  },
+  "power-points" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "power-points",
+    "name" : "Power Points",
+    "url" : "http://codecombat.com/play/level/power-points"
+  },
+  "perimeter-defense" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "perimeter-defense",
+    "name" : "Perimeter Defense",
+    "url" : "http://codecombat.com/play/level/perimeter-defense"
+  },
+  "grid-minefield" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "grid-minefield",
+    "name" : "Grid Minefield",
+    "url" : "http://codecombat.com/play/level/grid-minefield"
+  },
+  "subarray-retreat" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "subarray-retreat",
+    "name" : "Subarray Retreat",
+    "url" : "http://codecombat.com/play/level/subarray-retreat"
+  },
+  "resource-valleys" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "resource-valleys",
+    "name" : "Resource Valleys",
+    "url" : "http://codecombat.com/play/level/resource-valleys"
+  },
+  "bits-and-trits" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "bits-and-trits",
+    "name" : "Bits And Trits",
+    "url" : "http://codecombat.com/play/level/bits-and-trits"
+  },
+  "how-much" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "how-much",
+    "name" : "How much?",
+    "url" : "http://codecombat.com/play/level/how-much"
+  },
+  "volcano-fighters" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "volcano-fighters",
+    "name" : "Volcano Fighters",
+    "url" : "http://codecombat.com/play/level/volcano-fighters"
+  },
+  "rectangle-formation" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "rectangle-formation",
+    "name" : "Rectangle Formation",
+    "url" : "http://codecombat.com/play/level/rectangle-formation"
+  },
+  "rectangle-formation" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "rectangle-formation",
+    "name" : "Rectangle Formation",
+    "url" : "http://codecombat.com/play/level/rectangle-formation"
+  },
+  "rectangle-formation" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "rectangle-formation",
+    "name" : "Rectangle Formation",
+    "url" : "http://codecombat.com/play/level/rectangle-formation"
+  },
+  "circumference-of-yaks" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "circumference-of-yaks",
+    "name" : "Circumference of Yaks",
+    "url" : "http://codecombat.com/play/level/circumference-of-yaks"
+  },
+  "area-of-yetis" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "area-of-yetis",
+    "name" : "Area of Yetis",
+    "url" : "http://codecombat.com/play/level/area-of-yetis"
+  },
+  "the-hunt-begins" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "the-hunt-begins",
+    "name" : "The Hunt Begins",
+    "url" : "http://codecombat.com/play/level/the-hunt-begins"
+  },
+  "yeti-eater" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "yeti-eater",
+    "name" : "Yeti Eater",
+    "url" : "http://codecombat.com/play/level/yeti-eater"
+  },
+  "count-emptiness" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "count-emptiness",
+    "name" : "Count Emptiness",
+    "url" : "http://codecombat.com/play/level/count-emptiness"
+  },
+  "circle-walking" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "circle-walking",
+    "name" : "Circle Walking",
+    "url" : "http://codecombat.com/play/level/circle-walking"
+  },
+  "skating-away" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "skating-away",
+    "name" : "Skating Away",
+    "url" : "http://codecombat.com/play/level/skating-away"
+  },
+  "bombing-run" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "bombing-run",
+    "name" : "Bombing Run",
+    "url" : "http://codecombat.com/play/level/bombing-run"
+  },
+  "binary-deployment" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "binary-deployment",
+    "name" : "Binary Deployment",
+    "url" : "http://codecombat.com/play/level/binary-deployment"
+  },
+  "coded-orders" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "coded-orders",
+    "name" : "Coded Orders",
+    "url" : "http://codecombat.com/play/level/coded-orders"
+  },
+  "prime-pathing" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "prime-pathing",
+    "name" : "Prime Pathing",
+    "url" : "http://codecombat.com/play/level/prime-pathing"
+  },
+  "kelvintaph-crusader" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "kelvintaph-crusader",
+    "name" : "Kelvintaph Crusader",
+    "url" : "http://codecombat.com/play/level/kelvintaph-crusader"
+  },
+  "kelvintaph-burgler" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "kelvintaph-burgler",
+    "name" : "Kelvintaph Burgler",
+    "url" : "http://codecombat.com/play/level/kelvintaph-burgler"
+  },
+  "gridmancer-redux" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "gridmancer-redux",
+    "name" : "Gridmancer Redux",
+    "url" : "http://codecombat.com/play/level/gridmancer-redux"
+  },
+  "kelvintaph-defiler" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "kelvintaph-defiler",
+    "name" : "Kelvintaph Defiler",
+    "url" : "http://codecombat.com/play/level/kelvintaph-defiler"
+  },
+  "form-up" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "form-up",
+    "name" : "Form Up!",
+    "url" : "http://codecombat.com/play/level/form-up"
+  },
+  "guess-my-number" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "guess-my-number",
+    "name" : "Guess My Number",
+    "url" : "http://codecombat.com/play/level/guess-my-number"
+  },
+  "golden-choice" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "golden-choice",
+    "name" : "Golden Choice",
+    "url" : "http://codecombat.com/play/level/golden-choice"
+  },
+  "key-stack" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "key-stack",
+    "name" : "Key Stack",
+    "url" : "http://codecombat.com/play/level/key-stack"
+  },
+  "first-out" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "first-out",
+    "name" : "First Out",
+    "url" : "http://codecombat.com/play/level/first-out"
+  },
+  "linked-keys" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "linked-keys",
+    "name" : "Linked Keys",
+    "url" : "http://codecombat.com/play/level/linked-keys"
+  },
+  "hashed-yaks" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hashed-yaks",
+    "name" : "Hashed Yaks",
+    "url" : "http://codecombat.com/play/level/hashed-yaks"
+  },
+  "hashing-magic" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "hashing-magic",
+    "name" : "Hashing Magic",
+    "url" : "http://codecombat.com/play/level/hashing-magic"
+  },
+  "assembly-speed" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "assembly-speed",
+    "name" : "Assembly Speed",
+    "url" : "http://codecombat.com/play/level/assembly-speed"
+  },
+  "ace-of-coders" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "ace-of-coders",
+    "name" : "Ace of Coders",
+    "url" : "http://codecombat.com/play/level/ace-of-coders"
+  },
+  "capture-their-flag" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "capture-their-flag",
+    "name" : "Capture Their Flag",
+    "url" : "http://codecombat.com/play/level/capture-their-flag"
+  },
+  "clumsy-circle" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "clumsy-circle",
+    "name" : "Clumsy Circle",
+    "url" : "http://codecombat.com/play/level/clumsy-circle"
+  },
+  "humantron" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "humantron",
+    "name" : "Humantron",
+    "url" : "http://codecombat.com/play/level/humantron"
+  },
+  "reindeer-wakeup" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "reindeer-wakeup",
+    "name" : "Reindeer Wakeup",
+    "url" : "http://codecombat.com/play/level/reindeer-wakeup"
+  },
+  "leave-it-to-cleaver" : {
+    "iconUrl" : "/assets/icons/commanding_followers_blank.png",
+    "id" : "leave-it-to-cleaver",
+    "name" : "Leave it to Cleaver",
+    "url" : "http://codecombat.com/play/level/leave-it-to-cleaver"
   }
 }

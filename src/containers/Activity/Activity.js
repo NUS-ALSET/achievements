@@ -143,9 +143,13 @@ export class Activity extends React.PureComponent {
       pathProblem,
       solution,
       readOnly,
-      uid
+      uid,
+      error
     } = this.props;
     if (!pathProblem) {
+      if (error) {
+        return <p>Activity does not exist</p>
+      }
       return (
         <div
           style={{ width: "100%", textAlign: "center", padding: "20px 0px" }}
@@ -236,7 +240,8 @@ const mapStateToProps = (state, ownProps) => ({
   pathName: state.firebase.data.pathName,
   pathProblem: ownProps.pathProblem || state.problem.pathProblem,
   solution: ownProps.solution || state.problem.solution,
-  userAchievements: state.firebase.data.myAchievements || {}
+  userAchievements: state.firebase.data.myAchievements || {},
+  error: state.problem.error
 });
 
 const mapDispatchToProps = dispatch => ({

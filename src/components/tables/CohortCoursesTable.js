@@ -9,12 +9,13 @@ import PropTypes from "prop-types";
 
 import { Link, withRouter } from "react-router-dom";
 
+import Button from "@material-ui/core/Button";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Button from "@material-ui/core/Button";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 import { cohort } from "../../types";
@@ -53,7 +54,12 @@ class CohortCoursesTable extends React.PureComponent {
     isOwner: PropTypes.bool,
     isInstructor: PropTypes.bool,
     match: PropTypes.object,
-    onRemoveClick: PropTypes.func
+    onRemoveClick: PropTypes.func,
+    onSortClick: PropTypes.func,
+    sortState: PropTypes.shape({
+      field: PropTypes.string,
+      direction: PropTypes.oneOf(["asc", "desc"])
+    })
   };
 
   render() {
@@ -62,12 +68,17 @@ class CohortCoursesTable extends React.PureComponent {
       courses,
       cohort,
       isInstructor,
-      onRemoveClick
+      onRemoveClick,
+      onSortClick,
+      sortState
     } = this.props;
     let totals = {
       progress: 0,
       participants: 0
     };
+    if (courses.length <= 0) {
+      return <p>No Courses found for this cohort</p>
+    }
     courses.forEach(course => {
       totals.progress += course.progress;
       totals.participants += course.participants;
@@ -78,33 +89,71 @@ class CohortCoursesTable extends React.PureComponent {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.narrowCell}>Course Rank</TableCell>
+            <TableCell className={classes.narrowCell}>
+              <TableSortLabel
+                active={sortState.field === "rank"}
+                direction={sortState.direction}
+                onClick={() => onSortClick("rank")}
+              >
+                Course Rank
+              </TableSortLabel>
+            </TableCell>
             {cohort.pathsData && cohort.pathsData.length ? (
               cohort.pathsData.map(pathData => (
                 <TableCell
                   className={classes.narrowCell}
                   key={(pathData && pathData.id) || Math.random()}
                 >
-                  {pathData && pathData.name}
+                  <TableSortLabel
+                    active={sortState.field === pathData.id}
+                    direction={sortState.direction}
+                    onClick={() => onSortClick(pathData.id)}
+                  >
+                    {pathData && pathData.name}
+                  </TableSortLabel>
                 </TableCell>
               ))
             ) : (
               <TableCell className={classes.narrowCell}>
-                Paths for Cohort
+                <TableSortLabel
+                  active={sortState.field === "paths"}
+                  direction={sortState.direction}
+                  onClick={() => onSortClick("paths")}
+                >
+                  Paths for Cohort
+                </TableSortLabel>
               </TableCell>
             )}
             <TableCell className={classes.narrowCell}>
-              Explorers ({totals.progress})
+              <TableSortLabel
+                active={sortState.field === "progress"}
+                direction={sortState.direction}
+                onClick={() => onSortClick("progress")}
+              >
+                Explorers ({totals.progress})
+              </TableSortLabel>
             </TableCell>
 
             <TableCell className={classes.narrowCell}>
-              Total Students ({totals.participants})
+              <TableSortLabel
+                active={sortState.field === "participants"}
+                direction={sortState.direction}
+                onClick={() => onSortClick("participants")}
+              >
+                Total Students ({totals.participants})
+              </TableSortLabel>
             </TableCell>
             <TableCell
               className={classes.narrowCell}
               style={{ width: "50%", textAlign: "center" }}
             >
-              Course
+              <TableSortLabel
+                active={sortState.field === "name"}
+                direction={sortState.direction}
+                onClick={() => onSortClick("name")}
+              >
+                Course
+              </TableSortLabel>
             </TableCell>
             {isInstructor && <TableCell>Actions</TableCell>}
           </TableRow>

@@ -23,6 +23,7 @@ import {
   cohortCourseUpdateRequest,
   cohortOpen,
   cohortOpenAssistantsDialog,
+  cohortSortChange,
   cohortUpdateAssistantsRequest
 } from "./actions";
 import { sagaInjector } from "../../services/saga";
@@ -34,7 +35,7 @@ import { cohort } from "../../types";
 
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { USER_STATUSES } from "../../types/constants";
-import { selectUserStatus } from "./selectors";
+import { selectUserStatus, selectCohort } from "./selectors";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import CohortTabs from "../../components/tabs/CohortTabs";
@@ -104,6 +105,8 @@ class Cohort extends React.PureComponent {
 
   onRemoveCourseClick = courseId =>
     this.setState({ deletingCourseId: courseId });
+  onSortChange = sortField => this.props.dispatch(cohortSortChange(sortField));
+
   onRemoveAccept = () => {
     const { cohort, dispatch } = this.props;
     const { deletingCourseId } = this.state;
@@ -128,7 +131,6 @@ class Cohort extends React.PureComponent {
   render() {
     const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
     const tabIndex = this.state.tabIndex;
-
     if (!cohort) {
       return <div>Loading</div>;
     }
@@ -238,6 +240,8 @@ class Cohort extends React.PureComponent {
           isInstructor={tabIndex === COHORT_TAB_INSTRUCTOR}
           isOwner={isOwner}
           onRemoveClick={this.onRemoveCourseClick}
+          onSortClick={this.onSortChange}
+          sortState={ui.sortState}
         />
       </Fragment>
     );
@@ -252,7 +256,7 @@ const mapStateToProps = state => ({
     state.firebase.data.myCourses,
     state.firebase.data.publicCourses
   ),
-  cohort: state.cohort.cohort,
+  cohort: selectCohort(state),
   currentUser: {
     uid: state.firebase.auth.uid,
     name: state.firebase.auth.displayName,
