@@ -7,8 +7,7 @@ import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { ACTIVITY_TYPES, CodeCombat_Multiplayer_Data } from "../../services/paths";
-import { externalProfileRefreshRequest } from '../../containers/Account/actions';
-import { assignmentPathProblemSolutionRequest } from "../../containers/Assignments/actions";
+import { externalProfileRefreshRequest } from "../../containers/Account/actions";
 
 
 const externalProfile = {
