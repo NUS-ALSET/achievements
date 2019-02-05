@@ -6,8 +6,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { ACTIVITY_TYPES } from "../../services/paths";
+import { ACTIVITY_TYPES, CodeCombat_Multiplayer_Data } from "../../services/paths";
 import { externalProfileRefreshRequest } from '../../containers/Account/actions';
+import { assignmentPathProblemSolutionRequest } from "../../containers/Assignments/actions";
 
 
 const externalProfile = {
@@ -35,21 +36,23 @@ class CodeCombatActivity extends React.PureComponent {
   render() {
     const {
       problem,
-      userAchievements,
+      userAchievements
     } = this.props;
 
-    const achievements = ((userAchievements || {}).CodeCombat || {}).achievements;
-    if(!achievements){
+    const codeCombatAchievements = ((userAchievements || {}).CodeCombat || {});
+    const achievements = codeCombatAchievements.achievements;
+    
+    if (!achievements){
       return (
         <Typography>
             Please add your Codecombat profile to complete this assigment.  
         </Typography>
       )
     }
-    const updateCodeCombatAchievements = (<Button color="primary"variant="contained" onClick={this.updateCodeCombatProfile} style={{marginLeft : '10px'}}>
+    const updateCodeCombatAchievements = (<Button color="primary" onClick={this.updateCodeCombatProfile} style={{marginLeft : "10px"}}  variant="contained">
       Update CodeCombat Profile
     </Button>)
-    if(problem.type===ACTIVITY_TYPES.codeCombat.id){
+    if (problem.type===ACTIVITY_TYPES.codeCombat.id){
       const hasLevelCompleted = (achievements[problem.level] || {}).complete;
       if (hasLevelCompleted) {
         this.props.onCommit({
@@ -77,12 +80,12 @@ class CodeCombatActivity extends React.PureComponent {
               </Typography>
               <br/>
               <Button color="primary" variant="contained">
-                <a href={levelURL} target="__blank" style={{color : 'white'}}> Go To Level</a>
+                <a href={levelURL} style={{color : "white"}} target="__blank" > Go To Level</a>
               </Button>
               { updateCodeCombatAchievements }
             </div>
       );
-    }else if(problem.type===ACTIVITY_TYPES.codeCombatNumber.id){
+    } else if (problem.type===ACTIVITY_TYPES.codeCombatNumber.id){
       const totalAchievements = (userAchievements.CodeCombat || {}).totalAchievements || 0;
       const hasNumOfLevelCompleted = totalAchievements >=  problem.count;
       if (hasNumOfLevelCompleted) {
@@ -107,23 +110,35 @@ class CodeCombatActivity extends React.PureComponent {
             <Typography>
               This assigment required to complete {problem.count} levels,
               but you have only compledted levels;
-                You have completed only {totalAchievements || 0} {totalAchievements > 0 ? 'levels' : 'level'} on CodeCombat.
+                You have completed only {totalAchievements || 0} {totalAchievements > 0 ? "levels" : "level"} on CodeCombat.
               </Typography>
               <Typography>
                 Would you like to go to CodeCombat.
               </Typography>
               <br/>
               <Button color="primary"variant="contained">
-                <a href={externalProfile.url} target="__blank" style={{color : 'white'}}> Go To Codecombat</a>
+                <a
+                  href={externalProfile.url}
+                  style={{ color : "white" }}
+                  target="__blank">
+                  Go To Codecombat
+                </a>
               </Button>
               { updateCodeCombatAchievements }
             </div>
       );
-    }else if(problem.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id){
+    } else if (problem.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id){
       const levelUrl = `//codecombat.com/play/level/${problem.level}?team=${problem.team}`;
       const ladderUrl = `//codecombat.com/play/level/${problem.level}`;
-      const userPercentile = achievements.ladders ? (achievements.ladders[`${problem.level}-${problem.level.team}`] || {}).percentile : null;
-      const hasNumOfLevelCompleted = userPercentile >=problem.requiredPercentile          
+      const userPercentile = codeCombatAchievements.ladders ? (codeCombatAchievements.ladders[`${problem.level}-${problem.team}`] || {}).percentile : null;
+      const hasNumOfLevelCompleted = userPercentile >=problem.requiredPercentile;
+      const ladderKey = `${problem.level}-${problem.team}`;
+      const ladder = (codeCombatAchievements.ladders || {})[ladderKey] || {};
+      const ranked = ladder.isRanked ? ladder.rank : 0;
+      const teamColor = CodeCombat_Multiplayer_Data.teams[problem.team].name;
+      const level = CodeCombat_Multiplayer_Data.levels[problem.level].name;
+      const numInRanking = ladder.numInRanking || 0;
+
       if (hasNumOfLevelCompleted) {
         this.props.onCommit({
           type: "SOLUTION",
@@ -148,26 +163,22 @@ class CodeCombatActivity extends React.PureComponent {
           </Typography>
             <Typography>
               {
-                userPercentile 
-                ? `You have got only "${userPercentile}" percentile, but to complete this level you have to get "${problem.requiredPercentile}" percentile.`
-                : `You have not get any percentile from this level. To complete this level you have to get "${problem.requiredPercentile}" percentile.`
+                Object.keys(ladder).length > 0
+                ? `You are ranked ${ranked} out of ${numInRanking} (${ladder.percentile} percentile) playing as ${teamColor} on the ${level} multiplayer level. You have to be better than ${problem.requiredPercentile} percent of the other players to complete this activity.`
+                : `You have not played "${level}" level as "${teamColor}" team.`
               }
-              </Typography>
-              <Typography>
-                Would you like to go to CodeCombat to complete this level.
               </Typography>
               <br/>
               <Button color="primary"variant="contained">
-                <a href={ladderUrl} target="__blank" style={{color : 'white'}}> Go To Ladder</a>
-                </Button>
-                <Button color="primary"variant="contained" style={{marginLeft : '10px'}}>
-                <a href={levelUrl} target="__blank" style={{color : 'white'}}> Go To Level</a>
-                </Button>
+                <a href={ladderUrl} style={{color : "white"}} target="__blank" > Go To Ladder</a>
+              </Button>
+              <Button color="primary" style={{marginLeft : "10px"}} variant="contained" >
+                <a href={levelUrl} style={{color : "white"}} target="__blank" > Go To Level</a>
+              </Button>
                 { updateCodeCombatAchievements }
             </div>
       );
-    }
-    else{
+    } else {
       return (
         <div>
           Wrong Activity Type.
