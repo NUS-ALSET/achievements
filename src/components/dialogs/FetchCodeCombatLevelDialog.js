@@ -13,14 +13,15 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
-import { ACTIVITY_TYPES } from '../../services/paths'
+import { ACTIVITY_TYPES,CodeCombat_Multiplayer_Data } from '../../services/paths'
 
 class FetchCodeCombatLevelDialog extends React.PureComponent {
   static propTypes = {
     activity: PropTypes.any,
     codeCombatId: PropTypes.string,
     onClose: PropTypes.func,
-    open: PropTypes.bool
+    open: PropTypes.bool,
+    userAchievements: PropTypes.object
   };
 
   static defaultProps = {
@@ -63,10 +64,17 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
   };
 
   render() {
-    let { activity, onClose, open } = this.props;
-    if(!activity){
+    let { activity, onClose, open, userAchievements } = this.props;
+    if (!activity){
       return "";
     }
+    const codeCombatAchievements = userAchievements.CodeCombat;
+    const ladderKey = `${activity.level}-${activity.team}`;
+    const ladder = (codeCombatAchievements.ladders || {})[ladderKey] || {};
+    const ranked = ladder.isRanked ? ladder.rank : 0;
+    const teamColor = CodeCombat_Multiplayer_Data.teams[activity.team].name;
+    const level = CodeCombat_Multiplayer_Data.levels[activity.level].name;
+    const numInRanking = ladder.numInRanking || 0;
 
     return (
       <Dialog onClose={onClose} open={open}>
@@ -86,8 +94,11 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
         }
         {
           activity.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id &&  <Typography>
-          You have not get {`"${activity.requiredPercentile}"`} percentile in {`"${activity.level}"`} level with {`"${activity.team}"`} team on CodeCombat.
-          Would you like to go to CodeCombat to complete this level
+          {
+            Object.keys(ladder).length > 0
+            ? `You are ranked ${ranked} out of ${numInRanking} (${ladder.percentile} percentile) playing as ${teamColor} on the ${level} multiplayer level. You have to be better than ${activity.requiredPercentile} percent of the other players to complete this activity.`
+            : `You have not played "${level}" level as "${teamColor}" team.`
+          }
           </Typography>
         }
          
