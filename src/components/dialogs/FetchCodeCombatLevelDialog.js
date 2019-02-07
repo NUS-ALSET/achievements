@@ -42,7 +42,7 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
   goToLevel = () => {
     const { activity, onClose } = this.props;
     let url = "";
-    switch(activity.type){
+    switch (activity.type){
       case ACTIVITY_TYPES.codeCombat.id:{
         url = `//codecombat.com/play/level/${activity.level}`;
         break;
@@ -75,7 +75,6 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
     const teamColor = CodeCombat_Multiplayer_Data.teams[activity.team].name;
     const level = CodeCombat_Multiplayer_Data.levels[activity.level].name;
     const numInRanking = ladder.numInRanking || 0;
-
     return (
       <Dialog onClose={onClose} open={open}>
         <DialogTitle>{ACTIVITY_TYPES[activity.type].caption}</DialogTitle>
