@@ -312,11 +312,14 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             "Completed"
           )
         );
+        yield put(
+          notificationShow("Solution submitted")
+        );
         yield put(closeActivityDialog());
         return;
       }
       const levelsData = yield call(accountService.fetchAchievements, data.uid);
-        if(levelsData && (
+        if (levelsData && (
           (data.activity.type === ACTIVITY_TYPES.codeCombat.id
           && levelsData.achievements[data.activity.level] 
           && levelsData.achievements[data.activity.level].complete
@@ -330,7 +333,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
           (
             data.activity.type === ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id
             && levelsData.ladders
-            && (levelsData.ladders[`${data.activity.level}-${data.activity.level.team}`] || {}).percentile >=data.activity.requiredPercentile          
+            && (levelsData.ladders[`${data.activity.level}-${data.activity.team}`] || {}).percentile >= data.activity.requiredPercentile
           ))
           ){
             yield call(
@@ -350,9 +353,11 @@ export function* pathActivityCodeCombatOpenHandler(action) {
                 "Completed"
               )
             );
+            yield put(
+              notificationShow("Solution submitted")
+            );
             yield put(closeActivityDialog());
-        }
-        else {
+        } else {
           yield put(
             pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
           );
