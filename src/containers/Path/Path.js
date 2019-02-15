@@ -111,7 +111,8 @@ export class Path extends React.Component {
     pendingProfileUpdate: PropTypes.bool,
     ui: PropTypes.any,
     uid: PropTypes.string,
-    openJestActivity: PropTypes.func
+    openJestActivity: PropTypes.func,
+    userAchievements: PropTypes.object
   };
 
   state = {
@@ -276,7 +277,8 @@ export class Path extends React.Component {
       pendingProfileUpdate,
       ui,
       uid,
-      fetchGithubFiles
+      fetchGithubFiles,
+      userAchievements
     } = this.props;
 
     if (!(pathActivities && pathActivities.path)) {
@@ -435,6 +437,7 @@ export class Path extends React.Component {
           onClose={onCloseDialog}
           onCommit={this.onProfileUpdate}
           open={ui.dialog.type === `${ACTIVITY_TYPES.profile.id}Solution`}
+          userAchievements={userAchievements}
         />
         <ActivitiesTable
           activities={pathActivities.activities || []}
@@ -518,6 +521,7 @@ export class Path extends React.Component {
           codeCombatId={codeCombatProfile && codeCombatProfile.id}
           onClose={onCloseDialog}
           open={ui.dialog.type === "FetchCodeCombatLevel"}
+          userAchievements={userAchievements}
         />
         <RequestMorePathContentDialog
           onClose={this.requestMoreDialogHide}
@@ -538,7 +542,10 @@ const mapStateToProps = (state, ownProps) => ({
   pendingActivityId: state.path.ui.pendingActivityId,
   pendingProfileUpdate: state.path.ui.pendingProfileUpdate,
   ui: state.path.ui,
-  uid: state.firebase.auth.uid
+  uid: state.firebase.auth.uid,
+  userAchievements: (state.firebase.data.userAchievements || {})[
+    ownProps.match.params.accountId || state.firebase.auth.uid
+  ]
 });
 
 const mapDispatchToProps = {
