@@ -97,9 +97,21 @@ export const CodeCombat_Multiplayer_Data = {
       id: "king-of-the-hill",
       name: "King of the Hill"
     },
-    "treasure-games":{
+    "treasure-games": {
       id: "treasure-games",
       name: "Treasure Games"
+    },
+    "escort-duty": {
+      id: "escort-duty",
+      name: "Escort Duty"
+    },
+    "tesla-tesoro": {
+      id: "tesla-tesoro",
+      name: "Tesla Tesoro"
+    },
+    "elemental-wars": {
+      id: "elemental-wars",
+      name: "Elemental Wars"
     }
   },
   rankingPercentile: [0, 10, 20, 30, 40, 50]
