@@ -20,7 +20,8 @@ import {
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
   problemSolutionSubmitSuccess,
-  problemSolutionExecutionStatus
+  problemSolutionExecutionStatus,
+  PROBLEM_SOLUTION_ATTEMPT_REQUEST
 } from "./actions";
 import { push } from "connected-react-router";
 import { delay } from "redux-saga";
@@ -142,6 +143,7 @@ export function* problemSolveUpdateHandler(action) {
     );
   }
 }
+
 
 export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
@@ -372,6 +374,18 @@ export function* problemSolutionSubmitRequestHandler(action) {
   }
 }
 
+export function* problemSolutionAttemptRequestHandler(action) {
+  const uid = yield select(state => state.firebase.auth.uid);
+
+  if (uid) {
+    yield call(
+      [pathsService, pathsService.saveAttemptedSolution],
+      uid,
+      action.payload
+    );
+  }
+}
+
 export default [
   function* watchProblemInitRequest() {
     yield takeLatest(PROBLEM_INIT_REQUEST, problemInitRequestHandler);
@@ -399,6 +413,12 @@ export default [
     yield takeLatest(
       PROBLEM_SOLUTION_SUBMIT_REQUEST,
       problemSolutionSubmitRequestHandler
+    );
+  },
+  function* watchProblemSolutionAttemptRequest() {
+    yield takeLatest(
+      PROBLEM_SOLUTION_ATTEMPT_REQUEST,
+      problemSolutionAttemptRequestHandler
     );
   }
 ];

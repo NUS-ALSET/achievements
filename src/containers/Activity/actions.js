@@ -161,3 +161,17 @@ export const problemSolutionSubmitFail = (
   payload,
   reason
 });
+
+export const PROBLEM_SOLUTION_ATTEMPT_REQUEST =
+  "PROBLEM_SOLUTION_ATTEMPT_REQUEST";
+export const problemSolutionAttemptRequest = (problemId, pathId, activityType, completed, openTime, attemptTime) => ({
+  type: PROBLEM_SOLUTION_ATTEMPT_REQUEST,
+  payload: {
+    problemId,
+    pathId,
+    activityType,
+    completed,
+    openTime,
+    attemptTime
+  }
+});

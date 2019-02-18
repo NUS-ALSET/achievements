@@ -183,6 +183,20 @@ export class PathsService {
           throw new Error("Missed Path Problem");
         }
         switch (pathProblem.type) {
+          case "jest": {
+            if(pathProblem.version === 1){
+              return firebase
+              .ref(`/activityData/${activitiyId}`)
+              .once("value")
+              .then(data => {
+                Object.assign(pathProblem, {
+                  files: data.val().files 
+                })
+                return pathProblem;
+              })
+            }
+            return pathProblem;
+          }
           case "jupyter":
           case "jupyterInline": {
               return Promise.all([
@@ -1195,6 +1209,14 @@ export class PathsService {
               name: paths[pathKey].name
             }))
       );
+  }
+
+  saveAttemptedSolution(uid, payload){
+    payload.userKey = uid;
+    return firebase
+    .database()
+    .ref('analytics/activityAttempts')
+    .push(payload);
   }
 }
 
