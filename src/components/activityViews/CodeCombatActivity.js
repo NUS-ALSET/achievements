@@ -84,7 +84,7 @@ class CodeCombatActivity extends React.PureComponent {
               { updateCodeCombatAchievements }
             </div>
       );
-    } else if (problem.type===ACTIVITY_TYPES.codeCombatNumber.id){
+    } else if (problem.type===ACTIVITY_TYPES.codeCombatNumber.id) {
       const totalAchievements = (userAchievements.CodeCombat || {}).totalAchievements || 0;
       const hasNumOfLevelCompleted = totalAchievements >=  problem.count;
       if (hasNumOfLevelCompleted) {
