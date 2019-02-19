@@ -155,6 +155,7 @@ export class Path extends React.Component {
           activity
         );
         break;
+      case ACTIVITY_TYPES.multipleQuestion.id:
       case ACTIVITY_TYPES.jupyterInline.id:
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.youtube.id:
@@ -283,7 +284,7 @@ export class Path extends React.Component {
 
     if (!(pathActivities && pathActivities.path)) {
       if (pathActivities.path === null) {
-        return <p>Path does not exist!</p>
+        return <p>Path does not exist!</p>;
       }
       return <LinearProgress />;
     }
