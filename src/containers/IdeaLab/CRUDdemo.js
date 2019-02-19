@@ -131,7 +131,7 @@ class CRUDdemo extends React.Component {
         </ul>
         {analyticsData ? (
           <Fragment>
-            <h1>Fetched data from Firebase /analytics/jupyterSolutions node</h1>
+            <h1>Fetched data from Firebase /analytics/activityAttempts node</h1>
             <Button
               aria-haspopup="true"
               aria-owns={anchorEl ? "simple-menu" : undefined}
@@ -190,7 +190,7 @@ class CRUDdemo extends React.Component {
           </Fragment>
         ) : (
           <Fragment>
-            <h1>fetching from /analytics/jupyterSolutions</h1>
+            <h1>fetching from /analytics/activityAttempts</h1>
             <h2>data with pathKey = {jupyterAnalyticsPathKey}:</h2>
             <h2>...</h2>
           </Fragment>
@@ -251,9 +251,10 @@ export default compose(
         storeAs: "CRUDdemoData"
       },
       {
-        path: "/analytics/jupyterSolutions",
-        storeAs: "analyticsData"
-      }
+        path: "/analytics/activityAttempts",
+        storeAs: "analyticsData",
+        queryParams: ["orderByChild=activityType", 'equalTo=jupyterInline']
+      },
     ].concat(
       firebaseAuth.isEmpty
         ? []

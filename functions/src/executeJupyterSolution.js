@@ -37,47 +37,11 @@ const executeJupyterSolution = (data, taskKey, owner) => {
         })
         .then(() => response.data.ipynb)
     )
-    .then(solution => {
-      let solutionFailed = false;
-      solution.cells.slice(-Number(activity.frozen)).forEach(cell => {
-        solutionFailed =
-          solutionFailed || !!(cell.outputs && cell.outputs.join("").trim());
-        return true;
-      });
-      return admin
-        .database()
-        .ref("/analytics/jupyterSolutions")
-        .push({
-          time: {
-            ".sv": "timestamp"
-          },
-          userKey: owner,
-          activityKey: data.problem,
-          pathKey: activity.path,
-          open: data.open || 0,
-          completed: Number(!solutionFailed)
-        });
-    })
     .catch(() =>
       admin
         .database()
-        .ref("/analytics/jupyterSolutions")
-        .push({
-          time: {
-            ".sv": "timestamp"
-          },
-          userKey: owner,
-          pathKey: activity.path,
-          activityKey: data.problem,
-          open: data.open,
-          completed: 0
-        })
-        .then(() =>
-          admin
-            .database()
-            .ref(`/jupyterSolutionsQueue/responses/${taskKey}`)
-            .set(false)
-        )
+        .ref(`/jupyterSolutionsQueue/responses/${taskKey}`)
+        .set(false)
     )
     .then(() =>
       admin

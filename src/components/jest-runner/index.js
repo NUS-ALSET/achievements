@@ -6,8 +6,8 @@ import Loader from "./Loader";
 import Notification from "./Notification";
 import FileDirectory from "./FileDirectory";
 import EditIcon from "@material-ui/icons/Edit";
-
-import { APP_SETTING } from "../../achievementsApp/config";
+import { problemSolutionAttemptRequest } from '../../containers/Activity/actions';
+import {  APP_SETTING } from "../../achievementsApp/config";
 
 import "./index.css";
 
@@ -20,9 +20,19 @@ class JestRunner extends React.Component {
       notificationMsg: "",
       selectedFile: this.getFirstWritableFile(props),
       files: this.getFiles(props),
-      solution: props.solution
+      solution: props.solution,
+      openTime: null
     };
     this.testSolution = null;
+  }
+  saveAttemptedSolution=(completed)=>{
+    //problemId, pathId, activityType, completed, openTime, attemptTime
+    this.props.problemSolutionAttemptRequest
+    ? this.props.problemSolutionAttemptRequest( (this.props.problem.id || this.props.problem.problemId), this.props.problem.path,this.props.problem.type, Number(completed), this.state.openTime, new Date().getTime())
+    : this.props.dispatch(
+      problemSolutionAttemptRequest( (this.props.problem.id || this.props.problem.problemId), this.props.problem.path, this.props.problem.type, Number(completed), this.state.openTime, new Date().getTime())
+    )
+   
   }
   getFirstWritableFile(props) {
     const files = this.getFiles(props);
@@ -123,6 +133,7 @@ class JestRunner extends React.Component {
           // this.showOutput(data.message);
         } else {
           this.showOutput(data.results);
+          this.saveAttemptedSolution(data.results.success);
         }
         this.hideLoading();
       })
@@ -134,6 +145,11 @@ class JestRunner extends React.Component {
   submitTest = () => {
     this.props.onSubmit(this.testSolution);
   };
+  
+  componentDidMount(){
+    this.setState({ openTime : (new Date()).getTime()})
+  }
+
   render() {
     const {
       output,

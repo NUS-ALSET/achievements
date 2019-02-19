@@ -86,7 +86,9 @@ class AddJestSolutionDialog extends React.PureComponent {
       classes,
       problem,
       solution,
-      readOnly
+      readOnly,
+      problemSolutionAttemptRequest,
+      dispatch
     } = this.props;
 
     return (
@@ -139,6 +141,8 @@ class AddJestSolutionDialog extends React.PureComponent {
           </AppBar>
           {open && problem && (
             <JestRunner
+              dispatch={dispatch}
+              problemSolutionAttemptRequest={problemSolutionAttemptRequest}
               files={problem.files}
               onSubmit={this.handleSubmit}
               problem={problem}

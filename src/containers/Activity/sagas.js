@@ -10,6 +10,7 @@ import {
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_SUBMIT_REQUEST,
   PROBLEM_SOLVE_UPDATE,
+  PROBLEM_SOLUTION_ATTEMPT_REQUEST,
   problemCheckSolutionFail,
   problemInitFail,
   problemInitSuccess,
@@ -20,7 +21,8 @@ import {
   problemSolutionRefreshSuccess,
   problemSolutionSubmitFail,
   problemSolutionSubmitSuccess,
-  problemSolutionExecutionStatus
+  problemSolutionExecutionStatus,
+  problemSolutionAttemptRequest
 } from "./actions";
 import { push } from "connected-react-router";
 import { delay } from "redux-saga";
@@ -143,6 +145,7 @@ export function* problemSolveUpdateHandler(action) {
   }
 }
 
+
 export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
@@ -225,7 +228,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
           solutionFailed || !!(cell.outputs && cell.outputs.join("").trim());
         return true;
       });
-
+      
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
         yield put(
@@ -249,6 +252,11 @@ export function* problemSolutionRefreshRequestHandler(action) {
           })
         );
       }
+      yield put(
+        problemSolutionAttemptRequest(
+          data.pathProblem.problemId, data.pathProblem.pathId, data.pathProblem.type, Number(!solutionFailed), action.openTime, (new Date()).getTime()
+        )
+      )
     }
 
     // Removed `id` field from payload. It looks like we never use
@@ -372,6 +380,18 @@ export function* problemSolutionSubmitRequestHandler(action) {
   }
 }
 
+export function* problemSolutionAttemptRequestHandler(action) {
+  const uid = yield select(state => state.firebase.auth.uid);
+
+  if (uid) {
+    yield call(
+      [pathsService, pathsService.saveAttemptedSolution],
+      uid,
+      action.payload
+    );
+  }
+}
+
 export default [
   function* watchProblemInitRequest() {
     yield takeLatest(PROBLEM_INIT_REQUEST, problemInitRequestHandler);
@@ -399,6 +419,12 @@ export default [
     yield takeLatest(
       PROBLEM_SOLUTION_SUBMIT_REQUEST,
       problemSolutionSubmitRequestHandler
+    );
+  },
+  function* watchProblemSolutionAttemptRequest() {
+    yield takeLatest(
+      PROBLEM_SOLUTION_ATTEMPT_REQUEST,
+      problemSolutionAttemptRequestHandler
     );
   }
 ];
