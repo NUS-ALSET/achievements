@@ -287,6 +287,9 @@ export class AccountService {
     if (config.jupyterLambdaProcessor) {
       configUpdates.jupyterLambdaProcessor = config.jupyterLambdaProcessor;
     }
+    if (config.codeCombatProfileURL) {
+      configUpdates.codeCombatProfileURL = config.codeCombatProfileURL;
+    }
     if (config.jupyterLambdaProcessor) {
       configUpdates.jupyterAnalysisLambdaProcessor =
         config.jupyterAnalysisLambdaProcessor;

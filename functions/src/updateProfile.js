@@ -7,37 +7,45 @@ const Queue = require("firebase-queue");
 
 function updateProfile(data, resolve) {
   switch (data.service) {
-    case "CodeCombat":
-      return admin
+    case "CodeCombat": {
+     return  Promise.all([
+        admin
+        .database()
+        .ref("/config/codeCombatProfileURL")
+        .once("value")
+        .then(snapshot => snapshot.val()),
+        admin
         .database()
         .ref(`/userAchievements/${data.uid}/${data.service}/achievements`)
         .once("value")
         .then(existing => existing.val() || {})
-        .then(() =>
-          axios
-            .get(
-              "https://alset.azurewebsites.net/api/ccUserStats?username=" +
-                data.serviceId
-                  .toLowerCase()
-                  .replace(/[ _]/g, "-")
-                  .replace(/[!@#$%^&*()]/g, "")
-            )
-            .then(response => {
-              return admin
-                .database()
-                .ref(`/userAchievements/${data.uid}/${data.service}`)
-                .set(
-                  Object.assign(
-                    {
-                      lastUpdate: new Date().getTime()
-                    },
-                    response.data
-                  )
-                );
-            })
-        )
-        .catch(err => console.error(data.uid, err.message))
-        .then(() => resolve());
+      ])
+      .then(([codeCombatProfileURL]) =>
+        axios
+          .get(
+            `${codeCombatProfileURL}?username=` +
+              data.serviceId
+                .toLowerCase()
+                .replace(/[ _]/g, "-")
+                .replace(/[!@#$%^&*()]/g, "")
+          )
+          .then(response => {
+            return admin
+              .database()
+              .ref(`/userAchievements/${data.uid}/${data.service}`)
+              .set(
+                Object.assign(
+                  {
+                    lastUpdate: new Date().getTime()
+                  },
+                  response.data
+                )
+              );
+          })
+      )
+      .catch(err => console.error(data.uid, err.message))
+      .then(() => resolve());
+    }
     default:
       return Promise.resolve().then(() => resolve());
   }

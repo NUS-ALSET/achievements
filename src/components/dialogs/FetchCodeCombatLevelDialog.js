@@ -13,7 +13,8 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Typography from "@material-ui/core/Typography";
-import { ACTIVITY_TYPES,CodeCombat_Multiplayer_Data } from '../../services/paths'
+// eslint-disable-next-line max-len
+import { ACTIVITY_TYPES, CodeCombat_Multiplayer_Data } from "../../services/paths";
 
 class FetchCodeCombatLevelDialog extends React.PureComponent {
   static propTypes = {
@@ -42,7 +43,7 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
   goToLevel = () => {
     const { activity, onClose } = this.props;
     let url = "";
-    switch(activity.type){
+    switch (activity.type){
       case ACTIVITY_TYPES.codeCombat.id:{
         url = `//codecombat.com/play/level/${activity.level}`;
         break;
@@ -68,14 +69,7 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
     if (!activity){
       return "";
     }
-    const codeCombatAchievements = userAchievements.CodeCombat;
-    const ladderKey = `${activity.level}-${activity.team}`;
-    const ladder = (codeCombatAchievements.ladders || {})[ladderKey] || {};
-    const ranked = ladder.isRanked ? ladder.rank : 0;
-    const teamColor = CodeCombat_Multiplayer_Data.teams[activity.team].name;
-    const level = CodeCombat_Multiplayer_Data.levels[activity.level].name;
-    const numInRanking = ladder.numInRanking || 0;
-
+    
     return (
       <Dialog onClose={onClose} open={open}>
         <DialogTitle>{ACTIVITY_TYPES[activity.type].caption}</DialogTitle>
@@ -93,13 +87,24 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
           </Typography>
         }
         {
-          activity.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id &&  <Typography>
-          {
-            Object.keys(ladder).length > 0
-            ? `You are ranked ${ranked} out of ${numInRanking} (${ladder.percentile} percentile) playing as ${teamColor} on the ${level} multiplayer level. You have to be better than ${activity.requiredPercentile} percent of the other players to complete this activity.`
-            : `You have not played "${level}" level as "${teamColor}" team.`
-          }
-          </Typography>
+          activity.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id && (() => {
+            const codeCombatAchievements = userAchievements.CodeCombat;
+            const ladderKey = `${activity.level}-${activity.team}`;
+            const ladder = (codeCombatAchievements.ladders || {})[ladderKey] || {};
+            const ranked = ladder.isRanked ? ladder.rank : 0;
+            const teamColor = CodeCombat_Multiplayer_Data.teams[activity.team].name;
+            const level = CodeCombat_Multiplayer_Data.levels[activity.level].name;
+            const numInRanking = ladder.numInRanking || 0;
+            return (
+              <Typography>
+                {
+                  Object.keys(ladder).length > 0
+                  ? `You are ranked ${ranked} out of ${numInRanking} (${ladder.percentile} percentile) playing as ${teamColor} on the ${level} multiplayer level. You have to be better than ${activity.requiredPercentile} percent of the other players to complete this activity.`
+                  : `You have not played "${level}" level as "${teamColor}" team.`
+                }
+              </Typography>
+            );
+          })()
         }
          
         </DialogContent>
