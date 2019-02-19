@@ -10,6 +10,7 @@ import {
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_SUBMIT_REQUEST,
   PROBLEM_SOLVE_UPDATE,
+  PROBLEM_SOLUTION_ATTEMPT_REQUEST,
   problemCheckSolutionFail,
   problemInitFail,
   problemInitSuccess,
@@ -21,7 +22,7 @@ import {
   problemSolutionSubmitFail,
   problemSolutionSubmitSuccess,
   problemSolutionExecutionStatus,
-  PROBLEM_SOLUTION_ATTEMPT_REQUEST
+  problemSolutionAttemptRequest
 } from "./actions";
 import { push } from "connected-react-router";
 import { delay } from "redux-saga";
@@ -227,7 +228,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
           solutionFailed || !!(cell.outputs && cell.outputs.join("").trim());
         return true;
       });
-
+      
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
         yield put(
@@ -251,6 +252,11 @@ export function* problemSolutionRefreshRequestHandler(action) {
           })
         );
       }
+      yield put(
+        problemSolutionAttemptRequest(
+          data.pathProblem.problemId, data.pathProblem.pathId, data.pathProblem.type, Number(!solutionFailed), action.openTime, (new Date()).getTime()
+        )
+      )
     }
 
     // Removed `id` field from payload. It looks like we never use

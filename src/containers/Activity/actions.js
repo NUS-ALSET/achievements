@@ -164,14 +164,14 @@ export const problemSolutionSubmitFail = (
 
 export const PROBLEM_SOLUTION_ATTEMPT_REQUEST =
   "PROBLEM_SOLUTION_ATTEMPT_REQUEST";
-export const problemSolutionAttemptRequest = (problemId, pathId, activityType, completed, openTime, attemptTime) => ({
+export const problemSolutionAttemptRequest = (activityKey, pathKey, activityType, completed, open, time) => ({
   type: PROBLEM_SOLUTION_ATTEMPT_REQUEST,
   payload: {
-    problemId,
-    pathId,
+    activityKey,
+    pathKey,
     activityType,
     completed,
-    openTime,
-    attemptTime
+    open,
+    time
   }
 });
