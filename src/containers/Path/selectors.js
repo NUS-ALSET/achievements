@@ -66,6 +66,8 @@ const getActivitySelector = problem => {
   switch (problem.type) {
     case ACTIVITY_TYPES.text.id:
       return "Text Activity";
+    case ACTIVITY_TYPES.multipleQuestion.id:
+      return "Multiple Question Activity";
     case ACTIVITY_TYPES.profile.id:
       return "Fetch CodeCombat profile";
     case ACTIVITY_TYPES.codeCombat.id:
