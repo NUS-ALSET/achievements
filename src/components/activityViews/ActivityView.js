@@ -78,7 +78,8 @@ class ActivityView extends React.PureComponent {
       pathProblem,
       solution,
       readOnly,
-      userAchievements
+      userAchievements,
+      problemSolutionAttemptRequest,
     } = this.props;
     let SpecificView = views[pathProblem.type];
     const extraProps = ["jest", "jestInline", "game"].includes(pathProblem.type)
@@ -99,6 +100,7 @@ class ActivityView extends React.PureComponent {
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         <SpecificView
           dispatch={dispatch}
+          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           onChange={onProblemChange}
           onClose={onClose}
           onCommit={onCommit}

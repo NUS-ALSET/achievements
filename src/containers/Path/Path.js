@@ -62,7 +62,7 @@ import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialo
 import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import { problemSolutionSubmitRequest } from "../Activity/actions";
+import { problemSolutionSubmitRequest, problemSolutionAttemptRequest } from "../Activity/actions";
 import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
@@ -284,7 +284,8 @@ export class Path extends React.Component {
       ui,
       uid,
       fetchGithubFiles,
-      userAchievements
+      userAchievements,
+      problemSolutionAttemptRequest
     } = this.props;
 
     if (!(pathActivities && pathActivities.path)) {
@@ -396,6 +397,7 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddJestSolutionDialog
+          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`}
@@ -581,7 +583,8 @@ const mapDispatchToProps = {
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
   fetchGithubFiles: fetchGithubFiles,
-  openJestActivity: pathOpenJestSolutionDialog
+  openJestActivity: pathOpenJestSolutionDialog,
+  problemSolutionAttemptRequest: problemSolutionAttemptRequest
 };
 
 export default compose(

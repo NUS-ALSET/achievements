@@ -54,6 +54,12 @@
           ".write": "auth.uid == $uidKey"
         }
       },
+      "activityAttempts": {
+        ".read": true,
+        "$attemptKey": {
+          ".write": "newData.child('userKey').val() == auth.uid"
+        }
+      },
       "jupyterSolutions": {
         ".read": true
       },

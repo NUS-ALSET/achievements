@@ -35,7 +35,7 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
 
   goToLadder=()=>{
     const { activity, onClose } = this.props;
-    const url = `//codecombat.com/play/level/${activity.level}`;
+    const url = `//codecombat.com/play/ladder/${activity.level}`;
     window.open(url, "_blank");
     onClose();   
   }

@@ -84,7 +84,7 @@ class CodeCombatActivity extends React.PureComponent {
               { updateCodeCombatAchievements }
             </div>
       );
-    } else if (problem.type===ACTIVITY_TYPES.codeCombatNumber.id){
+    } else if (problem.type===ACTIVITY_TYPES.codeCombatNumber.id) {
       const totalAchievements = (userAchievements.CodeCombat || {}).totalAchievements || 0;
       const hasNumOfLevelCompleted = totalAchievements >=  problem.count;
       if (hasNumOfLevelCompleted) {
@@ -128,7 +128,7 @@ class CodeCombatActivity extends React.PureComponent {
       );
     } else if (problem.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id){
       const levelUrl = `//codecombat.com/play/level/${problem.level}?team=${problem.team}`;
-      const ladderUrl = `//codecombat.com/play/level/${problem.level}`;
+      const ladderUrl = `//codecombat.com/play/ladder/${problem.level}`;
       const userPercentile = codeCombatAchievements.ladders ? (codeCombatAchievements.ladders[`${problem.level}-${problem.team}`] || {}).percentile : null;
       const hasNumOfLevelCompleted = userPercentile >=problem.requiredPercentile;
       const ladderKey = `${problem.level}-${problem.team}`;

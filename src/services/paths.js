@@ -101,6 +101,18 @@ export const CodeCombat_Multiplayer_Data = {
     "treasure-games": {
       id: "treasure-games",
       name: "Treasure Games"
+    },
+    "escort-duty": {
+      id: "escort-duty",
+      name: "Escort Duty"
+    },
+    "tesla-tesoro": {
+      id: "tesla-tesoro",
+      name: "Tesla Tesoro"
+    },
+    "elemental-wars": {
+      id: "elemental-wars",
+      name: "Elemental Wars"
     }
   },
   rankingPercentile: [0, 10, 20, 30, 40, 50]
@@ -184,6 +196,20 @@ export class PathsService {
           throw new Error("Missed Path Problem");
         }
         switch (pathProblem.type) {
+          case "jest": {
+            if(pathProblem.version === 1){
+              return firebase
+              .ref(`/activityData/${activitiyId}`)
+              .once("value")
+              .then(data => {
+                Object.assign(pathProblem, {
+                  files: data.val().files 
+                })
+                return pathProblem;
+              })
+            }
+            return pathProblem;
+          }
           case "jupyter":
           case "jupyterInline": {
             return Promise.all([
@@ -1226,6 +1252,14 @@ export class PathsService {
               name: paths[pathKey].name
             }))
       );
+  }
+
+  saveAttemptedSolution(uid, payload){
+    payload.userKey = uid;
+    return firebase
+    .database()
+    .ref('analytics/activityAttempts')
+    .push(payload);
   }
 }
 
