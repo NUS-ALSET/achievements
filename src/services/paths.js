@@ -1132,6 +1132,7 @@ export class PathsService {
     const actions = [];
     const needUpdate = !!pathActivities.activities.find(activity =>
       [
+        ACTIVITY_TYPES.profile.id,
         ACTIVITY_TYPES.codeCombat.id,
         ACTIVITY_TYPES.codeCombatNumber.id
       ].includes(activity.type)
@@ -1148,6 +1149,7 @@ export class PathsService {
     for (const activity of pathActivities.activities) {
       if (
         [
+          ACTIVITY_TYPES.profile.id,
           ACTIVITY_TYPES.codeCombat.id,
           ACTIVITY_TYPES.codeCombatNumber.id
         ].includes(activity.type)

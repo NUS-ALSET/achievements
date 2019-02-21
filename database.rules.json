@@ -139,7 +139,12 @@
     "completedActivities": {
       "$userKey": {
         ".read": true,
-        ".write": "auth != null && $userKey == auth.uid"
+        "$pathKey": {
+          ".write": "auth != null && (
+            $userKey == auth.uid ||
+            root.child('/paths/' + $pathKey + '/owner').val() == auth.uid
+          )"
+        }
       }
     },
     "config": {
@@ -320,7 +325,11 @@
         ".read": "auth != null",
         "$userKey": {
           ".read": "auth != null",
-          ".write": "auth != null && auth.uid == $userKey"
+          ".write": "auth != null && (
+            auth.uid == $userKey ||
+            root.child('/paths/' + root.child('/activities/' +
+              $activityKey + '/path').val() + '/owner').val() == auth.uid
+          )"
         }
       }
     },

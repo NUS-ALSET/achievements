@@ -346,7 +346,7 @@ export class Path extends React.Component {
             ]) || [
               ui.inspectedUser && {
                 label: "Refersh",
-                handler: () => ({})
+                handler: this.refreshSolutions.bind(this)
               }
             ]
           }
@@ -458,7 +458,7 @@ export class Path extends React.Component {
           onEditActivity={onActivityDialogShow}
           onMoveActivity={this.onMoveActivity}
           onOpenActivity={this.onOpenActivity}
-          pathStatus={pathStatus}
+          pathStatus={ui.inspectedUser ? PATH_STATUS_JOINED : pathStatus}
           pendingActivityId={pendingActivityId}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
@@ -601,7 +601,7 @@ export default compose(
 
     return [
       `/activities#orderByChild=path&equalTo=${pathId}`,
-      `/completedActivities/${uid}/${pathId}`,
+      `/completedActivities/${state.path.ui.inspectedUser || uid}/${pathId}`,
       `/paths/${pathId}`,
       `/pathAssistants/${pathId}`,
       `/activities#orderByChild=path&equalTo=${pathId}`,

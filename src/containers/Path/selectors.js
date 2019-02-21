@@ -10,8 +10,12 @@ const getUserId = state => state.firebase.auth.uid;
 
 const getCodeCombatProfile = state =>
   state.firebase.data.userAchievements &&
-  state.firebase.data.userAchievements[state.firebase.auth.uid] &&
-  state.firebase.data.userAchievements[state.firebase.auth.uid].CodeCombat;
+  state.firebase.data.userAchievements[
+    state.path.ui.inspectedUser || state.firebase.auth.uid
+  ] &&
+  state.firebase.data.userAchievements[
+    state.path.ui.inspectedUser || state.firebase.auth.uid
+  ].CodeCombat;
 
 const getPath = (state, ownProps) =>
   ownProps.match.params.pathId[0] === "-"
@@ -40,8 +44,9 @@ const getActivities = (state, ownProps) => {
 };
 
 const getActivitiesSolutions = state =>
-  (state.firebase.data.completedActivities || {})[state.firebase.auth.uid] ||
-  {};
+  (state.firebase.data.completedActivities || {})[
+    state.path.ui.inspectedUser || state.firebase.auth.uid
+  ] || {};
 
 export const pathStatusSelector = createSelector(
   getUserId,
