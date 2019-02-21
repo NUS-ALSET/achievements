@@ -43,7 +43,8 @@ import {
   pathToggleJoinStatusRequest,
   fetchGithubFiles,
   pathActivityCodeCombatOpen,
-  pathOpenJestSolutionDialog
+  pathOpenJestSolutionDialog,
+  pathClose
 } from "./actions";
 import {
   pathActivityChangeRequest,
@@ -87,6 +88,7 @@ export class Path extends React.Component {
     match: PropTypes.object,
     onAddAssistant: PropTypes.func,
     onAssistantKeyChange: PropTypes.func,
+    onClose: PropTypes.func,
     onCloseDialog: PropTypes.func,
     onNotification: PropTypes.func,
     onOpen: PropTypes.func,
@@ -123,6 +125,9 @@ export class Path extends React.Component {
 
   componentDidMount() {
     this.props.onOpen(this.props.match.params.pathId);
+  }
+  componentWillUnmount() {
+    this.props.onClose(this.props.match.params.pathId);
   }
 
   onMoveActivity = (problem, direction) => {
@@ -338,8 +343,12 @@ export class Path extends React.Component {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
               }
-            ]) ||
-            []
+            ]) || [
+              ui.inspectedUser && {
+                label: "Refersh",
+                handler: () => ({})
+              }
+            ]
           }
           paths={[
             {
@@ -444,6 +453,7 @@ export class Path extends React.Component {
           activities={pathActivities.activities || []}
           codeCombatProfile={codeCombatProfile}
           currentUserId={uid || "Anonymous"}
+          inspectedUser={ui.inspectedUser}
           onDeleteActivity={this.onActivityDeleteRequest}
           onEditActivity={onActivityDialogShow}
           onMoveActivity={this.onMoveActivity}
@@ -555,6 +565,7 @@ const mapDispatchToProps = {
   onCloseDialog: closeActivityDialog,
   onNotification: notificationShow,
   onOpen: pathOpen,
+  onClose: pathClose,
   onShowCollaboratorsClick: pathShowCollaboratorsDialog,
   onProfileUpdate: externalProfileUpdateRequest,
   onOpenSolution: pathOpenSolutionDialog,

@@ -244,8 +244,9 @@ export function* updateNewAssignmentFieldHandler(action) {
           data.paths.myPaths,
           data.paths.publicPaths
         );
-        updatedFields.name = `Path progress for ${paths[data.assignment.path].name || "..."}`;
-        yield put(enableCommitAfterAutofill())
+        updatedFields.name = `Path progress for ${paths[data.assignment.path]
+          .name || "..."}`;
+        yield put(enableCommitAfterAutofill());
       }
 
       updatedFields.pathActivity = "";
@@ -268,7 +269,7 @@ export function* updateNewAssignmentFieldHandler(action) {
       }
       if (!data.manualUpdates.name && activity) {
         updatedFields.name = activity.name;
-        yield put(enableCommitAfterAutofill())
+        yield put(enableCommitAfterAutofill());
       }
 
       break;
@@ -428,9 +429,7 @@ export function* assignmentAddAssistantRequestHandler(action) {
       state => state.assignments.dialog.assistants
     );
 
-    const ownerUID = yield select(
-      state => state.firebase.auth.uid
-    );
+    const ownerUID = yield select(state => state.firebase.auth.uid);
 
     if (ownerUID === action.assistantId) {
       let error = "Cannot add self as assistant";
