@@ -21,7 +21,7 @@ import each from "lodash/each";
 import firebase from "firebase";
 import { APP_SETTING } from "../achievementsApp/config";
 
-const ERROR_TIMEOUT = 6000;
+const ERROR_TIMEOUT = 10000;
 const TAB_OPEN_TIMEOUT = 2000;
 const TIMEOUT_DELAY = 500;
 

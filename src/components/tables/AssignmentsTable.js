@@ -180,7 +180,6 @@ class AssignmentsTable extends React.PureComponent {
     const { classes } = this.props;
     let solution = solutions[assignment.id];
     const result = (solution && solution.value) || "";
-
     if (!solution) {
       return owner && "";
     }
