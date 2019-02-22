@@ -4,6 +4,12 @@ export const pathOpen = pathId => ({
   pathId
 });
 
+export const PATH_CLOSE = "PATH_CLOSE";
+export const pathClose = pathId => ({
+  type: PATH_CLOSE,
+  pathId
+});
+
 export const PATH_OPEN_SOLUTION_DIALOG = "PATH_OPEN_SOLUTION_DIALOG";
 export const pathOpenSolutionDialog = (pathId, problemInfo) => ({
   type: PATH_OPEN_SOLUTION_DIALOG,

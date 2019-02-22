@@ -383,6 +383,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
   }
 }
 
+
 export function* pathOpenSolutionDialogHandler(action) {
   const problemInfo = action.problemInfo;
   const uid = yield select(state => state.firebase.auth.uid);
@@ -413,7 +414,7 @@ export function* pathOpenSolutionDialogHandler(action) {
 export function* pathRefreshSolutionsRequestHandler(action) {
   try {
     const data = yield select(state => ({
-      uid: state.firebase.auth.uid,
+      uid: state.path.ui.inspectedUser || state.firebase.auth.uid,
       pathActivities: pathActivitiesSelector(state, {
         match: { params: action }
       }),

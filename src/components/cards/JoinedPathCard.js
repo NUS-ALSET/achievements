@@ -21,12 +21,15 @@ class JoinedPathCard extends React.PureComponent {
       card: PropTypes.string
     }).isRequired,
     id: PropTypes.string,
+    isOwner: PropTypes.bool,
     name: PropTypes.string,
+    onInspect: PropTypes.func,
     solutions: PropTypes.number
   };
+  onInspectClick = () => this.props.onInspect(this.props.id);
 
   render() {
-    const { classes, id, name, solutions } = this.props;
+    const { classes, id, isOwner, name, solutions } = this.props;
 
     return (
       <Card className={classes.card}>
@@ -37,6 +40,7 @@ class JoinedPathCard extends React.PureComponent {
           <Typography>{solutions} achievements</Typography>
         </CardContent>
         <CardActions style={{ float: "right" }}>
+          {isOwner && <Button onClick={this.onInspectClick}>Inspect</Button>}
           <Link style={{ textDecoration: "none" }} to={`/paths/${id}`}>
             <Button>View</Button>
           </Link>
