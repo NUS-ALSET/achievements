@@ -16,7 +16,6 @@ class YouTubeActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
-    setProblemOpenTime: PropTypes.func.isRequired,
     problem: PropTypes.object,
     solution: PropTypes.any,
   };
