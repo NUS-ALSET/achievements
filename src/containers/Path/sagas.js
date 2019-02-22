@@ -319,6 +319,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
         yield put(closeActivityDialog());
         return;
       }
+      
       const levelsData = yield call(accountService.fetchAchievements, data.uid);
         if (levelsData && (
           (data.activity.type === ACTIVITY_TYPES.codeCombat.id
@@ -337,6 +338,8 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             && (levelsData.ladders[`${data.activity.level}-${data.activity.team}`] || {}).percentile >= data.activity.requiredPercentile
           ))
           ){
+            const ladder = levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
+
             yield call(
               [pathsService, pathsService.submitSolution],
               data.uid,
@@ -345,7 +348,11 @@ export function* pathActivityCodeCombatOpenHandler(action) {
                 path: action.pathId,
                 problemId: action.activityId
               },
-              "Completed"
+              {
+                rank: ladder.rank,
+                numInRanking: ladder.numInRanking,
+                value: `${ladder.rank} of ${ladder.numInRanking}`
+              }
             );
             yield put(
               problemSolutionSubmitSuccess(
@@ -377,6 +384,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
   }
 }
 
+
 export function* pathOpenSolutionDialogHandler(action) {
   const problemInfo = action.problemInfo;
   const uid = yield select(state => state.firebase.auth.uid);
@@ -407,7 +415,7 @@ export function* pathOpenSolutionDialogHandler(action) {
 export function* pathRefreshSolutionsRequestHandler(action) {
   try {
     const data = yield select(state => ({
-      uid: state.firebase.auth.uid,
+      uid: state.path.ui.inspectedUser || state.firebase.auth.uid,
       pathActivities: pathActivitiesSelector(state, {
         match: { params: action }
       }),

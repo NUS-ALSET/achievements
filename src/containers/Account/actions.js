@@ -185,3 +185,10 @@ export const displayNameUpdateFail = reason => ({
   type: DISPLAY_NAME_UPDATE_FAIL,
   reason
 });
+
+export const INSPECT_PATH_AS_USER = "INSPECT_PATH_AS_USER";
+export const inspectPathAsUser = (pathId, userId) => ({
+  type: INSPECT_PATH_AS_USER,
+  pathId,
+  userId
+});

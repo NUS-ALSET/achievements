@@ -783,7 +783,6 @@ export class PathsService {
         switch (pathProblem.type) {
           case ACTIVITY_TYPES.codeCombat.id:
           case ACTIVITY_TYPES.codeCombatNumber.id:
-          case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -798,6 +797,7 @@ export class PathsService {
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.game.id:
+          case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -1176,6 +1176,7 @@ export class PathsService {
     const actions = [];
     const needUpdate = !!pathActivities.activities.find(activity =>
       [
+        ACTIVITY_TYPES.profile.id,
         ACTIVITY_TYPES.codeCombat.id,
         ACTIVITY_TYPES.codeCombatNumber.id
       ].includes(activity.type)
@@ -1192,6 +1193,7 @@ export class PathsService {
     for (const activity of pathActivities.activities) {
       if (
         [
+          ACTIVITY_TYPES.profile.id,
           ACTIVITY_TYPES.codeCombat.id,
           ACTIVITY_TYPES.codeCombatNumber.id
         ].includes(activity.type)

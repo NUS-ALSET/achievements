@@ -142,7 +142,9 @@ class CodeCombatActivity extends React.PureComponent {
         this.props.onCommit({
           type: "SOLUTION",
           solution: {
-            value: userPercentile
+              rank: ladder.rank,
+              numInRanking: ladder.numInRanking,
+              status: `${ladder.rank} of ${ladder.numInRanking}`
           }
         });
       }
