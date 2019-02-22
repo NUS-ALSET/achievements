@@ -12,7 +12,7 @@ import {
  } from "./sagas";
  import { _CRUDdemoService } from "../../services/CRUDdemo"
 import { NOTIFICATION_SHOW } from "../Root/actions";
-
+import { APP_SETTING } from "../../achievementsApp/config";
 
 describe("CRUDdemo sagas", () => {
   // Reduce timeouts for tests passing
