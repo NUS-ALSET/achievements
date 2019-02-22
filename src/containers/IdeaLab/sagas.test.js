@@ -6,17 +6,21 @@ import {
   deleteCRUDdemoData,
   deleteValueSuccess
 } from "./actions";
-import {
-  handleCreateRequest,
-  handleDeleteRequest
- } from "./sagas";
- import { _CRUDdemoService } from "../../services/CRUDdemo"
+import { handleCreateRequest, handleDeleteRequest } from "./sagas";
+import { _CRUDdemoService } from "../../services/CRUDdemo";
 import { NOTIFICATION_SHOW } from "../Root/actions";
-
+import { APP_SETTING } from "../../achievementsApp/config";
 
 describe("CRUDdemo sagas", () => {
+  let defaultTimeout = APP_SETTING.defaultTimeout;
+  beforeEach(() => {
+    APP_SETTING.defaultTimeout = 0;
+  });
+  afterEach(() => {
+    APP_SETTING.defaultTimeout = defaultTimeout;
+  });
   it("handleCreateRequest should handle CREATE_TO_CRUD_DEMO action", async () => {
-    const dispatchedActions = []
+    const dispatchedActions = [];
     const fakeStore = {
       dispatch: action => dispatchedActions.push(action),
       getState: () => ({
@@ -26,17 +30,13 @@ describe("CRUDdemo sagas", () => {
           }
         }
       })
-    }
+    };
 
-    _CRUDdemoService.WriteToCRUDdemo = jest.fn(() => Promise.resolve())
-    await runSaga(
-      fakeStore,
-      handleCreateRequest,
-      {
-        type: CREATE_TO_CRUD_DEMO,
-        solution: "input solution text"
-      }
-    ).done;
+    _CRUDdemoService.WriteToCRUDdemo = jest.fn(() => Promise.resolve());
+    await runSaga(fakeStore, handleCreateRequest, {
+      type: CREATE_TO_CRUD_DEMO,
+      solution: "input solution text"
+    }).done;
 
     expect(dispatchedActions).toEqual([
       {
@@ -45,7 +45,8 @@ describe("CRUDdemo sagas", () => {
       },
       {
         type: NOTIFICATION_SHOW,
-        message: "will now write [input solution text] to analyticsCRUDdemo node"
+        message:
+          "will now write [input solution text] to analyticsCRUDdemo node"
       },
       {
         type: "CRUDdemo/CREATE_VALUE_SUCCESS"
