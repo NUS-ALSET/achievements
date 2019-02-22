@@ -12,14 +12,16 @@ import {
   PATH_ACTIVITY_CODECOMBAT_OPEN,
   PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW,
   PATH_PROFILE_DIALOG_SHOW,
-  FETCH_MY_PATHS_ACTIVITIES
+  FETCH_MY_PATHS_ACTIVITIES,
+  PATH_CLOSE
 } from "./actions";
 import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
 import {
   EXTERNAL_PROFILE_REFRESH_REQUEST,
   EXTERNAL_PROFILE_UPDATE_FAIL,
-  EXTERNAL_PROFILE_UPDATE_SUCCESS
+  EXTERNAL_PROFILE_UPDATE_SUCCESS,
+  INSPECT_PATH_AS_USER
 } from "../Account/actions";
 import {
   PROBLEM_SOLUTION_SUBMIT_FAIL,
@@ -30,6 +32,7 @@ export const path = (
   state = {
     problemSolutions: {},
     ui: {
+      inspectedUser: "",
       dialog: {
         type: ""
       },
@@ -39,6 +42,22 @@ export const path = (
   action
 ) => {
   switch (action.type) {
+    case PATH_CLOSE:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          inspectedUser: ""
+        }
+      };
+    case INSPECT_PATH_AS_USER:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          inspectedUser: action.userId
+        }
+      };
     case CLOSE_ACTIVITY_DIALOG:
       return {
         ...state,
