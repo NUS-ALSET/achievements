@@ -80,6 +80,7 @@ class ActivityView extends React.PureComponent {
       readOnly,
       userAchievements,
       problemSolutionAttemptRequest,
+      setProblemOpenTime
     } = this.props;
     let SpecificView = views[pathProblem.type];
     const extraProps = ["jest", "jestInline", "game"].includes(pathProblem.type)
@@ -108,6 +109,7 @@ class ActivityView extends React.PureComponent {
           readOnly={readOnly}
           solution={solution}
           userAchievements={userAchievements}
+          setProblemOpenTime={setProblemOpenTime}
           {...extraProps}
         />
       </div>

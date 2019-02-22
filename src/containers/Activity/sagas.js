@@ -329,10 +329,11 @@ export function* problemCheckSolutionRequestHandler(action) {
 
 export function* problemSolutionSubmitRequestHandler(action) {
   let data;
-  try {
+  try { 
     data = yield select(state => ({
       uid: state.firebase.auth.uid,
       isPathPublic: state.firebase.data.isPathPublic,
+      problemOpenTime: state.problem.problemOpenTime,
       pathProblem:
         state.problem.pathProblem ||
         state.assignments.dialog.pathProblem ||
@@ -342,7 +343,8 @@ export function* problemSolutionSubmitRequestHandler(action) {
       [pathsService, pathsService.submitSolution],
       data.uid,
       data.pathProblem,
-      action.payload
+      action.payload,
+      data.problemOpenTime
     );
     yield put(
       problemSolutionSubmitSuccess(
@@ -382,7 +384,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
 
 export function* problemSolutionAttemptRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
-
+  
   if (uid) {
     yield call(
       [pathsService, pathsService.saveAttemptedSolution],
