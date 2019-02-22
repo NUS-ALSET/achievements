@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import YouTube from "react-youtube";
 
 import ActivityQuestion from "./ActivityQuestion";
+import { MultipleQuestionActivity } from "./MultipleQuestionActivity";
 
 class YouTubeActivity extends React.PureComponent {
   static propTypes = {
@@ -134,6 +135,14 @@ class YouTubeActivity extends React.PureComponent {
             question="questionCustom"
             setAnswer={this.setAnswer}
             solution={solution}
+          />
+        )}
+        {solution !== null && problem.multipleQuestion && (
+          <MultipleQuestionActivity
+            noForce={true}
+            onCommit={solution => this.setAnswer("multipleQuestion", solution)}
+            problem={problem}
+            solution={this.state.answers && this.state.answers.multipleQuestion}
           />
         )}
       </Fragment>

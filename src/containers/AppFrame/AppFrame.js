@@ -48,7 +48,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 // Idea lab for trial
 import CRUDdemo from "../IdeaLab/CRUDdemo";
-import Brenda from "../IdeaLab/Brenda/Brenda";
+import Brenda from "../IdeaLab/Brenda/PathDashboard";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
 import ZiYun from "../IdeaLab/ZiYun/ZiYun";
 import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills"

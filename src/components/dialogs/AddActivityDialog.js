@@ -15,8 +15,8 @@ import { connect } from "react-redux";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
 import Checkbox from "@material-ui/core/Checkbox";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -26,26 +26,28 @@ import FormLabel from "@material-ui/core/FormLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
+import IconButton from "@material-ui/core/IconButton";
 import Input from "@material-ui/core/Input";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import InputLabel from "@material-ui/core/InputLabel";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import IconButton from "@material-ui/core/IconButton";
-import CloudDownload from "@material-ui/icons/CloudDownload";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
-import LinkIcon from "@material-ui/icons/Link";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 
-import DeleteIcon from "@material-ui/icons/Delete";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import CloudDownload from "@material-ui/icons/CloudDownload";
+import LinkIcon from "@material-ui/icons/Link";
 
 import { GameActivity, TournamentActivity } from "../AddActivitiesForm/";
 
-import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS, CodeCombat_Multiplayer_Data } from "../../services/paths";
+import {
+  ACTIVITY_TYPES,
+  YOUTUBE_QUESTIONS,
+  CodeCombat_Multiplayer_Data
+} from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
 // RegExp rules
@@ -54,16 +56,9 @@ import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
 // images for user guide in the dialog
 import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
 import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
+import MultipleQuestionsForm from "../forms/MultipleQuestionsForm";
 
 const DEFAULT_COUNT = 2;
-const DEFAULT_OPTIONS_COUNT = 8;
-const defaultOptions = Array(DEFAULT_OPTIONS_COUNT)
-  .fill()
-  .map((value, index) => ({
-    id: index,
-    caption: `Option ${index + 1}`,
-    correct: !index
-  }));
 const gameDefaultData = {
   game: "passenger-picker",
   scoreToWin: 10,
@@ -73,22 +68,11 @@ const gameDefaultData = {
   playMode: "manual control"
 };
 
-const styles = () => ({
-  optionActions: {
-    width: 120
-  },
-  optionLabel: {
-    flexGrow: 1
-  }
-});
+const styles = () => ({});
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     activityExampleSolution: PropTypes.any,
-    classes: PropTypes.shape({
-      optionActions: PropTypes.string,
-      optionLabel: PropTypes.string
-    }),
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
@@ -171,17 +155,13 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   getTypeSpecificElements() {
-    let {
-      activity,
-      activityExampleSolution,
-      classes,
-      restrictedType
-    } = this.props;
+    let { activity, activityExampleSolution, restrictedType } = this.props;
     const type =
       restrictedType ||
       this.state.type ||
       (activity && activity.type) ||
       "text";
+
     /* if (
       ["jupyter", "jupyterInline"].includes(type) &&
       !isLoaded(activityExampleSolution)
@@ -204,40 +184,11 @@ class AddActivityDialog extends React.PureComponent {
         );
       case ACTIVITY_TYPES.multipleQuestion.id:
         return (
-          <Fragment>
-            <Typography variant="h6">Options:</Typography>
-            {!this.getOptions().length && (
-              <Typography color="secondary">Missing options</Typography>
-            )}
-            <Grid container>
-              {this.getOptions().map(option => (
-                <Fragment key={option.id}>
-                  <Grid className={classes.optionLabel} item>
-                    <TextField
-                      fullWidth
-                      onChange={value => this.onOptionChange(option.id, value)}
-                      value={option.caption || ""}
-                    />
-                  </Grid>
-                  <Grid className={classes.optionActions} item>
-                    <Checkbox
-                      checked={option.correct}
-                      onChange={() => this.onSetOptionCorrect(option.id)}
-                      readOnly={option.correct}
-                    />
-                    {!option.correct && (
-                      <IconButton
-                        onClick={() => this.onRemoveOptionClick(option.id)}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    )}
-                  </Grid>
-                </Fragment>
-              ))}
-            </Grid>
-            <Button onClick={this.onAddOption}>Add Option</Button>
-          </Fragment>
+          <MultipleQuestionsForm
+            activity={activity}
+            changes={this.state}
+            onFieldChange={this.onFieldChange}
+          />
         );
       case ACTIVITY_TYPES.codeCombat.id:
         return (
@@ -280,7 +231,7 @@ class AddActivityDialog extends React.PureComponent {
             value={activity.count}
           />
         );
-        case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+      case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
         return (
           <Fragment>
             <FormControl fullWidth margin="normal">
@@ -336,7 +287,9 @@ class AddActivityDialog extends React.PureComponent {
               </Select>
             </FormControl>
             <FormControl fullWidth margin="normal">
-              <InputLabel htmlFor="select-multiplayer-percentile">Percentile Required</InputLabel>
+              <InputLabel htmlFor="select-multiplayer-percentile">
+                Percentile Required
+              </InputLabel>
               <Select
                 input={<Input id="select-multiplayer-percentile" />}
                 margin="none"
@@ -348,14 +301,13 @@ class AddActivityDialog extends React.PureComponent {
                     }
                   }
                 }}
-                onChange={e => this.onFieldChange("requiredPercentile", e.target.value)}
+                onChange={e =>
+                  this.onFieldChange("requiredPercentile", e.target.value)
+                }
                 value={activity.requiredPercentile || ""}
               >
                 {CodeCombat_Multiplayer_Data.rankingPercentile.map(id => (
-                  <MenuItem
-                    key={id}
-                    value={id}
-                  >
+                  <MenuItem key={id} value={id}>
                     {id}
                   </MenuItem>
                 ))}
@@ -490,7 +442,8 @@ class AddActivityDialog extends React.PureComponent {
                         checked={
                           this.state[questionType] ||
                           (this.state[questionType] === undefined &&
-                            activity[questionType])
+                            activity[questionType]) ||
+                          false
                         }
                         color="primary"
                         onChange={e =>
@@ -502,19 +455,32 @@ class AddActivityDialog extends React.PureComponent {
                     label={YOUTUBE_QUESTIONS[questionType]}
                   />
                 ))}
-                <TextField
-                  defaultValue={activity && activity.customText}
-                  disabled={
-                    this.state.questionCustom === undefined
-                      ? !(activity && activity.questionCustom)
-                      : !this.state.questionCustom
-                  }
-                  fullWidth
-                  label="Custom question"
-                  onChange={e =>
-                    this.onFieldChange("customText", e.target.value)
-                  }
-                />
+                {this.state.questionCustom === undefined
+                  ? activity && activity.questionCustom
+                  : this.state.questionCustom && (
+                      <TextField
+                        defaultValue={activity && activity.customText}
+                        disabled={
+                          this.state.questionCustom === undefined
+                            ? !(activity && activity.questionCustom)
+                            : !this.state.questionCustom
+                        }
+                        fullWidth
+                        label="Custom question"
+                        onChange={e =>
+                          this.onFieldChange("customText", e.target.value)
+                        }
+                      />
+                    )}
+                {this.state.multipleQuestion === undefined
+                  ? activity && activity.multipleQuestion
+                  : this.state.multipleQuestion && (
+                      <MultipleQuestionsForm
+                        activity={activity}
+                        changes={this.state}
+                        onFieldChange={this.onFieldChange}
+                      />
+                    )}
               </FormGroup>
             </FormControl>
           </Fragment>
@@ -643,11 +609,6 @@ class AddActivityDialog extends React.PureComponent {
     }
   }
 
-  getOptions = () =>
-    this.state.options ||
-    (this.props.activity && this.props.activity.options) ||
-    defaultOptions;
-
   showLoading = () => {
     this.setState(() => ({ loading: true }));
   };
@@ -678,8 +639,8 @@ class AddActivityDialog extends React.PureComponent {
       (activity && activity.type === ACTIVITY_TYPES.multipleQuestion.id) ||
       this.state.type === ACTIVITY_TYPES.multipleQuestion.id
     ) {
-      const options = this.getOptions();
-      if (!(options && options.length)) {
+      const options = activity.options;
+      if (!(options && Object.keys(options).length)) {
         return true;
       }
     }
@@ -740,48 +701,6 @@ class AddActivityDialog extends React.PureComponent {
     }
     this.setState({ [field]: value, ...state });
   };
-
-  onAddOption = () => {
-    let newId = 0;
-    for (const option of this.getOptions()) {
-      newId = Math.max(option.id, newId);
-    }
-    this.onFieldChange("options", [
-      ...this.getOptions(),
-      {
-        id: newId + 1,
-        caption: "New Option"
-      }
-    ]);
-  };
-
-  onRemoveOptionClick = id =>
-    this.onFieldChange(
-      "options",
-      this.getOptions().filter(option => option.id !== id)
-    );
-
-  onSetOptionCorrect = id =>
-    this.onFieldChange(
-      "options",
-      this.getOptions().map(option => ({
-        ...option,
-        correct: id === option.id ? !option.correct : false
-      }))
-    );
-
-  onOptionChange = (id, e) =>
-    this.onFieldChange(
-      "options",
-      this.getOptions().map(option =>
-        id === option.id
-          ? {
-              ...option,
-              caption: e.target.value
-            }
-          : option
-      )
-    );
 
   // TODO: validate required inputs at client-side for
   // other types of activities

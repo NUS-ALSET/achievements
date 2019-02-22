@@ -52,6 +52,7 @@ class ActivitiesTable extends React.PureComponent {
     codeCombatProfile: PropTypes.any,
     classes: PropTypes.object.isRequired,
     currentUserId: PropTypes.string,
+    inspectedUser: PropTypes.string,
     onDeleteActivity: PropTypes.func.isRequired,
     onEditActivity: PropTypes.func.isRequired,
     onMoveActivity: PropTypes.func.isRequired,
@@ -106,6 +107,7 @@ class ActivitiesTable extends React.PureComponent {
     const {
       activities,
       classes,
+      inspectedUser,
       onDeleteActivity,
       onEditActivity,
       onMoveActivity,
@@ -190,11 +192,17 @@ class ActivitiesTable extends React.PureComponent {
 
                   ) */}
                   <Button
-                    disabled={activity.id === pendingActivityId}
+                    disabled={
+                      activity.id === pendingActivityId || !!inspectedUser
+                    }
                     onClick={() => onOpenActivity(activity)}
                     variant="contained"
                   >
-                    {([ACTIVITY_TYPES.codeCombat.id,ACTIVITY_TYPES.codeCombatNumber.id, ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id]).includes(activity.type)
+                    {[
+                      ACTIVITY_TYPES.codeCombat.id,
+                      ACTIVITY_TYPES.codeCombatNumber.id,
+                      ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id
+                    ].includes(activity.type)
                       ? "Fetch"
                       : "Solve"}
                     {activity.id === pendingActivityId && (
@@ -212,6 +220,7 @@ class ActivitiesTable extends React.PureComponent {
                   {canChange && (
                     <Button
                       className={classes.button}
+                      disabled={!!inspectedUser}
                       id={activity.id}
                       onClick={() => this.selectActivity(activity)}
                       variant="contained"

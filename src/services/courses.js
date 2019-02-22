@@ -61,17 +61,21 @@ export const ASSIGNMENTS_TYPES = {
   }
 };
 
-export const DISABLED_ASSIGNMNET_TYPES = ['Profile', 'CodeCombat', 'CodeCombat_Number'];
+export const DISABLED_ASSIGNMNET_TYPES = [
+  "Profile",
+  "CodeCombat",
+  "CodeCombat_Number"
+];
 
-const getEnabledAssignmnetType = ()=>{
+const getEnabledAssignmnetType = () => {
   const assignmentsType = JSON.parse(JSON.stringify(ASSIGNMENTS_TYPES)); // deep copy
   DISABLED_ASSIGNMNET_TYPES.forEach(type => {
     delete assignmentsType[type];
-  })
+  });
   return assignmentsType;
-}
+};
 
-export const ENABLED_ASSIGNMENTS_TYPES = getEnabledAssignmnetType()
+export const ENABLED_ASSIGNMENTS_TYPES = getEnabledAssignmnetType();
 
 export class CoursesService {
   errorTimeout = 0;

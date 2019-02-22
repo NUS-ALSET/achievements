@@ -486,7 +486,7 @@ class pathAnalyticsDemo extends React.PureComponent {
           ) : (
             <Fragment>
               <Typography variant="h5">
-                Fetching from /analytics/jupyterSolutions
+                Fetching from /analytics/activityAttempts
               </Typography>
               <Typography variant="h6">
                 Data with pathKey = {jupyterAnalyticsPathKey}:
@@ -670,7 +670,7 @@ class pathAnalyticsDemo extends React.PureComponent {
           ) : (
             <Fragment>
               <Typography variant="h5">
-                Fetching from /analytics/jupyterSolutions
+                Fetching from /analytics/activityAttempts
               </Typography>
               <Typography variant="h6">
                 Data with pathKey = {jupyterAnalyticsPathKey}:
@@ -854,7 +854,7 @@ class pathAnalyticsDemo extends React.PureComponent {
           ) : (
             <Fragment>
               <Typography variant="h5">
-                Fetching from /analytics/jupyterSolutions
+                Fetching from /analytics/activityAttempts
               </Typography>
               <Typography variant="h6">
                 Data with pathKey = {jupyterAnalyticsPathKey}:
@@ -878,15 +878,16 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   changePathKeyJupSol,
   initAnalyticsData,
-  filterAnalyticsData
+  filterAnalyticsData 
 };
 
 export default compose(
   firebaseConnect((ownProps, store) => {
     return [
       {
-        path: "/analytics/jupyterSolutions",
-        storeAs: "analyticsData"
+        path: "/analytics/activityAttempts",
+        storeAs: "analyticsData",
+        queryParams: ["orderByChild=activityType", 'equalTo=jupyterInline']
       },
       {
         path: "/activities",
