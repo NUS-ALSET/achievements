@@ -765,7 +765,6 @@ export class PathsService {
         switch (pathProblem.type) {
           case ACTIVITY_TYPES.codeCombat.id:
           case ACTIVITY_TYPES.codeCombatNumber.id:
-          case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -780,6 +779,7 @@ export class PathsService {
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.game.id:
+          case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
