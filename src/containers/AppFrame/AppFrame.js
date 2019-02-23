@@ -48,6 +48,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 
 // Idea lab for trial
 import CRUDdemo from "../IdeaLab/CRUDdemo";
+import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
 import Brenda from "../IdeaLab/Brenda/PathDashboard";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
 import ZiYun from "../IdeaLab/ZiYun/ZiYun";
@@ -243,12 +244,12 @@ class AppFrame extends React.Component {
                     </Menu>
                   </Fragment>
                 ) : (
-                  <Fragment>
-                    <Button color="inherit" onClick={this.handleLogin}>
-                      Login
+                    <Fragment>
+                      <Button color="inherit" onClick={this.handleLogin}>
+                        Login
                     </Button>
-                  </Fragment>
-                )}
+                    </Fragment>
+                  )}
               </Toolbar>
             </AppBar>
             <AppDrawer
@@ -273,6 +274,8 @@ class AppFrame extends React.Component {
                 <Route component={MyDestinations} exact path="/my-destinations" />
                 <Route component={ZiYun} exact path="/ziyun" />
                 <Route component={CRUDdemo} exact path="/CRUDdemo" />
+                <Route component={AdditionalContentRequest} exact path="/AdditionalContentRequest" />
+
                 <Route
                   component={userDemonstratedPythonSkills}
                   exact
