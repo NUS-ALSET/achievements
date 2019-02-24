@@ -197,16 +197,16 @@ export class PathsService {
         }
         switch (pathProblem.type) {
           case "jest": {
-            if(pathProblem.version === 1){
+            if (pathProblem.version === 1) {
               return firebase
-              .ref(`/activityData/${activitiyId}`)
-              .once("value")
-              .then(data => {
-                Object.assign(pathProblem, {
-                  files: data.val().files 
-                })
-                return pathProblem;
-              })
+                .ref(`/activityData/${activitiyId}`)
+                .once("value")
+                .then(data => {
+                  Object.assign(pathProblem, {
+                    files: data.val().files
+                  });
+                  return pathProblem;
+                });
             }
             return pathProblem;
           }
@@ -743,6 +743,46 @@ export class PathsService {
   }
 
   /**
+   *
+   * @param {String} uid
+   * @param {PathProblem} pathProblem
+   * @param {*} solution
+   * @param {Object} [json]
+   * @returns {Promise<Boolean>}
+   */
+  workaroundValidateSolution(uid, pathProblem) {
+    return firebase
+      .ref(`/userAchievements/${uid}/CodeCombat`)
+      .once("value")
+      .then(snap => snap.val())
+      .then(profile => {
+        const achievements = profile && profile.achievements;
+        if (!achievements) {
+          throw new Error("Missing required achievement");
+        }
+        switch (pathProblem.type) {
+          case ACTIVITY_TYPES.codeCombat.id:
+            if (!achievements[pathProblem.level]) {
+              throw new Error("Missing required achievement");
+            }
+            break;
+          case ACTIVITY_TYPES.codeCombatNumber.id:
+            if (
+              !profile.totalAchievements ||
+              profile.totalAchievements < pathProblem.count
+            ) {
+              throw new Error(
+                `Not finished required amount of levels (${pathProblem.count})`
+              );
+            }
+            break;
+          default:
+            return true;
+        }
+      });
+  }
+
+  /**
    * Store solution at firebase
    *
    * @param {String} uid
@@ -765,7 +805,6 @@ export class PathsService {
         switch (pathProblem.type) {
           case ACTIVITY_TYPES.codeCombat.id:
           case ACTIVITY_TYPES.codeCombatNumber.id:
-          case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -780,6 +819,7 @@ export class PathsService {
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.game.id:
+          case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
@@ -1180,7 +1220,54 @@ export class PathsService {
           ACTIVITY_TYPES.codeCombatNumber.id
         ].includes(activity.type)
       ) {
-        actions.push(this.submitSolution(uid, activity, "Completed"));
+        const pathProblem = {
+          ...activity,
+          problemId: activity.problemId || activity.id
+        };
+        const solution = "Completed";
+
+        actions.push(
+          Promise.resolve()
+            .then(() =>
+              this.workaroundValidateSolution(uid, pathProblem, solution)
+            )
+            .then(() => {
+              switch (pathProblem.type) {
+                case ACTIVITY_TYPES.codeCombat.id:
+                case ACTIVITY_TYPES.codeCombatNumber.id:
+                case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+                  return firebase
+                    .database()
+                    .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+                    .set({
+                      completed: true,
+                      updatedAt: {
+                        ".sv": "timestamp"
+                      }
+                    });
+                case ACTIVITY_TYPES.profile.id:
+                  return firebase
+                    .database()
+                    .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+                    .set(solution);
+                default:
+                  break;
+              }
+            })
+            .then(() =>
+              firebase
+                .database()
+                .ref(
+                  `/completedActivities/${uid}/${pathProblem.path}/${
+                    pathProblem.problemId
+                  }`
+                )
+                .set({
+                  ".sv": "timestamp"
+                })
+            )
+            .catch(() => ({}))
+        );
       }
     }
     return Promise.all(actions);
@@ -1254,12 +1341,12 @@ export class PathsService {
       );
   }
 
-  saveAttemptedSolution(uid, payload){
+  saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
     return firebase
-    .database()
-    .ref('analytics/activityAttempts')
-    .push(payload);
+      .database()
+      .ref("analytics/activityAttempts")
+      .push(payload);
   }
 }
 
