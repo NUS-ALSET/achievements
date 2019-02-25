@@ -7,10 +7,11 @@ branches:
     - master
 
 before_install:
+  - npm cache clear --force
   - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
 
 install:
-  - npm install
+  - yarn install
 
 script:
   - npm run-script test

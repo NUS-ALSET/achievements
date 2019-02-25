@@ -17,24 +17,27 @@ class YouTubeActivity extends React.PureComponent {
     dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
-    solution: PropTypes.any
+    solution: PropTypes.any,
   };
 
   state = {
     answers: {},
-    youtubeEvents: {}
+    youtubeEvents: {},
+    openTime: null
   };
 
   componentDidMount() {
-    const { solution, onChange } = this.props;
+    const { solution, onChange, problem, setProblemOpenTime } = this.props;
     if (solution && onChange) {
       const state = {
         answers: solution.answers,
-        youtubeEvents: solution.youtubeEvents
+        youtubeEvents: solution.youtubeEvents,
+        openTime : (new Date()).getTime()
       };
       this.setState(state);
       onChange(state);
     }
+    setProblemOpenTime(problem.problemId, (new Date()).getTime())
   }
 
   setAnswer = (question, answer) => {

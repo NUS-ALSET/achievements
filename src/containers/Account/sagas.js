@@ -21,6 +21,9 @@ import {
   profileUpdateDataSuccess,
   ACCOUNT_OPEN,
   accountFetchPaths,
+  FETCH_USER_DATA,
+  fetchUserDataFail,
+  fetchUserDataSuccess,
   INSPECT_PATH_AS_USER
 } from "./actions";
 import { accountService } from "../../services/account";
@@ -235,6 +238,16 @@ function* displayNameUpdateRequestHandler(action) {
   }
 }
 
+function* fetchUserDataHandler() {
+  const uid = yield select(state => state.firebase.auth.uid);
+  try {
+    const userData = yield call(accountService.fetchUserJSON, uid);
+    yield put(fetchUserDataSuccess(userData))
+  } catch (err) {
+    yield put(fetchUserDataFail(err.message));
+  }
+}
+
 export default [
   function* watchSignIn() {
     yield takeLatest("@@reactReduxFirebase/LOGIN", signInHandler);
@@ -273,6 +286,12 @@ export default [
     yield takeLatest(
       DISPLAY_NAME_UPDATE_REQUEST,
       displayNameUpdateRequestHandler
+    );
+  },
+  function* watchFetchUserData() {
+    yield takeLatest(
+      FETCH_USER_DATA,
+      fetchUserDataHandler
     );
   }
 ];

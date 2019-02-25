@@ -20,6 +20,7 @@ const updateUserPySkills = require("./src/updateUserPySkills.js");
 const processActivitySolutions = require("./src/processActivitySolution");
 const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
 const cohortRecalculate = require("./src/cohortRecalculate");
+const userJSONTrigger = require("./src/fetchUserJSON");
 const {
   addDestination,
   updateDestinationSkills
@@ -245,4 +246,14 @@ exports.cohortRecalculate = functions.database
   .onCreate((change, context) => {
     const { cohortKey, taskKey } = context.params;
     return cohortRecalculate.handler(cohortKey, taskKey);
+  });
+
+exports.handleUserJSONFetchRequest = functions.database
+  .ref("/fetchUserJSONQueue/responses/${taskKey}")
+  .onWrite(change => {
+    const data = change.after.val();
+    if (data) {
+      return userJSONTrigger.handler(data, data.taskKey, data.owner);
+    }
+    return Promise.resolve();
   });

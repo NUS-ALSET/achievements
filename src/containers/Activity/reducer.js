@@ -7,7 +7,8 @@ import {
   PROBLEM_SOLUTION_REFRESH_FAIL,
   PROBLEM_SOLUTION_REFRESH_REQUEST,
   PROBLEM_SOLUTION_REFRESH_SUCCESS,
-  PROBLEM_SOLUTION_EXECUTION_STATUS
+  PROBLEM_SOLUTION_EXECUTION_STATUS,
+  SET_PROBLEM_OPEN_TIME
 } from "./actions";
 
 export const problem = (
@@ -16,13 +17,13 @@ export const problem = (
     solution: null,
     unsolvedPublicActivities: [],
     publicActivitiesFetched: false,
-    error: false
+    error: false,
+    problemOpenTime: {}
   },
   action
 ) => {
   switch (action.type) {
     case PROBLEM_INIT_SUCCESS:
-    console.log('pass--', action)
       return {
         ...state,
         pathProblem: action.payload,
@@ -88,6 +89,14 @@ export const problem = (
           failed: true
         }
       };
+    case SET_PROBLEM_OPEN_TIME:
+      return {
+        ...state,
+        problemOpenTime :{
+          problemId: action.problemId,
+          openTime: action.openTime
+        }
+      }
     default:
       return state;
   }

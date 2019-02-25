@@ -7,7 +7,8 @@ describe("<YouTubeActivity />", () => {
     dispatch: jest.fn(),
     onChange: jest.fn(),
     problem: { youtubeURL: "lalala" },
-    solution: "somthing"
+    solution: "somthing",
+    setProblemOpenTime: ()=>{}
   };
 
   it("renders without crashing", () => {

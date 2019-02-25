@@ -2,7 +2,7 @@
  * Service for actions with account
  */
 import firebase from "firebase";
-
+import { firebaseService } from "./firebaseService";
 const authProvider = new firebase.auth.GoogleAuthProvider();
 // authProvider.addScope("https://www.googleapis.com/auth/drive.file");
 
@@ -336,6 +336,21 @@ export class AccountService {
         .database()
         .ref("/config/version")
         .off();
+  }
+  fetchUserJSON(uid) {
+    return new Promise(resolve => {
+      firebaseService
+          .startProcess(
+            {
+              owner: uid
+            },
+            "fetchUserJSONQueue",
+            "Fetch JSON Data"
+          )
+          .then(res => {
+            resolve(res)
+          });
+    })
   }
 }
 

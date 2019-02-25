@@ -11,6 +11,7 @@
     "compare-versions": "^3.4.0",
     "connected-react-router": "^4.3.0",
     "date-fns": "^1.29.0",
+    "downloadjs": "^1.4.7",
     "firebase": "^5.5.6",
     "firebase-queue": "^1.6.1",
     "fusioncharts": "^3.13.3",
