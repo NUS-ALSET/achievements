@@ -277,7 +277,8 @@ export function* pathActivityCodeCombatOpenHandler(action) {
     const data = yield select(state => ({
       uid: state.firebase.auth.uid,
       activity: state.firebase.data.activities[action.activityId],
-      achievements: state.firebase.data.userAchievements
+      achievements: state.firebase.data.userAchievements,
+      problemOpenTime: state.problem.problemOpenTime
     }));
 
     if (!action.codeCombatProfile) {

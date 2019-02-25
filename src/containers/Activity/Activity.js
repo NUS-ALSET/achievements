@@ -13,7 +13,8 @@ import { firebaseConnect } from "react-redux-firebase";
 import {
   problemFinalize,
   problemInitRequest,
-  problemSolutionSubmitRequest
+  problemSolutionSubmitRequest,
+  setProblemOpenTime
 } from "./actions";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { sagaInjector } from "../../services/saga";
@@ -192,6 +193,7 @@ export class Activity extends React.PureComponent {
             dispatch={dispatch}
             onCommit={this.onCommit}
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
+            setProblemOpenTime={this.props.setProblemOpenTime}
             pathProblem={pathProblem}
             readOnly={readOnly}
             solution={solution}
@@ -259,6 +261,7 @@ const mapDispatchToProps = dispatch => ({
   problemSolutionSubmitRequest: (pathId, problemId, payload) =>
     dispatch(problemSolutionSubmitRequest(pathId, problemId, payload)),
   signInRequire: () => dispatch(signInRequire()),
+  setProblemOpenTime: (problemId, openTime)=>dispatch(setProblemOpenTime(problemId, openTime)),
   dispatch
 });
 
