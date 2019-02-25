@@ -273,6 +273,20 @@
         }
       }
     },
+    "fetchUserJSONQueue" : {
+      "responses": {
+        "$taskKey": {
+          ".read": "auth != null",
+          ".write": "!newData.exists()"
+        }
+      },
+      "tasks": {
+        ".indexOn": ["_state"],
+        "$taskKey": {
+          ".write": "auth != null && newData.child('owner').val() == auth.uid"
+        }
+      }
+    },
     "logged_events": {
       ".read": "auth != null",
       "$loggedeventKey": {

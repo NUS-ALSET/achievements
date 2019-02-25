@@ -185,3 +185,20 @@ export const displayNameUpdateFail = reason => ({
   type: DISPLAY_NAME_UPDATE_FAIL,
   reason
 });
+
+export const FETCH_USER_DATA = "FETCH_USER_DATA";
+export const fetchUserData = () => ({
+  type: FETCH_USER_DATA
+})
+
+export const FETCH_USER_DATA_SUCCESS = "FETCH_USER_DATA_SUCCESS";
+export const fetchUserDataSuccess = data => ({
+  type: FETCH_USER_DATA_SUCCESS,
+  data
+})
+
+export const FETCH_USER_DATA_FAIL = "FETCH_USER_DATA_FAIL";
+export const fetchUserDataFail = reason => ({
+  type: FETCH_USER_DATA_FAIL,
+  reason
+});
