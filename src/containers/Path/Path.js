@@ -43,7 +43,8 @@ import {
   pathToggleJoinStatusRequest,
   fetchGithubFiles,
   pathActivityCodeCombatOpen,
-  pathOpenJestSolutionDialog
+  pathOpenJestSolutionDialog,
+  pathClose
 } from "./actions";
 import {
   pathActivityChangeRequest,
@@ -61,7 +62,7 @@ import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialo
 import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import { problemSolutionSubmitRequest } from "../Activity/actions";
+import { problemSolutionSubmitRequest, problemSolutionAttemptRequest } from "../Activity/actions";
 import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
@@ -87,6 +88,7 @@ export class Path extends React.Component {
     match: PropTypes.object,
     onAddAssistant: PropTypes.func,
     onAssistantKeyChange: PropTypes.func,
+    onClose: PropTypes.func,
     onCloseDialog: PropTypes.func,
     onNotification: PropTypes.func,
     onOpen: PropTypes.func,
@@ -124,6 +126,9 @@ export class Path extends React.Component {
   componentDidMount() {
     this.props.onOpen(this.props.match.params.pathId);
   }
+  componentWillUnmount() {
+    this.props.onClose(this.props.match.params.pathId);
+  }
 
   onMoveActivity = (problem, direction) => {
     const { pathActivities, onActivityMoveRequest } = this.props;
@@ -155,6 +160,7 @@ export class Path extends React.Component {
           activity
         );
         break;
+      case ACTIVITY_TYPES.multipleQuestion.id:
       case ACTIVITY_TYPES.jupyterInline.id:
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.youtube.id:
@@ -278,12 +284,13 @@ export class Path extends React.Component {
       ui,
       uid,
       fetchGithubFiles,
-      userAchievements
+      userAchievements,
+      problemSolutionAttemptRequest
     } = this.props;
 
     if (!(pathActivities && pathActivities.path)) {
       if (pathActivities.path === null) {
-        return <p>Path does not exist!</p>
+        return <p>Path does not exist!</p>;
       }
       return <LinearProgress />;
     }
@@ -337,8 +344,12 @@ export class Path extends React.Component {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus.bind(this)
               }
-            ]) ||
-            []
+            ]) || [
+              ui.inspectedUser && {
+                label: "Refersh",
+                handler: this.refreshSolutions.bind(this)
+              }
+            ]
           }
           paths={[
             {
@@ -386,6 +397,7 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddJestSolutionDialog
+          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`}
@@ -443,11 +455,12 @@ export class Path extends React.Component {
           activities={pathActivities.activities || []}
           codeCombatProfile={codeCombatProfile}
           currentUserId={uid || "Anonymous"}
+          inspectedUser={ui.inspectedUser}
           onDeleteActivity={this.onActivityDeleteRequest}
           onEditActivity={onActivityDialogShow}
           onMoveActivity={this.onMoveActivity}
           onOpenActivity={this.onOpenActivity}
-          pathStatus={pathStatus}
+          pathStatus={ui.inspectedUser ? PATH_STATUS_JOINED : pathStatus}
           pendingActivityId={pendingActivityId}
           selectedPathId={(pathActivities.path && pathActivities.path.id) || ""}
         />
@@ -554,6 +567,7 @@ const mapDispatchToProps = {
   onCloseDialog: closeActivityDialog,
   onNotification: notificationShow,
   onOpen: pathOpen,
+  onClose: pathClose,
   onShowCollaboratorsClick: pathShowCollaboratorsDialog,
   onProfileUpdate: externalProfileUpdateRequest,
   onOpenSolution: pathOpenSolutionDialog,
@@ -569,7 +583,8 @@ const mapDispatchToProps = {
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
   fetchGithubFiles: fetchGithubFiles,
-  openJestActivity: pathOpenJestSolutionDialog
+  openJestActivity: pathOpenJestSolutionDialog,
+  problemSolutionAttemptRequest: problemSolutionAttemptRequest
 };
 
 export default compose(
@@ -589,7 +604,7 @@ export default compose(
 
     return [
       `/activities#orderByChild=path&equalTo=${pathId}`,
-      `/completedActivities/${uid}/${pathId}`,
+      `/completedActivities/${state.path.ui.inspectedUser || uid}/${pathId}`,
       `/paths/${pathId}`,
       `/pathAssistants/${pathId}`,
       `/activities#orderByChild=path&equalTo=${pathId}`,

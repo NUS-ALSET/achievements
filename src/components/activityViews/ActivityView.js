@@ -17,17 +17,19 @@ import YouTubeProblem from "./YouTubeActivity";
 import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog";
 import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog";
 import CodeCombatActivity from "./CodeCombatActivity";
+import { MultipleQuestionActivity } from "./MultipleQuestionActivity";
 
 const views = {
   text: TextActivity,
+  multipleQuestion: MultipleQuestionActivity,
   profile: ProfileActivity,
   jupyter: JupyterProblem,
   jupyterInline: JupyterInlineProblem,
   youtube: YouTubeProblem,
   jest: AddJestSolutionDialog,
   game: AddGameSolutionDialog,
-  codeCombat : CodeCombatActivity,
-  codeCombatNumber : CodeCombatActivity,
+  codeCombat: CodeCombatActivity,
+  codeCombatNumber: CodeCombatActivity,
   codeCombatMultiPlayerLevel: CodeCombatActivity
 };
 
@@ -50,7 +52,7 @@ class ActivityView extends React.PureComponent {
   // TODO: this lifecycle method needs to
   // 1. rewrite to componentDidupdate
   // 2. implement a compare of props and updates
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps() {
     // this will call setState needlessly
     this.setState({ open: true });
     if (
@@ -76,7 +78,8 @@ class ActivityView extends React.PureComponent {
       pathProblem,
       solution,
       readOnly,
-      userAchievements
+      userAchievements,
+      problemSolutionAttemptRequest,
     } = this.props;
     let SpecificView = views[pathProblem.type];
     const extraProps = ["jest", "jestInline", "game"].includes(pathProblem.type)
@@ -89,7 +92,7 @@ class ActivityView extends React.PureComponent {
       // noinspection JSUnusedAssignment
       return <div>Wrong problem type</div>;
     }
-    
+
     if (!(pathProblem && solution)) {
       return <div>Loading</div>;
     }
@@ -97,6 +100,7 @@ class ActivityView extends React.PureComponent {
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         <SpecificView
           dispatch={dispatch}
+          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           onChange={onProblemChange}
           onClose={onClose}
           onCommit={onCommit}

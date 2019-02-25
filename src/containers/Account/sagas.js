@@ -23,22 +23,18 @@ import {
   accountFetchPaths,
   FETCH_USER_DATA,
   fetchUserDataFail,
-  fetchUserDataSuccess
+  fetchUserDataSuccess,
+  INSPECT_PATH_AS_USER
 } from "./actions";
 import { accountService } from "../../services/account";
-import {
-  call,
-  put,
-  race,
-  select,
-  take,
-  takeLatest
-} from "redux-saga/effects";
+import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
 import { delay } from "redux-saga";
 import { push } from "connected-react-router";
 import { notificationShow } from "../Root/actions";
-
-
+import {
+  getDynamicPathtitle,
+  GET_DYNAMIC_PATHTITLE
+} from "../AppFrame/actions";
 
 function* signInHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
@@ -75,6 +71,13 @@ function* accountOpenHandler(action) {
   } catch (err) {
     yield put(notificationShow(err.message));
   }
+}
+
+function* inspectPathAsUserHandler(action) {
+  const user = yield select(state => state.firebase.data.users[action.userId]);
+  yield put(push(`/paths/${action.pathId}`));
+  yield take(GET_DYNAMIC_PATHTITLE);
+  yield put(getDynamicPathtitle(`Path (as ${user.displayName})`));
 }
 
 function* externalProfileUpdateRequestHandler(action) {
@@ -251,6 +254,9 @@ export default [
   },
   function* watchAccountOpen() {
     yield takeLatest(ACCOUNT_OPEN, accountOpenHandler);
+  },
+  function* watchInspectPathAsUser() {
+    yield takeLatest(INSPECT_PATH_AS_USER, inspectPathAsUserHandler);
   },
   function* watchExternalProfileUpdateRequest() {
     yield takeLatest(

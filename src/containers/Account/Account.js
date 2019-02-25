@@ -18,7 +18,8 @@ import {
   externalProfileRemoveRequest,
   externalProfileUpdateRequest,
   profileUpdateDataRequest,
-  fetchUserData
+  fetchUserData,
+  inspectPathAsUser
 } from "./actions";
 import { firebaseConnect } from "react-redux-firebase";
 import { notificationShow } from "../Root/actions";
@@ -78,6 +79,7 @@ class Account extends React.PureComponent {
     externalProfileRemoveDialogShow: PropTypes.func,
     externalProfileRemoveRequest: PropTypes.func,
     externalProfileUpdateRequest: PropTypes.func,
+    inspectPathAsUser: PropTypes.func,
     profileUpdateDataRequest: PropTypes.func,
     fetchUserData: PropTypes.func,
 
@@ -87,6 +89,8 @@ class Account extends React.PureComponent {
     externalProfiles: PropTypes.object,
     joinedPaths: PropTypes.object,
     match: PropTypes.object,
+    myPaths: PropTypes.object,
+
     profileData: PropTypes.array,
     removeRequest: PropTypes.any,
     showDialog: PropTypes.bool.isRequired,
@@ -114,6 +118,9 @@ class Account extends React.PureComponent {
   addExternalProfileRequest = externalProfile => {
     this.props.externalProfileDialogShow(externalProfile);
   };
+  inspectPath = pathId =>
+    this.props.inspectPathAsUser(pathId, this.props.match.params.accountId);
+
   refreshAchievementsRequest = externalProfile => {
     const { userAchievements, externalProfileRefreshRequest } = this.props;
 
@@ -187,6 +194,7 @@ class Account extends React.PureComponent {
       externalProfileRemoveRequest,
       joinedPaths,
       match,
+      myPaths,
       profileData,
       userAchievements,
       removeRequest,
@@ -201,16 +209,20 @@ class Account extends React.PureComponent {
 
     if (!user) {
       if (user === null) {
-        return <p>This id <b>{match.params.accountId}</b> does not exist.</p>
+        return (
+          <p>
+            This id <b>{match.params.accountId}</b> does not exist.
+          </p>
+        );
       }
       return <LinearProgress />;
     }
 
     const isOwner = auth.uid === match.params.accountId;
-    const OwnerDisplayName = isOwner ||
-      (user.showDisplayName || user.showDisplayName === undefined)
+    const OwnerDisplayName =
+      isOwner || (user.showDisplayName || user.showDisplayName === undefined)
         ? displayName
-        : "(Hidden by the user)"
+        : "(Hidden by the user)";
 
     return (
       <Fragment>
@@ -377,8 +389,10 @@ class Account extends React.PureComponent {
               <JoinedPathCard
                 classes={classes}
                 id={path.id}
+                isOwner={!!(myPaths && myPaths[path.id])}
                 key={path.id}
                 name={path.name}
+                onInspect={this.inspectPath}
                 solutions={path.solutions}
               />
             ))}
@@ -417,6 +431,7 @@ const mapStateToProps = (state, ownProps) => ({
   externalProfiles: accountService.fetchExternalProfiles(),
   externalProfileInUpdate: state.account.externalProfileInUpdate,
   joinedPaths: state.account.joinedPaths,
+  myPaths: state.firebase.data.myPaths,
   profileData: getProfileData(state),
   removeRequest: {
     actual: state.account.showRemoveExternalProfileDialog,
@@ -439,6 +454,7 @@ const mapDispatchToProps = {
   accountOpen,
   displayNameEditToggle,
   displayNameUpdateRequest,
+  inspectPathAsUser,
   externalProfileDialogHide,
   externalProfileDialogShow,
   externalProfileRefreshRequest,
@@ -458,6 +474,14 @@ export default compose(
     `/users/${ownProps.match.params.accountId}`,
     `/userAchievements/${ownProps.match.params.accountId}`,
     `/users/${store.getState().firebase.auth.uid}`,
+    {
+      path: "/paths",
+      storeAs: "myPaths",
+      queryParams: [
+        "orderByChild=owner",
+        `equalTo=${store.getState().firebase.auth.uid}`
+      ]
+    },
     `/userAchievements/${store.getState().firebase.auth.uid}`
   ]),
   withStyles(styles),

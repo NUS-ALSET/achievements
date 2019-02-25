@@ -30,6 +30,7 @@ export class Activity extends React.PureComponent {
     children: PropTypes.any,
 
     externalProfileUpdateRequest: PropTypes.func,
+    error: PropTypes.any,
     notificationShow: PropTypes.func,
     problemFinalize: PropTypes.func,
     problemInitRequest: PropTypes.func,
@@ -103,12 +104,14 @@ export class Activity extends React.PureComponent {
       this.props.onProblemChange && this.props.onProblemChange(problemSolution)
     );
   };
-  onCommit = () => {
+  onCommit = options => {
     if (this.state.changed) {
       this.props.problemSolutionSubmitRequest(
         this.props.match.params.pathId,
         this.props.match.params.problemId,
-        this.state.problemSolution
+        options && options.forceSolution
+          ? options.solution
+          : this.state.problemSolution
       );
     } else {
       this.props.notificationShow("Nothing changed");
@@ -148,7 +151,7 @@ export class Activity extends React.PureComponent {
     } = this.props;
     if (!pathProblem) {
       if (error) {
-        return <p>Activity does not exist</p>
+        return <p>Activity does not exist</p>;
       }
       return (
         <div
