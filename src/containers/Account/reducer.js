@@ -11,7 +11,8 @@ import {
   EXTERNAL_PROFILE_REMOVE_DIALOG_SHOW,
   EXTERNAL_PROFILE_UPDATE_FAIL,
   EXTERNAL_PROFILE_UPDATE_REQUEST,
-  EXTERNAL_PROFILE_UPDATE_SUCCESS
+  EXTERNAL_PROFILE_UPDATE_SUCCESS,
+  FETCH_USER_DATA_SUCCESS
 } from "./actions";
 
 export const account = (
@@ -24,7 +25,8 @@ export const account = (
     showExternalProfileDialog: false,
     showRemoveExternalProfileDialog: false,
     removingProfileId: "",
-    removingProfileType: ""
+    removingProfileType: "",
+    userData: {}
   },
   action
 ) => {
@@ -91,6 +93,11 @@ export const account = (
         ...state,
         displayNameEdit: action.status
       };
+    case FETCH_USER_DATA_SUCCESS:
+      return {
+        ...state,
+        userData: action.data
+      }
     default:
       return state;
   }
