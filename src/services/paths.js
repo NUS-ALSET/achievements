@@ -1273,7 +1273,6 @@ export class PathsService {
   }
 
   saveAttemptedSolution(uid, payload){
-    console.log(uid, payload);
     payload.userKey = uid;
     return firebase
     .database()
