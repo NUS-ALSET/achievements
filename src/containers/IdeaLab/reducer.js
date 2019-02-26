@@ -77,15 +77,18 @@ export const selectDataset = state => {
   const attemptsKeys = Object.keys(attempts || {});
   if (attemptsKeys.length) attemptsKeys.forEach(id => {
     const attempt = attempts[id]
-    if (userObj[attempt.userKey]){
+    if (userObj[attempt.userKey]) {
         activities[attempt.activityKey] = true;
         userObj[attempt.userKey][attempt.activityKey] = true;
     } else {
         userObj[attempt.userKey] = {
-            [attempt.activityKey]:true
+            [attempt.activityKey] : true
         }
     }
   })
+  const days = 7; // Days you want to subtract
+  const today = new Date();
+  const last = new Date(today.getTime() - (days * 24 * 60 * 60 * 1000));
   Object.keys(userObj).forEach(userId => {
     userObj[userId] = Object.keys(userObj[userId]).length;
   })
