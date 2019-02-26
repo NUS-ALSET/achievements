@@ -1,0 +1,844 @@
+{
+    "-LRI6ZCPw5enJUlUhSq_" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1542213990076,
+      "time" : 1542214009202,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIH0OtIqEZKRrneZIx" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542213990076,
+      "time" : 1542216750878,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIH6GptN6lLNtCwFHh" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542213990076,
+      "time" : 1542216774936,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIHIz_n9QoK6ABfpe1" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542213990076,
+      "time" : 1542216827017,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIHa1zLT41xjMyaRXY" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542216846878,
+      "time" : 1542216900965,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIHtu7YbTmy9YwpxaL" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542216931385,
+      "time" : 1542216982318,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRII8wTj18uxiKCw-6T" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1542216931385,
+      "time" : 1542217047997,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIIxrQ-TqriP63hUk2" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1542216931385,
+      "time" : 1542217260665,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIJ97Zn0VbnO2ApfgC" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1542216931385,
+      "time" : 1542217310913,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRIJYoQ_EpredszX9S1" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542217259893,
+      "time" : 1542217416125,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRILI8-eshWb1UX0O49" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1542217259893,
+      "time" : 1542217872113,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRKeOFMySpuS94TtaRG" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1542256676150,
+      "time" : 1542256694443,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LRLIFugIU52CyWvwTZ9" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542267391327,
+      "time" : 1542267408193,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRLIYv0lCcdLnqtwY4q" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542267391327,
+      "pathKey" : "-L9JVgROKkDUhZs08WWp",
+      "time" : 1542267487445,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRLIcGyEDeQuHJa4jIn" : {
+      "activityKey" : "-LENuWIIWsQnx7E7mvZ8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1542267391327,
+      "pathKey" : "-L9JVgROKkDUhZs08WWp",
+      "time" : 1542267503879,
+      "userKey" : "UZmKsBKXhddzyHuXXhgreT1AmXt2"
+    },
+    "-LRPLLZgG5dD5CwFtNHI" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542335302671,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1542335326622,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LRPLODuIJlKj4ZCjQxc" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542335302671,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1542335337519,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LRPLRyIOMm6gDpZLTJX" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1542335302671,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1542335352838,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LTRZcPy42VVvfq-IqkX" : {
+      "activityKey" : "-LLGO9gN-fMSCB4HD_YT",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544520082025,
+      "pathKey" : "-LJmdXWBgsNkzRC6piLm",
+      "time" : 1544520107822,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTRbR7ok-ma6DOrlfQe" : {
+      "activityKey" : "-LKKYI79d9ZbBm_SRIGl",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544520820977,
+      "pathKey" : "-LIHcRLK2Ql9Fva5uERe",
+      "time" : 1544520843940,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTRcePk2o2pr-nt_nuL" : {
+      "activityKey" : "-LKKYI79d9ZbBm_SRIGl",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544521147588,
+      "pathKey" : "-LIHcRLK2Ql9Fva5uERe",
+      "time" : 1544521164576,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTRdTCpy21KE1ms9kaY" : {
+      "activityKey" : "-LKKYI79d9ZbBm_SRIGl",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544521355647,
+      "pathKey" : "-LIHcRLK2Ql9Fva5uERe",
+      "time" : 1544521376740,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTV9Zm9niE3543DKNXb" : {
+      "activityKey" : "-LKKYI79d9ZbBm_SRIGl",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544580363697,
+      "pathKey" : "-LIHcRLK2Ql9Fva5uERe",
+      "time" : 1544580386047,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LT_rGmMGFIfLfNrmpf6" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544675947455,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544675990798,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LT_rn_Xus0erCNpUBbK" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544676117467,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544676129238,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LT_sRA22ZfD9BU00o3I" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544676282059,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544676295480,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LT_sdwbNObfdfYGgRHg" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544676282059,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544676351901,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTa1BPeOSiqJXUko2Fr" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544678831836,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544678852383,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTaC6mECXla_guX3EQ8" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544681694603,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544681716996,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTaFMmm7jmsFdQm5je1" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544682555225,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544682569000,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTaHsYJt3fbOLzWzdZg" : {
+      "activityKey" : "-LMGlgmcViNk1z8kUD4v",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544682974287,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1544683227466,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTaIyLZZR0_6LEdfmhN" : {
+      "activityKey" : "-LMGlgmcViNk1z8kUD4v",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544683437569,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1544683513369,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTeT3dYNbS9bmeyvLm2" : {
+      "activityKey" : "-LM1NG5WtpMo06_yFNjP",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544753244965,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1544753269464,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTeTgjZtzUsFpTZQi5C" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1544753419652,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544753433687,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTeU1jPY8DBC2YJ7hOW" : {
+      "activityKey" : "-LM1NG5WtpMo06_yFNjP",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544753511101,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1544753523791,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LTeWrXUy8_NV2x18LxY" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544754246563,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544754264339,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTeXBi9uimg0HLwrrwe" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544754302563,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544754351103,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTeXYY-e3er96PnQZWd" : {
+      "activityKey" : "-LOWNrIGDzzKEOFi66o2",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544754429414,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1544754444595,
+      "userKey" : "UiRPOpGJ4iNnVpbny7WjVWQpdAh2"
+    },
+    "-LTeXcuex9CcM5dGSEl6" : {
+      "activityKey" : "-LM1NG5WtpMo06_yFNjP",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1544754418411,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1544754466590,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LU8lyzI8vLFfdO4FTEn" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545278546402,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545278582860,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LU8mAeN32_gwKRZwHA4" : {
+      "activityKey" : "-LMfAM_9vPA2dUy09IkE",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545278601964,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545278634768,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LU8oaQBDrLw-1paAk3W" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545279247763,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545279268676,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LU8pXNwrG-IbzhG2oIh" : {
+      "activityKey" : "-LMfFqUXsXSL-ajrdKP7",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545279338541,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545279514294,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LU8qD52CtKZbxjbsRal" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545279612868,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545279693308,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LU8t_RfocsntnEbXDJp" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545280012324,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545280575396,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUc_4YDeeShy4VFVOVY" : {
+      "activityKey" : "-LM1NG5WtpMo06_yFNjP",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1545795262625,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545795295542,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LUcqvNdT0IUgJcNU-Xv" : {
+      "activityKey" : "-LUciAMBWLTOeKJCuIsl",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1545799759344,
+      "pathKey" : "-LT0hGj19DXTh4WvJYiI",
+      "time" : 1545799972497,
+      "userKey" : "tn44mDueKNfUcBfku7ignQwt3US2"
+    },
+    "-LUcr1Y016gjk5PcwxsS" : {
+      "activityKey" : "-LUciAMBWLTOeKJCuIsl",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545799759344,
+      "pathKey" : "-LT0hGj19DXTh4WvJYiI",
+      "time" : 1545800001832,
+      "userKey" : "tn44mDueKNfUcBfku7ignQwt3US2"
+    },
+    "-LUcrCUHVxAIzwTK1vRv" : {
+      "activityKey" : "-LUciAMBWLTOeKJCuIsl",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1545799759344,
+      "pathKey" : "-LT0hGj19DXTh4WvJYiI",
+      "time" : 1545800046649,
+      "userKey" : "tn44mDueKNfUcBfku7ignQwt3US2"
+    },
+    "-LUiE507KCPx-fMKgB8M" : {
+      "activityKey" : "-LMfAM_9vPA2dUy09IkE",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545890161628,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545890193579,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiGPssh7G0t9vCJmdg" : {
+      "activityKey" : "-LMfAM_9vPA2dUy09IkE",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545890709855,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545890803356,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiIHwQL_VI7QwlplEs" : {
+      "activityKey" : "-LMfFqUXsXSL-ajrdKP7",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545891241368,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545891295103,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiIcYh27dfC_BJK3A3" : {
+      "activityKey" : "-LMfFqUXsXSL-ajrdKP7",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545891308532,
+      "pathKey" : "-LMfAB4SNR25AyoFLmN5",
+      "time" : 1545891383633,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiJCA9i4jrRlYnO3FN" : {
+      "activityKey" : "-LMGlgmcViNk1z8kUD4v",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545891409221,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545891533614,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiKhLTH-NQ_7knOpAK" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1545891837290,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545891927553,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiKlVXpWH5dHXBsabP" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1545891837290,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545891944582,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiKnFu76nk9N-bpBYm" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1545891837290,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545891951774,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiKpptcu8NeCw9MZMn" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1545891837290,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545891962333,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiKyUJbAs8Gcnd9-z9" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545891837290,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545891997752,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LUiLM6L0kAxhs4NTHcC" : {
+      "activityKey" : "-LM7wOmh-_DT4-b_QwWb",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1545892049483,
+      "pathKey" : "-LLd7A7XpcbQiQ9pzAIX",
+      "time" : 1545892098617,
+      "userKey" : "qYGxqMHzysfBHrCPPg5qvzE2HB62"
+    },
+    "-LWF0BwNv0-Qym5NeJPd" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1547530706460,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1547530719114,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LWF2qiGlKEBDSCaPEDn" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1547531403459,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1547531414531,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LWF5U8TVt9HXP_GdWta" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1547532095217,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1547532104399,
+      "userKey" : "I9nQZbQ5xMdklnudDqGfh1ucOZz2"
+    },
+    "-LX3kE0uhjJYWh7oQBEK" : {
+      "activityKey" : "-LX3aauYILxRsQQafg7y",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1548414714494,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1548415463659,
+      "userKey" : "C7cIa1duYjdwFneJ9Zqn2mOzRU22"
+    },
+    "-LYBJrln5l0hWGn0fsxD" : {
+      "activityKey" : "-LJRWxkqqzEIOsBj6WUT",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1549616225016,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1549616250088,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LYBJwca4y-FGafbtmeE" : {
+      "activityKey" : "-LJRWxkqqzEIOsBj6WUT",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1549616225016,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1549616269979,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LYBK1lnEZGVOufNZkY3" : {
+      "activityKey" : "-LJRWxkqqzEIOsBj6WUT",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1549616225016,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1549616295144,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LYBo8DTM-wN-oZQ-6o4" : {
+      "activityKey" : "-LMkKzS2y9I-A_e4ScmP",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1549624410460,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1549624448023,
+      "userKey" : "n4ELFWA8C5NAFWgczDkUMBJmL8D2"
+    },
+    "-LYjyJ5tfqtz4priQ8ca" : {
+      "activityKey" : "-LJSbk-hsgiAnDvg0AON",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1550214239674,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550214316593,
+      "userKey" : "QQBdm1Gg0Jb09X5DUDwkH3uhTZt1"
+    },
+    "-LYjzZczlM4Es2F2iw7F" : {
+      "activityKey" : "-LJSbk-hsgiAnDvg0AON",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550214239674,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550214646455,
+      "userKey" : "QQBdm1Gg0Jb09X5DUDwkH3uhTZt1"
+    },
+    "-LYjzmaH2_Ykb8K-hZSC" : {
+      "activityKey" : "-LJSbk-hsgiAnDvg0AON",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550214239674,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550214703626,
+      "userKey" : "QQBdm1Gg0Jb09X5DUDwkH3uhTZt1"
+    },
+    "-LYk-Jn_fKyBINQjqfSW" : {
+      "activityKey" : "-LJSbk-hsgiAnDvg0AON",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550214239674,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550214843741,
+      "userKey" : "QQBdm1Gg0Jb09X5DUDwkH3uhTZt1"
+    },
+    "-LYmUj02VHflyjRGctcC" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1550256587047,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550256631995,
+      "userKey" : "QQBdm1Gg0Jb09X5DUDwkH3uhTZt1"
+    },
+    "-LYmUxFWfbaglHeMS6XS" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550256587047,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550256690329,
+      "userKey" : "QQBdm1Gg0Jb09X5DUDwkH3uhTZt1"
+    },
+    "-LYuZqJA4SjjMdtRVN8R" : {
+      "activityKey" : "-LMqEvFnt3din5zwfmc8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550392172088,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550392190337,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LYuZxVPt5vG-VPoufuH" : {
+      "activityKey" : "-LMqEvFnt3din5zwfmc8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550392172088,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550392219794,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LYu_8Ubjoj2WhWUNWxC" : {
+      "activityKey" : "-LMqEvFnt3din5zwfmc8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550392233864,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550392268894,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LYu_hVwOt4vq_GCWWMs" : {
+      "activityKey" : "-LMqEvFnt3din5zwfmc8",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550392387465,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550392416435,
+      "userKey" : "eVJVC9kde3QSiXAP989kivD9SZn2"
+    },
+    "-LYzDAPFkZtQs6VI9BOA" : {
+      "activityKey" : "-LK5RJPmnJ0_2JyxEwgy",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550469414019,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550470133511,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LYzFbGqJRRbPaytZJkM" : {
+      "activityKey" : "-LK5RJPmnJ0_2JyxEwgy",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550469414019,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550470771948,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ-jqnFqjQ0_zIrWYkV" : {
+      "activityKey" : "-LJnjZw2JtOCbI1YsRtf",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550495699292,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550495739209,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ34vGjp8Qv0pJwM2h8" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550551940813,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550551856356,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3M3e5Fh3k9YJl8-xb" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550551940813,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550556351230,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3M6GBtFwgNVcVMyv_" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1550551940813,
+      "pathKey" : "-LJTYGqdRPFxpd7cIdyR",
+      "time" : 1550556361922,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3Q1P8dyOL7VSWNgMg" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550557380497,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550557390593,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3RII_1gUeRqDTlR4x" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1550557708918,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550557721948,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3UWM412hujerOMl4x" : {
+      "activityKey" : "-LIji3dcx8v-KXkEZLB3",
+      "activityType" : "jest",
+      "completed" : 1,
+      "open" : 1550558547307,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550558565088,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3Vb4RxDyQ5htcyTVo" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550558842209,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550558851538,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3Vb9lFDJhyuo4cUES" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1550558842209,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550558851125,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3VjBe08UDweNKScp5" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1550558842209,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550558884769,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZ3VjHAfGXCHhPu555U" : {
+      "activityKey" : "-LJTYN8vJ4u9BVRC8c2p",
+      "activityType" : "jupyterInline",
+      "completed" : 0,
+      "open" : 1550558842209,
+      "pathKey" : "-LJTYGqdRPFxpd7cIdyR",
+      "time" : 1550558884367,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZJ3YEUVqJ1YFNX2laF" : {
+      "activityKey" : "-LKe_zLCjXM9zRpvdzaX",
+      "activityType" : "youtube",
+      "completed" : 1,
+      "open" : 1550819479440,
+      "pathKey" : "-LEOF9q3V-gx1pPCkFC_",
+      "time" : 1550819930747,
+      "userKey" : "ZAVfAf7nrPQTjjI7GdOirBawAfj1"
+    },
+    "-LZcb8rb0AxoDfUh3QFz" : {
+      "activityKey" : "-LZcazzcNklsnw6m6427",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1551164507728,
+      "pathKey" : "-LZcYiJT464BSUY-AJkD",
+      "time" : 1551164544655,
+      "userKey" : "xtrGpD4xRQgi6U2cfsLXNNsXYW22"
+    },
+    "-LZciQlk8ZjGwN-YH9Uk" : {
+      "activityKey" : "-LZLjPWQHS9oJuFUwjBW",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1551166428195,
+      "pathKey" : "-LZKOZtSSMX1KZ9MKwzQ",
+      "time" : 1551166454275,
+      "userKey" : "TzR0UJoTJNQDleyb2YwBteLVwvP2"
+    },
+    "-LZdG62xT0zNgVrGjIp6" : {
+      "activityKey" : "-LZcazzcNklsnw6m6427",
+      "activityType" : "jupyterInline",
+      "completed" : 1,
+      "open" : 1551175511014,
+      "pathKey" : "-LZcYiJT464BSUY-AJkD",
+      "time" : 1551175544513,
+      "userKey" : "TzR0UJoTJNQDleyb2YwBteLVwvP2"
+    }
+  }

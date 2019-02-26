@@ -7,7 +7,7 @@ import { delay } from "redux-saga";
 import * as actions from "./actions"
 import { notificationShow } from "../Root/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
-import { _CRUDdemoService } from "../../services/CRUDdemo"
+import { _CRUDdemoService } from "../../services/CRUDdemo";
 
 // worker saga
 export function* handleCreateRequest(action) {
@@ -42,6 +42,22 @@ export function* handleDeleteRequest() {
   }
 }
 
+export function* handleFetchActivityAttempts(action) {
+  try {
+    let response = yield call(_CRUDdemoService.fetchActivityAttempts, action.path);
+    if (response) {
+      response = Object.keys(response).length && Object.keys(response).reduce((acc, el) => {
+        if (response[el].completed) acc[el] = response[el];
+        return acc;
+      }, {});
+      yield put(actions.fetchActivityAttemptsSuccess(response));
+    } else yield put(actions.fetchActivityAttemptsFaliure("No data found!"))
+  } catch (err) {
+    yield put(notificationShow("Failed fetch activity attempts"));
+    console.error("Failed to fetch activity attempts: ", err)
+  }
+}
+
 // watcher saga
 export default [
   function* watchCreateToCRUDdemo() {
@@ -49,5 +65,8 @@ export default [
   },
   function* watchDeleteToCRUDdemo() {
     yield takeLatest(actions.DELETE_TO_CRUD_DEMO, handleDeleteRequest);
+  },
+  function* watchFetchActivityAttempts() {
+    yield takeLatest(actions.FETCH_ACTIVITY_ATTEMPTS, handleFetchActivityAttempts);
   }
 ];
