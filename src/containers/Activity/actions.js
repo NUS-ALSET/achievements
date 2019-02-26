@@ -175,3 +175,10 @@ export const problemSolutionAttemptRequest = (activityKey, pathKey, activityType
     time
   }
 });
+
+export const SET_PROBLEM_OPEN_TIME = 'SET_PROBLEM_OPEN_TIME';
+export const setProblemOpenTime = (problemId,openTime) => ({
+  type: SET_PROBLEM_OPEN_TIME,
+  problemId,
+  openTime
+})

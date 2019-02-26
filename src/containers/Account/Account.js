@@ -18,6 +18,7 @@ import {
   externalProfileRemoveRequest,
   externalProfileUpdateRequest,
   profileUpdateDataRequest,
+  fetchUserData,
   inspectPathAsUser
 } from "./actions";
 import { firebaseConnect } from "react-redux-firebase";
@@ -53,6 +54,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
 import { getDisplayName, getProfileData } from "./selectors";
 import JoinedPathCard from "../../components/cards/JoinedPathCard";
+import { Button } from "@material-ui/core";
+import download from "downloadjs"
 
 const styles = theme => ({
   card: {
@@ -79,6 +82,7 @@ class Account extends React.PureComponent {
     inspectPathAsUser: PropTypes.func,
     isAdmin: PropTypes.bool,
     profileUpdateDataRequest: PropTypes.func,
+    fetchUserData: PropTypes.func,
 
     notificationShow: PropTypes.func,
     displayNameEdit: PropTypes.bool,
@@ -94,7 +98,8 @@ class Account extends React.PureComponent {
     user: PropTypes.object,
     uid: PropTypes.string,
     displayName: PropTypes.string,
-    userAchievements: PropTypes.object
+    userAchievements: PropTypes.object,
+    userJSON: PropTypes.object
   };
 
   state = {
@@ -103,6 +108,12 @@ class Account extends React.PureComponent {
 
   componentDidMount() {
     this.props.accountOpen(this.props.match.params.accountId);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (Object.keys(this.props.userJSON).length !== Object.keys(prevProps.userJSON).length) {
+      this.downloadData();
+    }
   }
 
   addExternalProfileRequest = externalProfile => {
@@ -176,6 +187,14 @@ class Account extends React.PureComponent {
   onProfileDataUpdate = (field, value) =>
     this.props.profileUpdateDataRequest(field, value);
 
+  fetchUserData = () => {
+    if (Object.keys(this.props.userJSON).length) this.downloadData();
+    else this.props.fetchUserData();
+  }
+
+  downloadData = () => {
+    download(JSON.stringify(this.props.userJSON.data), "user-achievements.json", "text/plain");
+  }
   render() {
     const {
       achievementsRefreshingInProgress,
@@ -393,6 +412,15 @@ class Account extends React.PureComponent {
               />
             ))}
           </Grid>
+          <Grid item xs={6}>
+            <Button
+                color="primary"
+                onClick={this.fetchUserData}
+                variant="contained"
+              >
+                Download JSON
+              </Button>
+          </Grid>
         </Grid>
         <RemoveExternalProfileDialog
           externalProfileId={removeRequest.id}
@@ -434,7 +462,8 @@ const mapStateToProps = (state, ownProps) => ({
   userAchievements: (state.firebase.data.userAchievements || {})[
     ownProps.match.params.accountId || state.firebase.auth.uid
   ],
-  displayName: getDisplayName(state, ownProps)
+  displayName: getDisplayName(state, ownProps),
+  userJSON: state.account.userData
 });
 
 const mapDispatchToProps = {
@@ -450,7 +479,8 @@ const mapDispatchToProps = {
   externalProfileRemoveRequest,
   externalProfileUpdateRequest,
   notificationShow,
-  profileUpdateDataRequest
+  profileUpdateDataRequest,
+  fetchUserData
 };
 
 export default compose(
