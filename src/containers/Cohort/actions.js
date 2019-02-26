@@ -135,3 +135,29 @@ export const cohortUpdateAssistantsFail = (
   action,
   reason
 });
+
+export const COHORT_ANALYTICS_DATA_REQUEST = "COHORT_ANALYTICS_DATA_REQUEST";
+export const cohortAnalyticsDataRequest = (
+  cohortId,
+) => ({
+  type: COHORT_ANALYTICS_DATA_REQUEST,
+  cohortId,
+});
+
+export const COHORT_ANALYTICS_DATA_REQUEST_SUCCESS = "COHORT_ANALYTICS_DATA_REQUEST_SUCCESS";
+export const cohortAnalyticsDataRequestSuccess = (
+  cohortId, data
+) => ({
+  type: COHORT_ANALYTICS_DATA_REQUEST_SUCCESS,
+  cohortId,
+  data
+});
+export const COHORT_ANALYTICS_DATA_REQUEST_FAIL = "COHORT_ANALYTICS_DATA_REQUEST_FAIL";
+export const cohortAnalyticsDataRequestFail = (
+  cohortId,
+  reason
+) => ({
+  type: COHORT_ANALYTICS_DATA_REQUEST_FAIL,
+  cohortId,
+  reason
+});
