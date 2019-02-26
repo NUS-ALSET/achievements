@@ -1,12 +1,14 @@
 import {
   CHANGE_PATH_KEY_JUPSOL,
   INIT_ANALYTICSDATA,
-  FILTER_ANALYTICSDATA
+  FILTER_ANALYTICSDATA,
+  UPDATE_SELECTED_PATH
 } from "./actions";
 
 const initialState = {
   jupyterAnalyticsPathKey: "",
-  filteredAnalytics: []
+  filteredAnalytics: [],
+  selectedPath: ""
 };
 
 export const CRUDdemo = (state = initialState, action) => {
@@ -28,7 +30,16 @@ export const CRUDdemo = (state = initialState, action) => {
           item => action.analyticsData[item].pathKey === action.pathKey
         )
       };
+    case UPDATE_SELECTED_PATH:
+      return {
+        ...state,
+        selectedPath: action.selectedPath
+      }
     default:
       return state;
   }
 };
+
+export const selectUsers = state => {
+  return state.firebase.data.analyticsData;
+}
