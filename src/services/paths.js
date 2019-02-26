@@ -9,7 +9,6 @@ import {
 } from "../containers/Root/actions";
 
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
-import { switchPathTab } from "../containers/Paths/actions";
 
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";

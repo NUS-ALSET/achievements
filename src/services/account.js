@@ -6,7 +6,6 @@ import firebase from "firebase";
 const authProvider = new firebase.auth.GoogleAuthProvider();
 // authProvider.addScope("https://www.googleapis.com/auth/drive.file");
 
-
 export class AccountService {
   static isAdmin = false;
 
@@ -114,16 +113,13 @@ export class AccountService {
         .database()
         .ref(`/userAchievements/${uid}/${externalProfileId}`)
         .on("value", snap => {
-          if (
-            snap.val() &&
-            snap.val().lastUpdate &&
-            snap.val().lastUpdate > now
-          ) {
+          const val = snap.val();
+          if (val && val.lastUpdate && val.lastUpdate > now) {
             firebase
               .database()
               .ref(`/userAchievements/${uid}/${externalProfileId}`)
               .off();
-            resolve(snap.val());
+            resolve(val);
           }
         })
     );

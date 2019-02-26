@@ -430,7 +430,10 @@
     "userAchievements": {
       ".read": "auth != null",
       "$userKey": {
-        ".write": "auth != null && auth.uid == $userKey",
+        ".write": "auth != null && (
+          root.child('/admins/' + auth.uid).exists() || 
+          auth.uid == $userKey
+        )",
         ".read": "auth != null",
         "CodeCombat": {
           "achievements": {

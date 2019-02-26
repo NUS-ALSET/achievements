@@ -40,11 +40,13 @@ export const EXTERNAL_PROFILE_UPDATE_REQUEST =
   "EXTERNAL_PROFILE_UPDATE_REQUEST";
 export const externalProfileUpdateRequest = (
   externalProfileId,
-  externalProfileType
+  externalProfileType,
+  customUID
 ) => ({
   type: EXTERNAL_PROFILE_UPDATE_REQUEST,
   externalProfileId,
-  externalProfileType
+  externalProfileType,
+  customUID
 });
 
 export const PROFILE_UPDATE_DATA_REQUEST = "PROFILE_UPDATE_DATA_REQUEST";
@@ -55,10 +57,11 @@ export const profileUpdateDataRequest = (field, data) => ({
 });
 
 export const PROFILE_UPDATE_DATA_SUCCESS = "PROFILE_UPDATE_DATA_SUCCESS";
-export const profileUpdateDataSuccess = (field, data) => ({
+export const profileUpdateDataSuccess = (field, data, customUID) => ({
   type: PROFILE_UPDATE_DATA_SUCCESS,
   field,
-  data
+  data,
+  customUID
 });
 
 export const PROFILE_UPDATE_DATA_FAIL = "PROFILE_UPDATE_DATA_FAIL";
@@ -96,11 +99,13 @@ export const EXTERNAL_PROFILE_REFRESH_REQUEST =
   "EXTERNAL_PROFILE_REFRESH_REQUEST";
 export const externalProfileRefreshRequest = (
   externalProfileId,
-  externalProfileType
+  externalProfileType,
+  customUID
 ) => ({
   type: EXTERNAL_PROFILE_REFRESH_REQUEST,
   externalProfileId,
-  externalProfileType
+  externalProfileType,
+  customUID
 });
 
 export const EXTERNAL_PROFILE_REFRESH_SUCCESS =
