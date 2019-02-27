@@ -5,7 +5,8 @@ describe("CRUDdemo reducer", () => {
   it("should return the initial state when initialize store", () => {
     expect(reducer(undefined, {})).toEqual({
       jupyterAnalyticsPathKey: "",
-      filteredAnalytics: []
+      filteredAnalytics: [],
+      selectedPath: {}
     });
   });
 
@@ -17,7 +18,8 @@ describe("CRUDdemo reducer", () => {
       })
     ).toEqual({
       jupyterAnalyticsPathKey: "666",
-      filteredAnalytics: []
+      filteredAnalytics: [],
+      selectedPath: {}
     });
   });
   it("can initialize the analytics data", () => {
@@ -32,7 +34,8 @@ describe("CRUDdemo reducer", () => {
       })
     ).toEqual({
       jupyterAnalyticsPathKey: "",
-      filteredAnalytics: ["someID"]
+      filteredAnalytics: ["someID"],
+      selectedPath: {}
     });
   });
 
@@ -58,7 +61,8 @@ describe("CRUDdemo reducer", () => {
       })
     ).toEqual({
       jupyterAnalyticsPathKey: "",
-      filteredAnalytics: ["123", "234"]
+      filteredAnalytics: ["123", "234"],
+      selectedPath: {}
     });
   });
 });
