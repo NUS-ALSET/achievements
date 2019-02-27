@@ -1,5 +1,4 @@
 import firebase from "firebase";
-import activityAttempts from "../containers/IdeaLab/dummyActivityAttempts.json";
 
 class CRUDdemoService {
   WriteToCRUDdemo(value) {
@@ -26,17 +25,17 @@ class CRUDdemoService {
   }
 
   fetchActivityAttempts(pathUID) {
-    return Object.keys(activityAttempts).reduce((acc, el) => {
-      if (activityAttempts[el].pathKey === pathUID) acc[el] = activityAttempts[el];
-      return acc;
-    }, {})
-    // return firebase
-    //   .database()
-    //   .ref("/analytics/activityAttempts/")
-    //   .orderByChild("pathKey")
-    //   .equalTo(pathUID)
-    //   .once("value")
-    //   .then(snapshot => snapshot.val())
+    // return Object.keys(activityAttempts).reduce((acc, el) => {
+    //   if (activityAttempts[el].pathKey === pathUID) acc[el] = activityAttempts[el];
+    //   return acc;
+    // }, {})
+    return firebase
+      .database()
+      .ref("/analytics/activityAttempts/")
+      .orderByChild("pathKey")
+      .equalTo(pathUID)
+      .once("value")
+      .then(snapshot => snapshot.val())
   }
 }
 
