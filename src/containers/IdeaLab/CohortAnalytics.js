@@ -1,18 +1,24 @@
-
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
-
 import FusionCharts from "fusioncharts";
 import charts from "fusioncharts/fusioncharts.charts";
 import ReactFusioncharts from "react-fusioncharts";
 import { connect } from "react-redux";
 import { firebaseConnect } from "react-redux-firebase";
 import { compose } from "redux";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 
+import Paper from '@material-ui/core/Paper';
 import Button from "@material-ui/core/Button";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ExploreIcon from "@material-ui/icons/Explore";
+import PersonIcon from "@material-ui/icons/Person";
 
 import { cohortAnalyticsDataRequest } from "../Cohort/actions";
 import { sagaInjector } from "../../services/saga";
@@ -20,20 +26,20 @@ import sagas from "./sagas";
 
 charts(FusionCharts);
 
-
-
 const styles = theme => ({
   container: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    display: "flex",
+    flexWrap: "wrap"
   },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
-    width: 200,
+    width: 200
   },
+  nested: {
+    paddingLeft: theme.spacing.unit * 8
+  }
 });
-
 
 class CohortAnalytics extends React.Component {
   static propTypes = {
@@ -77,7 +83,7 @@ class CohortAnalytics extends React.Component {
     this.setState({ selectedCohortId: cohortId });
     if (!this.state.cohortsRequests[cohortId]) {
       this.requestCohortData(cohortId);
-    }else{
+    } else {
       this.createDataSource(cohortId);
     }
   };
@@ -90,14 +96,15 @@ class CohortAnalytics extends React.Component {
     return true;
   };
 
-  changeCaption = (cohortId) => {
+  changeCaption = cohortId => {
     const dataSource = this.state.dataSource;
-    dataSource.chart.subcaption = (this.props.cohorts[cohortId] || {}).name || cohortId;
+    dataSource.chart.subcaption =
+      (this.props.cohorts[cohortId] || {}).name || cohortId;
     this.setState({
       dataSource
     });
-  }
-  
+  };
+
   componentDidUpdate(prevProps) {
     if (
       this.props.cohortsAnalyticsData[this.state.selectedCohortId] &&
@@ -107,7 +114,7 @@ class CohortAnalytics extends React.Component {
     }
   }
 
-  createDataSource = (selectedCohortId) => {
+  createDataSource = selectedCohortId => {
     const { cohortsAnalyticsData } = this.props;
     const selectedCohortData =
       cohortsAnalyticsData[selectedCohortId].studentsPathProgress || {};
@@ -169,10 +176,12 @@ class CohortAnalytics extends React.Component {
     this.setState({ anchorEl: null });
   };
   render() {
-    const { auth, cohorts } = this.props;
+    const { auth, cohorts, cohortsAnalyticsData, classes } = this.props;
     const { dataSource, anchorEl, selectedCohortId } = this.state;
-    if(!auth.uid){
-      return "Please login first."
+    const selectedCohortData =
+      (cohortsAnalyticsData[selectedCohortId] || {}).studentsPathProgress || {};
+    if (!auth.uid) {
+      return "Please login first.";
     }
     return (
       <Fragment>
@@ -183,8 +192,23 @@ class CohortAnalytics extends React.Component {
           onClick={this.handleClick}
           variant="contained"
         >
-          { selectedCohortId ? `Selected Cohort: ${dataSource.chart.subcaption}`: 'Please Select A Cohort'}
+          {selectedCohortId
+            ? `Selected Cohort: ${dataSource.chart.subcaption}`
+            : "Please Select A Cohort"}
         </Button>
+
+        {selectedCohortId && (
+          <Paper style={{ minHeight: "500px" , marginTop: '20px'}}>
+            <ReactFusioncharts
+              type="msline"
+              width="100%"
+              height="100%"
+              dataFormat="JSON"
+              dataSource={this.state.dataSource}
+            />
+          </Paper>
+        )}
+
         <Menu
           anchorEl={anchorEl}
           id="simple-menu"
@@ -203,19 +227,49 @@ class CohortAnalytics extends React.Component {
             </MenuItem>
           ))}
         </Menu>
-        <br/>
-        { selectedCohortId && 
-            <div style={{ height: "500px" }}>
-            <ReactFusioncharts
-              type="msline"
-              width="100%"
-              height="100%"
-              dataFormat="JSON"
-              dataSource={this.state.dataSource}
-            />
-          </div>
-        }
-      
+        <br />
+       {selectedCohortId &&
+          <Paper style={{ marginTop: "20px" }}>
+          <List
+            component="nav"
+            subheader={
+              <ListSubheader component="div">{`Cohort Paths & User Completed Activities Count`}</ListSubheader>
+            }
+            className={classes.root}
+          >
+            {Object.keys(selectedCohortData).map(pathId => {
+              const name = selectedCohortData[pathId].name;
+              const studentProgress =
+                selectedCohortData[pathId].studentProgress;
+              return (
+                <Fragment key={pathId}>
+                  <ListItem button>
+                    <ListItemIcon>
+                      <ExploreIcon />
+                    </ListItemIcon>
+                    <ListItemText  primary={name} />
+                  </ListItem>
+                    <List component="div" disablePadding>
+                      {Object.keys(studentProgress).map(userId => {
+                        return (
+                          <ListItem button key={userId} className={classes.nested}>
+                            <ListItemIcon><PersonIcon/></ListItemIcon>
+                            <ListItemText
+                              inset
+                              primary={`User(${userId}) completed ${studentProgress[userId]} activities.`}
+                            />
+                          </ListItem>
+                        );
+                      })}
+                    </List>
+                </Fragment>
+              );
+            })}
+          </List>
+        </Paper>
+
+       }
+       
       </Fragment>
     );
   }
