@@ -6,7 +6,7 @@ const analyseJupyterSolution = require("./src/analyseJupyterSolution");
 const outgoingRequests = require("./src/outgoingRequest");
 const fetchGithubFiles = require("./src/fetchGithubFiles");
 const fetchUserJSON = require("./src/fetchUserJSON");
-
+const cohortsAnalytics = require("./src//cohortAnalytics");
 const serviceAccount = require("./config/serviceAccountKey.json");
 
 admin.initializeApp({
@@ -20,4 +20,4 @@ outgoingRequests.queueHandler();
 analyseJupyterSolution.queueHandler();
 fetchGithubFiles.queueHandler();
 fetchUserJSON.queueHandler();
-
+cohortsAnalytics.queueHandler();

@@ -49,6 +49,7 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // Idea lab for trial
 import CRUDdemo from "../IdeaLab/CRUDdemo";
 import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
+import CohortAnalytics from "../IdeaLab/CohortAnalytics";
 import Brenda from "../IdeaLab/Brenda/PathDashboard";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
 import PathAnalytics from "../IdeaLab/pathAnalytics";
@@ -277,6 +278,7 @@ class AppFrame extends React.Component {
                 <Route component={CRUDdemo} exact path="/CRUDdemo" />
                 <Route component={AdditionalContentRequest} exact path="/AdditionalContentRequest" />
                 <Route component={PathAnalytics} exact path="/path-analytics" />
+                <Route component={CohortAnalytics} exact path="/CohortAnalytics" />
 
                 <Route
                   component={userDemonstratedPythonSkills}

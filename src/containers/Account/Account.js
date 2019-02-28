@@ -80,6 +80,7 @@ class Account extends React.PureComponent {
     externalProfileRemoveRequest: PropTypes.func,
     externalProfileUpdateRequest: PropTypes.func,
     inspectPathAsUser: PropTypes.func,
+    isAdmin: PropTypes.bool,
     profileUpdateDataRequest: PropTypes.func,
     fetchUserData: PropTypes.func,
 
@@ -122,11 +123,17 @@ class Account extends React.PureComponent {
     this.props.inspectPathAsUser(pathId, this.props.match.params.accountId);
 
   refreshAchievementsRequest = externalProfile => {
-    const { userAchievements, externalProfileRefreshRequest } = this.props;
+    const {
+      externalProfileRefreshRequest,
+      isAdmin,
+      match,
+      userAchievements
+    } = this.props;
 
     externalProfileRefreshRequest(
       userAchievements[externalProfile.id].id,
-      externalProfile.id
+      externalProfile.id,
+      isAdmin && match.params.accountId
     );
   };
   removeExternalProfileRequest = externalProfile => {
@@ -169,7 +176,12 @@ class Account extends React.PureComponent {
 
   showError = error => this.props.notificationShow(error);
   onProfileUpdate = profile => {
-    this.props.externalProfileUpdateRequest(profile, "CodeCombat");
+    const { externalProfileUpdateRequest, isAdmin, match } = this.props;
+    externalProfileUpdateRequest(
+      profile,
+      "CodeCombat",
+      isAdmin && match.params.accountId
+    );
   };
 
   onProfileDataUpdate = (field, value) =>
@@ -192,6 +204,7 @@ class Account extends React.PureComponent {
       externalProfiles,
       externalProfileRemoveDialogHide,
       externalProfileRemoveRequest,
+      isAdmin,
       joinedPaths,
       match,
       myPaths,
@@ -357,6 +370,7 @@ class Account extends React.PureComponent {
           </Grid>
           <Grid item xs={6}>
             {(isOwner ||
+              isAdmin ||
               user.showCodeCombatProfile ||
               user.showCodeCombatProfile === undefined) &&
               Object.keys(externalProfiles).map(externalProfileKey => (
@@ -366,6 +380,7 @@ class Account extends React.PureComponent {
                     classes={classes}
                     externalProfile={externalProfiles[externalProfileKey]}
                     inProgress={achievementsRefreshingInProgress}
+                    isAdmin={isAdmin}
                     isOwner={isOwner}
                     refreshAchievementsRequest={this.refreshAchievementsRequest}
                     removeExternalProfileRequest={
@@ -430,6 +445,7 @@ const mapStateToProps = (state, ownProps) => ({
   // That should be in firebase
   externalProfiles: accountService.fetchExternalProfiles(),
   externalProfileInUpdate: state.account.externalProfileInUpdate,
+  isAdmin: state.account.isAdmin,
   joinedPaths: state.account.joinedPaths,
   myPaths: state.firebase.data.myPaths,
   profileData: getProfileData(state),
