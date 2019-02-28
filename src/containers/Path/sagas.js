@@ -313,63 +313,60 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             "Completed"
           )
         );
-        yield put(
-          notificationShow("Solution submitted")
-        );
+        yield put(notificationShow("Solution submitted"));
         yield put(closeActivityDialog());
         return;
       }
-      
-      const levelsData = yield call(accountService.fetchAchievements, data.uid);
-        if (levelsData && (
-          (data.activity.type === ACTIVITY_TYPES.codeCombat.id
-          && levelsData.achievements[data.activity.level] 
-          && levelsData.achievements[data.activity.level].complete
-          )
-          ||
-          (
-            data.activity.type === ACTIVITY_TYPES.codeCombatNumber.id
-            && levelsData.totalAchievements >= data.activity.count
-          )
-          ||
-          (
-            data.activity.type === ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id
-            && levelsData.ladders
-            && (levelsData.ladders[`${data.activity.level}-${data.activity.team}`] || {}).percentile >= data.activity.requiredPercentile
-          ))
-          ){
-            const ladder = levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
 
-            yield call(
-              [pathsService, pathsService.submitSolution],
-              data.uid,
-              {
-                ...data.activity,
-                path: action.pathId,
-                problemId: action.activityId
-              },
-              {
-                rank: ladder.rank,
-                numInRanking: ladder.numInRanking,
-                value: `${ladder.rank} of ${ladder.numInRanking}`
-              }
-            );
-            yield put(
-              problemSolutionSubmitSuccess(
-                action.pathId,
-                action.activityId,
-                "Completed"
-              )
-            );
-            yield put(
-              notificationShow("Solution submitted")
-            );
-            yield put(closeActivityDialog());
-        } else {
-          yield put(
-            pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
-          );
-        }
+      const levelsData = yield call(accountService.fetchAchievements, data.uid);
+      if (
+        levelsData &&
+        ((data.activity.type === ACTIVITY_TYPES.codeCombat.id &&
+          levelsData.achievements[data.activity.level] &&
+          levelsData.achievements[data.activity.level].complete) ||
+          (data.activity.type === ACTIVITY_TYPES.codeCombatNumber.id &&
+            levelsData.totalAchievements >= data.activity.count) ||
+          (data.activity.type ===
+            ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id &&
+            levelsData.ladders &&
+            (
+              levelsData.ladders[
+                `${data.activity.level}-${data.activity.team}`
+              ] || {}
+            ).percentile >= data.activity.requiredPercentile))
+      ) {
+        const ladder =
+          levelsData.ladders &&
+          levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
+
+        yield call(
+          [pathsService, pathsService.submitSolution],
+          data.uid,
+          {
+            ...data.activity,
+            path: action.pathId,
+            problemId: action.activityId
+          },
+          ladder && {
+            rank: ladder.rank,
+            numInRanking: ladder.numInRanking,
+            value: `${ladder.rank} of ${ladder.numInRanking}`
+          }
+        );
+        yield put(
+          problemSolutionSubmitSuccess(
+            action.pathId,
+            action.activityId,
+            "Completed"
+          )
+        );
+        yield put(notificationShow("Solution submitted"));
+        yield put(closeActivityDialog());
+      } else {
+        yield put(
+          pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
+        );
+      }
     }
   } catch (err) {
     yield put(notificationShow(err.message));
@@ -383,7 +380,6 @@ export function* pathActivityCodeCombatOpenHandler(action) {
     );
   }
 }
-
 
 export function* pathOpenSolutionDialogHandler(action) {
   const problemInfo = action.problemInfo;

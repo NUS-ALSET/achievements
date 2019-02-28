@@ -25,30 +25,7 @@ class PathAnalytics extends React.PureComponent {
   };
   state = {
     anchorEl: null,
-    loading: true,
-    dataSource: {
-      "chart": {
-        "caption": "Path Analytics",
-        "yaxisname": "% of users",
-        "subcaption": "How far along a path users are progressing",
-        "showhovereffect": "1",
-        "numbersuffix": "%",
-        "drawcrossline": "1",
-        "plottooltext": "<b>$dataValue</b> of users completed in $seriesName",
-        // "theme": "fusion"
-      },
-      "categories": [
-        {
-          "category": []
-        }
-      ],
-      "dataset":[
-        {
-          seriesname: "All time",
-          data: []
-        }
-      ]
-    }
+    loading: true
   };
 
   handleClick = event => {

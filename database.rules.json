@@ -112,6 +112,20 @@
         ".write": "auth != null && root.child('/cohorts/' + $cohortKey).exists()"
       }
     },
+    "cohortAnalyticsQueue" : {
+      "responses": {
+        "$taskKey": {
+          ".read": "auth != null",
+          ".write": "!newData.exists()"
+        }
+      },
+      "tasks": {
+        ".indexOn": ["_state"],
+        "$taskKey": {
+          ".write": "auth != null && newData.child('owner').val() == auth.uid"
+        }
+      }
+    },
     "cohortAssistants": {
       "$cohortKey": {
         ".read": true,
@@ -444,7 +458,10 @@
     "userAchievements": {
       ".read": "auth != null",
       "$userKey": {
-        ".write": "auth != null && auth.uid == $userKey",
+        ".write": "auth != null && (
+          root.child('/admins/' + auth.uid).exists() || 
+          auth.uid == $userKey
+        )",
         ".read": "auth != null",
         "CodeCombat": {
           "achievements": {

@@ -20,6 +20,7 @@ const updateUserPySkills = require("./src/updateUserPySkills.js");
 const processActivitySolutions = require("./src/processActivitySolution");
 const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
 const cohortRecalculate = require("./src/cohortRecalculate");
+const cohortAnalytics = require("./src/cohortAnalytics");
 const userJSONTrigger = require("./src/fetchUserJSON");
 const {
   addDestination,
@@ -248,8 +249,18 @@ exports.cohortRecalculate = functions.database
     return cohortRecalculate.handler(cohortKey, taskKey);
   });
 
+exports.handleGithubFilesFetchRequest = functions.database
+  .ref("/cohortAnalyticsQueue/tasks/{taskKey}")
+  .onWrite(change => {
+    const data = change.after.val();
+    if (data) {
+      return cohortAnalytics.handler(data.cohortId, data.taskKey, data.owner);
+    }
+    return Promise.resolve();
+  });
+
 exports.handleUserJSONFetchRequest = functions.database
-  .ref("/fetchUserJSONQueue/responses/${taskKey}")
+  .ref("/fetchUserJSONQueue/responses/{taskKey}")
   .onWrite(change => {
     const data = change.after.val();
     if (data) {

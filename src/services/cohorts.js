@@ -1,5 +1,6 @@
 import firebase from "firebase";
 import { ASSIGNMENTS_TYPES } from "./courses";
+import { firebaseService } from "../services/firebaseService";
 
 class CohortsService {
   fetchCohort(uid, cohortId, checkRecountNeeds) {
@@ -316,6 +317,29 @@ class CohortsService {
       default:
         return ref.remove();
     }
+  }
+
+   /**
+   *
+   * @param {String} uid
+   * @param {String} cohortId
+   *
+   */
+  addTaskToCohortAnalyticsQueue({ cohortId, uid}){
+    return new Promise(resolve => {
+      firebaseService
+          .startProcess(
+            {
+              owner: uid,
+              cohortId
+            },
+            "cohortAnalyticsQueue",
+            "Fetch Cohort Analytics Data"
+          )
+          .then(res => {
+            resolve(res)
+          });
+    })
   }
 }
 

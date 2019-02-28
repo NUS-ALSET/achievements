@@ -11,7 +11,9 @@ import {
   cohortCourseUpdateSuccess,
   cohortFetchSuccess,
   cohortUpdateAssistantsFail,
-  cohortUpdateAssistantsSuccess
+  cohortUpdateAssistantsSuccess,
+  COHORT_ANALYTICS_DATA_REQUEST,
+  cohortAnalyticsDataRequestSuccess,
 } from "./actions";
 import { cohortsService } from "../../services/cohorts";
 import { notificationShow } from "../Root/actions";
@@ -110,6 +112,24 @@ export function* cohortUpdateAssistantRequestHandler(action) {
   }
 }
 
+export function* cohortAnalyticsDataRequestHandler(action) {
+  try {
+  const uid = yield select(state => state.firebase.auth.uid);
+  const analyticsData = yield call(
+    cohortsService.addTaskToCohortAnalyticsQueue,
+    { cohortId: action.cohortId, uid }
+    );
+  yield put(
+    cohortAnalyticsDataRequestSuccess(
+      action.cohortId,
+      analyticsData
+    )
+  )
+  }catch(err){
+
+  }
+}
+
 export default [
   function* watchCohortOpen() {
     yield takeLatest(COHORT_OPEN, cohortOpenHandle);
@@ -130,6 +150,12 @@ export default [
     yield takeLatest(
       COHORT_UPDATE_ASSISTANTS_REQUEST,
       cohortUpdateAssistantRequestHandler
+    );
+  },
+  function* watchCohortAnalyticsDataRequestt() {
+    yield takeLatest(
+      COHORT_ANALYTICS_DATA_REQUEST,
+      cohortAnalyticsDataRequestHandler
     );
   }
 ];
