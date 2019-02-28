@@ -249,7 +249,7 @@ exports.cohortRecalculate = functions.database
   });
 
 exports.handleUserJSONFetchRequest = functions.database
-  .ref("/fetchUserJSONQueue/responses/${taskKey}")
+  .ref("/fetchUserJSONQueue/responses/{taskKey}")
   .onWrite(change => {
     const data = change.after.val();
     if (data) {
