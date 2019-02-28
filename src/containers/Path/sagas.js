@@ -336,6 +336,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             ).percentile >= data.activity.requiredPercentile))
       ) {
         const ladder =
+          levelsData.ladders &&
           levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
 
         yield call(
@@ -346,7 +347,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
             path: action.pathId,
             problemId: action.activityId
           },
-          {
+          ladder && {
             rank: ladder.rank,
             numInRanking: ladder.numInRanking,
             value: `${ladder.rank} of ${ladder.numInRanking}`
