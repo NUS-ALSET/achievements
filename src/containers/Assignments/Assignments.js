@@ -212,6 +212,10 @@ class Assignments extends React.Component {
     );
   }
 
+  handleMessageClick = () => {
+    console.log("navigation to message component");
+  }
+
   render() {
     const {
       ui,
@@ -279,6 +283,10 @@ class Assignments extends React.Component {
               {
                 label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
                 handler: this.toggleHiddenShow
+              },
+              {
+                label: "Message",
+                handler: this.handleMessageClick
               }
             ]) ||
             null
