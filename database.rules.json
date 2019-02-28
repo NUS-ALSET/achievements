@@ -112,6 +112,20 @@
         ".write": "auth != null && root.child('/cohorts/' + $cohortKey).exists()"
       }
     },
+    "cohortAnalyticsQueue" : {
+      "responses": {
+        "$taskKey": {
+          ".read": "auth != null",
+          ".write": "!newData.exists()"
+        }
+      },
+      "tasks": {
+        ".indexOn": ["_state"],
+        "$taskKey": {
+          ".write": "auth != null && newData.child('owner').val() == auth.uid"
+        }
+      }
+    },
     "cohortAssistants": {
       "$cohortKey": {
         ".read": true,
