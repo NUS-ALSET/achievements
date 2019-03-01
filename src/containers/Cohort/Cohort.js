@@ -40,6 +40,7 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import CohortTabs from "../../components/tabs/CohortTabs";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
+import MessageDialog from "../../components/dialogs/MessageDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -73,7 +74,8 @@ class Cohort extends React.PureComponent {
   state = {
     deletingCourseId: "",
     selectedCourse: "",
-    tabIndex: COHORT_TAB_COMMON
+    tabIndex: COHORT_TAB_COMMON,
+    messageModalOpen: false
   };
 
   componentDidMount() {
@@ -128,6 +130,11 @@ class Cohort extends React.PureComponent {
   showAssistantsDialog = () =>
     this.props.dispatch(cohortOpenAssistantsDialog(this.props.cohort.id));
 
+  toggleMessageModal = () => {
+    this.setState(state => ({
+      messageModalOpen: !state.messageModalOpen
+    }))
+  }
   render() {
     const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
     const tabIndex = this.state.tabIndex;
@@ -140,6 +147,14 @@ class Cohort extends React.PureComponent {
     return (
       <Fragment>
         <Breadcrumbs
+          action={
+            [
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
+              }
+            ]
+          }
           paths={[
             {
               label: "Cohorts",
@@ -149,6 +164,7 @@ class Cohort extends React.PureComponent {
               label: cohort.name
             }
           ]}
+          
         />
         <Typography
           gutterBottom
@@ -242,6 +258,12 @@ class Cohort extends React.PureComponent {
           onRemoveClick={this.onRemoveCourseClick}
           onSortClick={this.onSortChange}
           sortState={ui.sortState}
+        />
+        <MessageDialog
+          cohort={cohort}
+          handleClose={this.toggleMessageModal}
+          open={this.state.messageModalOpen}
+          type={"cohort"}
         />
       </Fragment>
     );

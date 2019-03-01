@@ -10,7 +10,6 @@ import {
 import {
   call,
   put,
-  select,
   takeLatest
 } from "redux-saga/effects";
 
@@ -19,8 +18,7 @@ import messageService from "../../services/message";
 
 export function* fetchCourseMembersRequestIterator(action) {
   try {
-    // const courseMembers = yield call(messageService.fetchCourseMembers, action.courseID);
-    const courseMembers = yield call(messageService.fetchCourseMembers, "-L3l_FflaqA2xtcnHj6J");
+    const courseMembers = yield call(messageService.fetchCourseMembers, action.courseID);
     yield put(fetchCourseMembersSuccess(courseMembers));
   } catch (err) {
     yield put(fetchCourseMembersFaliure(err));
@@ -30,7 +28,7 @@ export function* fetchCourseMembersRequestIterator(action) {
 
 export function* sendMessageRequestIterator(action) {
   try {
-    const response = yield call(messageService.sendMessage, action.data, "courseMessages");
+    const response = yield call(messageService.sendMessage, action.data, action.data.collectionName);
     yield put(sendMessageSuccess(response));
   } catch (err) {
     yield put(sendMessageFaliure(err));

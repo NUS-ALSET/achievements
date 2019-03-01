@@ -3,11 +3,7 @@ import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { firebaseConnect } from "react-redux-firebase";
-import {
-  getCourseProps
-} from "../Assignments/selectors";
 import { sagaInjector } from "../../services/saga";
-
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import Typography from "@material-ui/core/Typography";
@@ -17,6 +13,38 @@ import sagas from "./sagas";
 import UsersList from "./UserList";
 import { fetchCourseMembers, sendMessage } from "./actions";
 import MessageForm from "./MessageForm";
+import Grid from "@material-ui/core/Grid";
+import { format , distanceInWordsToNow} from "date-fns";
+import { withStyles } from "@material-ui/core";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+
+const styles = theme => ({
+  container: {
+    display: "flex",
+    flexWrap: "wrap"
+  },
+  root: {
+    height: "calc(100vh - 64px)",
+    overflowY: "scroll"
+  },
+  inbox: {
+    height: "calc(100vh - 138px)",
+    overflowY: "scroll",
+    backgroundColor: "#ccc"
+  },
+  textField: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit
+  },
+  message: {
+    borderRadius: "10px 10px 10px 0px",
+    backgroundColor: "white",
+    width: "fit-content",
+    margin: "10px 3px"
+  }
+});
 
 class Message extends React.Component {
   static propTypes = {
@@ -25,92 +53,103 @@ class Message extends React.Component {
     course: courseInfo,
     firebase: PropTypes.any,
     fetchCourseMembers: PropTypes.func,
-    courseMembers: PropTypes.object,
+    courseMembers: PropTypes.array,
     sendMessage: PropTypes.func,
-    messages: PropTypes.object
+    messages: PropTypes.object,
+    type: PropTypes.string,
+    cohort: PropTypes.object
   };
 
-  componentDidMount() {
-    console.log(window.location.href);
-  }
 
-  componentDidUpdate(prevProps) {
+
+  componentDidMount() {
     const hasCourse = !!this.props.course;
-    if (hasCourse ) {
-      if (this.props.course.id !== (prevProps.course || {}).id)
-        this.props.fetchCourseMembers(this.props.course.id);
+    const hasCohort = !!this.props.cohort;
+    if (hasCourse) {
+      this.props.fetchCourseMembers(this.props.course.id);
+    } else if (hasCohort) {
+      console.log("fetch cohort members");
     }
   }
 
-  renderUsersList = users => {
-    return Object.keys(users).map(userkey => (
-      <p key={userkey}>{userkey}</p>
-    ));
-  }
-
   sendMessage = text => {
+    const chatType = this.props.type;
     const data = {
       text,
       time: new Date(),
       senderID: this.props.auth.uid,
-      courseID: this.props.course.id
+      groupID: chatType === "course" ? this.props.course.id : this.props.cohort.id,
+      collectionName: chatType === "course" ? "courseMessages" : "cohortMessages"
     }
     // console.log(this.props);
     this.props.sendMessage(data);
   }
 
-  renderMessages = () => {
+  renderMessages = (classes) => {
     const messages = this.props.messages || {};
     return Object.keys(messages).map((key, i) => (
-      <p key={i}>{messages[key].text}</p>
+      <ListItem alignItems="flex-start" key={i} className={classes.message}>
+        <ListItemText
+          style={{ fontSize: "12px"}}
+          primary={messages[key].text}
+          secondary={distanceInWordsToNow(new Date(messages[key].timestamp))}
+        />
+      </ListItem>
     ));
+
+
   };
 
   render() {
     const {
       auth,
-      course
+      course,
+      cohort,
+      type,
+      classes
     } = this.props;
 
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
-    } else if (!course) {
+    } else if (!course && !cohort) {
       if (course === null) {
         return <p>Something wrong!</p>
       }
       return <LinearProgress />;
     }
-  
     return (
       <Fragment>
-        <Breadcrumbs
+        {/* <Breadcrumbs
           paths={[
             {
-              label: "Courses",
+              label: type === "course" ? "Courses" : "Cohort",
               link: "/courses"
             },
             {
-              label: course.name
+              label: type === "course" ? course.name : cohort.name
             }
           ]}
-        />
-        <Typography
+        /> */}
+        {/* <Typography
           gutterBottom
           style={{
             marginLeft: 30
           }}
         >
-          Course Description: {course.description || "None provided"}
-        </Typography>
-        <div>
-          <UsersList members={this.props.courseMembers} />
-        </div>
-        <div>
-          {this.renderMessages()}
-        </div>
-        <div>
-          <MessageForm sendMessage={this.sendMessage} />
-        </div>
+          {type === "course" ? "Course Description" : "Cohort Description"} :
+          {type === "course" ?course.description || "None provided" : cohort.description}
+        </Typography> */}
+        <Grid container spacing={24}>
+          <Grid item xs={9} >
+            <List className={classes.inbox} >
+              {this.renderMessages(classes)}
+            </List>
+            <MessageForm sendMessage={this.sendMessage} />
+          </Grid>
+          <Grid item xs={3} className={classes.root}>
+            <UsersList members={this.props.courseMembers} />
+          </Grid>
+        </Grid>
       </Fragment>
     );
   }
@@ -118,39 +157,44 @@ class Message extends React.Component {
 
 sagaInjector.inject(sagas);
 
+const getState = (state, ownProps) => {
+  const type = ownProps.type;
+  const dynamicState = {
+    auth: state.firebase.auth,
+    [type === "course" ? "courseMembers" : "cohortMembers"]:
+      type === "course" ? state.message.courseMembers : console.log("need to fetch cohort members"),
+    messages: state.firebase.data.messages
+  }
+  return dynamicState;
+}
 /**
  *
- * @param {AchievementsAppState} state
+ * @param {Message} state
  * @param ownProps
  * @returns {*} props
  */
-const mapStateToProps = (state, ownProps) => ({
-  auth: state.firebase.auth,
-  course: getCourseProps(state, ownProps),
-  courseMembers: state.message.courseMembers,
-  messages: state.firebase.data.messages
-});
+const mapStateToProps = (state, ownProps) => (getState(state, ownProps));
 
 const mapDispatchToProps = dispatch => ({
-  fetchCourseMembers : courseId => dispatch(fetchCourseMembers(courseId)),
-  sendMessage : data => dispatch(sendMessage(data))
+  fetchCourseMembers: courseId => dispatch(fetchCourseMembers(courseId)),
+  sendMessage: data => dispatch(sendMessage(data))
 });
 
 export default compose(
   withRouter,
-  firebaseConnect((ownProps, store) => {
-    const courseId = ownProps.match.params.courseId;
-    const firebaseAuth = store.getState().firebase.auth;
-    return firebaseAuth.isEmpty ? [] : [
-        `/courses/${courseId}`,
-        {
-          path: `/courseMessages/${courseId}`,
-          storeAs: "messages"
-        }
+  firebaseConnect(ownProps => {
+    const groupID = ownProps.type === "course" ? ownProps.match.params.courseId : ownProps.cohort.id;
+    const ref = ownProps.type === "course" ? "courseMessages" : "cohortMessages";
+    return [
+      {
+        path: `/${ref}/${groupID}`,
+        storeAs: "messages"
+      }
     ]
   }),
   connect(
     mapStateToProps,
     mapDispatchToProps
-  )
+  ),
+  withStyles(styles)
 )(Message);

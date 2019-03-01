@@ -9,7 +9,7 @@ import {
 
 export const message = (
   state = {
-    courseMembers: {},
+    courseMembers: []
   },
   action
 ) => {
