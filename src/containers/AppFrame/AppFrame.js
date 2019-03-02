@@ -52,6 +52,7 @@ import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
 import CohortAnalytics from "../IdeaLab/CohortAnalytics";
 import Brenda from "../IdeaLab/Brenda/PathDashboard";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
+import PathAnalytics from "../IdeaLab/pathAnalytics";
 import ZiYun from "../IdeaLab/ZiYun/ZiYun";
 import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills"
 import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity"
@@ -276,6 +277,7 @@ class AppFrame extends React.Component {
                 <Route component={ZiYun} exact path="/ziyun" />
                 <Route component={CRUDdemo} exact path="/CRUDdemo" />
                 <Route component={AdditionalContentRequest} exact path="/AdditionalContentRequest" />
+                <Route component={PathAnalytics} exact path="/path-analytics" />
                 <Route component={CohortAnalytics} exact path="/CohortAnalytics" />
 
                 <Route

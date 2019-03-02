@@ -202,7 +202,7 @@ class CohortAnalytics extends React.Component {
             <ReactFusioncharts
               type="msline"
               width="100%"
-              height="100%"
+              height={500}
               dataFormat="JSON"
               dataSource={this.state.dataSource}
             />
