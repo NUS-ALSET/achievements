@@ -19,5 +19,8 @@
     "start": "firebase serve --only functions & node ./localTriggers.js",
     "test": "jest",
     "coverage": "jest --coverage"
+  },
+  "engines": {
+    "node": "8" 
   }
 }

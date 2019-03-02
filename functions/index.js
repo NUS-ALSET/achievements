@@ -249,7 +249,7 @@ exports.cohortRecalculate = functions.database
     return cohortRecalculate.handler(cohortKey, taskKey);
   });
 
-exports.handleGithubFilesFetchRequest = functions.database
+exports.handleCohortAnalyticsRequest = functions.database
   .ref("/cohortAnalyticsQueue/tasks/{taskKey}")
   .onWrite(change => {
     const data = change.after.val();
