@@ -5,7 +5,8 @@ import {
   COHORT_OPEN_ASSISTANTS_DIALOG,
   COHORT_UPDATE_ASSISTANTS_SUCCESS,
   COHORT_SORT_CHANGE,
-  COHORT_ANALYTICS_DATA_REQUEST_SUCCESS
+  COHORT_ANALYTICS_DATA_REQUEST_SUCCESS,
+  SET_COHORT_QUALIFICATION_CONDITION_SUCCESS
 } from "./actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
 
@@ -84,6 +85,14 @@ export const cohort = (
           [action.cohortId] : action.data
         }
       }
+    case SET_COHORT_QUALIFICATION_CONDITION_SUCCESS:
+      return {
+        ...state,
+        cohort: {
+          ...state.cohort,
+          qualifiedConditions: action.conditionData
+        }
+      };
     default:
       return state;
   }

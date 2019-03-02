@@ -17,6 +17,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { firebaseConnect } from "react-redux-firebase";
 
 import CohortCoursesTable from "../../components/tables/CohortCoursesTable";
+import CohortQualifiedConditionsList from "../../components/lists/CohortQualifiedConditionsList"
 import {
   cohortCloseDialog,
   cohortCoursesRecalculateRequest,
@@ -24,7 +25,8 @@ import {
   cohortOpen,
   cohortOpenAssistantsDialog,
   cohortSortChange,
-  cohortUpdateAssistantsRequest
+  cohortUpdateAssistantsRequest,
+  setCohortQualificationConditionRequest
 } from "./actions";
 import { sagaInjector } from "../../services/saga";
 
@@ -40,6 +42,7 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import CohortTabs from "../../components/tabs/CohortTabs";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
+import QualifiedConditionsDialog from "../../components/dialogs/QualifiedConditionsDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -73,7 +76,8 @@ class Cohort extends React.PureComponent {
   state = {
     deletingCourseId: "",
     selectedCourse: "",
-    tabIndex: COHORT_TAB_COMMON
+    tabIndex: COHORT_TAB_COMMON,
+    openQualifiedConditionsDialog: false
   };
 
   componentDidMount() {
@@ -127,14 +131,25 @@ class Cohort extends React.PureComponent {
 
   showAssistantsDialog = () =>
     this.props.dispatch(cohortOpenAssistantsDialog(this.props.cohort.id));
+    
+  showQualifiedConditionDialog = () =>
+    this.setState({ openQualifiedConditionsDialog: true });
 
+  closeQualifiedConditionsDialog = () =>
+    this.setState({ openQualifiedConditionsDialog: false });
+
+  saveQualifiedCondition = (condition) =>{
+    this.props.dispatch(
+      setCohortQualificationConditionRequest(this.props.cohort.id, condition)
+    );
+    this.closeQualifiedConditionsDialog();
+  }
   render() {
     const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
     const tabIndex = this.state.tabIndex;
     if (!cohort) {
       return <div>Loading</div>;
     }
-
     const isOwner = currentUser.uid && currentUser.uid === cohort.owner;
 
     return (
@@ -204,13 +219,22 @@ class Cohort extends React.PureComponent {
                   Recalculate
                 </Button>
                 {currentUser.status === USER_STATUSES.owner && (
-                  <Button
-                    className={classes.toolbarButton}
-                    onClick={this.showAssistantsDialog}
-                    variant="contained"
-                  >
-                    Collaborators
+                  <Fragment>
+                    <Button
+                      className={classes.toolbarButton}
+                      onClick={this.showAssistantsDialog}
+                      variant="contained"
+                    >
+                      Collaborators
+                    </Button>
+                    <Button
+                      className={classes.toolbarButton}
+                      onClick={this.showQualifiedConditionDialog}
+                      variant="contained"
+                    >
+                      Add Qualified Condition
                   </Button>
+                  </Fragment>
                 )}
               </Fragment>
             )}
@@ -243,6 +267,20 @@ class Cohort extends React.PureComponent {
           onSortClick={this.onSortChange}
           sortState={ui.sortState}
         />
+        <CohortQualifiedConditionsList
+          qualifiedConditions={cohort.qualifiedConditions}
+          pathsData={(cohort || {}).pathsData}
+        />
+        {
+          isOwner && 
+          <QualifiedConditionsDialog
+            open={this.state.openQualifiedConditionsDialog}
+            qualifiedConditions={cohort.qualifiedConditions}
+            pathsData={(cohort || {}).pathsData}
+            handleClose={this.closeQualifiedConditionsDialog}
+            saveChanges={this.saveQualifiedCondition}
+          />
+        }
       </Fragment>
     );
   }

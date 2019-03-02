@@ -341,7 +341,14 @@ class CohortsService {
           });
     })
   }
+  setCohortQualificationCondition(cohortId, conditionData){
+    return firebase
+        .database()
+        .ref(`/cohorts/${cohortId}/qualifiedConditions`)
+        .update(conditionData);
+  }
 }
+
 
 /** @type {CohortsService} */
 export const cohortsService = new CohortsService();

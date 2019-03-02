@@ -4,6 +4,7 @@ import {
   COHORT_COURSES_RECALCULATE_REQUEST,
   COHORT_OPEN,
   COHORT_UPDATE_ASSISTANTS_REQUEST,
+  SET_COHORT_QUALIFICATION_CONDITION_REQUEST,
   cohortCoursesRecalculateFail,
   cohortCoursesRecalculateRequest,
   cohortCoursesRecalculateSuccess,
@@ -14,6 +15,7 @@ import {
   cohortUpdateAssistantsSuccess,
   COHORT_ANALYTICS_DATA_REQUEST,
   cohortAnalyticsDataRequestSuccess,
+  setCohortQualificationConditionSuccess
 } from "./actions";
 import { cohortsService } from "../../services/cohorts";
 import { notificationShow } from "../Root/actions";
@@ -130,6 +132,21 @@ export function* cohortAnalyticsDataRequestHandler(action) {
   }
 }
 
+export function* setCohortQualificationConditionRequestHandler(action){
+  try{
+    yield call(
+      cohortsService.setCohortQualificationCondition,
+      action.cohortId,
+      action.conditionData
+    )
+    yield put(setCohortQualificationConditionSuccess(action.cohortId,action.conditionData))
+    yield put(notificationShow("Condition Added Successfully"));
+
+  }catch(err){
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchCohortOpen() {
     yield takeLatest(COHORT_OPEN, cohortOpenHandle);
@@ -157,5 +174,11 @@ export default [
       COHORT_ANALYTICS_DATA_REQUEST,
       cohortAnalyticsDataRequestHandler
     );
+  },
+  function* watchsetCohortQualificationConditionRequests() {
+    yield takeLatest(
+      SET_COHORT_QUALIFICATION_CONDITION_REQUEST,
+      setCohortQualificationConditionRequestHandler
+      );
   }
 ];

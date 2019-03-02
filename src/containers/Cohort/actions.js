@@ -161,3 +161,16 @@ export const cohortAnalyticsDataRequestFail = (
   cohortId,
   reason
 });
+
+export const SET_COHORT_QUALIFICATION_CONDITION_REQUEST = "SET_COHORT_QUALIFICATION_CONDITION_REQUEST";
+export const setCohortQualificationConditionRequest = (cohortId, conditionData) => ({
+  type: SET_COHORT_QUALIFICATION_CONDITION_REQUEST,
+  cohortId,
+  conditionData
+});
+export const SET_COHORT_QUALIFICATION_CONDITION_SUCCESS = "SET_COHORT_QUALIFICATION_CONDITION_SUCCESS";
+export const setCohortQualificationConditionSuccess = (cohortId, conditionData) => ({
+  type: SET_COHORT_QUALIFICATION_CONDITION_SUCCESS,
+  cohortId,
+  conditionData
+});
