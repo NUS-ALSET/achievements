@@ -345,7 +345,20 @@ class CohortsService {
     return firebase
         .database()
         .ref(`/cohorts/${cohortId}/qualifiedConditions`)
-        .update(conditionData);
+        .set({
+          pathConditions : conditionData,
+          updatedAt: {
+            ".sv": "timestamp"
+          }
+        });
+  }
+  cohortUpdateQualificationCalculateTime(cohortId){
+    return firebase
+        .database()
+        .ref(`/cohorts/${cohortId}/qualifiedConditions/updatedAt`)
+        .set({
+          ".sv": "timestamp"
+        });
   }
 }
 

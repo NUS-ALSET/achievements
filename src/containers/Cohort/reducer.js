@@ -90,7 +90,10 @@ export const cohort = (
         ...state,
         cohort: {
           ...state.cohort,
-          qualifiedConditions: action.conditionData
+          qualifiedConditions: {
+            pathConditions: action.conditionData,
+            updatedAt : Date.now()
+          }
         }
       };
     default:

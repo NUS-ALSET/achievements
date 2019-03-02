@@ -5,6 +5,7 @@ import {
   COHORT_OPEN,
   COHORT_UPDATE_ASSISTANTS_REQUEST,
   SET_COHORT_QUALIFICATION_CONDITION_REQUEST,
+  COHORT_RECALCULATE_QUALIFIED_MEMBERS_REQUEST,
   cohortCoursesRecalculateFail,
   cohortCoursesRecalculateRequest,
   cohortCoursesRecalculateSuccess,
@@ -147,6 +148,19 @@ export function* setCohortQualificationConditionRequestHandler(action){
   }
 }
 
+export function* cohortRecalculateQualifiedMembersRequesttHandler(action){
+  try{
+    yield call(
+      cohortsService.cohortUpdateQualificationCalculateTime,
+      action.cohortId
+    )
+  }catch(err){
+    yield put(notificationShow(err.message));
+  }
+}
+
+
+
 export default [
   function* watchCohortOpen() {
     yield takeLatest(COHORT_OPEN, cohortOpenHandle);
@@ -179,6 +193,12 @@ export default [
     yield takeLatest(
       SET_COHORT_QUALIFICATION_CONDITION_REQUEST,
       setCohortQualificationConditionRequestHandler
+      );
+  },
+  function* watchcohortRecalculateQualifiedMembersRequests() {
+    yield takeLatest(
+      COHORT_RECALCULATE_QUALIFIED_MEMBERS_REQUEST,
+      cohortRecalculateQualifiedMembersRequesttHandler
       );
   }
 ];

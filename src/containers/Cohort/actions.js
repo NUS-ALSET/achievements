@@ -168,9 +168,16 @@ export const setCohortQualificationConditionRequest = (cohortId, conditionData) 
   cohortId,
   conditionData
 });
+
 export const SET_COHORT_QUALIFICATION_CONDITION_SUCCESS = "SET_COHORT_QUALIFICATION_CONDITION_SUCCESS";
 export const setCohortQualificationConditionSuccess = (cohortId, conditionData) => ({
   type: SET_COHORT_QUALIFICATION_CONDITION_SUCCESS,
   cohortId,
   conditionData
+});
+
+export const COHORT_RECALCULATE_QUALIFIED_MEMBERS_REQUEST = "COHORT_RECALCULATE_QUALIFIED_MEMBERS_REQUEST";
+export const cohortRecalculateQualifiedMembersRequest = (cohortId) => ({
+  type: COHORT_RECALCULATE_QUALIFIED_MEMBERS_REQUEST,
+  cohortId
 });

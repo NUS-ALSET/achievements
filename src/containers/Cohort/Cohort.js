@@ -26,7 +26,8 @@ import {
   cohortOpenAssistantsDialog,
   cohortSortChange,
   cohortUpdateAssistantsRequest,
-  setCohortQualificationConditionRequest
+  setCohortQualificationConditionRequest,
+  cohortRecalculateQualifiedMembersRequest
 } from "./actions";
 import { sagaInjector } from "../../services/saga";
 
@@ -122,6 +123,9 @@ class Cohort extends React.PureComponent {
   recalculate = () => {
     const { cohort, dispatch } = this.props;
     dispatch(cohortCoursesRecalculateRequest(cohort.id));
+    dispatch(
+      cohortRecalculateQualifiedMembersRequest(cohort.id)
+    )
   };
 
   removeAssistant = (cohortId, assistantId) =>
@@ -144,8 +148,9 @@ class Cohort extends React.PureComponent {
     );
     this.closeQualifiedConditionsDialog();
   }
+
   render() {
-    const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
+    const { dispatch, classes, cohort, courses, currentUser, ui , cohortMemberQualificationStatus} = this.props;
     const tabIndex = this.state.tabIndex;
     if (!cohort) {
       return <div>Loading</div>;
@@ -232,7 +237,7 @@ class Cohort extends React.PureComponent {
                       onClick={this.showQualifiedConditionDialog}
                       variant="contained"
                     >
-                      Add Qualified Condition
+                      Set Qualification Condition
                   </Button>
                   </Fragment>
                 )}
@@ -268,14 +273,19 @@ class Cohort extends React.PureComponent {
           sortState={ui.sortState}
         />
         <CohortQualifiedConditionsList
-          qualifiedConditions={cohort.qualifiedConditions}
+          qualifiedConditions={(cohort.qualifiedConditions || {}).pathConditions}
           pathsData={(cohort || {}).pathsData}
+          cohortMemberQualificationStatus={cohortMemberQualificationStatus}
+          uid={currentUser.uid}
+          showAllUserStatus={tabIndex === COHORT_TAB_INSTRUCTOR && [USER_STATUSES.owner, USER_STATUSES.assistant].includes(
+            currentUser.status
+          )}
         />
         {
           isOwner && 
           <QualifiedConditionsDialog
             open={this.state.openQualifiedConditionsDialog}
-            qualifiedConditions={cohort.qualifiedConditions}
+            qualifiedConditions={(cohort.qualifiedConditions || {}).pathConditions}
             pathsData={(cohort || {}).pathsData}
             handleClose={this.closeQualifiedConditionsDialog}
             saveChanges={this.saveQualifiedCondition}
@@ -300,7 +310,8 @@ const mapStateToProps = state => ({
     name: state.firebase.auth.displayName,
     status: selectUserStatus(state)
   },
-  ui: state.cohort.ui
+  ui: state.cohort.ui,
+  cohortMemberQualificationStatus : state.firebase.data.cohortMemberQualificationStatus || {}
 });
 
 export default compose(
@@ -308,7 +319,14 @@ export default compose(
   firebaseConnect((ownProps, store) => {
     const state = store.getState();
     const firebaseAuth = state.firebase.auth;
-
+    const cohortId = ownProps.match.params.cohortId;
+    let qualificationStatus = [];
+    if(cohortId){
+      qualificationStatus= [{
+        path:  `/cohortMemberQualificationStatus/${cohortId}`,
+        storeAs: "cohortMemberQualificationStatus"
+      }]
+    }
     if (!firebaseAuth.uid) {
       return [];
     }
@@ -323,7 +341,8 @@ export default compose(
         path: "/courses",
         storeAs: "publicCourses",
         queryParams: ["orderByChild=isPublic", "equalTo=true"]
-      }
+      },
+      ...qualificationStatus
     ];
   }),
   connect(mapStateToProps)
