@@ -262,7 +262,11 @@ class Cohort extends React.PureComponent {
         <MessageDialog
           cohort={cohort}
           handleClose={this.toggleMessageModal}
+          isInstructor={[USER_STATUSES.owner, USER_STATUSES.assistant].includes(
+            currentUser.status
+          )}
           open={this.state.messageModalOpen}
+          showStudents={false}
           type={"cohort"}
         />
       </Fragment>

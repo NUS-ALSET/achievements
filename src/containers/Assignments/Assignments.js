@@ -409,7 +409,9 @@ class Assignments extends React.Component {
         <MessageDialog
           course={course}
           handleClose={this.toggleMessageModal}
+          isInstructor={currentUser.isAssistant}
           open={this.state.messageModalOpen}
+          showStudents={true}
           type={"course"}
         />
       </Fragment>

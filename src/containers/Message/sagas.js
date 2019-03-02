@@ -10,7 +10,8 @@ import {
 import {
   call,
   put,
-  takeLatest
+  takeLatest,
+  select
 } from "redux-saga/effects";
 
 import { notificationShow } from "../Root/actions";
@@ -19,6 +20,8 @@ import messageService from "../../services/message";
 export function* fetchCourseMembersRequestIterator(action) {
   try {
     const courseMembers = yield call(messageService.fetchCourseMembers, action.courseID);
+    const authUser = yield select(state => state.firebase.auth);
+    courseMembers.unshift(authUser)
     yield put(fetchCourseMembersSuccess(courseMembers));
   } catch (err) {
     yield put(fetchCourseMembersFaliure(err));
@@ -28,8 +31,15 @@ export function* fetchCourseMembersRequestIterator(action) {
 
 export function* sendMessageRequestIterator(action) {
   try {
-    const response = yield call(messageService.sendMessage, action.data, action.data.collectionName);
-    yield put(sendMessageSuccess(response));
+    if (!action.data.text) {
+      const err = "Please fill the form";
+      yield put(sendMessageFaliure(err));
+      yield put(notificationShow(err));
+    } else {
+      const response = yield call(messageService.sendMessage, action.data, action.data.collectionName);
+      yield put(sendMessageSuccess(response));
+    }
+    
   } catch (err) {
     yield put(sendMessageFaliure(err));
     yield put(notificationShow(err.message));

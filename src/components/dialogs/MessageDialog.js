@@ -26,10 +26,12 @@ function Transition(props) {
 
 class MessageDialog extends React.Component {
   render() {
-    const { classes, open, handleClose, type } = this.props;
+    const { classes, open, handleClose, type, isInstructor, showStudents } = this.props;
     const dynamicProps = {
       type,
-      [type === "course" ? "course" : "cohort"]: type === "course" ? this.props.course : this.props.cohort
+      [type === "course" ? "course" : "cohort"]: type === "course" ? this.props.course : this.props.cohort,
+      isInstructor,
+      showStudents
     }
     return (
       <div>
@@ -45,11 +47,9 @@ class MessageDialog extends React.Component {
                 <CloseIcon />
               </IconButton>
               <Typography className={classes.flex} color="inherit" variant="h6" >
-                {type === "course" ? "Course Chat" : "Cohort Chat"}
+                {type === "course" ? "Course Chat" : "Cohort Chat"} -
+                {type === "course" ? ` Course Name: ${this.props.course.name}` : ` Cohort Name: ${this.props.cohort.name}`}
               </Typography>
-              {/* <Button color="inherit" onClick={this.handleClose}>
-                save
-              </Button> */}
             </Toolbar>
           </AppBar>
           <Message {...dynamicProps} />
@@ -65,7 +65,8 @@ MessageDialog.propTypes = {
   handleClose: PropTypes.func,
   type: PropTypes.string,
   course: PropTypes.object,
-  cohort: PropTypes.object
+  cohort: PropTypes.object,
+  showStudents: PropTypes.bool
 };
 
 export default withStyles(styles)(MessageDialog);

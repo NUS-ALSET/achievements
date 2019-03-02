@@ -6,7 +6,7 @@ import { withStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
   root:{
-    display: "flex",
+    display: "flex"
   },
   container: {
     display: "flex",
@@ -14,7 +14,7 @@ const styles = theme => ({
     width: "calc(100% - 72px)"
   },
   textField: {
-    margin: "0px"  
+    margin: "0px"
   },
   noBorderRadius:{
     borderRadius: 0
@@ -42,49 +42,42 @@ class MessageForm extends React.Component {
     }
 
     handleSubmit(event) {
-      // alert("A message was submitted: " + this.state.value);
       event.preventDefault();
       this.props.sendMessage(this.state.value);
+      this.setState({
+        value: ""
+      });
     }
 
     render() {
-      const { classes } = this.props;
+      const { classes, isInstructor } = this.props;
 
       return (
         <div  className={classes.root}>
           <form autoComplete="off" className={classes.container} noValidate  onSubmit={this.handleSubmit}>
-              {/* <TextField
-                className={classes.textField}
-                fullWidth
-                id="standard-multiline-flexible"
-                // label="Input your message"
-                margin="normal"
-                multiline
-                onChange={this.handleChange}
-                rowsMax="4"
-                value={this.state.value}
-                placeholder={"Write your message here..."}
-              /> */}
             <TextField
               className={classes.textField}
+              disabled={!isInstructor}
               fullWidth
               id="outlined-full-width"
-              // InputLabelProps={{
-              //   shrink: true,
-              // }}
-              label="Write Message Here"
+              label={isInstructor ? "Write Message Here" : "Only instructor can send the messages"}
               margin="normal"
               multiline
+              onChange={this.handleChange}
               placeholder="Hi Kevin"
               rowsMax="4"
-              variant="outlined"
               value={this.state.value}
-              onChange={this.handleChange}
-
-        />
+              variant="outlined"
               
+            />
           </form>
-          <Button color="primary" onClick={this.handleSubmit} className={classes.noBorderRadius} variant="contained">
+          <Button
+            className={classes.noBorderRadius}
+            color="primary"
+            disabled={!isInstructor}
+            onClick={this.handleSubmit}
+            variant="contained"
+          >
             Send
           </Button>
         </div>
@@ -93,7 +86,8 @@ class MessageForm extends React.Component {
   }
   
   MessageForm.propTypes = {
-    classes: PropTypes.object.isRequired
+    classes: PropTypes.object.isRequired,
+    isInstructor: PropTypes.bool
   };
 
   export default withStyles(styles)(MessageForm);

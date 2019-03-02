@@ -266,7 +266,6 @@ class AppFrame extends React.Component {
                 <Route component={Admin} exact path="/admin" />
                 <Route component={Courses} exact path="/courses" />
                 <Route component={Assignments} exact path="/courses/:courseId" />
-                <Route component={Message} exact path="/courses-message/:courseId" />
                 <Route component={Cohorts} exact path="/cohorts" />
                 <Route component={Cohort} exact path="/cohorts/:cohortId" />
                 <Route component={Paths} exact path="/paths" />

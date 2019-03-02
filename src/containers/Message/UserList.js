@@ -30,7 +30,7 @@ const UsersList = (props) => {
                     <Avatar alt="Remy Sharp" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNdWGsNODpjNZ2SDeTj5uPjSadiNHp7FD179MaOQJesDOZtttjdg" />
                 </ListItemAvatar>
                 <ListItemText
-                    primary={el.displayName}
+                    primary={el.displayName || "Not Provided!"}
                 />
                 </ListItem>
         ))}

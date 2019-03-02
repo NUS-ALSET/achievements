@@ -1,4 +1,3 @@
-import LinearProgress from "@material-ui/core/LinearProgress";
 import { withRouter } from "react-router-dom";
 import { compose } from "redux";
 import { connect } from "react-redux";
@@ -6,15 +5,13 @@ import { firebaseConnect } from "react-redux-firebase";
 import { sagaInjector } from "../../services/saga";
 import PropTypes from "prop-types";
 import React, { Fragment } from "react";
-import Typography from "@material-ui/core/Typography";
-import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
 import sagas from "./sagas";
 import UsersList from "./UserList";
 import { fetchCourseMembers, sendMessage } from "./actions";
 import MessageForm from "./MessageForm";
 import Grid from "@material-ui/core/Grid";
-import { format , distanceInWordsToNow} from "date-fns";
+import { distanceInWordsToNow} from "date-fns";
 import { withStyles } from "@material-ui/core";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -57,18 +54,20 @@ class Message extends React.Component {
     sendMessage: PropTypes.func,
     messages: PropTypes.object,
     type: PropTypes.string,
-    cohort: PropTypes.object
+    cohort: PropTypes.object,
+    authUser: PropTypes.object,
+    classes: PropTypes.object,
+    isInstructor: PropTypes.bool,
+    showStudents: PropTypes.bool
   };
 
 
 
   componentDidMount() {
     const hasCourse = !!this.props.course;
-    const hasCohort = !!this.props.cohort;
+    // const hasCohort = !!this.props.cohort;
     if (hasCourse) {
       this.props.fetchCourseMembers(this.props.course.id);
-    } else if (hasCohort) {
-      console.log("fetch cohort members");
     }
   }
 
@@ -81,74 +80,62 @@ class Message extends React.Component {
       groupID: chatType === "course" ? this.props.course.id : this.props.cohort.id,
       collectionName: chatType === "course" ? "courseMessages" : "cohortMessages"
     }
-    // console.log(this.props);
     this.props.sendMessage(data);
   }
 
   renderMessages = (classes) => {
-    const messages = this.props.messages || {};
-    return Object.keys(messages).map((key, i) => (
-      <ListItem alignItems="flex-start" key={i} className={classes.message}>
+    const messagess = this.props.messages || {};
+    const messagesCopy = JSON.parse(JSON.stringify(messagess))
+    const computedMessages = Object.keys(messagesCopy).map(key => {
+      const newMessage = (this.props.courseMembers || []).reduce((acc, member) => {
+          acc = messagesCopy[key];
+          if (messagesCopy[key].senderId === member.uid) {
+            acc["senderName"] = member.displayName
+          }
+          return acc;
+      }, {})
+      if (Object.keys(newMessage).length === 0) {
+        return messagesCopy[key]
+      }
+      return newMessage;
+    })
+    return Object.keys(computedMessages).map((key, i) => (
+      <ListItem alignItems="flex-start" className={classes.message} key={i}>
         <ListItemText
-          style={{ fontSize: "12px"}}
-          primary={messages[key].text}
-          secondary={distanceInWordsToNow(new Date(messages[key].timestamp))}
+          primary={computedMessages[key].text}
+          secondary={
+            <Fragment>
+                From: {computedMessages[key].senderName} 
+                <br/>
+                <span style={{fontSize : "10px"}}>{distanceInWordsToNow(new Date(computedMessages[key].timestamp))}</span>
+            </Fragment>
+          }
+          style={{ fontSize: "12px", wordBreak: "break-all"}}
         />
       </ListItem>
     ));
-
-
   };
 
   render() {
     const {
-      auth,
-      course,
-      cohort,
-      type,
-      classes
+      classes,
+      courseMembers,
+      isInstructor,
+      showStudents
     } = this.props;
-
-    if (auth.isEmpty) {
-      return <div>Login required to display this page</div>;
-    } else if (!course && !cohort) {
-      if (course === null) {
-        return <p>Something wrong!</p>
-      }
-      return <LinearProgress />;
-    }
     return (
       <Fragment>
-        {/* <Breadcrumbs
-          paths={[
-            {
-              label: type === "course" ? "Courses" : "Cohort",
-              link: "/courses"
-            },
-            {
-              label: type === "course" ? course.name : cohort.name
-            }
-          ]}
-        /> */}
-        {/* <Typography
-          gutterBottom
-          style={{
-            marginLeft: 30
-          }}
-        >
-          {type === "course" ? "Course Description" : "Cohort Description"} :
-          {type === "course" ?course.description || "None provided" : cohort.description}
-        </Typography> */}
         <Grid container spacing={24}>
-          <Grid item xs={9} >
+          <Grid item xs={showStudents ? 9 : 12} >
             <List className={classes.inbox} >
               {this.renderMessages(classes)}
             </List>
-            <MessageForm sendMessage={this.sendMessage} />
+            <MessageForm isInstructor={isInstructor} sendMessage={this.sendMessage} />
           </Grid>
-          <Grid item xs={3} className={classes.root}>
-            <UsersList members={this.props.courseMembers} />
-          </Grid>
+          {showStudents && <Grid className={classes.root} item xs={3}>
+            <UsersList members={courseMembers} />
+          </Grid>}
+          
         </Grid>
       </Fragment>
     );
@@ -162,8 +149,9 @@ const getState = (state, ownProps) => {
   const dynamicState = {
     auth: state.firebase.auth,
     [type === "course" ? "courseMembers" : "cohortMembers"]:
-      type === "course" ? state.message.courseMembers : console.log("need to fetch cohort members"),
-    messages: state.firebase.data.messages
+      type === "course" && state.message.courseMembers,
+    messages: state.firebase.data.messages,
+    authUser: state.firebase.auth
   }
   return dynamicState;
 }
@@ -183,8 +171,12 @@ const mapDispatchToProps = dispatch => ({
 export default compose(
   withRouter,
   firebaseConnect(ownProps => {
-    const groupID = ownProps.type === "course" ? ownProps.match.params.courseId : ownProps.cohort.id;
-    const ref = ownProps.type === "course" ? "courseMessages" : "cohortMessages";
+    const groupID = ownProps.type === "course"
+    ? ownProps.match.params.courseId
+    : ownProps.cohort.id;
+    const ref = ownProps.type === "course"
+    ? "courseMessages"
+    : "cohortMessages";
     return [
       {
         path: `/${ref}/${groupID}`,

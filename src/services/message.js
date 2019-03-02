@@ -13,6 +13,10 @@ export class MessageService {
                         .ref(`/users/${memberId}`)
                         .once("value")
                         .then(snap => snap.val())
+                        .then(member => {
+                            member.uid = memberId
+                            return member;
+                        })
                 ))
             ))
     }
