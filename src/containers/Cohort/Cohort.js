@@ -272,15 +272,19 @@ class Cohort extends React.PureComponent {
           onSortClick={this.onSortChange}
           sortState={ui.sortState}
         />
-        <CohortQualifiedConditionsList
-          qualifiedConditions={(cohort.qualifiedConditions || {}).pathConditions}
-          pathsData={(cohort || {}).pathsData}
-          cohortMemberQualificationStatus={cohortMemberQualificationStatus}
-          uid={currentUser.uid}
-          showAllUserStatus={tabIndex === COHORT_TAB_INSTRUCTOR && [USER_STATUSES.owner, USER_STATUSES.assistant].includes(
-            currentUser.status
-          )}
-        />
+        {
+          Object.keys(((cohort.qualifiedConditions || {}).pathConditions || {})).length > 0 && 
+          <CohortQualifiedConditionsList
+            qualifiedConditions={(cohort.qualifiedConditions || {}).pathConditions}
+            pathsData={(cohort || {}).pathsData}
+            cohortMemberQualificationStatus={cohortMemberQualificationStatus}
+            uid={currentUser.uid}
+            showAllUserStatus={tabIndex === COHORT_TAB_INSTRUCTOR && [USER_STATUSES.owner, USER_STATUSES.assistant].includes(
+              currentUser.status
+            )}
+          />
+        }
+        
         {
           isOwner && 
           <QualifiedConditionsDialog
