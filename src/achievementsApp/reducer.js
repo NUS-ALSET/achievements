@@ -12,6 +12,7 @@ import { path } from "../containers/Path/reducer";
 import { paths } from "../containers/Paths/reducer";
 import { problem } from "../containers/Activity/reducer";
 import { CRUDdemo } from "../containers/IdeaLab/reducer";
+import { admin } from "../containers/Admin/reducer";
 
 export default combineReducers({
   firebase,
@@ -25,5 +26,6 @@ export default combineReducers({
   path,
   paths,
   problem,
-  CRUDdemo
+  CRUDdemo,
+  admin
 });
