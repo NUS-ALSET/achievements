@@ -113,7 +113,15 @@
       }
     },
     "cohortMemberQualificationStatus": {
-      ".read": true,
+      ".read": "auth != null",
+      "$cohortKey": {
+        "$UserKey": {
+          ".write": false
+        }
+      }
+    },
+    "cohortMembersCompletedActivitiesCountOnPaths": {
+      ".read": "auth != null",
       "$cohortKey": {
         "$UserKey": {
           ".write": false

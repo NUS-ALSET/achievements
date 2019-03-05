@@ -90,10 +90,29 @@ const handler = (dataBefore, dataAfter, cohortKey) => {
         }
       }
 
-      return admin
+      const cohortPaths = cohort.paths;
+      const memberProgressInPaths = {};
+      for(let pathId of cohortPaths){
+        memberProgressInPaths[pathId]={};
+        for(let memberId of cohortMembers){
+          const memberCompletedActivities =
+            (completedActivities[memberId] || {})[pathId] || {};
+          const memberCompletedPathActivitiesCount = Object.keys(
+            memberCompletedActivities
+          ).length;
+          memberProgressInPaths[pathId][memberId]=memberCompletedPathActivitiesCount;
+        }
+      }
+      return Promise.all([
+        admin
+        .database()
+        .ref(`/cohortMembersCompletedActivitiesCountOnPaths/${cohortKey}`)
+        .set(memberProgressInPaths),
+       admin
         .database()
         .ref(`/cohortMemberQualificationStatus/${cohortKey}`)
-        .set(memberQualifiedStatus);
+        .set(memberQualifiedStatus)
+      ])
     })
     .catch(err => {
       console.log(err);
