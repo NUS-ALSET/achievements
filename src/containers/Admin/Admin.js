@@ -7,11 +7,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { compose } from "redux";
-
 import { firebaseConnect } from "react-redux-firebase";
-
 import sagas from "./sagas";
-
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControl from "@material-ui/core/FormControl";
@@ -22,9 +19,8 @@ import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-
 import withStyles from "@material-ui/core/styles/withStyles";
-import { adminUpdateConfigRequest, createNewService, fetchServiceDetails } from "./actions";
+import { adminUpdateConfigRequest, createNewService, fetchServiceDetails, updateServiceDetails, removeService, deleteService, toggleService } from "./actions";
 import { sagaInjector } from "../../services/saga";
 import ServicesList from "./ServicesList";
 import ServiceDialog from "../../components/dialogs/ServiceDialog";
@@ -34,6 +30,9 @@ const styles = theme => ({
   setButton: { marginTop: 11 },
   formControl: {
     margin: theme.spacing.unit
+  },
+  right: {
+    float: "right"
   }
 });
 
@@ -66,7 +65,11 @@ class Admin extends React.PureComponent {
     createNewService: PropTypes.func,
     thirdPartyServices: PropTypes.object,
     fetchServiceDetails: PropTypes.func,
-    service: PropTypes.object
+    service: PropTypes.object,
+    updateServiceDetails: PropTypes.func,
+    removeServiceFromStore: PropTypes.func,
+    deleteService: PropTypes.func,
+    toggleService: PropTypes.func
   };
 
   static defaultProps = {
@@ -100,17 +103,12 @@ class Admin extends React.PureComponent {
     this.props.adminUpdateConfigRequest(this.state);
   };
 
-  addService = () => {
-    this.props.createNewService(this.state.newServiceDetails);
-  }
-
   toggleServiceModal = (editing) => () => {
+    if (!editing) this.props.removeServiceFromStore();
     this.setState(state => ({
       serviceModalOpen: !state.serviceModalOpen,
       editing
-    }), () => {
-      // console.log(this.state)
-    })
+    }))
   }
 
   editService = id => () => {
@@ -119,8 +117,11 @@ class Admin extends React.PureComponent {
     this.props.fetchServiceDetails(id);
   }
 
-  deleteService = id => () => console.log("deleting service....", id)
-
+  deleteService = id => () => {
+    if (window.confirm("Are you sure you wish to delete this item?")) {
+      this.props.deleteService(id);
+    }
+  }
   render() {
     const { classes, config, isAdmin } = this.props;
     const allowed = config.recommendations || {
@@ -224,7 +225,7 @@ class Admin extends React.PureComponent {
               </FormControl>
             </Grid>
             <Grid item sm={9} xs={12} />
-            <Grid item sm={3} xs={12}>
+            <Grid  item sm={3} xs={12}>
               <Button
                 color="primary"
                 fullWidth
@@ -234,23 +235,29 @@ class Admin extends React.PureComponent {
                 UPDATE
               </Button>
             </Grid>
-            <Grid item sm={9} xs={12} />
-              <Grid item sm={3} xs={12}>
+          </Grid>
+            
+        </Paper>
+        <Paper className={classes.section}>
+            <Grid item xs={12}>
+              <Typography gutterBottom variant="h6">
+                Third Party Services
+              </Typography>
+              <Grid className={classes.right} item sm={3} xs={12}>
                 <Button
                   color="primary"
                   fullWidth
                   onClick={this.toggleServiceModal(false)}
                   variant="contained"
                 >
-                  Add Service
+                  Add Third Party Service
                 </Button>
               </Grid>
-            </Grid>
-            <Grid item xs={12}>
               <ServicesList
                 deleteService={this.deleteService}
                 editService={this.editService}
                 services={this.props.thirdPartyServices}
+                toggleService={this.props.toggleService}
               />
             </Grid>
         </Paper>
@@ -260,6 +267,7 @@ class Admin extends React.PureComponent {
           onClose={this.toggleServiceModal(false)}
           open={this.state.serviceModalOpen}
           service={this.props.service}
+          updateServiceDetails={this.props.updateServiceDetails}
         />
       </React.Fragment>
     );
@@ -283,6 +291,18 @@ const mapDispatchToProps = dispatch => ({
   },
   fetchServiceDetails: id => {
     dispatch(fetchServiceDetails(id))
+  },
+  updateServiceDetails: data => {
+    dispatch(updateServiceDetails(data))
+  },
+  removeServiceFromStore: () => {
+    dispatch(removeService())
+  },
+  deleteService: id => {
+    dispatch(deleteService(id))
+  },
+  toggleService: service => {
+    dispatch(toggleService(service))
   }
 })
 
@@ -301,7 +321,7 @@ export default compose(
       },
       "/config",
       {
-        path: "/thirdPartyServices",
+        path: "/config/services",
         storeAs: "thirdPartyServices"
       }
     ];

@@ -1,12 +1,10 @@
-import { FETCH_SERVICE_DETAILS_SUCCESS } from "./actions";
+import {
+  FETCH_SERVICE_DETAILS_SUCCESS,
+  REMOVE_SERVICE
+} from "./actions";
 
   const initalState = {
-    service: {
-        name : "",
-        accessToken : "",
-        levelsUrl: "",
-        profileUrl: ""
-    }
+    service: {}
   }
   export const admin = (
     state = initalState,
@@ -18,8 +16,12 @@ import { FETCH_SERVICE_DETAILS_SUCCESS } from "./actions";
             ...state,
             service: action.service
         }
+      case REMOVE_SERVICE:
+        return {
+          ...state,
+          service: {}
+        }
       default:
         return state;
     }
   };
-  

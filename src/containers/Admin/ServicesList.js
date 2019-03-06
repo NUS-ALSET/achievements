@@ -8,6 +8,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import { Button } from "@material-ui/core";
+import Switch from "@material-ui/core/Switch";
 
 const styles = theme => ({
   root: {
@@ -20,7 +21,6 @@ const styles = theme => ({
   }
 });
 
-
 function ServicesList(props) {
   const { classes } = props;
 
@@ -30,9 +30,9 @@ function ServicesList(props) {
         <TableHead>
           <TableRow>
             <TableCell>Service Name</TableCell>
-            <TableCell align="right">Access Token</TableCell>
-            <TableCell align="right">Profile URL</TableCell>
-            <TableCell align="right">Levels URL</TableCell>
+            <TableCell align="right">URL</TableCell>
+            <TableCell align="right">Description</TableCell>
+            <TableCell align="right">Activate</TableCell>
             <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>
@@ -44,15 +44,24 @@ function ServicesList(props) {
                   <TableCell component="th" scope="row">
                     {service.name}
                   </TableCell>
-                  <TableCell align="right">{service.accessToken}</TableCell>
-                  <TableCell align="right">{service.profileUrl}</TableCell>
-                  <TableCell align="right">{service.levelsUrl}</TableCell>
+                  <TableCell align="right">{service.url}</TableCell>
+                  <TableCell align="right">
+                    {service.description}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Switch
+                      checked={service.enabled}
+                      color="primary"
+                      onChange={() => props.toggleService(service)}
+                    />
+                  </TableCell>
                   <TableCell align="right">
                     <Button onClick={props.editService(key)}>
                         Edit
                     </Button>
-                    <Button onClick={props.deleteService(key)}>Delete</Button>
+                    {/* <Button onClick={props.deleteService(key)}>Delete</Button> */}
                   </TableCell>
+                  
                 </TableRow>
               )
           })}
@@ -66,7 +75,8 @@ ServicesList.propTypes = {
   classes: PropTypes.object.isRequired,
   services: PropTypes.object,
   editService: PropTypes.func,
-  deleteService: PropTypes.func
+  deleteService: PropTypes.func,
+  toggleService: PropTypes.func
 };
 
 export default withStyles(styles)(ServicesList);

@@ -5,7 +5,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import PropTypes from "prop-types";
 import React from "react";
-import AddNewService from "../../containers/Admin/AddNewService";
+import ServiceForm from "../../containers/Admin/ServiceForm";
 
 class ServiceDialog extends React.PureComponent {
   static propTypes = {
@@ -14,7 +14,8 @@ class ServiceDialog extends React.PureComponent {
     open: PropTypes.bool.isRequired,
     createNewService: PropTypes.func,
     editing: PropTypes.bool,
-    service: PropTypes.object
+    service: PropTypes.object,
+    updateServiceDetails: PropTypes.func
   };
 
   constructor(props) {
@@ -35,21 +36,28 @@ class ServiceDialog extends React.PureComponent {
   }
 
   onSubmit = () => {
-    // console.log(this.props.createNewService());
     this.child.current.addService();
-   }
+  }
+
   render() {
-    const { onClose, open } = this.props;
+    const {
+      onClose,
+      open,
+      editing,
+      createNewService,
+      updateServiceDetails
+    } = this.props;
 
     return (
       <Dialog onClose={onClose} open={open}>
-        <DialogTitle>Add/Edit Third Party Service</DialogTitle>
+        <DialogTitle>{editing ? "Update" : "Add"} Third Party Service</DialogTitle>
         <DialogContent>
-          <AddNewService
-            createNewService={this.props.createNewService}
-            editing={this.props.editing}
+          <ServiceForm
+            createNewService={createNewService}
+            editing={editing}
             ref={this.child}
             service={this.props.service}
+            updateServiceDetails={updateServiceDetails}
             validate={this.validate}
           />
         </DialogContent>
