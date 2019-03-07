@@ -47,7 +47,8 @@ export const account = (
     case EXTERNAL_PROFILE_DIALOG_SHOW:
       return {
         ...state,
-        showExternalProfileDialog: true
+        showExternalProfileDialog: true,
+        selectedExternalProfileType : action.externalProfile.id
       };
     case EXTERNAL_PROFILE_DIALOG_HIDE:
       return {
@@ -68,7 +69,8 @@ export const account = (
     case EXTERNAL_PROFILE_REFRESH_REQUEST:
       return {
         ...state,
-        achievementsRefreshingInProgress: true
+        achievementsRefreshingInProgress: true,
+        selectedExternalProfileType: action.externalProfileType
       };
     case EXTERNAL_PROFILE_REFRESH_SUCCESS:
     case EXTERNAL_PROFILE_REFRESH_FAIL:

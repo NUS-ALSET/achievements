@@ -6,12 +6,10 @@ const axios = require("axios");
 const Queue = require("firebase-queue");
 
 function updateProfile(data, resolve) {
-  switch (data.service) {
-    case "CodeCombat": {
      return  Promise.all([
         admin
         .database()
-        .ref("/config/codeCombatProfileURL")
+        .ref("/config/services")
         .once("value")
         .then(snapshot => snapshot.val()),
         admin
@@ -20,10 +18,11 @@ function updateProfile(data, resolve) {
         .once("value")
         .then(existing => existing.val() || {})
       ])
-      .then(([codeCombatProfileURL]) =>
-        axios
+      .then(([services]) =>{
+        const serviceId = services[data.service] ? data.service : "CodeCombat"
+          return axios
           .get(
-            `${codeCombatProfileURL}?username=` +
+            `${services[serviceId].profileUrl}?username=` +
               data.serviceId
                 .toLowerCase()
                 .replace(/[ _]/g, "-")
@@ -42,13 +41,9 @@ function updateProfile(data, resolve) {
                 )
               );
           })
-      )
+      })
       .catch(err => console.error(data.uid, err.message))
       .then(() => resolve());
-    }
-    default:
-      return Promise.resolve().then(() => resolve());
-  }
 }
 
 exports.handler = updateProfile;

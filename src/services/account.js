@@ -139,10 +139,10 @@ export class AccountService {
     });
   }
 
-  fetchAchievements(uid) {
+  fetchAchievements(uid, service="CodeCombat") {
     return firebase
       .database()
-      .ref(`/userAchievements/${uid}/CodeCombat`)
+      .ref(`/userAchievements/${uid}/${service}`)
       .once("value")
       .then(snap => snap.val());
   }

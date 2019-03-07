@@ -54,17 +54,18 @@ class ActivityView extends React.PureComponent {
   // 2. implement a compare of props and updates
   UNSAFE_componentWillReceiveProps() {
     // this will call setState needlessly
+    const service = this.props.pathProblem.service || "CodeCombat";
     this.setState({ open: true });
     if (
       this.props.pathProblem.type === "profile" &&
       this.props.userAchievements &&
-      this.props.userAchievements.CodeCombat &&
-      this.props.userAchievements.CodeCombat.id
+      this.props.userAchievements[service] &&
+      this.props.userAchievements[service].id
     ) {
       this.props.onCommit({
         type: "SOLUTION",
         solution: {
-          value: this.props.userAchievements.CodeCombat.id
+          value: this.props.userAchievements[service].id
         }
       });
     }

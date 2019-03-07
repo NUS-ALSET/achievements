@@ -74,11 +74,11 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.multipleQuestion.id:
       return "Multiple Question Activity";
     case ACTIVITY_TYPES.profile.id:
-      return "Fetch CodeCombat profile";
+      return `Fetch ${problem.service || "CodeCombat"} profile`;
     case ACTIVITY_TYPES.codeCombat.id:
-      return `Finish "${problem.level}" level at CodeCombat`;
+      return `Finish "${problem.level}" level at ${problem.service || "CodeCombat"}`;
     case ACTIVITY_TYPES.codeCombatNumber.id:
-      return `Finish ${problem.count} levels at CodeCombat`;
+      return `Finish ${problem.count} levels at ${problem.service || "CodeCombat"}`;
     case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
       return `Finish "${problem.level}" level at CodeCombat`;
     case ACTIVITY_TYPES.jupyter.id:

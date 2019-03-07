@@ -489,6 +489,10 @@
         ".write": "auth != null && auth.uid == $userKey"
       }
     },
+    "thirdPartiesLevels":{
+      ".read": "auth != null",
+      ".write": false,
+    },
     "visibleSolutions": {
       "$courseKey": {
         ".read": "auth != null  &&

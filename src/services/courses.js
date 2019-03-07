@@ -33,15 +33,15 @@ export const ASSIGNMENTS_TYPES = {
   },
   Profile: {
     id: "Profile",
-    caption: "Fetch CodeCombat Profile"
+    caption: "Fetch Profile"
   },
   CodeCombat: {
     id: "CodeCombat",
-    caption: "Complete CodeCombat Level"
+    caption: "Complete Level"
   },
   CodeCombat_Number: {
     id: "CodeCombat_Number",
-    caption: "Complete Number of CodeCombat Levels"
+    caption: "Complete Number of Levels"
   },
   TeamFormation: {
     id: "TeamFormation",
@@ -354,15 +354,15 @@ export class CoursesService {
   //     .catch(err => this.store.dispatch(notificationShow(err.message)));
   // }
 
-  getProfileStatus(userId) {
+  getProfileStatus(userId, service="CodeCombat") {
     return firebase
-      .ref(`/userAchievements/${userId}/CodeCombat/id`)
+      .ref(`/userAchievements/${userId}/${service}/id`)
       .once("value")
       .then(id => {
         if (id.val()) {
           return id.val();
         }
-        throw new Error("Missing CodeCombat profile to submit");
+        throw new Error(`Missing ${service} profile to submit`);
       });
   }
 
@@ -372,9 +372,10 @@ export class CoursesService {
    * @param {Assignment} assignment
    */
   getAchievementsStatus(userId, assignment) {
+    const service = assignment.service || "CodeCombat";
     return new Promise((resolve, reject) => {
       firebase
-        .ref(`/userAchievements/${userId}/CodeCombat`)
+        .ref(`/userAchievements/${userId}/${service}`)
         .once("value")
         .then(profileData => {
           if (profileData.exists()) {
@@ -382,11 +383,11 @@ export class CoursesService {
             const profile = profileData.val() || {};
             if (err) {
               this.dispatch(
-                externalProfileRefreshRequest(profile.id, "CodeCombat")
+                externalProfileRefreshRequest(profile.id, service)
               );
               setTimeout(() => {
                 firebase
-                  .ref(`/userAchievements/${userId}/CodeCombat`)
+                  .ref(`/userAchievements/${userId}/${service}`)
                   .once("value")
                   .then(profileData => {
                     const err = this.checkAchievementsError(
@@ -403,7 +404,7 @@ export class CoursesService {
           } else {
             reject(
               new Error(
-                "Please enter your CodeCombat profile in the 1st question"
+                `Please enter your ${service} profile in the 1st question`
               )
             );
           }

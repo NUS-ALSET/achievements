@@ -138,16 +138,17 @@ export class Path extends React.Component {
 
   onOpenActivity = activity => {
     const {
-      codeCombatProfile,
       onOpenSolution,
       onActivityCodeCombatOpen,
       onPushPath,
       pathActivities,
-      openJestActivity
+      openJestActivity,
+      userAchievements
     } = this.props;
     this.setState(() => ({
       botsQuantity: activity.unitsPerSide
     }));
+    const userServiceAchievements = userAchievements[activity.service || "CodeCombat"];
     switch (activity.type) {
       case ACTIVITY_TYPES.profile.id:
       case ACTIVITY_TYPES.codeCombat.id:
@@ -156,8 +157,8 @@ export class Path extends React.Component {
         onActivityCodeCombatOpen(
           pathActivities.path.id,
           activity.id,
-          codeCombatProfile && codeCombatProfile.id,
-          activity
+          userServiceAchievements && userServiceAchievements.id,
+          activity.service
         );
         break;
       case ACTIVITY_TYPES.multipleQuestion.id:
@@ -609,7 +610,7 @@ export default compose(
       `/pathAssistants/${pathId}`,
       `/activities#orderByChild=path&equalTo=${pathId}`,
       `/studentJoinedPaths/${uid}/${pathId}`,
-      `userAchievements/${uid}/CodeCombat`
+      `userAchievements/${uid}`
     ];
   }),
   connect(

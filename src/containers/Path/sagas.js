@@ -274,6 +274,7 @@ export function* pathActivityJestOpenHandler(action) {
 }
 export function* pathActivityCodeCombatOpenHandler(action) {
   try {
+    const externalService = action.service || "CodeCombat";
     const data = yield select(state => ({
       uid: state.firebase.auth.uid,
       activity: state.firebase.data.activities[action.activityId],
@@ -285,7 +286,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       yield put(pathProfileDialogShow());
     } else {
       yield put(
-        externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
+        externalProfileRefreshRequest(action.codeCombatProfile, externalService, data.uid)
       );
     }
     const result = yield race({
@@ -318,7 +319,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
         return;
       }
 
-      const levelsData = yield call(accountService.fetchAchievements, data.uid);
+      const levelsData = yield call(accountService.fetchAchievements, data.uid, externalService);
       if (
         levelsData &&
         ((data.activity.type === ACTIVITY_TYPES.codeCombat.id &&
