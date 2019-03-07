@@ -48,8 +48,7 @@ const recommendations = {
 };
 const urls = {
   jupyterLambdaProcessor: "Jupyter Solver url",
-  jupyterAnalysisLambdaProcessor: "Jupyter Analyzer url",
-  codeCombatProfileURL: "CodeCombat Profile url"
+  jupyterAnalysisLambdaProcessor: "Jupyter Analyzer url"
 };
 const jestConfig = {
   awsJestRunnerServerURL: "Jest Runner url",

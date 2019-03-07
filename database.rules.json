@@ -177,6 +177,10 @@
         ".read": true
       }
     },
+    "thirdPartyServices": {
+      ".read": true,
+      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
+    },
     "courseMembers": {
       ".read": "auth != null",
       "$courseKey": {

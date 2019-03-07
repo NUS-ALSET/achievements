@@ -50,7 +50,7 @@ function ServicesList(props) {
                   </TableCell>
                   <TableCell align="right">
                     <Switch
-                      checked={service.enabled}
+                      checked={service.enable}
                       color="primary"
                       onChange={() => props.toggleService(service)}
                     />

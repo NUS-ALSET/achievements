@@ -14,13 +14,13 @@ export class AdminService {
     data.id = data.id || this.sliggify(data.name);
     const createdAtOrUpdatedAt = "createdAt" in data ? "updatedAt" : "createdAt";
     data[createdAtOrUpdatedAt] = {".sv": "timestamp"}
-    data["enabled"] = "enabled" in data ? data.enabled : false;
+    data["enable"] = "enable" in data ? data.enable : false;
     let publicData = {
       description : data.description,
       url : data.url,
       name : data.name,
       id : data.id,
-      enabled : data.enabled,
+      enable : data.enable,
       createdAt : data.createdAt || {".sv": "timestamp"}
     };
     if ("updatedAt" in data) publicData["updatedAt"] = {".sv": "timestamp"}
@@ -64,14 +64,14 @@ export class AdminService {
       .database()
       .ref(`/config/services/${service.id}`)
       .update({
-        enabled: !service.enabled
+        enable: !service.enable
       })
       .then(() => {
         return firebase
             .database()
             .ref(`/thirdPartyServices/${service.id}`)
             .update({
-              enabled: !service.enabled
+              enable: !service.enable
             })
       })
       .catch(err => console.log(err))
