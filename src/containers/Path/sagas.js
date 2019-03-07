@@ -289,7 +289,6 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       );
     }
     while (true) {
-      console.error("WTFWTFWTF");
       const result = yield race({
         skip: take(CLOSE_ACTIVITY_DIALOG),
         success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
@@ -383,7 +382,6 @@ export function* pathActivityCodeCombatOpenHandler(action) {
         }
       }
     }
-    console.error("FINSIH");
   } catch (err) {
     yield put(notificationShow(err.message));
     yield put(
