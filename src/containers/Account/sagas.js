@@ -112,7 +112,7 @@ function* externalProfileUpdateRequestHandler(action) {
     if (timedOut) {
       error = "Profile refreshing timed out";
     } else if (!response) {
-      error = "Wrong profile was provided";
+      error = "Invalid CodeCombat username provided";
     }
 
     if (error) {
@@ -257,7 +257,7 @@ function* fetchUserDataHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
   try {
     const userData = yield call(accountService.fetchUserJSON, uid);
-    yield put(fetchUserDataSuccess(userData))
+    yield put(fetchUserDataSuccess(userData));
   } catch (err) {
     yield put(fetchUserDataFail(err.message));
   }
@@ -304,9 +304,6 @@ export default [
     );
   },
   function* watchFetchUserData() {
-    yield takeLatest(
-      FETCH_USER_DATA,
-      fetchUserDataHandler
-    );
+    yield takeLatest(FETCH_USER_DATA, fetchUserDataHandler);
   }
 ];
