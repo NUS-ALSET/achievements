@@ -30,10 +30,10 @@ function ServicesList(props) {
         <TableHead>
           <TableRow>
             <TableCell>Service Name</TableCell>
-            <TableCell align="right">URL</TableCell>
-            <TableCell align="right">Description</TableCell>
-            <TableCell align="right">Activate</TableCell>
-            <TableCell align="right">Actions</TableCell>
+            <TableCell>URL</TableCell>
+            <TableCell>Description</TableCell>
+            <TableCell>Activate</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -44,18 +44,18 @@ function ServicesList(props) {
                   <TableCell component="th" scope="row">
                     {service.name}
                   </TableCell>
-                  <TableCell align="right">{service.url}</TableCell>
-                  <TableCell align="right">
+                  <TableCell>{service.url}</TableCell>
+                  <TableCell>
                     {service.description}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell>
                     <Switch
                       checked={service.enable}
                       color="primary"
                       onChange={() => props.toggleService(service)}
                     />
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell>
                     <Button onClick={props.editService(key)}>
                         Edit
                     </Button>
