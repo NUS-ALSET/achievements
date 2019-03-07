@@ -13,10 +13,10 @@ function updateProfile(data, resolve) {
         .once("value")
         .then(snapshot => snapshot.val()),
         admin
-        .database()
-        .ref(`/userAchievements/${data.uid}/${data.service}/achievements`)
-        .once("value")
-        .then(existing => existing.val() || {})
+          .database()
+          .ref(`/userAchievements/${data.uid}/${data.service}/achievements`)
+          .once("value")
+          .then(existing => existing.val() || {})
       ])
       .then(([services]) =>{
         const serviceId = services[data.service] ? data.service : "CodeCombat"
@@ -29,6 +29,12 @@ function updateProfile(data, resolve) {
                 .replace(/[!@#$%^&*()]/g, "")
           )
           .then(response => {
+            if(response.data.totalAchievements === -1){
+              return admin
+              .database()
+              .ref(`/userAchievements/${data.uid}/${data.service}`)
+              .remove()
+            }
             return admin
               .database()
               .ref(`/userAchievements/${data.uid}/${data.service}`)

@@ -17,7 +17,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 
-import { ENABLED_ASSIGNMENTS_TYPES } from "../../services/courses";
+import {
+  ENABLED_ASSIGNMENTS_TYPES,
+  ASSIGNMENTS_TYPES
+} from "../../services/courses";
 import {
   assignmentAddRequest,
   assignmentCloseDialog,
@@ -110,6 +113,24 @@ class AddAssignmentDialog extends React.PureComponent {
     }
   }
 
+  /**
+   * Returns list of assignments with requested team formation
+   * @param {String} teamFormation
+   * @returns {Array<Assignement>}
+   */
+  getTeamSourceAssignments(teamFormation) {
+    const { course } = this.props;
+    if (!teamFormation) {
+      return [];
+    }
+    return course.assignments.filter(
+      assignment =>
+        assignment.questionType !== ASSIGNMENTS_TYPES.TeamFormation.id &&
+        assignment.useTeams &&
+        assignment.teamFormation === teamFormation
+    );
+  }
+
   getAssignmentSpecificFields(assignment) {
     let { activities, paths, uid } = this.props;
 
@@ -173,6 +194,25 @@ class AddAssignmentDialog extends React.PureComponent {
               }
             />
           </Fragment>
+        );
+      case ENABLED_ASSIGNMENTS_TYPES.TeamChoice.id:
+        return (
+          <TextField
+            disabled={!assignment.teamFormation}
+            fullWidth
+            label="Options source"
+            onChange={this.updateField("source")}
+            select
+            value={assignment.source || ""}
+          >
+            {this.getTeamSourceAssignments(assignment.teamFormation).map(
+              source => (
+                <MenuItem key={source.id} value={source.id}>
+                  {source.name}
+                </MenuItem>
+              )
+            )}
+          </TextField>
         );
       case ENABLED_ASSIGNMENTS_TYPES.PathProgress.id:
         return (

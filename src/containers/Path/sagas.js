@@ -320,8 +320,12 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       }
 
       const levelsData = yield call(accountService.fetchAchievements, data.uid, externalService);
+      if (levelsData.totalAchievements === -1) {
+        throw new Error("Wrong CodeCombat profile was provided");
+      }
       if (
         levelsData &&
+        levelsData.achievements &&
         ((data.activity.type === ACTIVITY_TYPES.codeCombat.id &&
           levelsData.achievements[data.activity.level] &&
           levelsData.achievements[data.activity.level].complete) ||

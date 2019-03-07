@@ -8,7 +8,8 @@ import {
   courseRemoveStudentDialogShow,
   assignmentPathProblemSolutionRequest,
   courseMoveStudentDialogShow,
-  assignmentPathProgressSolutionRequest
+  assignmentPathProgressSolutionRequest,
+  assignmentTeamChoiceSolutionRequest
 } from "../../containers/Assignments/actions";
 
 import PropTypes from "prop-types";
@@ -319,6 +320,15 @@ class AssignmentsTable extends React.PureComponent {
           )
         );
         break;
+      case ASSIGNMENTS_TYPES.TeamChoice.id:
+        dispatch(
+          assignmentTeamChoiceSolutionRequest(
+            course.id,
+            assignment,
+            solution && solution.value
+          )
+        );
+        break;
       default:
         dispatch(assignmentSubmitRequest(assignment, solution));
     }
@@ -330,7 +340,7 @@ class AssignmentsTable extends React.PureComponent {
         assignmentPathProblemSolutionRequest(
           assignment,
           this.props.course.owner,
-          (assignment.problem || assignment.pathActivity),
+          assignment.problem || assignment.pathActivity,
           solution,
           true
         )

@@ -6,9 +6,11 @@ import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import { ACTIVITY_TYPES, CodeCombat_Multiplayer_Data } from "../../services/paths";
+import {
+  ACTIVITY_TYPES,
+  CodeCombat_Multiplayer_Data
+} from "../../services/paths";
 import { externalProfileRefreshRequest } from "../../containers/Account/actions";
-
 
 const externalProfile = {
   url: "https://codecombat.com",
@@ -17,7 +19,9 @@ const externalProfile = {
 
 class CodeCombatActivity extends React.PureComponent {
   static propTypes = {
+    dispatch: PropTypes.func,
     onChange: PropTypes.func.isRequired,
+    onCommit: PropTypes.func,
     problem: PropTypes.object,
     userAchievements: PropTypes.object,
     readOnly: PropTypes.bool
@@ -34,10 +38,7 @@ class CodeCombatActivity extends React.PureComponent {
       )
   }
   render() {
-    const {
-      problem,
-      userAchievements
-    } = this.props;
+    const { problem, userAchievements } = this.props;
 
     const service = problem.service || "CodeCombat";
     const codeCombatAchievements = ((userAchievements || {})[service] || {});
@@ -45,9 +46,9 @@ class CodeCombatActivity extends React.PureComponent {
     if (!achievements){
       return (
         <Typography>
-            Please add your Codecombat profile to complete this assigment.  
+          Please add your Codecombat profile to complete this assignment.
         </Typography>
-      )
+      );
     }
     const updateCodeCombatAchievements = (<Button color="primary" onClick={this.updateCodeCombatProfile} style={{marginLeft : "10px"}}  variant="contained">
       Update {service} Profile
@@ -62,17 +63,21 @@ class CodeCombatActivity extends React.PureComponent {
           }
         });
       }
-      const levelURL = `https://codecombat.com/play/level/${(problem || {}).level}`
+      const levelURL = `https://codecombat.com/play/level/${
+        (problem || {}).level
+      }`;
       if (hasLevelCompleted) {
-        return <div> Completed </div>
+        return <div> Completed </div>;
       }
       return (
         <div>
           <Typography>
             Assignmnet Type: {ACTIVITY_TYPES.codeCombat.caption}
           </Typography>
+          <Typography>Level to complete: {problem.level}</Typography>
           <Typography>
-            Level to complete: {problem.level}
+            You have not completed {`"${problem.level}"`} level on CodeCombat.
+            Would you like to go to CodeCombat to complete this level
           </Typography>
             <Typography>
                 You have not completed {`"${problem.level}"`} level on {service}.
@@ -97,15 +102,19 @@ class CodeCombatActivity extends React.PureComponent {
         });
       }
       if (hasNumOfLevelCompleted) {
-        return <div> Completed </div>
+        return <div> Completed </div>;
       }
       return (
         <div>
-           <Typography>
+          <Typography>
             Assignmnet Type: {ACTIVITY_TYPES.codeCombatNumber.caption}
           </Typography>
+          <Typography>Number of levels to complete: {problem.count}</Typography>
           <Typography>
-            Number of levels to complete: {problem.count}
+            This assignment required to complete {problem.count} levels, but you
+            have only compledted levels; You have completed only{" "}
+            {totalAchievements || 0}{" "}
+            {totalAchievements > 0 ? "levels" : "level"} on CodeCombat.
           </Typography>
             <Typography>
               This assigment required to complete {problem.count} levels,
@@ -127,11 +136,20 @@ class CodeCombatActivity extends React.PureComponent {
               { updateCodeCombatAchievements }
             </div>
       );
-    } else if (problem.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id){
-      const levelUrl = `//codecombat.com/play/level/${problem.level}?team=${problem.team}`;
+    } else if (problem.type === ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id) {
+      const levelUrl = `//codecombat.com/play/level/${problem.level}?team=${
+        problem.team
+      }`;
       const ladderUrl = `//codecombat.com/play/ladder/${problem.level}`;
-      const userPercentile = codeCombatAchievements.ladders ? (codeCombatAchievements.ladders[`${problem.level}-${problem.team}`] || {}).percentile : null;
-      const hasNumOfLevelCompleted = userPercentile >=problem.requiredPercentile;
+      const userPercentile = codeCombatAchievements.ladders
+        ? (
+            codeCombatAchievements.ladders[
+              `${problem.level}-${problem.team}`
+            ] || {}
+          ).percentile
+        : null;
+      const hasNumOfLevelCompleted =
+        userPercentile >= problem.requiredPercentile;
       const ladderKey = `${problem.level}-${problem.team}`;
       const ladder = (codeCombatAchievements.ladders || {})[ladderKey] || {};
       const ranked = ladder.isRanked ? ladder.rank : 0;
@@ -143,52 +161,54 @@ class CodeCombatActivity extends React.PureComponent {
         this.props.onCommit({
           type: "SOLUTION",
           solution: {
-              rank: ladder.rank,
-              numInRanking: ladder.numInRanking,
-              status: `${ladder.rank} of ${ladder.numInRanking}`
+            rank: ladder.rank,
+            numInRanking: ladder.numInRanking,
+            status: `${ladder.rank} of ${ladder.numInRanking}`
           }
         });
       }
       if (hasNumOfLevelCompleted) {
-        return <div> Completed </div>
+        return <div> Completed </div>;
       }
       return (
         <div>
           <Typography>
             Assignmnet Type: {ACTIVITY_TYPES.codeCombatMultiPlayerLevel.caption}
           </Typography>
+          <Typography>Level: {problem.level}</Typography>
+          <Typography>Team: {problem.team}</Typography>
           <Typography>
-            Level: {problem.level}
+            {Object.keys(ladder).length > 0
+              ? `You are ranked ${ranked} out of ${numInRanking} (${
+                  ladder.percentile
+                } percentile) playing as ${teamColor} on the ${level} multiplayer level. You have to be better than ${
+                  problem.requiredPercentile
+                } percent of the other players to complete this activity.`
+              : `You have not played "${level}" level as "${teamColor}" team.`}
           </Typography>
-          <Typography>
-            Team: {problem.team}
-          </Typography>
-            <Typography>
-              {
-                Object.keys(ladder).length > 0
-                ? `You are ranked ${ranked} out of ${numInRanking} (${ladder.percentile} percentile) playing as ${teamColor} on the ${level} multiplayer level. You have to be better than ${problem.requiredPercentile} percent of the other players to complete this activity.`
-                : `You have not played "${level}" level as "${teamColor}" team.`
-              }
-              </Typography>
-              <br/>
-              <Button color="primary"variant="contained">
-                <a href={ladderUrl} style={{color : "white"}} target="__blank" > Go To Ladder</a>
-              </Button>
-              <Button color="primary" style={{marginLeft : "10px"}} variant="contained" >
-                <a href={levelUrl} style={{color : "white"}} target="__blank" > Go To Level</a>
-              </Button>
-                { updateCodeCombatAchievements }
-            </div>
+          <br />
+          <Button color="primary" variant="contained">
+            <a href={ladderUrl} style={{ color: "white" }} target="__blank">
+              {" "}
+              Go To Ladder
+            </a>
+          </Button>
+          <Button
+            color="primary"
+            style={{ marginLeft: "10px" }}
+            variant="contained"
+          >
+            <a href={levelUrl} style={{ color: "white" }} target="__blank">
+              {" "}
+              Go To Level
+            </a>
+          </Button>
+          {updateCodeCombatAchievements}
+        </div>
       );
     } else {
-      return (
-        <div>
-          Wrong Activity Type.
-        </div>
-      )
+      return <div>Wrong Activity Type.</div>;
     }
-
-
   }
 }
 
