@@ -108,12 +108,17 @@ export class AccountService {
 
   watchProfileRefresh(uid, externalProfileId) {
     const now = new Date().getTime();
-    return new Promise(resolve =>
+    let index = 0;
+    return new Promise((resolve, reject) =>
       firebase
         .database()
         .ref(`/userAchievements/${uid}/${externalProfileId}`)
         .on("value", snap => {
           const val = snap.val();
+          if (index && !val) {
+            reject(new Error("Invalid CodeCombat username provided"));
+          }
+          index += 1;
           if (val && val.lastUpdate && val.lastUpdate > now) {
             firebase
               .database()
@@ -336,17 +341,17 @@ export class AccountService {
   fetchUserJSON(uid) {
     return new Promise(resolve => {
       firebaseService
-          .startProcess(
-            {
-              owner: uid
-            },
-            "fetchUserJSONQueue",
-            "Fetch JSON Data"
-          )
-          .then(res => {
-            resolve(res)
-          });
-    })
+        .startProcess(
+          {
+            owner: uid
+          },
+          "fetchUserJSONQueue",
+          "Fetch JSON Data"
+        )
+        .then(res => {
+          resolve(res);
+        });
+    });
   }
 }
 

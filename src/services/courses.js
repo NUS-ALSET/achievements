@@ -51,6 +51,10 @@ export const ASSIGNMENTS_TYPES = {
     id: "TeamText",
     caption: "Team Text"
   },
+  TeamChoice: {
+    id: "TeamChoice",
+    caption: "Team Choice"
+  },
   PathActivity: {
     id: "PathActivity",
     caption: "Path Activity"
