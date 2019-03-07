@@ -8,9 +8,16 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Paper from "@material-ui/core/Paper";
 import { Typography } from "@material-ui/core";
 import { firebaseConnect } from "react-redux-firebase";
-import ReactFCLoad from "./Ben/ReactFCLoad";
+import LinearProgress from "@material-ui/core/LinearProgress";
+// code-spliting
+import Loadable from "react-loadable";
 
 import { updateSelectedPath, fetchActivityAttempts } from "./actions";
+
+const ReactFCLoad = Loadable({
+  loader: () => import("./Ben/ReactFCLoad"),
+  loading: () => <LinearProgress />
+});
 
 class ActivitiesAnalytics extends React.PureComponent {
   static propTypes = {
