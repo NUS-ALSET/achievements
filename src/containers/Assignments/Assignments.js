@@ -241,7 +241,7 @@ class Assignments extends React.Component {
       return <div>Login required to display this page</div>;
     } else if (!course) {
       if (course === null) {
-        return <p>Something wrong!</p>
+        return <p>Something wrong!</p>;
       }
       return <LinearProgress />;
     }
@@ -369,9 +369,11 @@ class Assignments extends React.Component {
             [
               ASSIGNMENTS_TYPES.TeamFormation.id,
               ASSIGNMENTS_TYPES.TeamText.id,
-              ASSIGNMENTS_TYPES.Text.id
+              ASSIGNMENTS_TYPES.Text.id,
+              ASSIGNMENTS_TYPES.TeamChoice.id
             ].includes(ui.dialog.type)
           }
+          options={ui.dialog && ui.dialog.options}
           solution={ui.dialog && ui.dialog.value}
           taskId={ui.currentAssignment && ui.currentAssignment.id}
         />
@@ -448,15 +450,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(courseAssignmentsClose(courseId)),
   courseRemoveStudentRequest: (courseId, studentId) =>
     dispatch(courseRemoveStudentRequest(courseId, studentId)),
-  courseMoveStudentRequest: (
-    sourceCourseId,
-    targetCourseId,
-    studentId
-  ) => dispatch(courseMoveStudentRequest(
-    sourceCourseId,
-    targetCourseId,
-    studentId
-  )),
+  courseMoveStudentRequest: (sourceCourseId, targetCourseId, studentId) =>
+    dispatch(
+      courseMoveStudentRequest(sourceCourseId, targetCourseId, studentId)
+    ),
   dispatch
 });
 

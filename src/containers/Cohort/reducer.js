@@ -4,7 +4,8 @@ import {
   COHORT_FETCH_SUCCESS,
   COHORT_OPEN_ASSISTANTS_DIALOG,
   COHORT_UPDATE_ASSISTANTS_SUCCESS,
-  COHORT_SORT_CHANGE
+  COHORT_SORT_CHANGE,
+  COHORT_ANALYTICS_DATA_REQUEST_SUCCESS
 } from "./actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
 
@@ -75,6 +76,14 @@ export const cohort = (
         ...state,
         cohort: action.cohortData
       };
+    case COHORT_ANALYTICS_DATA_REQUEST_SUCCESS:
+      return {
+        ...state,
+        cohortsAnalytics :{
+          ...(state.cohortsAnalytics || {}),
+          [action.cohortId] : action.data
+        }
+      }
     default:
       return state;
   }

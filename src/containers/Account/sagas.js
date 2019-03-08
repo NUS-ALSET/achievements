@@ -83,7 +83,9 @@ function* inspectPathAsUserHandler(action) {
 function* externalProfileUpdateRequestHandler(action) {
   try {
     let error = "";
-    const uid = yield select(state => state.firebase.auth.uid);
+    const uid = yield select(
+      state => action.customUID || state.firebase.auth.uid
+    );
 
     yield call(
       accountService.addExternalProfile,
@@ -94,7 +96,8 @@ function* externalProfileUpdateRequestHandler(action) {
     yield put(
       externalProfileRefreshRequest(
         action.externalProfileId,
-        action.externalProfileType
+        action.externalProfileType,
+        action.customUID
       )
     );
     const { response, timedOut } = yield race({
@@ -109,7 +112,7 @@ function* externalProfileUpdateRequestHandler(action) {
     if (timedOut) {
       error = "Profile refreshing timed out";
     } else if (!response) {
-      error = "Wrong profile was provided";
+      error = "Invalid CodeCombat username provided";
     }
 
     if (error) {
@@ -144,7 +147,9 @@ function* externalProfileUpdateRequestHandler(action) {
 
 function* externalProfileRefreshRequestHandler(action) {
   try {
-    const uid = yield select(state => state.firebase.auth.uid);
+    const uid = yield select(
+      state => action.customUID || state.firebase.auth.uid
+    );
 
     yield call(
       accountService.refreshAchievements,
@@ -217,8 +222,18 @@ function* externalProfileRemoveRequestHandler(action) {
 function* profileUpdateDataRequestHandler(action) {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
-    accountService.updateProfileData(uid, action.field, action.data);
-    yield put(profileUpdateDataSuccess(action.field, action.data));
+    accountService.updateProfileData(
+      action.customUID || uid,
+      action.field,
+      action.data
+    );
+    yield put(
+      profileUpdateDataSuccess(
+        action.field,
+        action.data,
+        action.customUID || uid
+      )
+    );
   } catch (err) {
     yield put(profileUpdateDataFail(action.field, action.data, err.message));
     yield put(notificationShow(err.message));
@@ -242,7 +257,7 @@ function* fetchUserDataHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
   try {
     const userData = yield call(accountService.fetchUserJSON, uid);
-    yield put(fetchUserDataSuccess(userData))
+    yield put(fetchUserDataSuccess(userData));
   } catch (err) {
     yield put(fetchUserDataFail(err.message));
   }
@@ -289,9 +304,6 @@ export default [
     );
   },
   function* watchFetchUserData() {
-    yield takeLatest(
-      FETCH_USER_DATA,
-      fetchUserDataHandler
-    );
+    yield takeLatest(FETCH_USER_DATA, fetchUserDataHandler);
   }
 ];

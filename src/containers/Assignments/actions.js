@@ -226,16 +226,46 @@ export const assignmentPathProgressSolutionRequest = (
   solution
 });
 
+export const ASSIGNMENT_TEAM_CHOICE_SOLUTION_REQUEST =
+  "ASSIGNMENT_TEAM_CHOICE_SOLUTION_REQUEST";
+export const assignmentTeamChoiceSolutionRequest = (
+  courseId,
+  assignment,
+  solution
+) => ({
+  type: ASSIGNMENT_TEAM_CHOICE_SOLUTION_REQUEST,
+  courseId,
+  assignment,
+  solution
+});
+
+export const ASSIGNMENT_TEAM_CHOICE_SOLUTION_SUCCESS =
+  "ASSIGNMENT_TEAM_CHOICE_SOLUTION_SUCCESS";
+export const assignmentTeamChoiceSolutionSuccess = (
+  courseId,
+  assignment,
+  solution,
+  options
+) => ({
+  type: ASSIGNMENT_TEAM_CHOICE_SOLUTION_SUCCESS,
+  courseId,
+  assignment,
+  solution,
+  options
+});
+
 export const ASSIGNMENT_SOLUTION_REQUEST = "ASSIGNMENT_SOLUTION_REQUEST";
 export const assignmentSolutionRequest = (
   courseId,
   assignmentId,
-  solution
+  solution,
+  options
 ) => ({
   type: ASSIGNMENT_SOLUTION_REQUEST,
   courseId,
   assignmentId,
-  solution
+  solution,
+  options
 });
 
 export const ASSIGNMENT_SOLUTION_SUCCESS = "ASSIGNMENT_SOLUTION_SUCCESS";
@@ -524,10 +554,10 @@ export const assignmentsShowHiddenToggle = courseId => ({
   courseId
 });
 
-export const ENABLE_COMMIT_AFTER_AUTOFILL = "ENABLE_COMMIT_AFTER_AUTOFILL"
+export const ENABLE_COMMIT_AFTER_AUTOFILL = "ENABLE_COMMIT_AFTER_AUTOFILL";
 export const enableCommitAfterAutofill = () => ({
   type: ENABLE_COMMIT_AFTER_AUTOFILL
-})
+});
 
 /*
 export const ASSIGNMENTS_TEST_SOMETHING = "ASSIGNMENTS_TEST_SOMETHING";

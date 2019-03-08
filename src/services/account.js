@@ -6,7 +6,6 @@ import { firebaseService } from "./firebaseService";
 const authProvider = new firebase.auth.GoogleAuthProvider();
 // authProvider.addScope("https://www.googleapis.com/auth/drive.file");
 
-
 export class AccountService {
   static isAdmin = false;
 
@@ -109,21 +108,23 @@ export class AccountService {
 
   watchProfileRefresh(uid, externalProfileId) {
     const now = new Date().getTime();
-    return new Promise(resolve =>
+    let index = 0;
+    return new Promise((resolve, reject) =>
       firebase
         .database()
         .ref(`/userAchievements/${uid}/${externalProfileId}`)
         .on("value", snap => {
-          if (
-            snap.val() &&
-            snap.val().lastUpdate &&
-            snap.val().lastUpdate > now
-          ) {
+          const val = snap.val();
+          if (index && !val) {
+            reject(new Error("Invalid CodeCombat username provided"));
+          }
+          index += 1;
+          if (val && val.lastUpdate && val.lastUpdate > now) {
             firebase
               .database()
               .ref(`/userAchievements/${uid}/${externalProfileId}`)
               .off();
-            resolve(snap.val());
+            resolve(val);
           }
         })
     );
@@ -340,17 +341,17 @@ export class AccountService {
   fetchUserJSON(uid) {
     return new Promise(resolve => {
       firebaseService
-          .startProcess(
-            {
-              owner: uid
-            },
-            "fetchUserJSONQueue",
-            "Fetch JSON Data"
-          )
-          .then(res => {
-            resolve(res)
-          });
-    })
+        .startProcess(
+          {
+            owner: uid
+          },
+          "fetchUserJSONQueue",
+          "Fetch JSON Data"
+        )
+        .then(res => {
+          resolve(res);
+        });
+    });
   }
 }
 
