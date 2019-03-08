@@ -55,7 +55,7 @@ import { withRouter } from "react-router-dom";
 import { getDisplayName, getProfileData } from "./selectors";
 import JoinedPathCard from "../../components/cards/JoinedPathCard";
 import { Button } from "@material-ui/core";
-import download from "downloadjs"
+import download from "downloadjs";
 
 const styles = theme => ({
   card: {
@@ -111,7 +111,10 @@ class Account extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (Object.keys(this.props.userJSON).length !== Object.keys(prevProps.userJSON).length) {
+    if (
+      Object.keys(this.props.userJSON).length !==
+      Object.keys(prevProps.userJSON).length
+    ) {
       this.downloadData();
     }
   }
@@ -190,11 +193,15 @@ class Account extends React.PureComponent {
   fetchUserData = () => {
     if (Object.keys(this.props.userJSON).length) this.downloadData();
     else this.props.fetchUserData();
-  }
+  };
 
   downloadData = () => {
-    download(JSON.stringify(this.props.userJSON.data), "user-achievements.json", "text/plain");
-  }
+    download(
+      JSON.stringify(this.props.userJSON.data),
+      "user-achievements.json",
+      "text/plain"
+    );
+  };
   render() {
     const {
       achievementsRefreshingInProgress,
@@ -414,12 +421,12 @@ class Account extends React.PureComponent {
           </Grid>
           <Grid item xs={6}>
             <Button
-                color="primary"
-                onClick={this.fetchUserData}
-                variant="contained"
-              >
-                Download JSON
-              </Button>
+              color="primary"
+              onClick={this.fetchUserData}
+              variant="contained"
+            >
+              Download JSON
+            </Button>
           </Grid>
         </Grid>
         <RemoveExternalProfileDialog

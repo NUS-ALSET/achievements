@@ -220,6 +220,19 @@ export class SolutionsService {
       );
   }
 
+  /**
+   * Fetch team solutions list from requsted assignment
+   */
+  getTeamChoiceOptions(courseId, assignment) {
+    return firebase
+      .functions()
+      .httpsCallable("getTeamAssignmentSolutions")({
+        teamAssignment: assignment.teamFormation,
+        course: courseId
+      })
+      .then(response => response.data);
+  }
+
   // noinspection JSUnusedGlobalSymbols
   /**
    * This method should be invoked at firebase login

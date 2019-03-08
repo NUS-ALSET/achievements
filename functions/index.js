@@ -24,6 +24,7 @@ const cohortAnalytics = require("./src/cohortAnalytics");
 const userJSONTrigger = require("./src/fetchUserJSON");
 const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
 
+const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
   addDestination,
   updateDestinationSkills
@@ -131,6 +132,10 @@ exports.handleNewSolution = functions.database
       assignmentId
     );
   });
+
+exports.getTeamAssignmentSolutions = functions.https.onCall(
+  getTeamAssignmentSolutions.handler
+);
 
 exports.handleUserSkills = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")

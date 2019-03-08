@@ -288,84 +288,98 @@ export function* pathActivityCodeCombatOpenHandler(action) {
         externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
       );
     }
-    const result = yield race({
-      skip: take(CLOSE_ACTIVITY_DIALOG),
-      success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
-      fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
-    });
-    if (result.success) {
-      // FIXIT: cleanup this
-      if (data.activity.type === ACTIVITY_TYPES.profile.id) {
-        yield call(
-          [pathsService, pathsService.submitSolution],
-          data.uid,
-          {
-            ...data.activity,
-            path: action.pathId,
-            problemId: action.activityId
-          },
-          "Completed"
-        );
-        yield put(
-          problemSolutionSubmitSuccess(
-            action.pathId,
-            action.activityId,
-            "Completed"
-          )
-        );
-        yield put(notificationShow("Solution submitted"));
-        yield put(closeActivityDialog());
+    while (true) {
+      const result = yield race({
+        skip: take(CLOSE_ACTIVITY_DIALOG),
+        success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
+        fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
+      });
+      if (result.skip) {
         return;
       }
-
-      const levelsData = yield call(accountService.fetchAchievements, data.uid);
-      if (
-        levelsData &&
-        ((data.activity.type === ACTIVITY_TYPES.codeCombat.id &&
-          levelsData.achievements[data.activity.level] &&
-          levelsData.achievements[data.activity.level].complete) ||
-          (data.activity.type === ACTIVITY_TYPES.codeCombatNumber.id &&
-            levelsData.totalAchievements >= data.activity.count) ||
-          (data.activity.type ===
-            ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id &&
-            levelsData.ladders &&
-            (
-              levelsData.ladders[
-                `${data.activity.level}-${data.activity.team}`
-              ] || {}
-            ).percentile >= data.activity.requiredPercentile))
-      ) {
-        const ladder =
-          levelsData.ladders &&
-          levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
-
-        yield call(
-          [pathsService, pathsService.submitSolution],
-          data.uid,
-          {
-            ...data.activity,
-            path: action.pathId,
-            problemId: action.activityId
-          },
-          ladder && {
-            rank: ladder.rank,
-            numInRanking: ladder.numInRanking,
-            value: `${ladder.rank} of ${ladder.numInRanking}`
-          }
-        );
-        yield put(
-          problemSolutionSubmitSuccess(
-            action.pathId,
-            action.activityId,
+      if (result.success) {
+        // FIXIT: cleanup this
+        if (data.activity.type === ACTIVITY_TYPES.profile.id) {
+          yield call(
+            [pathsService, pathsService.submitSolution],
+            data.uid,
+            {
+              ...data.activity,
+              path: action.pathId,
+              problemId: action.activityId
+            },
             "Completed"
-          )
+          );
+          yield put(
+            problemSolutionSubmitSuccess(
+              action.pathId,
+              action.activityId,
+              "Completed"
+            )
+          );
+          yield put(notificationShow("Solution submitted"));
+          yield put(closeActivityDialog());
+          return;
+        }
+
+        const levelsData = yield call(
+          accountService.fetchAchievements,
+          data.uid
         );
-        yield put(notificationShow("Solution submitted"));
-        yield put(closeActivityDialog());
-      } else {
-        yield put(
-          pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
-        );
+
+        if (levelsData.totalAchievements === -1) {
+          throw new Error("Invalid CodeCombat username provided");
+        }
+
+        if (
+          levelsData &&
+          levelsData.achievements &&
+          ((data.activity.type === ACTIVITY_TYPES.codeCombat.id &&
+            levelsData.achievements[data.activity.level] &&
+            levelsData.achievements[data.activity.level].complete) ||
+            (data.activity.type === ACTIVITY_TYPES.codeCombatNumber.id &&
+              levelsData.totalAchievements >= data.activity.count) ||
+            (data.activity.type ===
+              ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id &&
+              levelsData.ladders &&
+              (
+                levelsData.ladders[
+                  `${data.activity.level}-${data.activity.team}`
+                ] || {}
+              ).percentile >= data.activity.requiredPercentile))
+        ) {
+          const ladder =
+            levelsData.ladders &&
+            levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
+
+          yield call(
+            [pathsService, pathsService.submitSolution],
+            data.uid,
+            {
+              ...data.activity,
+              path: action.pathId,
+              problemId: action.activityId
+            },
+            ladder && {
+              rank: ladder.rank,
+              numInRanking: ladder.numInRanking,
+              value: `${ladder.rank} of ${ladder.numInRanking}`
+            }
+          );
+          yield put(
+            problemSolutionSubmitSuccess(
+              action.pathId,
+              action.activityId,
+              "Completed"
+            )
+          );
+          yield put(notificationShow("Solution submitted"));
+          yield put(closeActivityDialog());
+        } else {
+          yield put(
+            pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
+          );
+        }
       }
     }
   } catch (err) {

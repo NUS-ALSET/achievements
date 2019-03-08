@@ -56,7 +56,9 @@ import {
   assignmentsSolutionsRefreshSuccess,
   assignmentsSolutionsRefreshFail,
   coursePathsFetchSuccess,
-  enableCommitAfterAutofill
+  enableCommitAfterAutofill,
+  ASSIGNMENT_TEAM_CHOICE_SOLUTION_REQUEST,
+  assignmentTeamChoiceSolutionSuccess
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -651,6 +653,21 @@ export function* assignmentsSolutionsRefreshRequestHandler(action) {
   }
 }
 
+export function* assignmentTeamChoiceSolutionRequestHandler(action) {
+  const options = yield call(
+    solutionsService.getTeamChoiceOptions,
+    action.courseId,
+    action.assignment
+  );
+  yield put(
+    assignmentTeamChoiceSolutionSuccess(
+      action.assignment,
+      action.solution,
+      options
+    )
+  );
+}
+
 export default [
   function* watchCourseAssignmentsOpen() {
     yield takeLatest(COURSE_ASSIGNMENTS_OPEN, courseAssignmentsOpenHandler);
@@ -762,6 +779,12 @@ export default [
     yield takeLatest(
       ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
       assignmentsSolutionsRefreshRequestHandler
+    );
+  },
+  function* watchAssignmentTeamChoiceSolutionRequest() {
+    yield takeLatest(
+      ASSIGNMENT_TEAM_CHOICE_SOLUTION_REQUEST,
+      assignmentTeamChoiceSolutionRequestHandler
     );
   } /* ,
   function* watchAssignmentsTestSomething() {
