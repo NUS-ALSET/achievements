@@ -70,7 +70,9 @@ class AddTextSolutionDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
-            defaultValue={(solution && solution.value) || ""}
+            defaultValue={
+              options ? undefined : (solution && solution.value) || ""
+            }
             error={!this.state.isCorrectInput}
             fullWidth
             helperText={
@@ -78,13 +80,18 @@ class AddTextSolutionDialog extends React.PureComponent {
                 ? ""
                 : "input should not be empty or have invalid characters"
             }
-            InputProps={{ readOnly: !!options }}
+            key={taskId}
             label="Solution"
             onChange={this.onChangeSolution}
             select={!!options}
             style={{
               width: 320
             }}
+            value={
+              options
+                ? this.state.solution || (solution && solution.value) || ""
+                : undefined
+            }
           >
             {options &&
               options.map(option => (
