@@ -116,7 +116,7 @@ export class AccountService {
         .on("value", snap => {
           const val = snap.val();
           if (index && !val) {
-            reject(new Error("Wrong profile was provided"));
+            reject(new Error("Invalid CodeCombat username provided"));
           }
           index += 1;
           if (val && val.lastUpdate && val.lastUpdate > now) {

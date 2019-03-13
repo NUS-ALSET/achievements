@@ -69,7 +69,8 @@ export const assignments = (
         ...state,
         dialog: {
           type: action.dialogType,
-          value: action.value
+          value: action.value,
+          options: state.dialog.options
         },
         currentAssignment: action.assignment
       };

@@ -17,6 +17,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import { firebaseConnect } from "react-redux-firebase";
 
 import CohortCoursesTable from "../../components/tables/CohortCoursesTable";
+import CohortQualifiedConditionsList from "../../components/lists/CohortQualifiedConditionsList";
 import {
   cohortCloseDialog,
   cohortCoursesRecalculateRequest,
@@ -24,7 +25,9 @@ import {
   cohortOpen,
   cohortOpenAssistantsDialog,
   cohortSortChange,
-  cohortUpdateAssistantsRequest
+  cohortUpdateAssistantsRequest,
+  setCohortQualificationConditionRequest,
+  cohortRecalculateQualifiedMembersRequest
 } from "./actions";
 import { sagaInjector } from "../../services/saga";
 
@@ -35,11 +38,13 @@ import { cohort } from "../../types";
 
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { USER_STATUSES } from "../../types/constants";
-import { selectUserStatus, selectCohort } from "./selectors";
+import { selectUserStatus, selectCohort, calculateRanking } from "./selectors";
 import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsDialog";
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import CohortTabs from "../../components/tabs/CohortTabs";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
+import MessageDialog from "../../components/dialogs/MessageDialog";
+import QualifiedConditionsDialog from "../../components/dialogs/QualifiedConditionsDialog";
 
 const styles = theme => ({
   breadcrumbLink: {
@@ -73,7 +78,9 @@ class Cohort extends React.PureComponent {
   state = {
     deletingCourseId: "",
     selectedCourse: "",
-    tabIndex: COHORT_TAB_COMMON
+    tabIndex: COHORT_TAB_COMMON,
+    messageModalOpen: false,
+    openQualifiedConditionsDialog: false
   };
 
   componentDidMount() {
@@ -118,6 +125,7 @@ class Cohort extends React.PureComponent {
   recalculate = () => {
     const { cohort, dispatch } = this.props;
     dispatch(cohortCoursesRecalculateRequest(cohort.id));
+    dispatch(cohortRecalculateQualifiedMembersRequest(cohort.id));
   };
 
   removeAssistant = (cohortId, assistantId) =>
@@ -128,18 +136,52 @@ class Cohort extends React.PureComponent {
   showAssistantsDialog = () =>
     this.props.dispatch(cohortOpenAssistantsDialog(this.props.cohort.id));
 
+  toggleMessageModal = () => {
+    this.setState(state => ({
+      messageModalOpen: !state.messageModalOpen
+    }))
+  }
+  showQualifiedConditionDialog = () =>
+    this.setState({ openQualifiedConditionsDialog: true });
+
+  closeQualifiedConditionsDialog = () =>
+    this.setState({ openQualifiedConditionsDialog: false });
+
+  saveQualifiedCondition = condition => {
+    this.props.dispatch(
+      setCohortQualificationConditionRequest(this.props.cohort.id, condition)
+    );
+    this.closeQualifiedConditionsDialog();
+  };
+
   render() {
-    const { dispatch, classes, cohort, courses, currentUser, ui } = this.props;
+    const {
+      dispatch,
+      classes,
+      cohort,
+      courses,
+      currentUser,
+      ui,
+      cohortMemberQualificationStatus,
+      membersPathsRanking
+    } = this.props;
     const tabIndex = this.state.tabIndex;
     if (!cohort) {
       return <div>Loading</div>;
     }
-
     const isOwner = currentUser.uid && currentUser.uid === cohort.owner;
 
     return (
       <Fragment>
         <Breadcrumbs
+          action={
+            [
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
+              }
+            ]
+          }
           paths={[
             {
               label: "Cohorts",
@@ -149,6 +191,7 @@ class Cohort extends React.PureComponent {
               label: cohort.name
             }
           ]}
+          
         />
         <Typography
           gutterBottom
@@ -204,13 +247,22 @@ class Cohort extends React.PureComponent {
                   Recalculate
                 </Button>
                 {currentUser.status === USER_STATUSES.owner && (
-                  <Button
-                    className={classes.toolbarButton}
-                    onClick={this.showAssistantsDialog}
-                    variant="contained"
-                  >
-                    Collaborators
-                  </Button>
+                  <Fragment>
+                    <Button
+                      className={classes.toolbarButton}
+                      onClick={this.showAssistantsDialog}
+                      variant="contained"
+                    >
+                      Collaborators
+                    </Button>
+                    <Button
+                      className={classes.toolbarButton}
+                      onClick={this.showQualifiedConditionDialog}
+                      variant="contained"
+                    >
+                      Set Qualification Condition
+                    </Button>
+                  </Fragment>
                 )}
               </Fragment>
             )}
@@ -242,7 +294,48 @@ class Cohort extends React.PureComponent {
           onRemoveClick={this.onRemoveCourseClick}
           onSortClick={this.onSortChange}
           sortState={ui.sortState}
+          membersPathsRanking={membersPathsRanking}
+          uid={currentUser.uid}
         />
+        <MessageDialog
+          cohort={cohort}
+          handleClose={this.toggleMessageModal}
+          isInstructor={[USER_STATUSES.owner, USER_STATUSES.assistant].includes(
+            currentUser.status
+          )}
+          open={this.state.messageModalOpen}
+          showStudents={false}
+          type={"cohort"}
+        />
+        {Object.keys((cohort.qualifiedConditions || {}).pathConditions || {})
+          .length > 0 && (
+          <CohortQualifiedConditionsList
+            qualifiedConditions={
+              (cohort.qualifiedConditions || {}).pathConditions
+            }
+            pathsData={(cohort || {}).pathsData}
+            cohortMemberQualificationStatus={cohortMemberQualificationStatus}
+            uid={currentUser.uid}
+            showAllUserStatus={
+              tabIndex === COHORT_TAB_INSTRUCTOR &&
+              [USER_STATUSES.owner, USER_STATUSES.assistant].includes(
+                currentUser.status
+              )
+            }
+          />
+        )}
+
+        {isOwner && (
+          <QualifiedConditionsDialog
+            open={this.state.openQualifiedConditionsDialog}
+            qualifiedConditions={
+              (cohort.qualifiedConditions || {}).pathConditions
+            }
+            pathsData={(cohort || {}).pathsData}
+            handleClose={this.closeQualifiedConditionsDialog}
+            saveChanges={this.saveQualifiedCondition}
+          />
+        )}
       </Fragment>
     );
   }
@@ -262,7 +355,10 @@ const mapStateToProps = state => ({
     name: state.firebase.auth.displayName,
     status: selectUserStatus(state)
   },
-  ui: state.cohort.ui
+  ui: state.cohort.ui,
+  cohortMemberQualificationStatus:
+    state.firebase.data.cohortMemberQualificationStatus || {},
+    membersPathsRanking: calculateRanking(state)
 });
 
 export default compose(
@@ -270,7 +366,20 @@ export default compose(
   firebaseConnect((ownProps, store) => {
     const state = store.getState();
     const firebaseAuth = state.firebase.auth;
-
+    const cohortId = ownProps.match.params.cohortId;
+    let qualificationStatus = [];
+    if (cohortId) {
+      qualificationStatus = [
+        {
+          path: `/cohortMemberQualificationStatus/${cohortId}`,
+          storeAs: "cohortMemberQualificationStatus"
+        },
+        {
+          path: `/cohortMembersCompletedActivitiesCountOnPaths/${cohortId}`,
+          storeAs: "cohortMembersCompletedActivitiesCountOnPaths"
+        }
+      ];
+    }
     if (!firebaseAuth.uid) {
       return [];
     }
@@ -285,7 +394,8 @@ export default compose(
         path: "/courses",
         storeAs: "publicCourses",
         queryParams: ["orderByChild=isPublic", "equalTo=true"]
-      }
+      },
+      ...qualificationStatus
     ];
   }),
   connect(mapStateToProps)

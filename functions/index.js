@@ -22,6 +22,8 @@ const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
 const cohortRecalculate = require("./src/cohortRecalculate");
 const cohortAnalytics = require("./src/cohortAnalytics");
 const userJSONTrigger = require("./src/fetchUserJSON");
+const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
+
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
   addDestination,
@@ -270,6 +272,18 @@ exports.handleUserJSONFetchRequest = functions.database
     const data = change.after.val();
     if (data) {
       return userJSONTrigger.handler(data, data.taskKey, data.owner);
+    }
+    return Promise.resolve();
+  });
+
+exports.cohortCalulateQualifiedUser = functions.database
+  .ref("/cohorts/{cohortKey}")
+  .onWrite((change, context) => {
+    const dataAfter = change.after.val();
+    const dataBefore = change.before.exists() ? change.before.val() : null;
+    const { cohortKey } = context.params;
+    if (dataAfter) {
+      return cohortCalulateQualifiedUser.handler(dataBefore, dataAfter, cohortKey);
     }
     return Promise.resolve();
   });

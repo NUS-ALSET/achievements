@@ -224,13 +224,20 @@ export class SolutionsService {
    * Fetch team solutions list from requsted assignment
    */
   getTeamChoiceOptions(courseId, assignment) {
+    // choosen by fair dice roll, guaranteed to be random
+    const FAIR_RANDOM = 0.5;
+
     return firebase
       .functions()
       .httpsCallable("getTeamAssignmentSolutions")({
         teamAssignment: assignment.teamFormation,
+        sourceAssignment: assignment.source,
         course: courseId
       })
-      .then(response => response.data);
+      .then(response => response.data || [])
+      .then(options =>
+        options.sort(() => (Math.random() > FAIR_RANDOM ? 1 : -1))
+      );
   }
 
   // noinspection JSUnusedGlobalSymbols

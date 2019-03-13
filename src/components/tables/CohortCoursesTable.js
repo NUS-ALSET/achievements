@@ -49,6 +49,7 @@ class CohortCoursesTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     cohort: cohort,
+    membersPathsRanking: PropTypes.object,
     courses: PropTypes.array,
     dispatch: PropTypes.func,
     isOwner: PropTypes.bool,
@@ -70,21 +71,30 @@ class CohortCoursesTable extends React.PureComponent {
       isInstructor,
       onRemoveClick,
       onSortClick,
-      sortState
+      sortState,
+      membersPathsRanking,
+      uid
     } = this.props;
     let totals = {
       progress: 0,
       participants: 0
     };
     if (courses.length <= 0) {
-      return <p>No Courses found for this cohort</p>
+      return <p>No Courses found for this cohort</p>;
     }
     courses.forEach(course => {
       totals.progress += course.progress;
       totals.participants += course.participants;
       return true;
     });
-
+    const rankCellData = ["User Path Rank->"];
+    const nonPathCellCount = 3;
+    cohort.paths.forEach(path => {
+      rankCellData.push(((membersPathsRanking[path] || {})[uid] || {}).rank);
+    });
+    for (let i = 0; i < nonPathCellCount; i++) {
+      rankCellData.push("");
+    }
     return (
       <Table className={classes.table}>
         <TableHead>
@@ -205,6 +215,23 @@ class CohortCoursesTable extends React.PureComponent {
                 )}
               </TableRow>
             ))}
+          {membersPathsRanking && Object.keys(membersPathsRanking).length>0 &&
+          <TableRow
+            className={classes.row}
+            hover
+            style={{ height: 18, backgroundColor: "darkgrey" }}
+          >
+            {rankCellData.map((data, index) => {
+              return (
+                <TableCell
+                  className={classes.narrowCell}
+                  key={`${index + String(data)}`}
+                >
+                  {data}
+                </TableCell>
+              );
+            })}
+          </TableRow>}
         </TableBody>
       </Table>
     );

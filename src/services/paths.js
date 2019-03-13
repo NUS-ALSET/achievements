@@ -8,7 +8,7 @@ import {
   notificationShow
 } from "../containers/Root/actions";
 
-import { problemSolutionAttemptRequest } from '../containers/Activity/actions';
+import { problemSolutionAttemptRequest } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 const NOT_FOUND_ERROR = 404;
@@ -726,7 +726,7 @@ export class PathsService {
             .once("value")
             .then(snap => {
               if (snap.val() !== pathProblem.targetType) {
-                throw new Error("Wrong Type of provided activity");
+                throw new Error("Invalid type of provided activity");
               }
             })
             .then(
@@ -800,7 +800,7 @@ export class PathsService {
    * @param {any} solution
    * @returns {Promise<any>}
    */
-  submitSolution(uid, pathProblem, solution, problemOpenTime=null) {
+  submitSolution(uid, pathProblem, solution, problemOpenTime = null) {
     pathProblem = {
       ...pathProblem,
       problemId: pathProblem.problemId || pathProblem.id
@@ -811,22 +811,35 @@ export class PathsService {
     }
     return Promise.resolve()
       .then(() => this.validateSolution(uid, pathProblem, solution))
-      .then(()=>{
-        if(problemOpenTime && problemOpenTime.problemId === (pathProblem.problemId || pathProblem.id)){
-           switch (pathProblem.type) {
+      .then(() => {
+        if (
+          problemOpenTime &&
+          problemOpenTime.problemId ===
+            (pathProblem.problemId || pathProblem.id)
+        ) {
+          switch (pathProblem.type) {
             // case ACTIVITY_TYPES.codeCombat.id:
             // case ACTIVITY_TYPES.codeCombatNumber.id:
             // case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
             // case ACTIVITY_TYPES.text.id:
             // case ACTIVITY_TYPES.profile.id:
             case ACTIVITY_TYPES.youtube.id:
-              this.dispatch(problemSolutionAttemptRequest( problemOpenTime.problemId, (pathProblem.path || pathProblem.pathId), pathProblem.type, 1, problemOpenTime.openTime, new Date().getTime()))
+              this.dispatch(
+                problemSolutionAttemptRequest(
+                  problemOpenTime.problemId,
+                  pathProblem.path || pathProblem.pathId,
+                  pathProblem.type,
+                  1,
+                  problemOpenTime.openTime,
+                  new Date().getTime()
+                )
+              );
               return;
             default:
               return;
           }
         }
-       return null;
+        return null;
       })
       .then(() => {
         switch (pathProblem.type) {
@@ -1125,22 +1138,23 @@ export class PathsService {
    */
   moveActivity(uid, pathId, activities, activityId, direction) {
     return this.checkActivitiesOrder(activities).then(activities => {
+      // Sort activities to find siblings
+      activities = activities.sort((a, b) =>
+        a.orderIndex > b.orderIndex ? 1 : a.orderIndex < b.orderIndex ? -1 : 0
+      );
       let siblingActivity;
 
-      let targetActivity = activities.find(a => a.id === activityId);
+      const targetActivity = activities.find(a => a.id === activityId);
+      const targetActivityIndex = activities.indexOf(targetActivity);
 
       if (!targetActivity) {
         throw new Error("Unable find requested activity");
       }
 
       if (direction === "up") {
-        siblingActivity = activities.find(
-          a => a.orderIndex === targetActivity.orderIndex - 1
-        );
+        siblingActivity = activities[targetActivityIndex - 1];
       } else {
-        siblingActivity = activities.find(
-          a => a.orderIndex === targetActivity.orderIndex + 1
-        );
+        siblingActivity = activities[targetActivityIndex + 1];
       }
 
       if (!siblingActivity) {

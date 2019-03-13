@@ -112,6 +112,22 @@
         ".write": "auth != null && root.child('/cohorts/' + $cohortKey).exists()"
       }
     },
+    "cohortMemberQualificationStatus": {
+      ".read": "auth != null",
+      "$cohortKey": {
+        "$UserKey": {
+          ".write": false
+        }
+      }
+    },
+    "cohortMembersCompletedActivitiesCountOnPaths": {
+      ".read": "auth != null",
+      "$cohortKey": {
+        "$UserKey": {
+          ".write": false
+        }
+      }
+    },
     "cohortAnalyticsQueue" : {
       "responses": {
         "$taskKey": {
