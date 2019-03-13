@@ -49,6 +49,7 @@ import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgr
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
+import MessageDialog from "../../components/dialogs/MessageDialog";
 
 class Assignments extends React.Component {
   static propTypes = {
@@ -73,7 +74,8 @@ class Assignments extends React.Component {
     fieldAutoUpdated: PropTypes.bool
   };
   state = {
-    password: ""
+    password: "",
+    messageModalOpen: false
   };
 
   componentDidMount() {
@@ -171,6 +173,12 @@ class Assignments extends React.Component {
     this.props.dispatch(
       assignmentRemoveAssistantRequest(courseId, assistantId)
     );
+  
+  toggleMessageModal = () => {
+    this.setState(state => ({
+      messageModalOpen: !state.messageModalOpen
+    }))
+  }
 
   getPasswordView() {
     return (
@@ -212,6 +220,8 @@ class Assignments extends React.Component {
     );
   }
 
+  
+
   render() {
     const {
       ui,
@@ -227,7 +237,6 @@ class Assignments extends React.Component {
       readOnly,
       fieldAutoUpdated
     } = this.props;
-
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
     } else if (!course) {
@@ -279,9 +288,18 @@ class Assignments extends React.Component {
               {
                 label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
                 handler: this.toggleHiddenShow
+              },
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
               }
             ]) ||
-            null
+            [
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
+              }
+            ]
           }
           paths={[
             {
@@ -389,6 +407,14 @@ class Assignments extends React.Component {
           paths={(ui.dialog && ui.dialog.paths) || {}}
           teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
           uid={currentUser && currentUser.id}
+        />
+        <MessageDialog
+          course={course}
+          handleClose={this.toggleMessageModal}
+          isInstructor={currentUser.isAssistant}
+          open={this.state.messageModalOpen}
+          showStudents={true}
+          type={"course"}
         />
       </Fragment>
     );

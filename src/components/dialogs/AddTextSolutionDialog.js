@@ -80,6 +80,7 @@ class AddTextSolutionDialog extends React.PureComponent {
                 ? ""
                 : "input should not be empty or have invalid characters"
             }
+            InputProps={{ readOnly: !!options }}
             key={taskId}
             label="Solution"
             onChange={this.onChangeSolution}
