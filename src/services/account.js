@@ -276,6 +276,24 @@ export class AccountService {
   }
 
   /**
+   * Replaces auth with provided UID. Available only for admins
+   *
+   * @param {String} uid custom UID to auth with
+   */
+  authWithCustomToken(uid) {
+    return firebase
+      .functions()
+      .httpsCallable("createCustomToken")({ uid })
+      .then(response => response.data)
+      .then(token => {
+        if (!token) {
+          throw new Error("Invalid UID");
+        }
+        return firebase.auth().signInWithCustomToken(token);
+      });
+  }
+
+  /**
    *
    * @param config
    * @returns {Promise<void>}

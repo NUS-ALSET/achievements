@@ -236,6 +236,7 @@ export class SolutionsService {
       })
       .then(response => response.data || [])
       .then(options =>
+        // randomize options
         options.sort(() => (Math.random() > FAIR_RANDOM ? 1 : -1))
       );
   }

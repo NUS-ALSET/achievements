@@ -16,3 +16,9 @@ export const adminUpdateConfigFail = (config, reason) => ({
   config,
   reason
 });
+
+export const ADMIN_CUSTOM_AUTH_REQUEST = "ADMIN_CUSTOM_AUTH_REQUEST";
+export const adminCustomAuthRequest = uid => ({
+  type: ADMIN_CUSTOM_AUTH_REQUEST,
+  uid
+});

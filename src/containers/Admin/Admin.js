@@ -18,14 +18,18 @@ import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import IconButton from "@material-ui/core/IconButton";
+import InputAdornment from "@material-ui/core/InputAdornment";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 
 import withStyles from "@material-ui/core/styles/withStyles";
-import { adminUpdateConfigRequest } from "./actions";
+import { adminUpdateConfigRequest, adminCustomAuthRequest } from "./actions";
 import { sagaInjector } from "../../services/saga";
+
+import SearchIcon from "@material-ui/icons/Search";
 
 const styles = theme => ({
   section: { padding: theme.spacing.unit },
@@ -58,6 +62,7 @@ const jestConfig = {
 class Admin extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
+    adminCustomAuthRequest: PropTypes.func,
     adminUpdateConfigRequest: PropTypes.func,
     config: PropTypes.object,
     isAdmin: PropTypes.bool
@@ -70,28 +75,45 @@ class Admin extends React.PureComponent {
   };
 
   state = {
-    recommendations: {}
+    uid: "",
+    config: {
+      recommendations: {}
+    }
   };
 
   handleChange = name => event =>
     this.setState({
-      [name]: event.target.value
+      config: {
+        ...this.state.config,
+        [name]: event.target.value
+      }
     });
 
   handleChangeRecommendation = name => event =>
     this.setState({
-      recommendations: {
-        ...this.state.recommendations,
-        [name]: event.target.checked
+      config: {
+        ...this.state.config,
+
+        recommendations: {
+          ...this.state.recommendations,
+          [name]: event.target.checked
+        }
       }
     });
 
+  catchReturn = event => event.key === "Enter" && this.customAuth();
+
+  customAuth = () => this.props.adminCustomAuthRequest(this.state.uid);
+
+  updateUID = e => this.setState({ uid: e.target.value });
+
   commit = () => {
-    this.props.adminUpdateConfigRequest(this.state);
+    this.props.adminUpdateConfigRequest(this.state.config);
   };
 
   render() {
     const { classes, config, isAdmin } = this.props;
+    const newConfig = this.state.config;
     const allowed = config.recommendations || {
       NotebookWithNewSkills: true,
       NotebookWithUsedSkills: true,
@@ -145,7 +167,7 @@ class Admin extends React.PureComponent {
                     key={url}
                     label={urls[url]}
                     onChange={this.handleChange(url)}
-                    value={this.state[url] || config[url] || ""}
+                    value={newConfig[url] || config[url] || ""}
                   />
                 ))}
                 {Object.keys(jestConfig).map(url => (
@@ -154,13 +176,34 @@ class Admin extends React.PureComponent {
                     key={url}
                     label={jestConfig[url]}
                     onChange={this.handleChange(url)}
-                    value={
-                      this.state[url] || config.jestRunnerConfig[url] || ""
-                    }
+                    value={newConfig[url] || config.jestRunnerConfig[url] || ""}
                   />
                 ))}
               </FormGroup>
             </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography gutterBottom variant="h6">
+              Auth with custom UID to inspect user experience
+            </Typography>
+            <TextField
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="Auth with custom UID"
+                      onClick={this.customAuth}
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+              label="User auth"
+              onChange={this.updateUID}
+              onKeyPress={this.catchReturn}
+            />
           </Grid>
           <Grid item xs={12}>
             <Typography gutterBottom variant="h6">
@@ -174,13 +217,13 @@ class Admin extends React.PureComponent {
                     control={
                       <Checkbox
                         checked={
-                          this.state.recommendations[key] === undefined
+                          newConfig.recommendations[key] === undefined
                             ? config.recommendations[key]
-                            : this.state.recommendations[key]
+                            : newConfig.recommendations[key]
                         }
                         onChange={this.handleChangeRecommendation(key)}
                         value={String(
-                          this.state.recommendations[key] ||
+                          newConfig.recommendations[key] ||
                             config.recommendations[key]
                         )}
                       />
@@ -237,6 +280,7 @@ export default compose(
   connect(
     mapStateToProps,
     {
+      adminCustomAuthRequest,
       adminUpdateConfigRequest
     }
   )
