@@ -661,11 +661,13 @@ export function* assignmentTeamChoiceSolutionRequestHandler(action) {
   );
   yield put(
     assignmentTeamChoiceSolutionSuccess(
+      action.courseId,
       action.assignment,
       action.solution,
       options
     )
   );
+  yield put(assignmentSubmitRequest(action.assignment, action.solution));
 }
 
 export default [
