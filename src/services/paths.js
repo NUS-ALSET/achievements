@@ -1129,22 +1129,23 @@ export class PathsService {
    */
   moveActivity(uid, pathId, activities, activityId, direction) {
     return this.checkActivitiesOrder(activities).then(activities => {
+      // Sort activities to find siblings
+      activities = activities.sort((a, b) =>
+        a.orderIndex > b.orderIndex ? 1 : a.orderIndex < b.orderIndex ? -1 : 0
+      );
       let siblingActivity;
 
-      let targetActivity = activities.find(a => a.id === activityId);
+      const targetActivity = activities.find(a => a.id === activityId);
+      const targetActivityIndex = activities.indexOf(targetActivity);
 
       if (!targetActivity) {
         throw new Error("Unable find requested activity");
       }
 
       if (direction === "up") {
-        siblingActivity = activities.find(
-          a => a.orderIndex === targetActivity.orderIndex - 1
-        );
+        siblingActivity = activities[targetActivityIndex - 1];
       } else {
-        siblingActivity = activities.find(
-          a => a.orderIndex === targetActivity.orderIndex + 1
-        );
+        siblingActivity = activities[targetActivityIndex + 1];
       }
 
       if (!siblingActivity) {

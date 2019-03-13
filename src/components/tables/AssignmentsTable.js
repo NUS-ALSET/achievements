@@ -322,11 +322,7 @@ class AssignmentsTable extends React.PureComponent {
         break;
       case ASSIGNMENTS_TYPES.TeamChoice.id:
         dispatch(
-          assignmentTeamChoiceSolutionRequest(
-            course.id,
-            assignment,
-            solution && solution.value
-          )
+          assignmentTeamChoiceSolutionRequest(course.id, assignment, solution)
         );
         break;
       default:
