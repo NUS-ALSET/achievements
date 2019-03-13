@@ -10,7 +10,6 @@ import ServiceForm from "../../containers/Admin/ServiceForm";
 class ServiceDialog extends React.PureComponent {
   static propTypes = {
     onClose: PropTypes.func,
-    onCommit: PropTypes.func,
     open: PropTypes.bool.isRequired,
     createNewService: PropTypes.func,
     editing: PropTypes.bool,

@@ -85,7 +85,7 @@ export function* toggleServiceIterator(action) {
     yield put(toggleServiceSuccess());
     yield put(notificationShow("Service Updated"));
   } catch (err) {
-    yield put(toggleServiceFaliure(err));
+    yield put(toggleServiceFaliure());
   }
 }
 
