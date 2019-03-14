@@ -169,7 +169,7 @@ class pathAnalyticsDemo extends React.PureComponent {
           return finalArray;
         });
 
-        thisVar.setState({
+        return thisVar.setState({
           userProgressArray: [
             {
               seriesname: "All Time",
@@ -878,7 +878,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   changePathKeyJupSol,
   initAnalyticsData,
-  filterAnalyticsData 
+  filterAnalyticsData
 };
 
 export default compose(
@@ -887,7 +887,7 @@ export default compose(
       {
         path: "/analytics/activityAttempts",
         storeAs: "analyticsData",
-        queryParams: ["orderByChild=activityType", 'equalTo=jupyterInline']
+        queryParams: ["orderByChild=activityType", "equalTo=jupyterInline"]
       },
       {
         path: "/activities",

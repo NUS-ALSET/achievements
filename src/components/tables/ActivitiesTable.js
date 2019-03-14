@@ -136,7 +136,7 @@ class ActivitiesTable extends React.PureComponent {
       totalActivities: 0,
       totalSolvedActivities: 0
     };
-    activities.forEach(activity =>
+    (activities || []).forEach(activity =>
       this.getStatus(activity) && activity.solved
         ? totals.totalSolvedActivities++ && totals.totalActivities++
         : totals.totalActivities++
@@ -160,7 +160,7 @@ class ActivitiesTable extends React.PureComponent {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map(activity => (
+            {(activities || []).map(activity => (
               <TableRow hover key={activity.id}>
                 <TableCell className={classes.noWrap}>
                   {activity.name}
