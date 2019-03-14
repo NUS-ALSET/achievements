@@ -12,7 +12,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { Fragment } from "react";
 
 import TextField from "@material-ui/core/TextField";
 import { AccountService } from "../../services/account";
@@ -48,7 +48,7 @@ class AddProfileDialog extends React.PureComponent {
     this.onCommit();
   };
   onCommit = () => {
-    this.props.onCommit(this.state.login || this.props.defaultValue);
+    this.props.onCommit((this.state.login || this.props.defaultValue), this.props.externalProfile.id);
     if (!this.props.keepOnCommit) {
       this.props.onClose();
     }
@@ -65,15 +65,17 @@ class AddProfileDialog extends React.PureComponent {
         <DialogTitle>Set Up {externalProfile.name} Profile</DialogTitle>
         <DialogContent>
           <Typography gutterBottom variant="body1">
-            1. Register or Login with CodeCombat.com
+            1. Register or Login with {externalProfile.url}
           </Typography>
-          <img
-            align="center"
-            alt="CodeCombatLogin"
-            src={CodeCombatLogin}
-            style={{ maxHeight: 110 }}
-          />
-          <Typography gutterBottom variant="subtitle1">
+          { externalProfile.id === 'CodeCombat' &&
+            <Fragment>
+              <img
+                align="center"
+                alt="CodeCombatLogin"
+                src={CodeCombatLogin}
+                style={{ maxHeight: 110 }}
+              />
+            <Typography gutterBottom variant="subtitle1">
             <a
               href="https://codecombat.com/home"
               rel="noopener noreferrer"
@@ -81,7 +83,9 @@ class AddProfileDialog extends React.PureComponent {
             >
               https://codecombat.com/home
             </a>
-          </Typography>
+            </Typography>
+            </Fragment>
+          }
           <Typography gutterBottom variant="body1">
             2. Enter your CodeCombat username:
           </Typography>

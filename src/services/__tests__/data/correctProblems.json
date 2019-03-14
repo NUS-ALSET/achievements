@@ -34,16 +34,19 @@
   },
   {
     "name": "test",
+    "service": "CodeCombat",
     "type": "profile"
   },
   {
     "name": "test",
     "type": "codeCombat",
+    "service": "CodeCombat",
     "level": "test"
   },
   {
     "count": 1,
     "name": "test",
+    "service": "CodeCombat",
     "type": "codeCombatNumber"
   },
   {

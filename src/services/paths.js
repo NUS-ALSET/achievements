@@ -35,15 +35,15 @@ export const ACTIVITY_TYPES = {
   },
   profile: {
     id: "profile",
-    caption: "Fetch CodeCombat Profile"
+    caption: "Fetch Profile"
   },
   codeCombat: {
     id: "codeCombat",
-    caption: "Complete CodeCombat Level"
+    caption: "Complete Level"
   },
   codeCombatNumber: {
     id: "codeCombatNumber",
-    caption: "Complete Number of CodeCombat Levels"
+    caption: "Complete Number of Levels"
   },
   codeCombatMultiPlayerLevel: {
     id: "codeCombatMultiPlayerLevel",
@@ -80,7 +80,11 @@ export const ACTIVITY_TYPES = {
   educator: {
     id: "educator",
     caption: "Educator"
-  }
+  },
+  // thirdPartyServices: {
+  //   id: "thirdPartyServices",
+  //   caption: "Third Party Services"
+  // }
 };
 
 export const CodeCombat_Multiplayer_Data = {
@@ -407,11 +411,14 @@ export class PathsService {
         // }
         break;
       case ACTIVITY_TYPES.profile.id:
+        if (!problemInfo.service) throw new Error("Missing service");
         break;
       case ACTIVITY_TYPES.codeCombat.id:
+        if (!problemInfo.service) throw new Error("Missing service");
         if (!problemInfo.level) throw new Error("Missing CodeCombat level");
         break;
       case ACTIVITY_TYPES.codeCombatNumber.id:
+        if (!problemInfo.service) throw new Error("Missing service");
         if (!problemInfo.count) throw new Error("Missing levels count");
         break;
       case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
@@ -607,12 +614,14 @@ export class PathsService {
         case ACTIVITY_TYPES.codeCombat.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
-            level: pathProblem.level
+            level: pathProblem.level,
+            service:pathProblem.service || "CodeCombat"
           });
         case ACTIVITY_TYPES.codeCombatNumber.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat_Number",
-            count: pathProblem.count
+            count: pathProblem.count,
+            service:pathProblem.service || "CodeCombat"
           });
         case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
           return true;
