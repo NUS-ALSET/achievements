@@ -562,7 +562,7 @@ const mapStateToProps = (state, ownProps) => ({
   uid: state.firebase.auth.uid,
   userAchievements: (state.firebase.data.userAchievements || {})[
     ownProps.match.params.accountId || state.firebase.auth.uid
-  ]
+  ] || {}
 });
 
 const mapDispatchToProps = {
