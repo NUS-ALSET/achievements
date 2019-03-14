@@ -120,6 +120,7 @@ class JupyterInlineActivity extends React.PureComponent {
   getSolutionCode = (solution, problem) =>
     (this.state.solutionJSON &&
       this.state.solutionJSON.cells &&
+      this.state.solutionJSON.cells[Number(problem.code)] &&
       this.state.solutionJSON.cells[Number(problem.code)].source
         .join("")
         .replace(/\n\n/g, "\n")) ||
