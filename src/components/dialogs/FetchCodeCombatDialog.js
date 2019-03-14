@@ -53,7 +53,7 @@ class FetchCodeCombatDialog extends React.PureComponent {
             <DialogTitle>Fetch {externalProfile.name} Profile</DialogTitle>
             <DialogContent>
               <Typography gutterBottom variant="body1">
-                1. Confirm Your CodeCombat Profile
+                1. Confirm Your {externalProfile.name} Profile
               </Typography>
               <Typography gutterBottom variant="subtitle1">
                 <a href={url} rel="noopener noreferrer" target="_blank">
@@ -61,7 +61,7 @@ class FetchCodeCombatDialog extends React.PureComponent {
                 </a>
               </Typography>
               <Typography gutterBottom variant="body1">
-                2. Make sure you are logged in to CodeCombat
+                2. Make sure you are logged in to {externalProfile.name}
               </Typography>
               <img
                 align="center"
@@ -79,7 +79,7 @@ class FetchCodeCombatDialog extends React.PureComponent {
             <DialogTitle>{externalProfile.name} Profile Not Set Up</DialogTitle>
             <DialogContent>
               <Typography gutterBottom variant="body1">
-                Click "SET UP PROFILE" to add your CodeCombat profile
+                Click "SET UP PROFILE" to add your {externalProfile.name} profile
               </Typography>
               <Typography gutterBottom variant="caption">
                 Set up the profile at our Profile page

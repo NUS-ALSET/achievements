@@ -5,11 +5,11 @@ const ASSIGNMENTS_TYPES = {
     },
     Profile: {
       id: "Profile",
-      caption: "Fetch CodeCombat Profile"
+      caption: "Fetch Profile"
     },
     CodeCombat: {
       id: "CodeCombat",
-      caption: "Complete CodeCombat Level"
+      caption: "Complete Level"
     },
     CodeCombat_Number: {
       id: "CodeCombat_Number",

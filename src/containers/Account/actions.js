@@ -100,7 +100,7 @@ export const EXTERNAL_PROFILE_REFRESH_REQUEST =
 export const externalProfileRefreshRequest = (
   externalProfileId,
   externalProfileType,
-  customUID
+  customUID=null
 ) => ({
   type: EXTERNAL_PROFILE_REFRESH_REQUEST,
   externalProfileId,

@@ -26,6 +26,7 @@
     "error": "Missing CodeCombat level",
     "problem": {
       "name": "test",
+      "service": "CodeCombat",
       "type": "codeCombat"
     }
   },
@@ -33,6 +34,15 @@
     "error": "Missing levels count",
     "problem": {
       "name": "test",
+      "service": "CodeCombat",
+      "type": "codeCombatNumber"
+    }
+  },
+  {
+    "error": "Missing service",
+    "problem": {
+      "name": "test",
+      "count": 2,
       "type": "codeCombatNumber"
     }
   },

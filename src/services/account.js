@@ -144,10 +144,10 @@ export class AccountService {
     });
   }
 
-  fetchAchievements(uid) {
+  fetchAchievements(uid, service = "CodeCombat") {
     return firebase
       .database()
-      .ref(`/userAchievements/${uid}/CodeCombat`)
+      .ref(`/userAchievements/${uid}/${service}`)
       .once("value")
       .then(snap => snap.val());
   }
@@ -284,7 +284,7 @@ export class AccountService {
     return firebase
       .functions()
       .httpsCallable("createCustomToken")({ uid })
-      .then(response => response.data)
+      .then(response => response && response.data)
       .then(token => {
         if (!token) {
           throw new Error("Invalid UID");
@@ -309,7 +309,7 @@ export class AccountService {
     if (config.codeCombatProfileURL) {
       configUpdates.codeCombatProfileURL = config.codeCombatProfileURL;
     }
-    if (config.jupyterLambdaProcessor) {
+    if (config.jupyterAnalysisLambdaProcessor) {
       configUpdates.jupyterAnalysisLambdaProcessor =
         config.jupyterAnalysisLambdaProcessor;
     }

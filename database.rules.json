@@ -193,6 +193,10 @@
         ".read": true
       }
     },
+    "thirdPartyServices": {
+      ".read": true,
+      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
+    },
     "courseMembers": {
       ".read": "auth != null",
       "$courseKey": {
@@ -504,6 +508,10 @@
         ".read": "auth != null && auth.uid == $userKey",
         ".write": "auth != null && auth.uid == $userKey"
       }
+    },
+    "thirdPartiesLevels":{
+      ".read": "auth != null",
+      ".write": false,
     },
     "visibleSolutions": {
       "$courseKey": {

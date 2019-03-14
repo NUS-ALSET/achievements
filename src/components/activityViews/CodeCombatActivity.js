@@ -26,41 +26,40 @@ class CodeCombatActivity extends React.PureComponent {
     userAchievements: PropTypes.object,
     readOnly: PropTypes.bool
   };
-  updateCodeCombatProfile = () => {
-    const { dispatch, userAchievements } = this.props;
-    const codeCombatProfileId = userAchievements.CodeCombat.id;
-    dispatch(externalProfileRefreshRequest(codeCombatProfileId, "CodeCombat"));
-  };
+  updateCodeCombatProfile = ()=>{
+    const { dispatch, userAchievements, problem } = this.props;
+    const service = problem.service || "CodeCombat";
+    const profileId = userAchievements[service].id;
+      dispatch(
+        externalProfileRefreshRequest(
+          profileId,
+          service
+        )
+      )
+  }
   render() {
     const { problem, userAchievements } = this.props;
 
-    const codeCombatAchievements = (userAchievements || {}).CodeCombat || {};
+    const service = problem.service || "CodeCombat";
+    const codeCombatAchievements = ((userAchievements || {})[service] || {});
     const achievements = codeCombatAchievements.achievements;
-
-    if (!achievements) {
+    if (!achievements){
       return (
         <Typography>
           Please add your Codecombat profile to complete this assignment.
         </Typography>
       );
     }
-    const updateCodeCombatAchievements = (
-      <Button
-        color="primary"
-        onClick={this.updateCodeCombatProfile}
-        style={{ marginLeft: "10px" }}
-        variant="contained"
-      >
-        Update CodeCombat Profile
-      </Button>
-    );
-    if (problem.type === ACTIVITY_TYPES.codeCombat.id) {
+    const updateCodeCombatAchievements = (<Button color="primary" onClick={this.updateCodeCombatProfile} style={{marginLeft : "10px"}}  variant="contained">
+      Update {service} Profile
+    </Button>)
+    if (problem.type===ACTIVITY_TYPES.codeCombat.id){
       const hasLevelCompleted = (achievements[problem.level] || {}).complete;
       if (hasLevelCompleted) {
         this.props.onCommit({
           type: "SOLUTION",
           solution: {
-            value: this.props.userAchievements.CodeCombat.id
+            value: this.props.userAchievements[service].id
           }
         });
       }
@@ -80,25 +79,25 @@ class CodeCombatActivity extends React.PureComponent {
             You have not completed {`"${problem.level}"`} level on CodeCombat.
             Would you like to go to CodeCombat to complete this level
           </Typography>
-          <br />
-          <Button color="primary" variant="contained">
-            <a href={levelURL} style={{ color: "white" }} target="__blank">
-              {" "}
-              Go To Level
-            </a>
-          </Button>
-          {updateCodeCombatAchievements}
-        </div>
+            <Typography>
+                You have not completed {`"${problem.level}"`} level on {service}.
+                Would you like to go to {service} to complete this level
+              </Typography>
+              <br/>
+              <Button color="primary" variant="contained">
+                <a href={levelURL} style={{color : "white"}} target="__blank" > Go To Level</a>
+              </Button>
+              { updateCodeCombatAchievements }
+            </div>
       );
-    } else if (problem.type === ACTIVITY_TYPES.codeCombatNumber.id) {
-      const totalAchievements =
-        (userAchievements.CodeCombat || {}).totalAchievements || 0;
-      const hasNumOfLevelCompleted = totalAchievements >= problem.count;
+    } else if (problem.type===ACTIVITY_TYPES.codeCombatNumber.id) {
+      const totalAchievements = (userAchievements[service] || {}).totalAchievements || 0;
+      const hasNumOfLevelCompleted = totalAchievements >=  problem.count;
       if (hasNumOfLevelCompleted) {
         this.props.onCommit({
           type: "SOLUTION",
           solution: {
-            value: this.props.userAchievements.CodeCombat.id
+            value: this.props.userAchievements[service].id
           }
         });
       }
@@ -117,19 +116,25 @@ class CodeCombatActivity extends React.PureComponent {
             {totalAchievements || 0}{" "}
             {totalAchievements > 0 ? "levels" : "level"} on CodeCombat.
           </Typography>
-          <Typography>Would you like to go to CodeCombat.</Typography>
-          <br />
-          <Button color="primary" variant="contained">
-            <a
-              href={externalProfile.url}
-              style={{ color: "white" }}
-              target="__blank"
-            >
-              Go To Codecombat
-            </a>
-          </Button>
-          {updateCodeCombatAchievements}
-        </div>
+            <Typography>
+              This assigment required to complete {problem.count} levels,
+              but you have only compledted levels;
+                You have completed only {totalAchievements || 0} {totalAchievements > 0 ? "levels" : "level"} on {service}.
+              </Typography>
+              <Typography>
+                Would you like to go to {service}.
+              </Typography>
+              <br/>
+              <Button color="primary"variant="contained">
+                <a
+                  href={externalProfile.url}
+                  style={{ color : "white" }}
+                  target="__blank">
+                  Go To {service}
+                </a>
+              </Button>
+              { updateCodeCombatAchievements }
+            </div>
       );
     } else if (problem.type === ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id) {
       const levelUrl = `//codecombat.com/play/level/${problem.level}?team=${
