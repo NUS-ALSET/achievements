@@ -144,7 +144,7 @@ export class AccountService {
     });
   }
 
-  fetchAchievements(uid, service="CodeCombat") {
+  fetchAchievements(uid, service = "CodeCombat") {
     return firebase
       .database()
       .ref(`/userAchievements/${uid}/${service}`)
@@ -276,6 +276,24 @@ export class AccountService {
   }
 
   /**
+   * Replaces auth with provided UID. Available only for admins
+   *
+   * @param {String} uid custom UID to auth with
+   */
+  authWithCustomToken(uid) {
+    return firebase
+      .functions()
+      .httpsCallable("createCustomToken")({ uid })
+      .then(response => response && response.data)
+      .then(token => {
+        if (!token) {
+          throw new Error("Invalid UID");
+        }
+        return firebase.auth().signInWithCustomToken(token);
+      });
+  }
+
+  /**
    *
    * @param config
    * @returns {Promise<void>}
@@ -291,7 +309,7 @@ export class AccountService {
     if (config.codeCombatProfileURL) {
       configUpdates.codeCombatProfileURL = config.codeCombatProfileURL;
     }
-    if (config.jupyterLambdaProcessor) {
+    if (config.jupyterAnalysisLambdaProcessor) {
       configUpdates.jupyterAnalysisLambdaProcessor =
         config.jupyterAnalysisLambdaProcessor;
     }

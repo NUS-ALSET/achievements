@@ -3,6 +3,7 @@ import {
   ADMIN_UPDATE_CONFIG_REQUEST,
   adminUpdateConfigFail,
   adminUpdateConfigSuccess,
+  ADMIN_CUSTOM_AUTH_REQUEST,
   createNewServiceFaliure,
   createNewServiceSuccess,
   CREATE_NEW_SERVICE,
@@ -22,6 +23,17 @@ import {
 import { accountService } from "../../services/account";
 import { adminService } from "../../services/admin";
 import { notificationShow } from "../Root/actions";
+import { push } from "connected-react-router";
+
+export function* adminCustomAuthRequestHandler(action) {
+  try {
+    yield put(notificationShow("Attempt to login with custom UID"));
+    yield call(accountService.authWithCustomToken, action.uid);
+    yield put(push("/"));
+  } catch (err) {
+    yield put(notificationShow(err.message));
+  }
+}
 
 export function* adminUpdateConfigRequestHandler(action) {
   try {
@@ -35,7 +47,6 @@ export function* adminUpdateConfigRequestHandler(action) {
 }
 
 export function* createNewServiceIterator(action) {
-  
   try {
     const data = action.data;
     yield call(adminService.createService, data);
@@ -90,30 +101,18 @@ export function* toggleServiceIterator(action) {
 }
 
 export default [
+  function* watchAdminCustomAuthRequest() {
+    yield takeLatest(ADMIN_CUSTOM_AUTH_REQUEST, adminCustomAuthRequestHandler);
+  },
   function* watchAdminUpdateConfigRequest() {
     yield takeLatest(
       ADMIN_UPDATE_CONFIG_REQUEST,
       adminUpdateConfigRequestHandler
     );
-    yield takeLatest(
-      CREATE_NEW_SERVICE,
-      createNewServiceIterator
-    );
-    yield takeLatest(
-      FETCH_SERVICE_DETAILS,
-      fetchServiceDetailsIterator
-    );
-    yield takeLatest(
-      UPDATE_SERVICE_DETAILS,
-      updateServiceIterator
-    );
-    yield takeLatest(
-      DELETE_SERVICE,
-      deleteServiceIterator
-    );
-    yield takeLatest(
-      TOGGLE_SERVICE,
-      toggleServiceIterator
-    )
+    yield takeLatest(CREATE_NEW_SERVICE, createNewServiceIterator);
+    yield takeLatest(FETCH_SERVICE_DETAILS, fetchServiceDetailsIterator);
+    yield takeLatest(UPDATE_SERVICE_DETAILS, updateServiceIterator);
+    yield takeLatest(DELETE_SERVICE, deleteServiceIterator);
+    yield takeLatest(TOGGLE_SERVICE, toggleServiceIterator);
   }
 ];

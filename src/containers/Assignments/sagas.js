@@ -114,7 +114,7 @@ export function* courseAssignmentsOpenHandler(action) {
     yield put(coursePathsFetchSuccess(action.courseId, pathsData));
   } catch (err) {
     // That's normal behavior if user isn't course member
-    if (!err.code === "PERMISSION_DENIED") {
+    if (err.code !== "PERMISSION_DENIED") {
       yield put(notificationShow(err.message));
     }
   }
@@ -569,7 +569,7 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
           yield put(
             problemSolutionRefreshSuccess(
               pathProblem.problemId,
-              action.solution || {}
+              action.solution
             )
           );
           break;

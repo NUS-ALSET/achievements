@@ -80,7 +80,7 @@ export const ACTIVITY_TYPES = {
   educator: {
     id: "educator",
     caption: "Educator"
-  },
+  }
   // thirdPartyServices: {
   //   id: "thirdPartyServices",
   //   caption: "Third Party Services"
@@ -595,6 +595,9 @@ export class PathsService {
    * @returns {Promise<Boolean>}
    */
   validateSolution(uid, pathProblem, solution, json) {
+    if (!solution) {
+      throw new Error("Missing solution");
+    }
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
         case ACTIVITY_TYPES.jest.id:
@@ -615,13 +618,13 @@ export class PathsService {
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
             level: pathProblem.level,
-            service:pathProblem.service || "CodeCombat"
+            service: pathProblem.service || "CodeCombat"
           });
         case ACTIVITY_TYPES.codeCombatNumber.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat_Number",
             count: pathProblem.count,
-            service:pathProblem.service || "CodeCombat"
+            service: pathProblem.service || "CodeCombat"
           });
         case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
           return true;
@@ -632,10 +635,8 @@ export class PathsService {
           if (pathProblem.multipleQuestion && pathProblem.options) {
             if (
               !(
-                solution &&
                 solution.answers &&
                 solution.answers.multipleQuestion &&
-                pathProblem.options &&
                 pathProblem.options[solution.answers.multipleQuestion] &&
                 pathProblem.options[solution.answers.multipleQuestion].correct
               )

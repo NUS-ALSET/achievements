@@ -187,7 +187,10 @@ export class SolutionsService {
             if (!publicStudentsSolutions) {
               return writes.push({
                 ref: `/visibleSolutions/${courseId}`,
-                value: this.processHiddenSolutions(studentsSolutions)
+                value: this.processHiddenSolutions(
+                  studentsSolutions,
+                  assignments
+                )
               });
             }
             each(studentsSolutions, (solutions, studentId) => {
@@ -206,7 +209,7 @@ export class SolutionsService {
                     ref:
                       "/visibleSolutions/" +
                       `${courseId}/${studentId}/${assignmentId}`,
-                    value: this.processHiddenSolutions(data)
+                    value: this.processHiddenSolutions(data, assignments)
                   });
                 }
               });
@@ -236,6 +239,7 @@ export class SolutionsService {
       })
       .then(response => response.data || [])
       .then(options =>
+        // randomize options
         options.sort(() => (Math.random() > FAIR_RANDOM ? 1 : -1))
       );
   }

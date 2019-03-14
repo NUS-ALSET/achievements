@@ -17,6 +17,12 @@ export const adminUpdateConfigFail = (config, reason) => ({
   reason
 });
 
+export const ADMIN_CUSTOM_AUTH_REQUEST = "ADMIN_CUSTOM_AUTH_REQUEST";
+export const adminCustomAuthRequest = uid => ({
+  type: ADMIN_CUSTOM_AUTH_REQUEST,
+  uid
+});
+
 export const CREATE_NEW_SERVICE = "CREATE_NEW_SERVICE";
 export const createNewService = data => ({
   type: CREATE_NEW_SERVICE,
@@ -91,20 +97,20 @@ export const deleteServiceFaliure = err => ({
 export const REMOVE_SERVICE = "UPDATE_SERVICE_VALUE";
 export const removeService = () => ({
   type: REMOVE_SERVICE
-})
+});
 
 export const TOGGLE_SERVICE = "TOGGLE_SERVICE";
 export const toggleService = service => ({
   type: TOGGLE_SERVICE,
   service
-})
+});
 
 export const TOGGLE_SERVICE_SUCCESS = "TOGGLE_SERVICE_SUCCESS";
 export const toggleServiceSuccess = () => ({
   type: TOGGLE_SERVICE_SUCCESS
-})
+});
 
 export const TOGGLE_SERVICE_FALIURE = "TOGGLE_SERVICE_FALIURE";
 export const toggleServiceFaliure = () => ({
   type: TOGGLE_SERVICE_FALIURE
-})
+});
