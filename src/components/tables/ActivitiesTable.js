@@ -160,7 +160,7 @@ class ActivitiesTable extends React.PureComponent {
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map(activity => (
+            {(activities || []).map(activity => (
               <TableRow hover key={activity.id}>
                 <TableCell className={classes.noWrap}>
                   {activity.name}
