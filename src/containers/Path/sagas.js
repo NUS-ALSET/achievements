@@ -286,7 +286,11 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       yield put(pathProfileDialogShow());
     } else {
       yield put(
-        externalProfileRefreshRequest(action.codeCombatProfile, externalService, data.uid)
+        externalProfileRefreshRequest(
+          action.codeCombatProfile,
+          externalService,
+          data.uid
+        )
       );
     }
     while (true) {
@@ -329,7 +333,7 @@ export function* pathActivityCodeCombatOpenHandler(action) {
           externalService
         );
 
-        if (levelsData.totalAchievements === -1) {
+        if (levelsData && levelsData.totalAchievements === -1) {
           throw new Error(`Invalid ${externalService} username provided`);
         }
 
