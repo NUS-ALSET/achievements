@@ -71,7 +71,8 @@ class Assignments extends React.Component {
     match: PropTypes.object,
     readOnly: PropTypes.bool,
     ui: PropTypes.object.isRequired,
-    fieldAutoUpdated: PropTypes.bool
+    fieldAutoUpdated: PropTypes.bool,
+    isAdmin: PropTypes.bool
   };
   state = {
     password: "",
@@ -173,7 +174,6 @@ class Assignments extends React.Component {
     this.props.dispatch(
       assignmentRemoveAssistantRequest(courseId, assistantId)
     );
-  
   toggleMessageModal = () => {
     this.setState(state => ({
       messageModalOpen: !state.messageModalOpen
@@ -235,7 +235,8 @@ class Assignments extends React.Component {
       course,
       currentUser,
       readOnly,
-      fieldAutoUpdated
+      fieldAutoUpdated,
+      isAdmin
     } = this.props;
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
@@ -247,9 +248,8 @@ class Assignments extends React.Component {
     }
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
-
     // If owner match user id then we suppose use as instructor and give him special view
-    if (currentUser.isAssistant) {
+    if (currentUser.isAssistant || isAdmin) {
       AssignmentView = (
         <InstructorTabs
           closeDialog={this.closeDialog}
@@ -348,9 +348,10 @@ class Assignments extends React.Component {
           open={ui.dialog && ui.dialog.type === "Profile"}
           uid={currentUser.id}
         />
-        {currentUser.isAssistant && (
+        {(currentUser.isAssistant || isAdmin) && (
           <ControlAssistantsDialog
             assistants={(ui.dialog && ui.dialog.assistants) || []}
+            isAdmin={isAdmin}
             isOwner={currentUser.isOwner}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
             onAddAssistant={this.onAddAssistant}
@@ -436,7 +437,8 @@ const mapStateToProps = (state, ownProps) => ({
   auth: state.firebase.auth,
   assistants: state.assignments.assistants,
   readOnly: state.problem && state.problem.readOnly,
-  fieldAutoUpdated: state.assignments.fieldAutoUpdated
+  fieldAutoUpdated: state.assignments.fieldAutoUpdated,
+  isAdmin: state.account.isAdmin
 });
 
 const mapDispatchToProps = dispatch => ({

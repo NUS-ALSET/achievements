@@ -34,7 +34,8 @@ class ControlAssistantsDialog extends React.Component {
     onClose: PropTypes.func.isRequired,
     onRemoveAssistant: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
-    target: PropTypes.string.isRequired
+    target: PropTypes.string.isRequired,
+    isAdmin: PropTypes.bool
   };
 
   state = {
@@ -63,9 +64,11 @@ class ControlAssistantsDialog extends React.Component {
       onClose,
       onRemoveAssistant,
       open,
-      target
+      target,
+      isAdmin
     } = this.props;
     let keyInputMessage = "Enter the User ID";
+    const hasAccess = isOwner || isAdmin;
 
     if (this.state.newAssistantKey) {
       if (newAssistant) {
@@ -79,7 +82,7 @@ class ControlAssistantsDialog extends React.Component {
       <Dialog onClose={onClose} open={open}>
         <DialogTitle>Control Assistants</DialogTitle>
         <DialogContent>
-          {isOwner && (
+          {hasAccess && (
             <Fragment>
               <TextField
                 helperText={keyInputMessage}
@@ -114,7 +117,7 @@ class ControlAssistantsDialog extends React.Component {
                     <Avatar src={assistant.photoURL || ""} />
                   </ListItemIcon>
                   <ListItemText primary={assistant.displayName || ""} />
-                  {isOwner && (
+                  {hasAccess && (
                     <ListItemSecondaryAction>
                       <IconButton
                         onClick={() => onRemoveAssistant(target, assistant.id)}
@@ -132,7 +135,7 @@ class ControlAssistantsDialog extends React.Component {
         </DialogContent>
         <DialogActions>
           <Button color="primary" onClick={onClose} variant="contained">
-            {isOwner ? "Commit" : "Close"}
+            {hasAccess ? "Commit" : "Close"}
           </Button>
         </DialogActions>
       </Dialog>
