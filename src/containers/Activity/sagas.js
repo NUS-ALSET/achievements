@@ -120,9 +120,9 @@ export function* problemInitRequestHandler(action) {
     // format (changed to string via #435 issue)
     if (
       pathProblem.type === ACTIVITY_TYPES.jupyterInline.id &&
-      typeof solution === "string"
+      (typeof solution === "string" || typeof solution.solution === "string")
     ) {
-      solution = JSON.parse(solution);
+      solution = JSON.parse(solution.solution || solution);
     }
     yield put(
       problemSolutionRefreshSuccess(action.problemId, solution || false)
@@ -144,7 +144,6 @@ export function* problemSolveUpdateHandler(action) {
     );
   }
 }
-
 
 export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
@@ -228,7 +227,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
           solutionFailed || !!(cell.outputs && cell.outputs.join("").trim());
         return true;
       });
-      
+
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
         yield put(
@@ -254,9 +253,14 @@ export function* problemSolutionRefreshRequestHandler(action) {
       }
       yield put(
         problemSolutionAttemptRequest(
-          data.pathProblem.problemId, data.pathProblem.pathId, data.pathProblem.type, Number(!solutionFailed), action.openTime, (new Date()).getTime()
+          data.pathProblem.problemId,
+          data.pathProblem.pathId,
+          data.pathProblem.type,
+          Number(!solutionFailed),
+          action.openTime,
+          new Date().getTime()
         )
-      )
+      );
     }
 
     // Removed `id` field from payload. It looks like we never use
@@ -329,7 +333,7 @@ export function* problemCheckSolutionRequestHandler(action) {
 
 export function* problemSolutionSubmitRequestHandler(action) {
   let data;
-  try { 
+  try {
     data = yield select(state => ({
       uid: state.firebase.auth.uid,
       isPathPublic: state.firebase.data.isPathPublic,
@@ -384,7 +388,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
 
 export function* problemSolutionAttemptRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
-  
+
   if (uid) {
     yield call(
       [pathsService, pathsService.saveAttemptedSolution],

@@ -6,17 +6,12 @@
   },
   "parser": "babel-eslint",
   "rules": {
-    "strict": [
-      2,
-      "safe"
-    ],
+    "strict": [2, "safe"],
     "array-callback-return": 2,
     "no-console": [
       2,
       {
-        "allow": [
-          "error"
-        ]
+        "allow": ["error"]
       }
     ],
     "default-case": 2,
@@ -30,42 +25,16 @@
     ],
     "no-trailing-spaces": 2,
     "keyword-spacing": 2,
-    "space-before-function-paren": [
-      2,
-      "never"
-    ],
-    "spaced-comment": [
-      2,
-      "always"
-    ],
+    "space-before-function-paren": [2, "never"],
+    "spaced-comment": [2, "always"],
     "vars-on-top": 2,
-    "comma-dangle": [
-      2,
-      "never"
-    ],
-    "quotes": [
-      2,
-      "double"
-    ],
+    "comma-dangle": [2, "never"],
+    "quotes": [2, "double"],
     "semi": 0,
     "no-mixed-operators": [
       2,
       {
-        "groups": [
-          [
-            "&",
-            "|",
-            "^",
-            "~",
-            "<<",
-            ">>",
-            ">>>"
-          ],
-          [
-            "&&",
-            "||"
-          ]
-        ]
+        "groups": [["&", "|", "^", "~", "<<", ">>", ">>>"], ["&&", "||"]]
       }
     ],
     "guard-for-in": 2,
@@ -77,22 +46,20 @@
     "no-extra-semi": 1,
     "no-unreachable": 1,
     "no-unused-expressions": 1,
-    "no-magic-numbers": [1, {"ignore": [0, -1, 1]}],
+    "no-magic-numbers": [1, { "ignore": [0, -1, 1] }],
     "max-len": [
       2,
       80,
       2,
       {
-        "ignorePattern": "^import .* from \"[^\"]*\";$",
+        "ignorePattern": "^(import .* from \"[^\"]*\";|const .* = require\\(\"[^\"]*\"\\);)$",
         "ignoreComments": true
       }
     ],
     "react/prefer-es6-class": 2,
-    "react/jsx-sort-props": [2, {"ignoreCase": true}]
+    "react/jsx-sort-props": [2, { "ignoreCase": true }]
   },
-  "plugins": [
-    "react"
-  ],
+  "plugins": ["react"],
   "globals": {
     "afterAll": true,
     "afterEach": true,
@@ -105,8 +72,5 @@
     "jest": true,
     "test": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ]
+  "extends": ["eslint:recommended", "plugin:react/recommended"]
 }
