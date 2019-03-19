@@ -595,9 +595,6 @@ export class PathsService {
    * @returns {Promise<Boolean>}
    */
   validateSolution(uid, pathProblem, solution, json) {
-    if (!solution) {
-      throw new Error("Missing solution");
-    }
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
         case ACTIVITY_TYPES.jest.id:
