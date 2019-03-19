@@ -70,6 +70,8 @@ const gameDefaultData = {
 
 const styles = () => ({});
 
+const cells = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     activityExampleSolution: PropTypes.any,
@@ -88,7 +90,8 @@ class AddActivityDialog extends React.PureComponent {
 
   state = {
     type: "text",
-    isCorrectInput: false
+    isCorrectInput: false,
+    cell: []
   };
 
   fetchedGithubURL = "";
@@ -153,6 +156,12 @@ class AddActivityDialog extends React.PureComponent {
         this.hideLoading();
     }
   };
+
+  handleCellsChange = e => {
+    this.setState({
+      cell: e.target.value
+    })
+  }
 
   getServicesList = () =>{
     let { thirdPartiesServices, activity } = this.props;
@@ -395,6 +404,28 @@ class AddActivityDialog extends React.PureComponent {
               }
               type="number"
             />
+            <Select
+              input={<Input id="select-multiple-checkbox" />}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 48 * 4.5 + 8,
+                    width: 250
+                  }
+                }
+              }}
+              multiple
+              onChange={this.handleCellsChange}
+              renderValue={selected => selected.join(', ')}
+              value={this.state.cell}
+            >
+              {cells.map(num => (
+                <MenuItem key={num} value={num}>
+                  <Checkbox checked={this.state.cell.indexOf(num) > -1} />
+                  <ListItemText primary={num} />
+                </MenuItem>
+              ))}
+            </Select>
           </Fragment>
         );
       case ACTIVITY_TYPES.jupyterInline.id:
@@ -792,7 +823,8 @@ class AddActivityDialog extends React.PureComponent {
     );
     this.setState({
       type: this.props.restrictedType || "text",
-      isCorrectInput: false
+      isCorrectInput: false,
+      cell: []
     });
   };
 
