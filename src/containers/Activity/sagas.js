@@ -149,10 +149,11 @@ export function* problemSolveUpdateHandler(action) {
 export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
-    pathProblem: state.problem.pathProblem
+    pathProblem: state.problem.pathProblem,
+    problemOpenTime: state.problem.problemOpenTime,
   }));
 
-  data.pathProblem.openTime = action.openTime;
+  data.pathProblem.openTime = action.openTime || data.problemOpenTime;
 
   switch (data.pathProblem.type) {
     case ACTIVITY_TYPES.text.id:
@@ -160,7 +161,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
       if (typeof action.fileId !== "object") {
         return yield put(
           problemSolutionRefreshSuccess(action.problemId, {
-            open: action.open,
+            open: action.openTime || data.problemOpenTime,
             json: data.pathProblem.solutionJSON
           })
         );

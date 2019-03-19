@@ -11,6 +11,9 @@ export class MultipleQuestionActivity extends React.PureComponent {
     noForce: PropTypes.bool,
     onCommit: PropTypes.func.isRequired
   };
+  componentDidMount(){
+    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  }
 
   render() {
     const { noForce, onCommit, problem, solution } = this.props;
