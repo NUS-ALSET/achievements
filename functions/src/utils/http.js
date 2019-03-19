@@ -1,5 +1,11 @@
 const uuid = require("uuid");
 const admin = require("firebase-admin");
+const functions = require("firebase-functions");
+const profilesRefreshApproach =
+  (functions.config().profiles &&
+    functions.config().profiles["refresh-approach"]) ||
+  "none";
+const axios = require("axios");
 
 class HTTPUtil {
   /**
@@ -15,6 +21,15 @@ class HTTPUtil {
 
     if (!url) {
       throw new Error("Missing required `url` parameter");
+    }
+
+    if (profilesRefreshApproach !== "trigger") {
+      return axios({
+        method,
+        headers: { "content-type": "text/plain" },
+        url,
+        data
+      }).then(response => response.data);
     }
 
     return new Promise((resolve, reject) => {
