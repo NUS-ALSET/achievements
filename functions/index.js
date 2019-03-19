@@ -17,7 +17,7 @@ const httpUtil = require("./src/utils/http").httpUtil;
 const migrateActivities = require("./src/migrateActivities");
 const updateUserRecommendations = require("./src/updateUserRecommendations");
 const updateUserPySkills = require("./src/updateUserPySkills.js");
-const processActivitySolutions = require("./src/processActivitySolution");
+const processActivitySolution = require("./src/processActivitySolution");
 const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
 const cohortRecalculate = require("./src/cohortRecalculate");
 const cohortAnalytics = require("./src/cohortAnalytics");
@@ -71,9 +71,10 @@ exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
 exports.handleActivitySolution = functions.database
   .ref("/problemSolutions/{activityKey}/{userKey}")
   .onWrite((change, context) =>
-    processActivitySolutions.handler(
+    processActivitySolution.handler(
       context.params.activityKey,
-      context.params.userKey
+      context.params.userKey,
+      change.after.val()
     )
   );
 
