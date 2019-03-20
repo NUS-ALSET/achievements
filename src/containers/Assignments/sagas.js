@@ -279,7 +279,6 @@ export function* updateNewAssignmentFieldHandler(action) {
   }
   // do not dispatch updateNewAssignmentField action in this handler, otherwise result will be infinite loop.
   // because if you dispatch updateNewAssignmentField action then this handler will run again
-  console.log(updatedFields);
   yield put(setDefaultAssignmentFields(updatedFields));
 }
 
