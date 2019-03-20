@@ -155,8 +155,8 @@ class JupyterNotebook extends React.PureComponent {
     // hide the cells
     let fillteredSol;
     if (solution && solution.json) {
-      const cellsToDisplay = solution && solution.json && this.filterCells(cellsToHide, solution);
-      fillteredSol = JSON.parse(JSON.stringify(solution || {}))
+      const cellsToDisplay = this.filterCells(cellsToHide, solution);
+      fillteredSol = JSON.parse(JSON.stringify(solution))
       fillteredSol.json.cells = cellsToDisplay;
     } else {
       fillteredSol = solution;
