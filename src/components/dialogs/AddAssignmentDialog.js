@@ -112,21 +112,24 @@ class AddAssignmentDialog extends React.PureComponent {
         });
       }
     }
-    if(assignment.name && NoStartWhiteSpace.test(assignment.name) && prevProps.assignment.name !== assignment.name){
+    if (assignment && assignment.name
+      && NoStartWhiteSpace.test(assignment.name)
+      && prevProps.assignment.name !== assignment.name
+    ) {
       this.updateField("name")({target:{value: assignment.name}})
     }
-    if(["PathProgress", "PathActivity"].includes(this.props.assignment.questionType)){
+    if (["PathProgress", "PathActivity"].includes(this.props.assignment.questionType)){
       const enableCommitBtn = Boolean( this.props.assignment.path &&  this.props.assignment.name);
-      if(enableCommitBtn !== this.state.enableCommitBtn){
+      if (enableCommitBtn !== this.state.enableCommitBtn){
         this.setState(()=>({
           enableCommitBtn: enableCommitBtn
         }));
       }
-    }else if(!this.state.enableCommitBtn){
+    } else if (!this.state.enableCommitBtn){
       this.setState(()=>({
         enableCommitBtn: true
-    }));
-    }                                                                                                                                                                                                                                                                                                                                                                          
+      }));
+    }
   }
 
   /**
