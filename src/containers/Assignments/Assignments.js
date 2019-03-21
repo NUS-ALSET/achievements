@@ -249,7 +249,7 @@ class Assignments extends React.Component {
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
     // If owner match user id then we suppose use as instructor and give him special view
-    if (currentUser.isAssistant || isAdmin) {
+    if ((currentUser && currentUser.isAssistant) || isAdmin) {
       AssignmentView = (
         <InstructorTabs
           closeDialog={this.closeDialog}
@@ -326,7 +326,7 @@ class Assignments extends React.Component {
           courseMemberName={ui && ui.dialog && ui.dialog.studentName}
           handleCloseDialog={assignmentCloseDialog}
           handleRemoveStudentRequest={courseRemoveStudentRequest}
-          open={ui.dialog && ui.dialog.type === "RemoveStudent"}
+          open={ui && ui.dialog && ui.dialog.type === "RemoveStudent"}
         />
         <MoveStudentDialog
           courseId={course.id}
@@ -387,9 +387,9 @@ class Assignments extends React.Component {
             ui.dialog &&
             ["PathActivity", "PathProblem"].includes(ui.dialog.type)
           }
-          pathProblem={ui.dialog.pathProblem}
+          pathProblem={ui.dialog && ui.dialog.pathProblem}
           readOnly={readOnly}
-          solution={ui.dialog.solution}
+          solution={ui.dialog && ui.dialog.solution}
         />
         <AddPathProgressSolutionDialog
           assignment={ui.currentAssignment}
