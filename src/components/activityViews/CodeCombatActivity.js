@@ -26,6 +26,9 @@ class CodeCombatActivity extends React.PureComponent {
     userAchievements: PropTypes.object,
     readOnly: PropTypes.bool
   };
+  componentDidMount(){
+    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  }
   updateCodeCombatProfile = ()=>{
     const { dispatch, userAchievements, problem } = this.props;
     const service = problem.service || "CodeCombat";

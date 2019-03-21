@@ -17,6 +17,9 @@ class TextActivity extends React.PureComponent {
     solution: PropTypes.object,
     readOnly: PropTypes.bool
   };
+  componentDidMount(){
+    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  }
 
   onChangeSolution = e => this.props.onChange({ value: e.target.value });
 

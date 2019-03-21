@@ -51,6 +51,9 @@ class AddJestSolutionDialog extends React.PureComponent {
     solution: "",
     open: true
   };
+  componentDidMount(){
+    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  }
 
   onChangeSolution = event => {
     this.setState({
