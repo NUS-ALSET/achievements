@@ -43,6 +43,7 @@ import ControlAssistantsDialog from "../../components/dialogs/ControlAssistantsD
 import { assignmentAssistantKeyChange } from "../Assignments/actions";
 import CohortTabs from "../../components/tabs/CohortTabs";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
+import MessageDialog from "../../components/dialogs/MessageDialog";
 import QualifiedConditionsDialog from "../../components/dialogs/QualifiedConditionsDialog";
 
 const styles = theme => ({
@@ -78,6 +79,7 @@ class Cohort extends React.PureComponent {
     deletingCourseId: "",
     selectedCourse: "",
     tabIndex: COHORT_TAB_COMMON,
+    messageModalOpen: false,
     openQualifiedConditionsDialog: false
   };
 
@@ -134,6 +136,11 @@ class Cohort extends React.PureComponent {
   showAssistantsDialog = () =>
     this.props.dispatch(cohortOpenAssistantsDialog(this.props.cohort.id));
 
+  toggleMessageModal = () => {
+    this.setState(state => ({
+      messageModalOpen: !state.messageModalOpen
+    }))
+  }
   showQualifiedConditionDialog = () =>
     this.setState({ openQualifiedConditionsDialog: true });
 
@@ -167,6 +174,14 @@ class Cohort extends React.PureComponent {
     return (
       <Fragment>
         <Breadcrumbs
+          action={
+            [
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
+              }
+            ]
+          }
           paths={[
             {
               label: "Cohorts",
@@ -176,6 +191,7 @@ class Cohort extends React.PureComponent {
               label: cohort.name
             }
           ]}
+          
         />
         <Typography
           gutterBottom
@@ -280,6 +296,16 @@ class Cohort extends React.PureComponent {
           sortState={ui.sortState}
           membersPathsRanking={membersPathsRanking}
           uid={currentUser.uid}
+        />
+        <MessageDialog
+          cohort={cohort}
+          handleClose={this.toggleMessageModal}
+          isInstructor={[USER_STATUSES.owner, USER_STATUSES.assistant].includes(
+            currentUser.status
+          )}
+          open={this.state.messageModalOpen}
+          showStudents={false}
+          type={"cohort"}
         />
         {Object.keys((cohort.qualifiedConditions || {}).pathConditions || {})
           .length > 0 && (

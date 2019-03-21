@@ -96,6 +96,93 @@ class pathAnalyticsDemo extends React.PureComponent {
     }
   };
 
+  produceUserProgressArray(
+    activitiesResponse,
+    analyticsResponse,
+    filteredResponse,
+    thisVar
+  ) {
+    let arrayUserKey = Object.keys(filteredResponse)
+      .map(item => ({
+        value: [
+          analyticsResponse[filteredResponse[item]].userKey,
+          activitiesResponse[
+            analyticsResponse[filteredResponse[item]].activityKey
+          ].name,
+          analyticsResponse[filteredResponse[item]].time,
+          activitiesResponse[
+            analyticsResponse[filteredResponse[item]].activityKey
+          ].orderIndex,
+          analyticsResponse[filteredResponse[item]].pathKey
+        ]
+      }))
+      .sort((a, b) => a.value[3] - b.value[3]);
+
+    let arrayByActivity = Array.from(
+      new Set(arrayUserKey.map(item => item.value[1]))
+    ).map(label => arrayUserKey.filter(item => item.value[1] === label));
+
+    let currDateUnix = new Date().getTime();
+    let finalArray = [[], [], [], []];
+    arrayByActivity.map(el => {
+      let allTime = [];
+      let lastWeek = [];
+      let twoWeek = [];
+      let threeWeek = [];
+      el.map(elem => {
+        if (!allTime.includes(elem.value[0])) {
+          allTime.push(elem.value[0]);
+        }
+        if (
+          currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 &&
+          !lastWeek.includes(elem.value[0])
+        ) {
+          lastWeek.push(elem.value[0]);
+        }
+        if (
+          currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 * 2 &&
+          !twoWeek.includes(elem.value[0])
+        ) {
+          twoWeek.push(elem.value[0]);
+        }
+        if (
+          currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 * 3 &&
+          !threeWeek.includes(elem.value[0])
+        ) {
+          threeWeek.push(elem.value[0]);
+        }
+        return elem;
+      });
+      finalArray[0].push(allTime.length);
+      finalArray[1].push(lastWeek.length);
+      finalArray[2].push(twoWeek.length);
+      finalArray[3].push(threeWeek.length);
+      return finalArray;
+    });
+
+    thisVar.setState({
+      userProgressArray: [
+        {
+          seriesname: "All Time",
+          data: finalArray[0].toString()
+        },
+        {
+          seriesname: "Since Last Week",
+          data: finalArray[1].toString()
+        },
+        {
+          seriesname: "Since 2 Weeks Ago",
+          data: finalArray[2].toString()
+        },
+        {
+          seriesname: "Since 3 Weeks Ago",
+          data: finalArray[3].toString()
+        }
+      ],
+      loading: false
+    });
+  }
+
   processDataUserProgress = (
     analyticsData,
     filteredAnalytics,
@@ -105,214 +192,159 @@ class pathAnalyticsDemo extends React.PureComponent {
     let analyticsProm = Promise.resolve(analyticsData);
     let activitiesProm = Promise.resolve(activitiesData);
     let thisVar = this;
-    Promise.all([filteredProm, analyticsProm, activitiesProm]).then(function([
-      filteredResponse,
-      analyticsResponse,
-      activitiesResponse
-    ]) {
-      if (activitiesResponse && analyticsResponse && filteredResponse) {
-        let arrayUserKey = Object.keys(filteredResponse)
-          .map(item => ({
-            value: [
-              analyticsResponse[filteredResponse[item]].userKey,
-              activitiesResponse[
-                analyticsResponse[filteredResponse[item]].activityKey
-              ].name,
-              analyticsResponse[filteredResponse[item]].time,
-              activitiesResponse[
-                analyticsResponse[filteredResponse[item]].activityKey
-              ].orderIndex,
-              analyticsResponse[filteredResponse[item]].pathKey
-            ]
-          }))
-          .sort((a, b) => a.value[3] - b.value[3]);
-
-        let arrayByActivity = Array.from(
-          new Set(arrayUserKey.map(item => item.value[1]))
-        ).map(label => arrayUserKey.filter(item => item.value[1] === label));
-
-        let currDateUnix = new Date().getTime();
-        let finalArray = [[], [], [], []];
-        arrayByActivity.map(el => {
-          let allTime = [];
-          let lastWeek = [];
-          let twoWeek = [];
-          let threeWeek = [];
-          el.map(elem => {
-            if (!allTime.includes(elem.value[0])) {
-              allTime.push(elem.value[0]);
-            }
-            if (
-              currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 &&
-              !lastWeek.includes(elem.value[0])
-            ) {
-              lastWeek.push(elem.value[0]);
-            }
-            if (
-              currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 * 2 &&
-              !twoWeek.includes(elem.value[0])
-            ) {
-              twoWeek.push(elem.value[0]);
-            }
-            if (
-              currDateUnix - elem.value[2] <= 1000 * 3600 * 24 * 7 * 3 &&
-              !threeWeek.includes(elem.value[0])
-            ) {
-              threeWeek.push(elem.value[0]);
-            }
-            return elem;
-          });
-          finalArray[0].push(allTime.length);
-          finalArray[1].push(lastWeek.length);
-          finalArray[2].push(twoWeek.length);
-          finalArray[3].push(threeWeek.length);
-          return finalArray;
-        });
-
-        thisVar.setState({
-          userProgressArray: [
-            {
-              seriesname: "All Time",
-              data: finalArray[0].toString()
-            },
-            {
-              seriesname: "Since Last Week",
-              data: finalArray[1].toString()
-            },
-            {
-              seriesname: "Since 2 Weeks Ago",
-              data: finalArray[2].toString()
-            },
-            {
-              seriesname: "Since 3 Weeks Ago",
-              data: finalArray[3].toString()
-            }
-          ],
-          loading: false
-        });
-      }
-    });
+    Promise.all([filteredProm, analyticsProm, activitiesProm])
+      .then(([filteredResponse, analyticsResponse, activitiesResponse]) => {
+        if (activitiesResponse && analyticsResponse && filteredResponse) {
+          this.produceUserProgressArray(
+            activitiesResponse,
+            analyticsResponse,
+            filteredResponse,
+            thisVar
+          );
+        }
+      })
+      .catch(err => console.log(err));
   };
 
+  processTimeAndOutliers(
+    activitiesResponse,
+    analyticsResponse,
+    filteredResponse,
+    thisVar
+  ) {
+    let myArray = Object.keys(filteredResponse)
+      .map(item => ({
+        value: [
+          (analyticsResponse[filteredResponse[item]].time -
+            analyticsResponse[filteredResponse[item]].open) /
+            60000,
+          activitiesResponse[
+            analyticsResponse[filteredResponse[item]].activityKey
+          ].name,
+          activitiesResponse[
+            analyticsResponse[filteredResponse[item]].activityKey
+          ].orderIndex
+        ]
+      }))
+      .sort((a, b) => a.value[2] - b.value[2]);
+    thisVar.setState({
+      timeTakenArray: Array.from(
+        new Set(myArray.map(item => item.value[1]))
+      ).map(label => ({
+        value: thisVar.calcOutlier(
+          myArray
+            .filter(item => item.value[1] === label)
+            .map(item => item.value[0]),
+          "value"
+        ),
+        outliers: thisVar.calcOutlier(
+          myArray
+            .filter(item => item.value[1] === label)
+            .map(item => item.value[0]),
+          "outlier"
+        )
+      })),
+      loading: false
+    });
+  }
   processDataTime = (analyticsData, filteredAnalytics, activitiesData) => {
     let filteredProm = Promise.resolve(filteredAnalytics);
     let analyticsProm = Promise.resolve(analyticsData);
     let activitiesProm = Promise.resolve(activitiesData);
     let thisVar = this;
-    Promise.all([filteredProm, analyticsProm, activitiesProm]).then(function([
-      filteredResponse,
-      analyticsResponse,
-      activitiesResponse
-    ]) {
-      if (activitiesResponse && analyticsResponse && filteredResponse) {
-        let myArray = Object.keys(filteredResponse)
-          .map(item => ({
-            value: [
-              (analyticsResponse[filteredResponse[item]].time -
-                analyticsResponse[filteredResponse[item]].open) /
-                60000,
-              activitiesResponse[
-                analyticsResponse[filteredResponse[item]].activityKey
-              ].name,
-              activitiesResponse[
-                analyticsResponse[filteredResponse[item]].activityKey
-              ].orderIndex
-            ]
-          }))
-          .sort((a, b) => a.value[2] - b.value[2]);
-        thisVar.setState({
-          timeTakenArray: Array.from(
-            new Set(myArray.map(item => item.value[1]))
-          ).map(label => ({
-            value: thisVar.calcOutlier(
-              myArray
-                .filter(item => item.value[1] === label)
-                .map(item => item.value[0]),
-              "value"
-            ),
-            outliers: thisVar.calcOutlier(
-              myArray
-                .filter(item => item.value[1] === label)
-                .map(item => item.value[0]),
-              "outlier"
-            )
-          })),
-          loading: false
-        });
-      }
-    });
+    Promise.all([filteredProm, analyticsProm, activitiesProm])
+      .then(([filteredResponse, analyticsResponse, activitiesResponse]) => {
+        if (activitiesResponse && analyticsResponse && filteredResponse) {
+          this.processTimeAndOutliers(
+            activitiesResponse,
+            analyticsResponse,
+            filteredResponse,
+            thisVar
+          );
+        }
+      })
+      .catch(err => console.log(err));
   };
 
+  processFinalArray(
+    activitiesResponse,
+    analyticsResponse,
+    filteredResponse,
+    thisVar
+  ) {
+    let arrayCompletedZero = Object.keys(filteredResponse)
+      // .filter(
+      //   item => analyticsResponse[filteredResponse[item]].completed === 0
+      // )
+      .map(item => ({
+        value: [
+          analyticsResponse[filteredResponse[item]].completed,
+          analyticsResponse[filteredResponse[item]].userKey,
+          activitiesResponse[
+            analyticsResponse[filteredResponse[item]].activityKey
+          ].name,
+          activitiesResponse[
+            analyticsResponse[filteredResponse[item]].activityKey
+          ].orderIndex
+        ]
+      }))
+      .sort((a, b) => a.value[3] - b.value[3]);
+
+    let arrayByActivity = Array.from(
+      new Set(arrayCompletedZero.map(item => item.value[2]))
+    ).map(label => arrayCompletedZero.filter(item => item.value[2] === label));
+
+    let finalArray = [];
+    arrayByActivity.map(el => {
+      let users = [];
+      let score = [];
+      let isCompleted = [];
+      el.map(elem => {
+        if (!users.includes(elem.value[1])) {
+          users.push(elem.value[1]);
+          score.push(1);
+          elem.value[0] === 1
+            ? isCompleted.push(true)
+            : isCompleted.push(false);
+        } else {
+          if (!isCompleted[users.indexOf(elem.value[1])]) {
+            score[users.indexOf(elem.value[1])] += 1;
+            if (elem.value[0] === 1) {
+              isCompleted[users.indexOf(elem.value[1])] = true;
+            }
+          }
+        }
+        return elem;
+      });
+      finalArray.push({
+        value: thisVar.calcOutlier(score, "value"),
+        outliers: thisVar.calcOutlier(score, "outlier")
+      });
+      return finalArray;
+    });
+
+    thisVar.setState({
+      numAttemptsArray: finalArray,
+      loading: false
+    });
+  }
   processDataAttempts = (analyticsData, filteredAnalytics, activitiesData) => {
     let filteredProm = Promise.resolve(filteredAnalytics);
     let analyticsProm = Promise.resolve(analyticsData);
     let activitiesProm = Promise.resolve(activitiesData);
     let thisVar = this;
-    Promise.all([filteredProm, analyticsProm, activitiesProm]).then(function([
-      filteredResponse,
-      analyticsResponse,
-      activitiesResponse
-    ]) {
-      if (activitiesResponse && analyticsResponse && filteredResponse) {
-        let arrayCompletedZero = Object.keys(filteredResponse)
-          // .filter(
-          //   item => analyticsResponse[filteredResponse[item]].completed === 0
-          // )
-          .map(item => ({
-            value: [
-              analyticsResponse[filteredResponse[item]].completed,
-              analyticsResponse[filteredResponse[item]].userKey,
-              activitiesResponse[
-                analyticsResponse[filteredResponse[item]].activityKey
-              ].name,
-              activitiesResponse[
-                analyticsResponse[filteredResponse[item]].activityKey
-              ].orderIndex
-            ]
-          }))
-          .sort((a, b) => a.value[3] - b.value[3]);
-
-        let arrayByActivity = Array.from(
-          new Set(arrayCompletedZero.map(item => item.value[2]))
-        ).map(label =>
-          arrayCompletedZero.filter(item => item.value[2] === label)
-        );
-
-        let finalArray = [];
-        arrayByActivity.map(el => {
-          let users = [];
-          let score = [];
-          let isCompleted = [];
-          el.map(elem => {
-            if (!users.includes(elem.value[1])) {
-              users.push(elem.value[1]);
-              score.push(1);
-              elem.value[0] === 1
-                ? isCompleted.push(true)
-                : isCompleted.push(false);
-            } else {
-              if (!isCompleted[users.indexOf(elem.value[1])]) {
-                score[users.indexOf(elem.value[1])] += 1;
-                if (elem.value[0] === 1) {
-                  isCompleted[users.indexOf(elem.value[1])] = true;
-                }
-              }
-            }
-            return elem;
-          });
-          finalArray.push({
-            value: thisVar.calcOutlier(score, "value"),
-            outliers: thisVar.calcOutlier(score, "outlier")
-          });
-          return finalArray;
-        });
-
-        thisVar.setState({
-          numAttemptsArray: finalArray,
-          loading: false
-        });
-      }
-    });
+    Promise.all([filteredProm, analyticsProm, activitiesProm])
+      .then(([filteredResponse, analyticsResponse, activitiesResponse]) => {
+        if (activitiesResponse && analyticsResponse && filteredResponse) {
+          this.processFinalArray(
+            activitiesResponse,
+            analyticsResponse,
+            filteredResponse,
+            thisVar
+          );
+        }
+      })
+      .catch(err => console.log(err));
   };
 
   render() {
@@ -878,7 +910,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   changePathKeyJupSol,
   initAnalyticsData,
-  filterAnalyticsData 
+  filterAnalyticsData
 };
 
 export default compose(
@@ -887,7 +919,7 @@ export default compose(
       {
         path: "/analytics/activityAttempts",
         storeAs: "analyticsData",
-        queryParams: ["orderByChild=activityType", 'equalTo=jupyterInline']
+        queryParams: ["orderByChild=activityType", "equalTo=jupyterInline"]
       },
       {
         path: "/activities",

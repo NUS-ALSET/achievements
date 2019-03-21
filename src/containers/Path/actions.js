@@ -168,12 +168,14 @@ export const PATH_ACTIVITY_CODECOMBAT_OPEN = "PATH_ACTIVITY_CODECOMBAT_OPEN";
 export const pathActivityCodeCombatOpen = (
   pathId,
   activityId,
-  codeCombatProfile
+  codeCombatProfile,
+  service="codecombat"
 ) => ({
   type: PATH_ACTIVITY_CODECOMBAT_OPEN,
   pathId,
   activityId,
-  codeCombatProfile
+  codeCombatProfile,
+  service
 });
 
 export const PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW =

@@ -43,7 +43,8 @@ class JupyterNotebook extends React.PureComponent {
     solution: PropTypes.any,
     title: PropTypes.any.isRequired,
     url: PropTypes.string,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    problem: PropTypes.object
   };
 
   state = {
@@ -140,8 +141,26 @@ class JupyterNotebook extends React.PureComponent {
     );
   };
 
+  filterCells = (cellsToHide, solution) => {
+    const cellsToDisplay = cellsToHide ? solution.json.cells.filter((el, i) => {
+      return !cellsToHide.includes(i+1);
+    }) : solution.json.cells;
+
+    return cellsToDisplay;
+  }
+
   render() {
-    const { action, persistent, richEditor, solution, title, url } = this.props;
+    const { action, persistent, richEditor, solution, title, url, problem } = this.props;
+    const cellsToHide = problem && problem.cell;
+    // hide the cells
+    let fillteredSol;
+    if (solution && solution.json) {
+      const cellsToDisplay = this.filterCells(cellsToHide, solution);
+      fillteredSol = JSON.parse(JSON.stringify(solution))
+      fillteredSol.json.cells = cellsToDisplay;
+    } else {
+      fillteredSol = solution;
+    }
     return (
       <Paper style={{ margin: "24px 2px" }}>
         <Typography
@@ -195,14 +214,14 @@ class JupyterNotebook extends React.PureComponent {
         </Typography>
         <br />
         {solution !== null && action && this.getEditor()}
-        {solution && solution.json && (
+        {fillteredSol && fillteredSol.json && (
           <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
             <div
               style={{
                 textAlign: "left"
               }}
             >
-              <NotebookPreview notebook={solution.json} />
+              <NotebookPreview notebook={fillteredSol.json} />
             </div>
           </Collapse>
         )}

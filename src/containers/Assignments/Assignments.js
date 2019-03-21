@@ -49,6 +49,7 @@ import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgr
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
+import MessageDialog from "../../components/dialogs/MessageDialog";
 
 class Assignments extends React.Component {
   static propTypes = {
@@ -70,10 +71,12 @@ class Assignments extends React.Component {
     match: PropTypes.object,
     readOnly: PropTypes.bool,
     ui: PropTypes.object.isRequired,
-    fieldAutoUpdated: PropTypes.bool
+    fieldAutoUpdated: PropTypes.bool,
+    isAdmin: PropTypes.bool
   };
   state = {
-    password: ""
+    password: "",
+    messageModalOpen: false
   };
 
   componentDidMount() {
@@ -171,6 +174,11 @@ class Assignments extends React.Component {
     this.props.dispatch(
       assignmentRemoveAssistantRequest(courseId, assistantId)
     );
+  toggleMessageModal = () => {
+    this.setState(state => ({
+      messageModalOpen: !state.messageModalOpen
+    }))
+  }
 
   getPasswordView() {
     return (
@@ -212,6 +220,8 @@ class Assignments extends React.Component {
     );
   }
 
+  
+
   render() {
     const {
       ui,
@@ -225,9 +235,9 @@ class Assignments extends React.Component {
       course,
       currentUser,
       readOnly,
-      fieldAutoUpdated
+      fieldAutoUpdated,
+      isAdmin
     } = this.props;
-
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
     } else if (!course) {
@@ -238,9 +248,8 @@ class Assignments extends React.Component {
     }
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
-
     // If owner match user id then we suppose use as instructor and give him special view
-    if (currentUser.isAssistant) {
+    if (currentUser.isAssistant || isAdmin) {
       AssignmentView = (
         <InstructorTabs
           closeDialog={this.closeDialog}
@@ -279,9 +288,18 @@ class Assignments extends React.Component {
               {
                 label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
                 handler: this.toggleHiddenShow
+              },
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
               }
             ]) ||
-            null
+            [
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
+              }
+            ]
           }
           paths={[
             {
@@ -330,9 +348,10 @@ class Assignments extends React.Component {
           open={ui.dialog && ui.dialog.type === "Profile"}
           uid={currentUser.id}
         />
-        {currentUser.isAssistant && (
+        {(currentUser.isAssistant || isAdmin) && (
           <ControlAssistantsDialog
             assistants={(ui.dialog && ui.dialog.assistants) || []}
+            isAdmin={isAdmin}
             isOwner={currentUser.isOwner}
             newAssistant={ui.dialog && ui.dialog.newAssistant}
             onAddAssistant={this.onAddAssistant}
@@ -390,6 +409,14 @@ class Assignments extends React.Component {
           teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
           uid={currentUser && currentUser.id}
         />
+        <MessageDialog
+          course={course}
+          handleClose={this.toggleMessageModal}
+          isInstructor={currentUser.isAssistant}
+          open={this.state.messageModalOpen}
+          showStudents={true}
+          type={"course"}
+        />
       </Fragment>
     );
   }
@@ -410,7 +437,8 @@ const mapStateToProps = (state, ownProps) => ({
   auth: state.firebase.auth,
   assistants: state.assignments.assistants,
   readOnly: state.problem && state.problem.readOnly,
-  fieldAutoUpdated: state.assignments.fieldAutoUpdated
+  fieldAutoUpdated: state.assignments.fieldAutoUpdated,
+  isAdmin: state.account.isAdmin
 });
 
 const mapDispatchToProps = dispatch => ({

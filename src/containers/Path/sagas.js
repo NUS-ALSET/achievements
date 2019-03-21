@@ -274,6 +274,7 @@ export function* pathActivityJestOpenHandler(action) {
 }
 export function* pathActivityCodeCombatOpenHandler(action) {
   try {
+    const externalService = action.service || "CodeCombat";
     const data = yield select(state => ({
       uid: state.firebase.auth.uid,
       activity: state.firebase.data.activities[action.activityId],
@@ -285,7 +286,11 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       yield put(pathProfileDialogShow());
     } else {
       yield put(
-        externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
+        externalProfileRefreshRequest(
+          action.codeCombatProfile,
+          externalService,
+          data.uid
+        )
       );
     }
     while (true) {
@@ -324,11 +329,12 @@ export function* pathActivityCodeCombatOpenHandler(action) {
 
         const levelsData = yield call(
           accountService.fetchAchievements,
-          data.uid
+          data.uid,
+          externalService
         );
 
-        if (levelsData.totalAchievements === -1) {
-          throw new Error("Invalid CodeCombat username provided");
+        if (levelsData && levelsData.totalAchievements === -1) {
+          throw new Error(`Invalid ${externalService} username provided`);
         }
 
         if (

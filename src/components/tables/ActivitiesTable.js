@@ -131,6 +131,16 @@ class ActivitiesTable extends React.PureComponent {
     const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
       pathStatus
     );
+
+    const totals = {
+      totalActivities: 0,
+      totalSolvedActivities: 0
+    };
+    (activities || []).forEach(activity =>
+      this.getStatus(activity) && activity.solved
+        ? totals.totalSolvedActivities++ && totals.totalActivities++
+        : totals.totalActivities++
+    );
     return (
       <Fragment>
         <Table>
@@ -138,14 +148,19 @@ class ActivitiesTable extends React.PureComponent {
             <TableRow>
               <TableCell>Activity name</TableCell>
               <TableCell>Type</TableCell>
-              {!canChange && <TableCell>Status</TableCell>}
+              {!canChange && (
+                <TableCell>
+                  Status {totals.totalSolvedActivities} /{" "}
+                  {totals.totalActivities}
+                </TableCell>
+              )}
               <TableCell style={{ width: COLUMN_ACTIONS_WIDTH }}>
                 Actions
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map(activity => (
+            {(activities || []).map(activity => (
               <TableRow hover key={activity.id}>
                 <TableCell className={classes.noWrap}>
                   {activity.name}

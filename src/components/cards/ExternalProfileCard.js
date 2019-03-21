@@ -56,7 +56,7 @@ class ExternalProfileCard extends React.Component {
                 >
                   {userAchievements.id}
                 </a>
-                &nbsp;on CodeCombat.com
+                &nbsp;on {externalProfile.url}
               </Typography>
               <Typography className={classes.card}>
                 {userAchievements.totalAchievements} completed levels

@@ -83,12 +83,14 @@
     "assignments": {
       "$courseKey": {
         ".read": "auth != null && root.child('courses/' + $courseKey).exists() &&
-          (root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
+          ((root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
            root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists() ||
-           root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists())",
-        ".write": "auth != null && root.child('courses/' + $courseKey).exists() &&
+           root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists())
+           || root.child('/admins/' + auth.uid).exists())",
+        ".write": "auth != null && (root.child('courses/' + $courseKey).exists() &&
           (root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
-          root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists())"
+          root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists())
+          || root.child('/admins/' + auth.uid).exists())"
       }
     },
     "blacklistActions": {
@@ -193,6 +195,10 @@
         ".read": true
       }
     },
+    "thirdPartyServices": {
+      ".read": true,
+      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
+    },
     "courseMembers": {
       ".read": "auth != null",
       "$courseKey": {
@@ -224,8 +230,9 @@
     "courseAssistants": {
       ".read": "auth.uid != null",
       "$courseKey": {
-        ".read": "auth != null",
-        ".write": "auth != null && auth.uid == root.child('courses/' + $courseKey + '/owner').val()"
+        ".read": "auth != null || root.child('admins/' + auth.uid).exists()",
+        ".write": "auth != null && (auth.uid == root.child('courses/' + $courseKey + '/owner').val()
+        || root.child('admins/' + auth.uid).exists())"
       }
     },
     "courses": {
@@ -392,10 +399,10 @@
     "solutions": {
       "$courseKey": {
         ".read": "
-          auth != null && (
+          auth != null && ((
             root.child('courses/' + $courseKey + '/owner').val() == auth.uid ||
             root.child('courseAssistants/' + $courseKey + '/' + auth.uid).exists()
-          )
+          ) || root.child('admins/' + auth.uid).exists())
         ",
         ".write": "
           auth != null && (
@@ -406,10 +413,11 @@
         "$userKey": {
           ".read": "
             auth != null &&
-              (
+              ((
                 ($userKey == auth.uid &&
                 root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()
               ) || root.child('courses/' + $courseKey + '/owner').val() == auth.uid )
+               || root.child('admins/' + auth.uid).exists())
           ",
           ".write": "
             auth != null &&
@@ -504,6 +512,10 @@
         ".read": "auth != null && auth.uid == $userKey",
         ".write": "auth != null && auth.uid == $userKey"
       }
+    },
+    "thirdPartiesLevels":{
+      ".read": "auth != null",
+      ".write": false,
     },
     "visibleSolutions": {
       "$courseKey": {

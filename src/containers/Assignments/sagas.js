@@ -114,7 +114,7 @@ export function* courseAssignmentsOpenHandler(action) {
     yield put(coursePathsFetchSuccess(action.courseId, pathsData));
   } catch (err) {
     // That's normal behavior if user isn't course member
-    if (!err.code === "PERMISSION_DENIED") {
+    if (err.code && err.code !== "PERMISSION_DENIED") {
       yield put(notificationShow(err.message));
     }
   }
@@ -212,9 +212,9 @@ export function* updateNewAssignmentFieldHandler(action) {
           data.uid
         );
         yield put(assignmentPathsFetchSuccess(paths));
-        updatedFields.path = assignment.path || data.uid;
-
-        if (!data.manualUpdates.details) {
+          updatedFields.path = ASSIGNMENTS_TYPES.PathProgress.id === action.value ?  "" : assignment.path || data.uid;
+        
+          if (!data.manualUpdates.details) {
           updatedFields.details = `${location}#/paths/${updatedFields.path}`;
         }
       } else if (
@@ -569,7 +569,7 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
           yield put(
             problemSolutionRefreshSuccess(
               pathProblem.problemId,
-              action.solution || {}
+              action.solution
             )
           );
           break;
@@ -661,11 +661,13 @@ export function* assignmentTeamChoiceSolutionRequestHandler(action) {
   );
   yield put(
     assignmentTeamChoiceSolutionSuccess(
+      action.courseId,
       action.assignment,
       action.solution,
       options
     )
   );
+  yield put(assignmentSubmitRequest(action.assignment, action.solution));
 }
 
 export default [

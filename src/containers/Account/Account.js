@@ -3,7 +3,7 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 26.01.18
  */
-import { accountService } from "../../services/account";
+// import { accountService } from "../../services/account";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import {
@@ -48,7 +48,7 @@ import React, { Fragment } from "react";
 import RemoveExternalProfileDialog from "../../components/dialogs/RemoveProfileDialog";
 
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
+// import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
@@ -99,7 +99,8 @@ class Account extends React.PureComponent {
     uid: PropTypes.string,
     displayName: PropTypes.string,
     userAchievements: PropTypes.object,
-    userJSON: PropTypes.object
+    userJSON: PropTypes.object,
+    selectedExternalProfileType: PropTypes.any
   };
 
   state = {
@@ -178,11 +179,11 @@ class Account extends React.PureComponent {
     this.setState({ newDisplayName: event.target.value });
 
   showError = error => this.props.notificationShow(error);
-  onProfileUpdate = profile => {
+  onProfileUpdate = (profile, profileType) => {
     const { externalProfileUpdateRequest, isAdmin, match } = this.props;
     externalProfileUpdateRequest(
       profile,
-      "CodeCombat",
+      profileType,
       isAdmin && match.params.accountId
     );
   };
@@ -219,7 +220,8 @@ class Account extends React.PureComponent {
       userAchievements,
       removeRequest,
       user,
-      displayName
+      displayName,
+      selectedExternalProfileType
     } = this.props;
 
     // taken from Courses.js, display if not logged in
@@ -255,13 +257,13 @@ class Account extends React.PureComponent {
                 title="UserPhoto"
               />
               <CardContent>
-                <Typography
+                {/* <Typography
                   style={{
                     fontSize: 12
                   }}
                 >
                   User ID: {match.params.accountId}
-                </Typography>
+                </Typography> */}
                 {isOwner && displayNameEdit ? (
                   <Fragment>
                     <TextField
@@ -380,13 +382,17 @@ class Account extends React.PureComponent {
               isAdmin ||
               user.showCodeCombatProfile ||
               user.showCodeCombatProfile === undefined) &&
-              Object.keys(externalProfiles).map(externalProfileKey => (
-                <Fragment key={externalProfileKey}>
+              Object.keys(externalProfiles).map(externalProfileKey =>
+                externalProfiles[externalProfileKey].enable ? (
                   <ExternalProfileCard
+                    key={externalProfileKey}
                     addExternalProfileRequest={this.addExternalProfileRequest}
                     classes={classes}
                     externalProfile={externalProfiles[externalProfileKey]}
-                    inProgress={achievementsRefreshingInProgress}
+                    inProgress={
+                      achievementsRefreshingInProgress &&
+                      selectedExternalProfileType === externalProfileKey
+                    }
                     isAdmin={isAdmin}
                     isOwner={isOwner}
                     refreshAchievementsRequest={this.refreshAchievementsRequest}
@@ -397,16 +403,20 @@ class Account extends React.PureComponent {
                       (userAchievements || {})[externalProfileKey]
                     }
                   />
-                  <AddProfileDialog
-                    externalProfile={externalProfiles[externalProfileKey]}
-                    inProgress={this.props.externalProfileInUpdate}
-                    onClose={this.closeExternalProfileDialog}
-                    onCommit={this.onProfileUpdate}
-                    open={this.props.showDialog}
-                    uid={this.props.uid}
-                  />
-                </Fragment>
-              ))}
+                ) : (
+                  ""
+                )
+              )}
+            <AddProfileDialog
+              externalProfile={
+                externalProfiles[selectedExternalProfileType] || {}
+              }
+              inProgress={this.props.externalProfileInUpdate}
+              onClose={this.closeExternalProfileDialog}
+              onCommit={this.onProfileUpdate}
+              open={this.props.showDialog}
+              uid={this.props.uid}
+            />
             {(joinedPaths[match.params.accountId] || []).map(path => (
               <JoinedPathCard
                 classes={classes}
@@ -450,7 +460,7 @@ const mapStateToProps = (state, ownProps) => ({
   displayNameEdit: state.account.displayNameEdit,
 
   // That should be in firebase
-  externalProfiles: accountService.fetchExternalProfiles(),
+  externalProfiles: state.firebase.data.thirdPartyServices || {},
   externalProfileInUpdate: state.account.externalProfileInUpdate,
   isAdmin: state.account.isAdmin,
   joinedPaths: state.account.joinedPaths,
@@ -462,6 +472,7 @@ const mapStateToProps = (state, ownProps) => ({
     type: state.account.removingProfileType
   },
   showDialog: state.account.showExternalProfileDialog,
+  selectedExternalProfileType: state.account.selectedExternalProfileType,
   uid: state.firebase.auth.uid,
   user: (state.firebase.data.users || {})[
     ownProps.match.params.accountId || state.firebase.auth.uid
@@ -505,7 +516,8 @@ export default compose(
         `equalTo=${store.getState().firebase.auth.uid}`
       ]
     },
-    `/userAchievements/${store.getState().firebase.auth.uid}`
+    `/userAchievements/${store.getState().firebase.auth.uid}`,
+    "/thirdPartyServices"
   ]),
   withStyles(styles),
   connect(

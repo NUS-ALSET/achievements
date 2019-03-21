@@ -70,6 +70,8 @@ const gameDefaultData = {
 
 const styles = () => ({});
 
+const cells = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     activityExampleSolution: PropTypes.any,
@@ -88,7 +90,8 @@ class AddActivityDialog extends React.PureComponent {
 
   state = {
     type: "text",
-    isCorrectInput: false
+    isCorrectInput: false,
+    cell: []
   };
 
   fetchedGithubURL = "";
@@ -154,8 +157,57 @@ class AddActivityDialog extends React.PureComponent {
     }
   };
 
+  handleCellsChange = e => {
+    this.setState({
+      cell: e.target.value
+    })
+  }
+
+  getServicesList = () =>{
+    let { thirdPartiesServices, activity } = this.props;
+    activity = Object.assign(activity || {}, this.state);
+    if(!thirdPartiesServices){
+      return "Loading...";
+    }
+    const enabledServices = Object.keys(thirdPartiesServices)
+    .reduce((res,service)=>{
+      if(thirdPartiesServices[service].enable){
+        res[service] = thirdPartiesServices[service];
+      }
+      return res;
+    }, {});
+    return (
+      <FormControl fullWidth margin="normal">
+      <InputLabel htmlFor="select-multiple-services">Select Service</InputLabel>
+      <Select
+        input={<Input id="select-multiple-services" />}
+        margin="none"
+        MenuProps={{
+          PaperProps: {
+            style: {
+              maxHeight: 224,
+              width: 250
+            }
+          }
+        }}
+        onChange={e => this.onFieldChange("service", e.target.value)}
+        value={activity.service || ""}
+      >
+        {Object.keys(enabledServices).map(id => (
+          <MenuItem
+            key={id}
+            value={id}
+          >
+            {enabledServices[id].name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+    )
+  }
+
   getTypeSpecificElements() {
-    let { activity, activityExampleSolution, restrictedType } = this.props;
+    let { activity, activityExampleSolution, restrictedType, thirdPartiesLevels } = this.props;
     const type =
       restrictedType ||
       this.state.type ||
@@ -190,11 +242,17 @@ class AddActivityDialog extends React.PureComponent {
             onFieldChange={this.onFieldChange}
           />
         );
+      case ACTIVITY_TYPES.profile.id:
+          return this.getServicesList();
       case ACTIVITY_TYPES.codeCombat.id:
+        const levels = (thirdPartiesLevels[activity.service] || {}).levelsJSON || {};
         return (
-          <FormControl fullWidth margin="normal">
+          <Fragment>
+            { this.getServicesList() }
+            <FormControl fullWidth margin="normal">
             <InputLabel htmlFor="select-multiple-levels">Level</InputLabel>
             <Select
+              disabled={!activity.service}
               input={<Input id="select-multiple-levels" />}
               margin="none"
               MenuProps={{
@@ -208,20 +266,23 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("level", e.target.value)}
               value={activity.level || ""}
             >
-              {Object.keys(APP_SETTING.CodeCombatLevels).map(id => (
+              {Object.keys(levels).map((id, index) => (
                 <MenuItem
-                  key={APP_SETTING.CodeCombatLevels[id].name}
+                  key={levels[id].name + index}
                   value={id}
                 >
-                  {APP_SETTING.CodeCombatLevels[id].name}
+                  {levels[id].name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
+          </Fragment>
         );
       case ACTIVITY_TYPES.codeCombatNumber.id:
         return (
-          <TextField
+          <Fragment>
+            { this.getServicesList()}
+            <TextField
             defaultValue={activity && String(activity.count || "1")}
             fullWidth
             label="Levels amount"
@@ -230,6 +291,7 @@ class AddActivityDialog extends React.PureComponent {
             type="number"
             value={activity.count}
           />
+          </Fragment>
         );
       case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
         return (
@@ -342,6 +404,28 @@ class AddActivityDialog extends React.PureComponent {
               }
               type="number"
             />
+            <Select
+              input={<Input id="select-multiple-checkbox" />}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 48 * 4.5 + 8,
+                    width: 250
+                  }
+                }
+              }}
+              multiple
+              onChange={this.handleCellsChange}
+              renderValue={selected => selected.join(', ')}
+              value={this.state.cell}
+            >
+              {cells.map(num => (
+                <MenuItem key={num} value={num}>
+                  <Checkbox checked={this.state.cell.indexOf(num) > -1} />
+                  <ListItemText primary={num} />
+                </MenuItem>
+              ))}
+            </Select>
           </Fragment>
         );
       case ACTIVITY_TYPES.jupyterInline.id:
@@ -739,7 +823,8 @@ class AddActivityDialog extends React.PureComponent {
     );
     this.setState({
       type: this.props.restrictedType || "text",
-      isCorrectInput: false
+      isCorrectInput: false,
+      cell: []
     });
   };
 
@@ -830,19 +915,23 @@ class AddActivityDialog extends React.PureComponent {
 const mapStateToProps = (state, ownProps) => {
   return {
     activityExampleSolution: (state.firebase.data.activityExampleSolutions ||
-      {})[(ownProps.activity || {}).id]
+      {})[(ownProps.activity || {}).id],
+    thirdPartiesServices: state.firebase.data.thirdPartyServices,
+    thirdPartiesLevels: state.firebase.data.thirdPartiesLevels,
   };
 };
 
 export default compose(
   withStyles(styles),
   firebaseConnect(ownProps => {
+    const final = ['thirdPartyServices','thirdPartiesLevels'];
+    const activityType = (ownProps.activity || {}).type;
     if (
-      !["jupyter", "jupyterInline"].includes((ownProps.activity || {}).type)
+      ["jupyter", "jupyterInline"].includes(activityType)
     ) {
-      return false;
+      final.push(`/activityExampleSolutions/${ownProps.activity.id}`)
     }
-    return [`/activityExampleSolutions/${ownProps.activity.id}`];
+    return final;
   }),
   connect(mapStateToProps)
 )(AddActivityDialog);

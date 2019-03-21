@@ -17,12 +17,13 @@ const httpUtil = require("./src/utils/http").httpUtil;
 const migrateActivities = require("./src/migrateActivities");
 const updateUserRecommendations = require("./src/updateUserRecommendations");
 const updateUserPySkills = require("./src/updateUserPySkills.js");
-const processActivitySolutions = require("./src/processActivitySolution");
+const processActivitySolution = require("./src/processActivitySolution");
 const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
 const cohortRecalculate = require("./src/cohortRecalculate");
 const cohortAnalytics = require("./src/cohortAnalytics");
 const userJSONTrigger = require("./src/fetchUserJSON");
 const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
+const createCustomToken = require("./src/createCustomToken");
 
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
@@ -70,9 +71,10 @@ exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
 exports.handleActivitySolution = functions.database
   .ref("/problemSolutions/{activityKey}/{userKey}")
   .onWrite((change, context) =>
-    processActivitySolutions.handler(
+    processActivitySolution.handler(
       context.params.activityKey,
-      context.params.userKey
+      context.params.userKey,
+      change.after.val()
     )
   );
 
@@ -283,7 +285,20 @@ exports.cohortCalulateQualifiedUser = functions.database
     const dataBefore = change.before.exists() ? change.before.val() : null;
     const { cohortKey } = context.params;
     if (dataAfter) {
-      return cohortCalulateQualifiedUser.handler(dataBefore, dataAfter, cohortKey);
+      return cohortCalulateQualifiedUser.handler(
+        dataBefore,
+        dataAfter,
+        cohortKey
+      );
     }
     return Promise.resolve();
   });
+
+/**
+ * Create custom token for auth. It requires enabled
+ * `Service Account Token Creator` role for Google Cloud Function Service Agent
+ * https://firebase.google.com/docs/auth/admin/create-custom-tokens#troubleshooting
+ *
+ * @returns {token|false|undefined} returns token or "falsable" value
+ */
+exports.createCustomToken = functions.https.onCall(createCustomToken.handler);
