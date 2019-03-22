@@ -88,7 +88,7 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
         }
         {
           activity.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id && (() => {
-            const codeCombatAchievements = userAchievements[service];
+            const codeCombatAchievements = userAchievements[service] || {};
             const ladderKey = `${activity.level}-${activity.team}`;
             const ladder = (codeCombatAchievements.ladders || {})[ladderKey] || {};
             const ranked = ladder.isRanked ? ladder.rank : 0;

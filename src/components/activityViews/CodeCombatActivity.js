@@ -27,7 +27,7 @@ class CodeCombatActivity extends React.PureComponent {
     readOnly: PropTypes.bool
   };
   componentDidMount(){
-    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+    this.props.setProblemOpenTime && this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
   }
   updateCodeCombatProfile = ()=>{
     const { dispatch, userAchievements, problem } = this.props;

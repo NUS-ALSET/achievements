@@ -27,7 +27,7 @@ class ProfileActivity extends React.PureComponent {
     login: ""
   };
   componentDidMount(){
-    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+    this.props.setProblemOpenTime && this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
   }
   onProfileChange = e => {
     const login = AccountService.processProfile(

@@ -39,7 +39,7 @@ export default class App extends Component {
         </div>
         <div className="clear-both" />
 
-        {this.props.gameData.playMode === "custom code" ? (
+        {(this.props.gameData || {}).playMode === "custom code" ? (
           <CodeEditor player1Data={this.props.player1Data} />
         ) : (
           <div className="instructions">
