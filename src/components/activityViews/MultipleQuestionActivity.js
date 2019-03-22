@@ -12,7 +12,7 @@ export class MultipleQuestionActivity extends React.PureComponent {
     onCommit: PropTypes.func.isRequired
   };
   componentDidMount(){
-    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+    this.props.setProblemOpenTime && this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
   }
 
   render() {
