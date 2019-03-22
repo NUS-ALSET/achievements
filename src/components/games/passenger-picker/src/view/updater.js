@@ -227,9 +227,9 @@ class Updater extends Component {
           restartGame={this.restartGame}
           pauseResumeGame={this.pauseResumeGame}
           playersName={this.props.playersName}
-          mode={this.props.gameData.playMode}
-          units={this.props.gameData.botsQuantities}
-          scoreToWin={this.props.gameData.scoreToWin}
+          mode={(this.props.gameData || {}).playMode}
+          units={(this.props.gameData || {}).botsQuantities}
+          scoreToWin={(this.props.gameData || {}).scoreToWin}
         />
       </div>
     );

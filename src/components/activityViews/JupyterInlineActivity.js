@@ -57,6 +57,7 @@ class JupyterInlineActivity extends React.PureComponent {
     this.setState({
       open: new Date().getTime()
     });
+    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
   }
 
   onSolutionRefreshClick = value => {

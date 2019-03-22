@@ -213,13 +213,7 @@ class ActivitiesTable extends React.PureComponent {
                     onClick={() => onOpenActivity(activity)}
                     variant="contained"
                   >
-                    {[
-                      ACTIVITY_TYPES.codeCombat.id,
-                      ACTIVITY_TYPES.codeCombatNumber.id,
-                      ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id
-                    ].includes(activity.type)
-                      ? "Fetch"
-                      : "Solve"}
+                    {"Solve"}
                     {activity.id === pendingActivityId && (
                       <CircularProgress
                         style={{
