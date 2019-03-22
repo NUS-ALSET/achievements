@@ -49,7 +49,8 @@ class AddAssignmentDialog extends React.PureComponent {
 
   state = {
     // Name of Assignment cannot be nonsense or empty spaces
-    isCorrectInput_Name: false
+    isCorrectInput_Name: false,
+    enableCommitBtn:true
   };
 
   updateField = field => e => {
@@ -69,7 +70,7 @@ class AddAssignmentDialog extends React.PureComponent {
         NoStartWhiteSpace.test(e.target.value)
       ) {
         this.setState({
-          isCorrectInput_Name: true
+          isCorrectInput_Name:true,
         });
       } else {
         this.setState({
@@ -110,6 +111,24 @@ class AddAssignmentDialog extends React.PureComponent {
           isCorrectInput_Name: true
         });
       }
+    }
+    if (assignment && assignment.name
+      && NoStartWhiteSpace.test(assignment.name)
+      && prevProps.assignment.name !== assignment.name
+    ) {
+      this.updateField("name")({target:{value: assignment.name}})
+    }
+    if (["PathProgress", "PathActivity"].includes(this.props.assignment.questionType)){
+      const enableCommitBtn = Boolean( this.props.assignment.path &&  this.props.assignment.name);
+      if (enableCommitBtn !== this.state.enableCommitBtn){
+        this.setState(()=>({
+          enableCommitBtn: enableCommitBtn
+        }));
+      }
+    } else if (!this.state.enableCommitBtn){
+      this.setState(()=>({
+        enableCommitBtn: true
+      }));
     }
   }
 
@@ -220,7 +239,7 @@ class AddAssignmentDialog extends React.PureComponent {
             allowMultiple={false}
             onChange={this.updateField("path")}
             paths={paths}
-            value={assignment.path || uid}
+            value={assignment.path}
           />
         );
       default:
@@ -345,7 +364,7 @@ class AddAssignmentDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            disabled={!this.state.isCorrectInput_Name}
+            disabled={!this.state.isCorrectInput_Name || !this.state.enableCommitBtn}
             onClick={this.onCommit}
             variant="contained"
           >

@@ -70,6 +70,8 @@ const gameDefaultData = {
 
 const styles = () => ({});
 
+const cells = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     activityExampleSolution: PropTypes.any,
@@ -88,7 +90,8 @@ class AddActivityDialog extends React.PureComponent {
 
   state = {
     type: "text",
-    isCorrectInput: false
+    isCorrectInput: false,
+    cell: []
   };
 
   fetchedGithubURL = "";
@@ -153,6 +156,12 @@ class AddActivityDialog extends React.PureComponent {
         this.hideLoading();
     }
   };
+
+  handleCellsChange = e => {
+    this.setState({
+      cell: e.target.value
+    })
+  }
 
   getServicesList = () =>{
     let { thirdPartiesServices, activity } = this.props;
@@ -274,7 +283,7 @@ class AddActivityDialog extends React.PureComponent {
           <Fragment>
             { this.getServicesList()}
             <TextField
-            defaultValue={activity && String(activity.count || "1")}
+            defaultValue={String(activity.count || "1")}
             fullWidth
             label="Levels amount"
             margin="normal"
@@ -372,7 +381,7 @@ class AddActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <TextField
-              defaultValue={activity && activity.problemURL}
+              defaultValue={activity.problemURL}
               fullWidth
               label="Problem Notebook URL"
               margin="dense"
@@ -386,7 +395,7 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("solutionURL", e.target.value)}
             />
             <TextField
-              defaultValue={activity && String(activity.frozen || "1")}
+              defaultValue={String(activity.frozen || "1")}
               fullWidth
               label="Number of frozen cells"
               margin="dense"
@@ -395,6 +404,28 @@ class AddActivityDialog extends React.PureComponent {
               }
               type="number"
             />
+            <Select
+              input={<Input id="select-multiple-checkbox" />}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 48 * 4.5 + 8,
+                    width: 250
+                  }
+                }
+              }}
+              multiple
+              onChange={this.handleCellsChange}
+              renderValue={selected => selected.join(', ')}
+              value={this.state.cell}
+            >
+              {cells.map(num => (
+                <MenuItem key={num} value={num}>
+                  <Checkbox checked={this.state.cell.indexOf(num) > -1} />
+                  <ListItemText primary={num} />
+                </MenuItem>
+              ))}
+            </Select>
           </Fragment>
         );
       case ACTIVITY_TYPES.jupyterInline.id:
@@ -424,7 +455,7 @@ class AddActivityDialog extends React.PureComponent {
               </Typography>
             </a>
             <TextField
-              defaultValue={activity && activity.problemURL}
+              defaultValue={activity.problemURL}
               fullWidth
               helperText="Make sure the ipynb's Link Sharing is on"
               label="Google Colab ipynb URL for this Activity"
@@ -456,7 +487,7 @@ class AddActivityDialog extends React.PureComponent {
               Step 3: Select code block for solution input
             </Typography>
             <TextField
-              defaultValue={activity && String(activity.code || "1")}
+              defaultValue={String(activity.code || "1")}
               fullWidth
               label="Index of Code Block Student Can Edit Solution (Index starts from 0)"
               margin="dense"
@@ -469,7 +500,7 @@ class AddActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <TextField
-              defaultValue={activity && activity.youtubeURL}
+              defaultValue={activity.youtubeURL}
               fullWidth
               helperText="The URL should be a clean '?v=<id>', without time start or playlist info (for example, 'https://www.youtube.com/watch?v=ZK3O402wf1c')"
               label="YouTube URL"
@@ -509,15 +540,11 @@ class AddActivityDialog extends React.PureComponent {
                   />
                 ))}
                 {this.state.questionCustom === undefined
-                  ? activity && activity.questionCustom
+                  ? activity.questionCustom
                   : this.state.questionCustom && (
                       <TextField
-                        defaultValue={activity && activity.customText}
-                        disabled={
-                          this.state.questionCustom === undefined
-                            ? !(activity && activity.questionCustom)
-                            : !this.state.questionCustom
-                        }
+                        defaultValue={activity.customText}
+                        disabled={!this.state.questionCustom}
                         fullWidth
                         label="Custom question"
                         onChange={e =>
@@ -526,7 +553,7 @@ class AddActivityDialog extends React.PureComponent {
                       />
                     )}
                 {this.state.multipleQuestion === undefined
-                  ? activity && activity.multipleQuestion
+                  ? activity.multipleQuestion
                   : this.state.multipleQuestion && (
                       <MultipleQuestionsForm
                         activity={activity}
@@ -631,7 +658,7 @@ class AddActivityDialog extends React.PureComponent {
               select
               value={
                 this.state.targetType ||
-                (activity && activity.targetType) ||
+                activity.targetType ||
                 "text"
               }
             >
@@ -651,7 +678,7 @@ class AddActivityDialog extends React.PureComponent {
                 }
                 value={
                   this.state.count ||
-                  ((activity && activity.count) || DEFAULT_COUNT)
+                  (activity.count || DEFAULT_COUNT)
                 }
               />
             )}
@@ -773,8 +800,8 @@ class AddActivityDialog extends React.PureComponent {
     } else {
       this.props.onCommit(
         this.props.pathId || this.state.path,
-        Object.assign(activity || {}, this.state, {
-          type: this.state.type || (activity && activity.type) || "text"
+        Object.assign(activity, this.state, {
+          type: this.state.type || activity.type || "text"
         })
       );
     }
@@ -792,7 +819,8 @@ class AddActivityDialog extends React.PureComponent {
     );
     this.setState({
       type: this.props.restrictedType || "text",
-      isCorrectInput: false
+      isCorrectInput: false,
+      cell: []
     });
   };
 

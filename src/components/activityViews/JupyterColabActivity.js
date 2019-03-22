@@ -111,6 +111,7 @@ class JupyterColabActivity extends React.PureComponent {
           />
         )}
         <JupyterNotebook
+          problem={problem}
           readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
           title="Problem"
