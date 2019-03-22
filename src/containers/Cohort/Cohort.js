@@ -313,7 +313,7 @@ class Cohort extends React.PureComponent {
             qualifiedConditions={
               (cohort.qualifiedConditions || {}).pathConditions
             }
-            pathsData={(cohort || {}).pathsData}
+            pathsData={cohort.pathsData}
             cohortMemberQualificationStatus={cohortMemberQualificationStatus}
             uid={currentUser.uid}
             showAllUserStatus={
@@ -331,7 +331,7 @@ class Cohort extends React.PureComponent {
             qualifiedConditions={
               (cohort.qualifiedConditions || {}).pathConditions
             }
-            pathsData={(cohort || {}).pathsData}
+            pathsData={cohort.pathsData}
             handleClose={this.closeQualifiedConditionsDialog}
             saveChanges={this.saveQualifiedCondition}
           />

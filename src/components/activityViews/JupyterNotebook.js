@@ -70,9 +70,6 @@ class JupyterNotebook extends React.PureComponent {
   getEditor = () => {
     const { action, defaultValue, readOnly, richEditor } = this.props;
     return richEditor ? (
-      richEditor === null || richEditor === undefined ? (
-        <p>Something went wrong!</p>
-      ) : (
         <AceEditor
           commands={[
             {
@@ -108,7 +105,7 @@ class JupyterNotebook extends React.PureComponent {
           value={this.state.solution || defaultValue || ""}
         />
       )
-    ) : (
+     : (
       <TextField
         defaultValue={this.state.solution || defaultValue || ""}
         disabled={readOnly}
