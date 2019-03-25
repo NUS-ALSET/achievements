@@ -184,10 +184,10 @@ class AssignmentsTable extends React.PureComponent {
     if (!solution) {
       return owner && "";
     }
-
+    // solution - True
     switch (assignment.questionType) {
       case ASSIGNMENTS_TYPES.Profile.id:
-        return solution ? (
+        return (
           <a
             href={`https://codecombat.com/user/${AccountService.processProfile(
               "CodeCombat",
@@ -198,13 +198,11 @@ class AssignmentsTable extends React.PureComponent {
           >
             {result}
           </a>
-        ) : (
-          undefined
-        );
+        ) 
       // Backward compatibility
       case "PathProblem":
       case ASSIGNMENTS_TYPES.PathActivity.id:
-        return solution ? (
+        return (
           <Tooltip
             classes={{ tooltip: classes.noWrapTooltip }}
             PopperProps={{ style: { pointerEvents: "none" } }}
@@ -226,9 +224,7 @@ class AssignmentsTable extends React.PureComponent {
               )}
             </span>
           </Tooltip>
-        ) : (
-          result
-        );
+        ) ;
 
       case ASSIGNMENTS_TYPES.Text.id:
       case ASSIGNMENTS_TYPES.TeamText.id:
@@ -399,10 +395,9 @@ class AssignmentsTable extends React.PureComponent {
                           link
                         </a>
                       )}
-                    {(assignment.details ? " " : "") +
-                      "(" +
+                    {" (" +
                       assignment.progress +
-                      " students submitted)" || ""}
+                      " students submitted)"}
                   </div>
                   <div>
                     {assignment.deadline &&
