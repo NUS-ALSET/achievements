@@ -1,7 +1,8 @@
 /**
  * Service for actions with account
  */
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
 import { firebaseService } from "./firebaseService";
 const authProvider = new firebase.auth.GoogleAuthProvider();
 // authProvider.addScope("https://www.googleapis.com/auth/drive.file");

@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
+import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -79,6 +80,9 @@ import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import AddCreatorSolutionDialog from "../../components/dialogs/AddCreatorSolutionDialog";
 
 const styles = theme => ({
+  linkButton: {
+    textDecoration: "none"
+  },
   toolbarButton: {
     marginLeft: theme.spacing.unit
   }
@@ -86,7 +90,10 @@ const styles = theme => ({
 
 export class Path extends React.Component {
   static propTypes = {
-    classes: PropTypes.object,
+    classes: PropTypes.shape({
+      linkButton: PropTypes.string,
+      toolbarButton: PropTypes.string
+    }),
     codeCombatProfile: PropTypes.any,
     match: PropTypes.object,
     onAddAssistant: PropTypes.func,
@@ -114,6 +121,7 @@ export class Path extends React.Component {
     pathStatus: PropTypes.string,
     pendingActivityId: PropTypes.string,
     pendingProfileUpdate: PropTypes.bool,
+    problemSolutionAttemptRequest: PropTypes.any,
     ui: PropTypes.any,
     uid: PropTypes.string,
     openJestActivity: PropTypes.func,
@@ -151,7 +159,8 @@ export class Path extends React.Component {
     this.setState(() => ({
       botsQuantity: activity.unitsPerSide
     }));
-    const userServiceAchievements = userAchievements[activity.service || "CodeCombat"];
+    const userServiceAchievements =
+      userAchievements[activity.service || "CodeCombat"];
     switch (activity.type) {
       case ACTIVITY_TYPES.profile.id:
       case ACTIVITY_TYPES.codeCombat.id:
@@ -293,7 +302,7 @@ export class Path extends React.Component {
     } = this.props;
 
     if (!(pathActivities && pathActivities.path)) {
-      if (pathActivities.path === null) {
+      if (pathActivities && pathActivities.path === null) {
         return <p>Path does not exist!</p>;
       }
       return <LinearProgress />;
@@ -337,7 +346,7 @@ export class Path extends React.Component {
             ) && [
               allFinished && {
                 label: "Request more",
-                handler: this.requestMoreDialogShow.bind(this)
+                handler: this.requestMoreDialogShow
               },
               // disable Refresh button.
               // !allFinished && {
@@ -346,12 +355,12 @@ export class Path extends React.Component {
               // },
               uid && {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
-                handler: this.changeJoinStatus.bind(this)
+                handler: this.changeJoinStatus
               }
             ]) || [
               ui.inspectedUser && {
                 label: "Refersh",
-                handler: this.refreshSolutions.bind(this)
+                handler: this.refreshSolutions
               }
             ]
           }
@@ -375,22 +384,31 @@ export class Path extends React.Component {
         </Typography>
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) && (
           <Toolbar>
-            <Button
-              color="primary"
-              onClick={this.onAddActivityClick}
-              variant="contained"
-            >
-              Add Activity
-            </Button>
-            {pathStatus === PATH_STATUS_OWNER && (
+            <React.Fragment>
               <Button
-                className={classes.toolbarButton}
-                onClick={() => onShowCollaboratorsClick(pathActivities.path.id)}
+                color="primary"
+                onClick={this.onAddActivityClick}
                 variant="contained"
               >
-                Collaborators
+                Add Activity
               </Button>
-            )}
+              {pathStatus === PATH_STATUS_OWNER && (
+                <Button
+                  className={classes.toolbarButton}
+                  onClick={() =>
+                    onShowCollaboratorsClick(pathActivities.path.id)
+                  }
+                  variant="contained"
+                >
+                  Collaborators
+                </Button>
+              )}
+              <Link className={classes.linkButton} to="/tasks">
+                <Button className={classes.toolbarButton} variant="contained">
+                  Notebooks
+                </Button>
+              </Link>
+            </React.Fragment>
           </Toolbar>
         )}
         <AddTextSolutionDialog
@@ -401,11 +419,11 @@ export class Path extends React.Component {
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddJestSolutionDialog
-          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`}
           problem={ui.dialog.value}
+          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           taskId={ui.dialog.value && ui.dialog.value.id}
         />
         <AddGameSolutionDialog
@@ -480,7 +498,7 @@ export class Path extends React.Component {
           onCommit={profile => {
             onProfileUpdate(profile, "CodeCombat");
           }}
-          open={ui.dialog && ui.dialog.type === "Profile"}
+          open={ui.dialog.type === "Profile"}
           uid={uid}
         />
         <AddActivityDialog
@@ -502,7 +520,7 @@ export class Path extends React.Component {
           pathId={
             ["creatorSolution", "educatorSolution"].includes(ui.dialog.type)
               ? ""
-              : (pathActivities.path && pathActivities.path.id) || ""
+              : pathActivities.path.id || ""
           }
           pathsInfo={ui.dialog.pathsInfo || []}
           restrictedType={isCreatorActivity && ui.dialog.value.targetType}
@@ -560,9 +578,10 @@ const mapStateToProps = (state, ownProps) => ({
   pendingProfileUpdate: state.path.ui.pendingProfileUpdate,
   ui: state.path.ui,
   uid: state.firebase.auth.uid,
-  userAchievements: (state.firebase.data.userAchievements || {})[
-    ownProps.match.params.accountId || state.firebase.auth.uid
-  ] || {}
+  userAchievements:
+    (state.firebase.data.userAchievements || {})[
+      ownProps.match.params.accountId || state.firebase.auth.uid
+    ] || {}
 });
 
 const mapDispatchToProps = {

@@ -1,15 +1,14 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 class CRUDdemoService {
   WriteToCRUDdemo(value) {
     if (!firebase.auth()) {
       throw new Error("Not logged in");
     }
-    firebase
-    .set(
+    firebase.set(
       `/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`,
       value
-    )
+    );
     /* return firebase
     .database()
     .ref(`/analytics/CRUDdemo`)
@@ -21,7 +20,7 @@ class CRUDdemoService {
     firebase
       .database()
       .ref(`/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`)
-      .remove()
+      .remove();
   }
 
   fetchActivityAttempts(pathUID) {
@@ -35,7 +34,7 @@ class CRUDdemoService {
       .orderByChild("pathKey")
       .equalTo(pathUID)
       .once("value")
-      .then(snapshot => snapshot.val())
+      .then(snapshot => snapshot.val());
   }
 }
 

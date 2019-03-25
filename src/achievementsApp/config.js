@@ -1,8 +1,15 @@
-import firebase from "firebase";
+// Import core of Firebase client
+import firebase from "firebase/app";
+
+// Import Firebase Authentication (optional)
+import "firebase/auth";
+
+// Import Firebase Realtime Database (optional)
+import "firebase/database";
 import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {
-  CodeCombatLevels: CodeCombatLevels,
+  CodeCombatLevels,
   games: {
     "passenger-picker": {
       id: "passenger-picker",
