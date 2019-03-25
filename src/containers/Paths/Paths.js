@@ -71,47 +71,49 @@ class Paths extends React.PureComponent {
                 joinedPaths === null && (
                   <p>Paths does not exist!</p>
                 )
-              ) : !Object.keys(joinedPaths).length
+              )
+              : !Object.keys(joinedPaths).length
                 ? <Fragment>
                   Loading Your Paths...
                   <LinearProgress />
                 </Fragment>
-                : (
+                : <Fragment>
+                  <PathTabs
+                    currentPathTab={currentPathTab}
+                    handleSwitchPathTab={handleSwitchPathTab}
+                    joinedPaths={joinedPaths}
+                    myPaths={Object.assign({
+                      [uid]: { name: "Default" }
+                    }, myPaths)}
+                    pathDialogShow={pathDialogShow}
+                    publicPaths={publicPaths}
+                    uid={uid}
+                  />
+                  <AddPathDialog
+                    open={ui.dialog.type === "PathChange"}
+                    path={ui.dialog.value}
+                    pathChangeRequest={pathChangeRequest}
+                    pathDialogHide={pathDialogHide}
+                  />
+                </Fragment>
+          )
+          : !publicPaths
+            ? (
+              publicPaths === null ? (
+                <p>Public does not exist!</p>
+              ) : (
                   <Fragment>
-                    <PathTabs
-                      currentPathTab={currentPathTab}
-                      handleSwitchPathTab={handleSwitchPathTab}
-                      joinedPaths={joinedPaths}
-                      myPaths={Object.assign({
-                        [uid]: { name: "Default" }
-                      }, myPaths)}
-                      pathDialogShow={pathDialogShow}
-                      publicPaths={publicPaths}
-                      uid={uid}
-                    />
-                    <AddPathDialog
-                      open={ui.dialog.type === "PathChange"}
-                      path={ui.dialog.value}
-                      pathChangeRequest={pathChangeRequest}
-                      pathDialogHide={pathDialogHide}
-                    />
+                    Loading Public Paths...
+                  <LinearProgress />
                   </Fragment>
                 )
-          ) : !publicPaths ? (
-            publicPaths === null ? (
-              <p>Public does not exist!</p>
             ) : (
-                <Fragment>
-                  Loading Public Paths...
-                <LinearProgress />
-                </Fragment>
-              )
-          ) : (
               <PathsTable
                 pathDialogShow={pathDialogShow}
                 paths={publicPaths}
               />
-            )}
+            )
+        }
       </Fragment>
     );
   }
