@@ -211,9 +211,9 @@ export function* updateNewAssignmentFieldHandler(action) {
           data.uid
         );
         yield put(assignmentPathsFetchSuccess(paths));
-        updatedFields.path = assignment.path || data.uid;
-
-        if (!data.manualUpdates.details) {
+          updatedFields.path = ASSIGNMENTS_TYPES.PathProgress.id === action.value ?  "" : assignment.path || data.uid;
+        
+          if (!data.manualUpdates.details) {
           updatedFields.details = `${location}#/paths/${updatedFields.path}`;
         }
       } else if (

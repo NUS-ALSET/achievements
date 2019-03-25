@@ -122,6 +122,10 @@ export const CodeCombat_Multiplayer_Data = {
     "elemental-wars": {
       id: "elemental-wars",
       name: "Elemental Wars"
+    },
+    "queen-of-the-desert":{
+      id: "queen-of-the-desert",
+      name: "queen-of-the-desert"
     }
   },
   rankingPercentile: [0, 10, 20, 30, 40, 50]
