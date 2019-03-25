@@ -63,10 +63,7 @@ import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialo
 import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import {
-  problemSolutionSubmitRequest,
-  problemSolutionAttemptRequest
-} from "../Activity/actions";
+import { problemSolutionSubmitRequest } from "../Activity/actions";
 import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
@@ -297,8 +294,7 @@ export class Path extends React.Component {
       ui,
       uid,
       fetchGithubFiles,
-      userAchievements,
-      problemSolutionAttemptRequest
+      userAchievements
     } = this.props;
 
     if (pathActivities && !pathActivities.path) {
@@ -508,7 +504,7 @@ export class Path extends React.Component {
           onCommit={profile => {
             onProfileUpdate(profile, "CodeCombat");
           }}
-          open={ui.dialog.type === "Profile"}
+          open={ui.dialog && ui.dialog.type === "Profile"}
           uid={uid}
         />
         <AddActivityDialog
@@ -620,8 +616,7 @@ const mapDispatchToProps = {
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
   fetchGithubFiles: fetchGithubFiles,
-  openJestActivity: pathOpenJestSolutionDialog,
-  problemSolutionAttemptRequest: problemSolutionAttemptRequest
+  openJestActivity: pathOpenJestSolutionDialog
 };
 
 export default compose(

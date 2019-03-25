@@ -59,6 +59,7 @@ import JupyterNotebookStep2 from "../../assets/JupyterNotebookSolution.png";
 import MultipleQuestionsForm from "../forms/MultipleQuestionsForm";
 
 const DEFAULT_COUNT = 2;
+const MAX_CELLS = 15;
 const gameDefaultData = {
   game: "passenger-picker",
   scoreToWin: 10,
@@ -69,8 +70,7 @@ const gameDefaultData = {
 };
 
 const styles = () => ({});
-
-const cells = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+const cells = new Array(MAX_CELLS).fill().map((value, index) => index + 1);
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
@@ -418,7 +418,7 @@ class AddActivityDialog extends React.PureComponent {
               MenuProps={{
                 PaperProps: {
                   style: {
-                    maxHeight: 48 * 4.5 + 8,
+                    maxHeight: 224,
                     width: 250
                   }
                 }
