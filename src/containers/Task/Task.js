@@ -113,6 +113,10 @@ class Task extends React.PureComponent {
     };
   };
 
+  getJupyterNotebookSolution = taskInfo => ({
+    json: this.generatePreview(taskInfo)
+  });
+
   onChangeField = field => e =>
     this.setState({
       changes: { ...this.state.changes, [field]: e.target.value },
@@ -270,9 +274,7 @@ class Task extends React.PureComponent {
             <div className={classes.previewCenter}>
               <JupyterNotebook
                 readOnly={true}
-                solution={{
-                  json: this.generatePreview(taskInfo)
-                }}
+                solution={this.getJupyterNotebookSolution(taskInfo)}
                 title="Preview"
               />
             </div>
