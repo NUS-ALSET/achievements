@@ -20,22 +20,21 @@ import {
 export function* loginHandler(action) {
   const authorized = yield select(state => state.paths.gapiAuthorized);
 
-  if (authorized) {
-    return;
-  }
-
-  // Auth GAPI to download files from google drive
-  yield call([pathsService, pathsService.auth]);
-  yield put(pathGAPIAuthorized(true));
-
   if (action.auth && action.auth.uid) {
     const joinedPaths = yield call(
       [pathsService, pathsService.fetchJoinedPaths],
       action.auth.uid
     );
-
     yield put(pathsJoinedFetchSuccess(joinedPaths));
   }
+
+  if (authorized) {
+    return;
+  }
+  // Auth GAPI to download files from google drive
+  yield call([pathsService, pathsService.auth]);
+  yield put(pathGAPIAuthorized(true));
+
 }
 
 export function* pathsOpenHandler() {
