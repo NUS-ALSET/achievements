@@ -72,12 +72,8 @@ class Paths extends React.PureComponent {
                   <p>Paths does not exist!</p>
                 )
               )
-              : !Object.keys(joinedPaths).length
-                ? <Fragment>
-                  Loading Your Paths...
-                  <LinearProgress />
-                </Fragment>
-                : <Fragment>
+              : (
+                <Fragment>
                   <PathTabs
                     currentPathTab={currentPathTab}
                     handleSwitchPathTab={handleSwitchPathTab}
@@ -96,7 +92,8 @@ class Paths extends React.PureComponent {
                     pathDialogHide={pathDialogHide}
                   />
                 </Fragment>
-          )
+              )
+            )
           : !publicPaths
             ? (
               publicPaths === null ? (
