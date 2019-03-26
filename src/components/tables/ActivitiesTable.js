@@ -138,7 +138,7 @@ class ActivitiesTable extends React.PureComponent {
     };
     (activities || []).forEach(activity =>
       this.getStatus(activity) && activity.solved
-        ? totals.totalSolvedActivities++ && totals.totalActivities++
+        ? (totals.totalSolvedActivities++, totals.totalActivities++)
         : totals.totalActivities++
     );
     return (
