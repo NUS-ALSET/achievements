@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { AccountService } from "../account";
 
 describe("Account tests", () => {

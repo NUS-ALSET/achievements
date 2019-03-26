@@ -1,5 +1,5 @@
 import isEmpty from "lodash/isEmpty";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { coursesService } from "./courses";
 import { firebaseService } from "./firebaseService";
 import {
@@ -56,6 +56,10 @@ export const ACTIVITY_TYPES = {
   jupyterInline: {
     id: "jupyterInline",
     caption: "Jupyter Notebook"
+  },
+  jupyterLocal: {
+    id: "jupyterLocal",
+    caption: "Jupyter Local"
   },
   youtube: {
     id: "youtube",

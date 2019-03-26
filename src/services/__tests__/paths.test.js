@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import firebase from "firebase";
+import firebase from "firebase/app";
 import assert from "assert";
 import sinon from "sinon";
 import Promise from "bluebird";

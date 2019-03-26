@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 
 export class AdminService {
   /**
@@ -7,57 +7,61 @@ export class AdminService {
    * @returns {Object}
    */
   sliggify(str) {
-    return str.toLowerCase().trim().replace(/\s/g,"");
+    return str
+      .toLowerCase()
+      .trim()
+      .replace(/\s/g, "");
   }
 
   getData = data => {
     data.id = data.id || this.sliggify(data.name);
-    const createdAtOrUpdatedAt = "createdAt" in data ? "updatedAt" : "createdAt";
-    data[createdAtOrUpdatedAt] = {".sv": "timestamp"}
+    const createdAtOrUpdatedAt =
+      "createdAt" in data ? "updatedAt" : "createdAt";
+    data[createdAtOrUpdatedAt] = { ".sv": "timestamp" };
     data["enable"] = "enable" in data ? data.enable : false;
     let publicData = {
-      description : data.description,
-      url : data.url,
-      name : data.name,
-      id : data.id,
-      enable : data.enable,
-      createdAt : data.createdAt || {".sv": "timestamp"}
+      description: data.description,
+      url: data.url,
+      name: data.name,
+      id: data.id,
+      enable: data.enable,
+      createdAt: data.createdAt || { ".sv": "timestamp" }
     };
-    if ("updatedAt" in data) publicData["updatedAt"] = {".sv": "timestamp"}
+    if ("updatedAt" in data) publicData["updatedAt"] = { ".sv": "timestamp" };
 
-    return {service: data, thirdPartyServices: publicData};
-  }
+    return { service: data, thirdPartyServices: publicData };
+  };
 
   saveService = finalData => {
     return firebase
-        .database()
-        .ref(`/config/services/${finalData.service.id}`)
-        .set(finalData.service)
-        .then(() => {
-          return firebase
-            .database()
-            .ref(`/thirdPartyServices/${finalData.service.id}`)
-            .set(finalData.thirdPartyServices)
-        })
-        .then(() => finalData.service)
-        .catch(err => console.log(err))
-  }
+      .database()
+      .ref(`/config/services/${finalData.service.id}`)
+      .set(finalData.service)
+      .then(() => {
+        return firebase
+          .database()
+          .ref(`/thirdPartyServices/${finalData.service.id}`)
+          .set(finalData.thirdPartyServices);
+      })
+      .then(() => finalData.service)
+      .catch(err => console.log(err));
+  };
   createService = data => {
-      const finalData = this.getData(data)
-      return this.saveService(finalData);
-  }
+    const finalData = this.getData(data);
+    return this.saveService(finalData);
+  };
 
   updateService = data => {
     const finalData = this.getData(data);
     return this.saveService(finalData);
-  }
+  };
 
   deleteService = id => {
     return firebase
       .database()
       .ref(`/thirdPartyServices/${id}`)
-      .remove()
-  }
+      .remove();
+  };
 
   toggleService = service => {
     return firebase
@@ -68,22 +72,22 @@ export class AdminService {
       })
       .then(() => {
         return firebase
-            .database()
-            .ref(`/thirdPartyServices/${service.id}`)
-            .update({
-              enable: !service.enable
-            })
+          .database()
+          .ref(`/thirdPartyServices/${service.id}`)
+          .update({
+            enable: !service.enable
+          });
       })
-      .catch(err => console.log(err))
-  }
+      .catch(err => console.log(err));
+  };
 
   fetchServiceDetails = id => {
     return firebase
       .database()
       .ref(`/config/services/${id}`)
       .once("value")
-      .then(snap => snap.val())
-  }
+      .then(snap => snap.val());
+  };
 }
 
 export const adminService = new AdminService();

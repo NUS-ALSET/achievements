@@ -188,6 +188,9 @@
     "config": {
       ".read": "auth != null && root.child('/admins/' + auth.uid).val() == true",
       ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true",
+      "taskPresets": {
+        ".read": "auth != null"
+      },
       "defaultRecommendations": {
         ".read": true
       },
@@ -465,6 +468,11 @@
             "
         }
       }
+    },
+    "tasks": {
+      ".read": "auth != null",
+      ".indexOn": ["owner"],
+      ".write": "auth != null"
     },
     "updateProfileQueue": {
       "tasks": {
