@@ -8,7 +8,7 @@ import {
 export const task = (
   state = {
     presets: [],
-    currentTask: false,
+    tasks: {},
     currentResponse: false,
     isRunning: false
   },
@@ -18,7 +18,13 @@ export const task = (
     case TASK_PRESETS_LOAD_SUCCESS:
       return { ...state, presets: action.presets };
     case TASK_LOAD_SUCCESS:
-      return { ...state, currentTask: action.taskInfo };
+      return {
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [action.taskInfo.id]: action.taskInfo
+        }
+      };
     case TASK_RUN_REQUEST:
       return {
         ...state,

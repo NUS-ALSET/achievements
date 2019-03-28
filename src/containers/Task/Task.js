@@ -3,7 +3,7 @@
 import * as React from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import { Prompt, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import Loadable from "react-loadable";
 
@@ -39,14 +39,17 @@ const AceEditor = Loadable({
 const styles = () => ({
   fabButton: { position: "fixed", bottom: 24, right: 24 },
   previewCenter: { textAlign: "center" },
-  mainColumn: { height: "100%" }
+  mainColumn: { height: "100%" },
+  editableCheckbox: { marginTop: 6 }
 });
 
 class Task extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.shape({
+      editableCheckbox: PropTypes.string,
       fabButton: PropTypes.string,
-      mainColumn: PropTypes.string
+      mainColumn: PropTypes.string,
+      previewCenter: PropTypes.string
     }),
     isRunning: PropTypes.bool,
     match: PropTypes.shape({
@@ -96,21 +99,21 @@ class Task extends React.PureComponent {
     const { changes, presetId } = this.state;
     const task = this.props.task || {};
     const preset = (presets || []).find(
-      preset => preset.id === presetId || task.presetId || "basic"
+      preset => preset.id === presetId || task.presetId
     );
     let json;
 
-    if (!preset) {
+    if (!preset || (match.params.taskId !== "new" && !task.name)) {
       return false;
     }
 
     json = changes.json || JSON.parse(task.json || preset.json).cells;
     return {
-      id: match.params.id,
+      id: match.params.taskId,
       editable: changes.editable || task.editable || preset.editable || false,
       hidden: {},
-      isNew: match.params.id === "new",
-      name: task.name || "New task",
+      isNew: match.params.taskId === "new",
+      name: changes.name || task.name,
       presetId: preset.id === presetId || task.presetId || "basic",
       blocksCount: json.length,
       type: changes.types || task.type || preset.type || "jupyter",
@@ -281,9 +284,9 @@ class Task extends React.PureComponent {
     });
   };
 
-  onSelectPreset = presetId =>
+  onSelectPreset = e =>
     this.setState({
-      preset: this.props.presets.find(preset => preset.id === presetId)
+      presetId: e.target.value
     });
 
   onSave = () => {
@@ -300,7 +303,7 @@ class Task extends React.PureComponent {
   };
 
   render() {
-    const { classes, isRunning, presets } = this.props;
+    const { classes, isRunning, presets, task } = this.props;
     const { isChanged, userView } = this.state;
     const taskInfo = this.getTaskInfo();
     let blockIndex = this.getBlockIndex(taskInfo);
@@ -316,7 +319,10 @@ class Task extends React.PureComponent {
     return (
       <React.Fragment>
         <Breadcrumbs
-          paths={[{ label: "Tasks", link: "/tasks" }, { label: taskInfo.name }]}
+          paths={[
+            { label: "Tasks", link: "/tasks" },
+            { label: (task && task.name) || "New Task" }
+          ]}
         />
         <Grid container spacing={8}>
           <Grid
@@ -328,7 +334,7 @@ class Task extends React.PureComponent {
             xs={12}
           >
             <Grid item xs={12}>
-              <Typography variant="h6">Jupyter settings</Typography>
+              <Typography variant="h6">Task settings</Typography>
             </Grid>
             <Grid item xs={6}>
               <TextField fullWidth label="Type" select value="jupyter">
@@ -353,10 +359,10 @@ class Task extends React.PureComponent {
             <Grid item xs={12}>
               <TextField
                 autoFocus
-                defaultValue={taskInfo.isNew ? "" : taskInfo.name}
                 fullWidth
                 label="Name"
                 onChange={this.onChangeField("name")}
+                value={taskInfo.name || ""}
               />
             </Grid>
             <Grid item xs={6}>
@@ -407,6 +413,7 @@ class Task extends React.PureComponent {
             </Grid>
             <Grid item xs={3}>
               <FormControlLabel
+                className={classes.editableCheckbox}
                 control={
                   <Checkbox
                     checked={taskInfo.editable === blockIndex}
@@ -481,6 +488,10 @@ class Task extends React.PureComponent {
             <SaveIcon />
           </Fab>
         </Zoom>
+        <Prompt
+          message="All your unsaved changes will be lost"
+          when={isChanged}
+        />
       </React.Fragment>
     );
   }
@@ -488,10 +499,10 @@ class Task extends React.PureComponent {
 
 sagaInjector.inject(sagas);
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
   isRunning: state.task.isRunning,
   presets: state.task.presets,
-  task: state.task.currentTask,
+  task: state.task.tasks[ownProps.match.params.taskId],
   response: state.task.currentResponse
 });
 

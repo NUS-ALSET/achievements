@@ -1,12 +1,7 @@
-import {
-  TASKS_LOAD_SUCCESS,
-  TASKS_DIALOG_HIDE,
-  TASKS_ADD_TASK_DIALOG_SHOW
-} from "./actions";
+import { TASKS_DIALOG_HIDE, TASKS_DELETE_TASK_DIALOG_SHOW } from "./actions";
 
 export const tasks = (
   state = {
-    tasks: [],
     ui: {
       type: ""
     }
@@ -14,23 +9,19 @@ export const tasks = (
   action
 ) => {
   switch (action.type) {
-    case TASKS_LOAD_SUCCESS:
-      return {
-        ...state,
-        tasks: action.tasks
-      };
-    case TASKS_ADD_TASK_DIALOG_SHOW:
+    case TASKS_DELETE_TASK_DIALOG_SHOW:
       return {
         ...state,
         ui: {
-          type: "ADD_TASK"
+          dialogType: "DELETE_TASK",
+          taskId: action.taskId
         }
       };
     case TASKS_DIALOG_HIDE:
       return {
         ...state,
         ui: {
-          type: ""
+          dialogType: ""
         }
       };
     default:

@@ -29,13 +29,12 @@ const styles = theme => ({
 class TasksTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
-    tasks: PropTypes.array.isRequired,
-    onEditClick: PropTypes.func.isRequired,
+    tasks: PropTypes.object.isRequired,
     onDeleteClick: PropTypes.func.isRequired
   };
 
   render() {
-    const { classes, onEditClick, onDeleteClick, tasks } = this.props;
+    const { classes, onDeleteClick, tasks } = this.props;
 
     return (
       <Table>
@@ -47,33 +46,28 @@ class TasksTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {tasks.map(task => (
-            <TableRow key={task.id}>
-              <TableCell>{task.name}</TableCell>
-              <TableCell>{task.type}</TableCell>
-              <TableCell>
-                <Link className={classes.link} to={`/tasks/${task.id}`}>
-                  <Button className={classes.button} variant="contained">
-                    View
+          {Object.keys(tasks)
+            .map(id => ({ ...tasks[id], id }))
+            .map(task => (
+              <TableRow key={task.id}>
+                <TableCell>{task.name}</TableCell>
+                <TableCell>{task.type}</TableCell>
+                <TableCell>
+                  <Link className={classes.link} to={`/tasks/${task.id}`}>
+                    <Button className={classes.button} variant="contained">
+                      View
+                    </Button>
+                  </Link>
+                  <Button
+                    className={classes.button}
+                    onClick={() => onDeleteClick(task)}
+                    variant="contained"
+                  >
+                    Delete
                   </Button>
-                </Link>
-                <Button
-                  className={classes.button}
-                  onClick={() => onEditClick(task)}
-                  variant="contained"
-                >
-                  Edit
-                </Button>
-                <Button
-                  className={classes.button}
-                  onClick={() => onDeleteClick(task)}
-                  variant="contained"
-                >
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     );
