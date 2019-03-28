@@ -14,7 +14,6 @@ import {
   problemSolutionRefreshFail,
   problemSolveUpdate
 } from "../../containers/Activity/actions";
-import { notificationShow } from "../../containers/Root/actions";
 import JupyterNotebook from "./JupyterNotebook";
 
 class JupyterInlineActivity extends React.PureComponent {
@@ -23,6 +22,7 @@ class JupyterInlineActivity extends React.PureComponent {
     onChange: PropTypes.func,
     onCommit: PropTypes.func,
     problem: PropTypes.object,
+    setProblemOpenTime: PropTypes.func,
     solution: PropTypes.object,
     readOnly: PropTypes.bool
   };
@@ -57,7 +57,10 @@ class JupyterInlineActivity extends React.PureComponent {
     this.setState({
       open: new Date().getTime()
     });
-    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+    this.props.setProblemOpenTime(
+      this.props.problem.problemId,
+      new Date().getTime()
+    );
   }
 
   onSolutionRefreshClick = value => {
@@ -70,14 +73,11 @@ class JupyterInlineActivity extends React.PureComponent {
       .map(line => line + "\n");
 
     this.setState({
-      solutionJSON: solutionJSON || false
+      solutionJSON
     });
     dispatch(problemSolutionRefreshFail());
     if (onChange) {
       onChange(solutionJSON);
-    }
-    if (!solutionJSON) {
-      return dispatch(notificationShow("Code wasn't changed"));
     }
 
     return dispatch(

@@ -86,6 +86,7 @@ class AddActivityDialog extends React.PureComponent {
     pathId: PropTypes.string.isRequired,
     pathsInfo: PropTypes.any,
     restrictedType: PropTypes.oneOf([...Object.keys(ACTIVITY_TYPES), false]),
+    tasks: PropTypes.any,
     thirdPartiesServices: PropTypes.any,
     thirdPartiesLevels: PropTypes.any,
     uid: PropTypes.string.isRequired
@@ -215,6 +216,7 @@ class AddActivityDialog extends React.PureComponent {
       activity,
       activityExampleSolution,
       restrictedType,
+      tasks,
       thirdPartiesLevels
     } = this.props;
     let levels;
@@ -503,6 +505,24 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
               type="number"
             />
+          </Fragment>
+        );
+      case ACTIVITY_TYPES.jupyterLocal.id:
+        return (
+          <Fragment>
+            <TextField
+              fullWidth
+              label="Local Jupyter task"
+              onChange={e => this.onFieldChange("task", e.target.value)}
+              select
+              value={activity.task || ""}
+            >
+              {Object.keys(tasks || {}).map(taskId => (
+                <MenuItem key={taskId} value={taskId}>
+                  {tasks[taskId].name}
+                </MenuItem>
+              ))}
+            </TextField>
           </Fragment>
         );
       case ACTIVITY_TYPES.youtube.id:

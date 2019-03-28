@@ -149,7 +149,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
     pathProblem: state.problem.pathProblem,
-    problemOpenTime: state.problem.problemOpenTime,
+    problemOpenTime: state.problem.problemOpenTime
   }));
 
   data.pathProblem.openTime = action.openTime || data.problemOpenTime;
