@@ -120,9 +120,10 @@ export function* problemInitRequestHandler(action) {
     // format (changed to string via #435 issue)
     if (
       pathProblem.type === ACTIVITY_TYPES.jupyterInline.id &&
-      typeof solution === "string"
+      solution &&
+      (typeof solution === "string" || typeof solution.solution === "string")
     ) {
-      solution = JSON.parse(solution);
+      solution = JSON.parse(solution.solution || solution);
     }
     yield put(
       problemSolutionRefreshSuccess(action.problemId, solution || false)
