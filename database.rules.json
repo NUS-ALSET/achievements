@@ -1,7 +1,7 @@
 {
   "rules": {
     "activities": {
-      ".read": true",
+      ".read": true,
       ".indexOn": ["path"],
       "$activityKey": {
         ".read": "root.child('/paths/' + data.child('path').val() + '/isPublic').val() == true",
