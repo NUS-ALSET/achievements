@@ -92,6 +92,7 @@ export class Path extends React.Component {
       toolbarButton: PropTypes.string
     }),
     codeCombatProfile: PropTypes.any,
+    fetchGithubFiles: PropTypes.func,
     match: PropTypes.object,
     onAddAssistant: PropTypes.func,
     onAssistantKeyChange: PropTypes.func,
@@ -113,15 +114,15 @@ export class Path extends React.Component {
     onRequestMoreProblems: PropTypes.func,
     onShowCollaboratorsClick: PropTypes.func,
     onToggleJoinStatus: PropTypes.func,
-    fetchGithubFiles: PropTypes.func,
+    openJestActivity: PropTypes.func,
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
     pendingActivityId: PropTypes.string,
     pendingProfileUpdate: PropTypes.bool,
     problemSolutionAttemptRequest: PropTypes.any,
+    tasks: PropTypes.any,
     ui: PropTypes.any,
     uid: PropTypes.string,
-    openJestActivity: PropTypes.func,
     userAchievements: PropTypes.object
   };
 
@@ -171,8 +172,9 @@ export class Path extends React.Component {
         );
         break;
       case ACTIVITY_TYPES.multipleQuestion.id:
-      case ACTIVITY_TYPES.jupyterInline.id:
       case ACTIVITY_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
+      case ACTIVITY_TYPES.jupyterLocal.id:
       case ACTIVITY_TYPES.youtube.id:
         onPushPath(
           `/paths/${pathActivities.path.id}/activities/${activity.id}`
@@ -278,6 +280,7 @@ export class Path extends React.Component {
     const {
       classes,
       codeCombatProfile,
+      fetchGithubFiles,
       match,
       onAddAssistant,
       onAssistantKeyChange,
@@ -291,9 +294,9 @@ export class Path extends React.Component {
       pathStatus,
       pendingActivityId,
       pendingProfileUpdate,
+      tasks,
       ui,
       uid,
-      fetchGithubFiles,
       userAchievements
     } = this.props;
 
@@ -355,7 +358,7 @@ export class Path extends React.Component {
                 handler: this.changeJoinStatus
               }
             ]) || [
-              ui.inspectedUser && {
+              {
                 label: "Refersh",
                 handler: this.refreshSolutions
               }
@@ -534,6 +537,7 @@ export class Path extends React.Component {
           restrictedType={
             isCreatorActivity && ui.dialog && ui.dialog.value.targetType
           }
+          tasks={tasks}
           uid={uid || "Anonymous"}
         />
         <DeleteConfirmationDialog
@@ -586,6 +590,7 @@ const mapStateToProps = (state, ownProps) => ({
   pathStatus: pathStatusSelector(state, ownProps),
   pendingActivityId: state.path.ui.pendingActivityId,
   pendingProfileUpdate: state.path.ui.pendingProfileUpdate,
+  tasks: state.firebase.data.tasks,
   ui: state.path.ui,
   uid: state.firebase.auth.uid,
   userAchievements:
@@ -636,6 +641,7 @@ export default compose(
 
     return [
       `/activities#orderByChild=path&equalTo=${pathId}`,
+      `/tasks#orderByChild=owner&equalTo=${uid}`,
       `/completedActivities/${state.path.ui.inspectedUser || uid}/${pathId}`,
       `/paths/${pathId}`,
       `/pathAssistants/${pathId}`,

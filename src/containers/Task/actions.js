@@ -36,3 +36,18 @@ export const taskSaveFail = (taskId, reason) => ({
   taskId,
   reason
 });
+
+export const TASK_RUN_REQUEST = "TASK_RUN_REQUEST";
+export const taskRunRequest = (taskId, taskType, taskData) => ({
+  type: TASK_RUN_REQUEST,
+  taskId,
+  taskType,
+  taskData
+});
+
+export const TASK_RUN_SUCCESS = "TASK_RUN_SUCCESS";
+export const taskRunSuccess = (taskId, response) => ({
+  type: TASK_RUN_SUCCESS,
+  taskId,
+  response
+});
