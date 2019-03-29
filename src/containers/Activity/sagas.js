@@ -61,11 +61,12 @@ export function* problemInitRequestHandler(action) {
     let uid = yield select(state => state.firebase.auth.uid);
 
     if (!uid) {
-      const { auth } = yield race({
+      const response = yield race({
         auth: take("@@reactReduxFirebase/LOGIN"),
-        empty: "@@reactReduxFirebase/AuthEmptyChange"
+        emptyFake: take("@@reactReduxFirebase/AuthEmptyChange"),
+        empty: take("@@reactReduxFirebase/AUTH_EMPTY_CHANGE")
       });
-      if (auth) {
+      if (response.auth) {
         uid = yield select(state => state.firebase.auth.uid);
       }
     }
