@@ -359,7 +359,7 @@ export class Path extends React.Component {
               }
             ]) || [
               {
-                label: "Refersh",
+                label: "Refresh",
                 handler: this.refreshSolutions
               }
             ]

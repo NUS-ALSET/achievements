@@ -736,14 +736,15 @@ class AddActivityDialog extends React.PureComponent {
 
   isIncorrect = () => {
     const { activity } = this.props;
-
     if (
       (activity && activity.type === ACTIVITY_TYPES.multipleQuestion.id) ||
       this.state.type === ACTIVITY_TYPES.multipleQuestion.id
     ) {
-      const options = activity.options;
-      if (!(options && Object.keys(options).length)) {
-        return true;
+      if (activity) {
+        const options = activity.options;
+        if (!(options && Object.keys(options).length)) {
+          return true;
+        }
       }
     }
     return (
