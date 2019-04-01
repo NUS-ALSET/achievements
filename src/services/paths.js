@@ -462,13 +462,11 @@ export class PathsService {
           throw new Error("Missing code field");
         if (!problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
           throw new Error("Invalid Problem URL");
-        if (
-          problemInfo.solutionURL &&
-          !problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL)
-        )
+        if (!problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
           throw new Error("Invalid Solution URL");
         break;
       case ACTIVITY_TYPES.jupyterLocal.id:
+        if (!problemInfo.task) throw new Error("Missing task");
         break;
       case ACTIVITY_TYPES.youtube.id:
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
