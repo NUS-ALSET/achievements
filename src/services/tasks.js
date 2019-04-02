@@ -1,5 +1,22 @@
 import firebase from "firebase/app";
 
+const BASIC_PRESET = {
+  blocksCount: 4,
+  id: "basic",
+  json: JSON.stringify({
+    nbformat: 4,
+    nbformat_minor: 0,
+    metadata: {},
+    cells: [
+      { cell_type: "markdown", source: ["Hi\\n"] },
+      { cell_type: "code", source: ["test", "f()"], outputs: [] },
+      { cell_type: "markdown", source: ["Cool\\n"] },
+      { cell_type: "code", source: ["assert(True)\\n"], outputs: [] }
+    ]
+  }),
+  owner: "no-one"
+};
+
 export class TasksService {
   fetchPresets() {
     return firebase
@@ -9,12 +26,13 @@ export class TasksService {
       .then(snap => snap.val() || {})
       .then(presets =>
         Promise.all(
-          Object.keys(presets).map(presetId =>
-            firebase
-              .database()
-              .ref(`/tasks/${presetId}`)
-              .once("value")
-              .then(snap => ({ id: presetId, ...(snap.val() || {}) }))
+          Object.keys({ ...presets, basic: presets.basic || BASIC_PRESET }).map(
+            presetId =>
+              firebase
+                .database()
+                .ref(`/tasks/${presetId}`)
+                .once("value")
+                .then(snap => ({ id: presetId, ...(snap.val() || {}) }))
           )
         )
       );
@@ -83,7 +101,19 @@ export class TasksService {
     });
   }
 
+  validateTask(taskInfo) {
+    switch (taskInfo.type) {
+      case "jupyter":
+        if (taskInfo.editable === undefined)
+          throw new Error("Missing required `editable` field");
+        break;
+      default:
+        return true;
+    }
+  }
+
   saveTask(uid, taskId, taskInfo) {
+    this.validateTask(taskInfo);
     if (taskId === "new") {
       taskId = firebase
         .database()

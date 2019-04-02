@@ -340,7 +340,12 @@ export class Path extends React.Component {
     return (
       <Fragment>
         <Breadcrumbs
-          action={
+          action={[
+            {
+              label: "Refersh",
+              handler: this.refreshSolutions
+            }
+          ].concat(
             (![PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(
               pathStatus
             ) && [
@@ -363,7 +368,7 @@ export class Path extends React.Component {
                 handler: this.refreshSolutions
               }
             ]
-          }
+          )}
           paths={[
             {
               label: "Paths",

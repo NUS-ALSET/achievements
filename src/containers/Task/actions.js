@@ -51,3 +51,20 @@ export const taskRunSuccess = (taskId, response) => ({
   taskId,
   response
 });
+
+export const TASK_EXPORT_REQUEST = "TASK_EXPORT_REQUEST";
+export const taskExportRequest = taskId => ({
+  type: TASK_EXPORT_REQUEST,
+  taskId
+});
+
+export const TASK_IMPORT_DIALOG_SHOW = "TASK_IMPORT_DIALOG_SHOW";
+export const taskImportDialogShow = dialog => ({
+  type: TASK_IMPORT_DIALOG_SHOW,
+  dialog
+});
+
+export const TASK_IMPORT_DIALOG_HIDE = "TASK_IMPORT_DIALOG_HIDE";
+export const taskImportDialogHide = () => ({
+  type: TASK_IMPORT_DIALOG_HIDE
+});

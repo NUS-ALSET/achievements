@@ -7,7 +7,8 @@ import {
   taskSaveFail,
   taskLoadSuccess,
   TASK_RUN_REQUEST,
-  taskRunSuccess
+  taskRunSuccess,
+  taskOpen
 } from "./actions";
 import { tasksService } from "../../services/tasks";
 import { notificationShow } from "../Root/actions";
@@ -35,13 +36,14 @@ export function* taskSaveRequestHandler(action) {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
     const taskId = yield call(
-      tasksService.saveTask,
+      [tasksService, tasksService.saveTask],
       uid,
       action.taskId,
       action.taskInfo
     );
     if (action.taskId === "new") {
       yield put(push("/tasks/" + taskId));
+      yield put(taskOpen(taskId));
     }
   } catch (err) {
     yield put(taskSaveFail(action.taskId, err.message));
