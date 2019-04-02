@@ -362,9 +362,13 @@ export class Path extends React.Component {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
                 handler: this.changeJoinStatus
               }
-            ]) ||
-              []
-          )}
+            ]) || [
+              {
+                label: "Refresh",
+                handler: this.refreshSolutions
+              }
+            ]
+          }
           paths={[
             {
               label: "Paths",
