@@ -85,8 +85,7 @@ class AssignmentsTable extends React.PureComponent {
     isInstructor: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     sortState: PropTypes.object,
-    currentUser: PropTypes.object,
-    ui: PropTypes.object
+    currentUser: PropTypes.object
   };
 
   state = {

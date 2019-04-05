@@ -106,7 +106,6 @@ class CodeEditor extends Component {
     }
   }
   render() {
-    const { classes } = this.props;
     const { updatedCode, mode, jsCode } = this.state;
     const code = mode === "python" ? updatedCode : jsCode;
     return (

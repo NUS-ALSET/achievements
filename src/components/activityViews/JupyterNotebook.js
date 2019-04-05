@@ -37,7 +37,7 @@ class JupyterNotebook extends React.PureComponent {
   static propTypes = {
     action: PropTypes.func,
     defaultValue: PropTypes.string,
-    onCommit: PropTypes.func,
+    // onCommit: PropTypes.func,
     persistent: PropTypes.bool,
     richEditor: PropTypes.bool,
     solution: PropTypes.any,

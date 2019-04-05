@@ -44,10 +44,11 @@ class AddCreatorSolutionDialog extends React.PureComponent {
     });
 
   render() {
-    const { onClose, onCommit, open, pathsInfo, solution, taskId } = this.props;
+    const { onClose, onCommit, open, pathsInfo: pInfo, solution, taskId } = this.props;
     const stateSolution = this.state.solution;
+    const pathsInfo = pInfo || [];
     const pathActivities =
-      (pathsInfo || []).find(path => path.id === stateSolution.path) || {};
+      (pathsInfo).find(path => path.id === stateSolution.path) || {};
     const activities = pathActivities.activities || [];
 
     return (

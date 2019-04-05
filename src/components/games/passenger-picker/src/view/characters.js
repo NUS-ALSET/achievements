@@ -11,7 +11,7 @@ class Characters extends Component {
   };
   constructor(props) {
     super(props);
-    var charactersTypeArr = ["drone1", "drone2", "drone3"];
+    // var charactersTypeArr = ["drone1", "drone2", "drone3"];
   }
   render() {
     return (
