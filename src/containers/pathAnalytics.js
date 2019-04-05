@@ -193,6 +193,7 @@ class PathAnalytics extends React.PureComponent {
         });
       }
     });
+    return undefined;
   };
 
   processDataTime = (analyticsData, filteredAnalytics, activitiesData) => {
@@ -242,6 +243,7 @@ class PathAnalytics extends React.PureComponent {
         });
       }
     });
+    return undefined;
   };
 
   processDataAttempts = (analyticsData, filteredAnalytics, activitiesData) => {
@@ -314,6 +316,7 @@ class PathAnalytics extends React.PureComponent {
         });
       }
     });
+    return undefined;
   };
 
   render() {
@@ -449,7 +452,7 @@ class PathAnalytics extends React.PureComponent {
                           category:
                             filteredAnalytics &&
                             activitiesData &&
-                            analyticsData &&
+                            // analyticsData &&
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)
@@ -628,7 +631,7 @@ class PathAnalytics extends React.PureComponent {
                           category:
                             filteredAnalytics &&
                             activitiesData &&
-                            analyticsData &&
+                            // analyticsData &&
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)
@@ -812,7 +815,7 @@ class PathAnalytics extends React.PureComponent {
                           category:
                             filteredAnalytics &&
                             activitiesData &&
-                            analyticsData &&
+                            // analyticsData &&
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)

@@ -65,7 +65,7 @@ export const selectUsers = state => {
 export const selectActivities = state => {
   const completedActivities = state.CRUDdemo.attempts;
   const completedActivitiesKeys = Object.keys(completedActivities || {});
-  return (completedActivitiesKeys || []).map((el, i) => {
+  return (completedActivitiesKeys ).map((el, i) => {
     return { "label": String(i) };
   });
 }

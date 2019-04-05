@@ -1,4 +1,3 @@
-import assert from "assert";
 import { CodeCombatService } from "../codeCombat";
 
 describe("courses service tests", () => {
