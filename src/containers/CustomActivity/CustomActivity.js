@@ -17,13 +17,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import HelpIcon from "@material-ui/icons/HelpOutline";
 
-import Markdown from "react-markdown";
-import "brace/mode/javascript";
-import "brace/mode/python";
-import "brace/mode/markdown";
-import "brace/theme/monokai";
-import "brace/theme/github";
-
 // Development notes
 // This is just a prototype - the logic - eg. setState can be totally replaced
 // To be implemented --> Redux / firebase operations to retrieve previously saved custom activity
@@ -56,6 +49,11 @@ import "brace/theme/github";
 
 const AceEditor = Loadable({
   loader: () => import("../../components/AceEditor"),
+  loading: () => <LinearProgress />
+});
+
+const Markdown = Loadable({
+  loader: () => import("../../components/ReactMarkdown"),
   loading: () => <LinearProgress />
 });
 

@@ -62,7 +62,7 @@
   "scripts": {
     "analyze": "source-map-explorer build/static/js/8.*",
     "start": "react-scripts start",
-    "build": "react-scripts build --max-old-space-size=4096",
+    "build": "react-scripts build",
     "test": "CI=true react-scripts test --env=jsdom",
     "windows-test": "set CI=true &&react-scripts test --env=jsdom",
     "coverage": "CI=true react-scripts test --env=jsdom --coverage",
