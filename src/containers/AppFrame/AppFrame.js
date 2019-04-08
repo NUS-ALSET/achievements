@@ -34,6 +34,7 @@ import ViewDestination from "../Destinations/ViewDestination";
 import HomeV2 from "../HomeV2/HomeV2";
 import Task from "../Task/Task";
 import Tasks from "../Tasks/Tasks";
+import CustomActivity from "../CustomActivity/CustomActivity";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -338,6 +339,11 @@ class AppFrame extends React.Component {
                 <Route component={Contribute} exact path="/contribute" />
                 <Route component={Tasks} exact path="/tasks" />
                 <Route component={Task} exact path="/tasks/:taskId" />
+                <Route
+                  component={CustomActivity}
+                  exact
+                  path="/customactivity"
+                />
                 <Route component={NoMatch} />
               </Switch>
             </main>
