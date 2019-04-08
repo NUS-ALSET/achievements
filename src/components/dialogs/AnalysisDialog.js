@@ -85,7 +85,7 @@ const mapStateToProps = (state, ownProps) => {
     (state.firebase.data.activityExampleSolutions || {})[ownProps.activityId] ||
     {};
   return {
-    solution: activityExampleSolutions || {}
+    solution: activityExampleSolutions
   };
 };
 

@@ -104,7 +104,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           return true;
         case ASSIGNMENTS_TYPES.PathProgress.id:
           if (pathActivities) {
-            solution = solution && solution.replace(/\d+$/, pathActivities);
+            solution = solution.replace(/\d+$/, pathActivities);
           }
           result[assignmentId] = {
             createdAt,

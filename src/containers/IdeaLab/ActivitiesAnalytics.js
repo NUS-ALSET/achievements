@@ -22,10 +22,10 @@ const ReactFCLoad = Loadable({
 class ActivitiesAnalytics extends React.PureComponent {
   static propTypes = {
     fetchActivityAttempts: PropTypes.func,
-    timeTakenChartDataSource: PropTypes.object,
+    // timeTakenChartDataSource: PropTypes.object,
     updateSelectedPath: PropTypes.func,
     ownerPaths: PropTypes.object,
-    selectedPath: PropTypes.object,
+    // selectedPath: PropTypes.object,
     selectedpathActivities: PropTypes.object,
   };
   state = {

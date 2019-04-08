@@ -19,7 +19,6 @@ import { ACTIVITY_TYPES, CodeCombat_Multiplayer_Data } from "../../services/path
 class FetchCodeCombatLevelDialog extends React.PureComponent {
   static propTypes = {
     activity: PropTypes.any,
-    codeCombatId: PropTypes.string,
     onClose: PropTypes.func,
     open: PropTypes.bool,
     userAchievements: PropTypes.object

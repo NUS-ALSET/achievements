@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import { format } from 'date-fns';
 import FusionCharts from 'fusioncharts';
 import charts from 'fusioncharts/fusioncharts.charts';
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import React, { Fragment } from "react";
 import ReactFusioncharts from 'react-fusioncharts';
 import { connect } from "react-redux";
@@ -42,9 +42,7 @@ const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "June",
 
 
 class AdditionalContentRequests extends React.Component {
-  static propTypes = {
-    auth: PropTypes.object,
-  };
+
   constructor(props) {
     super(props);
     const dateTo = new Date((new Date()).setDate(new Date().getDate() + 1));
