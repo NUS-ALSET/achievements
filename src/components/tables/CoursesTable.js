@@ -34,7 +34,7 @@ class CoursesTable extends React.PureComponent {
     ownerId: PropTypes.string.isRequired,
     courses: PropTypes.any.isRequired,
     dispatch: PropTypes.func.isRequired,
-    onDeleteCourseClick: PropTypes.func.isRequired,
+    // onDeleteCourseClick: PropTypes.func.isRequired,
     classes: PropTypes.object.isRequired,
     fetchedCourses: PropTypes.bool
   };

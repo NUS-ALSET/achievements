@@ -1,10 +1,7 @@
 {
   "rules": {
     "activities": {
-      ".read": "auth != null || (
-          query.orderByChild == 'path' &&
-          root.child('/paths/' + query.equalTo + '/isPublic').val() == true
-        )",
+      ".read": true,
       ".indexOn": ["path"],
       "$activityKey": {
         ".read": "root.child('/paths/' + data.child('path').val() + '/isPublic').val() == true",
@@ -188,6 +185,9 @@
     "config": {
       ".read": "auth != null && root.child('/admins/' + auth.uid).val() == true",
       ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true",
+      "taskPresets": {
+        ".read": "auth != null"
+      },
       "defaultRecommendations": {
         ".read": true
       },
@@ -465,6 +465,11 @@
             "
         }
       }
+    },
+    "tasks": {
+      ".read": "auth != null",
+      ".indexOn": ["owner"],
+      ".write": "auth != null"
     },
     "updateProfileQueue": {
       "tasks": {

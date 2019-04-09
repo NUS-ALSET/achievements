@@ -204,6 +204,8 @@ class pathAnalyticsDemo extends React.PureComponent {
         }
       })
       .catch(err => console.log(err));
+
+      return undefined;
   };
 
   processTimeAndOutliers(
@@ -264,6 +266,7 @@ class pathAnalyticsDemo extends React.PureComponent {
         }
       })
       .catch(err => console.log(err));
+      return undefined;
   };
 
   processFinalArray(
@@ -345,6 +348,7 @@ class pathAnalyticsDemo extends React.PureComponent {
         }
       })
       .catch(err => console.log(err));
+      return undefined;
   };
 
   render() {
@@ -480,7 +484,7 @@ class pathAnalyticsDemo extends React.PureComponent {
                           category:
                             filteredAnalytics &&
                             activitiesData &&
-                            analyticsData &&
+                            // analyticsData &&
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)
@@ -659,7 +663,7 @@ class pathAnalyticsDemo extends React.PureComponent {
                           category:
                             filteredAnalytics &&
                             activitiesData &&
-                            analyticsData &&
+                            // analyticsData &&
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)
@@ -843,7 +847,7 @@ class pathAnalyticsDemo extends React.PureComponent {
                           category:
                             filteredAnalytics &&
                             activitiesData &&
-                            analyticsData &&
+                            // analyticsData &&
                             Array.from(
                               new Set(
                                 Object.keys(filteredAnalytics)

@@ -28,6 +28,7 @@ const CohortQualifiedConditionsList = ({
     0
   );
   const isCurrentUserQualified = cohortMemberQualificationStatus[uid];
+  
   return (
     <Fragment>
       <div style={{ height: "20px" }} />
@@ -76,6 +77,7 @@ const CohortQualifiedConditionsList = ({
         {Object.keys(qualifiedConditions).map(pathId => {
           const name = (pathsData.find(path => path.id === pathId) || {}).name;
           const pathCondition = qualifiedConditions[pathId];
+          console.log(pathCondition)
           const activitiesToComplete = pathCondition.activitiesToComplete || {};
           return (
             <Fragment key={pathId}>
@@ -87,7 +89,7 @@ const CohortQualifiedConditionsList = ({
               </ListItem>
               <List component="ul" dense>
                 <Fragment>
-                  {Boolean(pathCondition.allActivities) > 0 && (
+                  {Number(pathCondition.allActivities) > 0 && (
                     <ListItem className={classes.nested}>
                       <ListItemText
                         primary={`Complete all activities from this path`}

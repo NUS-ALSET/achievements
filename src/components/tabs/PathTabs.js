@@ -22,7 +22,7 @@ const PATHS_TAB_PUBLIC = 2;
 class PathTabs extends React.Component {
   static propTypes = {
     pathDialogShow: PropTypes.func.isRequired,
-    paths: PropTypes.object,
+    // paths: PropTypes.object,
     myPaths: PropTypes.object.isRequired,
     publicPaths: PropTypes.object,
     joinedPaths: PropTypes.object,

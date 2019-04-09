@@ -34,10 +34,10 @@ const COHORT_TAB_MY_COHORTS = 1;
 
 class Cohorts extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func,
+    // dispatch: PropTypes.func,
     ui: PropTypes.object,
     currentUser: PropTypes.object,
-    myCohorts: PropTypes.object,
+    myCohorts: PropTypes.object,                                                                                                                                
     myPaths: PropTypes.object,
     publicCohorts: PropTypes.object,
     publicPaths: PropTypes.object,
@@ -105,7 +105,7 @@ class Cohorts extends React.PureComponent {
           onEditCohortClick={onEditCohortClick}
         />
         <AddCohortDialog
-          cohort={ui.dialog.cohort}
+          cohort={ui.dialog && ui.dialog.cohort}
           myPaths={myPaths}
           onAddCohortRequest={onAddCohortRequest}
           onCloseAddCohortDialg={onCloseAddCohortDialg}

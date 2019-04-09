@@ -18,7 +18,7 @@ import { firebaseService } from "./firebaseService";
 import { pathsService } from "./paths";
 
 import each from "lodash/each";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { APP_SETTING } from "../achievementsApp/config";
 
 const ERROR_TIMEOUT = 10000;
@@ -358,7 +358,7 @@ export class CoursesService {
   //     .catch(err => this.store.dispatch(notificationShow(err.message)));
   // }
 
-  getProfileStatus(userId, service="CodeCombat") {
+  getProfileStatus(userId, service = "CodeCombat") {
     return firebase
       .ref(`/userAchievements/${userId}/${service}/id`)
       .once("value")
@@ -386,9 +386,7 @@ export class CoursesService {
             const err = this.checkAchievementsError(profileData, assignment);
             const profile = profileData.val() || {};
             if (err) {
-              this.dispatch(
-                externalProfileRefreshRequest(profile.id, service)
-              );
+              this.dispatch(externalProfileRefreshRequest(profile.id, service));
               setTimeout(() => {
                 firebase
                   .ref(`/userAchievements/${userId}/${service}`)

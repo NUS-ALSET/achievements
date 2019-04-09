@@ -27,7 +27,6 @@ class Updater extends Component {
   };
   constructor(props) {
     super(props);
-    this.loop = this.loop.bind(this);
     this.state = {
       gameOver: {
         status: false,

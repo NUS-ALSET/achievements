@@ -2,7 +2,6 @@
 import sinon from "sinon";
 import * as cohortsSagas from "../sagas";
 import { coursesService } from "../../../services/courses";
-import assert from "assert";
 import { runSaga } from "redux-saga";
 import {
   addCohortRequest

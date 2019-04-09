@@ -11,8 +11,8 @@ export const selectCohort = createSelector(
   (cohort, ui) => {
     if (cohort && ui.sortState.field !== "paths") {
       cohort.courses = cohort.courses.sort((a, b) => {
-        let aValue = a.rank;
-        let bValue = b.rank;
+        let aValue;
+        let bValue;
         let result = 0;
 
         switch (ui.sortState.field) {

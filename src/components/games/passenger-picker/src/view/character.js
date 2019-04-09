@@ -12,7 +12,6 @@ import BlackCar from "./Components/Characters/CarBlack";
 import BlueCar from "./Components/Characters/CarBlue";
 import OrangeCar from "./Components/Characters/CarOrange";
 import WhiteCar from "./Components/Characters/CarWhite";
-import Store from "../store";
 import config from "../simulation/config.json";
 import { observer } from "mobx-react";
 

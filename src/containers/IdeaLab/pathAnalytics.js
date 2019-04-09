@@ -21,7 +21,7 @@ class PathAnalytics extends React.PureComponent {
     dataSource: PropTypes.object,
     updateSelectedPath: PropTypes.func,
     ownerPaths: PropTypes.object,
-    selectedPath: PropTypes.object
+    // selectedPath: PropTypes.object
   };
   state = {
     anchorEl: null,
@@ -42,9 +42,10 @@ class PathAnalytics extends React.PureComponent {
     this.props.fetchActivityAttempts(key);
   }
 
-  getFirstElement = obj => {
+  getFirstElement = object => {
+    const obj = object || {}
     const isObjectEmpty = Object.entries(obj).length === 0 && obj.constructor === Object;
-    return !isObjectEmpty ? obj[Object.keys(obj || {})[0]] : "";
+    return !isObjectEmpty ? obj[Object.keys(obj)[0]] : "";
   }
 
   renderDropdownItems = () => {

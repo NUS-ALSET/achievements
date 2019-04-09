@@ -1,5 +1,5 @@
 import isEmpty from "lodash/isEmpty";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { coursesService } from "./courses";
 import { firebaseService } from "./firebaseService";
 import {
@@ -56,6 +56,10 @@ export const ACTIVITY_TYPES = {
   jupyterInline: {
     id: "jupyterInline",
     caption: "Jupyter Notebook"
+  },
+  jupyterLocal: {
+    id: "jupyterLocal",
+    caption: "Jupyter Local"
   },
   youtube: {
     id: "youtube",
@@ -119,7 +123,7 @@ export const CodeCombat_Multiplayer_Data = {
       id: "elemental-wars",
       name: "Elemental Wars"
     },
-    "queen-of-the-desert":{
+    "queen-of-the-desert": {
       id: "queen-of-the-desert",
       name: "queen-of-the-desert"
     }
@@ -281,7 +285,22 @@ export class PathsService {
                 return pathProblem;
               });
           }
-
+          case "jupyterLocal":
+            return firebase
+              .database()
+              .ref(`/tasks/${pathProblem.task}`)
+              .once("value")
+              .then(snap => snap.val())
+              .then(task => {
+                const problemJSON = JSON.parse(task.json);
+                return {
+                  ...pathProblem,
+                  taskInfo: task,
+                  code: task.editable,
+                  frozen: problemJSON.cells.length - task.editable - 1,
+                  problemJSON
+                };
+              });
           default:
             return pathProblem;
         }
@@ -443,11 +462,11 @@ export class PathsService {
           throw new Error("Missing code field");
         if (!problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
           throw new Error("Invalid Problem URL");
-        if (
-          problemInfo.solutionURL &&
-          !problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL)
-        )
+        if (!problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
           throw new Error("Invalid Solution URL");
+        break;
+      case ACTIVITY_TYPES.jupyterLocal.id:
+        if (!problemInfo.task) throw new Error("Missing task");
         break;
       case ACTIVITY_TYPES.youtube.id:
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
@@ -655,6 +674,7 @@ export class PathsService {
           break;
         case "jupyter":
         case "jupyterInline":
+        case "jupyterLocal":
           if (json) {
             const frozenSolution = json.cells
               .filter(cell => cell.source.join("").trim())

@@ -14,7 +14,6 @@ import { MultipleQuestionActivity } from "./MultipleQuestionActivity";
 
 class YouTubeActivity extends React.PureComponent {
   static propTypes = {
-    dispatch: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
     solution: PropTypes.any,

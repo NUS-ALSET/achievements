@@ -103,7 +103,6 @@ export function* courseAssignmentsOpenHandler(action) {
 
   if (!uid) {
     yield take("@@reactReduxFirebase/LOGIN");
-    yield select(state => state.firebase.auth.uid);
   }
 
   try {

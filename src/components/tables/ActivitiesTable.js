@@ -51,7 +51,6 @@ class ActivitiesTable extends React.PureComponent {
     activities: PropTypes.array.isRequired,
     codeCombatProfile: PropTypes.any,
     classes: PropTypes.object.isRequired,
-    currentUserId: PropTypes.string,
     inspectedUser: PropTypes.string,
     onDeleteActivity: PropTypes.func.isRequired,
     onEditActivity: PropTypes.func.isRequired,
@@ -138,7 +137,7 @@ class ActivitiesTable extends React.PureComponent {
     };
     (activities || []).forEach(activity =>
       this.getStatus(activity) && activity.solved
-        ? totals.totalSolvedActivities++ && totals.totalActivities++
+        ? (totals.totalSolvedActivities++, totals.totalActivities++)
         : totals.totalActivities++
     );
     return (

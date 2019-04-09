@@ -20,16 +20,19 @@ const externalProfile = {
 class CodeCombatActivity extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
-    onChange: PropTypes.func.isRequired,
+    // onChange: PropTypes.func.isRequired,
     onCommit: PropTypes.func,
     problem: PropTypes.object,
-    userAchievements: PropTypes.object,
-    readOnly: PropTypes.bool
+    userAchievements: PropTypes.object
+    // readOnly: PropTypes.bool
   };
   componentDidMount(){
-    this.props.setProblemOpenTime && this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+    // eslint-disable-next-line react/prop-types
+    if (this.props.setProblemOpenTime) {
+      this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+    }
   }
-  updateCodeCombatProfile = ()=>{
+  updateCodeCombatProfile = () => {
     const { dispatch, userAchievements, problem } = this.props;
     const service = problem.service || "CodeCombat";
     const profileId = userAchievements[service].id;
@@ -41,8 +44,8 @@ class CodeCombatActivity extends React.PureComponent {
       )
   }
   render() {
-    const { problem, userAchievements } = this.props;
-
+    const { problem: prob, userAchievements } = this.props;
+    const problem = prob || {};
     const service = problem.service || "CodeCombat";
     const codeCombatAchievements = ((userAchievements || {})[service] || {});
     const achievements = codeCombatAchievements.achievements;
@@ -67,7 +70,7 @@ class CodeCombatActivity extends React.PureComponent {
         });
       }
       const levelURL = `https://codecombat.com/play/level/${
-        (problem || {}).level
+        (problem).level
       }`;
       if (hasLevelCompleted) {
         return <div> Completed </div>;

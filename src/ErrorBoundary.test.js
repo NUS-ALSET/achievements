@@ -1,6 +1,6 @@
 import React from "react";
 import ErrorBoundary from "./ErrorBoundary";
-import Enzyme, { shallow, render, mount } from "enzyme";
+import { mount } from "enzyme";
 
 // Let's create a Child functional component which does
 // nothing but throw an error. This way we can ensure we'll trigger

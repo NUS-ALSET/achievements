@@ -67,7 +67,7 @@ class Editor extends React.Component {
           }
           style={{
             right:
-              this.props.selectedFile.code === this.state.code
+            this.props.selectedFile && this.props.selectedFile.code === this.state.code
                 ? "-250px"
                 : "0px"
           }}

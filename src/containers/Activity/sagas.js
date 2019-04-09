@@ -61,11 +61,12 @@ export function* problemInitRequestHandler(action) {
     let uid = yield select(state => state.firebase.auth.uid);
 
     if (!uid) {
-      const { auth } = yield race({
+      const response = yield race({
         auth: take("@@reactReduxFirebase/LOGIN"),
-        empty: "@@reactReduxFirebase/AuthEmptyChange"
+        emptyFake: take("@@reactReduxFirebase/AuthEmptyChange"),
+        empty: take("@@reactReduxFirebase/AUTH_EMPTY_CHANGE")
       });
-      if (auth) {
+      if (response.auth) {
         uid = yield select(state => state.firebase.auth.uid);
       }
     }
@@ -120,9 +121,10 @@ export function* problemInitRequestHandler(action) {
     // format (changed to string via #435 issue)
     if (
       pathProblem.type === ACTIVITY_TYPES.jupyterInline.id &&
-      typeof solution === "string"
+      solution &&
+      (typeof solution === "string" || typeof solution.solution === "string")
     ) {
-      solution = JSON.parse(solution);
+      solution = JSON.parse(solution.solution || solution);
     }
     yield put(
       problemSolutionRefreshSuccess(action.problemId, solution || false)
@@ -149,7 +151,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
     pathProblem: state.problem.pathProblem,
-    problemOpenTime: state.problem.problemOpenTime,
+    problemOpenTime: state.problem.problemOpenTime
   }));
 
   data.pathProblem.openTime = action.openTime || data.problemOpenTime;

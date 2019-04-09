@@ -42,8 +42,8 @@ class Courses extends React.Component {
     myCourses: PropTypes.any,
     joinedCourses: PropTypes.any,
     publicCourses: PropTypes.any,
-    firebase: PropTypes.object,
-    instructorName: PropTypes.string,
+    // firebase: PropTypes.object,
+    // instructorName: PropTypes.string,
     ownerId: PropTypes.string,
     currentTab: PropTypes.number,
     fetchedCourses: PropTypes.bool

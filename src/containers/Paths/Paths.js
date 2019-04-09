@@ -64,50 +64,53 @@ class Paths extends React.PureComponent {
     return (
       <Fragment>
         <Breadcrumbs paths={[{ label: "Paths" }]} />
-        {uid ? (
-          !joinedPaths ? (
-            joinedPaths === null || joinedPaths === undefined ? (
-              <p>Paths does not exist!</p>
-            ) : (
-              <Fragment>
-                Loading Your Paths...
-                <LinearProgress />
-              </Fragment>
+        {uid
+          ? (
+            !joinedPaths
+              ? (
+                joinedPaths === null && (
+                  <p>Paths does not exist!</p>
+                )
+              )
+              : (
+                <Fragment>
+                  <PathTabs
+                    currentPathTab={currentPathTab}
+                    handleSwitchPathTab={handleSwitchPathTab}
+                    joinedPaths={joinedPaths}
+                    myPaths={Object.assign({
+                      [uid]: { name: "Default" }
+                    }, myPaths)}
+                    pathDialogShow={pathDialogShow}
+                    publicPaths={publicPaths}
+                    uid={uid}
+                  />
+                  <AddPathDialog
+                    open={ui.dialog.type === "PathChange"}
+                    path={ui.dialog.value}
+                    pathChangeRequest={pathChangeRequest}
+                    pathDialogHide={pathDialogHide}
+                  />
+                </Fragment>
+              )
             )
-          ) : (
-            <Fragment>
-              <PathTabs
-                currentPathTab={currentPathTab}
-                handleSwitchPathTab={handleSwitchPathTab}
-                joinedPaths={joinedPaths}
-                myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+          : !publicPaths
+            ? (
+              publicPaths === null ? (
+                <p>Public does not exist!</p>
+              ) : (
+                  <Fragment>
+                    Loading Public Paths...
+                  <LinearProgress />
+                  </Fragment>
+                )
+            ) : (
+              <PathsTable
                 pathDialogShow={pathDialogShow}
-                publicPaths={publicPaths}
-                uid={uid}
+                paths={publicPaths}
               />
-              <AddPathDialog
-                open={ui.dialog.type === "PathChange"}
-                path={ui.dialog.value}
-                pathChangeRequest={pathChangeRequest}
-                pathDialogHide={pathDialogHide}
-              />
-            </Fragment>
-          )
-        ) : !publicPaths ? (
-          publicPaths === null ? (
-            <p>Public does not exist!</p>
-          ) : (
-            <Fragment>
-              Loading Public Paths...
-              <LinearProgress />
-            </Fragment>
-          )
-        ) : (
-          <PathsTable
-            pathDialogShow={pathDialogShow}
-            paths={publicPaths || {}}
-          />
-        )}
+            )
+        }
       </Fragment>
     );
   }
@@ -145,12 +148,12 @@ export default compose(
       firebaseAuth.isEmpty
         ? []
         : [
-            {
-              path: "/paths",
-              storeAs: "myPaths",
-              queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
-            }
-          ]
+          {
+            path: "/paths",
+            storeAs: "myPaths",
+            queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
+          }
+        ]
     );
   }),
   connect(

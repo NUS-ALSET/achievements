@@ -10,9 +10,10 @@ import PropTypes from "prop-types";
 import TextActivity from "./TextActivity";
 import ProfileActivity from "./ProfileActivity";
 
-import JupyterProblem from "./JupyterColabActivity";
-import JupyterInlineProblem from "./JupyterInlineActivity";
-import YouTubeProblem from "./YouTubeActivity";
+import JupyterActivity from "./JupyterColabActivity";
+import JupyterInlineActivity from "./JupyterInlineActivity";
+import JupyterLocalActivity from "./JupyterLocalActivity";
+import YouTubeActivity from "./YouTubeActivity";
 
 import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog";
 import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog";
@@ -23,9 +24,10 @@ const views = {
   text: TextActivity,
   multipleQuestion: MultipleQuestionActivity,
   profile: ProfileActivity,
-  jupyter: JupyterProblem,
-  jupyterInline: JupyterInlineProblem,
-  youtube: YouTubeProblem,
+  jupyter: JupyterActivity,
+  jupyterInline: JupyterInlineActivity,
+  jupyterLocal: JupyterLocalActivity,
+  youtube: YouTubeActivity,
   jest: AddJestSolutionDialog,
   game: AddGameSolutionDialog,
   codeCombat: CodeCombatActivity,
@@ -36,11 +38,15 @@ const views = {
 class ActivityView extends React.PureComponent {
   static propTypes = {
     dispatch: PropTypes.func,
-    match: PropTypes.object,
     pathProblem: PropTypes.any,
+    onClose: PropTypes.func,
+    onCommit: PropTypes.func,
     onProblemChange: PropTypes.func.isRequired,
+    problemSolutionAttemptRequest: PropTypes.func,
+    readOnly: PropTypes.bool,
+    setProblemOpenTime: PropTypes.func,
     solution: PropTypes.any,
-    readOnly: PropTypes.bool
+    userAchievements: PropTypes.any
   };
   state = {
     open: true
@@ -92,25 +98,25 @@ class ActivityView extends React.PureComponent {
       : {};
     if (!SpecificView) {
       // noinspection JSUnusedAssignment
-      return <div>Wrong problem type</div>;
+      return <div>Wrong activity type</div>;
     }
 
-    if (!(pathProblem && solution)) {
+    if (!solution) {
       return <div>Loading</div>;
     }
     return (
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         <SpecificView
           dispatch={dispatch}
-          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           onChange={onProblemChange}
           onClose={onClose}
           onCommit={onCommit}
           problem={pathProblem}
+          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           readOnly={readOnly}
+          setProblemOpenTime={setProblemOpenTime}
           solution={solution}
           userAchievements={userAchievements}
-          setProblemOpenTime={setProblemOpenTime}
           {...extraProps}
         />
       </div>

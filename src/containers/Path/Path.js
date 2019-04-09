@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import { push } from "connected-react-router";
+import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -62,10 +63,7 @@ import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialo
 import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import {
-  problemSolutionSubmitRequest,
-  problemSolutionAttemptRequest
-} from "../Activity/actions";
+import { problemSolutionSubmitRequest } from "../Activity/actions";
 import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
@@ -79,6 +77,9 @@ import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import AddCreatorSolutionDialog from "../../components/dialogs/AddCreatorSolutionDialog";
 
 const styles = theme => ({
+  linkButton: {
+    textDecoration: "none"
+  },
   toolbarButton: {
     marginLeft: theme.spacing.unit
   }
@@ -86,8 +87,12 @@ const styles = theme => ({
 
 export class Path extends React.Component {
   static propTypes = {
-    classes: PropTypes.object,
+    classes: PropTypes.shape({
+      linkButton: PropTypes.string,
+      toolbarButton: PropTypes.string
+    }),
     codeCombatProfile: PropTypes.any,
+    fetchGithubFiles: PropTypes.func,
     match: PropTypes.object,
     onAddAssistant: PropTypes.func,
     onAssistantKeyChange: PropTypes.func,
@@ -109,14 +114,15 @@ export class Path extends React.Component {
     onRequestMoreProblems: PropTypes.func,
     onShowCollaboratorsClick: PropTypes.func,
     onToggleJoinStatus: PropTypes.func,
-    fetchGithubFiles: PropTypes.func,
+    openJestActivity: PropTypes.func,
     pathActivities: pathActivities,
     pathStatus: PropTypes.string,
     pendingActivityId: PropTypes.string,
     pendingProfileUpdate: PropTypes.bool,
+    problemSolutionAttemptRequest: PropTypes.any,
+    tasks: PropTypes.any,
     ui: PropTypes.any,
     uid: PropTypes.string,
-    openJestActivity: PropTypes.func,
     userAchievements: PropTypes.object
   };
 
@@ -151,7 +157,8 @@ export class Path extends React.Component {
     this.setState(() => ({
       botsQuantity: activity.unitsPerSide
     }));
-    const userServiceAchievements = userAchievements[activity.service || "CodeCombat"];
+    const userServiceAchievements =
+      userAchievements[activity.service || "CodeCombat"];
     switch (activity.type) {
       case ACTIVITY_TYPES.profile.id:
       case ACTIVITY_TYPES.codeCombat.id:
@@ -165,8 +172,9 @@ export class Path extends React.Component {
         );
         break;
       case ACTIVITY_TYPES.multipleQuestion.id:
-      case ACTIVITY_TYPES.jupyterInline.id:
       case ACTIVITY_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
+      case ACTIVITY_TYPES.jupyterLocal.id:
       case ACTIVITY_TYPES.youtube.id:
         onPushPath(
           `/paths/${pathActivities.path.id}/activities/${activity.id}`
@@ -272,6 +280,7 @@ export class Path extends React.Component {
     const {
       classes,
       codeCombatProfile,
+      fetchGithubFiles,
       match,
       onAddAssistant,
       onAssistantKeyChange,
@@ -285,17 +294,15 @@ export class Path extends React.Component {
       pathStatus,
       pendingActivityId,
       pendingProfileUpdate,
+      tasks,
       ui,
       uid,
-      fetchGithubFiles,
-      userAchievements,
-      problemSolutionAttemptRequest
+      userAchievements
     } = this.props;
 
-    if (!(pathActivities && pathActivities.path)) {
-      if (pathActivities.path === null) {
-        return <p>Path does not exist!</p>;
-      }
+    if (pathActivities && !pathActivities.path) {
+      return <p>Path does not exist!</p>;
+    } else if (!pathActivities) {
       return <LinearProgress />;
     }
 
@@ -303,6 +310,7 @@ export class Path extends React.Component {
       (pathActivities.activities || []).filter(problem => problem.solved)
         .length === (pathActivities.activities || []).length;
     const hasActivities =
+      ui.dialog &&
       ui.dialog.pathsInfo &&
       ui.dialog.pathsInfo.filter(
         pathInfo => pathInfo.activities && pathInfo.activities.length
@@ -312,6 +320,7 @@ export class Path extends React.Component {
     // editing existing activity
     // FIXIT: move it into selectors
     const isCreatorActivity =
+      ui.dialog &&
       ui.dialog.value &&
       ui.dialog.value.owner !== uid &&
       ui.dialog.value.type === ACTIVITY_TYPES.creator.id;
@@ -331,13 +340,18 @@ export class Path extends React.Component {
     return (
       <Fragment>
         <Breadcrumbs
-          action={
+          action={[
+            {
+              label: "Refersh",
+              handler: this.refreshSolutions
+            }
+          ].concat(
             (![PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(
               pathStatus
             ) && [
               allFinished && {
                 label: "Request more",
-                handler: this.requestMoreDialogShow.bind(this)
+                handler: this.requestMoreDialogShow
               },
               // disable Refresh button.
               // !allFinished && {
@@ -346,15 +360,15 @@ export class Path extends React.Component {
               // },
               uid && {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
-                handler: this.changeJoinStatus.bind(this)
+                handler: this.changeJoinStatus
               }
             ]) || [
-              ui.inspectedUser && {
-                label: "Refersh",
-                handler: this.refreshSolutions.bind(this)
+              {
+                label: "Refresh",
+                handler: this.refreshSolutions
               }
             ]
-          }
+          )}
           paths={[
             {
               label: "Paths",
@@ -375,55 +389,70 @@ export class Path extends React.Component {
         </Typography>
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) && (
           <Toolbar>
-            <Button
-              color="primary"
-              onClick={this.onAddActivityClick}
-              variant="contained"
-            >
-              Add Activity
-            </Button>
-            {pathStatus === PATH_STATUS_OWNER && (
+            <React.Fragment>
               <Button
-                className={classes.toolbarButton}
-                onClick={() => onShowCollaboratorsClick(pathActivities.path.id)}
+                color="primary"
+                onClick={this.onAddActivityClick}
                 variant="contained"
               >
-                Collaborators
+                Add Activity
               </Button>
-            )}
+              {pathStatus === PATH_STATUS_OWNER && (
+                <Button
+                  className={classes.toolbarButton}
+                  onClick={() =>
+                    onShowCollaboratorsClick(pathActivities.path.id)
+                  }
+                  variant="contained"
+                >
+                  Collaborators
+                </Button>
+              )}
+              <Link className={classes.linkButton} to="/tasks">
+                <Button className={classes.toolbarButton} variant="contained">
+                  Notebooks
+                </Button>
+              </Link>
+            </React.Fragment>
           </Toolbar>
         )}
         <AddTextSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog.type === `${ACTIVITY_TYPES.text.id}Solution`}
-          solution={ui.dialog.solution}
-          taskId={ui.dialog.value && ui.dialog.value.id}
+          open={
+            ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.text.id}Solution`
+          }
+          solution={ui.dialog && ui.dialog.solution}
+          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
         <AddJestSolutionDialog
-          problemSolutionAttemptRequest={problemSolutionAttemptRequest}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`}
-          problem={ui.dialog.value}
-          taskId={ui.dialog.value && ui.dialog.value.id}
+          open={
+            ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`
+          }
+          problem={ui.dialog && ui.dialog.value}
+          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
         <AddGameSolutionDialog
           botsQuantity={this.state.botsQuantity}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog.type === `${ACTIVITY_TYPES.game.id}Solution`}
-          problem={ui.dialog.value}
-          taskId={ui.dialog.value && ui.dialog.value.id}
+          open={
+            ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.game.id}Solution`
+          }
+          problem={ui.dialog && ui.dialog.value}
+          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
         <AddGameTournamentSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={
+            ui.dialog &&
             ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`
           }
-          problem={ui.dialog.value}
-          taskId={ui.dialog.value && ui.dialog.value.id}
+          problem={ui.dialog && ui.dialog.value}
+          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
         <AddCreatorSolutionDialog
           onClose={onCloseDialog}
@@ -431,15 +460,15 @@ export class Path extends React.Component {
           open={
             !!(
               ["creatorSolution", "educatorSolution"].includes(
-                ui.dialog.type
+                ui.dialog && ui.dialog.type
               ) &&
               ui.dialog.pathsInfo &&
               hasActivities
             )
           }
-          pathsInfo={ui.dialog.pathsInfo || []}
-          solution={ui.dialog.solution}
-          taskId={ui.dialog.value && ui.dialog.value.id}
+          pathsInfo={(ui.dialog && ui.dialog.pathsInfo) || []}
+          solution={ui.dialog && ui.dialog.solution}
+          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
         <FetchCodeCombatDialog
           currentUserId={uid}
@@ -452,7 +481,10 @@ export class Path extends React.Component {
           }}
           onClose={onCloseDialog}
           onCommit={this.onProfileUpdate}
-          open={ui.dialog.type === `${ACTIVITY_TYPES.profile.id}Solution`}
+          open={
+            ui.dialog &&
+            ui.dialog.type === `${ACTIVITY_TYPES.profile.id}Solution`
+          }
           userAchievements={userAchievements}
         />
         <ActivitiesTable
@@ -484,13 +516,13 @@ export class Path extends React.Component {
           uid={uid}
         />
         <AddActivityDialog
-          activity={!isCreatorActivity && ui.dialog.value}
+          activity={!isCreatorActivity && ui.dialog && ui.dialog.value}
           fetchGithubFiles={fetchGithubFiles}
           fetchGithubFilesStatus={ui.fetchGithubFilesStatus}
           onClose={onCloseDialog}
           onCommit={this.onActivityChangeRequest}
           open={
-            ui.dialog.type === "ProblemChange" ||
+            (ui.dialog && ui.dialog.type === "ProblemChange") ||
             !!(
               ["creatorSolution", "educatorSolution"].includes(
                 ui.dialog.type
@@ -500,12 +532,17 @@ export class Path extends React.Component {
             )
           }
           pathId={
-            ["creatorSolution", "educatorSolution"].includes(ui.dialog.type)
+            ["creatorSolution", "educatorSolution"].includes(
+              ui.dialog && ui.dialog.type
+            )
               ? ""
-              : (pathActivities.path && pathActivities.path.id) || ""
+              : pathActivities.path.id || ""
           }
-          pathsInfo={ui.dialog.pathsInfo || []}
-          restrictedType={isCreatorActivity && ui.dialog.value.targetType}
+          pathsInfo={(ui.dialog && ui.dialog.pathsInfo) || []}
+          restrictedType={
+            isCreatorActivity && ui.dialog && ui.dialog.value.targetType
+          }
+          tasks={tasks}
           uid={uid || "Anonymous"}
         />
         <DeleteConfirmationDialog
@@ -521,15 +558,15 @@ export class Path extends React.Component {
           open={!!this.state.selectedActivityId}
         />
         <ControlAssistantsDialog
-          assistants={ui.dialog.assistants}
+          assistants={ui.dialog && ui.dialog.assistants}
           isOwner={pathStatus === PATH_STATUS_OWNER}
-          newAssistant={ui.dialog.newAssistant}
+          newAssistant={ui.dialog && ui.dialog.newAssistant}
           onAddAssistant={onAddAssistant}
           onAssistantKeyChange={onAssistantKeyChange}
           onClose={onCloseDialog}
           onRemoveAssistant={onRemoveAssistant}
-          open={ui.dialog.type === "CollaboratorsControl"}
-          target={pathActivities.path.id}
+          open={ui.dialog && ui.dialog.type === "CollaboratorsControl"}
+          target={pathActivities.path && pathActivities.path.id}
         />
         <FetchCodeCombatLevelDialog
           activity={pathActivities.activities.find(
@@ -537,7 +574,7 @@ export class Path extends React.Component {
           )}
           codeCombatId={codeCombatProfile && codeCombatProfile.id}
           onClose={onCloseDialog}
-          open={ui.dialog.type === "FetchCodeCombatLevel"}
+          open={ui.dialog && ui.dialog.type === "FetchCodeCombatLevel"}
           userAchievements={userAchievements}
         />
         <RequestMorePathContentDialog
@@ -558,11 +595,13 @@ const mapStateToProps = (state, ownProps) => ({
   pathStatus: pathStatusSelector(state, ownProps),
   pendingActivityId: state.path.ui.pendingActivityId,
   pendingProfileUpdate: state.path.ui.pendingProfileUpdate,
+  tasks: state.firebase.data.tasks,
   ui: state.path.ui,
   uid: state.firebase.auth.uid,
-  userAchievements: (state.firebase.data.userAchievements || {})[
-    ownProps.match.params.accountId || state.firebase.auth.uid
-  ] || {}
+  userAchievements:
+    (state.firebase.data.userAchievements || {})[
+      ownProps.match.params.accountId || state.firebase.auth.uid
+    ] || {}
 });
 
 const mapDispatchToProps = {
@@ -587,8 +626,7 @@ const mapDispatchToProps = {
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
   fetchGithubFiles: fetchGithubFiles,
-  openJestActivity: pathOpenJestSolutionDialog,
-  problemSolutionAttemptRequest: problemSolutionAttemptRequest
+  openJestActivity: pathOpenJestSolutionDialog
 };
 
 export default compose(
@@ -608,6 +646,7 @@ export default compose(
 
     return [
       `/activities#orderByChild=path&equalTo=${pathId}`,
+      `/tasks#orderByChild=owner&equalTo=${uid}`,
       `/completedActivities/${state.path.ui.inspectedUser || uid}/${pathId}`,
       `/paths/${pathId}`,
       `/pathAssistants/${pathId}`,
