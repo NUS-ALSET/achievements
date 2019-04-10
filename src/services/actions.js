@@ -7,7 +7,7 @@ import {
   COURSE_NEW_REQUEST
 } from "../containers/Courses/actions";
 import firebase from "firebase/app";
-
+import 'firebase/firestore';
 export class ActionsService {
   consumerKey = undefined;
 
@@ -85,6 +85,20 @@ export class ActionsService {
               ActionsService.pickActionData(action)
             )
           });
+          
+          const firestore_db = firebase.firestore();
+          //Added firestore related changes    
+          firestore_db.collection('/logged_events').add({
+            ...data,
+            createdAt: firebase.firestore.Timestamp.now().toMillis(),
+            type: action.type,
+            uid: currentUserId,
+            version: process.env.REACT_APP_VERSION,
+            otherActionData: JSON.stringify(
+              ActionsService.pickActionData(action)
+            )
+          });  
+         
       } catch (err) {
         console.error(err, action);
       }
