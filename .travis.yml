@@ -1,12 +1,14 @@
 language: node_js
 node_js:
-  - "10"
+  - "10" 
+  --max-old-space-size=8192
 
 branches:
   only:
     - master
 
 before_install:
+  - df -h
   - npm cache clear --force
   - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
 
