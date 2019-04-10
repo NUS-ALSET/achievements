@@ -87,7 +87,7 @@ export class ActionsService {
           });
           
           const firestore_db = firebase.firestore();
-              
+          //Added firestore related changes    
           firestore_db.collection('/logged_events').add({
             ...data,
             createdAt: firebase.firestore.Timestamp.now().toMillis(),

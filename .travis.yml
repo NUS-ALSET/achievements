@@ -1,7 +1,7 @@
 language: node_js
 node_js:
-  - "10" 
-  --max-old-space-size=8192
+  - "10" -- max-old-space-size=8192
+  
 
 branches:
   only:
