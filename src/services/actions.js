@@ -88,16 +88,16 @@ export class ActionsService {
           
           const firestore_db = firebase.firestore();
               
-              const logged_events = firestore_db.collection('/logged_events').add({
-                ...data,
-                createdAt: firebase.firestore.Timestamp.now().toMillis(),
-                type: action.type,
-                uid: currentUserId,
-                version: process.env.REACT_APP_VERSION,
-                otherActionData: JSON.stringify(
-                  ActionsService.pickActionData(action)
-                )
-              });  
+          firestore_db.collection('/logged_events').add({
+            ...data,
+            createdAt: firebase.firestore.Timestamp.now().toMillis(),
+            type: action.type,
+            uid: currentUserId,
+            version: process.env.REACT_APP_VERSION,
+            otherActionData: JSON.stringify(
+              ActionsService.pickActionData(action)
+            )
+          });  
          
       } catch (err) {
         console.error(err, action);
