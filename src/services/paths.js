@@ -11,6 +11,8 @@ import {
 import { problemSolutionAttemptRequest } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
+import 'firebase/firestore';
+
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
 export const YOUTUBE_QUESTIONS = {
@@ -1406,6 +1408,17 @@ export class PathsService {
 
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
+    //Added code to save to firestore
+    firebase.firestore().collection("analytics").doc("activityAttempts").set({
+      activityKey: payload.activityKey,
+      activityType: payload.activityType,
+      completed:payload.completed,
+      open:payload.open,
+      time:payload.time,
+      userKey:payload.userKey
+    }
+      )
+     
     return firebase
       .database()
       .ref("analytics/activityAttempts")
