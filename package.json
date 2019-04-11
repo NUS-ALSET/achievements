@@ -2,7 +2,7 @@
   "name": "achievements",
   "description": "nus alset achievements web app",
   "version": "0.0.42",
-  "repository": "https://github.com/NUS-ALSET",
+  "repository": "https://github.com/Thangamanir/",
   "dependencies": {
     "@material-ui/core": "3.7.0",
     "@material-ui/icons": "^3.0.1",
