@@ -12,6 +12,7 @@ import { problemSolutionAttemptRequest } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 import 'firebase/firestore';
+import { Collection } from "immutable";
 
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
@@ -1409,13 +1410,15 @@ export class PathsService {
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
     //Added code to save to firestore
-    firebase.firestore().collection("analytics").doc("activityAttempts").set({
+    firebase.firestore().collection("analytics").doc("activityAnalytics")
+    .collection("activityAttempts").add({
       activityKey: payload.activityKey,
       activityType: payload.activityType,
       completed:payload.completed,
       open:payload.open,
       time:payload.time,
-      userKey:payload.userKey
+      userKey:payload.userKey,
+      pathKey:payload.pathKey
     }
       )
      
