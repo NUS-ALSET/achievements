@@ -16,6 +16,8 @@ import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
 import Tooltip from "@material-ui/core/Tooltip";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 
 import JestRunner from "../jest-runner";
 
@@ -44,15 +46,28 @@ class AddJestSolutionDialog extends React.PureComponent {
     solution: PropTypes.any,
     taskId: PropTypes.string,
     classes: PropTypes.object.isRequired,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    problemSolutionAttemptRequest: PropTypes.object,
+    dispatch: PropTypes.func,
+    isOwner: PropTypes.bool,
+    onSaveProblem: PropTypes.func,
+    addNewFile: PropTypes.func,
+    removeFile: PropTypes.func
   };
+
+  constructor(props) {
+    super(props);
+    this.jestRunner = React.createRef();
+  }
 
   state = {
     solution: "",
-    open: true
+    open: true,
+    editMode: false
   };
 
   componentDidMount(){
+    // eslint-disable-next-line no-unused-expressions
     this.props.setProblemOpenTime && this.props.setProblemOpenTime((this.props.problem || {}).problemId, (new Date()).getTime());
   }
 
@@ -83,6 +98,33 @@ class AddJestSolutionDialog extends React.PureComponent {
     }
     this.handleClose();
   };
+
+  handleEdit = () => {
+    // make editor editable for all the files
+    // show edit button on all the files
+    this.setState({ editMode: true });
+  }
+
+  handleSave = () => {
+    // save problem files to firebase
+    this.setState({ editMode: false })
+    // console.log(this.jestRunner.current.state.files)
+    const files = this.jestRunner.current.state.files;
+    // save files to firebase
+    this.props.onSaveProblem(this.props.problem, files);
+  }
+
+  handleFileChange = name => event => {
+    this.setState({ [name]: event.target.value });
+  };
+
+  addFile = () => {
+    // dispatch an action here and add new file to ui state
+    this.props.addNewFile(this.state.name);
+    this.setState({ name: "" })
+  }
+
+
   render() {
     const {
       // onClose, onCommit, taskId,
@@ -92,8 +134,12 @@ class AddJestSolutionDialog extends React.PureComponent {
       solution,
       readOnly,
       problemSolutionAttemptRequest,
-      dispatch
+      dispatch,
+      isOwner,
+      removeFile
     } = this.props;
+
+    const { editMode } = this.state;
 
     return (
       <div>
@@ -119,6 +165,42 @@ class AddJestSolutionDialog extends React.PureComponent {
               <Typography color="inherit" variant="h6">
                 {/* ALSET Editor */}
               </Typography>
+              {
+                isOwner && this.state.editMode &&
+                  <div >
+                    <TextField
+                      className={classes.textField}
+                      id="standard-name"
+                      margin="normal"
+                      onChange={this.handleFileChange("name")}
+                      placeholder="File name"
+                      style={{ backgroundColor: "#fff", borderRadius : "10px", padding : "4px 10px"}}
+                      value={this.state.name || ""}
+                    />
+                    <Button
+                      className={classes.button}
+                      color="default"
+                      disabled={this.state.name === "" || !this.state.name}
+                      onClick={this.addFile}
+                      style={{margin: "18px 20px 0 20px"}}
+                      variant="contained"
+                    >
+                      ADD
+                    </Button>
+                  </div>
+              }
+              {
+                isOwner && <Button
+                  className={classes.button}
+                  color="default"
+                  onClick={this.state.editMode ? this.handleSave : this.handleEdit}
+                  style={{marginRight: "20px"}}
+                  variant="contained"
+                >
+                  {this.state.editMode ? "SAVE PROBLEM" : "EDIT PROBLEM"}
+                </Button>
+              }
+              
               {problem && (
                 <Tooltip title="Open in Codesandbox">
                   <a
@@ -141,16 +223,20 @@ class AddJestSolutionDialog extends React.PureComponent {
                   </a>
                 </Tooltip>
               )}
+              
             </Toolbar>
           </AppBar>
           {open && problem && (
             <JestRunner
               dispatch={dispatch}
-              problemSolutionAttemptRequest={problemSolutionAttemptRequest}
+              editMode={editMode}
               files={problem.files}
               onSubmit={this.handleSubmit}
               problem={problem}
+              problemSolutionAttemptRequest={problemSolutionAttemptRequest}
               readOnly={readOnly}
+              ref={this.jestRunner}
+              removeFile={removeFile}
               solution={solution}
             />
           )}
