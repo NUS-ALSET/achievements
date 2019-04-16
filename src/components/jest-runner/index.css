@@ -444,7 +444,7 @@
 
 .save-btn{
   position: fixed;
-  top: 0px;
+  top: 10%;
   right: -200px;
   z-index: 99;
   width: 188px;

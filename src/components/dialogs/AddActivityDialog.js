@@ -665,6 +665,12 @@ class AddActivityDialog extends React.PureComponent {
                 value={activity.githubURL || ""}
               />
             </FormControl>}
+            {
+              this.props.fetchGithubFilesStatus === "LOADING" &&
+              <div style={{width: "100%", textAlign: "center", marginTop: "15px"}}>
+                <CircularProgress /><p>Fetching Template...</p>
+              </div>
+            }
             {this.state.files && this.state.files.length > 0 && (
               <Fragment>
                 <Typography

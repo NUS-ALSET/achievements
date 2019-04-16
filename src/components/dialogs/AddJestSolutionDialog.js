@@ -18,6 +18,7 @@ import Slide from "@material-ui/core/Slide";
 import Tooltip from "@material-ui/core/Tooltip";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
+import Cancel from "@material-ui/icons/CancelPresentation";
 
 import JestRunner from "../jest-runner";
 
@@ -81,7 +82,7 @@ class AddJestSolutionDialog extends React.PureComponent {
   };
 
   handleClose = () => {
-    this.setState({ open: false });
+    this.setState({ open: false, editMode: false });
     this.props.onClose();
   };
 
@@ -100,17 +101,12 @@ class AddJestSolutionDialog extends React.PureComponent {
   };
 
   handleEdit = () => {
-    // make editor editable for all the files
-    // show edit button on all the files
     this.setState({ editMode: true });
   }
 
   handleSave = () => {
-    // save problem files to firebase
     this.setState({ editMode: false })
-    // console.log(this.jestRunner.current.state.files)
     const files = this.jestRunner.current.state.files;
-    // save files to firebase
     this.props.onSaveProblem(this.props.problem, files);
   }
 
@@ -119,7 +115,6 @@ class AddJestSolutionDialog extends React.PureComponent {
   };
 
   addFile = () => {
-    // dispatch an action here and add new file to ui state
     this.props.addNewFile(this.state.name);
     this.setState({ name: "" })
   }
@@ -127,7 +122,6 @@ class AddJestSolutionDialog extends React.PureComponent {
 
   render() {
     const {
-      // onClose, onCommit, taskId,
       open,
       classes,
       problem,
@@ -173,8 +167,8 @@ class AddJestSolutionDialog extends React.PureComponent {
                       id="standard-name"
                       margin="normal"
                       onChange={this.handleFileChange("name")}
-                      placeholder="File name"
-                      style={{ backgroundColor: "#fff", borderRadius : "10px", padding : "4px 10px"}}
+                      placeholder="File Name"
+                      style={{ backgroundColor: "#fff", borderRadius : "4px", padding : "4px 10px"}}
                       value={this.state.name || ""}
                     />
                     <Button
@@ -182,7 +176,7 @@ class AddJestSolutionDialog extends React.PureComponent {
                       color="default"
                       disabled={this.state.name === "" || !this.state.name}
                       onClick={this.addFile}
-                      style={{margin: "18px 20px 0 20px"}}
+                      style={{margin: "18px 20px 15px 20px"}}
                       variant="contained"
                     >
                       ADD
@@ -190,15 +184,21 @@ class AddJestSolutionDialog extends React.PureComponent {
                   </div>
               }
               {
-                isOwner && <Button
-                  className={classes.button}
-                  color="default"
-                  onClick={this.state.editMode ? this.handleSave : this.handleEdit}
-                  style={{marginRight: "20px"}}
-                  variant="contained"
-                >
-                  {this.state.editMode ? "SAVE PROBLEM" : "EDIT PROBLEM"}
-                </Button>
+                isOwner &&
+                <>
+                  <Button
+                    className={classes.button}
+                    color="default"
+                    onClick={this.state.editMode ? this.handleSave : this.handleEdit}
+                    style={{marginRight: "20px"}}
+                    variant="contained"
+                  >
+                    {this.state.editMode ? "SAVE" : "EDIT PROBLEM"}
+                  </Button>
+                  {this.state.editMode &&
+                    <span onClick={() => this.setState({ editMode: false })} style={{ margin: "0 15px 0 0", cursor: "pointer"}}><Cancel /></span>
+                  }
+                </>
               }
               
               {problem && (
