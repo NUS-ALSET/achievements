@@ -117,9 +117,12 @@ class JestRunner extends React.Component {
     this.setState({ confirmDelete: false })
   }
 
+  onClose = () => {
+    this.setState({ confirmDelete: false })
+  }
+
   confirmDelete = file => {
-    // dispatch an action here and update files array in ui dialog
-    this.setState({ confirmDelete: true, fileToDelete: file })
+    if (file) this.setState({ confirmDelete: true, fileToDelete: file })
   }
 
   postFiles = () => {
@@ -235,7 +238,7 @@ class JestRunner extends React.Component {
         <Notification message={notificationMsg} />
         <DeleteConfirmationDialog
           message={"Do you really want to delete this file ?"}
-          onClose={() => this.setState({ confirmDelete: false })}
+          onClose={this.onClose}
           onCommit={this.onDelete}
           open={this.state.confirmDelete || false}
         />
