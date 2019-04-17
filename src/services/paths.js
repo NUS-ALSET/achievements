@@ -11,7 +11,7 @@ import {
 import { problemSolutionAttemptRequest } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
-import 'firebase/firestore';
+import "firebase/firestore";
 
 
 const NOT_FOUND_ERROR = 404;
@@ -26,6 +26,21 @@ export const YOUTUBE_QUESTIONS = {
   questionCustom: "Custom question after watching this video",
   multipleQuestion: "Select answer options for question"
 };
+
+export const JEST_GIT_MAP = {
+  react: {
+    id: "React JS",
+    url: "https://github.com/walkwel/temp-test/tree/master/react-jest"
+  },
+  vue: {
+    id: "Vue JS",
+    url: "https://github.com/walkwel/temp-test/tree/master/vue-jest"
+  },
+  vanilla: {
+    id: "Vanilla JS",
+    url: "https://github.com/walkwel/temp-test/tree/master/vanilla-jest"
+  }
+}
 
 export const ACTIVITY_TYPES = {
   text: {
@@ -1426,6 +1441,21 @@ export class PathsService {
       .database()
       .ref("analytics/activityAttempts")
       .push(payload);
+  }
+
+  saveFiles(problem, files) {
+    const collection = problem.version === 1 ? "activityData" : "activities"
+    return firebase
+      .database()
+      .ref(`${collection}/${problem.id}`)
+      .update({ files });
+  }
+
+  fetchJestFiles(activitiyId) {
+      return firebase
+        .ref(`/activityData/${activitiyId}`)
+        .once("value")
+        .then(data => data.val().files);
   }
 }
 

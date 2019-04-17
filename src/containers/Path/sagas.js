@@ -32,7 +32,12 @@ import {
   PATH_OPEN_JEST_SOLUTION_DIALOG,
   pathOpenSolutionDialog,
   PATH_OPEN_SOLUTION_DIALOG,
-  fetchMyPathsActivities
+  fetchMyPathsActivities,
+  SAVE_PROBLEM_TO_DB,
+  saveProblemToDBSuccess,
+  saveProblemToDBFailure,
+  updateProblemInUI,
+  updateJestFiles
 } from "./actions";
 import { ACTIVITY_TYPES, pathsService } from "../../services/paths";
 import {
@@ -42,7 +47,8 @@ import {
   pathActivityDeleteSuccess,
   pathActivityMoveFail,
   pathActivityMoveSuccess,
-  PATHS_JOINED_FETCH_SUCCESS
+  PATHS_JOINED_FETCH_SUCCESS,
+  PATH_ACTIVITY_DIALOG_SHOW
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
 import { codeCombatProfileSelector, pathActivitiesSelector } from "./selectors";
@@ -468,6 +474,36 @@ export function* fetchGithubFilesHandler(action) {
   }
 }
 
+export function* saveFilesToDBHandler(action) {
+  try {
+    yield put(notificationShow("Saving Problem"));
+    yield put(updateProblemInUI(action.files))
+    const res = yield call(
+      pathsService.saveFiles,
+      action.problem,
+      action.files
+    );
+    yield put(saveProblemToDBSuccess(res));
+    yield put(notificationShow("Problem Saved"));
+  } catch (err) {
+    yield put(
+      saveProblemToDBFailure()
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* insertJestFilesHandler(action) {
+  try {
+    if (action.activityInfo.type === "jest" && action.activityInfo.version === 1) {
+      const files = yield call(pathsService.fetchJestFiles, action.activityInfo.id)
+      yield put(updateJestFiles(files))
+    }
+  } catch (err) {
+    yield put(notificationShow(err.message))
+  }
+}
+
 export default [
   function* watchPathOpenRequest() {
     yield takeLatest(PATH_OPEN, pathOpenHandler);
@@ -545,5 +581,11 @@ export default [
   },
   function* watchFetchGithubFilesHandler() {
     yield takeLatest(FETCH_GITHUB_FILES, fetchGithubFilesHandler);
+  },
+  function* watchSaveFilesToDB() {
+    yield takeLatest(SAVE_PROBLEM_TO_DB, saveFilesToDBHandler);
+  },
+  function* watchEditActivity() {
+    yield takeLatest(PATH_ACTIVITY_DIALOG_SHOW, insertJestFilesHandler)
   }
 ];

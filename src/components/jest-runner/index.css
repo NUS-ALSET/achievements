@@ -219,7 +219,7 @@
   border: 0;
   margin-bottom: 2px;
   background: #fff;
-  padding: 20px;
+  padding: 10px;
   font-size: 1.2em;
   font-family: "Gentium Book Basic";
   box-shadow: 4px 4px 0px rgba(0, 0, 0, .1);
@@ -444,7 +444,7 @@
 
 .save-btn{
   position: fixed;
-  top: 0px;
+  top: 10%;
   right: -200px;
   z-index: 99;
   width: 188px;

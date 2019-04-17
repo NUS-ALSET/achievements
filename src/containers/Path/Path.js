@@ -45,7 +45,10 @@ import {
   fetchGithubFiles,
   pathActivityCodeCombatOpen,
   pathOpenJestSolutionDialog,
-  pathClose
+  pathClose,
+  saveProblemToDB,
+  addNewFile,
+  removeFile
 } from "./actions";
 import {
   pathActivityChangeRequest,
@@ -123,7 +126,10 @@ export class Path extends React.Component {
     tasks: PropTypes.any,
     ui: PropTypes.any,
     uid: PropTypes.string,
-    userAchievements: PropTypes.object
+    userAchievements: PropTypes.object,
+    onSaveProblem: PropTypes.func,
+    removeFile: PropTypes.func,
+    addNewFile: PropTypes.func
   };
 
   state = {
@@ -297,7 +303,10 @@ export class Path extends React.Component {
       tasks,
       ui,
       uid,
-      userAchievements
+      userAchievements,
+      onSaveProblem,
+      addNewFile,
+      removeFile
     } = this.props;
 
     if (pathActivities && !pathActivities.path) {
@@ -426,12 +435,16 @@ export class Path extends React.Component {
           taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
         <AddJestSolutionDialog
+          addNewFile={addNewFile}
+          isOwner={pathStatus === PATH_STATUS_OWNER}
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
+          onSaveProblem={onSaveProblem}
           open={
             ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`
           }
           problem={ui.dialog && ui.dialog.value}
+          removeFile={removeFile}
           taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
         <AddGameSolutionDialog
@@ -626,7 +639,10 @@ const mapDispatchToProps = {
   onRequestMoreProblems: pathMoreProblemsRequest,
   onToggleJoinStatus: pathToggleJoinStatusRequest,
   fetchGithubFiles: fetchGithubFiles,
-  openJestActivity: pathOpenJestSolutionDialog
+  openJestActivity: pathOpenJestSolutionDialog,
+  onSaveProblem: saveProblemToDB,
+  addNewFile: addNewFile,
+  removeFile: removeFile
 };
 
 export default compose(
