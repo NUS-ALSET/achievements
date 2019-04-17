@@ -1,5 +1,90 @@
 import firebase from "firebase/app";
 
+export const TASK_TYPES = {
+  jupyter: {
+    id: "jupyter",
+    name: "Jupyter Notebook"
+  },
+  custom: {
+    id: "custom",
+    name: "Custom Task"
+  },
+  customNotebook: {
+    id: "customNotebook",
+    name: "Custom Notebook"
+  }
+};
+
+const DEFAULT_JUPYTER_TASK = {
+  nbformat: 4,
+  nbformat_minor: 0,
+  metadata: {},
+  cells: [
+    {
+      cell_type: "code",
+      metadata: {
+        colab_type: "code",
+        achievements: {
+          title: "Task",
+          editable: true,
+          language_info: {
+            name: "python"
+          },
+          type: "shown"
+        }
+      },
+      source: []
+    }
+  ]
+};
+
+const DEFAULT_CUSTOM_TASK = {
+  nbformat: 4,
+  nbformat_minor: 0,
+  metadata: {},
+  cells: [
+    {
+      cell_type: "code",
+      metadata: {
+        colab_type: "code",
+        achievements: {
+          title: "Hidden",
+          language_info: {
+            name: "python"
+          },
+          type: "hidden"
+        }
+      },
+      source: []
+    },
+    {
+      cell_type: "code",
+      metadata: {
+        colab_type: "code",
+        achievements: {
+          title: "Shown",
+          language_info: {
+            name: "python"
+          },
+          type: "shown"
+        }
+      },
+      source: []
+    },
+    {
+      cell_type: "code",
+      metadata: {
+        colab_type: "code",
+        achievements: {
+          title: "Editable",
+          editable: true,
+          type: "editable"
+        }
+      }
+    }
+  ]
+};
+
 const BASIC_PRESET = {
   blocksCount: 4,
   id: "basic",
@@ -18,6 +103,58 @@ const BASIC_PRESET = {
 };
 
 export class TasksService {
+  getTaskInfo(id, initialTask, changes, preset, response) {
+    const type = changes.type || initialTask.type || preset.type || "custom";
+    let json = changes.json;
+
+    const result = {
+      id,
+      type,
+      name: changes.name || initialTask.name || "",
+      presetId: changes.presetId || initialTask.presetId || "basic"
+    };
+
+    if (initialTask.json) {
+      json = json || JSON.parse(initialTask.json);
+    }
+    if (preset && type === TASK_TYPES.jupyter.id) {
+      json = json || JSON.parse(preset.json);
+    }
+
+    switch (type) {
+      case TASK_TYPES.jupyter.id:
+        json = json || DEFAULT_JUPYTER_TASK;
+        break;
+      case TASK_TYPES.custom.id:
+        // Add required blocks for `custom` Task
+        json = json || DEFAULT_CUSTOM_TASK;
+        result.url = changes.url || initialTask.url || "";
+        break;
+      default:
+    }
+
+    if (json.cells && response && response.cells) {
+      json.cells = json.cells.map((cell, index) =>
+        response
+          ? {
+              ...cell,
+              outputs:
+                response.cells[index] &&
+                response.cells[index].outputs &&
+                response.cells[index].source.join("") === cell.source.join("")
+                  ? [...response.cells[index].outputs]
+                  : []
+            }
+          : cell
+      );
+    }
+
+    return {
+      ...result,
+      json
+    };
+  }
+
   fetchPresets() {
     return firebase
       .database()

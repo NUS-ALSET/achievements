@@ -59,7 +59,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
     }
 
     // Restrict current block index with 0 and max length
-    result = Math.min(result, taskInfo.json.length - 1);
+    result = Math.min(result, taskInfo.json.cells.length - 1);
     result = Math.max(0, result);
     return result;
   };
@@ -73,7 +73,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
           name: "python"
         }
       },
-      cells: taskInfo.json
+      cells: taskInfo.json.cells
         .map(cell => ({
           ...cell,
           source:
@@ -111,7 +111,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
 
     switch (field) {
       case "blockType":
-        json = json.map((cell, index) =>
+        json = json.cells.map((cell, index) =>
           index === blockIndex
             ? {
                 ...cell,
@@ -124,8 +124,8 @@ class JupyterTaskSettingsForm extends React.PureComponent {
       case "blocksCount":
         blocksCount = Number(e.target.value);
         blocksCount = Math.max(blocksCount, 1);
-        for (let i = json.length; i < blocksCount; i += 1) {
-          json.push({
+        for (let i = json.cells.length; i < blocksCount; i += 1) {
+          json.cells.push({
             cell_type: "markdown",
             metadata: { jyputer: {} },
             source: ["New block"],
@@ -249,11 +249,11 @@ class JupyterTaskSettingsForm extends React.PureComponent {
     let currentBlock;
 
     // Pick current block with block index and task JSON
-    currentBlock = taskInfo.json[blockIndex];
+    currentBlock = taskInfo.json.cells[blockIndex];
 
     return (
       <React.Fragment>
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <Toolbar>
             <Button
               className={classes.toolbarButton}
@@ -273,9 +273,13 @@ class JupyterTaskSettingsForm extends React.PureComponent {
           </Toolbar>
         </Grid>
         <Grid item xs={6}>
-          <TextField fullWidth label="Type" select value="jupyter">
-            <MenuItem value="jupyter">Jupyter</MenuItem>
-          </TextField>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Name"
+            onChange={this.onChangeField("name")}
+            value={taskInfo.name || ""}
+          />
         </Grid>
         <Grid item xs={6}>
           <TextField
@@ -291,15 +295,6 @@ class JupyterTaskSettingsForm extends React.PureComponent {
               </MenuItem>
             ))}
           </TextField>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            autoFocus
-            fullWidth
-            label="Name"
-            onChange={this.onChangeField("name")}
-            value={taskInfo.name || ""}
-          />
         </Grid>
         <Grid item xs={6}>
           <TextField

@@ -9,6 +9,8 @@ import withStyles from "@material-ui/core/styles/withStyles";
 import Fab from "@material-ui/core/Fab";
 import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import MenuItem from "@material-ui/core/MenuItem";
+import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Zoom from "@material-ui/core/Zoom";
 
@@ -22,6 +24,9 @@ import JupyterTaskPreviewForm from "../../components/forms/JupyterTaskPreviewFor
 import { taskOpen, taskSaveRequest, taskRunRequest } from "./actions";
 import { sagaInjector } from "../../services/saga";
 import { sagas } from "./sagas";
+import { TASK_TYPES, tasksService } from "../../services/tasks";
+import { CustomTaskSettingsForm } from "../../components/forms/CustomTaskSettingsForm";
+import { CustomTaskPreviewForm } from "../../components/forms/CustomTaskPreviewForm";
 
 const RANDOM_RADIX = 32;
 
@@ -71,36 +76,18 @@ class Task extends React.PureComponent {
     const preset = (presets || []).find(
       preset => preset.id === presetId || task.presetId || "basic"
     );
-    let json;
 
     if (!preset || (match.params.taskId !== "new" && !task.name)) {
       return false;
     }
 
-    json = changes.json || JSON.parse(task.json || preset.json).cells;
-    return {
-      id: match.params.taskId,
-      editable: changes.editable || task.editable || preset.editable || false,
-      hidden: {},
-      isNew: match.params.taskId === "new",
-      name: changes.name || task.name,
-      presetId: changes.presetId || task.presetId || "basic",
-      blocksCount: json.length,
-      type: changes.types || task.type || preset.type || "jupyter",
-      json: json.map((cell, index) =>
-        response
-          ? {
-              ...cell,
-              outputs:
-                response.cells[index] &&
-                response.cells[index].outputs &&
-                response.cells[index].source.join("") === cell.source.join("")
-                  ? [...response.cells[index].outputs]
-                  : []
-            }
-          : cell
-      )
-    };
+    return tasksService.getTaskInfo(
+      match.params.id,
+      task,
+      changes,
+      preset,
+      response
+    );
   };
 
   /**
@@ -144,15 +131,62 @@ class Task extends React.PureComponent {
     json: this.generatePreview(taskInfo, false, this.state.userView)
   });
 
+  getTaskSettingsForm = taskInfo => {
+    switch (taskInfo.type) {
+      case TASK_TYPES.custom.id:
+        return (
+          <CustomTaskSettingsForm
+            onChange={this.onChange}
+            presets={this.props.presets}
+            taskInfo={taskInfo}
+          />
+        );
+      default:
+        return (
+          <JupyterTaskSettingsForm
+            onChange={this.onChange}
+            presets={this.props.presets}
+            taskInfo={taskInfo}
+          />
+        );
+    }
+  };
+
+  getTaskPreviewForm = taskInfo => {
+    const { isRunning, onTaskRunRequest } = this.props;
+    const { isChanged, userView } = this.state;
+    switch (taskInfo.type) {
+      case TASK_TYPES.custom.id:
+        return <CustomTaskPreviewForm taskInfo={taskInfo} />;
+      default:
+        return (
+          <JupyterTaskPreviewForm
+            isChanged={isChanged}
+            isRunning={isRunning}
+            onChange={this.onChange}
+            onTaskRunRequest={onTaskRunRequest}
+            taskInfo={taskInfo}
+            userView={userView}
+          />
+        );
+    }
+  };
+
+  onChangeField = field => e =>
+    this.setState({
+      isChanged: true,
+      changes: { ...this.state.changes, [field]: e.target.value }
+    });
+
   onChange = state => this.setState(state);
 
   onSave = () => {
     const taskInfo = this.getTaskInfo();
     this.props.onTaskSaveRequest(this.props.match.params.taskId, {
       ...this.state.changes,
-      presetId: taskInfo.presetId,
+      name: this.state.changes.name || taskInfo.name,
       type: taskInfo.type,
-      json: JSON.stringify(this.generatePreview(taskInfo, false))
+      json: taskInfo.json
     });
     this.setState({
       isChanged: false
@@ -160,8 +194,8 @@ class Task extends React.PureComponent {
   };
 
   render() {
-    const { classes, isRunning, onTaskRunRequest, presets, task } = this.props;
-    const { isChanged, userView } = this.state;
+    const { classes, isRunning, task } = this.props;
+    const { isChanged } = this.state;
     const taskInfo = this.getTaskInfo();
 
     if (!taskInfo) {
@@ -188,11 +222,22 @@ class Task extends React.PureComponent {
             <Grid item xs={12}>
               <Typography variant="h6">Task settings</Typography>
             </Grid>
-            <JupyterTaskSettingsForm
-              onChange={this.onChange}
-              presets={presets}
-              taskInfo={taskInfo}
-            />
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                label="Type"
+                onChange={this.onChangeField("type")}
+                select
+                value={taskInfo.type}
+              >
+                {Object.keys(TASK_TYPES).map(id => (
+                  <MenuItem key={id} value={id}>
+                    {TASK_TYPES[id].name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            {this.getTaskSettingsForm(taskInfo)}
           </Grid>
           <Grid
             className={classes.mainColumn}
@@ -205,14 +250,7 @@ class Task extends React.PureComponent {
             <Grid item xs={12}>
               <Typography variant="h6">Preview settings</Typography>
             </Grid>
-            <JupyterTaskPreviewForm
-              isChanged={isChanged}
-              isRunning={isRunning}
-              onChange={this.onChange}
-              onTaskRunRequest={onTaskRunRequest}
-              taskInfo={taskInfo}
-              userView={userView}
-            />
+            {this.getTaskPreviewForm(taskInfo)}
           </Grid>
         </Grid>
         <Zoom in={isChanged && !isRunning}>

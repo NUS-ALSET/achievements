@@ -53,7 +53,7 @@ class JupyterTaskPreviewForm extends React.PureComponent {
           name: "python"
         }
       },
-      cells: taskInfo.json
+      cells: taskInfo.json.cells
         .map(cell => ({
           ...cell,
           source:
