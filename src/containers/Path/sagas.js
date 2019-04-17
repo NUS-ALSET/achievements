@@ -495,7 +495,7 @@ export function* saveFilesToDBHandler(action) {
 
 export function* insertJestFilesHandler(action) {
   try {
-    if (action.activityInfo.type === "jest" && action.activityInfo.version === 1) {
+    if (action.activityInfo && action.activityInfo.type === "jest" && action.activityInfo.version === 1) {
       const files = yield call(pathsService.fetchJestFiles, action.activityInfo.id)
       yield put(updateJestFiles(files))
     }
