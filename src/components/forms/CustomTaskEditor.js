@@ -38,9 +38,18 @@ export class CustomTaskEditor extends React.PureComponent {
     return (
       <Grid container item spacing={8} xs={12}>
         <Grid item xs={7}>
-          <Typography style={styles.blockTitle} variant="subtitle1">
-            {block.metadata.achievements.title}
-          </Typography>
+          {onRemove ? (
+            <TextField
+              fullWidth
+              label="Title"
+              onChange={onChange("title", block)}
+              value={block.metadata.achievements.title}
+            />
+          ) : (
+            <Typography style={styles.blockTitle} variant="subtitle1">
+              {block.metadata.achievements.title}
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={4}>
           <TextField
@@ -48,9 +57,11 @@ export class CustomTaskEditor extends React.PureComponent {
             label="Editor mode"
             onChange={onChange("mode", block)}
             select
-            value={block.metadata.achievements.language_info.name}
+            value={block.metadata.language_info.name}
           >
-            <MenuItem value="markdown">Markdown</MenuItem>
+            {!["editable", "hidden"].includes(
+              block.metadata.achievements.type
+            ) && <MenuItem value="markdown">Markdown</MenuItem>}
             <MenuItem value="javascript">JavaScript</MenuItem>
             <MenuItem value="python">Python</MenuItem>
           </TextField>
@@ -67,7 +78,7 @@ export class CustomTaskEditor extends React.PureComponent {
             editorProps={{ $blockScrolling: true }}
             maxLines={Infinity}
             minLines={8}
-            mode={block.metadata.achievements.language_info.name}
+            mode={block.metadata.language_info.name}
             onChange={onChange("content", block)}
             theme="github"
             value={block.source.join("\n")}

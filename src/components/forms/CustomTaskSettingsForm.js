@@ -10,9 +10,10 @@ import TextField from "@material-ui/core/TextField";
 import AddIcon from "@material-ui/icons/Add";
 
 import { CustomTaskEditor } from "./CustomTaskEditor";
+import { MenuItem } from "@material-ui/core";
 
-// Every custom task has to have `hidden` and `shown` blocks at least
-const CUSTOM_REQUIRED_BLOCKS_COUNT = 2;
+// Every custom task has to have `editable`, `hidden` and `shown` blocks at least
+const CUSTOM_REQUIRED_BLOCKS_COUNT = 3;
 
 export class CustomTaskSettingsForm extends React.PureComponent {
   static propTypes = {
@@ -21,22 +22,43 @@ export class CustomTaskSettingsForm extends React.PureComponent {
   };
   state = {
     isChanged: false,
-    changes: {}
+    changes: {
+      type: "custom"
+    }
   };
   render() {
     const { taskInfo } = this.props;
     return (
       <React.Fragment>
         <Grid item xs={6}>
-          <TextField fullWidth label="preset" value={taskInfo.preset || ""} />
+          <TextField
+            fullWidth
+            label="Name"
+            onChange={this.onChangeField("name")}
+            value={taskInfo.name || ""}
+          />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <TextField
             fullWidth
             label="URL"
             onChange={this.onChangeField("url")}
             value={taskInfo.url || ""}
           />
+        </Grid>
+        <Grid item xs={6}>
+          <TextField
+            fullWidth
+            label="Fallback mode"
+            onChange={this.onChangeField("fallback")}
+            select
+            value={taskInfo.fallback || "ipynb"}
+          >
+            <MenuItem value="ipynb">ipynb</MenuItem>
+            <MenuItem value="json">JSON</MenuItem>
+            <MenuItem value="html">HTML</MenuItem>
+            <MenuItem value="text">Text</MenuItem>
+          </TextField>
         </Grid>
         {taskInfo.json.cells.map(block => (
           <CustomTaskEditor
@@ -70,6 +92,23 @@ export class CustomTaskSettingsForm extends React.PureComponent {
 
     let json;
     switch (field) {
+      case "title":
+        json = { ...taskInfo.json };
+        json.cells = json.cells.map(block =>
+          block === changedBlock
+            ? {
+                ...block,
+                metadata: {
+                  ...block.metadata,
+                  achievements: {
+                    ...block.metadata.achievements,
+                    title: value
+                  }
+                }
+              }
+            : block
+        );
+        break;
       case "content":
         json = { ...taskInfo.json };
         json.cells = json.cells.map(block =>

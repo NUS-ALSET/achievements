@@ -8,10 +8,6 @@ export const TASK_TYPES = {
   custom: {
     id: "custom",
     name: "Custom Task"
-  },
-  customNotebook: {
-    id: "customNotebook",
-    name: "Custom Notebook"
   }
 };
 
@@ -24,16 +20,16 @@ const DEFAULT_JUPYTER_TASK = {
       cell_type: "code",
       metadata: {
         colab_type: "code",
+        language_info: {
+          name: "python"
+        },
         achievements: {
           title: "Task",
           editable: true,
-          language_info: {
-            name: "python"
-          },
           type: "shown"
         }
       },
-      source: []
+      source: [""]
     }
   ]
 };
@@ -41,17 +37,36 @@ const DEFAULT_JUPYTER_TASK = {
 const DEFAULT_CUSTOM_TASK = {
   nbformat: 4,
   nbformat_minor: 0,
-  metadata: {},
+  metadata: {
+    language_info: {
+      name: "python"
+    }
+  },
   cells: [
+    {
+      cell_type: "code",
+      language_info: {
+        name: "python"
+      },
+      metadata: {
+        colab_type: "code",
+        achievements: {
+          title: "Editable Code",
+          editable: true,
+          type: "editable"
+        }
+      },
+      source: []
+    },
     {
       cell_type: "code",
       metadata: {
         colab_type: "code",
+        language_info: {
+          name: "python"
+        },
         achievements: {
-          title: "Hidden",
-          language_info: {
-            name: "python"
-          },
+          title: "Hidden Code",
           type: "hidden"
         }
       },
@@ -62,7 +77,7 @@ const DEFAULT_CUSTOM_TASK = {
       metadata: {
         colab_type: "code",
         achievements: {
-          title: "Shown",
+          title: "Shown Code/Text",
           language_info: {
             name: "python"
           },
@@ -70,17 +85,6 @@ const DEFAULT_CUSTOM_TASK = {
         }
       },
       source: []
-    },
-    {
-      cell_type: "code",
-      metadata: {
-        colab_type: "code",
-        achievements: {
-          title: "Editable",
-          editable: true,
-          type: "editable"
-        }
-      }
     }
   ]
 };
@@ -115,7 +119,7 @@ export class TasksService {
     };
 
     if (initialTask.json) {
-      json = json || JSON.parse(initialTask.json);
+      json = json || initialTask.json;
     }
     if (preset && type === TASK_TYPES.jupyter.id) {
       json = json || JSON.parse(preset.json);
@@ -129,11 +133,29 @@ export class TasksService {
         // Add required blocks for `custom` Task
         json = json || DEFAULT_CUSTOM_TASK;
         result.url = changes.url || initialTask.url || "";
+        result.fallback = changes.fallback || initialTask.fallback || "ipynb";
         break;
       default:
     }
 
-    if (json.cells && response && response.cells) {
+    if (!json.cells) {
+      json = { ...json, cells: [] };
+    }
+
+    // Mutable code. Just validation, shouldn't affect anything
+    json.metadata = json.metadata || {};
+    json.metadata.language_info = json.metadata.language_info || {
+      name: "python"
+    };
+    for (const cell of json.cells) {
+      cell.metadata = cell.metadata || {};
+      cell.metadata.achievements = cell.metadata.achievements || {};
+      cell.metadata.language_info = cell.metadata.language_info || {
+        name: "python"
+      };
+      cell.outputs = cell.outputs || [];
+    }
+    if (response && response.cells) {
       json.cells = json.cells.map((cell, index) =>
         response
           ? {
@@ -232,16 +254,21 @@ export class TasksService {
         .set({
           owner: uid,
           taskKey: answerKey,
-          solution: taskInfo,
+          solution: JSON.stringify(taskInfo.json),
           open: new Date().getTime()
         });
     });
   }
 
   validateTask(taskInfo) {
+    let editableExists = false;
     switch (taskInfo.type) {
       case "jupyter":
-        if (taskInfo.editable === undefined)
+        for (const cell of taskInfo.json.cells) {
+          editableExists =
+            editableExists || cell.metadata.achievements.editable;
+        }
+        if (!editableExists)
           throw new Error("Missing required `editable` field");
         break;
       default:

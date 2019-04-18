@@ -8,7 +8,8 @@ import {
   taskLoadSuccess,
   TASK_RUN_REQUEST,
   taskRunSuccess,
-  taskOpen
+  taskOpen,
+  taskRunFail
 } from "./actions";
 import { tasksService } from "../../services/tasks";
 import { notificationShow } from "../Root/actions";
@@ -25,9 +26,10 @@ export function* taskOpenHandler(action) {
 export function* taskRunRequestHandler(action) {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
-    const solution = yield call(tasksService.runTask, uid, action.taskData);
+    const solution = yield call(tasksService.runTask, uid, action.taskInfo);
     yield put(taskRunSuccess(action.taskId, solution));
   } catch (err) {
+    yield put(taskRunFail(action.taskId, err.message));
     yield put(notificationShow(err.message));
   }
 }

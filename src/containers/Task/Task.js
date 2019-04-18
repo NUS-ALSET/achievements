@@ -157,7 +157,16 @@ class Task extends React.PureComponent {
     const { isChanged, userView } = this.state;
     switch (taskInfo.type) {
       case TASK_TYPES.custom.id:
-        return <CustomTaskPreviewForm taskInfo={taskInfo} />;
+        return (
+          <CustomTaskPreviewForm
+            isChanged={isChanged}
+            isRunning={isRunning}
+            onChange={this.onChange}
+            onTaskRunRequest={onTaskRunRequest}
+            taskInfo={taskInfo}
+            userView={userView}
+          />
+        );
       default:
         return (
           <JupyterTaskPreviewForm

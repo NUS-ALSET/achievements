@@ -84,11 +84,7 @@ class JupyterTaskPreviewForm extends React.PureComponent {
   };
 
   onRunClick = taskInfo => () => {
-    this.props.onTaskRunRequest(
-      taskInfo.id,
-      taskInfo.type,
-      JSON.stringify(this.generatePreview(taskInfo, true))
-    );
+    this.props.onTaskRunRequest(taskInfo.id, taskInfo);
     this.setState({
       isChanged: true
     });

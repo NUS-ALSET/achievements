@@ -21,7 +21,12 @@ class AceEditor extends React.PureComponent {
 
   render() {
     const { ...props } = this.props;
-    return <ReactAce {...props} />;
+    return (
+      <ReactAce
+        {...props}
+        editorProps={props.editorProps || { $blockScrolling: true }}
+      />
+    );
   }
 }
 
