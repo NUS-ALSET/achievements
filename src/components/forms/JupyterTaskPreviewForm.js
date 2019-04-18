@@ -53,7 +53,7 @@ class JupyterTaskPreviewForm extends React.PureComponent {
           name: "python"
         }
       },
-      cells: taskInfo.json
+      cells: taskInfo.json.cells
         .map(cell => ({
           ...cell,
           source:
@@ -84,11 +84,7 @@ class JupyterTaskPreviewForm extends React.PureComponent {
   };
 
   onRunClick = taskInfo => () => {
-    this.props.onTaskRunRequest(
-      taskInfo.id,
-      taskInfo.type,
-      JSON.stringify(this.generatePreview(taskInfo, true))
-    );
+    this.props.onTaskRunRequest(taskInfo.id, taskInfo);
     this.setState({
       isChanged: true
     });

@@ -10,6 +10,8 @@ import ReactAce from "react-ace";
 
 // These imports make this module required to detach
 import "brace/mode/python";
+import "brace/mode/javascript";
+import "brace/mode/markdown";
 import "brace/theme/github";
 
 class AceEditor extends React.PureComponent {
@@ -19,7 +21,12 @@ class AceEditor extends React.PureComponent {
 
   render() {
     const { ...props } = this.props;
-    return <ReactAce {...props} />;
+    return (
+      <ReactAce
+        {...props}
+        editorProps={props.editorProps || { $blockScrolling: true }}
+      />
+    );
   }
 }
 
