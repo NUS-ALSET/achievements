@@ -51,7 +51,11 @@ export class CustomTaskEditor extends React.PureComponent {
             </Typography>
           )}
         </Grid>
-        <Grid item xs={4}>
+        <Grid
+          id={`custom-task-mode-${block.metadata.achievements.type}`}
+          item
+          xs={4}
+        >
           <TextField
             fullWidth
             label="Editor mode"
@@ -73,7 +77,11 @@ export class CustomTaskEditor extends React.PureComponent {
             </IconButton>
           )}
         </Grid>
-        <Grid item xs={12}>
+        <Grid
+          id={`custom-task-editor-${block.metadata.achievements.type}`}
+          item
+          xs={12}
+        >
           <AceEditor
             editorProps={{ $blockScrolling: true }}
             maxLines={Infinity}

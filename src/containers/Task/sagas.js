@@ -26,7 +26,12 @@ export function* taskOpenHandler(action) {
 export function* taskRunRequestHandler(action) {
   try {
     const uid = yield select(state => state.firebase.auth.uid);
-    const solution = yield call(tasksService.runTask, uid, action.taskInfo);
+    const solution = yield call(
+      [tasksService, tasksService.runTask],
+      uid,
+      action.taskInfo,
+      action.solution
+    );
     yield put(taskRunSuccess(action.taskId, solution));
   } catch (err) {
     yield put(taskRunFail(action.taskId, err.message));

@@ -216,7 +216,7 @@ export class TasksService {
       .then(tasks => Object.keys(tasks).map(field => tasks[field]));
   }
 
-  runTask(uid, taskInfo) {
+  runJupyterTask(uid, taskInfo) {
     return new Promise((resolve, reject) => {
       const answerPath = "/jupyterSolutionsQueue/responses/";
       const answerKey = firebase
@@ -260,6 +260,39 @@ export class TasksService {
     });
   }
 
+  runCustomTask(uid, taskInfo, solution) {
+    if (uid) {
+      return fetch(taskInfo.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ...taskInfo.json,
+          cells: taskInfo.json.cells.map(cell =>
+            cell.metadata.achievements.type === "editable"
+              ? {
+                  ...cell,
+                  source: [solution]
+                }
+              : cell
+          )
+        })
+      }).then(response => response.json());
+    }
+  }
+
+  runTask(uid, taskInfo, solution) {
+    switch (taskInfo.type) {
+      case TASK_TYPES.jupyter.id:
+        return this.runJupyterTask(uid, taskInfo);
+      case TASK_TYPES.custom.id:
+        return this.runCustomTask(uid, taskInfo, solution);
+      default:
+        return Promise.resolve();
+    }
+  }
+
   validateTask(taskInfo) {
     let editableExists = false;
     switch (taskInfo.type) {
@@ -278,6 +311,7 @@ export class TasksService {
 
   saveTask(uid, taskId, taskInfo) {
     this.validateTask(taskInfo);
+
     if (taskId === "new") {
       taskId = firebase
         .database()
