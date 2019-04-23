@@ -3,6 +3,7 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import Loadable from "react-loadable";
+import ReactJoyride, { STATUS } from "react-joyride";
 
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -25,10 +26,9 @@ const Markdown = Loadable({
 });
 
 const styles = {
-  toolbar: {
-    display: "flex",
-    justifyContent: "space-between"
-  }
+  toolbar: { display: "flex", justifyContent: "space-between" },
+  paper: { margin: "24px 2px", padding: "2.5%" },
+  output: { color: "red" }
 };
 
 export class CustomTaskPreviewForm extends React.PureComponent {
@@ -41,15 +41,51 @@ export class CustomTaskPreviewForm extends React.PureComponent {
   };
 
   state = {
-    solution: ""
+    solution: "",
+    runTour: false,
+    steps: [
+      {
+        target: "#custom-task-name",
+        content: "Name for new task"
+      },
+      {
+        target: "#custom-task-url",
+        content: "URL of custom task service"
+      },
+      {
+        target: "#custom-task-fallback",
+        content: "Format of custom task service output"
+      },
+      {
+        target: "#custom-task-mode-editable",
+        content: "Mode of block. Editable and hidden blocks could be only code"
+      },
+      {
+        target: "#custom-task-editor-editable",
+        content: "Default content of block available to edit by user"
+      },
+      {
+        target: "#custom-task-editor-hidden",
+        content:
+          "Block with hidden code. Usually used to validate user's solution"
+      },
+      {
+        target: "#custom-task-editor-shown",
+        content: "Displayed for user block"
+      },
+      {
+        target: "#custom-task-add-button",
+        content: "Click to add more displayed for user blocks"
+      }
+    ]
   };
 
-  onUserViewChange = e => {
-    this.setState({ userView: e.target.checked });
-    this.props.onChange({ userView: e.target.checked });
-  };
-
+  onJoyrideCallback = data =>
+    [STATUS.FINISHED, STATUS.SKIPPED].includes(data.status) &&
+    this.setState({ runTour: false });
   onSolutionChange = solution => this.setState({ solution });
+
+  onStartTour = () => this.setState({ runTour: true });
 
   onTaskRunRequest = () =>
     this.props.onTaskRunRequest(
@@ -58,9 +94,14 @@ export class CustomTaskPreviewForm extends React.PureComponent {
       this.state.solution
     );
 
+  onUserViewChange = e => {
+    this.setState({ userView: e.target.checked });
+    this.props.onChange({ userView: e.target.checked });
+  };
+
   render() {
     const { isRunning, taskInfo, userView } = this.props;
-    const { solution } = this.state;
+    const { runTour, solution, steps } = this.state;
 
     if (isRunning) {
       return (
@@ -71,6 +112,20 @@ export class CustomTaskPreviewForm extends React.PureComponent {
     }
     return (
       <React.Fragment>
+        <ReactJoyride
+          callback={this.onJoyrideCallback}
+          continuous
+          run={runTour}
+          scrollToFirstStep
+          showProgress
+          showSkipButton
+          steps={steps}
+          styles={{
+            options: {
+              zIndex: 10000
+            }
+          }}
+        />
         <Grid item style={styles.toolbar} xs={12}>
           <FormControlLabel
             control={
@@ -79,87 +134,92 @@ export class CustomTaskPreviewForm extends React.PureComponent {
             label="User view"
           />
 
-          <Button>
+          <Button onClick={this.onStartTour}>
             <Typography align="right" variant="body1">
               Help
             </Typography>
             <HelpIcon style={{ marginLeft: "10px" }} />
           </Button>
         </Grid>
-        {taskInfo.json.cells
-          .filter(block =>
-            userView
-              ? !["hidden", "editable"].includes(
-                  block.metadata.achievements.type
-                )
-              : block.metadata.achievements.type !== "editable"
-          )
-          .map(block => (
-            <Grid
-              item
-              key={
-                block.metadata.achievements.type +
-                block.metadata.achievements.index
-              }
-              xs={12}
-            >
-              {block.cell_type === "text" ? (
-                <Markdown source={block.source.join("\n")} />
-              ) : (
-                <AceEditor
-                  maxLines={Infinity}
-                  minLines={3}
-                  mode={block.metadata.language_info.name}
-                  readOnly={true}
-                  setOptions={{ showLineNumbers: false }}
-                  showGutter={true}
-                  theme="github"
-                  value={block.source.join("\n")}
-                  width={"100%"}
-                />
-              )}
-            </Grid>
-          ))}
-        {userView &&
-          taskInfo.json.cells
-            .filter(block => block.metadata.achievements.type === "editable")
+        <Grid item xs={12}>
+          {taskInfo.json.cells
+            .filter(block =>
+              userView
+                ? block.source.join("") &&
+                  !["hidden", "editable"].includes(
+                    block.metadata.achievements.type
+                  )
+                : block.metadata.achievements.type !== "editable"
+            )
             .map(block => (
-              <Grid item key="there-should-be-only-one" xs={12}>
-                <Paper style={{ margin: "24px 2px", padding: "2.5%" }}>
-                  <Typography color="textSecondary">
-                    Please first read the Path Activity above. <br />
-                    Click the RUN button to test your solution.
-                  </Typography>
-                  <Grid container spacing={8}>
-                    <Grid item xs={8}>
-                      <Typography variant="h6">
-                        Edit Your Solution Here
-                      </Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                      <Button
-                        color="primary"
-                        disabled={!solution}
-                        onClick={this.onTaskRunRequest}
-                        variant="contained"
-                      >
-                        Run
-                      </Button>
-                    </Grid>
-                  </Grid>
+              <Paper
+                key={
+                  block.metadata.achievements.type +
+                  block.metadata.achievements.index
+                }
+                style={styles.paper}
+              >
+                {block.cell_type === "text" ? (
+                  <Markdown source={block.source.join("\n")} />
+                ) : (
                   <AceEditor
                     maxLines={Infinity}
                     minLines={3}
                     mode={block.metadata.language_info.name}
-                    onChange={this.onSolutionChange}
+                    readOnly={true}
                     setOptions={{ showLineNumbers: false }}
                     showGutter={true}
                     theme="github"
-                    value={solution || block.source.join("\n") || ""}
+                    value={block.source.join("\n")}
                     width={"100%"}
                   />
-                </Paper>
-              </Grid>
+                )}
+                {block.metadata.achievements.type === "shown" &&
+                  block.outputs &&
+                  !!block.outputs.length && (
+                    <pre style={styles.output}>{block.outputs.join("\n")}</pre>
+                  )}
+              </Paper>
+            ))}
+        </Grid>
+        {userView &&
+          taskInfo.json.cells
+            .filter(block => block.metadata.achievements.type === "editable")
+            .map(block => (
+              <Paper key="there-should-be-only-one" style={styles.paper}>
+                <Typography color="textSecondary">
+                  Please first read the Path Activity above. <br />
+                  Click the RUN button to test your solution.
+                </Typography>
+                <Grid container spacing={8}>
+                  <Grid item xs={8}>
+                    <Typography variant="h6">
+                      Edit Your Solution Here
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <Button
+                      color="primary"
+                      disabled={!solution}
+                      onClick={this.onTaskRunRequest}
+                      variant="contained"
+                    >
+                      Run
+                    </Button>
+                  </Grid>
+                </Grid>
+                <AceEditor
+                  maxLines={Infinity}
+                  minLines={3}
+                  mode={block.metadata.language_info.name}
+                  onChange={this.onSolutionChange}
+                  setOptions={{ showLineNumbers: false }}
+                  showGutter={true}
+                  theme="github"
+                  value={solution || block.source.join("\n") || ""}
+                  width={"100%"}
+                />
+              </Paper>
             ))}
       </React.Fragment>
     );

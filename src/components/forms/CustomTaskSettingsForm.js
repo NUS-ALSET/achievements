@@ -28,11 +28,13 @@ export class CustomTaskSettingsForm extends React.PureComponent {
   };
   render() {
     const { taskInfo } = this.props;
+
     return (
       <React.Fragment>
         <Grid item xs={6}>
           <TextField
             fullWidth
+            id="custom-task-name"
             label="Name"
             onChange={this.onChangeField("name")}
             value={taskInfo.name || ""}
@@ -41,12 +43,13 @@ export class CustomTaskSettingsForm extends React.PureComponent {
         <Grid item xs={6}>
           <TextField
             fullWidth
+            id="custom-task-url"
             label="URL"
             onChange={this.onChangeField("url")}
             value={taskInfo.url || ""}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid id="custom-task-fallback" item xs={6}>
           <TextField
             fullWidth
             label="Fallback mode"
@@ -75,7 +78,7 @@ export class CustomTaskSettingsForm extends React.PureComponent {
             }
           />
         ))}
-        <Button onClick={this.onAddBlock}>
+        <Button id="custom-task-add-button" onClick={this.onAddBlock}>
           Add more blocks <AddIcon />
         </Button>
       </React.Fragment>
@@ -129,11 +132,8 @@ export class CustomTaskSettingsForm extends React.PureComponent {
                 cell_type: value === "markdown" ? "text" : "code",
                 metadata: {
                   ...block.metadata,
-                  achievements: {
-                    ...block.metadata.achievements,
-                    language_info: {
-                      name: value
-                    }
+                  language_info: {
+                    name: value
                   }
                 }
               }
