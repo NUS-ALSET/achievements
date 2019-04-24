@@ -1,7 +1,6 @@
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
 
-const firestore = admin.firestore();
 
 const fetchUserJSON = (data, taskKey, uid) => {
   return Promise.all([
@@ -37,7 +36,7 @@ const fetchUserJSON = (data, taskKey, uid) => {
         .equalTo(uid)
         .once("value")
         .then(snap => snap.val()),
-    firestore.collection("logged_events")
+    admin.firestore().collection("logged_events")
         .where("uid", "==", uid)
         .get()
         .then(querySnapshot => {

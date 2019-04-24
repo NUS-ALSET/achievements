@@ -198,7 +198,7 @@ class Account extends React.PureComponent {
 
   downloadData = () => {
     download(
-      JSON.stringify(this.props.userJSON.data),
+      JSON.stringify(this.props.userJSON.data, null, 2),
       "user-achievements.json",
       "text/plain"
     );
