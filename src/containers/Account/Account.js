@@ -55,7 +55,6 @@ import { withRouter } from "react-router-dom";
 import { getDisplayName, getProfileData } from "./selectors";
 import JoinedPathCard from "../../components/cards/JoinedPathCard";
 import { Button } from "@material-ui/core";
-import download from "downloadjs";
 
 const styles = theme => ({
   card: {
@@ -109,15 +108,6 @@ class Account extends React.PureComponent {
 
   componentDidMount() {
     this.props.accountOpen(this.props.match.params.accountId);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      Object.keys(this.props.userJSON).length !==
-      Object.keys(prevProps.userJSON).length
-    ) {
-      this.downloadData();
-    }
   }
 
   addExternalProfileRequest = externalProfile => {
@@ -192,17 +182,9 @@ class Account extends React.PureComponent {
     this.props.profileUpdateDataRequest(field, value);
 
   fetchUserData = () => {
-    if (Object.keys(this.props.userJSON).length) this.downloadData();
-    else this.props.fetchUserData();
+    this.props.fetchUserData();
   };
 
-  downloadData = () => {
-    download(
-      JSON.stringify(this.props.userJSON.data, null, 2),
-      "user-achievements.json",
-      "text/plain"
-    );
-  };
   render() {
     const {
       achievementsRefreshingInProgress,
