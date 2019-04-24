@@ -1,6 +1,8 @@
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
 
+const firestore = admin.firestore();
+
 const fetchUserJSON = (data, taskKey, uid) => {
   return Promise.all([
     admin
@@ -27,10 +29,27 @@ const fetchUserJSON = (data, taskKey, uid) => {
       .database()
       .ref("/problemSolutions/")
       .once("value")
-      .then(snap => snap.val())
+      .then(snap => snap.val()),
+    admin
+      .database()
+      .ref("/analytics/activityAttempts")
+        .orderByChild("userKey")
+        .equalTo(uid)
+        .once("value")
+        .then(snap => snap.val()),
+    firestore.collection("logged_events")
+        .where("uid", "==", uid)
+        .get()
+        .then(querySnapshot => {
+            const allActions = []
+            querySnapshot.forEach(function(doc) {
+                allActions.push({[doc.id]:doc.data()});
+            });
+            return allActions;
+        })
   ])
   .then(
-    ([userData, userAchievements, userPrivate, completedActivities, solutions]) => {
+    ([userData, userAchievements, userPrivate, completedActivities, solutions, activityAttempts, loggedEvents]) => {
             let problemSolutions = solutions;
             const userSolutions = Object.keys(problemSolutions).reduce((acc, activityID) => {
               const propIsEmpty = !Object.keys(problemSolutions[activityID]).length;
@@ -53,7 +72,7 @@ const fetchUserJSON = (data, taskKey, uid) => {
           .set({
             owner: uid,
             data: {
-              userData, userAchievements, userPrivate, completedActivities, solutions
+              userData, userAchievements, userPrivate, completedActivities, solutions, activityAttempts, loggedEvents
             }
           })
     },
