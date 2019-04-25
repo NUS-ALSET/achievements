@@ -1,5 +1,7 @@
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
+const MAX_CHAR_IN_ACTION = 2000;
+const MAX_LOGGED_EVENTS = 500;
 
 
 const fetchUserJSON = (data, taskKey, uid) => {
@@ -32,53 +34,89 @@ const fetchUserJSON = (data, taskKey, uid) => {
     admin
       .database()
       .ref("/analytics/activityAttempts")
-        .orderByChild("userKey")
-        .equalTo(uid)
-        .once("value")
-        .then(snap => snap.val()),
-    admin.firestore().collection("logged_events")
-        .where("uid", "==", uid)
-        .get()
-        .then(querySnapshot => {
-            const allActions = []
-            querySnapshot.forEach(function(doc) {
-                allActions.push({[doc.id]:doc.data()});
-            });
-            return allActions;
-        })
+      .orderByChild("userKey")
+      .equalTo(uid)
+      .once("value")
+      .then(snap => snap.val()),
+    admin
+      .firestore()
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .orderBy("createdAt", "desc")
+      .limit(MAX_LOGGED_EVENTS)
+      .get()
+      .then(querySnapshot => {
+        const allActions = [];
+        querySnapshot.forEach(function(doc) {
+          allActions.push({ [doc.id]: doc.data() });
+        });
+        return allActions;
+      })
   ])
-  .then(
-    ([userData, userAchievements, userPrivate, completedActivities, solutions, activityAttempts, loggedEvents]) => {
-            let problemSolutions = solutions;
-            const userSolutions = Object.keys(problemSolutions).reduce((acc, activityID) => {
-              const propIsEmpty = !Object.keys(problemSolutions[activityID]).length;
-              let singleActivityData;
-              if (!propIsEmpty) {
-                singleActivityData = !propIsEmpty && Object.keys(problemSolutions[activityID]).reduce((acc2, userID) => {
-                  if (userID === uid) {
-                    acc2["answers"] = problemSolutions[activityID][userID]
-                  }
-                  return acc2;
-                }, {})
-              }
-              if (Object.keys(singleActivityData).length) (function() {acc[activityID] = singleActivityData})();
-              return acc;
-            }, {})
-            solutions = userSolutions;
-          admin
+    .then(
+      ([
+        userData,
+        userAchievements,
+        userPrivate,
+        completedActivities,
+        solutions,
+        activityAttempts,
+        loggedEvents
+      ]) => {
+        let problemSolutions = solutions;
+        const fileredEvents = loggedEvents.map(event=>{
+          const key = Object.keys(event)[0];
+          if (key && (event[key].otherActionData || "").length>MAX_CHAR_IN_ACTION){
+            event[key].otherActionData = "action data is too large to download";
+          }
+          return event;
+        })
+        const userSolutions = Object.keys(problemSolutions).reduce(
+          (acc, activityID) => {
+            const propIsEmpty = !Object.keys(problemSolutions[activityID])
+              .length;
+            let singleActivityData;
+            if (!propIsEmpty) {
+              singleActivityData =
+                !propIsEmpty &&
+                Object.keys(problemSolutions[activityID]).reduce(
+                  (acc2, userID) => {
+                    if (userID === uid) {
+                      acc2["answers"] = problemSolutions[activityID][userID];
+                    }
+                    return acc2;
+                  },
+                  {}
+                );
+            }
+            if (Object.keys(singleActivityData).length)
+              (function() {
+                acc[activityID] = singleActivityData;
+              })();
+            return acc;
+          },
+          {}
+        );
+        solutions = userSolutions;
+        admin
           .database()
           .ref(`/fetchUserJSONQueue/responses/${taskKey}`)
           .set({
             owner: uid,
             data: {
-              userData, userAchievements, userPrivate, completedActivities, solutions, activityAttempts, loggedEvents
+              userData,
+              userAchievements,
+              userPrivate,
+              completedActivities,
+              solutions,
+              activityAttempts,
+              loggedEvents:fileredEvents
             }
-          })
-    },
-    err => console.log(err)
-  );
-}
-
+          });
+      }
+    )
+    .catch(err => console.log(err));
+};
 
 exports.handler = fetchUserJSON;
 
@@ -86,9 +124,7 @@ exports.queueHandler = () => {
   const queue = new Queue(
     admin.database().ref("/fetchUserJSONQueue"),
     (data, progress, resolve) =>
-    fetchUserJSON(data, data.taskKey, data.owner).then(() =>
-        resolve()
-      )
+      fetchUserJSON(data, data.taskKey, data.owner).then(() => resolve())
   );
   queue.addWorker();
 };
