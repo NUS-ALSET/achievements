@@ -55,7 +55,8 @@
         ".read": true,
         "$attemptKey": {
           ".write": "newData.child('userKey').val() == auth.uid"
-        }
+        },
+        ".indexOn": ["userKey"]
       },
       "jupyterSolutions": {
         ".read": true
