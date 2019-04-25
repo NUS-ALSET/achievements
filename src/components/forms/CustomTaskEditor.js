@@ -61,7 +61,7 @@ export class CustomTaskEditor extends React.PureComponent {
             label="Editor mode"
             onChange={onChange("mode", block)}
             select
-            value={block.metadata.language_info.name}
+            value={block.metadata.achievements.language_info.name}
           >
             {!["editable", "hidden"].includes(
               block.metadata.achievements.type
@@ -86,7 +86,7 @@ export class CustomTaskEditor extends React.PureComponent {
             editorProps={{ $blockScrolling: true }}
             maxLines={Infinity}
             minLines={8}
-            mode={block.metadata.language_info.name}
+            mode={block.metadata.achievements.language_info.name}
             onChange={onChange("content", block)}
             theme="github"
             value={block.source.join("\n")}

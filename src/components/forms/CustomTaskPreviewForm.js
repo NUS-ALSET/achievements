@@ -165,7 +165,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
                   <AceEditor
                     maxLines={Infinity}
                     minLines={3}
-                    mode={block.metadata.language_info.name}
+                    mode={block.metadata.achievements.language_info.name}
                     readOnly={true}
                     setOptions={{ showLineNumbers: false }}
                     showGutter={true}
@@ -176,8 +176,14 @@ export class CustomTaskPreviewForm extends React.PureComponent {
                 )}
                 {block.metadata.achievements.type === "shown" &&
                   block.outputs &&
-                  !!block.outputs.length && (
-                    <pre style={styles.output}>{block.outputs.join("\n")}</pre>
+                  !!block.outputs.length &&
+                  block.outputs.map(
+                    (output, index) =>
+                      output.data && (
+                        <pre key={index} style={styles.output}>
+                          {output.data["text/plain"]}
+                        </pre>
+                      )
                   )}
               </Paper>
             ))}
@@ -186,40 +192,42 @@ export class CustomTaskPreviewForm extends React.PureComponent {
           taskInfo.json.cells
             .filter(block => block.metadata.achievements.type === "editable")
             .map(block => (
-              <Paper key="there-should-be-only-one" style={styles.paper}>
-                <Typography color="textSecondary">
-                  Please first read the Path Activity above. <br />
-                  Click the RUN button to test your solution.
-                </Typography>
-                <Grid container spacing={8}>
-                  <Grid item xs={8}>
-                    <Typography variant="h6">
-                      Edit Your Solution Here
-                    </Typography>
+              <Grid item key="there-should-be-only-one" xs={12}>
+                <Paper style={styles.paper}>
+                  <Typography color="textSecondary">
+                    Please first read the Path Activity above. <br />
+                    Click the RUN button to test your solution.
+                  </Typography>
+                  <Grid container item spacing={8}>
+                    <Grid item xs={8}>
+                      <Typography variant="h6">
+                        Edit Your Solution Here
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Button
+                        color="primary"
+                        disabled={!solution}
+                        onClick={this.onTaskRunRequest}
+                        variant="contained"
+                      >
+                        Run
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={4}>
-                    <Button
-                      color="primary"
-                      disabled={!solution}
-                      onClick={this.onTaskRunRequest}
-                      variant="contained"
-                    >
-                      Run
-                    </Button>
-                  </Grid>
-                </Grid>
-                <AceEditor
-                  maxLines={Infinity}
-                  minLines={3}
-                  mode={block.metadata.language_info.name}
-                  onChange={this.onSolutionChange}
-                  setOptions={{ showLineNumbers: false }}
-                  showGutter={true}
-                  theme="github"
-                  value={solution || block.source.join("\n") || ""}
-                  width={"100%"}
-                />
-              </Paper>
+                  <AceEditor
+                    maxLines={Infinity}
+                    minLines={3}
+                    mode={block.metadata.achievements.language_info.name}
+                    onChange={this.onSolutionChange}
+                    setOptions={{ showLineNumbers: false }}
+                    showGutter={true}
+                    theme="github"
+                    value={solution || block.source.join("\n") || ""}
+                    width={"100%"}
+                  />
+                </Paper>
+              </Grid>
             ))}
       </React.Fragment>
     );

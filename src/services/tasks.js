@@ -8,6 +8,10 @@ export const TASK_TYPES = {
   custom: {
     id: "custom",
     name: "Custom Task"
+  },
+  customNotebook: {
+    id: "customNotebook",
+    name: "Custom Notebook"
   }
 };
 
@@ -52,6 +56,9 @@ const DEFAULT_CUSTOM_TASK = {
         colab_type: "code",
         achievements: {
           title: "Editable Code",
+          language_info: {
+            name: "python"
+          },
           editable: true,
           type: "editable"
         }
@@ -62,11 +69,11 @@ const DEFAULT_CUSTOM_TASK = {
       cell_type: "code",
       metadata: {
         colab_type: "code",
-        language_info: {
-          name: "python"
-        },
         achievements: {
           title: "Hidden Code",
+          language_info: {
+            name: "python"
+          },
           type: "hidden"
         }
       },
@@ -150,7 +157,8 @@ export class TasksService {
     for (const cell of json.cells) {
       cell.metadata = cell.metadata || {};
       cell.metadata.achievements = cell.metadata.achievements || {};
-      cell.metadata.language_info = cell.metadata.language_info || {
+      cell.metadata.achievements.language_info = cell.metadata.achievements
+        .language_info || {
         name: "python"
       };
       cell.outputs = cell.outputs || [];

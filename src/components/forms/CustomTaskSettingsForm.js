@@ -125,15 +125,28 @@ export class CustomTaskSettingsForm extends React.PureComponent {
         break;
       case "mode":
         json = { ...taskInfo.json };
+        if (value !== "markdown") {
+          json.metadata.language_info = {
+            name: value
+          };
+          json.metadata.kernelspec = {
+            language: value,
+            display_name: value
+          };
+        }
         json.cells = json.cells.map(block =>
-          block === changedBlock
+          block === changedBlock ||
+          !(value === "markdown" || block.cell_type === "text")
             ? {
                 ...block,
                 cell_type: value === "markdown" ? "text" : "code",
                 metadata: {
                   ...block.metadata,
-                  language_info: {
-                    name: value
+                  achievements: {
+                    ...block.metadata.achievements,
+                    language_info: {
+                      name: value
+                    }
                   }
                 }
               }
