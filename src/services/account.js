@@ -3,7 +3,7 @@
  */
 import firebase from "firebase/app";
 import "firebase/auth";
-import { firebaseService } from "./firebaseService";
+import { firebaseService } from "./firebaseQueueService";
 const authProvider = new firebase.auth.GoogleAuthProvider();
 // authProvider.addScope("https://www.googleapis.com/auth/drive.file");
 
@@ -364,7 +364,7 @@ export class AccountService {
           {
             owner: uid
           },
-          "fetchUserJSONQueue",
+          "newFetchUserJSONQueue",
           "Fetch JSON Data"
         )
         .then(res => {

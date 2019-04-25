@@ -4,7 +4,7 @@ const MAX_CHAR_IN_ACTION = 2000;
 const MAX_LOGGED_EVENTS = 500;
 
 
-const fetchUserJSON = (data, taskKey, uid) => {
+const fetchUserJSON = (taskKey, uid) => {
   return Promise.all([
     admin
       .database()
@@ -64,13 +64,16 @@ const fetchUserJSON = (data, taskKey, uid) => {
         loggedEvents
       ]) => {
         let problemSolutions = solutions;
-        const fileredEvents = loggedEvents.map(event=>{
+        const fileredEvents = loggedEvents.map(event => {
           const key = Object.keys(event)[0];
-          if (key && (event[key].otherActionData || "").length>MAX_CHAR_IN_ACTION){
+          if (
+            key &&
+            (event[key].otherActionData || "").length > MAX_CHAR_IN_ACTION
+          ) {
             event[key].otherActionData = "action data is too large to download";
           }
           return event;
-        })
+        });
         const userSolutions = Object.keys(problemSolutions).reduce(
           (acc, activityID) => {
             const propIsEmpty = !Object.keys(problemSolutions[activityID])
@@ -100,7 +103,7 @@ const fetchUserJSON = (data, taskKey, uid) => {
         solutions = userSolutions;
         admin
           .database()
-          .ref(`/fetchUserJSONQueue/responses/${taskKey}`)
+          .ref(`/newFetchUserJSONQueue/responses/${taskKey}`)
           .set({
             owner: uid,
             data: {
@@ -110,7 +113,7 @@ const fetchUserJSON = (data, taskKey, uid) => {
               completedActivities,
               solutions,
               activityAttempts,
-              loggedEvents:fileredEvents
+              loggedEvents: fileredEvents
             }
           });
       }
@@ -122,9 +125,9 @@ exports.handler = fetchUserJSON;
 
 exports.queueHandler = () => {
   const queue = new Queue(
-    admin.database().ref("/fetchUserJSONQueue"),
+    admin.database().ref("/newFetchUserJSONQueue"),
     (data, progress, resolve) =>
-      fetchUserJSON(data, data.taskKey, data.owner).then(() => resolve())
+      fetchUserJSON(data.taskKey, data.owner).then(() => resolve())
   );
   queue.addWorker();
 };

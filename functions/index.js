@@ -270,11 +270,11 @@ exports.handleCohortAnalyticsRequest = functions.database
   });
 
 exports.handleUserJSONFetchRequest = functions.database
-  .ref("/fetchUserJSONQueue/responses/{taskKey}")
+  .ref("/newFetchUserJSONQueue/tasks/{taskKey}")
   .onWrite(change => {
-    const data = change.after.val();
-    if (data) {
-      return userJSONTrigger.handler(data, data.taskKey, data.owner);
+    const data = (change.after || {}).val();
+    if (data && data.taskKey) {
+      return userJSONTrigger.handler(data.taskKey, data.owner);
     }
     return Promise.resolve();
   });

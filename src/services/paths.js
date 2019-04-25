@@ -1,7 +1,7 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase/app";
 import { coursesService } from "./courses";
-import { firebaseService } from "./firebaseService";
+import { firebaseService } from "./firebaseQueueService";
 import {
   SOLUTION_PRIVATE_LINK,
   SOLUTION_MODIFIED_TESTS,

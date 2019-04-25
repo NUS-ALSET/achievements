@@ -322,7 +322,7 @@
         }
       }
     },
-    "fetchUserJSONQueue" : {
+    "newFetchUserJSONQueue" : {
       "responses": {
         "$taskKey": {
           ".read": "auth != null",
