@@ -358,6 +358,14 @@ class Account extends React.PureComponent {
                 )}
               </CardContent>
             </Card>
+            <Button
+              color="primary"
+              onClick={this.fetchUserData}
+              style={{margin : "8px"}}
+              variant="contained"
+            >
+              Download JSON
+            </Button>
           </Grid>
           <Grid item xs={6}>
             {(isOwner ||
@@ -410,15 +418,6 @@ class Account extends React.PureComponent {
                 solutions={path.solutions}
               />
             ))}
-          </Grid>
-          <Grid item xs={6}>
-            <Button
-              color="primary"
-              onClick={this.fetchUserData}
-              variant="contained"
-            >
-              Download JSON
-            </Button>
           </Grid>
         </Grid>
         <RemoveExternalProfileDialog
