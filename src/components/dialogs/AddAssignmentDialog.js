@@ -117,7 +117,7 @@ class AddAssignmentDialog extends React.PureComponent {
     ) {
       this.updateField("name")({target:{value: assignment.name}})
     }
-    if (["PathProgress", "PathActivity"].includes(this.props.assignment.questionType)){
+    if (this.props.assignment && ["PathProgress", "PathActivity"].includes(this.props.assignment.questionType)){
       const enableCommitBtn = Boolean( this.props.assignment.path &&  this.props.assignment.name);
       if (enableCommitBtn !== this.state.enableCommitBtn){
         this.setState(()=>({
