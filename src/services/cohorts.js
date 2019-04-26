@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import { ASSIGNMENTS_TYPES } from "./courses";
-import { firebaseService } from "../services/firebaseService";
+import { firebaseService } from "../services/firebaseQueueService";
 
 class CohortsService {
   fetchCohort(uid, cohortId, checkRecountNeeds) {

@@ -14,7 +14,7 @@ import {
 } from "../containers/Assignments/actions";
 import { notificationHide, notificationShow } from "../containers/Root/actions";
 // import { solutionsService } from "./solutions";
-import { firebaseService } from "./firebaseService";
+import { firebaseService } from "./firebaseQueueService";
 import { pathsService } from "./paths";
 
 import each from "lodash/each";
