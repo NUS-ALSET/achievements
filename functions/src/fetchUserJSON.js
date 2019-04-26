@@ -81,7 +81,6 @@ const fetchUserJSON = (taskKey, uid) => {
             let singleActivityData;
             if (!propIsEmpty) {
               singleActivityData =
-                !propIsEmpty &&
                 Object.keys(problemSolutions[activityID]).reduce(
                   (acc2, userID) => {
                     if (userID === uid) {
