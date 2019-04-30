@@ -1,6 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase/app";
-import 'firebase/firestore';
+
 import { coursesService } from "./courses";
 import { firebaseService } from "./firebaseService";
 import {

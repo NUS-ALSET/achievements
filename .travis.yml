@@ -9,12 +9,12 @@ branches:
 
 before_install:
   - df -h
+  - yarn cache clean
   - npm cache clear --force
   - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
 
 install:
   - yarn install
-  - npm install -g firebase-tools;
 
 script:
   - npm run-script test
@@ -27,7 +27,7 @@ after_success:
     cd ./functions;
     pwd;
     npm install;
-    
+    npm install -g firebase-tools;
     bash ../scripts/firebase-deploy.sh;
     if [ "$?" != 0 ]; then
     echo "ERROR with deployment";

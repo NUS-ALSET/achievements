@@ -36,7 +36,7 @@ const fetchUserJSON = (data, taskKey, uid) => {
               const propIsEmpty = !Object.keys(problemSolutions[activityID]).length;
               let singleActivityData;
               if (!propIsEmpty) {
-                singleActivityData = !propIsEmpty && Object.keys(problemSolutions[activityID]).reduce((acc2, userID) => {
+                singleActivityData = Object.keys(problemSolutions[activityID]).reduce((acc2, userID) => {
                   if (userID === uid) {
                     acc2["answers"] = problemSolutions[activityID][userID]
                   }
