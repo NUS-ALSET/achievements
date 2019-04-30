@@ -14,6 +14,7 @@ before_install:
 
 install:
   - yarn install
+  - npm install -g firebase-tools;
 
 script:
   - npm run-script test
@@ -26,7 +27,7 @@ after_success:
     cd ./functions;
     pwd;
     npm install;
-    npm install -g firebase-tools;
+    
     bash ../scripts/firebase-deploy.sh;
     if [ "$?" != 0 ]; then
     echo "ERROR with deployment";
