@@ -903,7 +903,12 @@ export class PathsService {
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
-              .set(solution);
+              .set({
+                ...solution,
+                updatedAt: {
+                  ".sv": "timestamp"
+                }
+              });
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
               .then(json => {

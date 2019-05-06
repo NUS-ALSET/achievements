@@ -6,6 +6,7 @@
 
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -43,6 +44,19 @@ const styles = theme => ({
   },
   noWrap: {
     whiteSpace: "nowrap"
+  },
+  noTextDecoration: {
+    textDecoration : "none",
+    color : "inherit",
+    padding: "11px 16px"
+  },
+  listLink :{
+     margin: theme.spacing.unit,
+     height: "auto",
+     padding : "0px",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.08)"
+    }
   }
 });
 
@@ -270,6 +284,12 @@ class ActivitiesTable extends React.PureComponent {
               variant="contained"
             >
               Delete
+            </MenuItem>
+            <MenuItem
+              className={classes.listLink}
+              variant="contained"
+            >
+            <Link className={classes.noTextDecoration} to={`/activitySolutions/${(this.state.activity || {}).id}`}> View Solutions</Link>
             </MenuItem>
             {this.state.activity &&
               this.state.activity.orderIndex !== minOrderIndex && (
