@@ -1,6 +1,6 @@
 const admin = require("firebase-admin");
 const Queue = require("firebase-queue");
-const MAX_CHAR_IN_ACTION = 2000;
+//const MAX_CHAR_IN_ACTION = 2000;
 const MAX_LOGGED_EVENTS = 500;
 
 const fetchUserJSON = (taskKey, uid) => {
