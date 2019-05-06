@@ -19,7 +19,6 @@ import Dialog from "../../components/dialogs/ViewActivityJestSolutionDialog";
 
 export class ActivitySolution extends React.PureComponent {
   static propTypes = {
-    children: PropTypes.any,
     match: PropTypes.any,
     uid: PropTypes.string,
     activity: PropTypes.object,
