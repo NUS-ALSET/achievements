@@ -9,6 +9,7 @@ branches:
 
 before_install:
   - df -h
+  - yarn cache clean
   - npm cache clear --force
   - npm config set //registry.npmjs.org/:_authToken $NPM_API_KEY
 

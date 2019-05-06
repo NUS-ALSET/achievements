@@ -3,7 +3,6 @@ const Queue = require("firebase-queue");
 const MAX_CHAR_IN_ACTION = 2000;
 const MAX_LOGGED_EVENTS = 500;
 
-
 const fetchUserJSON = (taskKey, uid) => {
   return Promise.all([
     admin
@@ -59,37 +58,23 @@ const fetchUserJSON = (taskKey, uid) => {
         userAchievements,
         userPrivate,
         completedActivities,
-        solutions,
-        activityAttempts,
-        loggedEvents
+        solutions
       ]) => {
         let problemSolutions = solutions;
-        const fileredEvents = loggedEvents.map(event => {
-          const key = Object.keys(event)[0];
-          if (
-            key &&
-            (event[key].otherActionData || "").length > MAX_CHAR_IN_ACTION
-          ) {
-            event[key].otherActionData = "action data is too large to download";
-          }
-          return event;
-        });
         const userSolutions = Object.keys(problemSolutions).reduce(
           (acc, activityID) => {
             const propIsEmpty = !Object.keys(problemSolutions[activityID])
               .length;
             let singleActivityData;
             if (!propIsEmpty) {
-              singleActivityData =
-                Object.keys(problemSolutions[activityID]).reduce(
-                  (acc2, userID) => {
-                    if (userID === uid) {
-                      acc2["answers"] = problemSolutions[activityID][userID];
-                    }
-                    return acc2;
-                  },
-                  {}
-                );
+              singleActivityData = Object.keys(
+                problemSolutions[activityID]
+              ).reduce((acc2, userID) => {
+                if (userID === uid) {
+                  acc2["answers"] = problemSolutions[activityID][userID];
+                }
+                return acc2;
+              }, {});
             }
             if (Object.keys(singleActivityData).length)
               (function() {
@@ -130,4 +115,3 @@ exports.queueHandler = () => {
   );
   queue.addWorker();
 };
-
