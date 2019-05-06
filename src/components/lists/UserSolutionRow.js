@@ -80,8 +80,8 @@ export class UserSolutionRow extends React.PureComponent {
           </Grid>
         </TableCell>
         <TableCell>
-          {solution.updatedAt
-            ? distanceInWords(solution.updatedAt, new Date(), {
+          {solution.updatedAt || typeof(status)==="number"
+            ? distanceInWords(solution.updatedAt || status, new Date(), {
                 includeSeconds: true
               }) + " ago"
             : ""}
