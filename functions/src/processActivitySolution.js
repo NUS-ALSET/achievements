@@ -44,8 +44,49 @@ function analyzePythonCode(activityKey, userKey, data) {
     }
   });
 }
-exports.analyzePythonCode = analyzePythonCode;
 
+function analyzeDiffPythonCode(activityKey, userKey, data) {
+  return Promise.all([
+    admin
+      .database()
+      .ref("/config/jupyterDiffAnalysisLambdaProcessor")
+      .once("value")
+      .then(snap => snap.val()),
+    admin
+      .database()
+      .ref(`/activities/${activityKey}`)
+      .once("value")
+      .then(snap => snap.val())
+  ]).then(([analyzeUrl, activity]) => {
+    let code, solution;
+    switch (activity.type) {
+      case "jupyterInline":
+        solution = JSON.parse(data.solution);
+        code = solution.cells[activity.code].source.join("");
+
+        return httpUtil
+          .post(analyzeUrl, { givenCode: code, solutionCode: code })
+          .then(response =>
+            admin
+              .firestore()
+              .collection("/diffCodeAnalysis")
+              .add({
+                ...response,
+                uid: userKey,
+                createdAt: firebase.firestore.Timestamp.now().toMillis(),
+                activityKey: activityKey,
+                sGen: True
+              })
+          )
+          .catch(err => console.error(err));
+      default:
+        return Promise.resolve();
+    }
+  });
+}
+
+exports.analyzePythonCode = analyzePythonCode;
+exports.analyzeDiffPythonCode = analyzeDiffPythonCode;
 /**
  * This function executes 2 tasks:
  *  * analyze activity attempts and store result into firebase
@@ -59,6 +100,7 @@ exports.analyzePythonCode = analyzePythonCode;
 exports.handler = (activityKey, userKey, solution) =>
   Promise.all([
     analyzePythonCode(activityKey, userKey, solution),
+    analyzeDiffPythonCode(activityKey, userKey, solution),
     admin
       .database()
       .ref("/logged_events")
