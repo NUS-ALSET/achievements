@@ -15,7 +15,7 @@ function analyzePythonCode(activityKey, userKey, data) {
   return Promise.all([
     admin
       .database()
-      .ref("/config/jupyterAnalysisLambdaProcessor")
+      .ref("/config/jupyterDiffAnalysisLambdaProcessor")
       .once("value")
       .then(snap => snap.val()),
     admin
@@ -31,12 +31,18 @@ function analyzePythonCode(activityKey, userKey, data) {
         code = solution.cells[activity.code].source.join("");
 
         return httpUtil
-          .post(analyzeUrl, { [activityKey]: { [userKey]: code } })
+          .post(analyzeUrl, { givenCode: code, solutionCode: code })
           .then(response =>
             admin
-              .database()
-              .ref("/analyze/skills")
-              .update(response)
+              .firestore()
+              .collection("/diffCodeAnalysis")
+              .add({
+                ...response,
+                uid: userKey,
+                createdAt: firebase.firestore.Timestamp.now().toMillis(),
+                activityKey: activityKey,
+                sGen: True
+              })
           )
           .catch(err => console.error(err));
       default:
