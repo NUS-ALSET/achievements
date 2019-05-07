@@ -31,10 +31,11 @@ const {
   updateDestinationSkills
 } = require("./src/destinationHandler");
 
-const profilesRefreshApproach =
-  (functions.config().profiles &&
-    functions.config().profiles["refresh-approach"]) ||
-  "none";
+//  dev-db is paid account now
+// const profilesRefreshApproach =
+//   (functions.config().profiles &&
+//     functions.config().profiles["refresh-approach"]) ||
+//   "none";
 const ERROR_500 = 500;
 
 // initialize the Firebase Admin SDK
@@ -42,7 +43,7 @@ admin.initializeApp();
 admin.firestore().settings( { timestampsInSnapshots: true });
 
 exports.handleNewProblemSolution =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
   functions.database
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
@@ -152,7 +153,7 @@ exports.handleUserSkills = functions.database
   });
 
 exports.handleProfileRefreshRequest =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
   functions.database
     .ref("/updateProfileQueue/tasks/{requestId}")
     .onCreate((snap, context) =>

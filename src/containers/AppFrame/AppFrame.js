@@ -62,6 +62,7 @@ import ZiYun from "../IdeaLab/ZiYun/ZiYun";
 import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
 import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
 import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
+import ActivitySolutions from "../ActivitySolutions/ActivitySolutions"
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -333,6 +334,11 @@ class AppFrame extends React.Component {
                   component={Activity}
                   exact
                   path="/paths/:pathId/activities/:problemId"
+                />
+                <Route
+                  component={ActivitySolutions}
+                  exact
+                  path="/activitySolutions/:problemId"
                 />
                 <Route
                   component={Account}
