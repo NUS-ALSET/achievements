@@ -39,7 +39,7 @@ const ERROR_500 = 500;
 
 // initialize the Firebase Admin SDK
 admin.initializeApp();
-admin.firestore().settings({ timestampsInSnapshots: true });
+admin.firestore().settings( { timestampsInSnapshots: true });
 
 exports.handleNewProblemSolution =
   ["trigger", "both"].includes(profilesRefreshApproach) &&
