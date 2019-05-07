@@ -2,7 +2,8 @@ import {
   TASK_PRESETS_LOAD_SUCCESS,
   TASK_LOAD_SUCCESS,
   TASK_RUN_SUCCESS,
-  TASK_RUN_REQUEST
+  TASK_RUN_REQUEST,
+  TASK_RUN_FAIL
 } from "./actions";
 
 export const task = (
@@ -36,6 +37,8 @@ export const task = (
         isRunning: false,
         currentResponse: action.response
       };
+    case TASK_RUN_FAIL:
+      return { ...state, isRunning: false, currentResponse: false };
     default:
       return state;
   }

@@ -15,7 +15,7 @@ import { configureStore } from "./achievementsApp/store";
 import { coursesService } from "./services/courses";
 import { pathsService } from "./services/paths";
 import { historyService } from "./services/history";
-import { firebaseService } from "./services/firebaseService";
+import { firebaseService } from "./services/firebaseQueueService";
 
 
 const history = createHashHistory();

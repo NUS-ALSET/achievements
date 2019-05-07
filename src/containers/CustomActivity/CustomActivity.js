@@ -21,20 +21,31 @@ import HelpIcon from "@material-ui/icons/HelpOutline";
 // This is just a prototype - the logic - eg. setState can be totally replaced
 // To be implemented --> Redux / firebase operations to retrieve previously saved custom activity
 // To be implemented --> Redux / firebase operations to create new custom activity
-// To be implemented --> Creator can view / create their Custom Activities in http://localhost:3000/#/tasks alongside tasks
-// To be implemented --> Add custom activity dialog when creator wants to add custom activity to a path - similar to dialog to add Jupyter Local activity
-// To be implemented --> NEW blocks - allow creator to change title of new Blocks added under Shown Code/Text section - only for new blocks - creators cannot change title of shown code/hidden/editable code
-// To be implemented --> NEW blocks - allow creator to add new blocks in between 2 blocks of Shown Code/Text section - eg BLOCK 1 (creator press add new block here) BLOCK 2 - allow new block to be inserted in between block 1 and block 2
-// To be implemented --> NEW blocks - In the preview, render Shown Code/Text blocks in sequence - currently, let say user added a new block, filled it up then go back to fill up the block under Shown Code/Text, the "new block" content will show above the content of block directly beneath Shown Code/Text
+// To be implemented --> Creator can view / create their Custom Activities in
+// http://localhost:3000/#/tasks alongside tasks
+// To be implemented --> Add custom activity dialog when creator wants to add
+// custom activity to a path - similar to dialog to add Jupyter Local activity
+// To be implemented --> NEW blocks - allow creator to change title of new Blocks
+// added under Shown Code/Text section - only for new blocks - creators cannot change title of shown code/hidden/editable code
+// To be implemented --> NEW blocks - allow creator to add new blocks in between
+// 2 blocks of Shown Code/Text section - eg BLOCK 1 (creator press add new block here)
+// BLOCK 2 - allow new block to be inserted in between block 1 and block 2
+// To be implemented --> NEW blocks - In the preview, render Shown Code/Text blocks
+// in sequence - currently, let say user added a new block, filled it up then go back to fill up the block under Shown Code/Text, the "new block" content will show above the content of block directly beneath Shown Code/Text
 // To be implemented --> NEW blocks - add a delete icon and delete functionality for new added blocks
-// To be implemented --> NEW blocks - add an up/down icon and toggle functionality for added blocks to change position up or down against other added blocks
+// To be implemented --> NEW blocks - add an up/down icon and toggle functionality for
+//  added blocks to change position up or down against other added blocks
 // To be implemented --> validation of activity url entered
-// To be implemented --> When creator has made changes but navigates from page without saving his work, user is alerted of unsaved changes
+// To be implemented --> When creator has made changes but navigates from page without
+//  saving his work, user is alerted of unsaved changes
 // To be implemented --> User View page
-// To be implemented --> User View - All the content (ie. creator's hidden code/shown code/editable code / user's code) to be packaged as JSON and sent to activity URL
+// To be implemented --> User View - All the content (ie. creator's hidden code/shown
+//  code/editable code / user's code) to be packaged as JSON and sent to activity URL
 // To be implemented --> Result Section to appear when user clicks on "run" button under the preview
-// To be implemented --> Result Section to show the indicator that result is loading while awaiting response
-// To be implemented --> Result Section to support the various feedback options - HTML / ipynb / text / JSON
+// To be implemented --> Result Section to show the indicator that result is loading
+//  while awaiting response
+// To be implemented --> Result Section to support the various feedback options
+//  - HTML / ipynb / text / JSON
 // To be implemented --> HELP button to provide information about custom activity type to creators
 
 // Implemented features
@@ -63,6 +74,7 @@ const initialState = {
   title: "",
   url: ""
 };
+
 export default class CustomActivity extends React.PureComponent {
   constructor(props) {
     super(props);

@@ -1,6 +1,7 @@
 import React from "react";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import EditIcon from "@material-ui/icons/Edit";
+import DeleteIcon from "@material-ui/icons/DeleteForever";
 
 class FileDirectory extends React.Component {
   constructor() {
@@ -8,10 +9,11 @@ class FileDirectory extends React.Component {
     this.state = {};
   }
   render() {
+    
     return (
       <div className="sidebar">
         {this.props.files.map(
-          file =>
+          (file, index) =>
             file.type !== "dir" && (
               <div
                 className={
@@ -20,17 +22,23 @@ class FileDirectory extends React.Component {
                     ? "file1 pointer active-file"
                     : "file1 pointer"
                 }
-                key={file.path}
+                key={file.path + index}
                 style={{display:'flex'}}
-                onClick={() => this.props.openFile(file.path)}
               >
+              <div style={{ width :"72px"}}>
                 <span
                   aria-label={file.readOnly ? "Not Editable" : "Editable"}
                   role="img"
                 >
-                  {file.readOnly ? <VisibilityIcon/> : <EditIcon/>}
+                  {this.props.editMode ? <EditIcon/> : file.readOnly ? <VisibilityIcon/> : <EditIcon/> }
                 </span>
-                &nbsp;&nbsp;{file.path}
+                {this.props.editMode && <span onClick={() => this.props.deleteFile(file)}>
+                  <DeleteIcon style={{right: "0px"}} />
+                </span>}
+              </div>
+              <div onClick={() => this.props.openFile(file.path)} style={{width : "calc(100% - 72px)"}}>
+                {file.path}
+              </div>
               </div>
             )
         )}

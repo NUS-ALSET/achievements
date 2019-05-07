@@ -58,6 +58,15 @@ class Editor extends React.Component {
     this.resetUndoManager();
   }
   render() {
+    const readOnly = (() => {
+      if (typeof this.props.readOnly === "undefined") {
+        return this.props.selectedFile &&
+        (this.props.selectedFile.readOnly || this.props.readOnly)
+      } else {
+        return this.props.readOnly;
+      }
+    })();
+
     return (
       <div className="editor">
         <button
@@ -84,8 +93,7 @@ class Editor extends React.Component {
             this.setState({ code: v });
           }}
           readOnly={
-            this.props.selectedFile &&
-            (this.props.selectedFile.readOnly || this.props.readOnly)
+            readOnly
           }
           ref="AceEditor"
           showPrintMargin={false}

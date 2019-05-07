@@ -46,7 +46,8 @@ import { GameActivity, TournamentActivity } from "../AddActivitiesForm/";
 import {
   ACTIVITY_TYPES,
   YOUTUBE_QUESTIONS,
-  CodeCombat_Multiplayer_Data
+  CodeCombat_Multiplayer_Data,
+  JEST_GIT_MAP
 } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
 
@@ -605,6 +606,43 @@ class AddActivityDialog extends React.PureComponent {
         return (
           <Fragment>
             <FormControl style={{ width: "100%" }}>
+              <InputLabel htmlFor="method">Select Method</InputLabel>
+              <Select
+                inputProps={{
+                  name: "method",
+                  id: "method"
+                }}
+                onChange={e => this.onFieldChange("jestMethod", e.target.value)}
+                value={this.state.jestMethod || ""}
+              >
+                <MenuItem value={"git"}>Github URL</MenuItem>
+                <MenuItem value={"templates"}>Templates</MenuItem>
+              </Select>
+            </FormControl>
+            {
+              this.state.jestMethod === "templates" && <FormControl style={{ width: "100%" }}>
+                <InputLabel htmlFor="templates">Select Template</InputLabel>
+                <Select
+                  inputProps={{
+                    name: "templates"
+                  }}
+                  onChange={e => {
+                    this.setState({
+                      githubURL: e.target.value
+                    }, () => {
+                      this.handleGithubURLSubmit()
+                    })
+                  }}
+                  value={this.state.githubURL || ""}
+                >
+                  <MenuItem value={JEST_GIT_MAP.react.url}>{JEST_GIT_MAP.react.id}</MenuItem>
+                  <MenuItem value={JEST_GIT_MAP.vue.url}>{JEST_GIT_MAP.vue.id}</MenuItem>
+                  <MenuItem value={JEST_GIT_MAP.vanilla.url}>{JEST_GIT_MAP.vanilla.id}</MenuItem>
+                </Select>
+              </FormControl>
+            }
+
+            {this.state.jestMethod === "git" && <FormControl style={{ width: "100%" }}>
               <InputLabel htmlFor="githubURL">Github URL</InputLabel>
               <Input
                 endAdornment={
@@ -626,7 +664,13 @@ class AddActivityDialog extends React.PureComponent {
                 type="text"
                 value={activity.githubURL || ""}
               />
-            </FormControl>
+            </FormControl>}
+            {
+              this.props.fetchGithubFilesStatus === "LOADING" &&
+              <div style={{width: "100%", textAlign: "center", marginTop: "15px"}}>
+                <CircularProgress /><p>Fetching Template...</p>
+              </div>
+            }
             {this.state.files && this.state.files.length > 0 && (
               <Fragment>
                 <Typography

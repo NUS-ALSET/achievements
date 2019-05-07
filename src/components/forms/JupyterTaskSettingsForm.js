@@ -41,7 +41,10 @@ class JupyterTaskSettingsForm extends React.PureComponent {
   };
 
   state = {
-    changes: {},
+    changes: {
+      type: "jupyter"
+    },
+    blockIndex: 1,
     presetId: "basic",
     menuEl: document.body,
     showImportMenu: false
@@ -51,15 +54,15 @@ class JupyterTaskSettingsForm extends React.PureComponent {
   inputFileRef = React.createRef();
 
   getBlockIndex = taskInfo => {
-    const { changes } = this.state;
-    let result = Math.max((changes.blockIndex || 1) - 1);
+    const { blockIndex } = this.state;
+    let result = Math.max((blockIndex || 1) - 1);
 
     if (!taskInfo) {
       return 0;
     }
 
     // Restrict current block index with 0 and max length
-    result = Math.min(result, taskInfo.json.length - 1);
+    result = Math.min(result, taskInfo.json.cells.length - 1);
     result = Math.max(0, result);
     return result;
   };
@@ -73,7 +76,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
           name: "python"
         }
       },
-      cells: taskInfo.json
+      cells: taskInfo.json.cells
         .map(cell => ({
           ...cell,
           source:
@@ -94,6 +97,12 @@ class JupyterTaskSettingsForm extends React.PureComponent {
     };
   };
 
+  onChange = field => e => {
+    this.setState({
+      [field]: e.target.value
+    });
+  };
+
   onChangeField = field => e => {
     const change = {
       changes: { ...this.state.changes, [field]: e.target.value },
@@ -105,13 +114,15 @@ class JupyterTaskSettingsForm extends React.PureComponent {
 
   onChangeNotebook = (field, taskInfo) => e => {
     const { onChange } = this.props;
-    let json = taskInfo.json;
+    const json = taskInfo.json;
     const blockIndex = this.getBlockIndex(taskInfo);
     let blocksCount;
 
+    let cells = json.cells;
+
     switch (field) {
       case "blockType":
-        json = json.map((cell, index) =>
+        cells = cells.map((cell, index) =>
           index === blockIndex
             ? {
                 ...cell,
@@ -124,18 +135,48 @@ class JupyterTaskSettingsForm extends React.PureComponent {
       case "blocksCount":
         blocksCount = Number(e.target.value);
         blocksCount = Math.max(blocksCount, 1);
-        for (let i = json.length; i < blocksCount; i += 1) {
-          json.push({
-            cell_type: "markdown",
-            metadata: { jyputer: {} },
-            source: ["New block"],
-            outputs: []
-          });
+        for (let i = json.cells.length; i < blocksCount; i += 1) {
+          cells = [
+            ...cells,
+            {
+              cell_type: "markdown",
+              metadata: { jyputer: {} },
+              source: ["New block"],
+              outputs: []
+            }
+          ];
         }
-        json = json.slice(0, blocksCount);
+        cells = cells.slice(0, blocksCount);
+        break;
+      case "editable":
+        cells = cells.map((cell, index) =>
+          index === blockIndex
+            ? {
+                ...cell,
+                metadata: {
+                  ...cell.metadata,
+                  achievements: {
+                    ...cell.metadata.achievements,
+                    editable: e.target.checked
+                  }
+                }
+              }
+            : cell.metadata.achievements.editable
+            ? {
+                ...cell,
+                metadata: {
+                  ...cell.metadata,
+                  achievements: {
+                    ...cell.metadata.achievements,
+                    editable: false
+                  }
+                }
+              }
+            : cell
+        );
         break;
       case "hide":
-        json = json.map((cell, index) =>
+        cells = cells.map((cell, index) =>
           index === blockIndex
             ? {
                 ...cell,
@@ -155,7 +196,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
         );
         break;
       case "hidden":
-        json = json.map((cell, index) =>
+        cells = cells.map((cell, index) =>
           index === blockIndex
             ? {
                 ...cell,
@@ -171,7 +212,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
         );
         break;
       case "content":
-        json = json.map((cell, index) =>
+        cells = cells.map((cell, index) =>
           index === blockIndex
             ? {
                 ...cell,
@@ -188,7 +229,10 @@ class JupyterTaskSettingsForm extends React.PureComponent {
       isChanged: true,
       changes: {
         ...this.state.changes,
-        json
+        json: {
+          ...json,
+          cells
+        }
       }
     };
     this.setState(change);
@@ -249,11 +293,11 @@ class JupyterTaskSettingsForm extends React.PureComponent {
     let currentBlock;
 
     // Pick current block with block index and task JSON
-    currentBlock = taskInfo.json[blockIndex];
+    currentBlock = taskInfo.json.cells[blockIndex];
 
     return (
       <React.Fragment>
-        <Grid item xs={12}>
+        <Grid item xs={6}>
           <Toolbar>
             <Button
               className={classes.toolbarButton}
@@ -273,9 +317,13 @@ class JupyterTaskSettingsForm extends React.PureComponent {
           </Toolbar>
         </Grid>
         <Grid item xs={6}>
-          <TextField fullWidth label="Type" select value="jupyter">
-            <MenuItem value="jupyter">Jupyter</MenuItem>
-          </TextField>
+          <TextField
+            autoFocus
+            fullWidth
+            label="Name"
+            onChange={this.onChangeField("name")}
+            value={taskInfo.name || ""}
+          />
         </Grid>
         <Grid item xs={6}>
           <TextField
@@ -292,20 +340,11 @@ class JupyterTaskSettingsForm extends React.PureComponent {
             ))}
           </TextField>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            autoFocus
-            fullWidth
-            label="Name"
-            onChange={this.onChangeField("name")}
-            value={taskInfo.name || ""}
-          />
-        </Grid>
         <Grid item xs={6}>
           <TextField
             fullWidth
             label="Current index"
-            onChange={this.onChangeField("blockIndex")}
+            onChange={this.onChange("blockIndex")}
             type="number"
             value={blockIndex + 1}
           />
@@ -316,7 +355,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
             label="Count of blocks"
             onChange={this.onChangeNotebook("blocksCount", taskInfo)}
             type="number"
-            value={taskInfo.blocksCount}
+            value={taskInfo.json.cells.length}
           />
         </Grid>
         <Grid item xs={6}>
@@ -338,7 +377,7 @@ class JupyterTaskSettingsForm extends React.PureComponent {
             label="Hide"
             onChange={this.onChangeNotebook("hide", taskInfo)}
             select
-            value={(currentBlock.metadata && currentBlock.metadata.hide) || ""}
+            value={currentBlock.metadata.hide || ""}
           >
             <MenuItem value="">Nothing</MenuItem>
             <MenuItem value="code">Code</MenuItem>
@@ -350,12 +389,8 @@ class JupyterTaskSettingsForm extends React.PureComponent {
             className={classes.editableCheckbox}
             control={
               <Checkbox
-                checked={taskInfo.editable === blockIndex}
-                onChange={e =>
-                  this.onChangeField("editable")({
-                    target: { value: e.target.checked ? blockIndex : false }
-                  })
-                }
+                checked={currentBlock.metadata.achievements.editable || false}
+                onChange={this.onChangeNotebook("editable", taskInfo)}
               />
             }
             disabled={currentBlock.cell_type !== "code"}

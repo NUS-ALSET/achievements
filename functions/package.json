@@ -9,6 +9,7 @@
     "firebase-functions": "^2.0.5",
     "firebase-queue": "^1.6.1",
     "firebase-tools": "^4.2.1",
+    "grpc": "^1.20.0",
     "uuid": "^3.3.2"
   },
   "private": true,
@@ -21,6 +22,6 @@
     "coverage": "jest --coverage"
   },
   "engines": {
-    "node": "8" 
+    "node": "8"
   }
 }
