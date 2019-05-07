@@ -73,7 +73,7 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
               .add({
                 ...response,
                 uid: userKey,
-                createdAt: firebase.firestore.Timestamp.now().toMillis(),
+                //createdAt: firebase.firestore.Timestamp.now().toMillis(),
                 activityKey: activityKey,
                 sGen: True
               })
