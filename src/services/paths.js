@@ -1,5 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase/app";
+
 import { coursesService } from "./courses";
 import { firebaseService } from "./firebaseQueueService";
 import {
@@ -149,6 +150,7 @@ export const CodeCombat_Multiplayer_Data = {
   rankingPercentile: [0, 10, 20, 30, 40, 50]
 };
 
+const firestore_db = firebase.firestore();
 export class PathsService {
   auth() {
     return new Promise(resolve =>
@@ -417,7 +419,12 @@ export class PathsService {
       .database()
       .ref("/paths")
       .push().key;
-
+    
+          //Added firestore related changes    
+          firestore_db.collection('/path_owners').add({
+            ownerId: uid,
+            pathId: key            
+          });  
     return firebase
       .database()
       .ref(`/paths/${key}`)
@@ -938,6 +945,7 @@ export class PathsService {
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
 
+
           default:
             break;
         }
@@ -970,6 +978,7 @@ export class PathsService {
       solution: editableBlockCode || ""
     };
     const resData = {};
+    
     return firebaseService
       .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
       .then(res => {
@@ -980,7 +989,7 @@ export class PathsService {
       })
       .finally(() => {
         // pathId added, so solution's skills will be fetch on basis of pathId
-
+        
         firebase
           .database()
           .ref(`/activityExampleSolutions/${activityId}`)
@@ -1264,10 +1273,26 @@ export class PathsService {
     const ref = firebase
       .database()
       .ref(`/pathAssistants/${pathId}/${collaboratorId}`);
-    if (action === "add") {
-      return ref.set(true);
-    }
-    return ref.remove();
+          
+      firestore_db.collection("path_owners").get().then((snapshot)=>{
+        snapshot.forEach((owner_path)=>{
+          if (action === "add") {
+            if(owner_path.data().pathId===pathId){
+              firestore_db.collection("path_owners").doc(owner_path.id).update({
+              collaboratorId: firebase.firestore.FieldValue.arrayUnion(collaboratorId)})
+            }
+            return ref.set(true);
+          }
+          if(owner_path.data().pathId===pathId){
+            firestore_db.collection("path_owners").doc(owner_path.id).update({
+            collaboratorId: firebase.firestore.FieldValue.arrayRemove(collaboratorId)})             
+          }
+          return ref.remove();
+        })
+      })        
+      
+
+    
   }
 
   /**
@@ -1423,9 +1448,9 @@ export class PathsService {
   }
 
   saveAttemptedSolution(uid, payload) {
-    payload.userKey = uid;
+    payload.userKey = uid;    
     //Added code to save to firestore
-    firebase.firestore().collection("analytics").doc("activityAnalytics")
+    firestore_db.collection("analytics").doc("activityAnalytics")
     .collection("activityAttempts").add({
       activityKey: payload.activityKey,
       activityType: payload.activityType,
@@ -1435,8 +1460,7 @@ export class PathsService {
       userKey:payload.userKey,
       pathKey:payload.pathKey
     }
-      )
-     
+      )     
     return firebase
       .database()
       .ref("analytics/activityAttempts")
