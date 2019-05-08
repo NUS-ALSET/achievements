@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
-
 // Import the Firebase SDK for Google Cloud Functions.
 const functions = require("firebase-functions");
 // Import the Firebase Admin SDK.
 const admin = require("firebase-admin");
-
 const checkToken = require("./src/utils/checkToken");
 const api = require("./src/api");
 const ltiLogin = require("./src/ltiLogin");
@@ -42,19 +40,20 @@ const ERROR_500 = 500;
 admin.initializeApp();
 admin.firestore().settings( { timestampsInSnapshots: true });
 
+
 exports.handleNewProblemSolution =
   // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
   functions.database
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
-      return jupyterTrigger.handler(data, data.taskKey, data.owner);
+      return jupyterTrigger.handler(data, data.taskKey, data.owner,"handleNewProblemSolution");
     });
 
 exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
   .onWrite(change => {
-    const data = change.after.val();
+    const data = change.after.val();      
     if (data) {
       return githubTrigger.handler(data, data.taskKey, data.owner);
     }

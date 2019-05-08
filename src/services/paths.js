@@ -1469,7 +1469,8 @@ export class PathsService {
       userKey:payload.userKey,
       pathKey:payload.pathKey
     }
-      )     
+      )
+               
     return firebase
       .database()
       .ref("analytics/activityAttempts")
