@@ -1459,7 +1459,7 @@ export class PathsService {
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;    
     //Added code to save to firestore
-    /*firestore_db.collection("analytics").doc("activityAnalytics")
+    firestore_db.collection("analytics").doc("activityAnalytics")
     .collection("activityAttempts").add({
       activityKey: payload.activityKey,
       activityType: payload.activityType,
@@ -1469,17 +1469,8 @@ export class PathsService {
       userKey:payload.userKey,
       pathKey:payload.pathKey
     }
-      )*/
-    firestore_db.collection("activityAnalytics").add({
-      activityKey: payload.activityKey,
-      activityType: payload.activityType,
-      completed:payload.completed,
-      open:payload.open,
-      time:payload.time,
-      userKey:payload.userKey,
-      pathKey:payload.pathKey
-    }
-      )       
+      )
+               
     return firebase
       .database()
       .ref("analytics/activityAttempts")
