@@ -22,6 +22,7 @@ const cohortAnalytics = require("./src/cohortAnalytics");
 const userJSONTrigger = require("./src/fetchUserJSON");
 const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
 const createCustomToken = require("./src/createCustomToken");
+const runLocalTask = require("./src/runLocalTask");
 
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
@@ -139,6 +140,11 @@ exports.handleNewSolution = functions.database
 exports.getTeamAssignmentSolutions = functions.https.onCall(
   getTeamAssignmentSolutions.handler
 );
+
+/**
+ * Method that allows to run local tasks with CORS workaround
+ */
+exports.runLocalTask = functions.https.onCall(runLocalTask.handler);
 
 exports.handleUserSkills = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")

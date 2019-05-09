@@ -10,20 +10,20 @@ export const tasksDialogHide = () => ({
 });
 
 export const TASKS_DELETE_TASK_REQUEST = "TASKS_DELETE_TASK_REQUEST";
-export const tasksDeleteTaskRequest = taskInfo => ({
+export const tasksDeleteTaskRequest = taskId => ({
   type: TASKS_DELETE_TASK_REQUEST,
-  taskInfo
+  taskId
 });
 
 export const TASKS_DELETE_TASK_SUCCESS = "TASKS_DELETE_TASK_SUCCESS";
-export const tasksDeleteTaskSuccess = taskInfo => ({
+export const tasksDeleteTaskSuccess = taskId => ({
   type: TASKS_DELETE_TASK_SUCCESS,
-  taskInfo
+  taskId
 });
 
 export const TASKS_DELETE_TASK_FAIL = "TASKS_DELETE_TASK_FAIL";
-export const tasksDeleteTaskFail = (taskInfo, reason) => ({
+export const tasksDeleteTaskFail = (taskId, reason) => ({
   type: TASKS_DELETE_TASK_FAIL,
-  taskInfo,
+  taskId,
   reason
 });

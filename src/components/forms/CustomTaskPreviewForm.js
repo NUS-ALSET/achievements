@@ -15,6 +15,8 @@ import Typography from "@material-ui/core/Typography";
 
 import HelpIcon from "@material-ui/icons/HelpOutline";
 
+import { CustomTaskResponseForm } from "./CustomTaskResponseForm";
+
 const AceEditor = Loadable({
   loader: () => import("../../components/AceEditor"),
   loading: () => <LinearProgress />
@@ -188,6 +190,11 @@ export class CustomTaskPreviewForm extends React.PureComponent {
               </Paper>
             ))}
         </Grid>
+        {taskInfo.response && (
+          <Grid item xs={12}>
+            <CustomTaskResponseForm taskInfo={taskInfo} />
+          </Grid>
+        )}
         {userView &&
           taskInfo.json.cells
             .filter(block => block.metadata.achievements.type === "editable")

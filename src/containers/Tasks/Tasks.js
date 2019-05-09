@@ -45,6 +45,8 @@ class Tasks extends React.PureComponent {
 
   onAddTaskClick = () => this.props.onPush("/tasks/new");
   onDeleteTaskClick = taskId => this.props.onTasksDeleteTaskDialogShow(taskId);
+  onDeleteTaskRequest = () =>
+    this.props.onTasksDeleteTaskRequest(this.props.ui.taskId);
 
   render() {
     const { classes, tasks, ui } = this.props;
@@ -66,7 +68,7 @@ class Tasks extends React.PureComponent {
         <DeleteConfirmationDialog
           message="This will remove Task"
           onClose={this.props.onTasksDialogHide}
-          onCommit={this.props.onTasksDeleteTaskRequest}
+          onCommit={this.onDeleteTaskRequest}
           open={ui.dialogType === "DELETE_TASK"}
         />
       </React.Fragment>

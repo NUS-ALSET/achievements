@@ -6,6 +6,10 @@ import "firebase/auth";
 
 // Import Firebase Realtime Database (optional)
 import "firebase/database";
+
+// Import Firebase Functions (optional)
+import "firebase/functions";
+
 import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {
