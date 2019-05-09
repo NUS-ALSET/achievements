@@ -82,7 +82,7 @@ class Task extends React.PureComponent {
     }
 
     return tasksService.getTaskInfo(
-      match.params.id,
+      match.params.taskId,
       task,
       changes,
       preset,

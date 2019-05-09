@@ -410,7 +410,7 @@ export class Path extends React.Component {
               )}
               <Link className={classes.linkButton} to="/tasks">
                 <Button className={classes.toolbarButton} variant="contained">
-                  Notebooks
+                  Local tasks
                 </Button>
               </Link>
             </React.Fragment>

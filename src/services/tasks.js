@@ -122,14 +122,18 @@ export class TasksService {
       id,
       type,
       name: changes.name || initialTask.name || "",
-      presetId: changes.presetId || initialTask.presetId || "basic"
+      presetId: changes.presetId || initialTask.presetId || "basic",
+      response
     };
 
     if (initialTask.json) {
       json = json || initialTask.json;
     }
     if (preset && type === TASK_TYPES.jupyter.id) {
-      json = json || JSON.parse(preset.json);
+      json = json || preset.json;
+      if (typeof json === "string") {
+        json = JSON.parse(json);
+      }
     }
 
     switch (type) {
@@ -210,7 +214,13 @@ export class TasksService {
       .database()
       .ref(`/tasks/${taskId}`)
       .once("value")
-      .then(snap => snap.val());
+      .then(snap => snap.val())
+      .then(task => {
+        if (typeof task.json === "string") {
+          task.json = JSON.parse(task.json);
+        }
+        return task;
+      });
   }
 
   fetchTasks(uid) {
@@ -268,25 +278,39 @@ export class TasksService {
     });
   }
 
+  prepareCustomTask(taskInfo, solution) {
+    const request = {};
+    for (const [index, cell] of taskInfo.json.cells.entries()) {
+      switch (cell.metadata.achievements.type) {
+        case "shown":
+        case "hidden":
+          request[cell.metadata.achievements.type] = {
+            0: cell.source.join("\n")
+          };
+          break;
+        case "editable":
+          request[cell.metadata.achievements.type] = {
+            0: solution
+          };
+          break;
+        default:
+          request[`public${index}`] = {
+            [cell.metadata.achievements.index]: cell.source.join("\n")
+          };
+      }
+    }
+    return request;
+  }
+
   runCustomTask(uid, taskInfo, solution) {
     if (uid) {
-      return fetch(taskInfo.url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ...taskInfo.json,
-          cells: taskInfo.json.cells.map(cell =>
-            cell.metadata.achievements.type === "editable"
-              ? {
-                  ...cell,
-                  source: [solution]
-                }
-              : cell
-          )
+      return firebase
+        .functions()
+        .httpsCallable("runLocalTask")({
+          solution,
+          taskId: taskInfo.id
         })
-      }).then(response => response.json());
+        .catch(err => console.error(err));
     }
   }
 
@@ -326,8 +350,11 @@ export class TasksService {
         .ref("/tasks")
         .push().key;
     }
+    // We should keep json as string since it could contain restricted
+    // symbols at Firebase
     const request = {
       ...taskInfo,
+      json: JSON.stringify(taskInfo.json),
       id: taskId,
       owner: uid,
       updatedAt: {
@@ -340,6 +367,13 @@ export class TasksService {
       .ref(`/tasks/${taskId}`)
       .update(request)
       .then(() => taskId);
+  }
+
+  removeTask(taskId) {
+    return firebase
+      .database()
+      .ref(`/tasks/${taskId}`)
+      .remove();
   }
 }
 

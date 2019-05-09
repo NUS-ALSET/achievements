@@ -9,7 +9,8 @@ import {
   TASK_RUN_REQUEST,
   taskRunSuccess,
   taskOpen,
-  taskRunFail
+  taskRunFail,
+  taskSaveSuccess
 } from "./actions";
 import { tasksService } from "../../services/tasks";
 import { notificationShow } from "../Root/actions";
@@ -52,6 +53,7 @@ export function* taskSaveRequestHandler(action) {
       yield put(push("/tasks/" + taskId));
       yield put(taskOpen(taskId));
     }
+    yield put(taskSaveSuccess(action.taskId));
   } catch (err) {
     yield put(taskSaveFail(action.taskId, err.message));
     yield put(notificationShow(err.message));

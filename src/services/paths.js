@@ -59,7 +59,7 @@ export const ACTIVITY_TYPES = {
   },
   jupyterLocal: {
     id: "jupyterLocal",
-    caption: "Jupyter Local"
+    caption: "Local task"
   },
   youtube: {
     id: "youtube",
@@ -292,7 +292,11 @@ export class PathsService {
               .once("value")
               .then(snap => snap.val())
               .then(task => {
-                const problemJSON = JSON.parse(task.json);
+                let problemJSON = task.json;
+                if (typeof problemJSON === "string") {
+                  problemJSON = JSON.parse(task.json);
+                }
+
                 return {
                   ...pathProblem,
                   taskInfo: task,
@@ -674,7 +678,6 @@ export class PathsService {
           break;
         case "jupyter":
         case "jupyterInline":
-        case "jupyterLocal":
           if (json) {
             const frozenSolution = json.cells
               .filter(cell => cell.source.join("").trim())
@@ -740,6 +743,11 @@ export class PathsService {
             });
           }
           break;
+        case ACTIVITY_TYPES.jupyterLocal.id:
+          return firebase.functions().httpsCallable("runLocalTask")({
+            solution: solution.payload,
+            taskId: pathProblem.taskInfo.id
+          });
         case ACTIVITY_TYPES.creator.id:
         case ACTIVITY_TYPES.educator.id:
           return firebase
@@ -882,6 +890,7 @@ export class PathsService {
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.game.id:
           case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+          case ACTIVITY_TYPES.jupyterLocal.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
