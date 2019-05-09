@@ -51,6 +51,10 @@ class CustomLocalActivity extends React.PureComponent {
     });
   }
 
+  getTaskInfo = () => ({
+    response: this.props.solution.json
+  });
+
   onSolutionChange = solution => this.setState({ solution });
 
   onSolutionRunClick = () => {
@@ -129,11 +133,7 @@ class CustomLocalActivity extends React.PureComponent {
         </Grid>
         {solution && solution.json && (
           <Grid item xs={12}>
-            <CustomTaskResponseForm
-              taskInfo={{
-                response: solution.json
-              }}
-            />
+            <CustomTaskResponseForm taskInfo={this.getTaskInfo()} />
           </Grid>
         )}
         {problem.problemJSON.cells
