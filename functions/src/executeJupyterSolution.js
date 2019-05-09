@@ -6,8 +6,12 @@ const jupyterLambdaProcessor =
   "https://bi3umkz9u7.execute-api.ap-southeast-1.amazonaws.com" +
   "/prod/notebook_runner";
 
-const executeJupyterSolution = (data, taskKey, owner) => {
-  let activity;
+const executeJupyterSolution = (data, taskKey, owner, triggerName) => {
+  let logged_data = Object.assign({}, data);
+  if ("solution" in logged_data) {
+    delete logged_data.solution;
+  }
+  logged_data["triggerType"] = triggerName;
   return Promise.all([
     admin
       .database()
@@ -18,7 +22,21 @@ const executeJupyterSolution = (data, taskKey, owner) => {
       .database()
       .ref(`/activities/${data.problem}`)
       .once("value")
-      .then(snap => (activity = snap.val()))
+      .then(snap => snap.val())
+      .then(activity =>
+        admin
+          .firestore()
+          .collection("/logged_events")
+          .add({
+            createdAt: Date.now(),
+            type: "FIREBASE_TRIGGERS",
+            uid: owner,
+            sGen: true,
+            activityKey: data.problem,
+            pathKey: activity.path,
+            otherActionData: logged_data
+          })
+      )
   ])
     .then(([lambdaProcessor]) =>
       axios({
@@ -63,9 +81,12 @@ exports.queueHandler = () => {
   const queue = new Queue(
     admin.database().ref("/jupyterSolutionsQueue"),
     (data, progress, resolve) =>
-      executeJupyterSolution(data, data.taskKey, data.owner).then(() =>
-        resolve()
-      )
+      executeJupyterSolution(
+        data,
+        data.taskKey,
+        data.owner,
+        "handleProblemSolutionQueue"
+      ).then(() => resolve())
   );
   queue.addWorker();
 };

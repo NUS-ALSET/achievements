@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
-
 // Import the Firebase SDK for Google Cloud Functions.
 const functions = require("firebase-functions");
 // Import the Firebase Admin SDK.
 const admin = require("firebase-admin");
-
 const checkToken = require("./src/utils/checkToken");
 const api = require("./src/api");
 const ltiLogin = require("./src/ltiLogin");
@@ -24,6 +22,7 @@ const cohortAnalytics = require("./src/cohortAnalytics");
 const userJSONTrigger = require("./src/fetchUserJSON");
 const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
 const createCustomToken = require("./src/createCustomToken");
+const runLocalTask = require("./src/runLocalTask");
 
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
@@ -31,29 +30,31 @@ const {
   updateDestinationSkills
 } = require("./src/destinationHandler");
 
-const profilesRefreshApproach =
-  (functions.config().profiles &&
-    functions.config().profiles["refresh-approach"]) ||
-  "none";
+//  dev-db is paid account now
+// const profilesRefreshApproach =
+//   (functions.config().profiles &&
+//     functions.config().profiles["refresh-approach"]) ||
+//   "none";
 const ERROR_500 = 500;
 
 // initialize the Firebase Admin SDK
 admin.initializeApp();
 admin.firestore().settings( { timestampsInSnapshots: true });
 
+
 exports.handleNewProblemSolution =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
   functions.database
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
-      return jupyterTrigger.handler(data, data.taskKey, data.owner);
+      return jupyterTrigger.handler(data, data.taskKey, data.owner,"handleNewProblemSolution");
     });
 
 exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
   .onWrite(change => {
-    const data = change.after.val();
+    const data = change.after.val();      
     if (data) {
       return githubTrigger.handler(data, data.taskKey, data.owner);
     }
@@ -140,6 +141,11 @@ exports.getTeamAssignmentSolutions = functions.https.onCall(
   getTeamAssignmentSolutions.handler
 );
 
+/**
+ * Method that allows to run local tasks with CORS workaround
+ */
+exports.runLocalTask = functions.https.onCall(runLocalTask.handler);
+
 exports.handleUserSkills = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
   .onWrite((change, context) => {
@@ -152,7 +158,7 @@ exports.handleUserSkills = functions.database
   });
 
 exports.handleProfileRefreshRequest =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
   functions.database
     .ref("/updateProfileQueue/tasks/{requestId}")
     .onCreate((snap, context) =>

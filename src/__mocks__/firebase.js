@@ -10,6 +10,15 @@ class FirebaseMock {
     this.database = this.dbStub;
     this.auth = this.authStub;
     this.auth.GoogleAuthProvider = function() {};
+    // Mocking for firestore
+    this.collectionStub.returns({
+      add: this.addStub
+    });
+    this.firestoreDbStub = sinon.stub();
+    this.firestore = this.firestoreDbStub;
+    this.firestoreDbStub.returns({
+      collection: this.collectionStub
+    });
   }
 
   configure(config) {
@@ -21,6 +30,8 @@ class FirebaseMock {
   restore() {
     this.refStub = sinon.stub();
     this.authStub = sinon.stub();
+    this.addStub = sinon.stub();
+    this.collectionStub = sinon.stub();
     this.refreshDbStub();
   }
 
@@ -28,6 +39,10 @@ class FirebaseMock {
 
   database() {
     return this.dbStub;
+  }
+
+  firestore() {
+    return this.firestoreDbStub;
   }
 
   snapshot(data) {

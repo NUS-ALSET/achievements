@@ -1,5 +1,6 @@
 import isEmpty from "lodash/isEmpty";
 import firebase from "firebase/app";
+
 import { coursesService } from "./courses";
 import { firebaseService } from "./firebaseQueueService";
 import {
@@ -76,7 +77,7 @@ export const ACTIVITY_TYPES = {
   },
   jupyterLocal: {
     id: "jupyterLocal",
-    caption: "Jupyter Local"
+    caption: "Local task"
   },
   youtube: {
     id: "youtube",
@@ -148,6 +149,7 @@ export const CodeCombat_Multiplayer_Data = {
   rankingPercentile: [0, 10, 20, 30, 40, 50]
 };
 
+const firestore_db = firebase.firestore();
 export class PathsService {
   auth() {
     return new Promise(resolve =>
@@ -309,7 +311,11 @@ export class PathsService {
               .once("value")
               .then(snap => snap.val())
               .then(task => {
-                const problemJSON = JSON.parse(task.json);
+                let problemJSON = task.json;
+                if (typeof problemJSON === "string") {
+                  problemJSON = JSON.parse(task.json);
+                }
+
                 return {
                   ...pathProblem,
                   taskInfo: task,
@@ -417,6 +423,11 @@ export class PathsService {
       .ref("/paths")
       .push().key;
 
+    //Added firestore related changes
+    firestore_db.collection("/path_owners").add({
+      ownerId: uid,
+      pathId: key
+    });
     return firebase
       .database()
       .ref(`/paths/${key}`)
@@ -701,7 +712,6 @@ export class PathsService {
           break;
         case "jupyter":
         case "jupyterInline":
-        case "jupyterLocal":
           if (json) {
             const frozenSolution = json.cells
               .filter(cell => cell.source.join("").trim())
@@ -767,6 +777,11 @@ export class PathsService {
             });
           }
           break;
+        case ACTIVITY_TYPES.jupyterLocal.id:
+          return firebase.functions().httpsCallable("runLocalTask")({
+            solution: solution.payload,
+            taskId: pathProblem.taskInfo.id
+          });
         case ACTIVITY_TYPES.creator.id:
         case ACTIVITY_TYPES.educator.id:
           return firebase
@@ -916,15 +931,25 @@ export class PathsService {
                 }
               });
           case ACTIVITY_TYPES.text.id:
-          case ACTIVITY_TYPES.jest.id:
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.game.id:
           case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+          case ACTIVITY_TYPES.jupyterLocal.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
+          case ACTIVITY_TYPES.jest.id:
+            return firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set({
+                ...solution,
+                updatedAt: {
+                  ".sv": "timestamp"
+                }
+              });
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
               .then(json => {
@@ -991,6 +1016,7 @@ export class PathsService {
       solution: editableBlockCode || ""
     };
     const resData = {};
+
     return firebaseService
       .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
       .then(res => {
@@ -1285,10 +1311,38 @@ export class PathsService {
     const ref = firebase
       .database()
       .ref(`/pathAssistants/${pathId}/${collaboratorId}`);
-    if (action === "add") {
-      return ref.set(true);
-    }
-    return ref.remove();
+
+    firestore_db
+      .collection("path_owners")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(owner_path => {
+          if (action === "add") {
+            if (owner_path.data().pathId === pathId) {
+              firestore_db
+                .collection("path_owners")
+                .doc(owner_path.id)
+                .update({
+                  collaboratorId: firebase.firestore.FieldValue.arrayUnion(
+                    collaboratorId
+                  )
+                });
+            }
+            return ref.set(true);
+          }
+          if (owner_path.data().pathId === pathId) {
+            firestore_db
+              .collection("path_owners")
+              .doc(owner_path.id)
+              .update({
+                collaboratorId: firebase.firestore.FieldValue.arrayRemove(
+                  collaboratorId
+                )
+              });
+          }
+          return ref.remove();
+        });
+      });
   }
 
   /**
@@ -1446,8 +1500,7 @@ export class PathsService {
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
     //Added code to save to firestore
-    firebase
-      .firestore()
+    firestore_db
       .collection("analytics")
       .doc("activityAnalytics")
       .collection("activityAttempts")

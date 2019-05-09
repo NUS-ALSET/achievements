@@ -1,10 +1,10 @@
-const uuid = require("uuid");
-const admin = require("firebase-admin");
-const functions = require("firebase-functions");
-const profilesRefreshApproach =
-  (functions.config().profiles &&
-    functions.config().profiles["refresh-approach"]) ||
-  "none";
+// const uuid = require("uuid");
+// const admin = require("firebase-admin");
+// const functions = require("firebase-functions");
+// const profilesRefreshApproach =
+//   (functions.config().profiles &&
+//     functions.config().profiles["refresh-approach"]) ||
+//   "none";
 const axios = require("axios");
 
 class HTTPUtil {
@@ -17,50 +17,50 @@ class HTTPUtil {
    * @returns {Promise<any>} promise with request processing result
    */
   call(url, method, data) {
-    const taskKey = uuid();
+    // const taskKey = uuid();
 
     if (!url) {
       throw new Error("Missing required `url` parameter");
     }
 
-    if (profilesRefreshApproach !== "trigger") {
+    // if (profilesRefreshApproach !== "trigger") {
       return axios({
         method,
         headers: { "content-type": "text/plain" },
         url,
         data
       }).then(response => response.data);
-    }
+    // }
 
-    return new Promise((resolve, reject) => {
-      try {
-        admin
-          .database()
-          .ref("/outgoingRequestsQueue/tasks")
-          .push({
-            url,
-            method: method || "get",
-            data: data || null,
-            taskKey
-          })
-          .then(() => {
-            const answerRef = admin
-              .database()
-              .ref(`/outgoingRequestsQueue/answers/${taskKey}`);
-            let skipFirst;
-            return answerRef.on("value", response => {
-              if (!skipFirst) {
-                return (skipFirst = true);
-              }
-              answerRef.off();
-              answerRef.remove();
-              resolve(response.val());
-            });
-          });
-      } catch (err) {
-        reject(err);
-      }
-    });
+    // return new Promise((resolve, reject) => {
+    //   try {
+    //     admin
+    //       .database()
+    //       .ref("/outgoingRequestsQueue/tasks")
+    //       .push({
+    //         url,
+    //         method: method || "get",
+    //         data: data || null,
+    //         taskKey
+    //       })
+    //       .then(() => {
+    //         const answerRef = admin
+    //           .database()
+    //           .ref(`/outgoingRequestsQueue/answers/${taskKey}`);
+    //         let skipFirst;
+    //         return answerRef.on("value", response => {
+    //           if (!skipFirst) {
+    //             return (skipFirst = true);
+    //           }
+    //           answerRef.off();
+    //           answerRef.remove();
+    //           resolve(response.val());
+    //         });
+    //       });
+    //   } catch (err) {
+    //     reject(err);
+    //   }
+    // });
   }
   /**
    * Call HTTP resource with GET method

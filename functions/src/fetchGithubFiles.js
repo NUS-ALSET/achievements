@@ -195,6 +195,15 @@ class GithubCodeHandler {
 
 
 const fetchGithubFiles = (data, taskKey, owner) => {
+  data['triggerType']='handleGithubFilesFetchRequest'
+  admin.firestore().collection("/logged_events").add({          
+    createdAt: Date.now(),
+    type: "FIREBASE_TRIGGERS",
+    uid: owner,
+    sGen: true,
+    otherActionData:data
+  });  
+  
   return admin
     .database()
     .ref("/config/jestRunnerConfig")
