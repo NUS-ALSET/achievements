@@ -51,7 +51,7 @@ class FirebaseService {
     return firebase
       .database()
       .ref(`/${this.collectionName}/responses/${taskKey}`)
-      .remove();
+      .remove()
   }
 
   deleteTask(taskKey) {

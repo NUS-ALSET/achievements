@@ -23,7 +23,6 @@ import {
   accountFetchPaths,
   FETCH_USER_DATA,
   fetchUserDataFail,
-  fetchUserDataSuccess,
   INSPECT_PATH_AS_USER
 } from "./actions";
 import { accountService } from "../../services/account";
@@ -35,6 +34,7 @@ import {
   getDynamicPathtitle,
   GET_DYNAMIC_PATHTITLE
 } from "../AppFrame/actions";
+import download from "downloadjs";
 
 function* signInHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
@@ -257,7 +257,11 @@ function* fetchUserDataHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
   try {
     const userData = yield call(accountService.fetchUserJSON, uid);
-    yield put(fetchUserDataSuccess(userData));
+    download(
+      JSON.stringify(userData.data, null, 2),
+      "user-achievements.json",
+      "text/plain"
+    );
   } catch (err) {
     yield put(fetchUserDataFail(err.message));
   }

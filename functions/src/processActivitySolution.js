@@ -4,18 +4,17 @@ const ONE_HOURS = 3600000;
 
 /**
  * Checks Python activities solutions for skills via lambda function
- * and store result into firebase
+ * and store result into firestore
  * @param {String} activityKey
  * @param {String} userKey
  * @param {Object} data
- * @param {String} data.solution JSON with jupyter solution
- * @param {Number} data.updatedAt
  */
-function analyzePythonCode(activityKey, userKey, data) {
+
+function analyzeDiffPythonCode(activityKey, userKey, data) {
   return Promise.all([
     admin
       .database()
-      .ref("/config/jupyterAnalysisLambdaProcessor")
+      .ref("/config/jupyterDiffAnalysisLambdaProcessor")
       .once("value")
       .then(snap => snap.val()),
     admin
@@ -24,28 +23,68 @@ function analyzePythonCode(activityKey, userKey, data) {
       .once("value")
       .then(snap => snap.val())
   ]).then(([analyzeUrl, activity]) => {
-    let code, solution;
     switch (activity.type) {
       case "jupyterInline":
-        solution = JSON.parse(data.solution);
-        code = solution.cells[activity.code].source.join("");
-
+        let solution = JSON.parse(data.solution);
+        let b1 = solution.result.cells; //given notebook cells
+        let b2 = solution.cells; // solution notebook cells
+        let result = {};
+        // get given and solution code by comparing the code cell for changes
+        b1.filter(
+          o =>
+            !b2.some(v => {
+              if (
+                "code" === v.cell_type &&
+                v.cell_type === o.cell_type &&
+                v.metadata.id === o.metadata.id &&
+                !(v.source.join() === o.source.join())
+              ) {
+                result = {
+                  solutionCode: v.source.join(""),
+                  givenCode: o.source.join("")
+                };
+              }
+            })
+        );
         return httpUtil
-          .post(analyzeUrl, { [activityKey]: { [userKey]: code } })
+          .post(analyzeUrl, result)
           .then(response =>
             admin
-              .database()
-              .ref("/analyze/skills")
-              .update(response)
+              .firestore()
+              .collection("/logged_events")
+              .add({
+                uid: userKey,
+                createdAt: admin.firestore.Timestamp.now().toMillis(),
+                activityKey: activityKey,
+                sGen: true,
+                language: "Python 3",
+                difference: response.difference,
+                solutionFeatures: response.solutionFeatures,
+                type: "CODE_ANALYSIS",
+                path: activity.path
+              })
           )
-          .catch(err => console.error(err));
+          .catch(err =>
+            admin
+              .firestore()
+              .collection("/logged_events")
+              .add({
+                uid: userKey,
+                createdAt: admin.firestore.Timestamp.now().toMillis(),
+                activityKey: activityKey,
+                sGen: true,
+                type: "CODE_ANALYSIS_ERROR",
+                errorMsg: String(err),
+                path: activity.path
+              })
+          );
       default:
         return Promise.resolve();
     }
   });
 }
-exports.analyzePythonCode = analyzePythonCode;
 
+exports.analyzeDiffPythonCode = analyzeDiffPythonCode;
 /**
  * This function executes 2 tasks:
  *  * analyze activity attempts and store result into firebase
@@ -58,7 +97,7 @@ exports.analyzePythonCode = analyzePythonCode;
  */
 exports.handler = (activityKey, userKey, solution) =>
   Promise.all([
-    analyzePythonCode(activityKey, userKey, solution),
+    analyzeDiffPythonCode(activityKey, userKey, solution),
     admin
       .database()
       .ref("/logged_events")

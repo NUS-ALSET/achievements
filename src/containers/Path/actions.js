@@ -230,3 +230,47 @@ export const fetchMyPathsActivities = pathsInfo => ({
   type: FETCH_MY_PATHS_ACTIVITIES,
   pathsInfo
 });
+
+export const SAVE_PROBLEM_TO_DB = "SAVE_PROBLEM_TO_DB";
+export const saveProblemToDB = (problem, files) => ({
+  type: SAVE_PROBLEM_TO_DB,
+  problem,
+  files
+})
+
+export const SAVE_PROBLEM_TO_DB_SUCCESS = "SAVE_PROBLEM_TO_DB_SUCCESS";
+export const saveProblemToDBSuccess = res => ({
+  type: SAVE_PROBLEM_TO_DB_SUCCESS,
+  res
+})
+
+export const SAVE_PROBLEM_TO_DB_FAILURE = "SAVE_PROBLEM_TO_DB_FAILURE";
+export const saveProblemToDBFailure = () => ({
+  type: SAVE_PROBLEM_TO_DB_FAILURE
+})
+
+export const UPDATE_PROBLEM_IN_UI = "UPDATE_PROBLEM_IN_UI";
+export const updateProblemInUI = files => ({
+  type: UPDATE_PROBLEM_IN_UI,
+  files
+})
+
+export const ADD_NEW_FILE = "ADD_NEW_FILE"
+export const addNewFile = name => ({
+  type: ADD_NEW_FILE,
+  name
+})
+
+export const UPDATE_JEST_FILES = "UPDATE_JEST_FILES";
+export const updateJestFiles = files => ({
+  type: UPDATE_JEST_FILES,
+  files
+})
+
+export const REMOVE_JEST_FILE = "REMOVE_JEST_FILE";
+export const removeFile = file => {
+  return {
+    type: REMOVE_JEST_FILE,
+    file
+  }
+}

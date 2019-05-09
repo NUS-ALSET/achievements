@@ -32,6 +32,8 @@ import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
+// HomeV3 is a prototype for homepage
+import HomeV3 from "../HomeV3/HomeV3";
 import Task from "../Task/Task";
 import Tasks from "../Tasks/Tasks";
 import CustomActivity from "../CustomActivity/CustomActivity";
@@ -60,6 +62,7 @@ import ZiYun from "../IdeaLab/ZiYun/ZiYun";
 import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
 import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
 import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
+import ActivitySolutions from "../ActivitySolutions/ActivitySolutions"
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -269,6 +272,7 @@ class AppFrame extends React.Component {
             <main className={classes.content}>
               <Switch>
                 <Route component={HomeV2} exact path="(/|/home)" />
+                <Route component={HomeV3} exact path="(/|/homev3)" />
                 <Route component={Admin} exact path="/admin" />
                 <Route component={Courses} exact path="/courses" />
                 <Route
@@ -330,6 +334,11 @@ class AppFrame extends React.Component {
                   component={Activity}
                   exact
                   path="/paths/:pathId/activities/:problemId"
+                />
+                <Route
+                  component={ActivitySolutions}
+                  exact
+                  path="/activitySolutions/:problemId"
                 />
                 <Route
                   component={Account}

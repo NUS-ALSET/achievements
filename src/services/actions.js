@@ -7,7 +7,7 @@ import {
   COURSE_NEW_REQUEST
 } from "../containers/Courses/actions";
 import firebase from "firebase/app";
-
+import "firebase/firestore";
 export class ActionsService {
   consumerKey = undefined;
 
@@ -21,6 +21,25 @@ export class ActionsService {
     PROBLEM_INIT_SUCCESS: ["payload"]
   };
 
+  static clearKeysFromAction = ["files", "cells"];
+  static deleteExtraKeys(action) {
+    const obj = JSON.parse(JSON.stringify(action));
+    const keysTodelete = ActionsService.clearKeysFromAction;
+    function deleteKeys(obj) {
+      if (obj && typeof obj === "object") {
+        Object.keys(obj).forEach(key => {
+          if (keysTodelete.includes(key)) {
+            delete obj[key];
+          } else {
+            deleteKeys(obj[key]);
+          }
+        });
+      }
+      return obj;
+    }
+    deleteKeys(obj);
+    return obj;
+  }
   static pickActionData(action) {
     action = Object.assign({}, action);
     const clearInfo = ActionsService.clearActions[action.type];
@@ -32,7 +51,7 @@ export class ActionsService {
     }
 
     delete action.type;
-    return action;
+    return ActionsService.deleteExtraKeys(action);
   }
 
   removeEmpty(obj) {
@@ -70,6 +89,9 @@ export class ActionsService {
       currentUserId
     ) {
       try {
+        const actionDataToSave = JSON.stringify(
+          ActionsService.pickActionData(action)
+        );
         firebase
           .database()
           .ref("/logged_events")
@@ -81,10 +103,19 @@ export class ActionsService {
             type: action.type,
             uid: currentUserId,
             version: process.env.REACT_APP_VERSION,
-            otherActionData: JSON.stringify(
-              ActionsService.pickActionData(action)
-            )
+            otherActionData: actionDataToSave
           });
+
+        const firestore_db = firebase.firestore();
+        // Added firestore related changes             
+        firestore_db.collection("/logged_events").add({
+          ...data,
+          createdAt: firebase.firestore.Timestamp.now().toMillis(),
+          type: action.type,
+          uid: currentUserId,
+          version: process.env.REACT_APP_VERSION,
+          otherActionData: actionDataToSave
+        });
       } catch (err) {
         console.error(err, action);
       }
