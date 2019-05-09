@@ -35,7 +35,9 @@ class AddTextSolutionDialog extends React.PureComponent {
       PropTypes.bool
     ]),
     solution: PropTypes.any,
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    problem: PropTypes.object,
+    setProblemOpenTime: PropTypes.func
   };
 
   state = {
@@ -43,6 +45,21 @@ class AddTextSolutionDialog extends React.PureComponent {
     // validate inputs
     isCorrectInput: false
   };
+
+  componentDidUpdate(prevProps) {
+    // eslint-disable-next-line no-unused-expressions
+    if (
+      JSON.stringify(prevProps.problem) !== JSON.stringify(this.props.problem)
+    ) {
+      // eslint-disable-next-line no-unused-expressions
+      this.props.problem &&
+        this.props.setProblemOpenTime &&
+        this.props.setProblemOpenTime(
+          this.props.problem.id,
+          new Date().getTime()
+        );
+    }
+  }
 
   onChangeSolution = event => {
     // validate inputs

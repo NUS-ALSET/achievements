@@ -13,7 +13,6 @@ import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 import "firebase/firestore";
 
-
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
 export const YOUTUBE_QUESTIONS = {
@@ -40,7 +39,7 @@ export const JEST_GIT_MAP = {
     id: "Vanilla JS",
     url: "https://github.com/walkwel/temp-test/tree/master/vanilla-jest"
   }
-}
+};
 
 export const ACTIVITY_TYPES = {
   text: {
@@ -635,7 +634,7 @@ export class PathsService {
    * @param {Object} [json]
    * @returns {Promise<Boolean>}
    */
-  validateSolution(uid, pathProblem, solution, json) {
+  validateSolution(uid, pathProblem, solution, json, problemOpenTime = {}) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
         case ACTIVITY_TYPES.jest.id:
@@ -649,6 +648,16 @@ export class PathsService {
               pathProblem.options[solution.id].correct
             )
           ) {
+            this.dispatch(
+              problemSolutionAttemptRequest(
+                problemOpenTime.problemId,
+                pathProblem.path || pathProblem.pathId,
+                pathProblem.type,
+                0,
+                problemOpenTime.openTime,
+                new Date().getTime()
+              )
+            );
             throw new Error("Not correct answer");
           }
           break;
@@ -850,26 +859,38 @@ export class PathsService {
       solution.version = process.env.REACT_APP_VERSION;
     }
     return Promise.resolve()
-      .then(() => this.validateSolution(uid, pathProblem, solution))
+      .then(() =>
+        this.validateSolution(uid, pathProblem, solution, null, problemOpenTime)
+      )
       .then(() => {
         if (
           problemOpenTime &&
           problemOpenTime.problemId ===
             (pathProblem.problemId || pathProblem.id)
         ) {
+          let isCompleted = 1;
           switch (pathProblem.type) {
             // case ACTIVITY_TYPES.codeCombat.id:
             // case ACTIVITY_TYPES.codeCombatNumber.id:
             // case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
-            // case ACTIVITY_TYPES.text.id:
-            // case ACTIVITY_TYPES.profile.id:
+            case ACTIVITY_TYPES.game.id:
+            case ACTIVITY_TYPES.jest.id:
+            case ACTIVITY_TYPES.codeCombat.id:
+            case ACTIVITY_TYPES.multipleQuestion.id:
+            case ACTIVITY_TYPES.text.id:
             case ACTIVITY_TYPES.youtube.id:
+              if (ACTIVITY_TYPES.game.id === pathProblem.type) {
+                isCompleted = solution.result === "WIN" ? 1 : 0;
+              }
+              if (ACTIVITY_TYPES.multipleQuestion.id === pathProblem.type) {
+                isCompleted = +pathProblem.options[solution.id].correct;
+              }
               this.dispatch(
                 problemSolutionAttemptRequest(
                   problemOpenTime.problemId,
                   pathProblem.path || pathProblem.pathId,
                   pathProblem.type,
-                  1,
+                  isCompleted,
                   problemOpenTime.openTime,
                   new Date().getTime()
                 )
@@ -1425,18 +1446,21 @@ export class PathsService {
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
     //Added code to save to firestore
-    firebase.firestore().collection("analytics").doc("activityAnalytics")
-    .collection("activityAttempts").add({
-      activityKey: payload.activityKey,
-      activityType: payload.activityType,
-      completed:payload.completed,
-      open:payload.open,
-      time:payload.time,
-      userKey:payload.userKey,
-      pathKey:payload.pathKey
-    }
-      )
-     
+    firebase
+      .firestore()
+      .collection("analytics")
+      .doc("activityAnalytics")
+      .collection("activityAttempts")
+      .add({
+        activityKey: payload.activityKey,
+        activityType: payload.activityType,
+        completed: payload.completed,
+        open: payload.open,
+        time: payload.time,
+        userKey: payload.userKey,
+        pathKey: payload.pathKey
+      });
+
     return firebase
       .database()
       .ref("analytics/activityAttempts")
@@ -1444,7 +1468,7 @@ export class PathsService {
   }
 
   saveFiles(problem, files) {
-    const collection = problem.version === 1 ? "activityData" : "activities"
+    const collection = problem.version === 1 ? "activityData" : "activities";
     return firebase
       .database()
       .ref(`${collection}/${problem.id}`)
@@ -1452,10 +1476,10 @@ export class PathsService {
   }
 
   fetchJestFiles(activitiyId) {
-      return firebase
-        .ref(`/activityData/${activitiyId}`)
-        .once("value")
-        .then(data => data.val().files);
+    return firebase
+      .ref(`/activityData/${activitiyId}`)
+      .once("value")
+      .then(data => data.val().files);
   }
 }
 
