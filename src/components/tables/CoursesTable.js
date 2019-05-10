@@ -48,8 +48,11 @@ class CoursesTable extends React.PureComponent {
     const { classes, courses, ownerId } = this.props;
 
     if (!this.props.fetchedCourses) {
-      if (this.props.fetchedCourses === null || this.props.fetchedCourses === undefined) {
-        return <p>No courses available!</p>
+      if (
+        this.props.fetchedCourses === null ||
+        this.props.fetchedCourses === undefined
+      ) {
+        return <p>No courses available!</p>;
       }
       return (
         <Fragment>

@@ -15,10 +15,16 @@ class TextActivity extends React.PureComponent {
     onChange: PropTypes.func.isRequired,
     problem: PropTypes.object,
     solution: PropTypes.object,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    setProblemOpenTime: PropTypes.func
   };
-  componentDidMount(){
-    this.props.setProblemOpenTime && this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  componentDidMount() {
+    // eslint-disable-next-line no-unused-expressions
+    this.props.setProblemOpenTime &&
+      this.props.setProblemOpenTime(
+        this.props.problem.problemId,
+        new Date().getTime()
+      );
   }
 
   onChangeSolution = e => this.props.onChange({ value: e.target.value });
