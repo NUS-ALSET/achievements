@@ -17,6 +17,7 @@
     "firebase-queue": "^1.6.1",
     "fusioncharts": "^3.13.3",
     "history": "^4.7.2",
+    "html-react-parser": "^0.7.0",
     "lodash": "^4.17.10",
     "mdi-react": "^2.1.19",
     "mobx": "^5.1.0",
