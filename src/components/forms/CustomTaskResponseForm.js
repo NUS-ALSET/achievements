@@ -13,11 +13,6 @@ const AceEditor = Loadable({
   loader: () => import("../../components/AceEditor"),
   loading: () => <LinearProgress />
 });
-const styles = {
-  iframeStyle: {
-    width: "100%"
-  }
-};
 
 export class CustomTaskResponseForm extends React.PureComponent {
   static propTypes = {
