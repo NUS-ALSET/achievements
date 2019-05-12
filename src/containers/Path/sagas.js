@@ -59,7 +59,8 @@ import {
 } from "../Account/actions";
 import {
   problemSolutionSubmitFail,
-  problemSolutionSubmitSuccess
+  problemSolutionSubmitSuccess,
+  problemSolutionAttemptRequest
 } from "../Activity/actions";
 import { accountService } from "../../services/account";
 
@@ -330,6 +331,16 @@ export function* pathActivityCodeCombatOpenHandler(action) {
           );
           yield put(notificationShow("Solution submitted"));
           yield put(closeActivityDialog());
+          yield put(
+            problemSolutionAttemptRequest(
+              action.activityId,
+              action.pathId,
+              data.activity.type,
+              1,
+              new Date().getTime(),
+              new Date().getTime()
+            )
+          );
           return;
         }
 
@@ -385,9 +396,29 @@ export function* pathActivityCodeCombatOpenHandler(action) {
               "Completed"
             )
           );
+          yield put(
+            problemSolutionAttemptRequest(
+              action.activityId,
+              action.pathId,
+              data.activity.type,
+              1,
+              new Date().getTime(),
+              new Date().getTime()
+            )
+          );
           yield put(notificationShow("Solution submitted"));
           yield put(closeActivityDialog());
         } else {
+          yield put(
+            problemSolutionAttemptRequest(
+              action.activityId,
+              action.pathId,
+              data.activity.type,
+              0,
+              new Date().getTime(),
+              new Date().getTime()
+            )
+          );
           yield put(
             pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
           );
@@ -477,7 +508,7 @@ export function* fetchGithubFilesHandler(action) {
 export function* saveFilesToDBHandler(action) {
   try {
     yield put(notificationShow("Saving Problem"));
-    yield put(updateProblemInUI(action.files))
+    yield put(updateProblemInUI(action.files));
     const res = yield call(
       pathsService.saveFiles,
       action.problem,
@@ -486,21 +517,26 @@ export function* saveFilesToDBHandler(action) {
     yield put(saveProblemToDBSuccess(res));
     yield put(notificationShow("Problem Saved"));
   } catch (err) {
-    yield put(
-      saveProblemToDBFailure()
-    );
+    yield put(saveProblemToDBFailure());
     yield put(notificationShow(err.message));
   }
 }
 
 export function* insertJestFilesHandler(action) {
   try {
-    if (action.activityInfo && action.activityInfo.type === "jest" && action.activityInfo.version === 1) {
-      const files = yield call(pathsService.fetchJestFiles, action.activityInfo.id)
-      yield put(updateJestFiles(files))
+    if (
+      action.activityInfo &&
+      action.activityInfo.type === "jest" &&
+      action.activityInfo.version === 1
+    ) {
+      const files = yield call(
+        pathsService.fetchJestFiles,
+        action.activityInfo.id
+      );
+      yield put(updateJestFiles(files));
     }
   } catch (err) {
-    yield put(notificationShow(err.message))
+    yield put(notificationShow(err.message));
   }
 }
 
@@ -586,6 +622,6 @@ export default [
     yield takeLatest(SAVE_PROBLEM_TO_DB, saveFilesToDBHandler);
   },
   function* watchEditActivity() {
-    yield takeLatest(PATH_ACTIVITY_DIALOG_SHOW, insertJestFilesHandler)
+    yield takeLatest(PATH_ACTIVITY_DIALOG_SHOW, insertJestFilesHandler);
   }
 ];
