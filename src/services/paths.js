@@ -14,7 +14,6 @@ import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 import "firebase/firestore";
 
-
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
 export const YOUTUBE_QUESTIONS = {
@@ -41,7 +40,7 @@ export const JEST_GIT_MAP = {
     id: "Vanilla JS",
     url: "https://github.com/walkwel/temp-test/tree/master/vanilla-jest"
   }
-}
+};
 
 export const ACTIVITY_TYPES = {
   text: {
@@ -78,7 +77,7 @@ export const ACTIVITY_TYPES = {
   },
   jupyterLocal: {
     id: "jupyterLocal",
-    caption: "Jupyter Local"
+    caption: "Local task"
   },
   youtube: {
     id: "youtube",
@@ -312,7 +311,11 @@ export class PathsService {
               .once("value")
               .then(snap => snap.val())
               .then(task => {
-                const problemJSON = JSON.parse(task.json);
+                let problemJSON = task.json;
+                if (typeof problemJSON === "string") {
+                  problemJSON = JSON.parse(task.json);
+                }
+
                 return {
                   ...pathProblem,
                   taskInfo: task,
@@ -419,12 +422,12 @@ export class PathsService {
       .database()
       .ref("/paths")
       .push().key;
-    
-          //Added firestore related changes    
-          firestore_db.collection('/path_owners').add({
-            ownerId: uid,
-            pathId: key            
-          });  
+
+    //Added firestore related changes
+    firestore_db.collection("/path_owners").add({
+      ownerId: uid,
+      pathId: key
+    });
     return firebase
       .database()
       .ref(`/paths/${key}`)
@@ -642,7 +645,7 @@ export class PathsService {
    * @param {Object} [json]
    * @returns {Promise<Boolean>}
    */
-  validateSolution(uid, pathProblem, solution, json) {
+  validateSolution(uid, pathProblem, solution, json, problemOpenTime = {}) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
         case ACTIVITY_TYPES.jest.id:
@@ -656,6 +659,16 @@ export class PathsService {
               pathProblem.options[solution.id].correct
             )
           ) {
+            this.dispatch(
+              problemSolutionAttemptRequest(
+                problemOpenTime.problemId,
+                pathProblem.path || pathProblem.pathId,
+                pathProblem.type,
+                0,
+                problemOpenTime.openTime,
+                new Date().getTime()
+              )
+            );
             throw new Error("Not correct answer");
           }
           break;
@@ -699,7 +712,6 @@ export class PathsService {
           break;
         case "jupyter":
         case "jupyterInline":
-        case "jupyterLocal":
           if (json) {
             const frozenSolution = json.cells
               .filter(cell => cell.source.join("").trim())
@@ -765,6 +777,11 @@ export class PathsService {
             });
           }
           break;
+        case ACTIVITY_TYPES.jupyterLocal.id:
+          return firebase.functions().httpsCallable("runLocalTask")({
+            solution: solution.payload,
+            taskId: pathProblem.taskInfo.id
+          });
         case ACTIVITY_TYPES.creator.id:
         case ACTIVITY_TYPES.educator.id:
           return firebase
@@ -857,26 +874,38 @@ export class PathsService {
       solution.version = process.env.REACT_APP_VERSION;
     }
     return Promise.resolve()
-      .then(() => this.validateSolution(uid, pathProblem, solution))
+      .then(() =>
+        this.validateSolution(uid, pathProblem, solution, null, problemOpenTime)
+      )
       .then(() => {
         if (
           problemOpenTime &&
           problemOpenTime.problemId ===
             (pathProblem.problemId || pathProblem.id)
         ) {
+          let isCompleted = 1;
           switch (pathProblem.type) {
             // case ACTIVITY_TYPES.codeCombat.id:
             // case ACTIVITY_TYPES.codeCombatNumber.id:
             // case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
-            // case ACTIVITY_TYPES.text.id:
-            // case ACTIVITY_TYPES.profile.id:
+            case ACTIVITY_TYPES.game.id:
+            case ACTIVITY_TYPES.jest.id:
+            case ACTIVITY_TYPES.codeCombat.id:
+            case ACTIVITY_TYPES.multipleQuestion.id:
+            case ACTIVITY_TYPES.text.id:
             case ACTIVITY_TYPES.youtube.id:
+              if (ACTIVITY_TYPES.game.id === pathProblem.type) {
+                isCompleted = solution.result === "WIN" ? 1 : 0;
+              }
+              if (ACTIVITY_TYPES.multipleQuestion.id === pathProblem.type) {
+                isCompleted = +pathProblem.options[solution.id].correct;
+              }
               this.dispatch(
                 problemSolutionAttemptRequest(
                   problemOpenTime.problemId,
                   pathProblem.path || pathProblem.pathId,
                   pathProblem.type,
-                  1,
+                  isCompleted,
                   problemOpenTime.openTime,
                   new Date().getTime()
                 )
@@ -906,12 +935,13 @@ export class PathsService {
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.game.id:
           case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+          case ACTIVITY_TYPES.jupyterLocal.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
           case ACTIVITY_TYPES.jest.id:
-              return firebase
+            return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set({
@@ -954,7 +984,6 @@ export class PathsService {
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
 
-
           default:
             break;
         }
@@ -987,7 +1016,7 @@ export class PathsService {
       solution: editableBlockCode || ""
     };
     const resData = {};
-    
+
     return firebaseService
       .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
       .then(res => {
@@ -998,7 +1027,7 @@ export class PathsService {
       })
       .finally(() => {
         // pathId added, so solution's skills will be fetch on basis of pathId
-        
+
         firebase
           .database()
           .ref(`/activityExampleSolutions/${activityId}`)
@@ -1282,26 +1311,38 @@ export class PathsService {
     const ref = firebase
       .database()
       .ref(`/pathAssistants/${pathId}/${collaboratorId}`);
-          
-      firestore_db.collection("path_owners").get().then((snapshot)=>{
-        snapshot.forEach((owner_path)=>{
+
+    firestore_db
+      .collection("path_owners")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(owner_path => {
           if (action === "add") {
-            if(owner_path.data().pathId===pathId){
-              firestore_db.collection("path_owners").doc(owner_path.id).update({
-              collaboratorId: firebase.firestore.FieldValue.arrayUnion(collaboratorId)})
+            if (owner_path.data().pathId === pathId) {
+              firestore_db
+                .collection("path_owners")
+                .doc(owner_path.id)
+                .update({
+                  collaboratorId: firebase.firestore.FieldValue.arrayUnion(
+                    collaboratorId
+                  )
+                });
             }
             return ref.set(true);
           }
-          if(owner_path.data().pathId===pathId){
-            firestore_db.collection("path_owners").doc(owner_path.id).update({
-            collaboratorId: firebase.firestore.FieldValue.arrayRemove(collaboratorId)})             
+          if (owner_path.data().pathId === pathId) {
+            firestore_db
+              .collection("path_owners")
+              .doc(owner_path.id)
+              .update({
+                collaboratorId: firebase.firestore.FieldValue.arrayRemove(
+                  collaboratorId
+                )
+              });
           }
           return ref.remove();
-        })
-      })        
-      
-
-    
+        });
+      });
   }
 
   /**
@@ -1457,20 +1498,22 @@ export class PathsService {
   }
 
   saveAttemptedSolution(uid, payload) {
-    payload.userKey = uid;    
+    payload.userKey = uid;
     //Added code to save to firestore
-    firestore_db.collection("analytics").doc("activityAnalytics")
-    .collection("activityAttempts").add({
-      activityKey: payload.activityKey,
-      activityType: payload.activityType,
-      completed:payload.completed,
-      open:payload.open,
-      time:payload.time,
-      userKey:payload.userKey,
-      pathKey:payload.pathKey
-    }
-      )
-               
+    firestore_db
+      .collection("analytics")
+      .doc("activityAnalytics")
+      .collection("activityAttempts")
+      .add({
+        activityKey: payload.activityKey,
+        activityType: payload.activityType,
+        completed: payload.completed,
+        open: payload.open,
+        time: payload.time,
+        userKey: payload.userKey,
+        pathKey: payload.pathKey
+      });
+
     return firebase
       .database()
       .ref("analytics/activityAttempts")
@@ -1478,7 +1521,7 @@ export class PathsService {
   }
 
   saveFiles(problem, files) {
-    const collection = problem.version === 1 ? "activityData" : "activities"
+    const collection = problem.version === 1 ? "activityData" : "activities";
     return firebase
       .database()
       .ref(`${collection}/${problem.id}`)
@@ -1486,10 +1529,10 @@ export class PathsService {
   }
 
   fetchJestFiles(activitiyId) {
-      return firebase
-        .ref(`/activityData/${activitiyId}`)
-        .once("value")
-        .then(data => data.val().files);
+    return firebase
+      .ref(`/activityData/${activitiyId}`)
+      .once("value")
+      .then(data => data.val().files);
   }
 }
 

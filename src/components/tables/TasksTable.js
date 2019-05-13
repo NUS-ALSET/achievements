@@ -60,7 +60,7 @@ class TasksTable extends React.PureComponent {
                   </Link>
                   <Button
                     className={classes.button}
-                    onClick={() => onDeleteClick(task)}
+                    onClick={() => onDeleteClick(task.id)}
                     variant="contained"
                   >
                     Delete

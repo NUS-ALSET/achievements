@@ -1,4 +1,8 @@
-import { TASKS_DIALOG_HIDE, TASKS_DELETE_TASK_DIALOG_SHOW } from "./actions";
+import {
+  TASKS_DIALOG_HIDE,
+  TASKS_DELETE_TASK_DIALOG_SHOW,
+  TASKS_DELETE_TASK_SUCCESS
+} from "./actions";
 
 export const tasks = (
   state = {
@@ -15,6 +19,13 @@ export const tasks = (
         ui: {
           dialogType: "DELETE_TASK",
           taskId: action.taskId
+        }
+      };
+    case TASKS_DELETE_TASK_SUCCESS:
+      return {
+        ...state,
+        ui: {
+          type: ""
         }
       };
     case TASKS_DIALOG_HIDE:

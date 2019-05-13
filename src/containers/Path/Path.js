@@ -66,7 +66,10 @@ import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialo
 import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import { problemSolutionSubmitRequest } from "../Activity/actions";
+import {
+  problemSolutionSubmitRequest,
+  setProblemOpenTime
+} from "../Activity/actions";
 import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
@@ -129,7 +132,8 @@ export class Path extends React.Component {
     userAchievements: PropTypes.object,
     onSaveProblem: PropTypes.func,
     removeFile: PropTypes.func,
-    addNewFile: PropTypes.func
+    addNewFile: PropTypes.func,
+    setProblemOpenTime: PropTypes.func
   };
 
   state = {
@@ -306,7 +310,8 @@ export class Path extends React.Component {
       userAchievements,
       onSaveProblem,
       addNewFile,
-      removeFile
+      removeFile,
+      setProblemOpenTime
     } = this.props;
 
     if (pathActivities && !pathActivities.path) {
@@ -419,7 +424,7 @@ export class Path extends React.Component {
               )}
               <Link className={classes.linkButton} to="/tasks">
                 <Button className={classes.toolbarButton} variant="contained">
-                  Notebooks
+                  Local tasks
                 </Button>
               </Link>
             </React.Fragment>
@@ -431,6 +436,8 @@ export class Path extends React.Component {
           open={
             ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.text.id}Solution`
           }
+          problem={ui.dialog && ui.dialog.value}
+          setProblemOpenTime={setProblemOpenTime}
           solution={ui.dialog && ui.dialog.solution}
           taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
@@ -642,7 +649,8 @@ const mapDispatchToProps = {
   openJestActivity: pathOpenJestSolutionDialog,
   onSaveProblem: saveProblemToDB,
   addNewFile: addNewFile,
-  removeFile: removeFile
+  removeFile: removeFile,
+  setProblemOpenTime: setProblemOpenTime
 };
 
 export default compose(
