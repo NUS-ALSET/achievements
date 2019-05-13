@@ -8,10 +8,6 @@ export const TASK_TYPES = {
   custom: {
     id: "custom",
     name: "Custom Task"
-  },
-  customNotebook: {
-    id: "customNotebook",
-    name: "Custom Notebook"
   }
 };
 
