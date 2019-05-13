@@ -177,8 +177,8 @@ class Assignments extends React.Component {
   toggleMessageModal = () => {
     this.setState(state => ({
       messageModalOpen: !state.messageModalOpen
-    }))
-  }
+    }));
+  };
 
   getPasswordView() {
     return (
@@ -219,8 +219,6 @@ class Assignments extends React.Component {
       </Fragment>
     );
   }
-
-  
 
   render() {
     const {
@@ -280,7 +278,7 @@ class Assignments extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            (currentUser && currentUser.isAssistant && [
+            (currentUser && [
               {
                 label: "Refresh",
                 handler: this.refreshSolutions
@@ -293,8 +291,7 @@ class Assignments extends React.Component {
                 label: "Message",
                 handler: this.toggleMessageModal
               }
-            ]) ||
-            [
+            ]) || [
               {
                 label: "Message",
                 handler: this.toggleMessageModal
@@ -366,7 +363,8 @@ class Assignments extends React.Component {
           onClose={this.closeDialog}
           onCommit={this.commitTextSolution}
           open={
-            ui && ui.dialog &&
+            ui &&
+            ui.dialog &&
             [
               ASSIGNMENTS_TYPES.TeamFormation.id,
               ASSIGNMENTS_TYPES.TeamText.id,
@@ -384,7 +382,8 @@ class Assignments extends React.Component {
           loadingSolution={ui && !!ui.dialog && ui.dialog.loadingSolution}
           onCommit={this.onPathProblemSolutionCommit}
           open={
-            ui && ui.dialog &&
+            ui &&
+            ui.dialog &&
             ["PathActivity", "PathProblem"].includes(ui.dialog.type)
           }
           pathProblem={ui && ui.dialog && ui.dialog.pathProblem}
