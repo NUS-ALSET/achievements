@@ -9,7 +9,7 @@ export const publicPathSelector = createSelector(
   (publicPaths, joinedPaths) => {
     let counter = false;
     Object.keys(joinedPaths || {}).forEach(key => {
-      if (publicPaths[key]) {
+      if (publicPaths && publicPaths[key]) {
         publicPaths[key].solutions = joinedPaths[key].solutions;
         publicPaths[key].totalActivities = joinedPaths[key].totalActivities;
         counter = true;
