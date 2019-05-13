@@ -2,6 +2,7 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import Loadable from "react-loadable";
+import parse from "html-react-parser";
 
 import LinearProgress from "@material-ui/core/LinearProgress";
 import TextField from "@material-ui/core/TextField";
@@ -12,11 +13,6 @@ const AceEditor = Loadable({
   loader: () => import("../../components/AceEditor"),
   loading: () => <LinearProgress />
 });
-const styles = {
-  iframeStyle: {
-    width: "100%"
-  }
-};
 
 export class CustomTaskResponseForm extends React.PureComponent {
   static propTypes = {
@@ -25,24 +21,13 @@ export class CustomTaskResponseForm extends React.PureComponent {
   state = {
     tabIndex: "htmlFeedback"
   };
-  frameRef = React.createRef();
-
-  componentDidMount() {
-    const { taskInfo } = this.props;
-    const { tabIndex } = this.state;
-    if (this.frameRef.current) {
-      this.frameRef.current.contentWindow.document.write(
-        taskInfo.response.data[tabIndex]
-      );
-    }
-  }
 
   getFeedback = () => {
     const { taskInfo } = this.props;
     const { tabIndex } = this.state;
     switch (tabIndex) {
       case "htmlFeedback":
-        break;
+        return parse(taskInfo.response.data[tabIndex]);
       case "textFeedback":
         return (
           <TextField
@@ -85,12 +70,6 @@ export class CustomTaskResponseForm extends React.PureComponent {
           <Tab label="JSON" value="jsonFeedback" />
           <Tab label="Text" value="textFeedback" />
         </Tabs>
-        <iframe
-          hidden={tabIndex !== "htmlFeedback"}
-          ref={this.frameRef}
-          style={styles.iframeStyle}
-          title="HTML Preview"
-        />
         {taskInfo &&
           taskInfo.response &&
           taskInfo.response.data &&
