@@ -34,7 +34,7 @@ export class UserSolutionRow extends React.PureComponent {
     student: PropTypes.object,
     classes: PropTypes.object,
     openSolution: PropTypes.func,
-    type: PropTypes.string,
+    showViewSolutionBtn: PropTypes.bool,
     status: PropTypes.any
   };
 
@@ -58,7 +58,7 @@ export class UserSolutionRow extends React.PureComponent {
       student,
       classes,
       status,
-      type
+      showViewSolutionBtn
     } = this.props;
     return (
       <TableRow key={userId}>
@@ -87,7 +87,7 @@ export class UserSolutionRow extends React.PureComponent {
             : ""}
         </TableCell>
         <TableCell>{status ? <CheckIcon /> : <CloseIcon />}</TableCell>
-        {type === "jest" && (
+        {showViewSolutionBtn && (
           <TableCell>
             <Button onClick={() => openSolution(solution, student)}>
               View Solution

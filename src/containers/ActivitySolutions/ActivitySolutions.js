@@ -15,7 +15,9 @@ import { Typography } from "@material-ui/core";
 
 import Breadcrumbs from "../../components/Breadcrumbs";
 import UserSolutionRow from "../../components/lists/UserSolutionRow";
-import Dialog from "../../components/dialogs/ViewActivityJestSolutionDialog";
+import ViewActivityJestSolutionDialog from "../../components/dialogs/ViewActivityJestSolutionDialog";
+import ViewActivitySolutionDialog from "../../components/dialogs/ViewActivitySolutionDialog";
+import JupyterInlineActivity from "../../components/activityViews/JupyterInlineActivity";
 
 export class ActivitySolution extends React.PureComponent {
   static propTypes = {
@@ -28,25 +30,34 @@ export class ActivitySolution extends React.PureComponent {
 
   state = {
     open: false,
-    dialogData: {}
+    dialogData: null,
+    showSolutionFor: ["jest", "jupyterInline"]
   };
 
   handleClickOpen = (solution, student) => {
-    this.setState({ open: true, dialogData: { solution, student } });
+    let sol = (solution || {}).solution ? solution.solution : solution;
+    if (this.props.activity.type === "jupyterInline") {
+      sol = typeof sol === "string" ? JSON.parse(sol) : sol;
+    }
+    this.setState({
+      open: true,
+      dialogData: {
+        solution: sol,
+        student
+      }
+    });
   };
 
   handleClose = () => {
-    this.setState({ open: false, dialogData: {} });
+    this.setState({ open: false, dialogData: null });
   };
 
   render() {
     const activity = this.props.activity || {};
     const problemSolutions = this.props.problemSolutions || {};
-    const {
-      open,
-      dialogData: { student, solution }
-    } = this.state;
-
+    const { open, dialogData, showSolutionFor } = this.state;
+    const { student, solution } = dialogData || {};
+    console.log(this.props, this.state);
     if (
       isLoaded(this.props.activity) &&
       this.props.uid !== this.props.activity.owner
@@ -99,7 +110,9 @@ export class ActivitySolution extends React.PureComponent {
                 <TableCell> Student </TableCell>
                 <TableCell> Last Update </TableCell>
                 <TableCell> Completed </TableCell>
-                {activity.type === "jest" && <TableCell> Action </TableCell>}
+                {showSolutionFor.includes(activity.type) && (
+                  <TableCell> Action </TableCell>
+                )}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -111,8 +124,10 @@ export class ActivitySolution extends React.PureComponent {
                     key={userId}
                     openSolution={this.handleClickOpen}
                     pathId={this.props.pathId}
+                    showViewSolutionBtn={showSolutionFor.includes(
+                      activity.type
+                    )}
                     solution={solution}
-                    type={activity.type || ""}
                     userId={userId}
                   />
                 );
@@ -127,13 +142,40 @@ export class ActivitySolution extends React.PureComponent {
             No solution submitted yet.
           </Typography>
         )}
-        <Dialog
-          activity={activity}
-          handleClose={this.handleClose}
-          open={open}
-          solution={solution}
-          student={student}
-        />
+        {dialogData && (
+          <>
+            <ViewActivityJestSolutionDialog
+              activity={activity}
+              handleClose={this.handleClose}
+              open={open}
+              solution={solution}
+              student={student}
+            />
+
+            {activity.type === "jupyterInline" && (
+              <ViewActivitySolutionDialog
+                displayName={(student || {}).displayName}
+                handleClose={this.handleClose}
+                open={open}
+              >
+                <JupyterInlineActivity
+                  dispatch={() => {}}
+                  handleClose={this.handleClose}
+                  onChange={() => {}}
+                  onClose={this.handleClose}
+                  onCommit={() => {}}
+                  open={open}
+                  problem={activity}
+                  problemSolutionAttemptRequest={() => {}}
+                  readOnly={true}
+                  setProblemOpenTime={() => {}}
+                  showPathActivity={false}
+                  solution={solution}
+                />
+              </ViewActivitySolutionDialog>
+            )}
+          </>
+        )}
       </Fragment>
     );
   }

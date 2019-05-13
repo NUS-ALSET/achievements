@@ -147,7 +147,7 @@ class JupyterNotebook extends React.PureComponent {
   }
 
   render() {
-    const { action, persistent, richEditor, solution, title, url, problem } = this.props;
+    const { action, persistent, richEditor, solution, title, url, problem, readOnly } = this.props;
     const cellsToHide = problem && problem.cell;
     // hide the cells
     let fillteredSol;
@@ -185,6 +185,7 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
           {persistent ? (
+            !readOnly ?
             <Button
               color="primary"
               disabled={!(this.state.solution && action && richEditor)}
@@ -197,6 +198,7 @@ class JupyterNotebook extends React.PureComponent {
             >
               Run
             </Button>
+            : ""
           ) : (
             <IconButton
               onClick={this.onSwitchCollapse}
