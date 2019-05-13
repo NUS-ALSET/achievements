@@ -15,9 +15,9 @@ import Zoom from "@material-ui/core/Zoom";
 import AddIcon from "@material-ui/icons/Add";
 import PathsTable from "../../components/tables/PathsTable";
 
-const PATHS_TAB_JOINED = 0;
+const PATHS_TAB_PUBLIC = 0;
 const PATHS_TAB_OWNED = 1;
-const PATHS_TAB_PUBLIC = 2;
+const PATHS_TAB_JOINED = 2;
 
 class PathTabs extends React.Component {
   static propTypes = {
@@ -53,14 +53,6 @@ class PathTabs extends React.Component {
     switch (currentPathTab) {
       case PATHS_TAB_PUBLIC:
         paths = publicPaths;
-
-        // FIXIT: Dirty workaround, move that somewhere else
-        Object.keys(publicPaths || {}).forEach(key => {
-          if (joinedPaths[key]) {
-            publicPaths[key].solutions = joinedPaths[key].solutions;
-            publicPaths[key].totalActivities = joinedPaths[key].totalActivities;
-          }
-        });
         break;
       case PATHS_TAB_OWNED:
         paths = myPaths;
@@ -96,9 +88,9 @@ class PathTabs extends React.Component {
           textColor="primary"
           value={currentPathTab}
         >
-          <Tab label="Joined Paths" />
-          <Tab label="Created Paths" />
           <Tab label="Public Paths" />
+          <Tab label="Created Paths" />
+          <Tab label="Joined Paths" />
         </Tabs>
         <PathsTable
           pathDialogShow={pathDialogShow}
