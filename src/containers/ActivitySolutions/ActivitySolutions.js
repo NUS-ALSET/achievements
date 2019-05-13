@@ -19,6 +19,8 @@ import ViewActivityJestSolutionDialog from "../../components/dialogs/ViewActivit
 import ViewActivitySolutionDialog from "../../components/dialogs/ViewActivitySolutionDialog";
 import JupyterInlineActivity from "../../components/activityViews/JupyterInlineActivity";
 
+function emptyFn(){}
+
 export class ActivitySolution extends React.PureComponent {
   static propTypes = {
     match: PropTypes.any,
@@ -57,7 +59,6 @@ export class ActivitySolution extends React.PureComponent {
     const problemSolutions = this.props.problemSolutions || {};
     const { open, dialogData, showSolutionFor } = this.state;
     const { student, solution } = dialogData || {};
-    console.log(this.props, this.state);
     if (
       isLoaded(this.props.activity) &&
       this.props.uid !== this.props.activity.owner
@@ -159,16 +160,16 @@ export class ActivitySolution extends React.PureComponent {
                 open={open}
               >
                 <JupyterInlineActivity
-                  dispatch={() => {}}
+                  dispatch={emptyFn}
                   handleClose={this.handleClose}
-                  onChange={() => {}}
+                  onChange={emptyFn}
                   onClose={this.handleClose}
-                  onCommit={() => {}}
+                  onCommit={emptyFn}
                   open={open}
                   problem={activity}
-                  problemSolutionAttemptRequest={() => {}}
+                  problemSolutionAttemptRequest={emptyFn}
                   readOnly={true}
-                  setProblemOpenTime={() => {}}
+                  setProblemOpenTime={emptyFn}
                   showPathActivity={false}
                   solution={solution}
                 />
