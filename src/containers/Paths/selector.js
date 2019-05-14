@@ -7,18 +7,15 @@ export const publicPathSelector = createSelector(
   getPublicPath,
   getJoinedPath,
   (publicPaths, joinedPaths) => {
-    let counter = false;
-    Object.keys(joinedPaths || {}).forEach(key => {
-      if (publicPaths && publicPaths[key]) {
+    //let counter = false;
+    Object.keys(publicPaths || {}).forEach(key => {
+      if (joinedPaths && joinedPaths[key]) {
         publicPaths[key].solutions = joinedPaths[key].solutions;
         publicPaths[key].totalActivities = joinedPaths[key].totalActivities;
-        counter = true;
+        //counter = true;
       }
     });
-    if (counter) {
-      return publicPaths;
-    } else {
-      return undefined;
-    }
+    //FIXIT : fix progress to be rendered on initial load of paths screen
+    return publicPaths;
   }
 );
