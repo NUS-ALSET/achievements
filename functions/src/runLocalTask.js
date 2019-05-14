@@ -6,9 +6,10 @@ const axios = require("axios");
 
 const CALL_TIMEOUT = 50000;
 
-function runCustomTask(task, solution) {
+function runCustomTask(uid, task, solution) {
   const json = JSON.parse(task.json);
   const request = {};
+  request["userToken"] = uid;
   for (const [index, cell] of json.cells.entries()) {
     switch (cell.metadata.achievements.type) {
       case "shown":
@@ -43,8 +44,11 @@ function runCustomTask(task, solution) {
  * @param {String} data.taskId
  * @param {String} data.url
  * @param {*} data.solution
+ * @param {Object} context
+ * @param {Object} context.auth
+ * @param {String} context.auth.uid
  */
-function runLocalTask(data) {
+function runLocalTask(data, context) {
   return admin
     .database()
     .ref(`/tasks/${data.taskId}`)
@@ -53,7 +57,7 @@ function runLocalTask(data) {
     .then(task => {
       switch (task.type) {
         case "custom":
-          return runCustomTask(task, data.solution);
+          return runCustomTask(context.auth.uid, task, data.solution);
         default:
           throw new Error("Unsupported task/activity type");
       }

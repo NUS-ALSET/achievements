@@ -6,6 +6,7 @@ import CustomLocalActivity from "./CustomLocalActivity";
 
 export class LocalTaskActivity extends React.PureComponent {
   static propTypes = {
+    uid: PropTypes.string,
     dispatch: PropTypes.func,
     onChange: PropTypes.func,
     onCommit: PropTypes.func,

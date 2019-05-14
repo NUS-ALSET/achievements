@@ -48,7 +48,7 @@ import React, { Fragment } from "react";
 import RemoveExternalProfileDialog from "../../components/dialogs/RemoveProfileDialog";
 
 import TextField from "@material-ui/core/TextField";
-// import Typography from "@material-ui/core/Typography";
+import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
@@ -185,6 +185,19 @@ class Account extends React.PureComponent {
     this.props.fetchUserData();
   };
 
+  hashCode = uid => {
+    var hash = 0,
+      i,
+      chr;
+    if (uid.length === 0) return hash;
+    for (i = 0; i < uid.length; i++) {
+      chr = uid.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  };
+
   render() {
     const {
       achievementsRefreshingInProgress,
@@ -239,13 +252,13 @@ class Account extends React.PureComponent {
                 title="UserPhoto"
               />
               <CardContent>
-                {/* <Typography
+                <Typography
                   style={{
-                    fontSize: 12
+                    fontSize: 14
                   }}
                 >
-                  User ID: {match.params.accountId}
-                </Typography> */}
+                  User Token : {this.hashCode(String(match.params.accountId))}
+                </Typography>
                 {isOwner && displayNameEdit ? (
                   <Fragment>
                     <TextField
@@ -361,7 +374,7 @@ class Account extends React.PureComponent {
             <Button
               color="primary"
               onClick={this.fetchUserData}
-              style={{margin : "8px"}}
+              style={{ margin: "8px" }}
               variant="contained"
             >
               Download JSON

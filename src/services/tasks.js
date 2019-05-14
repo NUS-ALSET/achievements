@@ -274,8 +274,9 @@ export class TasksService {
     });
   }
 
-  prepareCustomTask(taskInfo, solution) {
+  prepareCustomTask(uid, taskInfo, solution) {
     const request = {};
+    request["userToken"] = uid;
     for (const [index, cell] of taskInfo.json.cells.entries()) {
       switch (cell.metadata.achievements.type) {
         case "shown":
@@ -303,6 +304,7 @@ export class TasksService {
       return firebase
         .functions()
         .httpsCallable("runLocalTask")({
+          uid,
           solution,
           taskId: taskInfo.id
         })
