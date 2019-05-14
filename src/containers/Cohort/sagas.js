@@ -4,6 +4,8 @@ import {
   COHORT_COURSES_RECALCULATE_REQUEST,
   COHORT_OPEN,
   COHORT_UPDATE_ASSISTANTS_REQUEST,
+  SET_COHORT_QUALIFICATION_CONDITION_REQUEST,
+  COHORT_RECALCULATE_QUALIFIED_MEMBERS_REQUEST,
   cohortCoursesRecalculateFail,
   cohortCoursesRecalculateRequest,
   cohortCoursesRecalculateSuccess,
@@ -11,7 +13,10 @@ import {
   cohortCourseUpdateSuccess,
   cohortFetchSuccess,
   cohortUpdateAssistantsFail,
-  cohortUpdateAssistantsSuccess
+  cohortUpdateAssistantsSuccess,
+  COHORT_ANALYTICS_DATA_REQUEST,
+  cohortAnalyticsDataRequestSuccess,
+  setCohortQualificationConditionSuccess
 } from "./actions";
 import { cohortsService } from "../../services/cohorts";
 import { notificationShow } from "../Root/actions";
@@ -110,6 +115,52 @@ export function* cohortUpdateAssistantRequestHandler(action) {
   }
 }
 
+export function* cohortAnalyticsDataRequestHandler(action) {
+  try {
+  const uid = yield select(state => state.firebase.auth.uid);
+  const analyticsData = yield call(
+    cohortsService.addTaskToCohortAnalyticsQueue,
+    { cohortId: action.cohortId, uid }
+    );
+  yield put(
+    cohortAnalyticsDataRequestSuccess(
+      action.cohortId,
+      analyticsData
+    )
+  )
+  }catch(err){
+
+  }
+}
+
+export function* setCohortQualificationConditionRequestHandler(action){
+  try{
+    yield call(
+      cohortsService.setCohortQualificationCondition,
+      action.cohortId,
+      action.conditionData
+    )
+    yield put(setCohortQualificationConditionSuccess(action.cohortId,action.conditionData))
+    yield put(notificationShow("Condition Added Successfully"));
+
+  }catch(err){
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* cohortRecalculateQualifiedMembersRequesttHandler(action){
+  try{
+    yield call(
+      cohortsService.cohortUpdateQualificationCalculateTime,
+      action.cohortId
+    )
+  }catch(err){
+    yield put(notificationShow(err.message));
+  }
+}
+
+
+
 export default [
   function* watchCohortOpen() {
     yield takeLatest(COHORT_OPEN, cohortOpenHandle);
@@ -131,5 +182,23 @@ export default [
       COHORT_UPDATE_ASSISTANTS_REQUEST,
       cohortUpdateAssistantRequestHandler
     );
+  },
+  function* watchCohortAnalyticsDataRequestt() {
+    yield takeLatest(
+      COHORT_ANALYTICS_DATA_REQUEST,
+      cohortAnalyticsDataRequestHandler
+    );
+  },
+  function* watchsetCohortQualificationConditionRequests() {
+    yield takeLatest(
+      SET_COHORT_QUALIFICATION_CONDITION_REQUEST,
+      setCohortQualificationConditionRequestHandler
+      );
+  },
+  function* watchcohortRecalculateQualifiedMembersRequests() {
+    yield takeLatest(
+      COHORT_RECALCULATE_QUALIFIED_MEMBERS_REQUEST,
+      cohortRecalculateQualifiedMembersRequesttHandler
+      );
   }
 ];

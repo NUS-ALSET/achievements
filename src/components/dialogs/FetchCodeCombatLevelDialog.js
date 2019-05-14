@@ -19,7 +19,6 @@ import { ACTIVITY_TYPES, CodeCombat_Multiplayer_Data } from "../../services/path
 class FetchCodeCombatLevelDialog extends React.PureComponent {
   static propTypes = {
     activity: PropTypes.any,
-    codeCombatId: PropTypes.string,
     onClose: PropTypes.func,
     open: PropTypes.bool,
     userAchievements: PropTypes.object
@@ -69,26 +68,26 @@ class FetchCodeCombatLevelDialog extends React.PureComponent {
     if (!activity){
       return "";
     }
-    
+    const service = activity.service || "CodeCombat";
     return (
       <Dialog onClose={onClose} open={open}>
         <DialogTitle>{ACTIVITY_TYPES[activity.type].caption}</DialogTitle>
         <DialogContent>
         {
           activity.type===ACTIVITY_TYPES.codeCombat.id &&  <Typography>
-          You have not completed {`"${activity.level}"`} level on CodeCombat.
-          Would you like to go to CodeCombat to complete this level
+          You have not completed {`"${activity.level}"`} level on {service}.
+          Would you like to go to {service} to complete this level
           </Typography>
         }
         {
           activity.type===ACTIVITY_TYPES.codeCombatNumber.id &&  <Typography>
-          You have not completed {`"${activity.count}"`} levels on CodeCombat.
-          Would you like to go to CodeCombat to complete more levels.
+          You have not completed {`"${activity.count}"`} levels on {service}.
+          Would you like to go to {service} to complete more levels.
           </Typography>
         }
         {
           activity.type===ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id && (() => {
-            const codeCombatAchievements = userAchievements.CodeCombat;
+            const codeCombatAchievements = userAchievements[service] || {};
             const ladderKey = `${activity.level}-${activity.team}`;
             const ladder = (codeCombatAchievements.ladders || {})[ladderKey] || {};
             const ranked = ladder.isRanked ? ladder.rank : 0;

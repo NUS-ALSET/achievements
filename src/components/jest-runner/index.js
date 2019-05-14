@@ -6,12 +6,19 @@ import Loader from "./Loader";
 import Notification from "./Notification";
 import FileDirectory from "./FileDirectory";
 import EditIcon from "@material-ui/icons/Edit";
-import { problemSolutionAttemptRequest } from '../../containers/Activity/actions';
+import { problemSolutionAttemptRequest } from "../../containers/Activity/actions";
 import {  APP_SETTING } from "../../achievementsApp/config";
+import PropTypes from "prop-types";
 
 import "./index.css";
+import DeleteConfirmationDialog from "../dialogs/DeleteConfirmationDialog";
 
 class JestRunner extends React.Component {
+  static propTypes = {
+    removeFile: PropTypes.func,
+    onSubmit: PropTypes.func,
+    dispatch: PropTypes.func
+  }
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +33,8 @@ class JestRunner extends React.Component {
     this.testSolution = null;
   }
   saveAttemptedSolution=(completed)=>{
-    //problemId, pathId, activityType, completed, openTime, attemptTime
+    // problemId, pathId, activityType, completed, openTime, attemptTime
+    // eslint-disable-next-line no-unused-expressions
     this.props.problemSolutionAttemptRequest
     ? this.props.problemSolutionAttemptRequest( (this.props.problem.id || this.props.problem.problemId), this.props.problem.path,this.props.problem.type, Number(completed), this.state.openTime, new Date().getTime())
     : this.props.dispatch(
@@ -57,7 +65,7 @@ class JestRunner extends React.Component {
     }
     return files;
   }
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     this.setState({
       files: this.getFiles(nextProps),
       selectedFile: this.getFirstWritableFile(nextProps),
@@ -86,7 +94,6 @@ class JestRunner extends React.Component {
     this.setState({ output: null });
   };
   handleError = (err = {}) => {
-    console.log("error", err);
     this.showNotification("Error");
     this.hideLoading();
   };
@@ -104,6 +111,20 @@ class JestRunner extends React.Component {
       selectedFile: { ...this.state.selectedFile, code }
     });
   };
+
+  onDelete = () => {
+    this.props.removeFile(this.state.fileToDelete);
+    this.setState({ confirmDelete: false })
+  }
+
+  onClose = () => {
+    this.setState({ confirmDelete: false })
+  }
+
+  confirmDelete = file => {
+    if (file) this.setState({ confirmDelete: true, fileToDelete: file })
+  }
+
   postFiles = () => {
     this.hideOutput();
     // this.saveFile();
@@ -128,7 +149,6 @@ class JestRunner extends React.Component {
     })
       .then(response => response.json())
       .then(data => {
-        console.log("server response", data);
         if (data.message && data.message === "Internal server error") {
           // this.showOutput(data.message);
         } else {
@@ -159,7 +179,7 @@ class JestRunner extends React.Component {
       selectedFile,
       solution
     } = this.state;
-    const { readOnly } = this.props;
+    const { readOnly, editMode } = this.props;
     return (
       <div>
         <div className="super" ref="jestRunnerEle">
@@ -167,12 +187,14 @@ class JestRunner extends React.Component {
             <div className="mainWrap" id="editor-panel">
               <div className="container" id="container">
                 <FileDirectory
+                  deleteFile={this.confirmDelete}
+                  editMode={editMode || false}
                   files={files}
                   openFile={this.openFile}
                   selectedFile={selectedFile}
                 />
                 <Editor
-                  readOnly={readOnly}
+                  readOnly={editMode ? false : readOnly}
                   saveFile={this.saveFile}
                   selectedFile={selectedFile}
                 />
@@ -214,6 +236,12 @@ class JestRunner extends React.Component {
         </div>
         {loading && <Loader />}
         <Notification message={notificationMsg} />
+        <DeleteConfirmationDialog
+          message={"Do you really want to delete this file ?"}
+          onClose={this.onClose}
+          onCommit={this.onDelete}
+          open={this.state.confirmDelete || false}
+        />
       </div>
     );
   }

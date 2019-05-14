@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { notificationShow, notificationHide } from "../containers/Root/actions";
 
 const PROCESS_STOP_TIME = 5000;
@@ -51,7 +51,7 @@ class FirebaseService {
     return firebase
       .database()
       .ref(`/${this.collectionName}/responses/${taskKey}`)
-      .remove();
+      .remove()
   }
 
   deleteTask(taskKey) {

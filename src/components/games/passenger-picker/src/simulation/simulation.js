@@ -1531,22 +1531,24 @@ Simulation.prototype.simulate = function() {
         gameId: i,
         map: this.map[i],
         controlInfo: this.controlInfo,
-        botIndex: j,
-        gameId: i
+        botIndex: j
       };
     }
   }
-  for (var gameId = 0; gameId < gamesQuant; gameId++) {
-    if (gameId == 0) var clb = this.bot1clb;
-    else var clb = this.bot2clb;
-    for (var botId = 0; botId < this.quantity; botId++) {
+  var gameId;
+  var botId;
+  var clb;
+  for (gameId = 0; gameId < gamesQuant; gameId++) {
+    if (gameId == 0) clb = this.bot1clb;
+    else clb = this.bot2clb;
+    for (botId = 0; botId < this.quantity; botId++) {
       this.direction[gameId][botId] = clb(botsData[gameId][botId]);
     }
   }
   this.direction = this.getDirections(this.direction);
   var botsQuant = this.quantity;
-  for (var gameId = 0; gameId < gamesQuant; gameId++) {
-    for (var botId = 0; botId < botsQuant; botId++) {
+  for (gameId = 0; gameId < gamesQuant; gameId++) {
+    for (botId = 0; botId < botsQuant; botId++) {
       if (this.direction[gameId][botId] == undefined)
         this.direction[gameId][botId] = this.directionsArr[
           Math.floor(Math.random() * this.directionsArr.length)
@@ -1651,61 +1653,65 @@ Simulation.prototype.moveCharacters = function() {
   }
 };
 Simulation.prototype.isInsideRoad = function(direction, gameId, botId) {
+  var row1Id;
+  var col1Id;
+  var row2Id;
+  var col2Id;
   if (direction.up) {
-    var row1Id = Math.floor(
+    row1Id = Math.floor(
       (this.bots[gameId][botId].y - 1) / this.config.roadWidth
     );
-    var col1Id = Math.floor(this.bots[gameId][botId].x / this.config.roadWidth);
+    col1Id = Math.floor(this.bots[gameId][botId].x / this.config.roadWidth);
   } else if (direction.down) {
-    var row1Id = Math.floor(
+    row1Id = Math.floor(
       (this.bots[gameId][botId].y + this.config.playerSize) /
         this.config.roadWidth
     );
-    var col1Id = Math.floor(this.bots[gameId][botId].x / this.config.roadWidth);
+    col1Id = Math.floor(this.bots[gameId][botId].x / this.config.roadWidth);
   } else if (direction.left) {
-    var row1Id = Math.floor(this.bots[gameId][botId].y / this.config.roadWidth);
-    var col1Id = Math.floor(
+    row1Id = Math.floor(this.bots[gameId][botId].y / this.config.roadWidth);
+    col1Id = Math.floor(
       (this.bots[gameId][botId].x - 1) / this.config.roadWidth
     );
   } else if (direction.right) {
-    var row1Id = Math.floor(this.bots[gameId][botId].y / this.config.roadWidth);
-    var col1Id = Math.floor(
+    row1Id = Math.floor(this.bots[gameId][botId].y / this.config.roadWidth);
+    col1Id = Math.floor(
       (this.bots[gameId][botId].x + this.config.playerSize) /
         this.config.roadWidth
     );
   }
 
   if (direction.up) {
-    var row2Id = Math.floor(
+    row2Id = Math.floor(
       (this.bots[gameId][botId].y - 1) / this.config.roadWidth
     );
-    var col2Id = Math.floor(
+    col2Id = Math.floor(
       (this.bots[gameId][botId].x + this.config.playerSize - 1) /
         this.config.roadWidth
     );
   } else if (direction.down) {
-    var row2Id = Math.floor(
+    row2Id = Math.floor(
       (this.bots[gameId][botId].y + this.config.playerSize) /
         this.config.roadWidth
     );
-    var col2Id = Math.floor(
+    col2Id = Math.floor(
       (this.bots[gameId][botId].x + this.config.playerSize - 1) /
         this.config.roadWidth
     );
   } else if (direction.left) {
-    var row2Id = Math.floor(
+    row2Id = Math.floor(
       (this.bots[gameId][botId].y + this.config.playerSize - 1) /
         this.config.roadWidth
     );
-    var col2Id = Math.floor(
+    col2Id = Math.floor(
       (this.bots[gameId][botId].x - 1) / this.config.roadWidth
     );
   } else if (direction.right) {
-    var row2Id = Math.floor(
+    row2Id = Math.floor(
       (this.bots[gameId][botId].y + this.config.playerSize - 1) /
         this.config.roadWidth
     );
-    var col2Id = Math.floor(
+    col2Id = Math.floor(
       (this.bots[gameId][botId].x + this.config.playerSize) /
         this.config.roadWidth
     );
@@ -1767,8 +1773,8 @@ function Cell(x, y) {
 Cell.prototype.addNeighbors = function(map) {
   var x = this.x;
   var y = this.y;
-  var rows = map.length;
-  var cols = map[0].length;
+  //var rows = map.length;
+  //var cols = map[0].length;
   if (map[y + 1] && map[y + 1][x]) {
     this.neighbors.push(map[y + 1][x]);
   }
@@ -1801,7 +1807,6 @@ Simulation.prototype.findShortestPath = function(arr, pointA, pointB, charId) {
   var openSet = [];
   var closeSet = [];
   var path = [];
-  var current = cellPointA;
   openSet.push(cellPointA);
   //searching path function started here
   while (openSet.length > 0) {

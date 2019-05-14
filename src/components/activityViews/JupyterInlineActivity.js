@@ -14,7 +14,6 @@ import {
   problemSolutionRefreshFail,
   problemSolveUpdate
 } from "../../containers/Activity/actions";
-import { notificationShow } from "../../containers/Root/actions";
 import JupyterNotebook from "./JupyterNotebook";
 
 class JupyterInlineActivity extends React.PureComponent {
@@ -23,8 +22,10 @@ class JupyterInlineActivity extends React.PureComponent {
     onChange: PropTypes.func,
     onCommit: PropTypes.func,
     problem: PropTypes.object,
+    setProblemOpenTime: PropTypes.func,
     solution: PropTypes.object,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    showPathActivity: PropTypes.bool
   };
 
   state = {
@@ -57,6 +58,10 @@ class JupyterInlineActivity extends React.PureComponent {
     this.setState({
       open: new Date().getTime()
     });
+    this.props.setProblemOpenTime(
+      this.props.problem.problemId,
+      new Date().getTime()
+    );
   }
 
   onSolutionRefreshClick = value => {
@@ -69,14 +74,11 @@ class JupyterInlineActivity extends React.PureComponent {
       .map(line => line + "\n");
 
     this.setState({
-      solutionJSON: solutionJSON || false
+      solutionJSON
     });
     dispatch(problemSolutionRefreshFail());
     if (onChange) {
       onChange(solutionJSON);
-    }
-    if (!solutionJSON) {
-      return dispatch(notificationShow("Code wasn't changed"));
     }
 
     return dispatch(
@@ -120,6 +122,7 @@ class JupyterInlineActivity extends React.PureComponent {
   getSolutionCode = (solution, problem) =>
     (this.state.solutionJSON &&
       this.state.solutionJSON.cells &&
+      this.state.solutionJSON.cells[Number(problem.code)] &&
       this.state.solutionJSON.cells[Number(problem.code)].source
         .join("")
         .replace(/\n\n/g, "\n")) ||
@@ -141,9 +144,9 @@ class JupyterInlineActivity extends React.PureComponent {
       /** @type {JupyterPathProblem} */
       problem,
       solution,
-      readOnly
+      readOnly,
+      showPathActivity=true
     } = this.props;
-
     return (
       <Fragment>
         {this.state.statusText && (
@@ -182,11 +185,13 @@ class JupyterInlineActivity extends React.PureComponent {
             }
           />
         ) : (
-          <JupyterNotebook
-            readOnly={readOnly}
-            solution={{ json: problem.problemJSON }}
-            title="Path Activity"
-          />
+            showPathActivity ?
+              <JupyterNotebook
+              readOnly={readOnly}
+              solution={{ json: problem.problemJSON }}
+              title="Path Activity"
+            />
+            : ""
         )}
         <JupyterNotebook
           action={this.onSolutionRefreshClick}

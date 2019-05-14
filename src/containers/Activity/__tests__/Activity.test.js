@@ -2,7 +2,7 @@ import React from "react";
 import sinon from "sinon";
 
 import { createShallow } from "@material-ui/core/test-utils";
-import Button from "@material-ui/core/Button";
+
 
 import { Activity } from "../Activity";
 import ActivityView from "../../../components/activityViews/ActivityView";

@@ -37,13 +37,14 @@ class JupyterNotebook extends React.PureComponent {
   static propTypes = {
     action: PropTypes.func,
     defaultValue: PropTypes.string,
-    onCommit: PropTypes.func,
+    // onCommit: PropTypes.func,
     persistent: PropTypes.bool,
     richEditor: PropTypes.bool,
     solution: PropTypes.any,
     title: PropTypes.any.isRequired,
     url: PropTypes.string,
-    readOnly: PropTypes.bool
+    readOnly: PropTypes.bool,
+    problem: PropTypes.object
   };
 
   state = {
@@ -69,9 +70,6 @@ class JupyterNotebook extends React.PureComponent {
   getEditor = () => {
     const { action, defaultValue, readOnly, richEditor } = this.props;
     return richEditor ? (
-      richEditor === null || richEditor === undefined ? (
-        <p>Something went wrong!</p>
-      ) : (
         <AceEditor
           commands={[
             {
@@ -107,7 +105,7 @@ class JupyterNotebook extends React.PureComponent {
           value={this.state.solution || defaultValue || ""}
         />
       )
-    ) : (
+     : (
       <TextField
         defaultValue={this.state.solution || defaultValue || ""}
         disabled={readOnly}
@@ -140,8 +138,26 @@ class JupyterNotebook extends React.PureComponent {
     );
   };
 
+  filterCells = (cellsToHide, solution) => {
+    const cellsToDisplay = cellsToHide ? solution.json.cells.filter((el, i) => {
+      return !cellsToHide.includes(i+1);
+    }) : solution.json.cells;
+
+    return cellsToDisplay;
+  }
+
   render() {
-    const { action, persistent, richEditor, solution, title, url } = this.props;
+    const { action, persistent, richEditor, solution, title, url, problem, readOnly } = this.props;
+    const cellsToHide = problem && problem.cell;
+    // hide the cells
+    let fillteredSol;
+    if (solution && solution.json) {
+      const cellsToDisplay = this.filterCells(cellsToHide, solution);
+      fillteredSol = JSON.parse(JSON.stringify(solution))
+      fillteredSol.json.cells = cellsToDisplay;
+    } else {
+      fillteredSol = solution;
+    }
     return (
       <Paper style={{ margin: "24px 2px" }}>
         <Typography
@@ -169,6 +185,7 @@ class JupyterNotebook extends React.PureComponent {
             </IconButton>
           )}
           {persistent ? (
+            !readOnly ?
             <Button
               color="primary"
               disabled={!(this.state.solution && action && richEditor)}
@@ -181,6 +198,7 @@ class JupyterNotebook extends React.PureComponent {
             >
               Run
             </Button>
+            : ""
           ) : (
             <IconButton
               onClick={this.onSwitchCollapse}
@@ -195,14 +213,14 @@ class JupyterNotebook extends React.PureComponent {
         </Typography>
         <br />
         {solution !== null && action && this.getEditor()}
-        {solution && solution.json && (
+        {fillteredSol && fillteredSol.json && (
           <Collapse collapsedHeight="10px" in={!this.state.collapsed}>
             <div
               style={{
                 textAlign: "left"
               }}
             >
-              <NotebookPreview notebook={solution.json} />
+              <NotebookPreview notebook={fillteredSol.json} />
             </div>
           </Collapse>
         )}

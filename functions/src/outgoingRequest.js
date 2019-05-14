@@ -22,7 +22,7 @@ exports.queueHandler = () => {
     (data, progress, resolve) =>
       requestHandler(data)
         .then(() => resolve())
-        .catch(() => resolve)
+        .catch(() => resolve())
   );
   queue.addWorker();
 };

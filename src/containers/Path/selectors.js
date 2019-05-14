@@ -74,17 +74,21 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.multipleQuestion.id:
       return "Multiple Question Activity";
     case ACTIVITY_TYPES.profile.id:
-      return "Fetch CodeCombat profile";
+      return `Fetch ${problem.service || "CodeCombat"} profile`;
     case ACTIVITY_TYPES.codeCombat.id:
-      return `Finish "${problem.level}" level at CodeCombat`;
+      return `Finish "${problem.level}" level at ${problem.service ||
+        "CodeCombat"}`;
     case ACTIVITY_TYPES.codeCombatNumber.id:
-      return `Finish ${problem.count} levels at CodeCombat`;
+      return `Finish ${problem.count} levels at ${problem.service ||
+        "CodeCombat"}`;
     case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
       return `Finish "${problem.level}" level at CodeCombat`;
     case ACTIVITY_TYPES.jupyter.id:
       return "Colaboratory Notebook Activity";
     case ACTIVITY_TYPES.jupyterInline.id:
       return "Jupyter Notebook Activity";
+    case ACTIVITY_TYPES.jupyterLocal.id:
+      return "Local Task Activity";
     case ACTIVITY_TYPES.youtube.id:
       return "YouTube Video Activity";
     case ACTIVITY_TYPES.game.id:
@@ -101,6 +105,7 @@ const getActivitySelector = problem => {
       return `Educate ${
         (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
       } Activity`;
+
     default:
       return "Usual activity";
   }

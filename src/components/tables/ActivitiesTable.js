@@ -6,6 +6,7 @@
 
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -43,6 +44,19 @@ const styles = theme => ({
   },
   noWrap: {
     whiteSpace: "nowrap"
+  },
+  noTextDecoration: {
+    textDecoration : "none",
+    color : "inherit",
+    padding: "11px 16px"
+  },
+  listLink :{
+     margin: theme.spacing.unit,
+     height: "auto",
+     padding : "0px",
+    "&:hover": {
+      backgroundColor: "rgba(0, 0, 0, 0.08)"
+    }
   }
 });
 
@@ -51,7 +65,6 @@ class ActivitiesTable extends React.PureComponent {
     activities: PropTypes.array.isRequired,
     codeCombatProfile: PropTypes.any,
     classes: PropTypes.object.isRequired,
-    currentUserId: PropTypes.string,
     inspectedUser: PropTypes.string,
     onDeleteActivity: PropTypes.func.isRequired,
     onEditActivity: PropTypes.func.isRequired,
@@ -131,6 +144,16 @@ class ActivitiesTable extends React.PureComponent {
     const canChange = [PATH_STATUS_COLLABORATOR, PATH_STATUS_OWNER].includes(
       pathStatus
     );
+
+    const totals = {
+      totalActivities: 0,
+      totalSolvedActivities: 0
+    };
+    (activities || []).forEach(activity =>
+      this.getStatus(activity) && activity.solved
+        ? (totals.totalSolvedActivities++, totals.totalActivities++)
+        : totals.totalActivities++
+    );
     return (
       <Fragment>
         <Table>
@@ -138,14 +161,19 @@ class ActivitiesTable extends React.PureComponent {
             <TableRow>
               <TableCell>Activity name</TableCell>
               <TableCell>Type</TableCell>
-              {!canChange && <TableCell>Status</TableCell>}
+              {!canChange && (
+                <TableCell>
+                  Status {totals.totalSolvedActivities} /{" "}
+                  {totals.totalActivities}
+                </TableCell>
+              )}
               <TableCell style={{ width: COLUMN_ACTIONS_WIDTH }}>
                 Actions
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {activities.map(activity => (
+            {(activities || []).map(activity => (
               <TableRow hover key={activity.id}>
                 <TableCell className={classes.noWrap}>
                   {activity.name}
@@ -198,13 +226,7 @@ class ActivitiesTable extends React.PureComponent {
                     onClick={() => onOpenActivity(activity)}
                     variant="contained"
                   >
-                    {[
-                      ACTIVITY_TYPES.codeCombat.id,
-                      ACTIVITY_TYPES.codeCombatNumber.id,
-                      ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id
-                    ].includes(activity.type)
-                      ? "Fetch"
-                      : "Solve"}
+                    {"Solve"}
                     {activity.id === pendingActivityId && (
                       <CircularProgress
                         style={{
@@ -262,6 +284,12 @@ class ActivitiesTable extends React.PureComponent {
               variant="contained"
             >
               Delete
+            </MenuItem>
+            <MenuItem
+              className={classes.listLink}
+              variant="contained"
+            >
+            <Link className={classes.noTextDecoration} to={`/activitySolutions/${(this.state.activity || {}).id}`}> View Solutions</Link>
             </MenuItem>
             {this.state.activity &&
               this.state.activity.orderIndex !== minOrderIndex && (

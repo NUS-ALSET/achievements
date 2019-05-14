@@ -46,6 +46,7 @@ export class Activity extends React.PureComponent {
     pathName: PropTypes.string,
     pathProblem: PropTypes.any,
     readOnly: PropTypes.bool,
+    setProblemOpenTime: PropTypes.func,
     solution: PropTypes.any,
     uid: PropTypes.string
   };
@@ -193,9 +194,9 @@ export class Activity extends React.PureComponent {
             dispatch={dispatch}
             onCommit={this.onCommit}
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
-            setProblemOpenTime={this.props.setProblemOpenTime}
             pathProblem={pathProblem}
             readOnly={readOnly}
+            setProblemOpenTime={this.props.setProblemOpenTime}
             solution={solution}
             style={{
               paddingBottom: 20,
@@ -261,7 +262,8 @@ const mapDispatchToProps = dispatch => ({
   problemSolutionSubmitRequest: (pathId, problemId, payload) =>
     dispatch(problemSolutionSubmitRequest(pathId, problemId, payload)),
   signInRequire: () => dispatch(signInRequire()),
-  setProblemOpenTime: (problemId, openTime)=>dispatch(setProblemOpenTime(problemId, openTime)),
+  setProblemOpenTime: (problemId, openTime) =>
+    dispatch(setProblemOpenTime(problemId, openTime)),
   dispatch
 });
 

@@ -32,6 +32,11 @@ import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
+// HomeV3 is a prototype for homepage
+import HomeV3 from "../HomeV3/HomeV3";
+import Task from "../Task/Task";
+import Tasks from "../Tasks/Tasks";
+import CustomActivity from "../CustomActivity/CustomActivity";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -49,20 +54,31 @@ import withStyles from "@material-ui/core/styles/withStyles";
 // Idea lab for trial
 import CRUDdemo from "../IdeaLab/CRUDdemo";
 import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
+import CohortAnalytics from "../IdeaLab/CohortAnalytics";
 import Brenda from "../IdeaLab/Brenda/PathDashboard";
 import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
+import PathAnalytics from "../IdeaLab/pathAnalytics";
 import ZiYun from "../IdeaLab/ZiYun/ZiYun";
-import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills"
-import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity"
-
+import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
+import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
+import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
+import ActivitySolutions from "../ActivitySolutions/ActivitySolutions"
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
  * Routes are passed as props to be rendered within this component*/
 
 const NoMatch = ({ location }) => (
-  <h3>No page found for <code>{location.pathname}</code></h3>
-)
+  <h3>
+    No page found for <code>{location.pathname}</code>
+  </h3>
+);
+
+NoMatch.propTypes = {
+  location: PropTypes.shape({
+    pathName: PropTypes.string
+  })
+};
 
 const styles = theme => ({
   "@global": {
@@ -178,13 +194,7 @@ class AppFrame extends React.Component {
   };
 
   render() {
-    const {
-      anchorElId,
-      classes,
-      history,
-      isAdmin,
-      userId
-    } = this.props;
+    const { anchorElId, classes, history, isAdmin, userId } = this.props;
 
     return (
       <Router history={history}>
@@ -244,12 +254,12 @@ class AppFrame extends React.Component {
                     </Menu>
                   </Fragment>
                 ) : (
-                    <Fragment>
-                      <Button color="inherit" onClick={this.handleLogin}>
-                        Login
+                  <Fragment>
+                    <Button color="inherit" onClick={this.handleLogin}>
+                      Login
                     </Button>
-                    </Fragment>
-                  )}
+                  </Fragment>
+                )}
               </Toolbar>
             </AppBar>
             <AppDrawer
@@ -262,19 +272,43 @@ class AppFrame extends React.Component {
             <main className={classes.content}>
               <Switch>
                 <Route component={HomeV2} exact path="(/|/home)" />
+                <Route component={HomeV3} exact path="(/|/homev3)" />
                 <Route component={Admin} exact path="/admin" />
                 <Route component={Courses} exact path="/courses" />
-                <Route component={Assignments} exact path="/courses/:courseId" />
+                <Route
+                  component={Assignments}
+                  exact
+                  path="/courses/:courseId"
+                />
                 <Route component={Cohorts} exact path="/cohorts" />
                 <Route component={Cohort} exact path="/cohorts/:cohortId" />
                 <Route component={Paths} exact path="/paths" />
                 <Route component={Path} exact path="/paths/:pathId" />
                 <Route component={Brenda} exact path="/brenda" />
                 <Route component={AllDestinations} exact path="/destinations" />
-                <Route component={MyDestinations} exact path="/my-destinations" />
+                <Route
+                  component={MyDestinations}
+                  exact
+                  path="/my-destinations"
+                />
                 <Route component={ZiYun} exact path="/ziyun" />
                 <Route component={CRUDdemo} exact path="/CRUDdemo" />
-                <Route component={AdditionalContentRequest} exact path="/AdditionalContentRequest" />
+                <Route
+                  component={AdditionalContentRequest}
+                  exact
+                  path="/AdditionalContentRequest"
+                />
+                <Route
+                  component={ActivitiesAnalytics}
+                  exact
+                  path="/ActivitiesAnalytics"
+                />
+                <Route component={PathAnalytics} exact path="/path-analytics" />
+                <Route
+                  component={CohortAnalytics}
+                  exact
+                  path="/CohortAnalytics"
+                />
 
                 <Route
                   component={userDemonstratedPythonSkills}
@@ -302,11 +336,23 @@ class AppFrame extends React.Component {
                   path="/paths/:pathId/activities/:problemId"
                 />
                 <Route
+                  component={ActivitySolutions}
+                  exact
+                  path="/activitySolutions/:problemId"
+                />
+                <Route
                   component={Account}
                   exact
                   path="/(account|profile)/:accountId"
                 />
                 <Route component={Contribute} exact path="/contribute" />
+                <Route component={Tasks} exact path="/tasks" />
+                <Route component={Task} exact path="/tasks/:taskId" />
+                <Route
+                  component={CustomActivity}
+                  exact
+                  path="/customactivity"
+                />
                 <Route component={NoMatch} />
               </Switch>
             </main>

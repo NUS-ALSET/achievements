@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
-
 // Import the Firebase SDK for Google Cloud Functions.
 const functions = require("firebase-functions");
 // Import the Firebase Admin SDK.
 const admin = require("firebase-admin");
-
 const checkToken = require("./src/utils/checkToken");
 const api = require("./src/api");
 const ltiLogin = require("./src/ltiLogin");
@@ -17,37 +15,46 @@ const httpUtil = require("./src/utils/http").httpUtil;
 const migrateActivities = require("./src/migrateActivities");
 const updateUserRecommendations = require("./src/updateUserRecommendations");
 const updateUserPySkills = require("./src/updateUserPySkills.js");
-const processActivitySolutions = require("./src/processActivitySolution");
+const processActivitySolution = require("./src/processActivitySolution");
 const downloadAnalyzeReports = require("./src/downloadAnalyzeReports");
 const cohortRecalculate = require("./src/cohortRecalculate");
+const cohortAnalytics = require("./src/cohortAnalytics");
 const userJSONTrigger = require("./src/fetchUserJSON");
+const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
+const createCustomToken = require("./src/createCustomToken");
+const runLocalTask = require("./src/runLocalTask");
+
+const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
   addDestination,
   updateDestinationSkills
 } = require("./src/destinationHandler");
 
-const profilesRefreshApproach =
-  (functions.config().profiles &&
-    functions.config().profiles["refresh-approach"]) ||
-  "none";
+//  dev-db is paid account now
+// const profilesRefreshApproach =
+//   (functions.config().profiles &&
+//     functions.config().profiles["refresh-approach"]) ||
+//   "none";
 const ERROR_500 = 500;
 
 // initialize the Firebase Admin SDK
 admin.initializeApp();
+admin.firestore().settings( { timestampsInSnapshots: true });
+
 
 exports.handleNewProblemSolution =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
   functions.database
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
-      return jupyterTrigger.handler(data, data.taskKey, data.owner);
+      return jupyterTrigger.handler(data, data.taskKey, data.owner,"handleNewProblemSolution");
     });
 
 exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
   .onWrite(change => {
-    const data = change.after.val();
+    const data = change.after.val();      
     if (data) {
       return githubTrigger.handler(data, data.taskKey, data.owner);
     }
@@ -66,9 +73,10 @@ exports.handleProblemSolutionQueue = functions.https.onRequest((req, res) => {
 exports.handleActivitySolution = functions.database
   .ref("/problemSolutions/{activityKey}/{userKey}")
   .onWrite((change, context) =>
-    processActivitySolutions.handler(
+    processActivitySolution.handler(
       context.params.activityKey,
-      context.params.userKey
+      context.params.userKey,
+      change.after.val()
     )
   );
 
@@ -129,6 +137,15 @@ exports.handleNewSolution = functions.database
     );
   });
 
+exports.getTeamAssignmentSolutions = functions.https.onCall(
+  getTeamAssignmentSolutions.handler
+);
+
+/**
+ * Method that allows to run local tasks with CORS workaround
+ */
+exports.runLocalTask = functions.https.onCall(runLocalTask.handler);
+
 exports.handleUserSkills = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
   .onWrite((change, context) => {
@@ -141,7 +158,7 @@ exports.handleUserSkills = functions.database
   });
 
 exports.handleProfileRefreshRequest =
-  ["trigger", "both"].includes(profilesRefreshApproach) &&
+  // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
   functions.database
     .ref("/updateProfileQueue/tasks/{requestId}")
     .onCreate((snap, context) =>
@@ -248,12 +265,47 @@ exports.cohortRecalculate = functions.database
     return cohortRecalculate.handler(cohortKey, taskKey);
   });
 
-exports.handleUserJSONFetchRequest = functions.database
-  .ref("/fetchUserJSONQueue/responses/${taskKey}")
+exports.handleCohortAnalyticsRequest = functions.database
+  .ref("/cohortAnalyticsQueue/tasks/{taskKey}")
   .onWrite(change => {
     const data = change.after.val();
     if (data) {
-      return userJSONTrigger.handler(data, data.taskKey, data.owner);
+      return cohortAnalytics.handler(data.cohortId, data.taskKey, data.owner);
     }
     return Promise.resolve();
   });
+
+exports.handleUserJSONFetchRequest = functions.database
+  .ref("/newFetchUserJSONQueue/tasks/{taskKey}")
+  .onWrite(change => {
+    const data = (change.after || {}).val();
+    if (data && data.taskKey) {
+      return userJSONTrigger.handler(data.taskKey, data.owner);
+    }
+    return Promise.resolve();
+  });
+
+exports.cohortCalulateQualifiedUser = functions.database
+  .ref("/cohorts/{cohortKey}")
+  .onWrite((change, context) => {
+    const dataAfter = change.after.val();
+    const dataBefore = change.before.exists() ? change.before.val() : null;
+    const { cohortKey } = context.params;
+    if (dataAfter) {
+      return cohortCalulateQualifiedUser.handler(
+        dataBefore,
+        dataAfter,
+        cohortKey
+      );
+    }
+    return Promise.resolve();
+  });
+
+/**
+ * Create custom token for auth. It requires enabled
+ * `Service Account Token Creator` role for Google Cloud Function Service Agent
+ * https://firebase.google.com/docs/auth/admin/create-custom-tokens#troubleshooting
+ *
+ * @returns {token|false|undefined} returns token or "falsable" value
+ */
+exports.createCustomToken = functions.https.onCall(createCustomToken.handler);

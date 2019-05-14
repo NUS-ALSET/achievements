@@ -24,7 +24,8 @@ import {
   ASSIGNMENT_PATH_PROGRESS_FETCH_SUCCESS,
   ASSIGNMENTS_SHOW_HIDDEN_TOGGLE,
   COURSE_PATHS_FETCH_SUCCESS,
-  ENABLE_COMMIT_AFTER_AUTOFILL
+  ENABLE_COMMIT_AFTER_AUTOFILL,
+  ASSIGNMENT_TEAM_CHOICE_SOLUTION_SUCCESS
 } from "./actions";
 import { EXTERNAL_PROFILE_DIALOG_HIDE } from "../Account/actions";
 import addDays from "date-fns/add_days";
@@ -68,7 +69,8 @@ export const assignments = (
         ...state,
         dialog: {
           type: action.dialogType,
-          value: action.value
+          value: action.value,
+          options: state.dialog.options
         },
         currentAssignment: action.assignment
       };
@@ -144,10 +146,14 @@ export const assignments = (
     case ASSIGNMENT_CLOSE_DIALOG:
       return {
         ...state,
+        dialog: false
+        /*
+        // I don't sure that we need other state, so, I'll just remove it
         dialog: {
           ...state.dialog,
           type: ""
         }
+        */
       };
     case ASSIGNMENTS_ASSISTANTS_DIALOG_SHOW:
       return {
@@ -227,6 +233,14 @@ export const assignments = (
             failed: false,
             checked: false
           }
+        }
+      };
+    case ASSIGNMENT_TEAM_CHOICE_SOLUTION_SUCCESS:
+      return {
+        ...state,
+        dialog: {
+          ...state.dialog,
+          options: action.options
         }
       };
     case PROBLEM_SOLUTION_REFRESH_FAIL:
@@ -352,7 +366,7 @@ export const assignments = (
       return {
         ...state,
         fieldAutoUpdated: true
-      }
+      };
     default:
       return state;
   }

@@ -61,11 +61,12 @@ export function* problemInitRequestHandler(action) {
     let uid = yield select(state => state.firebase.auth.uid);
 
     if (!uid) {
-      const { auth } = yield race({
+      const response = yield race({
         auth: take("@@reactReduxFirebase/LOGIN"),
-        empty: "@@reactReduxFirebase/AuthEmptyChange"
+        emptyFake: take("@@reactReduxFirebase/AuthEmptyChange"),
+        empty: take("@@reactReduxFirebase/AUTH_EMPTY_CHANGE")
       });
-      if (auth) {
+      if (response.auth) {
         uid = yield select(state => state.firebase.auth.uid);
       }
     }
@@ -120,9 +121,10 @@ export function* problemInitRequestHandler(action) {
     // format (changed to string via #435 issue)
     if (
       pathProblem.type === ACTIVITY_TYPES.jupyterInline.id &&
-      typeof solution === "string"
+      solution &&
+      (typeof solution === "string" || typeof solution.solution === "string")
     ) {
-      solution = JSON.parse(solution);
+      solution = JSON.parse(solution.solution || solution);
     }
     yield put(
       problemSolutionRefreshSuccess(action.problemId, solution || false)
@@ -145,14 +147,14 @@ export function* problemSolveUpdateHandler(action) {
   }
 }
 
-
 export function* problemSolutionRefreshRequestHandler(action) {
   const data = yield select(state => ({
     uid: state.firebase.auth.uid,
-    pathProblem: state.problem.pathProblem
+    pathProblem: state.problem.pathProblem,
+    problemOpenTime: state.problem.problemOpenTime
   }));
 
-  data.pathProblem.openTime = action.openTime;
+  data.pathProblem.openTime = action.openTime || data.problemOpenTime;
 
   switch (data.pathProblem.type) {
     case ACTIVITY_TYPES.text.id:
@@ -160,7 +162,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
       if (typeof action.fileId !== "object") {
         return yield put(
           problemSolutionRefreshSuccess(action.problemId, {
-            open: action.open,
+            open: action.openTime || data.problemOpenTime,
             json: data.pathProblem.solutionJSON
           })
         );
@@ -228,7 +230,7 @@ export function* problemSolutionRefreshRequestHandler(action) {
           solutionFailed || !!(cell.outputs && cell.outputs.join("").trim());
         return true;
       });
-      
+
       if (solutionFailed) {
         yield put(problemSolutionCalculatedWrong());
         yield put(
@@ -254,9 +256,14 @@ export function* problemSolutionRefreshRequestHandler(action) {
       }
       yield put(
         problemSolutionAttemptRequest(
-          data.pathProblem.problemId, data.pathProblem.pathId, data.pathProblem.type, Number(!solutionFailed), action.openTime, (new Date()).getTime()
+          data.pathProblem.problemId,
+          data.pathProblem.pathId,
+          data.pathProblem.type,
+          Number(!solutionFailed),
+          action.openTime,
+          new Date().getTime()
         )
-      )
+      );
     }
 
     // Removed `id` field from payload. It looks like we never use
@@ -329,7 +336,7 @@ export function* problemCheckSolutionRequestHandler(action) {
 
 export function* problemSolutionSubmitRequestHandler(action) {
   let data;
-  try { 
+  try {
     data = yield select(state => ({
       uid: state.firebase.auth.uid,
       isPathPublic: state.firebase.data.isPathPublic,
@@ -384,7 +391,7 @@ export function* problemSolutionSubmitRequestHandler(action) {
 
 export function* problemSolutionAttemptRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
-  
+
   if (uid) {
     yield call(
       [pathsService, pathsService.saveAttemptedSolution],

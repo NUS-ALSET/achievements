@@ -26,6 +26,7 @@ import {
   switchPathTab
 } from "./actions";
 import PathsTable from "../../components/tables/PathsTable";
+import { publicPathSelector } from "./selector";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 class Paths extends React.PureComponent {
@@ -66,21 +67,19 @@ class Paths extends React.PureComponent {
         <Breadcrumbs paths={[{ label: "Paths" }]} />
         {uid ? (
           !joinedPaths ? (
-            joinedPaths === null || joinedPaths === undefined ? (
-              <p>Paths does not exist!</p>
-            ) : (
-              <Fragment>
-                Loading Your Paths...
-                <LinearProgress />
-              </Fragment>
-            )
+            joinedPaths === null && <p>Paths does not exist!</p>
           ) : (
             <Fragment>
               <PathTabs
                 currentPathTab={currentPathTab}
                 handleSwitchPathTab={handleSwitchPathTab}
                 joinedPaths={joinedPaths}
-                myPaths={Object.assign({ [uid]: { name: "Default" } }, myPaths)}
+                myPaths={Object.assign(
+                  {
+                    [uid]: { name: "Default" }
+                  },
+                  myPaths
+                )}
                 pathDialogShow={pathDialogShow}
                 publicPaths={publicPaths}
                 uid={uid}
@@ -103,10 +102,7 @@ class Paths extends React.PureComponent {
             </Fragment>
           )
         ) : (
-          <PathsTable
-            pathDialogShow={pathDialogShow}
-            paths={publicPaths || {}}
-          />
+          <PathsTable pathDialogShow={pathDialogShow} paths={publicPaths} />
         )}
       </Fragment>
     );
@@ -119,8 +115,8 @@ const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
   ui: state.paths.ui,
   myPaths: state.firebase.data.myPaths,
-  publicPaths: state.firebase.data.publicPaths,
   joinedPaths: state.paths.joinedPaths,
+  publicPaths: publicPathSelector(state),
   currentPathTab: state.paths.currentPathTab
 });
 

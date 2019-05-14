@@ -4,14 +4,15 @@
  * @created 07.02.18
  */
 
-import Button from "@material-ui/core/Button";
+import React from "react";
+import PropTypes from "prop-types";
 
+import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import PropTypes from "prop-types";
-import React from "react";
+import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 
 // RegExp rules
@@ -29,8 +30,14 @@ class AddTextSolutionDialog extends React.PureComponent {
     onClose: PropTypes.func.isRequired,
     onCommit: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
+    options: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.bool
+    ]),
     solution: PropTypes.any,
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    problem: PropTypes.object,
+    setProblemOpenTime: PropTypes.func
   };
 
   state = {
@@ -38,6 +45,21 @@ class AddTextSolutionDialog extends React.PureComponent {
     // validate inputs
     isCorrectInput: false
   };
+
+  componentDidUpdate(prevProps) {
+    // eslint-disable-next-line no-unused-expressions
+    if (
+      JSON.stringify(prevProps.problem) !== JSON.stringify(this.props.problem)
+    ) {
+      // eslint-disable-next-line no-unused-expressions
+      this.props.problem &&
+        this.props.setProblemOpenTime &&
+        this.props.setProblemOpenTime(
+          this.props.problem.id,
+          new Date().getTime()
+        );
+    }
+  }
 
   onChangeSolution = event => {
     // validate inputs
@@ -57,7 +79,7 @@ class AddTextSolutionDialog extends React.PureComponent {
   };
 
   render() {
-    const { onClose, onCommit, open, solution, taskId } = this.props;
+    const { onClose, onCommit, open, options, solution, taskId } = this.props;
 
     return (
       <Dialog onClose={onClose} open={open}>
@@ -65,7 +87,9 @@ class AddTextSolutionDialog extends React.PureComponent {
         <DialogContent>
           <TextField
             autoFocus
-            defaultValue={(solution && solution.value) || ""}
+            defaultValue={
+              options ? undefined : (solution && solution.value) || ""
+            }
             error={!this.state.isCorrectInput}
             fullWidth
             helperText={
@@ -73,12 +97,27 @@ class AddTextSolutionDialog extends React.PureComponent {
                 ? ""
                 : "input should not be empty or have invalid characters"
             }
+            InputProps={{ readOnly: !!options }}
+            key={taskId}
             label="Solution"
             onChange={this.onChangeSolution}
+            select={!!options}
             style={{
               width: 320
             }}
-          />
+            value={
+              options
+                ? this.state.solution || (solution && solution.value) || ""
+                : undefined
+            }
+          >
+            {options &&
+              options.map(option => (
+                <MenuItem key={option} value={option}>
+                  {option}
+                </MenuItem>
+              ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
           <Button color="secondary" onClick={onClose}>

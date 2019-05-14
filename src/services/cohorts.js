@@ -1,5 +1,6 @@
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { ASSIGNMENTS_TYPES } from "./courses";
+import { firebaseService } from "../services/firebaseQueueService";
 
 class CohortsService {
   fetchCohort(uid, cohortId, checkRecountNeeds) {
@@ -316,6 +317,48 @@ class CohortsService {
       default:
         return ref.remove();
     }
+  }
+
+  /**
+   *
+   * @param {String} uid
+   * @param {String} cohortId
+   *
+   */
+  addTaskToCohortAnalyticsQueue({ cohortId, uid }) {
+    return new Promise(resolve => {
+      firebaseService
+        .startProcess(
+          {
+            owner: uid,
+            cohortId
+          },
+          "cohortAnalyticsQueue",
+          "Fetch Cohort Analytics Data"
+        )
+        .then(res => {
+          resolve(res);
+        });
+    });
+  }
+  setCohortQualificationCondition(cohortId, conditionData) {
+    return firebase
+      .database()
+      .ref(`/cohorts/${cohortId}/qualifiedConditions`)
+      .set({
+        pathConditions: conditionData,
+        updatedAt: {
+          ".sv": "timestamp"
+        }
+      });
+  }
+  cohortUpdateQualificationCalculateTime(cohortId) {
+    return firebase
+      .database()
+      .ref(`/cohorts/${cohortId}/qualifiedConditions/updatedAt`)
+      .set({
+        ".sv": "timestamp"
+      });
   }
 }
 

@@ -1,15 +1,18 @@
 import isEmpty from "lodash/isEmpty";
-import firebase from "firebase";
+import firebase from "firebase/app";
+
 import { coursesService } from "./courses";
-import { firebaseService } from "./firebaseService";
+import { firebaseService } from "./firebaseQueueService";
 import {
   SOLUTION_PRIVATE_LINK,
   SOLUTION_MODIFIED_TESTS,
   notificationShow
 } from "../containers/Root/actions";
 
-import { problemSolutionAttemptRequest } from '../containers/Activity/actions';
+import { problemSolutionAttemptRequest } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
+
+import "firebase/firestore";
 
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
@@ -24,6 +27,21 @@ export const YOUTUBE_QUESTIONS = {
   multipleQuestion: "Select answer options for question"
 };
 
+export const JEST_GIT_MAP = {
+  react: {
+    id: "React JS",
+    url: "https://github.com/walkwel/temp-test/tree/master/react-jest"
+  },
+  vue: {
+    id: "Vue JS",
+    url: "https://github.com/walkwel/temp-test/tree/master/vue-jest"
+  },
+  vanilla: {
+    id: "Vanilla JS",
+    url: "https://github.com/walkwel/temp-test/tree/master/vanilla-jest"
+  }
+};
+
 export const ACTIVITY_TYPES = {
   text: {
     id: "text",
@@ -35,15 +53,15 @@ export const ACTIVITY_TYPES = {
   },
   profile: {
     id: "profile",
-    caption: "Fetch CodeCombat Profile"
+    caption: "Fetch Profile"
   },
   codeCombat: {
     id: "codeCombat",
-    caption: "Complete CodeCombat Level"
+    caption: "Complete Level"
   },
   codeCombatNumber: {
     id: "codeCombatNumber",
-    caption: "Complete Number of CodeCombat Levels"
+    caption: "Complete Number of Levels"
   },
   codeCombatMultiPlayerLevel: {
     id: "codeCombatMultiPlayerLevel",
@@ -56,6 +74,10 @@ export const ACTIVITY_TYPES = {
   jupyterInline: {
     id: "jupyterInline",
     caption: "Jupyter Notebook"
+  },
+  jupyterLocal: {
+    id: "jupyterLocal",
+    caption: "Local task"
   },
   youtube: {
     id: "youtube",
@@ -81,6 +103,10 @@ export const ACTIVITY_TYPES = {
     id: "educator",
     caption: "Educator"
   }
+  // thirdPartyServices: {
+  //   id: "thirdPartyServices",
+  //   caption: "Third Party Services"
+  // }
 };
 
 export const CodeCombat_Multiplayer_Data = {
@@ -114,11 +140,16 @@ export const CodeCombat_Multiplayer_Data = {
     "elemental-wars": {
       id: "elemental-wars",
       name: "Elemental Wars"
+    },
+    "queen-of-the-desert": {
+      id: "queen-of-the-desert",
+      name: "queen-of-the-desert"
     }
   },
   rankingPercentile: [0, 10, 20, 30, 40, 50]
 };
 
+const firestore_db = firebase.firestore();
 export class PathsService {
   auth() {
     return new Promise(resolve =>
@@ -273,7 +304,26 @@ export class PathsService {
                 return pathProblem;
               });
           }
+          case "jupyterLocal":
+            return firebase
+              .database()
+              .ref(`/tasks/${pathProblem.task}`)
+              .once("value")
+              .then(snap => snap.val())
+              .then(task => {
+                let problemJSON = task.json;
+                if (typeof problemJSON === "string") {
+                  problemJSON = JSON.parse(task.json);
+                }
 
+                return {
+                  ...pathProblem,
+                  taskInfo: task,
+                  code: task.editable,
+                  frozen: problemJSON.cells.length - task.editable - 1,
+                  problemJSON
+                };
+              });
           default:
             return pathProblem;
         }
@@ -373,6 +423,11 @@ export class PathsService {
       .ref("/paths")
       .push().key;
 
+    //Added firestore related changes
+    firestore_db.collection("/path_owners").add({
+      ownerId: uid,
+      pathId: key
+    });
     return firebase
       .database()
       .ref(`/paths/${key}`)
@@ -407,11 +462,14 @@ export class PathsService {
         // }
         break;
       case ACTIVITY_TYPES.profile.id:
+        if (!problemInfo.service) throw new Error("Missing service");
         break;
       case ACTIVITY_TYPES.codeCombat.id:
+        if (!problemInfo.service) throw new Error("Missing service");
         if (!problemInfo.level) throw new Error("Missing CodeCombat level");
         break;
       case ACTIVITY_TYPES.codeCombatNumber.id:
+        if (!problemInfo.service) throw new Error("Missing service");
         if (!problemInfo.count) throw new Error("Missing levels count");
         break;
       case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
@@ -432,11 +490,11 @@ export class PathsService {
           throw new Error("Missing code field");
         if (!problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
           throw new Error("Invalid Problem URL");
-        if (
-          problemInfo.solutionURL &&
-          !problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL)
-        )
+        if (!problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
           throw new Error("Invalid Solution URL");
+        break;
+      case ACTIVITY_TYPES.jupyterLocal.id:
+        if (!problemInfo.task) throw new Error("Missing task");
         break;
       case ACTIVITY_TYPES.youtube.id:
         if (!problemInfo.youtubeURL) throw new Error("Missing youtubeURL");
@@ -587,7 +645,7 @@ export class PathsService {
    * @param {Object} [json]
    * @returns {Promise<Boolean>}
    */
-  validateSolution(uid, pathProblem, solution, json) {
+  validateSolution(uid, pathProblem, solution, json, problemOpenTime = {}) {
     return Promise.resolve().then(() => {
       switch (pathProblem.type) {
         case ACTIVITY_TYPES.jest.id:
@@ -601,18 +659,30 @@ export class PathsService {
               pathProblem.options[solution.id].correct
             )
           ) {
+            this.dispatch(
+              problemSolutionAttemptRequest(
+                problemOpenTime.problemId,
+                pathProblem.path || pathProblem.pathId,
+                pathProblem.type,
+                0,
+                problemOpenTime.openTime,
+                new Date().getTime()
+              )
+            );
             throw new Error("Not correct answer");
           }
           break;
         case ACTIVITY_TYPES.codeCombat.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat",
-            level: pathProblem.level
+            level: pathProblem.level,
+            service: pathProblem.service || "CodeCombat"
           });
         case ACTIVITY_TYPES.codeCombatNumber.id:
           return coursesService.getAchievementsStatus(uid, {
             questionType: "CodeCombat_Number",
-            count: pathProblem.count
+            count: pathProblem.count,
+            service: pathProblem.service || "CodeCombat"
           });
         case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
           return true;
@@ -623,10 +693,8 @@ export class PathsService {
           if (pathProblem.multipleQuestion && pathProblem.options) {
             if (
               !(
-                solution &&
                 solution.answers &&
                 solution.answers.multipleQuestion &&
-                pathProblem.options &&
                 pathProblem.options[solution.answers.multipleQuestion] &&
                 pathProblem.options[solution.answers.multipleQuestion].correct
               )
@@ -709,6 +777,11 @@ export class PathsService {
             });
           }
           break;
+        case ACTIVITY_TYPES.jupyterLocal.id:
+          return firebase.functions().httpsCallable("runLocalTask")({
+            solution: solution.payload,
+            taskId: pathProblem.taskInfo.id
+          });
         case ACTIVITY_TYPES.creator.id:
         case ACTIVITY_TYPES.educator.id:
           return firebase
@@ -717,7 +790,7 @@ export class PathsService {
             .once("value")
             .then(snap => {
               if (snap.val() !== pathProblem.targetType) {
-                throw new Error("Wrong Type of provided activity");
+                throw new Error("Invalid type of provided activity");
               }
             })
             .then(
@@ -791,7 +864,7 @@ export class PathsService {
    * @param {any} solution
    * @returns {Promise<any>}
    */
-  submitSolution(uid, pathProblem, solution, problemOpenTime=null) {
+  submitSolution(uid, pathProblem, solution, problemOpenTime = null) {
     pathProblem = {
       ...pathProblem,
       problemId: pathProblem.problemId || pathProblem.id
@@ -801,23 +874,48 @@ export class PathsService {
       solution.version = process.env.REACT_APP_VERSION;
     }
     return Promise.resolve()
-      .then(() => this.validateSolution(uid, pathProblem, solution))
-      .then(()=>{
-        if(problemOpenTime && problemOpenTime.problemId === (pathProblem.problemId || pathProblem.id)){
-           switch (pathProblem.type) {
+      .then(() =>
+        this.validateSolution(uid, pathProblem, solution, null, problemOpenTime)
+      )
+      .then(() => {
+        if (
+          problemOpenTime &&
+          problemOpenTime.problemId ===
+            (pathProblem.problemId || pathProblem.id)
+        ) {
+          let isCompleted = 1;
+          switch (pathProblem.type) {
             // case ACTIVITY_TYPES.codeCombat.id:
             // case ACTIVITY_TYPES.codeCombatNumber.id:
             // case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
-            // case ACTIVITY_TYPES.text.id:
-            // case ACTIVITY_TYPES.profile.id:
+            case ACTIVITY_TYPES.game.id:
+            case ACTIVITY_TYPES.jest.id:
+            case ACTIVITY_TYPES.codeCombat.id:
+            case ACTIVITY_TYPES.multipleQuestion.id:
+            case ACTIVITY_TYPES.text.id:
             case ACTIVITY_TYPES.youtube.id:
-              this.dispatch(problemSolutionAttemptRequest( problemOpenTime.problemId, (pathProblem.path || pathProblem.pathId), pathProblem.type, 1, problemOpenTime.openTime, new Date().getTime()))
+              if (ACTIVITY_TYPES.game.id === pathProblem.type) {
+                isCompleted = solution.result === "WIN" ? 1 : 0;
+              }
+              if (ACTIVITY_TYPES.multipleQuestion.id === pathProblem.type) {
+                isCompleted = +pathProblem.options[solution.id].correct;
+              }
+              this.dispatch(
+                problemSolutionAttemptRequest(
+                  problemOpenTime.problemId,
+                  pathProblem.path || pathProblem.pathId,
+                  pathProblem.type,
+                  isCompleted,
+                  problemOpenTime.openTime,
+                  new Date().getTime()
+                )
+              );
               return;
             default:
               return;
           }
         }
-       return null;
+        return null;
       })
       .then(() => {
         switch (pathProblem.type) {
@@ -833,15 +931,25 @@ export class PathsService {
                 }
               });
           case ACTIVITY_TYPES.text.id:
-          case ACTIVITY_TYPES.jest.id:
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.game.id:
           case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
+          case ACTIVITY_TYPES.jupyterLocal.id:
             return firebase
               .database()
               .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
               .set(solution);
+          case ACTIVITY_TYPES.jest.id:
+            return firebase
+              .database()
+              .ref(`/problemSolutions/${pathProblem.problemId}/${uid}`)
+              .set({
+                ...solution,
+                updatedAt: {
+                  ".sv": "timestamp"
+                }
+              });
           case ACTIVITY_TYPES.jupyter.id:
             return this.fetchFile(this.getFileId(solution))
               .then(json => {
@@ -908,6 +1016,7 @@ export class PathsService {
       solution: editableBlockCode || ""
     };
     const resData = {};
+
     return firebaseService
       .startProcess(data, "jupyterSolutionAnalysisQueue", "Code Analysis")
       .then(res => {
@@ -1116,22 +1225,23 @@ export class PathsService {
    */
   moveActivity(uid, pathId, activities, activityId, direction) {
     return this.checkActivitiesOrder(activities).then(activities => {
+      // Sort activities to find siblings
+      activities = activities.sort((a, b) =>
+        a.orderIndex > b.orderIndex ? 1 : a.orderIndex < b.orderIndex ? -1 : 0
+      );
       let siblingActivity;
 
-      let targetActivity = activities.find(a => a.id === activityId);
+      const targetActivity = activities.find(a => a.id === activityId);
+      const targetActivityIndex = activities.indexOf(targetActivity);
 
       if (!targetActivity) {
         throw new Error("Unable find requested activity");
       }
 
       if (direction === "up") {
-        siblingActivity = activities.find(
-          a => a.orderIndex === targetActivity.orderIndex - 1
-        );
+        siblingActivity = activities[targetActivityIndex - 1];
       } else {
-        siblingActivity = activities.find(
-          a => a.orderIndex === targetActivity.orderIndex + 1
-        );
+        siblingActivity = activities[targetActivityIndex + 1];
       }
 
       if (!siblingActivity) {
@@ -1201,10 +1311,38 @@ export class PathsService {
     const ref = firebase
       .database()
       .ref(`/pathAssistants/${pathId}/${collaboratorId}`);
-    if (action === "add") {
-      return ref.set(true);
-    }
-    return ref.remove();
+
+    firestore_db
+      .collection("path_owners")
+      .get()
+      .then(snapshot => {
+        snapshot.forEach(owner_path => {
+          if (action === "add") {
+            if (owner_path.data().pathId === pathId) {
+              firestore_db
+                .collection("path_owners")
+                .doc(owner_path.id)
+                .update({
+                  collaboratorId: firebase.firestore.FieldValue.arrayUnion(
+                    collaboratorId
+                  )
+                });
+            }
+            return ref.set(true);
+          }
+          if (owner_path.data().pathId === pathId) {
+            firestore_db
+              .collection("path_owners")
+              .doc(owner_path.id)
+              .update({
+                collaboratorId: firebase.firestore.FieldValue.arrayRemove(
+                  collaboratorId
+                )
+              });
+          }
+          return ref.remove();
+        });
+      });
   }
 
   /**
@@ -1361,10 +1499,40 @@ export class PathsService {
 
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
+    //Added code to save to firestore
+    firestore_db
+      .collection("analytics")
+      .doc("activityAnalytics")
+      .collection("activityAttempts")
+      .add({
+        activityKey: payload.activityKey,
+        activityType: payload.activityType,
+        completed: payload.completed,
+        open: payload.open,
+        time: payload.time,
+        userKey: payload.userKey,
+        pathKey: payload.pathKey
+      });
+
     return firebase
       .database()
       .ref("analytics/activityAttempts")
       .push(payload);
+  }
+
+  saveFiles(problem, files) {
+    const collection = problem.version === 1 ? "activityData" : "activities";
+    return firebase
+      .database()
+      .ref(`${collection}/${problem.id}`)
+      .update({ files });
+  }
+
+  fetchJestFiles(activitiyId) {
+    return firebase
+      .ref(`/activityData/${activitiyId}`)
+      .once("value")
+      .then(data => data.val().files);
   }
 }
 

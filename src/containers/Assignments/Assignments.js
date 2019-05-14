@@ -49,6 +49,7 @@ import AddPathProgressSolutionDialog from "../../components/dialogs/AddPathProgr
 import AddAssignmentDialog from "../../components/dialogs/AddAssignmentDialog";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { courseInfo } from "../../types/index";
+import MessageDialog from "../../components/dialogs/MessageDialog";
 
 class Assignments extends React.Component {
   static propTypes = {
@@ -70,10 +71,12 @@ class Assignments extends React.Component {
     match: PropTypes.object,
     readOnly: PropTypes.bool,
     ui: PropTypes.object.isRequired,
-    fieldAutoUpdated: PropTypes.bool
+    fieldAutoUpdated: PropTypes.bool,
+    isAdmin: PropTypes.bool
   };
   state = {
-    password: ""
+    password: "",
+    messageModalOpen: false
   };
 
   componentDidMount() {
@@ -171,6 +174,11 @@ class Assignments extends React.Component {
     this.props.dispatch(
       assignmentRemoveAssistantRequest(courseId, assistantId)
     );
+  toggleMessageModal = () => {
+    this.setState(state => ({
+      messageModalOpen: !state.messageModalOpen
+    }));
+  };
 
   getPasswordView() {
     return (
@@ -225,22 +233,21 @@ class Assignments extends React.Component {
       course,
       currentUser,
       readOnly,
-      fieldAutoUpdated
+      fieldAutoUpdated,
+      isAdmin
     } = this.props;
-
     if (auth.isEmpty) {
       return <div>Login required to display this page</div>;
     } else if (!course) {
       if (course === null) {
-        return <p>Something wrong!</p>
+        return <p>Something wrong!</p>;
       }
       return <LinearProgress />;
     }
     // Default view with password enter
     let AssignmentView = this.getPasswordView();
-
     // If owner match user id then we suppose use as instructor and give him special view
-    if (currentUser.isAssistant) {
+    if ((currentUser && currentUser.isAssistant) || isAdmin) {
       AssignmentView = (
         <InstructorTabs
           closeDialog={this.closeDialog}
@@ -271,7 +278,7 @@ class Assignments extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            (currentUser.isAssistant && [
+            (currentUser && [
               {
                 label: "Refresh",
                 handler: this.refreshSolutions
@@ -279,9 +286,17 @@ class Assignments extends React.Component {
               {
                 label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
                 handler: this.toggleHiddenShow
+              },
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
               }
-            ]) ||
-            null
+            ]) || [
+              {
+                label: "Message",
+                handler: this.toggleMessageModal
+              }
+            ]
           }
           paths={[
             {
@@ -308,14 +323,14 @@ class Assignments extends React.Component {
           courseMemberName={ui && ui.dialog && ui.dialog.studentName}
           handleCloseDialog={assignmentCloseDialog}
           handleRemoveStudentRequest={courseRemoveStudentRequest}
-          open={ui.dialog && ui.dialog.type === "RemoveStudent"}
+          open={ui && ui.dialog && ui.dialog.type === "RemoveStudent"}
         />
         <MoveStudentDialog
           courseId={course.id}
-          courses={(ui.dialog && ui.dialog.courses) || []}
+          courses={(ui && ui.dialog && ui.dialog.courses) || []}
           handleCloseDialog={assignmentCloseDialog}
           handleMOVEStudentRequest={courseMoveStudentRequest}
-          open={ui.dialog && ui.dialog.type === "MoveStudent"}
+          open={ui && ui.dialog && ui.dialog.type === "MoveStudent"}
           studentId={ui && ui.dialog && ui.dialog.studentId}
           studentName={ui && ui.dialog && ui.dialog.studentName}
         />
@@ -327,19 +342,20 @@ class Assignments extends React.Component {
           }}
           onClose={this.closeDialog}
           onCommit={this.onProfileCommit}
-          open={ui.dialog && ui.dialog.type === "Profile"}
-          uid={currentUser.id}
+          open={ui && ui.dialog && ui.dialog.type === "Profile"}
+          uid={currentUser && currentUser.id}
         />
-        {currentUser.isAssistant && (
+        {((currentUser && currentUser.isAssistant) || isAdmin) && (
           <ControlAssistantsDialog
-            assistants={(ui.dialog && ui.dialog.assistants) || []}
-            isOwner={currentUser.isOwner}
-            newAssistant={ui.dialog && ui.dialog.newAssistant}
+            assistants={(ui && ui.dialog && ui.dialog.assistants) || []}
+            isAdmin={isAdmin}
+            isOwner={currentUser && currentUser.isOwner}
+            newAssistant={ui && ui.dialog && ui.dialog.newAssistant}
             onAddAssistant={this.onAddAssistant}
             onAssistantKeyChange={this.onAssistantKeyChange}
             onClose={this.closeDialog}
             onRemoveAssistant={this.onRemoveAssistant}
-            open={ui.dialog && ui.dialog.type === "CourseAssistants"}
+            open={ui && ui.dialog && ui.dialog.type === "CourseAssistants"}
             target={course.id}
           />
         )}
@@ -347,46 +363,58 @@ class Assignments extends React.Component {
           onClose={this.closeDialog}
           onCommit={this.commitTextSolution}
           open={
+            ui &&
             ui.dialog &&
             [
               ASSIGNMENTS_TYPES.TeamFormation.id,
               ASSIGNMENTS_TYPES.TeamText.id,
-              ASSIGNMENTS_TYPES.Text.id
+              ASSIGNMENTS_TYPES.Text.id,
+              ASSIGNMENTS_TYPES.TeamChoice.id
             ].includes(ui.dialog.type)
           }
-          solution={ui.dialog && ui.dialog.value}
-          taskId={ui.currentAssignment && ui.currentAssignment.id}
+          options={ui && ui.dialog && ui.dialog.options}
+          solution={ui && ui.dialog && ui.dialog.value}
+          taskId={ui && ui.currentAssignment && ui.currentAssignment.id}
         />
         <AddPathActivitySolutionDialog
-          assignment={ui.currentAssignment}
+          assignment={ui && ui.currentAssignment}
           dispatch={dispatch}
-          loadingSolution={!!ui.dialog && ui.dialog.loadingSolution}
+          loadingSolution={ui && !!ui.dialog && ui.dialog.loadingSolution}
           onCommit={this.onPathProblemSolutionCommit}
           open={
+            ui &&
             ui.dialog &&
             ["PathActivity", "PathProblem"].includes(ui.dialog.type)
           }
-          pathProblem={ui.dialog.pathProblem}
+          pathProblem={ui && ui.dialog && ui.dialog.pathProblem}
           readOnly={readOnly}
-          solution={ui.dialog.solution}
+          solution={ui && ui.dialog && ui.dialog.solution}
         />
         <AddPathProgressSolutionDialog
-          assignment={ui.currentAssignment}
+          assignment={ui && ui.currentAssignment}
           courseId={course.id}
           dispatch={dispatch}
-          open={ui.dialog && ui.dialog.type === "PathProgress"}
-          pathProgress={ui.dialog && ui.dialog.pathProgress}
+          open={ui && ui.dialog && ui.dialog.type === "PathProgress"}
+          pathProgress={ui && ui.dialog && ui.dialog.pathProgress}
         />
         <AddAssignmentDialog
-          activities={(ui.dialog && ui.dialog.activities) || []}
-          assignment={ui.dialog && ui.dialog.value}
+          activities={(ui && ui.dialog && ui.dialog.activities) || []}
+          assignment={ui && ui.dialog && ui.dialog.value}
           course={course}
           dispatch={dispatch}
           fieldAutoUpdated={fieldAutoUpdated}
-          open={ui.dialog && ui.dialog.type === "AddAssignment"}
-          paths={(ui.dialog && ui.dialog.paths) || {}}
-          teamFormations={(ui.dialog && ui.dialog.teamFormations) || []}
+          open={ui && ui.dialog && ui.dialog.type === "AddAssignment"}
+          paths={(ui && ui.dialog && ui.dialog.paths) || {}}
+          teamFormations={(ui && ui.dialog && ui.dialog.teamFormations) || []}
           uid={currentUser && currentUser.id}
+        />
+        <MessageDialog
+          course={course}
+          handleClose={this.toggleMessageModal}
+          isInstructor={currentUser && currentUser.isAssistant}
+          open={this.state.messageModalOpen}
+          showStudents={true}
+          type={"course"}
         />
       </Fragment>
     );
@@ -408,7 +436,8 @@ const mapStateToProps = (state, ownProps) => ({
   auth: state.firebase.auth,
   assistants: state.assignments.assistants,
   readOnly: state.problem && state.problem.readOnly,
-  fieldAutoUpdated: state.assignments.fieldAutoUpdated
+  fieldAutoUpdated: state.assignments.fieldAutoUpdated,
+  isAdmin: state.account.isAdmin
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -422,15 +451,10 @@ const mapDispatchToProps = dispatch => ({
     dispatch(courseAssignmentsClose(courseId)),
   courseRemoveStudentRequest: (courseId, studentId) =>
     dispatch(courseRemoveStudentRequest(courseId, studentId)),
-  courseMoveStudentRequest: (
-    sourceCourseId,
-    targetCourseId,
-    studentId
-  ) => dispatch(courseMoveStudentRequest(
-    sourceCourseId,
-    targetCourseId,
-    studentId
-  )),
+  courseMoveStudentRequest: (sourceCourseId, targetCourseId, studentId) =>
+    dispatch(
+      courseMoveStudentRequest(sourceCourseId, targetCourseId, studentId)
+    ),
   dispatch
 });
 

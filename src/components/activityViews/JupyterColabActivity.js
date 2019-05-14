@@ -41,6 +41,10 @@ class JupyterColabActivity extends React.PureComponent {
       }
     }
   }
+  componentDidMount(){
+    this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  }
+  
   onSolutionRefreshClick = solutionURL => {
     const { dispatch, problem } = this.props;
 
@@ -107,6 +111,7 @@ class JupyterColabActivity extends React.PureComponent {
           />
         )}
         <JupyterNotebook
+          problem={problem}
           readOnly={readOnly}
           solution={{ json: problem.problemJSON }}
           title="Problem"

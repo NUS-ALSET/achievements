@@ -1,6 +1,6 @@
 import cloneDeep from "lodash/cloneDeep";
 import each from "lodash/each";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { ASSIGNMENTS_TYPES, coursesService } from "./courses";
 
 export class SolutionsService {
@@ -187,7 +187,10 @@ export class SolutionsService {
             if (!publicStudentsSolutions) {
               return writes.push({
                 ref: `/visibleSolutions/${courseId}`,
-                value: this.processHiddenSolutions(studentsSolutions)
+                value: this.processHiddenSolutions(
+                  studentsSolutions,
+                  assignments
+                )
               });
             }
             each(studentsSolutions, (solutions, studentId) => {
@@ -206,7 +209,7 @@ export class SolutionsService {
                     ref:
                       "/visibleSolutions/" +
                       `${courseId}/${studentId}/${assignmentId}`,
-                    value: this.processHiddenSolutions(data)
+                    value: this.processHiddenSolutions(data, assignments)
                   });
                 }
               });
@@ -217,6 +220,27 @@ export class SolutionsService {
         Promise.all(
           writes.map(config => firebase.ref(config.ref).set(config.value))
         )
+      );
+  }
+
+  /**
+   * Fetch team solutions list from requsted assignment
+   */
+  getTeamChoiceOptions(courseId, assignment) {
+    // choosen by fair dice roll, guaranteed to be random
+    const FAIR_RANDOM = 0.5;
+
+    return firebase
+      .functions()
+      .httpsCallable("getTeamAssignmentSolutions")({
+        teamAssignment: assignment.teamFormation,
+        sourceAssignment: assignment.source,
+        course: courseId
+      })
+      .then(response => response.data || [])
+      .then(options =>
+        // randomize options
+        options.sort(() => (Math.random() > FAIR_RANDOM ? 1 : -1))
       );
   }
 

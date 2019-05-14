@@ -1,11 +1,11 @@
 /**
  * Service for actions with account
  */
-import firebase from "firebase";
-import { firebaseService } from "./firebaseService";
+import firebase from "firebase/app";
+import "firebase/auth";
+import { firebaseService } from "./firebaseQueueService";
 const authProvider = new firebase.auth.GoogleAuthProvider();
 // authProvider.addScope("https://www.googleapis.com/auth/drive.file");
-
 
 export class AccountService {
   static isAdmin = false;
@@ -109,21 +109,23 @@ export class AccountService {
 
   watchProfileRefresh(uid, externalProfileId) {
     const now = new Date().getTime();
-    return new Promise(resolve =>
+    let index = 0;
+    return new Promise((resolve, reject) =>
       firebase
         .database()
         .ref(`/userAchievements/${uid}/${externalProfileId}`)
         .on("value", snap => {
-          if (
-            snap.val() &&
-            snap.val().lastUpdate &&
-            snap.val().lastUpdate > now
-          ) {
+          const val = snap.val();
+          if (index && !val) {
+            reject(new Error("Invalid CodeCombat username provided"));
+          }
+          index += 1;
+          if (val && val.lastUpdate && val.lastUpdate > now) {
             firebase
               .database()
               .ref(`/userAchievements/${uid}/${externalProfileId}`)
               .off();
-            resolve(snap.val());
+            resolve(val);
           }
         })
     );
@@ -143,10 +145,10 @@ export class AccountService {
     });
   }
 
-  fetchAchievements(uid) {
+  fetchAchievements(uid, service = "CodeCombat") {
     return firebase
       .database()
-      .ref(`/userAchievements/${uid}/CodeCombat`)
+      .ref(`/userAchievements/${uid}/${service}`)
       .once("value")
       .then(snap => snap.val());
   }
@@ -275,6 +277,24 @@ export class AccountService {
   }
 
   /**
+   * Replaces auth with provided UID. Available only for admins
+   *
+   * @param {String} uid custom UID to auth with
+   */
+  authWithCustomToken(uid) {
+    return firebase
+      .functions()
+      .httpsCallable("createCustomToken")({ uid })
+      .then(response => response && response.data)
+      .then(token => {
+        if (!token) {
+          throw new Error("Invalid UID");
+        }
+        return firebase.auth().signInWithCustomToken(token);
+      });
+  }
+
+  /**
    *
    * @param config
    * @returns {Promise<void>}
@@ -290,7 +310,7 @@ export class AccountService {
     if (config.codeCombatProfileURL) {
       configUpdates.codeCombatProfileURL = config.codeCombatProfileURL;
     }
-    if (config.jupyterLambdaProcessor) {
+    if (config.jupyterAnalysisLambdaProcessor) {
       configUpdates.jupyterAnalysisLambdaProcessor =
         config.jupyterAnalysisLambdaProcessor;
     }
@@ -340,17 +360,17 @@ export class AccountService {
   fetchUserJSON(uid) {
     return new Promise(resolve => {
       firebaseService
-          .startProcess(
-            {
-              owner: uid
-            },
-            "fetchUserJSONQueue",
-            "Fetch JSON Data"
-          )
-          .then(res => {
-            resolve(res)
-          });
-    })
+        .startProcess(
+          {
+            owner: uid
+          },
+          "newFetchUserJSONQueue",
+          "Fetch JSON Data"
+        )
+        .then(res => {
+          resolve(res);
+        });
+    });
   }
 }
 

@@ -1,8 +1,19 @@
-import firebase from "firebase";
+// Import core of Firebase client
+import firebase from "firebase/app";
+
+// Import Firebase Authentication (optional)
+import "firebase/auth";
+
+// Import Firebase Realtime Database (optional)
+import "firebase/database";
+
+// Import Firebase Functions (optional)
+import "firebase/functions";
+
 import CodeCombatLevels from "./CodeCombatLevels";
 
 export const APP_SETTING = {
-  CodeCombatLevels: CodeCombatLevels,
+  CodeCombatLevels,
   games: {
     "passenger-picker": {
       id: "passenger-picker",
@@ -15,7 +26,7 @@ export const APP_SETTING = {
   },
   basename: process.env.REACT_APP_BASENAME || "/",
   defaultThrottle: 500,
-  defaultTimeout: 5000,
+  defaultTimeout: 10000,
   GITHUB_BASE_URL: "https://github.com/",
   AWS_SERVER_URL:
     "https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest"

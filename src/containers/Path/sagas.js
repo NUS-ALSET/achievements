@@ -1,5 +1,5 @@
 import { call, put, race, select, take, takeLatest } from "redux-saga/effects";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import {
   PATH_ADD_COLLABORATOR_REQUEST,
   PATH_MORE_PROBLEMS_REQUEST,
@@ -32,7 +32,12 @@ import {
   PATH_OPEN_JEST_SOLUTION_DIALOG,
   pathOpenSolutionDialog,
   PATH_OPEN_SOLUTION_DIALOG,
-  fetchMyPathsActivities
+  fetchMyPathsActivities,
+  SAVE_PROBLEM_TO_DB,
+  saveProblemToDBSuccess,
+  saveProblemToDBFailure,
+  updateProblemInUI,
+  updateJestFiles
 } from "./actions";
 import { ACTIVITY_TYPES, pathsService } from "../../services/paths";
 import {
@@ -42,7 +47,8 @@ import {
   pathActivityDeleteSuccess,
   pathActivityMoveFail,
   pathActivityMoveSuccess,
-  PATHS_JOINED_FETCH_SUCCESS
+  PATHS_JOINED_FETCH_SUCCESS,
+  PATH_ACTIVITY_DIALOG_SHOW
 } from "../Paths/actions";
 import { notificationShow } from "../Root/actions";
 import { codeCombatProfileSelector, pathActivitiesSelector } from "./selectors";
@@ -53,7 +59,8 @@ import {
 } from "../Account/actions";
 import {
   problemSolutionSubmitFail,
-  problemSolutionSubmitSuccess
+  problemSolutionSubmitSuccess,
+  problemSolutionAttemptRequest
 } from "../Activity/actions";
 import { accountService } from "../../services/account";
 
@@ -274,6 +281,7 @@ export function* pathActivityJestOpenHandler(action) {
 }
 export function* pathActivityCodeCombatOpenHandler(action) {
   try {
+    const externalService = action.service || "CodeCombat";
     const data = yield select(state => ({
       uid: state.firebase.auth.uid,
       activity: state.firebase.data.activities[action.activityId],
@@ -285,91 +293,137 @@ export function* pathActivityCodeCombatOpenHandler(action) {
       yield put(pathProfileDialogShow());
     } else {
       yield put(
-        externalProfileRefreshRequest(action.codeCombatProfile, "CodeCombat")
+        externalProfileRefreshRequest(
+          action.codeCombatProfile,
+          externalService,
+          data.uid
+        )
       );
     }
-    const result = yield race({
-      skip: take(CLOSE_ACTIVITY_DIALOG),
-      success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
-      fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
-    });
-    if (result.success) {
-      // FIXIT: cleanup this
-      if (data.activity.type === ACTIVITY_TYPES.profile.id) {
-        yield call(
-          [pathsService, pathsService.submitSolution],
-          data.uid,
-          {
-            ...data.activity,
-            path: action.pathId,
-            problemId: action.activityId
-          },
-          "Completed"
-        );
-        yield put(
-          problemSolutionSubmitSuccess(
-            action.pathId,
-            action.activityId,
-            "Completed"
-          )
-        );
-        yield put(
-          notificationShow("Solution submitted")
-        );
-        yield put(closeActivityDialog());
+    while (true) {
+      const result = yield race({
+        skip: take(CLOSE_ACTIVITY_DIALOG),
+        success: take(EXTERNAL_PROFILE_REFRESH_SUCCESS),
+        fail: take(EXTERNAL_PROFILE_REFRESH_FAIL)
+      });
+      if (result.skip) {
         return;
       }
-      
-      const levelsData = yield call(accountService.fetchAchievements, data.uid);
-        if (levelsData && (
-          (data.activity.type === ACTIVITY_TYPES.codeCombat.id
-          && levelsData.achievements[data.activity.level] 
-          && levelsData.achievements[data.activity.level].complete
-          )
-          ||
-          (
-            data.activity.type === ACTIVITY_TYPES.codeCombatNumber.id
-            && levelsData.totalAchievements >= data.activity.count
-          )
-          ||
-          (
-            data.activity.type === ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id
-            && levelsData.ladders
-            && (levelsData.ladders[`${data.activity.level}-${data.activity.team}`] || {}).percentile >= data.activity.requiredPercentile
-          ))
-          ){
-            const ladder = levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
+      if (result.success) {
+        // FIXIT: cleanup this
+        if (data.activity.type === ACTIVITY_TYPES.profile.id) {
+          yield call(
+            [pathsService, pathsService.submitSolution],
+            data.uid,
+            {
+              ...data.activity,
+              path: action.pathId,
+              problemId: action.activityId
+            },
+            "Completed"
+          );
+          yield put(
+            problemSolutionSubmitSuccess(
+              action.pathId,
+              action.activityId,
+              "Completed"
+            )
+          );
+          yield put(notificationShow("Solution submitted"));
+          yield put(closeActivityDialog());
+          yield put(
+            problemSolutionAttemptRequest(
+              action.activityId,
+              action.pathId,
+              data.activity.type,
+              1,
+              new Date().getTime(),
+              new Date().getTime()
+            )
+          );
+          return;
+        }
 
-            yield call(
-              [pathsService, pathsService.submitSolution],
-              data.uid,
-              {
-                ...data.activity,
-                path: action.pathId,
-                problemId: action.activityId
-              },
-              {
-                rank: ladder.rank,
-                numInRanking: ladder.numInRanking,
-                value: `${ladder.rank} of ${ladder.numInRanking}`
-              }
-            );
-            yield put(
-              problemSolutionSubmitSuccess(
-                action.pathId,
-                action.activityId,
-                "Completed"
-              )
-            );
-            yield put(
-              notificationShow("Solution submitted")
-            );
-            yield put(closeActivityDialog());
+        const levelsData = yield call(
+          accountService.fetchAchievements,
+          data.uid,
+          externalService
+        );
+
+        if (levelsData && levelsData.totalAchievements === -1) {
+          throw new Error(`Invalid ${externalService} username provided`);
+        }
+
+        if (
+          levelsData &&
+          levelsData.achievements &&
+          ((data.activity.type === ACTIVITY_TYPES.codeCombat.id &&
+            levelsData.achievements[data.activity.level] &&
+            levelsData.achievements[data.activity.level].complete) ||
+            (data.activity.type === ACTIVITY_TYPES.codeCombatNumber.id &&
+              levelsData.totalAchievements >= data.activity.count) ||
+            (data.activity.type ===
+              ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id &&
+              levelsData.ladders &&
+              (
+                levelsData.ladders[
+                  `${data.activity.level}-${data.activity.team}`
+                ] || {}
+              ).percentile >= data.activity.requiredPercentile))
+        ) {
+          const ladder =
+            levelsData.ladders &&
+            levelsData.ladders[`${data.activity.level}-${data.activity.team}`];
+
+          yield call(
+            [pathsService, pathsService.submitSolution],
+            data.uid,
+            {
+              ...data.activity,
+              path: action.pathId,
+              problemId: action.activityId
+            },
+            ladder && {
+              rank: ladder.rank,
+              numInRanking: ladder.numInRanking,
+              value: `${ladder.rank} of ${ladder.numInRanking}`
+            }
+          );
+          yield put(
+            problemSolutionSubmitSuccess(
+              action.pathId,
+              action.activityId,
+              "Completed"
+            )
+          );
+          yield put(
+            problemSolutionAttemptRequest(
+              action.activityId,
+              action.pathId,
+              data.activity.type,
+              1,
+              new Date().getTime(),
+              new Date().getTime()
+            )
+          );
+          yield put(notificationShow("Solution submitted"));
+          yield put(closeActivityDialog());
         } else {
+          yield put(
+            problemSolutionAttemptRequest(
+              action.activityId,
+              action.pathId,
+              data.activity.type,
+              0,
+              new Date().getTime(),
+              new Date().getTime()
+            )
+          );
           yield put(
             pathActivityCodeCombatDialogShow(action.pathId, action.activityId)
           );
         }
+      }
     }
   } catch (err) {
     yield put(notificationShow(err.message));
@@ -383,7 +437,6 @@ export function* pathActivityCodeCombatOpenHandler(action) {
     );
   }
 }
-
 
 export function* pathOpenSolutionDialogHandler(action) {
   const problemInfo = action.problemInfo;
@@ -449,6 +502,41 @@ export function* fetchGithubFilesHandler(action) {
     );
   } catch (err) {
     yield put(fetchGithubFilesError());
+  }
+}
+
+export function* saveFilesToDBHandler(action) {
+  try {
+    yield put(notificationShow("Saving Problem"));
+    yield put(updateProblemInUI(action.files));
+    const res = yield call(
+      pathsService.saveFiles,
+      action.problem,
+      action.files
+    );
+    yield put(saveProblemToDBSuccess(res));
+    yield put(notificationShow("Problem Saved"));
+  } catch (err) {
+    yield put(saveProblemToDBFailure());
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* insertJestFilesHandler(action) {
+  try {
+    if (
+      action.activityInfo &&
+      action.activityInfo.type === "jest" &&
+      action.activityInfo.version === 1
+    ) {
+      const files = yield call(
+        pathsService.fetchJestFiles,
+        action.activityInfo.id
+      );
+      yield put(updateJestFiles(files));
+    }
+  } catch (err) {
+    yield put(notificationShow(err.message));
   }
 }
 
@@ -529,5 +617,11 @@ export default [
   },
   function* watchFetchGithubFilesHandler() {
     yield takeLatest(FETCH_GITHUB_FILES, fetchGithubFilesHandler);
+  },
+  function* watchSaveFilesToDB() {
+    yield takeLatest(SAVE_PROBLEM_TO_DB, saveFilesToDBHandler);
+  },
+  function* watchEditActivity() {
+    yield takeLatest(PATH_ACTIVITY_DIALOG_SHOW, insertJestFilesHandler);
   }
 ];

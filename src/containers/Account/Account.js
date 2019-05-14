@@ -3,7 +3,7 @@
  * @author Theodor Shaytanov <theodor.shaytanov@gmail.com>
  * @created 26.01.18
  */
-import { accountService } from "../../services/account";
+// import { accountService } from "../../services/account";
 import { compose } from "redux";
 import { connect } from "react-redux";
 import {
@@ -48,14 +48,13 @@ import React, { Fragment } from "react";
 import RemoveExternalProfileDialog from "../../components/dialogs/RemoveProfileDialog";
 
 import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
+// import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
 import { getDisplayName, getProfileData } from "./selectors";
 import JoinedPathCard from "../../components/cards/JoinedPathCard";
 import { Button } from "@material-ui/core";
-import download from "downloadjs"
 
 const styles = theme => ({
   card: {
@@ -80,6 +79,7 @@ class Account extends React.PureComponent {
     externalProfileRemoveRequest: PropTypes.func,
     externalProfileUpdateRequest: PropTypes.func,
     inspectPathAsUser: PropTypes.func,
+    isAdmin: PropTypes.bool,
     profileUpdateDataRequest: PropTypes.func,
     fetchUserData: PropTypes.func,
 
@@ -98,7 +98,8 @@ class Account extends React.PureComponent {
     uid: PropTypes.string,
     displayName: PropTypes.string,
     userAchievements: PropTypes.object,
-    userJSON: PropTypes.object
+    userJSON: PropTypes.object,
+    selectedExternalProfileType: PropTypes.any
   };
 
   state = {
@@ -109,12 +110,6 @@ class Account extends React.PureComponent {
     this.props.accountOpen(this.props.match.params.accountId);
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (Object.keys(this.props.userJSON).length !== Object.keys(prevProps.userJSON).length) {
-      this.downloadData();
-    }
-  }
-
   addExternalProfileRequest = externalProfile => {
     this.props.externalProfileDialogShow(externalProfile);
   };
@@ -122,11 +117,17 @@ class Account extends React.PureComponent {
     this.props.inspectPathAsUser(pathId, this.props.match.params.accountId);
 
   refreshAchievementsRequest = externalProfile => {
-    const { userAchievements, externalProfileRefreshRequest } = this.props;
+    const {
+      externalProfileRefreshRequest,
+      isAdmin,
+      match,
+      userAchievements
+    } = this.props;
 
     externalProfileRefreshRequest(
       userAchievements[externalProfile.id].id,
-      externalProfile.id
+      externalProfile.id,
+      isAdmin && match.params.accountId
     );
   };
   removeExternalProfileRequest = externalProfile => {
@@ -168,21 +169,22 @@ class Account extends React.PureComponent {
     this.setState({ newDisplayName: event.target.value });
 
   showError = error => this.props.notificationShow(error);
-  onProfileUpdate = profile => {
-    this.props.externalProfileUpdateRequest(profile, "CodeCombat");
+  onProfileUpdate = (profile, profileType) => {
+    const { externalProfileUpdateRequest, isAdmin, match } = this.props;
+    externalProfileUpdateRequest(
+      profile,
+      profileType,
+      isAdmin && match.params.accountId
+    );
   };
 
   onProfileDataUpdate = (field, value) =>
     this.props.profileUpdateDataRequest(field, value);
 
   fetchUserData = () => {
-    if (Object.keys(this.props.userJSON).length) this.downloadData();
-    else this.props.fetchUserData();
-  }
+    this.props.fetchUserData();
+  };
 
-  downloadData = () => {
-    download(JSON.stringify(this.props.userJSON.data), "user-achievements.json", "text/plain");
-  }
   render() {
     const {
       achievementsRefreshingInProgress,
@@ -192,6 +194,7 @@ class Account extends React.PureComponent {
       externalProfiles,
       externalProfileRemoveDialogHide,
       externalProfileRemoveRequest,
+      isAdmin,
       joinedPaths,
       match,
       myPaths,
@@ -199,7 +202,8 @@ class Account extends React.PureComponent {
       userAchievements,
       removeRequest,
       user,
-      displayName
+      displayName,
+      selectedExternalProfileType
     } = this.props;
 
     // taken from Courses.js, display if not logged in
@@ -230,18 +234,18 @@ class Account extends React.PureComponent {
           <Grid item xs={3}>
             <Card className={classes.card}>
               <CardMedia
-                image={user && user.photoURL}
+                image={user.photoURL}
                 style={{ height: 240 }}
                 title="UserPhoto"
               />
               <CardContent>
-                <Typography
+                {/* <Typography
                   style={{
                     fontSize: 12
                   }}
                 >
                   User ID: {match.params.accountId}
-                </Typography>
+                </Typography> */}
                 {isOwner && displayNameEdit ? (
                   <Fragment>
                     <TextField
@@ -354,18 +358,32 @@ class Account extends React.PureComponent {
                 )}
               </CardContent>
             </Card>
+            <Button
+              color="primary"
+              onClick={this.fetchUserData}
+              style={{margin : "8px"}}
+              variant="contained"
+            >
+              Download JSON
+            </Button>
           </Grid>
           <Grid item xs={6}>
             {(isOwner ||
+              isAdmin ||
               user.showCodeCombatProfile ||
               user.showCodeCombatProfile === undefined) &&
-              Object.keys(externalProfiles).map(externalProfileKey => (
-                <Fragment key={externalProfileKey}>
+              Object.keys(externalProfiles).map(externalProfileKey =>
+                externalProfiles[externalProfileKey].enable ? (
                   <ExternalProfileCard
+                    key={externalProfileKey}
                     addExternalProfileRequest={this.addExternalProfileRequest}
                     classes={classes}
                     externalProfile={externalProfiles[externalProfileKey]}
-                    inProgress={achievementsRefreshingInProgress}
+                    inProgress={
+                      achievementsRefreshingInProgress &&
+                      selectedExternalProfileType === externalProfileKey
+                    }
+                    isAdmin={isAdmin}
                     isOwner={isOwner}
                     refreshAchievementsRequest={this.refreshAchievementsRequest}
                     removeExternalProfileRequest={
@@ -375,16 +393,20 @@ class Account extends React.PureComponent {
                       (userAchievements || {})[externalProfileKey]
                     }
                   />
-                  <AddProfileDialog
-                    externalProfile={externalProfiles[externalProfileKey]}
-                    inProgress={this.props.externalProfileInUpdate}
-                    onClose={this.closeExternalProfileDialog}
-                    onCommit={this.onProfileUpdate}
-                    open={this.props.showDialog}
-                    uid={this.props.uid}
-                  />
-                </Fragment>
-              ))}
+                ) : (
+                  ""
+                )
+              )}
+            <AddProfileDialog
+              externalProfile={
+                externalProfiles[selectedExternalProfileType] || {}
+              }
+              inProgress={this.props.externalProfileInUpdate}
+              onClose={this.closeExternalProfileDialog}
+              onCommit={this.onProfileUpdate}
+              open={this.props.showDialog}
+              uid={this.props.uid}
+            />
             {(joinedPaths[match.params.accountId] || []).map(path => (
               <JoinedPathCard
                 classes={classes}
@@ -396,15 +418,6 @@ class Account extends React.PureComponent {
                 solutions={path.solutions}
               />
             ))}
-          </Grid>
-          <Grid item xs={6}>
-            <Button
-                color="primary"
-                onClick={this.fetchUserData}
-                variant="contained"
-              >
-                Download JSON
-              </Button>
           </Grid>
         </Grid>
         <RemoveExternalProfileDialog
@@ -428,8 +441,9 @@ const mapStateToProps = (state, ownProps) => ({
   displayNameEdit: state.account.displayNameEdit,
 
   // That should be in firebase
-  externalProfiles: accountService.fetchExternalProfiles(),
+  externalProfiles: state.firebase.data.thirdPartyServices || {},
   externalProfileInUpdate: state.account.externalProfileInUpdate,
+  isAdmin: state.account.isAdmin,
   joinedPaths: state.account.joinedPaths,
   myPaths: state.firebase.data.myPaths,
   profileData: getProfileData(state),
@@ -439,6 +453,7 @@ const mapStateToProps = (state, ownProps) => ({
     type: state.account.removingProfileType
   },
   showDialog: state.account.showExternalProfileDialog,
+  selectedExternalProfileType: state.account.selectedExternalProfileType,
   uid: state.firebase.auth.uid,
   user: (state.firebase.data.users || {})[
     ownProps.match.params.accountId || state.firebase.auth.uid
@@ -482,7 +497,8 @@ export default compose(
         `equalTo=${store.getState().firebase.auth.uid}`
       ]
     },
-    `/userAchievements/${store.getState().firebase.auth.uid}`
+    `/userAchievements/${store.getState().firebase.auth.uid}`,
+    "/thirdPartyServices"
   ]),
   withStyles(styles),
   connect(

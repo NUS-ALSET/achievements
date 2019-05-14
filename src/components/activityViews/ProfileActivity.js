@@ -26,6 +26,9 @@ class ProfileActivity extends React.PureComponent {
   state = {
     login: ""
   };
+  componentDidMount(){
+    this.props.setProblemOpenTime && this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  }
   onProfileChange = e => {
     const login = AccountService.processProfile(
       externalProfile.id,
@@ -37,11 +40,12 @@ class ProfileActivity extends React.PureComponent {
 
   render() {
     const { problem, solution, userAchievements, readOnly } = this.props;
+    const service = problem.service || "CodeCombat";
     const userName =
       userAchievements &&
-      userAchievements.CodeCombat &&
-      userAchievements.CodeCombat.id
-        ? userAchievements.CodeCombat.id
+      userAchievements[service] &&
+      userAchievements[service].id
+        ? userAchievements[service].id
         : solution.value;
     const url = `${externalProfile.url}/user/${this.state.login ||
       solution.value}`;

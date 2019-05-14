@@ -49,11 +49,9 @@ class CohortCoursesTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     cohort: cohort,
+    membersPathsRanking: PropTypes.object,
     courses: PropTypes.array,
-    dispatch: PropTypes.func,
-    isOwner: PropTypes.bool,
     isInstructor: PropTypes.bool,
-    match: PropTypes.object,
     onRemoveClick: PropTypes.func,
     onSortClick: PropTypes.func,
     sortState: PropTypes.shape({
@@ -65,26 +63,37 @@ class CohortCoursesTable extends React.PureComponent {
   render() {
     const {
       classes,
-      courses,
+      courses: crs,
       cohort,
       isInstructor,
       onRemoveClick,
       onSortClick,
-      sortState
+      sortState,
+      membersPathsRanking,
+      uid
     } = this.props;
     let totals = {
       progress: 0,
       participants: 0
     };
+    const courses = crs || [];
+
     if (courses.length <= 0) {
-      return <p>No Courses found for this cohort</p>
+      return <p>No Courses found for this cohort</p>;
     }
     courses.forEach(course => {
       totals.progress += course.progress;
       totals.participants += course.participants;
       return true;
     });
-
+    const rankCellData = ["User Path Rank->"];
+    const nonPathCellCount = 3;
+    cohort.paths.forEach(path => {
+      rankCellData.push(((membersPathsRanking[path] || {})[uid] || {}).rank);
+    });
+    for (let i = 0; i < nonPathCellCount; i++) {
+      rankCellData.push("");
+    }
     return (
       <Table className={classes.table}>
         <TableHead>
@@ -99,20 +108,23 @@ class CohortCoursesTable extends React.PureComponent {
               </TableSortLabel>
             </TableCell>
             {cohort.pathsData && cohort.pathsData.length ? (
-              cohort.pathsData.map(pathData => (
-                <TableCell
-                  className={classes.narrowCell}
-                  key={(pathData && pathData.id) || Math.random()}
-                >
-                  <TableSortLabel
-                    active={sortState.field === pathData.id}
-                    direction={sortState.direction}
-                    onClick={() => onSortClick(pathData.id)}
+              cohort.pathsData.map(pathData => {
+                pathData = pathData || {};
+                return (
+                  <TableCell
+                    className={classes.narrowCell}
+                    key={pathData.id || Math.random()}
                   >
-                    {pathData && pathData.name}
-                  </TableSortLabel>
-                </TableCell>
-              ))
+                    <TableSortLabel
+                      active={sortState.field === pathData.id}
+                      direction={sortState.direction}
+                      onClick={() => onSortClick(pathData.id)}
+                    >
+                      {pathData.name}
+                    </TableSortLabel>
+                  </TableCell>
+                )
+              })
             ) : (
               <TableCell className={classes.narrowCell}>
                 <TableSortLabel
@@ -159,8 +171,7 @@ class CohortCoursesTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {courses &&
-            courses.map(course => (
+          {courses.map(course => (
               <TableRow
                 className={classes.row}
                 hover
@@ -205,6 +216,23 @@ class CohortCoursesTable extends React.PureComponent {
                 )}
               </TableRow>
             ))}
+          {membersPathsRanking && Object.keys(membersPathsRanking).length>0 &&
+          <TableRow
+            className={classes.row}
+            hover
+            style={{ height: 18, backgroundColor: "darkgrey" }}
+          >
+            {rankCellData.map((data, index) => {
+              return (
+                <TableCell
+                  className={classes.narrowCell}
+                  key={`${index + String(data)}`}
+                >
+                  {data}
+                </TableCell>
+              );
+            })}
+          </TableRow>}
         </TableBody>
       </Table>
     );

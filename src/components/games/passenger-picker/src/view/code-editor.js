@@ -102,7 +102,6 @@ class CodeEditor extends Component {
     }
   }
   render() {
-    const { classes } = this.props;
     const { pyCode, jsCode, pythonSyntaxError } = this.state;
     const code = Store.editorMode === "python" ? pyCode : jsCode;
     return (

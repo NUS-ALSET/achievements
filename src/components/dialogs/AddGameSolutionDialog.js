@@ -50,6 +50,9 @@ class AddGameSolutionDialog extends React.PureComponent {
     solution: null,
     open: true
   };
+  componentDidMount(){
+    this.props.setProblemOpenTime && this.props.setProblemOpenTime(this.props.problem.problemId, (new Date()).getTime());
+  }
 
   onChangeSolution = event => {
     this.setState({
@@ -83,15 +86,16 @@ class AddGameSolutionDialog extends React.PureComponent {
       // onClose, onCommit, taskId, solution
       open,
       classes,
-      problem,
+      problem: prob,
       readOnly,
       ...rest
     } = this.props;
 
-    if (!["game", "gameTournament"].includes((problem || {}).type)) {
+    const problem = prob || {};
+    if (!["game", "gameTournament"].includes(problem.type)) {
       return "";
     }
-    const heading = `${APP_SETTING.games[(problem || {}).game].name ||
+    const heading = `${APP_SETTING.games[(problem).game].name ||
       ""} Game Level${problem.levelsToWin} ${
       problem.unitsPerSide === 1
         ? "Single Unit"
@@ -122,7 +126,7 @@ class AddGameSolutionDialog extends React.PureComponent {
               <Typography color="inherit" variant="h6" />
             </Toolbar>
           </AppBar>
-          {open && problem && <GameActivity {...rest} problem={problem} />}
+          {open && <GameActivity {...rest} problem={problem} />}
         </Dialog>
       </div>
     );

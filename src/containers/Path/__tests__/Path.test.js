@@ -41,7 +41,7 @@ describe("<Path>", () => {
         }}
         pathStatus="test"
         ui={{
-          dialog: false
+          dialog: "false"
         }}
         uid="testUser"
       />

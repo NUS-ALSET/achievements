@@ -17,7 +17,10 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 
-import { ENABLED_ASSIGNMENTS_TYPES } from "../../services/courses";
+import {
+  ENABLED_ASSIGNMENTS_TYPES,
+  ASSIGNMENTS_TYPES
+} from "../../services/courses";
 import {
   assignmentAddRequest,
   assignmentCloseDialog,
@@ -46,14 +49,14 @@ class AddAssignmentDialog extends React.PureComponent {
 
   state = {
     // Name of Assignment cannot be nonsense or empty spaces
-    isCorrectInput_Name: false
+    isCorrectInput_Name: false,
+    enableCommitBtn:true
   };
 
   updateField = field => e => {
     // when update assignment
     if (
       this.props.assignment &&
-      !(typeof this.props.assignment === "undefined") &&
       this.props.assignment.id
     ) {
       this.setState({
@@ -66,7 +69,7 @@ class AddAssignmentDialog extends React.PureComponent {
         NoStartWhiteSpace.test(e.target.value)
       ) {
         this.setState({
-          isCorrectInput_Name: true
+          isCorrectInput_Name:true,
         });
       } else {
         this.setState({
@@ -108,6 +111,42 @@ class AddAssignmentDialog extends React.PureComponent {
         });
       }
     }
+    if (assignment && assignment.name
+      && NoStartWhiteSpace.test(assignment.name)
+      && prevProps.assignment.name !== assignment.name
+    ) {
+      this.updateField("name")({target:{value: assignment.name}})
+    }
+    if (this.props.assignment && ["PathProgress", "PathActivity"].includes(this.props.assignment.questionType)){
+      const enableCommitBtn = Boolean( this.props.assignment.path &&  this.props.assignment.name);
+      if (enableCommitBtn !== this.state.enableCommitBtn){
+        this.setState(()=>({
+          enableCommitBtn: enableCommitBtn
+        }));
+      }
+    } else if (!this.state.enableCommitBtn){
+      this.setState(()=>({
+        enableCommitBtn: true
+      }));
+    }
+  }
+
+  /**
+   * Returns list of assignments with requested team formation
+   * @param {String} teamFormation
+   * @returns {Array<Assignement>}
+   */
+  getTeamSourceAssignments(teamFormation) {
+    const { course } = this.props;
+    if (!teamFormation) {
+      return [];
+    }
+    return course.assignments.filter(
+      assignment =>
+        assignment.questionType !== ASSIGNMENTS_TYPES.TeamFormation.id &&
+        assignment.useTeams &&
+        assignment.teamFormation === teamFormation
+    );
   }
 
   getAssignmentSpecificFields(assignment) {
@@ -174,13 +213,32 @@ class AddAssignmentDialog extends React.PureComponent {
             />
           </Fragment>
         );
+      case ENABLED_ASSIGNMENTS_TYPES.TeamChoice.id:
+        return (
+          <TextField
+            disabled={!assignment.teamFormation}
+            fullWidth
+            label="Options source"
+            onChange={this.updateField("source")}
+            select
+            value={assignment.source || ""}
+          >
+            {this.getTeamSourceAssignments(assignment.teamFormation).map(
+              source => (
+                <MenuItem key={source.id} value={source.id}>
+                  {source.name}
+                </MenuItem>
+              )
+            )}
+          </TextField>
+        );
       case ENABLED_ASSIGNMENTS_TYPES.PathProgress.id:
         return (
           <PathsSelector
             allowMultiple={false}
             onChange={this.updateField("path")}
             paths={paths}
-            value={assignment.path || uid}
+            value={assignment.path}
           />
         );
       default:
@@ -305,7 +363,7 @@ class AddAssignmentDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            disabled={!this.state.isCorrectInput_Name}
+            disabled={!this.state.isCorrectInput_Name || !this.state.enableCommitBtn}
             onClick={this.onCommit}
             variant="contained"
           >

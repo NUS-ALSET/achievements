@@ -20,7 +20,7 @@ if [[ $# -eq 0 ]]; then
   fi
   if [ -n "${functions}" ]; then
     echo "functions will be deployed"
-    firebase deploy --token "$FIREBASE_SECRET" --project "achievements-dev" --only functions
+    firebase deploy --token "$FIREBASE_SECRET" --project "achievements-dev" --only functions --force
   fi
   exit 0;
 fi

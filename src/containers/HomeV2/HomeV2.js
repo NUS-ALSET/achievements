@@ -33,10 +33,10 @@ const recommendationTypes = {
 
 export class HomeV2 extends React.Component {
   static propTypes = {
-    dispatch: PropTypes.func,
+    // dispatch: PropTypes.func,
     userRecommendations: PropTypes.any,
-    uid: PropTypes.string,
-    auth: PropTypes.object,
+    // uid: PropTypes.string,
+    // auth: PropTypes.object,
     homeOpenRecommendation: PropTypes.func,
     updateRecommendation: PropTypes.func
   };

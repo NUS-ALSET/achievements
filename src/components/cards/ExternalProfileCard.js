@@ -19,6 +19,7 @@ class ExternalProfileCard extends React.Component {
     classes: PropTypes.object.isRequired,
     externalProfile: PropTypes.object.isRequired,
     inProgress: PropTypes.bool,
+    isAdmin: PropTypes.bool,
     isOwner: PropTypes.bool,
     refreshAchievementsRequest: PropTypes.func.isRequired,
     removeExternalProfileRequest: PropTypes.func.isRequired,
@@ -31,6 +32,7 @@ class ExternalProfileCard extends React.Component {
       classes,
       externalProfile,
       inProgress,
+      isAdmin,
       isOwner,
       refreshAchievementsRequest,
       removeExternalProfileRequest,
@@ -54,7 +56,7 @@ class ExternalProfileCard extends React.Component {
                 >
                   {userAchievements.id}
                 </a>
-                &nbsp;on CodeCombat.com
+                &nbsp;on {externalProfile.url}
               </Typography>
               <Typography className={classes.card}>
                 {userAchievements.totalAchievements} completed levels
@@ -73,7 +75,7 @@ class ExternalProfileCard extends React.Component {
             </Typography>
           )}
         </CardContent>
-        {isOwner && (
+        {(isOwner || isAdmin) && (
           <CardActions>
             {userAchievements ? (
               <Fragment>

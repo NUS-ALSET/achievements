@@ -56,7 +56,9 @@ import {
   assignmentsSolutionsRefreshSuccess,
   assignmentsSolutionsRefreshFail,
   coursePathsFetchSuccess,
-  enableCommitAfterAutofill
+  enableCommitAfterAutofill,
+  ASSIGNMENT_TEAM_CHOICE_SOLUTION_REQUEST,
+  assignmentTeamChoiceSolutionSuccess
 } from "./actions";
 
 import { eventChannel } from "redux-saga";
@@ -101,7 +103,6 @@ export function* courseAssignmentsOpenHandler(action) {
 
   if (!uid) {
     yield take("@@reactReduxFirebase/LOGIN");
-    yield select(state => state.firebase.auth.uid);
   }
 
   try {
@@ -112,7 +113,7 @@ export function* courseAssignmentsOpenHandler(action) {
     yield put(coursePathsFetchSuccess(action.courseId, pathsData));
   } catch (err) {
     // That's normal behavior if user isn't course member
-    if (!err.code === "PERMISSION_DENIED") {
+    if (err.code && err.code !== "PERMISSION_DENIED") {
       yield put(notificationShow(err.message));
     }
   }
@@ -210,9 +211,9 @@ export function* updateNewAssignmentFieldHandler(action) {
           data.uid
         );
         yield put(assignmentPathsFetchSuccess(paths));
-        updatedFields.path = assignment.path || data.uid;
-
-        if (!data.manualUpdates.details) {
+          updatedFields.path = ASSIGNMENTS_TYPES.PathProgress.id === action.value ?  "" : assignment.path || data.uid;
+        
+          if (!data.manualUpdates.details) {
           updatedFields.details = `${location}#/paths/${updatedFields.path}`;
         }
       } else if (
@@ -567,7 +568,7 @@ export function* assignmentPathProblemSolutionRequestHandler(action) {
           yield put(
             problemSolutionRefreshSuccess(
               pathProblem.problemId,
-              action.solution || {}
+              action.solution
             )
           );
           break;
@@ -649,6 +650,23 @@ export function* assignmentsSolutionsRefreshRequestHandler(action) {
     yield put(assignmentsSolutionsRefreshFail(action.courseId, err.message));
     yield put(notificationShow(err.message));
   }
+}
+
+export function* assignmentTeamChoiceSolutionRequestHandler(action) {
+  const options = yield call(
+    solutionsService.getTeamChoiceOptions,
+    action.courseId,
+    action.assignment
+  );
+  yield put(
+    assignmentTeamChoiceSolutionSuccess(
+      action.courseId,
+      action.assignment,
+      action.solution,
+      options
+    )
+  );
+  yield put(assignmentSubmitRequest(action.assignment, action.solution));
 }
 
 export default [
@@ -762,6 +780,12 @@ export default [
     yield takeLatest(
       ASSIGNMENTS_SOLUTIONS_REFRESH_REQUEST,
       assignmentsSolutionsRefreshRequestHandler
+    );
+  },
+  function* watchAssignmentTeamChoiceSolutionRequest() {
+    yield takeLatest(
+      ASSIGNMENT_TEAM_CHOICE_SOLUTION_REQUEST,
+      assignmentTeamChoiceSolutionRequestHandler
     );
   } /* ,
   function* watchAssignmentsTestSomething() {

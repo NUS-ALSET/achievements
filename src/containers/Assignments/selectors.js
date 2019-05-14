@@ -104,7 +104,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
           return true;
         case ASSIGNMENTS_TYPES.PathProgress.id:
           if (pathActivities) {
-            solution = solution && solution.replace(/\d+$/, pathActivities);
+            solution = solution.replace(/\d+$/, pathActivities);
           }
           result[assignmentId] = {
             createdAt,
@@ -174,7 +174,8 @@ export const processTeamSolutions = (assignments, members) => {
     let team;
 
     if (
-      assignment.useTeams ||
+      (assignment.useTeams &&
+        assignment.questionType !== ASSIGNMENTS_TYPES.TeamChoice.id) ||
       assignment.questionType === ASSIGNMENTS_TYPES.TeamText.id
     ) {
       if (!assignment.teamFormation) {

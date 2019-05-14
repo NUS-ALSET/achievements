@@ -1,12 +1,8 @@
 import { runSaga } from "redux-saga";
 import {
-  createToCRUDdemo,
   CREATE_TO_CRUD_DEMO,
-  createValueSuccess,
-  deleteCRUDdemoData,
-  deleteValueSuccess
 } from "./actions";
-import { handleCreateRequest, handleDeleteRequest } from "./sagas";
+import { handleCreateRequest } from "./sagas";
 import { _CRUDdemoService } from "../../services/CRUDdemo";
 import { NOTIFICATION_SHOW } from "../Root/actions";
 import { APP_SETTING } from "../../achievementsApp/config";

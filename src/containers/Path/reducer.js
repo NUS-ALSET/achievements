@@ -13,7 +13,11 @@ import {
   PATH_ACTIVITY_CODECOMBAT_DIALOG_SHOW,
   PATH_PROFILE_DIALOG_SHOW,
   FETCH_MY_PATHS_ACTIVITIES,
-  PATH_CLOSE
+  PATH_CLOSE,
+  UPDATE_PROBLEM_IN_UI,
+  ADD_NEW_FILE,
+  UPDATE_JEST_FILES,
+  REMOVE_JEST_FILE
 } from "./actions";
 import { PATH_ACTIVITY_DIALOG_SHOW } from "../Paths/actions";
 import { ASSIGNMENT_ASSISTANT_FOUND } from "../Assignments/actions";
@@ -21,7 +25,8 @@ import {
   EXTERNAL_PROFILE_REFRESH_REQUEST,
   EXTERNAL_PROFILE_UPDATE_FAIL,
   EXTERNAL_PROFILE_UPDATE_SUCCESS,
-  INSPECT_PATH_AS_USER
+  INSPECT_PATH_AS_USER,
+  EXTERNAL_PROFILE_REFRESH_FAIL
 } from "../Account/actions";
 import {
   PROBLEM_SOLUTION_SUBMIT_FAIL,
@@ -107,6 +112,7 @@ export const path = (
       };
     case PROBLEM_SOLUTION_SUBMIT_SUCCESS:
     case PROBLEM_SOLUTION_SUBMIT_FAIL:
+    case EXTERNAL_PROFILE_REFRESH_FAIL:
       return {
         ...state,
         ui: {
@@ -267,6 +273,72 @@ export const path = (
           }
         }
       };
+    case UPDATE_PROBLEM_IN_UI:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            ...state.ui.dialog,
+            value: {
+              ...state.ui.dialog.value,
+              files: [...action.files]
+            }
+          }
+        }
+      }
+    case ADD_NEW_FILE: {
+      const fileArray = [...state.ui.dialog.value.files];
+      fileArray.unshift({
+        code: "",
+        path: action.name,
+        readOnly: false,
+        type: "file"
+      })
+
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            ...state.ui.dialog,
+            value: {
+              ...state.ui.dialog.value,
+              files: fileArray
+            }
+          }
+        }
+      }
+    }
+    case REMOVE_JEST_FILE:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            ...state.ui.dialog,
+            value: {
+              ...state.ui.dialog.value,
+              files: state.ui.dialog.value.files.filter(f => f.path !== action.file.path)
+            }
+          }
+        }
+      }
+    case UPDATE_JEST_FILES:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            type: "ProblemChange",
+            value: {
+              ...state.ui.dialog.value,
+              files: action.files
+            }
+          },
+          fetchGithubFilesStatus: ""
+        }
+      }
     default:
       return state;
   }

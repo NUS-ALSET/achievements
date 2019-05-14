@@ -14,11 +14,11 @@ import {
 } from "../containers/Assignments/actions";
 import { notificationHide, notificationShow } from "../containers/Root/actions";
 // import { solutionsService } from "./solutions";
-import { firebaseService } from "./firebaseService";
+import { firebaseService } from "./firebaseQueueService";
 import { pathsService } from "./paths";
 
 import each from "lodash/each";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import { APP_SETTING } from "../achievementsApp/config";
 
 const ERROR_TIMEOUT = 10000;
@@ -33,15 +33,15 @@ export const ASSIGNMENTS_TYPES = {
   },
   Profile: {
     id: "Profile",
-    caption: "Fetch CodeCombat Profile"
+    caption: "Fetch Profile"
   },
   CodeCombat: {
     id: "CodeCombat",
-    caption: "Complete CodeCombat Level"
+    caption: "Complete Level"
   },
   CodeCombat_Number: {
     id: "CodeCombat_Number",
-    caption: "Complete Number of CodeCombat Levels"
+    caption: "Complete Number of Levels"
   },
   TeamFormation: {
     id: "TeamFormation",
@@ -50,6 +50,10 @@ export const ASSIGNMENTS_TYPES = {
   TeamText: {
     id: "TeamText",
     caption: "Team Text"
+  },
+  TeamChoice: {
+    id: "TeamChoice",
+    caption: "Team Choice"
   },
   PathActivity: {
     id: "PathActivity",
@@ -354,15 +358,15 @@ export class CoursesService {
   //     .catch(err => this.store.dispatch(notificationShow(err.message)));
   // }
 
-  getProfileStatus(userId) {
+  getProfileStatus(userId, service = "CodeCombat") {
     return firebase
-      .ref(`/userAchievements/${userId}/CodeCombat/id`)
+      .ref(`/userAchievements/${userId}/${service}/id`)
       .once("value")
       .then(id => {
         if (id.val()) {
           return id.val();
         }
-        throw new Error("Missing CodeCombat profile to submit");
+        throw new Error(`Missing ${service} profile to submit`);
       });
   }
 
@@ -372,21 +376,20 @@ export class CoursesService {
    * @param {Assignment} assignment
    */
   getAchievementsStatus(userId, assignment) {
+    const service = assignment.service || "CodeCombat";
     return new Promise((resolve, reject) => {
       firebase
-        .ref(`/userAchievements/${userId}/CodeCombat`)
+        .ref(`/userAchievements/${userId}/${service}`)
         .once("value")
         .then(profileData => {
           if (profileData.exists()) {
             const err = this.checkAchievementsError(profileData, assignment);
             const profile = profileData.val() || {};
             if (err) {
-              this.dispatch(
-                externalProfileRefreshRequest(profile.id, "CodeCombat")
-              );
+              this.dispatch(externalProfileRefreshRequest(profile.id, service));
               setTimeout(() => {
                 firebase
-                  .ref(`/userAchievements/${userId}/CodeCombat`)
+                  .ref(`/userAchievements/${userId}/${service}`)
                   .once("value")
                   .then(profileData => {
                     const err = this.checkAchievementsError(
@@ -403,7 +406,7 @@ export class CoursesService {
           } else {
             reject(
               new Error(
-                "Please enter your CodeCombat profile in the 1st question"
+                `Please enter your ${service} profile in the 1st question`
               )
             );
           }

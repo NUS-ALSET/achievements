@@ -38,10 +38,11 @@ class squadStore {
     }
   }
   updateDirection(gameId, playerId, newDirection) {
-    if (newDirection.right) var direction = "right";
-    else if (newDirection.left) var direction = "left";
-    else if (newDirection.up) var direction = "up";
-    else if (newDirection.down) var direction = "down";
+    var direction = null;
+    if (newDirection.right)  direction = "right";
+    else if (newDirection.left)  direction = "left";
+    else if (newDirection.up)  direction = "up";
+    else if (newDirection.down)  direction = "down";
 
     if (this.direction[gameId][playerId] != direction) {
       this.direction[gameId][playerId] = direction;
