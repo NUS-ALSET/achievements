@@ -9,7 +9,7 @@ const CALL_TIMEOUT = 50000;
 function runCustomTask(uid, task, solution) {
   const json = JSON.parse(task.json);
   const request = {};
-  request["userToken"] = uid;
+  request["userToken"] = uid.slice(0, 5);
   for (const [index, cell] of json.cells.entries()) {
     switch (cell.metadata.achievements.type) {
       case "shown":

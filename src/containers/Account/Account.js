@@ -185,19 +185,6 @@ class Account extends React.PureComponent {
     this.props.fetchUserData();
   };
 
-  hashCode = uid => {
-    var hash = 0,
-      i,
-      chr;
-    if (uid.length === 0) return hash;
-    for (i = 0; i < uid.length; i++) {
-      chr = uid.charCodeAt(i);
-      hash = (hash << 5) - hash + chr;
-      hash |= 0; // Convert to 32bit integer
-    }
-    return hash;
-  };
-
   render() {
     const {
       achievementsRefreshingInProgress,
@@ -257,7 +244,7 @@ class Account extends React.PureComponent {
                     fontSize: 14
                   }}
                 >
-                  User Token : {this.hashCode(String(match.params.accountId))}
+                  User Token : {String(match.params.accountId).slice(0,5)}
                 </Typography>
                 {isOwner && displayNameEdit ? (
                   <Fragment>
