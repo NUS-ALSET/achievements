@@ -244,7 +244,7 @@ class Account extends React.PureComponent {
                     fontSize: 14
                   }}
                 >
-                  User Token : {String(match.params.accountId).slice(0,5)}
+                  User Token : {String(match.params.accountId).slice(0, 5)}
                 </Typography>
                 {isOwner && displayNameEdit ? (
                   <Fragment>
