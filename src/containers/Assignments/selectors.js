@@ -174,8 +174,7 @@ export const processTeamSolutions = (assignments, members) => {
     let team;
 
     if (
-      (assignment.useTeams &&
-        assignment.questionType !== ASSIGNMENTS_TYPES.TeamChoice.id) ||
+      assignment.useTeams ||
       assignment.questionType === ASSIGNMENTS_TYPES.TeamText.id
     ) {
       if (!assignment.teamFormation) {
