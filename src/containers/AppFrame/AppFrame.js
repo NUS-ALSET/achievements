@@ -354,7 +354,11 @@ class AppFrame extends React.Component {
                   exact
                   path="/customactivity"
                 />
-                <Route component={MyLearning} exact path="/myLearning" />
+                <Route
+                  render={routeProps => (
+                    <MyLearning {...routeProps} {...userId} />
+                  )}
+                />
                 <Route component={NoMatch} />
               </Switch>
             </main>
