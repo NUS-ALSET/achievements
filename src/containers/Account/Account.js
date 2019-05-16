@@ -48,7 +48,7 @@ import React, { Fragment } from "react";
 import RemoveExternalProfileDialog from "../../components/dialogs/RemoveProfileDialog";
 
 import TextField from "@material-ui/core/TextField";
-// import Typography from "@material-ui/core/Typography";
+import Typography from "@material-ui/core/Typography";
 import sagas from "./sagas";
 import withStyles from "@material-ui/core/styles/withStyles";
 import { withRouter } from "react-router-dom";
@@ -239,13 +239,13 @@ class Account extends React.PureComponent {
                 title="UserPhoto"
               />
               <CardContent>
-                {/* <Typography
+                <Typography
                   style={{
-                    fontSize: 12
+                    fontSize: 14
                   }}
                 >
-                  User ID: {match.params.accountId}
-                </Typography> */}
+                  User Token : {String(match.params.accountId).slice(0, 5)}
+                </Typography>
                 {isOwner && displayNameEdit ? (
                   <Fragment>
                     <TextField
@@ -361,7 +361,7 @@ class Account extends React.PureComponent {
             <Button
               color="primary"
               onClick={this.fetchUserData}
-              style={{margin : "8px"}}
+              style={{ margin: "8px" }}
               variant="contained"
             >
               Download JSON

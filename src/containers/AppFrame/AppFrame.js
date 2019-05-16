@@ -30,6 +30,7 @@ import Contribute from "../Contribute/Contribute";
 import AllDestinations from "../Destinations/AllDestinations";
 import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
+import MyLearning from "../MyLearning/MyLearning";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
 // HomeV3 is a prototype for homepage
@@ -62,7 +63,7 @@ import ZiYun from "../IdeaLab/ZiYun/ZiYun";
 import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
 import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
 import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
-import ActivitySolutions from "../ActivitySolutions/ActivitySolutions"
+import ActivitySolutions from "../ActivitySolutions/ActivitySolutions";
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -353,6 +354,7 @@ class AppFrame extends React.Component {
                   exact
                   path="/customactivity"
                 />
+                <Route component={MyLearning} exact path="/myLearning" />
                 <Route component={NoMatch} />
               </Switch>
             </main>

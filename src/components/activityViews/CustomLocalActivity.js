@@ -33,6 +33,7 @@ const styles = {
 
 class CustomLocalActivity extends React.PureComponent {
   static propTypes = {
+    uid: PropTypes.string,
     dispatch: PropTypes.func,
     onChange: PropTypes.func,
     onCommit: PropTypes.func,
@@ -79,7 +80,7 @@ class CustomLocalActivity extends React.PureComponent {
   onTaskRunRequest = () => this.props.onCommit();
 
   render() {
-    const { problem, solution, readOnly } = this.props;
+    const { uid, problem, solution, readOnly } = this.props;
     if (!problem.problemJSON) {
       return <LinearProgress />;
     }
@@ -103,7 +104,11 @@ class CustomLocalActivity extends React.PureComponent {
                 style={styles.paper}
               >
                 {block.cell_type === "text" ? (
-                  <Markdown source={block.source.join("\n")} />
+                  <Markdown
+                    source={block.source
+                      .join("\n")
+                      .replace("YOUR_USER_TOKEN", uid.slice(0, 5))}
+                  />
                 ) : (
                   <AceEditor
                     maxLines={Infinity}
@@ -113,7 +118,9 @@ class CustomLocalActivity extends React.PureComponent {
                     setOptions={{ showLineNumbers: false }}
                     showGutter={true}
                     theme="github"
-                    value={block.source.join("\n")}
+                    value={block.source
+                      .join("\n")
+                      .replace("YOUR_USER_TOKEN", uid.slice(0, 5))}
                     width={"100%"}
                   />
                 )}

@@ -191,6 +191,7 @@ export class Activity extends React.PureComponent {
           })
         ) : (
           <ActivityView
+            uid={uid}
             dispatch={dispatch}
             onCommit={this.onCommit}
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
