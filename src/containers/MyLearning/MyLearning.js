@@ -1,4 +1,3 @@
-/*----------------------*/
 /**
  * @file MyLearning container module
  * @created 15.05.2019
@@ -34,7 +33,14 @@ class MyLearning extends React.Component {
       codeAnalysis: 0,
       skillsUsed: [],
       funDef: 0,
-      completedActivities: 0,
+      allActivities: {
+        ccTotal: 0,
+        ccCompleted: 0,
+        allTotal: 0,
+        allCompleted: 0,
+        jypTotal: 0,
+        jypCompleted: 0
+      },
       BarChartOptions: {
         chart: {
           type: "column"
@@ -77,8 +83,6 @@ class MyLearning extends React.Component {
     let Functions = 0;
     let Import = 0;
     let Statements = 0;
-
-    let completedActivities = 0;
 
     let db = firebase.firestore();
     let query = db
@@ -135,21 +139,48 @@ class MyLearning extends React.Component {
       .catch(function(error) {
         console.log("Error getting documents: ", error);
       });
-    var queryActivities = db
+
+    var allActivities = {
+      ccTotal: 0,
+      ccCompleted: 0,
+      allTotal: 0,
+      allCompleted: 0,
+      jypTotal: 0,
+      jypCompleted: 0
+    };
+    var queryCodeCombat = db
       .collection("logged_events")
       .where("uid", "==", uid)
-      .where("type", "==", "PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS")
+      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")
       .where("createdAt", ">=", last)
       .orderBy("createdAt", "desc")
       .limit(100);
-    queryActivities
+    queryCodeCombat
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          completedActivities = querySnapshot.size;
+          var otherActionData = JSON.parse(doc.data().otherActionData);
+          if (otherActionData.payload.activityType === "codeCombat") {
+            if (otherActionData.payload.completed === 1) {
+              allActivities.ccCompleted += 1;
+            }
+            allActivities.ccTotal += 1;
+          } else if (
+            otherActionData.payload.activityType === "jupyterInline" ||
+            otherActionData.payload.activityType === "jupyterLocal"
+          ) {
+            if (otherActionData.payload.completed === 1) {
+              allActivities.jypCompleted += 1;
+            }
+            allActivities.jypTotal += 1;
+          }
+          if (otherActionData.payload.completed === 1) {
+            allActivities.allCompleted += 1;
+          }
+          allActivities.allTotal += 1;
         });
         this.setState({
-          completedActivities: completedActivities
+          allActivities: allActivities
         });
       })
       .catch(function(error) {
@@ -182,27 +213,60 @@ class MyLearning extends React.Component {
                     </Typography>
                     <hr />
                     <div>
+                      <Typography variant="subtitle1">Overall :</Typography>
                       <ul>
                         <li>
-                          Submmited{" "}
+                          Attempted{" "}
                           <span style={{ ...stats }}>
-                            {this.state.codeAnalysis}
+                            {this.state.allActivities.allTotal}
                           </span>{" "}
-                          Jupyter Notebook activity solutions.
+                          activities.
                         </li>
                         <li>
                           Completed{" "}
                           <span style={{ ...stats }}>
-                            {this.state.completedActivities}
+                            {this.state.allActivities.allCompleted}
                           </span>{" "}
                           activities.
                         </li>
                       </ul>
                     </div>
-                    <Typography variant="subtitle1">Skills:</Typography>
-
                     <div>
+                      <Typography variant="subtitle1">CodeCombat :</Typography>
                       <ul>
+                        <li>
+                          Attempted{" "}
+                          <span style={{ ...stats }}>
+                            {this.state.allActivities.ccTotal}
+                          </span>{" "}
+                          CodeCombat activities.
+                        </li>
+                        <li>
+                          Completed{" "}
+                          <span style={{ ...stats }}>
+                            {this.state.allActivities.ccCompleted}
+                          </span>{" "}
+                          CodeCombat activities.
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <Typography variant="subtitle1">Python :</Typography>
+                      <ul>
+                        <li>
+                          Attempted{" "}
+                          <span style={{ ...stats }}>
+                            {this.state.allActivities.jypTotal}
+                          </span>{" "}
+                          Jupyter Notebook activities.
+                        </li>
+                        <li>
+                          Completed{" "}
+                          <span style={{ ...stats }}>
+                            {this.state.allActivities.jypCompleted}
+                          </span>{" "}
+                          Jupyter Notebook activities.
+                        </li>
                         <li>
                           Skills demonstrated :
                           <br />
