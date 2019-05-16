@@ -50,15 +50,12 @@ class AddAssignmentDialog extends React.PureComponent {
   state = {
     // Name of Assignment cannot be nonsense or empty spaces
     isCorrectInput_Name: false,
-    enableCommitBtn:true
+    enableCommitBtn: true
   };
 
   updateField = field => e => {
     // when update assignment
-    if (
-      this.props.assignment &&
-      this.props.assignment.id
-    ) {
+    if (this.props.assignment && this.props.assignment.id) {
       this.setState({
         isCorrectInput_Name: true
       });
@@ -69,7 +66,7 @@ class AddAssignmentDialog extends React.PureComponent {
         NoStartWhiteSpace.test(e.target.value)
       ) {
         this.setState({
-          isCorrectInput_Name:true,
+          isCorrectInput_Name: true
         });
       } else {
         this.setState({
@@ -111,21 +108,30 @@ class AddAssignmentDialog extends React.PureComponent {
         });
       }
     }
-    if (assignment && assignment.name
-      && NoStartWhiteSpace.test(assignment.name)
-      && prevProps.assignment.name !== assignment.name
+    if (
+      assignment &&
+      assignment.name &&
+      NoStartWhiteSpace.test(assignment.name) &&
+      prevProps.assignment.name !== assignment.name
     ) {
-      this.updateField("name")({target:{value: assignment.name}})
+      this.updateField("name")({ target: { value: assignment.name } });
     }
-    if (this.props.assignment && ["PathProgress", "PathActivity"].includes(this.props.assignment.questionType)){
-      const enableCommitBtn = Boolean( this.props.assignment.path &&  this.props.assignment.name);
-      if (enableCommitBtn !== this.state.enableCommitBtn){
-        this.setState(()=>({
+    if (
+      this.props.assignment &&
+      ["PathProgress", "PathActivity"].includes(
+        this.props.assignment.questionType
+      )
+    ) {
+      const enableCommitBtn = Boolean(
+        this.props.assignment.path && this.props.assignment.name
+      );
+      if (enableCommitBtn !== this.state.enableCommitBtn) {
+        this.setState(() => ({
           enableCommitBtn: enableCommitBtn
         }));
       }
-    } else if (!this.state.enableCommitBtn){
-      this.setState(()=>({
+    } else if (!this.state.enableCommitBtn) {
+      this.setState(() => ({
         enableCommitBtn: true
       }));
     }
@@ -141,11 +147,10 @@ class AddAssignmentDialog extends React.PureComponent {
     if (!teamFormation) {
       return [];
     }
-    return course.assignments.filter(
-      assignment =>
-        assignment.questionType !== ASSIGNMENTS_TYPES.TeamFormation.id &&
-        assignment.useTeams &&
-        assignment.teamFormation === teamFormation
+    return course.assignments.filter(assignment =>
+      [ASSIGNMENTS_TYPES.Text.id, ASSIGNMENTS_TYPES.TeamText.id].includes(
+        assignment.questionType
+      )
     );
   }
 
@@ -363,7 +368,9 @@ class AddAssignmentDialog extends React.PureComponent {
           </Button>
           <Button
             color="primary"
-            disabled={!this.state.isCorrectInput_Name || !this.state.enableCommitBtn}
+            disabled={
+              !this.state.isCorrectInput_Name || !this.state.enableCommitBtn
+            }
             onClick={this.onCommit}
             variant="contained"
           >
