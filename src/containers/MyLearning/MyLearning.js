@@ -1,4 +1,3 @@
-/*----------------------*/
 /**
  * @file MyLearning container module
  * @created 15.05.2019
@@ -35,6 +34,7 @@ class MyLearning extends React.Component {
       skillsUsed: [],
       funDef: 0,
       completedActivities: 0,
+      completedCCActivities: { total: 0, completed: 0 },
       BarChartOptions: {
         chart: {
           type: "column"
@@ -155,6 +155,33 @@ class MyLearning extends React.Component {
       .catch(function(error) {
         console.log("Error getting documents: ", error);
       });
+    var codeCombat = { total: 0, completed: 0 };
+    var queryCodeCombat = db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")
+      .where("createdAt", ">=", last)
+      .orderBy("createdAt", "desc")
+      .limit(100);
+    queryCodeCombat
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          var otherActionData = JSON.parse(doc.data().otherActionData);
+          if (otherActionData.payload.activityType === "codeCombat") {
+            if (otherActionData.payload.completed === 1) {
+              codeCombat.completed += 1;
+            }
+            codeCombat.total += 1;
+          }
+        });
+        this.setState({
+          completedCCActivities: codeCombat
+        });
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+      });
   };
 
   render() {
@@ -182,14 +209,8 @@ class MyLearning extends React.Component {
                     </Typography>
                     <hr />
                     <div>
+                      <Typography variant="subtitle1">Overall :</Typography>
                       <ul>
-                        <li>
-                          Submmited{" "}
-                          <span style={{ ...stats }}>
-                            {this.state.codeAnalysis}
-                          </span>{" "}
-                          Jupyter Notebook activity solutions.
-                        </li>
                         <li>
                           Completed{" "}
                           <span style={{ ...stats }}>
@@ -199,10 +220,35 @@ class MyLearning extends React.Component {
                         </li>
                       </ul>
                     </div>
-                    <Typography variant="subtitle1">Skills:</Typography>
-
                     <div>
+                      <Typography variant="subtitle1">CodeCombat :</Typography>
                       <ul>
+                        <li>
+                          Attempted{" "}
+                          <span style={{ ...stats }}>
+                            {this.state.completedCCActivities.total}
+                          </span>{" "}
+                          CodeCombat activities.
+                        </li>
+                        <li>
+                          Completed{" "}
+                          <span style={{ ...stats }}>
+                            {this.state.completedCCActivities.completed}
+                          </span>{" "}
+                          CodeCombat activities.
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <Typography variant="subtitle1">Python :</Typography>
+                      <ul>
+                        <li>
+                          Submmited{" "}
+                          <span style={{ ...stats }}>
+                            {this.state.codeAnalysis}
+                          </span>{" "}
+                          Jupyter Notebook activity solutions.
+                        </li>
                         <li>
                           Skills demonstrated :
                           <br />
