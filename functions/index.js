@@ -23,6 +23,7 @@ const userJSONTrigger = require("./src/fetchUserJSON");
 const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
 const createCustomToken = require("./src/createCustomToken");
 const runLocalTask = require("./src/runLocalTask");
+const fetchNotebookFromGitTrigger = require("./src/fetchNotebookFromGit");
 
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
@@ -39,8 +40,7 @@ const ERROR_500 = 500;
 
 // initialize the Firebase Admin SDK
 admin.initializeApp();
-admin.firestore().settings( { timestampsInSnapshots: true });
-
+admin.firestore().settings({ timestampsInSnapshots: true });
 
 exports.handleNewProblemSolution =
   // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
@@ -48,13 +48,18 @@ exports.handleNewProblemSolution =
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
-      return jupyterTrigger.handler(data, data.taskKey, data.owner,"handleNewProblemSolution");
+      return jupyterTrigger.handler(
+        data,
+        data.taskKey,
+        data.owner,
+        "handleNewProblemSolution"
+      );
     });
 
 exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
   .onWrite(change => {
-    const data = change.after.val();      
+    const data = change.after.val();
     if (data) {
       return githubTrigger.handler(data, data.taskKey, data.owner);
     }
@@ -281,6 +286,20 @@ exports.handleUserJSONFetchRequest = functions.database
     const data = (change.after || {}).val();
     if (data && data.taskKey) {
       return userJSONTrigger.handler(data.taskKey, data.owner);
+    }
+    return Promise.resolve();
+  });
+
+exports.handleFetchNotebookFromGit = functions.database
+  .ref("/notebookFromGitQueue/tasks/{taskKey}")
+  .onWrite(change => {
+    const data = (change.after || {}).val();
+    if (data && data.taskKey) {
+      return fetchNotebookFromGitTrigger.handler(
+        data.taskKey,
+        data.owner,
+        data.url
+      );
     }
     return Promise.resolve();
   });
