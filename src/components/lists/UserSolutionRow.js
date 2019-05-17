@@ -9,7 +9,7 @@ import { firebaseConnect } from "react-redux-firebase";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import { withStyles } from "@material-ui/core/styles";
-import Avatar from "@material-ui/core/Avatar";
+
 import Grid from "@material-ui/core/Grid";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
@@ -31,8 +31,6 @@ export class UserSolutionRow extends React.PureComponent {
   static propTypes = {
     userId: PropTypes.string,
     solution: PropTypes.any,
-    student: PropTypes.object,
-    classes: PropTypes.object,
     openSolution: PropTypes.func,
     showViewSolutionBtn: PropTypes.bool,
     status: PropTypes.any
@@ -55,8 +53,6 @@ export class UserSolutionRow extends React.PureComponent {
       openSolution,
       userId,
       solution,
-      student,
-      classes,
       status,
       showViewSolutionBtn
     } = this.props;
@@ -64,19 +60,7 @@ export class UserSolutionRow extends React.PureComponent {
       <TableRow key={userId}>
         <TableCell>
           <Grid alignItems="center" container>
-            {this.state.errInImgLoad ? (
-              <Avatar className={classes.avatar}>
-                {(student.displayName || "").toUpperCase()[0]}
-              </Avatar>
-            ) : (
-              <Avatar
-                alt={student.displayName}
-                className={classes.avatar}
-                onError={this.setError}
-                src={student.photoURL}
-              />
-            )}
-            {student.displayName}
+            <a href={`/#/profile/${userId}`} target={"_blank"}>{userId}</a>
           </Grid>
         </TableCell>
         <TableCell>
@@ -89,7 +73,7 @@ export class UserSolutionRow extends React.PureComponent {
         <TableCell>{status ? <CheckIcon /> : <CloseIcon />}</TableCell>
         {showViewSolutionBtn && (
           <TableCell>
-            <Button onClick={() => openSolution(solution, student)}>
+            <Button onClick={() => openSolution(solution, {displayName: userId})}>
               View Solution
             </Button>
           </TableCell>
@@ -100,7 +84,6 @@ export class UserSolutionRow extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  student: (state.firebase.data.users || {})[ownProps.userId] || {},
   status:
     (((state.firebase.data.completedActivities || {})[ownProps.userId] || {})[
       ownProps.pathId
@@ -112,9 +95,6 @@ export default compose(
   withStyles(styles),
   firebaseConnect(ownProps => {
     return [
-      {
-        path: `/users/${ownProps.userId}`
-      },
       {
         path: `/completedActivities/${ownProps.userId}/${ownProps.pathId}/${
           ownProps.activityId
