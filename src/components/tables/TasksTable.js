@@ -53,7 +53,7 @@ class TasksTable extends React.PureComponent {
                 <TableCell>{task.name}</TableCell>
                 <TableCell>{task.type}</TableCell>
                 <TableCell>
-                  <Link className={classes.link} to={`/tasks/${task.id}`}>
+                  <Link className={classes.link} to={`/advanced/${task.id}`}>
                     <Button className={classes.button} variant="contained">
                       View
                     </Button>

@@ -39,8 +39,7 @@ const ERROR_500 = 500;
 
 // initialize the Firebase Admin SDK
 admin.initializeApp();
-admin.firestore().settings( { timestampsInSnapshots: true });
-
+admin.firestore().settings({ timestampsInSnapshots: true });
 
 exports.handleNewProblemSolution =
   // ["trigger", "both"].includes(profilesRefreshApproach) && // dev-db is paid account now
@@ -48,13 +47,18 @@ exports.handleNewProblemSolution =
     .ref("/jupyterSolutionsQueue/tasks/{requestId}")
     .onWrite(change => {
       const data = change.after.val();
-      return jupyterTrigger.handler(data, data.taskKey, data.owner,"handleNewProblemSolution");
+      return jupyterTrigger.handler(
+        data,
+        data.taskKey,
+        data.owner,
+        "handleNewProblemSolution"
+      );
     });
 
 exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
   .onWrite(change => {
-    const data = change.after.val();      
+    const data = change.after.val();
     if (data) {
       return githubTrigger.handler(data, data.taskKey, data.owner);
     }
@@ -142,7 +146,7 @@ exports.getTeamAssignmentSolutions = functions.https.onCall(
 );
 
 /**
- * Method that allows to run local tasks with CORS workaround
+ * Method that allows to run advanced activities with CORS workaround
  */
 exports.runLocalTask = functions.https.onCall(runLocalTask.handler);
 

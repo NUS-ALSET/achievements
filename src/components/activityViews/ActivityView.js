@@ -12,7 +12,7 @@ import ProfileActivity from "./ProfileActivity";
 
 import JupyterActivity from "./JupyterColabActivity";
 import JupyterInlineActivity from "./JupyterInlineActivity";
-import LocalTaskActivity from "./LocalTaskActivity";
+import AdvancedActivity from "./AdvancedActivity";
 import YouTubeActivity from "./YouTubeActivity";
 
 import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog";
@@ -26,7 +26,7 @@ const views = {
   profile: ProfileActivity,
   jupyter: JupyterActivity,
   jupyterInline: JupyterInlineActivity,
-  jupyterLocal: LocalTaskActivity,
+  jupyterLocal: AdvancedActivity,
   youtube: YouTubeActivity,
   jest: AddJestSolutionDialog,
   game: AddGameSolutionDialog,

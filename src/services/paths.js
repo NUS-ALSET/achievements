@@ -77,7 +77,7 @@ export const ACTIVITY_TYPES = {
   },
   jupyterLocal: {
     id: "jupyterLocal",
-    caption: "Local task"
+    caption: "Advanced Activity"
   },
   youtube: {
     id: "youtube",
@@ -423,7 +423,7 @@ export class PathsService {
       .ref("/paths")
       .push().key;
 
-    //Added firestore related changes
+    // Added firestore related changes
     firestore_db.collection("/path_owners").add({
       ownerId: uid,
       pathId: key
@@ -778,10 +778,22 @@ export class PathsService {
           }
           break;
         case ACTIVITY_TYPES.jupyterLocal.id:
-          return firebase.functions().httpsCallable("runLocalTask")({
-            solution: solution.payload,
-            taskId: pathProblem.taskInfo.id
-          });
+          return firebase
+            .functions()
+            .httpsCallable("runLocalTask")({
+              solution: solution.payload,
+              taskId: pathProblem.taskInfo.id
+            })
+            .then(solution => {
+              if (solution && solution.data) {
+                solution.failed = !solution.data.isComplete;
+                if (solution.data.jsonFeedback) {
+                  const json = JSON.parse(solution.data.jsonFeedback);
+                  solution.failed = json.solved === false;
+                }
+              }
+              return solution;
+            });
         case ACTIVITY_TYPES.creator.id:
         case ACTIVITY_TYPES.educator.id:
           return firebase
@@ -1499,7 +1511,7 @@ export class PathsService {
 
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
-    //Added code to save to firestore
+    // Added code to save to firestore
     firestore_db
       .collection("analytics")
       .doc("activityAnalytics")

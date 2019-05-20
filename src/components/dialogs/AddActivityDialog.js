@@ -11,6 +11,7 @@ import PropTypes from "prop-types";
 import { firebaseConnect } from "react-redux-firebase";
 import { compose } from "redux";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
@@ -21,6 +22,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -70,13 +72,20 @@ const gameDefaultData = {
   playMode: "manual control"
 };
 
-const styles = () => ({});
+const styles = () => ({
+  link: {
+    textDecoration: "none"
+  }
+});
 const cells = new Array(MAX_CELLS).fill().map((value, index) => index + 1);
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     activity: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
     activityExampleSolution: PropTypes.any,
+    classes: PropTypes.shape({
+      link: PropTypes.string
+    }),
 
     // temporary remove isRequired for fetchGithubFiles
     fetchGithubFiles: PropTypes.func,
@@ -619,58 +628,77 @@ class AddActivityDialog extends React.PureComponent {
                 <MenuItem value={"templates"}>Templates</MenuItem>
               </Select>
             </FormControl>
-            {
-              this.state.jestMethod === "templates" && <FormControl style={{ width: "100%" }}>
+            {this.state.jestMethod === "templates" && (
+              <FormControl style={{ width: "100%" }}>
                 <InputLabel htmlFor="templates">Select Template</InputLabel>
                 <Select
                   inputProps={{
                     name: "templates"
                   }}
                   onChange={e => {
-                    this.setState({
-                      githubURL: e.target.value
-                    }, () => {
-                      this.handleGithubURLSubmit()
-                    })
+                    this.setState(
+                      {
+                        githubURL: e.target.value
+                      },
+                      () => {
+                        this.handleGithubURLSubmit();
+                      }
+                    );
                   }}
                   value={this.state.githubURL || ""}
                 >
-                  <MenuItem value={JEST_GIT_MAP.react.url}>{JEST_GIT_MAP.react.id}</MenuItem>
-                  <MenuItem value={JEST_GIT_MAP.vue.url}>{JEST_GIT_MAP.vue.id}</MenuItem>
-                  <MenuItem value={JEST_GIT_MAP.vanilla.url}>{JEST_GIT_MAP.vanilla.id}</MenuItem>
+                  <MenuItem value={JEST_GIT_MAP.react.url}>
+                    {JEST_GIT_MAP.react.id}
+                  </MenuItem>
+                  <MenuItem value={JEST_GIT_MAP.vue.url}>
+                    {JEST_GIT_MAP.vue.id}
+                  </MenuItem>
+                  <MenuItem value={JEST_GIT_MAP.vanilla.url}>
+                    {JEST_GIT_MAP.vanilla.id}
+                  </MenuItem>
                 </Select>
               </FormControl>
-            }
+            )}
 
-            {this.state.jestMethod === "git" && <FormControl style={{ width: "100%" }}>
-              <InputLabel htmlFor="githubURL">Github URL</InputLabel>
-              <Input
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="Fetch files from github."
-                      onClick={this.handleGithubURLSubmit}
-                    >
-                      {this.state.loading ? (
-                        <CircularProgress size={25} />
-                      ) : (
-                        <CloudDownload />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                id="githubURL"
-                onChange={e => this.onFieldChange("githubURL", e.target.value)}
-                type="text"
-                value={activity.githubURL || ""}
-              />
-            </FormControl>}
-            {
-              this.props.fetchGithubFilesStatus === "LOADING" &&
-              <div style={{width: "100%", textAlign: "center", marginTop: "15px"}}>
-                <CircularProgress /><p>Fetching Template...</p>
+            {this.state.jestMethod === "git" && (
+              <FormControl style={{ width: "100%" }}>
+                <InputLabel htmlFor="githubURL">Github URL</InputLabel>
+                <Input
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="Fetch files from github."
+                        onClick={this.handleGithubURLSubmit}
+                      >
+                        {this.state.loading ? (
+                          <CircularProgress size={25} />
+                        ) : (
+                          <CloudDownload />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  id="githubURL"
+                  onChange={e =>
+                    this.onFieldChange("githubURL", e.target.value)
+                  }
+                  type="text"
+                  value={activity.githubURL || ""}
+                />
+              </FormControl>
+            )}
+            {this.props.fetchGithubFilesStatus === "LOADING" && (
+              <div
+                style={{
+                  width: "100%",
+                  textAlign: "center",
+                  marginTop: "15px"
+                }}
+              >
+                <CircularProgress />
+                <p>Fetching Template...</p>
               </div>
-            }
+            )}
             {this.state.files && this.state.files.length > 0 && (
               <Fragment>
                 <Typography
@@ -892,7 +920,14 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   render() {
-    const { activity, open, pathId, pathsInfo, restrictedType } = this.props;
+    const {
+      activity,
+      classes,
+      open,
+      pathId,
+      pathsInfo,
+      restrictedType
+    } = this.props;
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -954,6 +989,10 @@ class AddActivityDialog extends React.PureComponent {
                 {ACTIVITY_TYPES[key].caption}
               </MenuItem>
             ))}
+            <Divider />
+            <Link className={classes.link} to="/advanced/new">
+              <MenuItem value="advanced">Create in Achievements</MenuItem>
+            </Link>
           </TextField>
           {this.getTypeSpecificElements()}
         </DialogContent>

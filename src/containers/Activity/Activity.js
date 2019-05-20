@@ -25,6 +25,7 @@ import ActivityView from "../../components/activityViews/ActivityView";
 import Button from "@material-ui/core/Button/Button";
 import isEqual from "lodash/isEqual";
 import { notificationShow, signInRequire } from "../Root/actions";
+import { ACTIVITY_TYPES } from "../../services/paths";
 
 export class Activity extends React.PureComponent {
   static propTypes = {
@@ -76,7 +77,11 @@ export class Activity extends React.PureComponent {
       this.onProblemChange({});
     }
     if (
-      !["jupyter", "jupyterInline"].includes((nextProps.pathProblem || {}).type)
+      ![
+        ACTIVITY_TYPES.jupyter.id,
+        ACTIVITY_TYPES.jupyterInline.id,
+        ACTIVITY_TYPES.jupyterLocal.id
+      ].includes((nextProps.pathProblem || {}).type)
     ) {
       this.setState({ disabledCommitBtn: false });
     } else if (
