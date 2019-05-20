@@ -197,7 +197,7 @@ class AssignmentsTable extends React.PureComponent {
           >
             {result}
           </a>
-        ) 
+        );
       // Backward compatibility
       case "PathProblem":
       case ASSIGNMENTS_TYPES.PathActivity.id:
@@ -223,7 +223,7 @@ class AssignmentsTable extends React.PureComponent {
               )}
             </span>
           </Tooltip>
-        ) ;
+        );
 
       case ASSIGNMENTS_TYPES.Text.id:
       case ASSIGNMENTS_TYPES.TeamText.id:
@@ -349,7 +349,6 @@ class AssignmentsTable extends React.PureComponent {
       sortState
     } = this.props;
     const { currentStudent } = this.state;
-
     return (
       <Fragment>
         <Table>
@@ -394,9 +393,7 @@ class AssignmentsTable extends React.PureComponent {
                           link
                         </a>
                       )}
-                    {" (" +
-                      assignment.progress +
-                      " students submitted)"}
+                    {" (" + assignment.progress + " students submitted)"}
                   </div>
                   <div>
                     {assignment.deadline &&
@@ -519,24 +516,25 @@ class AssignmentsTable extends React.PureComponent {
                             </Fragment>
                           )}
 
-                        {studentInfo.id === currentUser.id && (
-                          <Button
-                            onClick={() =>
-                              this.onSubmitClick(
-                                assignment,
-                                studentInfo.solutions[assignment.id]
-                              )
-                            }
-                            style={{
-                              marginLeft: 4
-                            }}
-                            variant="contained"
-                          >
-                            {studentInfo.solutions[assignment.id]
-                              ? "Update"
-                              : "Submit"}
-                          </Button>
-                        )}
+                        {studentInfo.id === currentUser.id &&
+                          new Date() <= new Date(assignment.deadline) && (
+                            <Button
+                              onClick={() =>
+                                this.onSubmitClick(
+                                  assignment,
+                                  studentInfo.solutions[assignment.id]
+                                )
+                              }
+                              style={{
+                                marginLeft: 4
+                              }}
+                              variant="contained"
+                            >
+                              {studentInfo.solutions[assignment.id]
+                                ? "Update"
+                                : "Submit"}
+                            </Button>
+                          )}
                       </Fragment>
                     </TableCell>
                   ))}

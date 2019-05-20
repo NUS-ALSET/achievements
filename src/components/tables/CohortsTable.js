@@ -47,37 +47,46 @@ class CohortsTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.keys(cohorts)
-            .map(id => ({ ...cohorts[id], id }))
-            .map(cohort => (
-              <TableRow key={cohort.id}>
-                <TableCell>{cohort.name}</TableCell>
-                <TableCell>{cohort.instructorName}</TableCell>
-                <TableCell>
-                  <Link className={classes.link} to={`/cohorts/${cohort.id}`}>
-                    <Button className={classes.button} variant="contained">
-                      View
-                    </Button>
-                  </Link>
-                  {cohort.owner === currentUserId && (
-                    <Fragment>
-                      <Button
-                        className={classes.button}
-                        onClick={() => onEditCohortClick(cohort)}
-                        variant="contained"
-                      >
-                        Edit
+          {!Object.keys(cohorts).length ? (
+            <TableRow>
+              <TableCell colSpan={5}>Empty list</TableCell>
+            </TableRow>
+          ) : (
+            Object.keys(cohorts)
+              .map(id => ({ ...cohorts[id], id }))
+              .map(cohort => (
+                <TableRow key={cohort.id}>
+                  <TableCell>{cohort.name}</TableCell>
+                  <TableCell>{cohort.instructorName}</TableCell>
+                  <TableCell>
+                    <Link className={classes.link} to={`/cohorts/${cohort.id}`}>
+                      <Button className={classes.button} variant="contained">
+                        View
                       </Button>
-                      {/* Not implemented yet */ false && (
-                        <Button className={classes.button} variant="contained">
-                          Delete
+                    </Link>
+                    {cohort.owner === currentUserId && (
+                      <Fragment>
+                        <Button
+                          className={classes.button}
+                          onClick={() => onEditCohortClick(cohort)}
+                          variant="contained"
+                        >
+                          Edit
                         </Button>
-                      )}
-                    </Fragment>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                        {/* Not implemented yet */ false && (
+                          <Button
+                            className={classes.button}
+                            variant="contained"
+                          >
+                            Delete
+                          </Button>
+                        )}
+                      </Fragment>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))
+          )}
         </TableBody>
       </Table>
     );

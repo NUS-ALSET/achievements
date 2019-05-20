@@ -37,6 +37,7 @@ const views = {
 
 class ActivityView extends React.PureComponent {
   static propTypes = {
+    uid: PropTypes.string,
     dispatch: PropTypes.func,
     pathProblem: PropTypes.any,
     onClose: PropTypes.func,
@@ -78,6 +79,7 @@ class ActivityView extends React.PureComponent {
   }
   render() {
     const {
+      uid,
       dispatch,
       onClose,
       onProblemChange,
@@ -107,6 +109,7 @@ class ActivityView extends React.PureComponent {
     return (
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         <SpecificView
+          uid={uid}
           dispatch={dispatch}
           onChange={onProblemChange}
           onClose={onClose}

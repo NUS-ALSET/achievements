@@ -23,6 +23,7 @@ const userJSONTrigger = require("./src/fetchUserJSON");
 const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
 const createCustomToken = require("./src/createCustomToken");
 const runLocalTask = require("./src/runLocalTask");
+const fetchNotebookFromGitTrigger = require("./src/fetchNotebookFromGit");
 
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 const {
@@ -285,6 +286,20 @@ exports.handleUserJSONFetchRequest = functions.database
     const data = (change.after || {}).val();
     if (data && data.taskKey) {
       return userJSONTrigger.handler(data.taskKey, data.owner);
+    }
+    return Promise.resolve();
+  });
+
+exports.handleFetchNotebookFromGit = functions.database
+  .ref("/notebookFromGitQueue/tasks/{taskKey}")
+  .onWrite(change => {
+    const data = (change.after || {}).val();
+    if (data && data.taskKey) {
+      return fetchNotebookFromGitTrigger.handler(
+        data.taskKey,
+        data.owner,
+        data.url
+      );
     }
     return Promise.resolve();
   });

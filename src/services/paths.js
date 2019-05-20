@@ -16,6 +16,7 @@ import "firebase/firestore";
 
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
+const GITHUB_BASE_URL = "https://github.com";
 export const YOUTUBE_QUESTIONS = {
   topics:
     "What topics were covered in this video? Put each topic on a new line",
@@ -187,7 +188,6 @@ export class PathsService {
     if (result && result[1]) return result[1];
     result = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(url);
     if (result && result[1]) return result[1];
-
     return url;
   }
 
@@ -244,41 +244,34 @@ export class PathsService {
           }
           case "jupyter":
           case "jupyterInline": {
-            return Promise.all([
-              Promise.resolve(this.getFileId(pathProblem.problemURL)).then(
-                fileId => {
-                  if (pathProblem.version === 1) {
-                    return firebase
-                      .database()
-                      .ref(`/activityData/${activitiyId}`)
-                      .once("value")
-                      .then(data => {
-                        return {
-                          id: fileId,
-                          data: JSON.parse(data.val().problemData)
-                        };
-                      });
-                  } else {
-                    return this.fetchFile(fileId).then(data => ({
-                      id: fileId,
-                      data
-                    }));
-                  }
-                }
-              )
-              // Promise.resolve(this.getFileId(pathProblem.solutionURL)).then(
-              //   fileId =>
-              //     this.fetchFile(fileId).then(data => ({
-              //       id: fileId,
-              //       data
-              //     }))
-              // )
-            ])
+            const fileId = this.getFileId(pathProblem.problemURL);
+            let promise;
+            if (pathProblem.version === 1) {
+              promise = firebase
+                .database()
+                .ref(`/activityData/${activitiyId}`)
+                .once("value")
+                .then(data => {
+                  return {
+                    id: fileId,
+                    data: JSON.parse(data.val().problemData)
+                  };
+                });
+            } else {
+              promise = this.fetchNotebookFiles(
+                pathProblem.problemURL,
+                pathProblem.owner
+              ).then(data => ({
+                id: fileId,
+                data
+              }));
+            }
+            return promise
               .then(files => {
-                Object.assign(pathProblem, {
-                  problemColabURL: PathsService.getColabURL(files[0].id),
-                  problemJSON: files[0].data,
-                  problemFileId: files[0].id
+                return Object.assign(pathProblem, {
+                  problemColabURL: PathsService.getColabURL(files.id),
+                  problemJSON: files.data,
+                  problemFileId: files.id
                   // solutionFileId: files[1].id,
                   // solutionColabURL: PathsService.getColabURL(files[1].id),
                   // solutionJSON: files[1].data
@@ -346,13 +339,30 @@ export class PathsService {
         .then(snapshot => snapshot.val())
     ]).then(data => ({ solutions: data[0], totalActivities: data[1] }));
   }
-
+  fetchNotebookFiles(url, uid) {
+    if (url.includes(GITHUB_BASE_URL)) {
+      return this.fetchNotebookFromGithub(url, uid);
+    } else {
+      return this.fetchFile(this.getFileId(url));
+    }
+  }
+  fetchNotebookFromGithub(url, uid) {
+    return firebaseService
+      .startProcess(
+        { owner: uid, url: url },
+        "notebookFromGitQueue",
+        "Fetch Notebook form GitHub"
+      )
+      .then(res => JSON.parse(res.data))
+      .catch(e => {
+        e.error = e.message || "Error occured";
+      });
+  }
   fetchFile(fileId) {
     const request = window.gapi.client.drive.files.get({
       fileId,
       alt: "media"
     });
-
     return new Promise((resolve, reject) =>
       request.execute(data => {
         if (data.code && data.code === NOT_FOUND_ERROR) {
@@ -390,7 +400,7 @@ export class PathsService {
         switch (pathProblem.type) {
           case "jupyter":
             return solution
-              ? this.fetchFile(this.getFileId(solution)).then(json => ({
+              ? this.fetchNotebookFiles(solution, uid).then(json => ({
                   id: solution,
                   json,
                   colabURL: PathsService.getColabURL(solution)
@@ -488,9 +498,15 @@ export class PathsService {
         if (!problemInfo.frozen) throw new Error("Missing frozen field");
         if (problemInfo.type === "jupyterInline" && !problemInfo.code)
           throw new Error("Missing code field");
-        if (!problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
+        if (
+          !problemInfo.problemURL.includes(JUPYTER_NOTEBOOL_BASE_URL) &&
+          !problemInfo.problemURL.includes(GITHUB_BASE_URL)
+        )
           throw new Error("Invalid Problem URL");
-        if (!problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL))
+        if (
+          !problemInfo.solutionURL.includes(JUPYTER_NOTEBOOL_BASE_URL) &&
+          !problemInfo.problemURL.includes(GITHUB_BASE_URL)
+        )
           throw new Error("Invalid Solution URL");
         break;
       case ACTIVITY_TYPES.jupyterLocal.id:
@@ -593,17 +609,20 @@ export class PathsService {
       )
       .then(() => {
         if (solutionURL) {
-          this.fetchFile(this.getFileId(solutionURL)).then(json => {
-            this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
-          });
+          this.fetchNotebookFiles(solutionURL, uid).then(
+            json => {
+              this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
+            },
+            err => console.log(err.message)
+          );
         }
         if (problemURL) {
-          this.fetchFile(this.getFileId(problemURL)).then(json => {
-            /*
-              Update to activityData if Jupyter Activity
-            */
-            this.saveJupyterProblemToFirebase({ json, key, info });
-          });
+          this.fetchNotebookFiles(solutionURL, uid).then(
+            json => {
+              this.saveJupyterProblemToFirebase({ json, key, info });
+            },
+            err => console.log(err.message)
+          );
         }
         /*
           Update to activityData if Jest Activity
@@ -963,7 +982,7 @@ export class PathsService {
                 }
               });
           case ACTIVITY_TYPES.jupyter.id:
-            return this.fetchFile(this.getFileId(solution))
+            return this.fetchNotebookFiles(solution, uid)
               .then(json => {
                 return this.validateSolution(uid, pathProblem, solution, json);
               })

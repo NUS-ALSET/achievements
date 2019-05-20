@@ -57,7 +57,7 @@ function Transition(props) {
   return <Slide direction="up" {...props} />;
 }
 
-class FullScreenDialog extends React.Component {
+class ViewActivityJestSolutionDialog extends React.Component {
   static propTypes = {
     classes: PropTypes.object,
     handleClose: PropTypes.func,
@@ -76,9 +76,9 @@ class FullScreenDialog extends React.Component {
   };
 
   render() {
-    const { classes, handleClose, open, student, solution } = this.props;
+    const { classes, handleClose, open, student, solution, activity } = this.props;
 
-    if (!open) {
+    if (!open || (activity || {}).type !=="jest") {
       return "";
     }
 
@@ -165,8 +165,5 @@ class FullScreenDialog extends React.Component {
   }
 }
 
-FullScreenDialog.propTypes = {
-  classes: PropTypes.object.isRequired
-};
 
-export default withStyles(styles)(FullScreenDialog);
+export default withStyles(styles)(ViewActivityJestSolutionDialog);

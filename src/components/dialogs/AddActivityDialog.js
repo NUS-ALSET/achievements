@@ -463,7 +463,7 @@ class AddActivityDialog extends React.PureComponent {
             </Typography>
             <br />
             <Typography gutterBottom variant="body2">
-              Step 1: Get the Shareable Link from Google Colab ipynb
+              Step 1: Get the Shareable Link from Google Colab/github commit ipynb
             </Typography>
             <img alt="JupyterNotebookStep1" src={JupyterNotebookStep1} />
             <a
