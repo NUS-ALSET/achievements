@@ -43,7 +43,7 @@ class Tasks extends React.PureComponent {
   };
   state = {};
 
-  onAddTaskClick = () => this.props.onPush("/tasks/new");
+  onAddTaskClick = () => this.props.onPush("/advanced/new");
   onDeleteTaskClick = taskId => this.props.onTasksDeleteTaskDialogShow(taskId);
   onDeleteTaskRequest = () =>
     this.props.onTasksDeleteTaskRequest(this.props.ui.taskId);
