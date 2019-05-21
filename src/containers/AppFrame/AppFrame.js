@@ -347,8 +347,8 @@ class AppFrame extends React.Component {
                   path="/(account|profile)/:accountId"
                 />
                 <Route component={Contribute} exact path="/contribute" />
-                <Route component={Tasks} exact path="/tasks" />
-                <Route component={Task} exact path="/tasks/:taskId" />
+                <Route component={Tasks} exact path="/advanced" />
+                <Route component={Task} exact path="/advanced/:taskId" />
                 <Route
                   component={CustomActivity}
                   exact

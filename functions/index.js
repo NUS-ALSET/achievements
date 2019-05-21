@@ -147,7 +147,7 @@ exports.getTeamAssignmentSolutions = functions.https.onCall(
 );
 
 /**
- * Method that allows to run local tasks with CORS workaround
+ * Method that allows to run advanced activities with CORS workaround
  */
 exports.runLocalTask = functions.https.onCall(runLocalTask.handler);
 

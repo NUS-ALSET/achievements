@@ -55,8 +55,10 @@ import { withRouter } from "react-router-dom";
 import { getDisplayName, getProfileData } from "./selectors";
 import JoinedPathCard from "../../components/cards/JoinedPathCard";
 import { Button } from "@material-ui/core";
+import { adminCustomAuthRequest } from "../Admin/actions";
 
 const styles = theme => ({
+  actionButton: { margin: "8px" },
   card: {
     margin: theme.spacing.unit
   }
@@ -69,6 +71,7 @@ class Account extends React.PureComponent {
     classes: PropTypes.object.isRequired,
 
     accountOpen: PropTypes.func,
+    adminCustomAuthRequest: PropTypes.func,
     displayNameEditToggle: PropTypes.func,
     displayNameUpdateRequest: PropTypes.func,
     externalProfileDialogHide: PropTypes.func,
@@ -184,6 +187,9 @@ class Account extends React.PureComponent {
   fetchUserData = () => {
     this.props.fetchUserData();
   };
+
+  inspectUser = () =>
+    this.props.adminCustomAuthRequest(this.props.match.params.accountId);
 
   render() {
     const {
@@ -359,13 +365,23 @@ class Account extends React.PureComponent {
               </CardContent>
             </Card>
             <Button
+              className={classes.actionButton}
               color="primary"
               onClick={this.fetchUserData}
-              style={{ margin: "8px" }}
               variant="contained"
             >
               Download JSON
             </Button>
+            {isAdmin && (
+              <Button
+                className={classes.actionButton}
+                color="primary"
+                onClick={this.inspectUser}
+                variant="contained"
+              >
+                Inspect
+              </Button>
+            )}
           </Grid>
           <Grid item xs={6}>
             {(isOwner ||
@@ -375,7 +391,6 @@ class Account extends React.PureComponent {
               Object.keys(externalProfiles).map(externalProfileKey =>
                 externalProfiles[externalProfileKey].enable ? (
                   <ExternalProfileCard
-                    key={externalProfileKey}
                     addExternalProfileRequest={this.addExternalProfileRequest}
                     classes={classes}
                     externalProfile={externalProfiles[externalProfileKey]}
@@ -385,6 +400,7 @@ class Account extends React.PureComponent {
                     }
                     isAdmin={isAdmin}
                     isOwner={isOwner}
+                    key={externalProfileKey}
                     refreshAchievementsRequest={this.refreshAchievementsRequest}
                     removeExternalProfileRequest={
                       this.removeExternalProfileRequest
@@ -467,6 +483,7 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = {
   accountOpen,
+  adminCustomAuthRequest,
   displayNameEditToggle,
   displayNameUpdateRequest,
   inspectPathAsUser,
