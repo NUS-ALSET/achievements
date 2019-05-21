@@ -1,15 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import Dialog from "@material-ui/core/Dialog";
 import ListItem from "@material-ui/core/ListItem";
 import List from "@material-ui/core/List";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import CloseIcon from "@material-ui/icons/Close";
-import Slide from "@material-ui/core/Slide";
+
 import Grid from "@material-ui/core/Grid";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -43,28 +37,17 @@ const styles = {
       color: "#fff"
     }
   },
-  body: {
-    borderTop: "15px solid #d8d8d8",
-    borderBottom: "15px solid #d8d8d8"
-  },
   list:{
     paddingTop: "0px",
     minWidth: "max-content"
   }
 };
 
-function Transition(props) {
-  return <Slide direction="up" {...props} />;
-}
-
 class ViewActivityJestSolutionDialog extends React.Component {
   static propTypes = {
     classes: PropTypes.object,
-    handleClose: PropTypes.func,
-    open: PropTypes.bool,
     solution: PropTypes.object,
-    activity: PropTypes.object,
-    student: PropTypes.object
+    activity: PropTypes.object
   };
 
   state = {
@@ -76,9 +59,9 @@ class ViewActivityJestSolutionDialog extends React.Component {
   };
 
   render() {
-    const { classes, handleClose, open, student, solution, activity } = this.props;
+    const { classes, solution, activity } = this.props;
 
-    if (!open || (activity || {}).type !=="jest") {
+    if ((activity || {}).type !=="jest") {
       return "";
     }
 
@@ -88,28 +71,7 @@ class ViewActivityJestSolutionDialog extends React.Component {
     ext = extensions[ext] ? extensions[ext] : ext;
 
     return (
-      <div>
-        <Dialog
-          fullScreen
-          onClose={handleClose}
-          open={open}
-          TransitionComponent={Transition}
-        >
-          <AppBar className={classes.appBar}>
-            <Toolbar>
-              <IconButton
-                aria-label="Close"
-                color="inherit"
-                onClick={handleClose}
-              >
-                <CloseIcon />
-              </IconButton>
-              <Typography className={classes.flex} color="inherit" variant="h6">
-                Solution by <i>{student.displayName}</i>
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          <Grid className={classes.body} container spacing={0}>
+          <Grid container spacing={0}>
             <Grid item style={{ overflowX: "auto"}} xs={2}>
               <List className={classes.list} component="nav">
                 <ListItem>
@@ -148,7 +110,7 @@ class ViewActivityJestSolutionDialog extends React.Component {
               <AceEditor
                 editorProps={{ $blockScrolling: true }}
                 fontSize={16}
-                height={"calc(100vh - 94px)"}
+                height={"500px"}
                 mode={ext}
                 name="alsetEditor"
                 readOnly={true}
@@ -159,8 +121,6 @@ class ViewActivityJestSolutionDialog extends React.Component {
               />
             </Grid>
           </Grid>
-        </Dialog>
-      </div>
     );
   }
 }

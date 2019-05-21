@@ -6,21 +6,14 @@ import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { firebaseConnect, populate, isLoaded } from "react-redux-firebase";
 
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
 import { Typography } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
 
 import Breadcrumbs from "../../components/Breadcrumbs";
 import UserSolutionRow from "../../components/lists/UserSolutionRow";
-import ViewActivityJestSolutionDialog from "../../components/dialogs/ViewActivityJestSolutionDialog";
-import ViewActivitySolutionDialog from "../../components/dialogs/ViewActivitySolutionDialog";
-import JupyterInlineActivity from "../../components/activityViews/JupyterInlineActivity";
+import "./style.css";
 
-function emptyFn(){}
-
+const HEADER_HEIGHT = 70;
 export class ActivitySolution extends React.PureComponent {
   static propTypes = {
     match: PropTypes.any,
@@ -31,34 +24,49 @@ export class ActivitySolution extends React.PureComponent {
   };
 
   state = {
-    open: false,
-    dialogData: null,
-    showSolutionFor: ["jest", "jupyterInline"]
+    setRefs: false
   };
+  allRefs = [];
 
-  handleClickOpen = (solution, student) => {
-    let sol = (solution || {}).solution ? solution.solution : solution;
-    if (this.props.activity.type === "jupyterInline") {
-      sol = typeof sol === "string" ? JSON.parse(sol) : sol;
+  componentDidUpdate() {
+    const { problemSolutions } = this.props;
+    const numOfProblems = Object.keys(problemSolutions || {}).length;
+    if (numOfProblems > 0 && !this.state.setRefs) {
+      this.allRefs = Array(numOfProblems)
+        .fill(0)
+        .map(() => React.createRef());
+      this.setState({ setRefs: true });
     }
-    this.setState({
-      open: true,
-      dialogData: {
-        solution: sol,
-        student
-      }
+  }
+  scrollToMyRef = myRef => {
+    window.scrollTo({
+      left: 0,
+      top: myRef.current.offsetTop - HEADER_HEIGHT,
+      behavior: "smooth"
     });
   };
 
-  handleClose = () => {
-    this.setState({ open: false, dialogData: null });
+  goTo = step => {
+    const minDiff = 10;
+    const divYs = this.allRefs.map(
+      ref => ref.current.getBoundingClientRect().y - HEADER_HEIGHT
+    );
+    let positiveYs, eleY;
+    if (step === 1) {
+      positiveYs = divYs.filter(y => y > minDiff);
+      eleY = Math.min(...positiveYs);
+    } else {
+      positiveYs = divYs.filter(y => y < -minDiff);
+      eleY = Math.max(...positiveYs);
+    }
+    const index = divYs.indexOf(eleY);
+    if (index > -1) {
+      this.scrollToMyRef(this.allRefs[index]);
+    }
   };
-
   render() {
     const activity = this.props.activity || {};
     const problemSolutions = this.props.problemSolutions || {};
-    const { open, dialogData, showSolutionFor } = this.state;
-    const { student, solution } = dialogData || {};
     if (
       isLoaded(this.props.activity) &&
       this.props.uid !== this.props.activity.owner
@@ -87,6 +95,7 @@ export class ActivitySolution extends React.PureComponent {
       }
       return 1;
     });
+
     return (
       <Fragment>
         <Breadcrumbs
@@ -104,78 +113,51 @@ export class ActivitySolution extends React.PureComponent {
             }
           ]}
         />
-        {hasSolutions ? (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell> Student </TableCell>
-                <TableCell> Last Update </TableCell>
-                <TableCell> Completed </TableCell>
-                {showSolutionFor.includes(activity.type) && (
-                  <TableCell> Action </TableCell>
-                )}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedSolutionsKeys.map(userId => {
-                const solution = problemSolutions[userId];
-                return (
-                  <UserSolutionRow
-                    activityId={this.props.match.params.problemId}
-                    key={userId}
-                    openSolution={this.handleClickOpen}
-                    pathId={this.props.pathId}
-                    showViewSolutionBtn={showSolutionFor.includes(
-                      activity.type
-                    )}
-                    solution={solution}
-                    userId={userId}
-                  />
-                );
-              })}
-            </TableBody>
-          </Table>
-        ) : (
+        {Object.keys(problemSolutions).length > 1 && (
+          <div className="next-previous-btn">
+            <Button
+              color="primary"
+              onClick={() => this.goTo(-1)}
+              size="small"
+              variant="outlined"
+            >
+              Previous
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => this.goTo(+1)}
+              size="small"
+              style={{ marginLeft: "10px" }}
+              variant="outlined"
+            >
+              Next
+            </Button>
+          </div>
+        )}
+
+        {sortedSolutionsKeys.map((userId, index) => {
+          const solution = problemSolutions[userId];
+          return (
+            <div className="user-solution" key={"id-" + index + userId} ref={this.allRefs[index]}>
+              <UserSolutionRow
+                activity={activity}
+                activityId={this.props.match.params.problemId}
+                key={userId}
+                openSolution={this.handleClickOpen}
+                pathId={this.props.pathId}
+                solution={solution}
+                userId={userId}
+              />
+            </div>
+          );
+        })}
+        {!hasSolutions && (
           <Typography
             style={{ textAlign: "center", marginTop: 55 }}
             variant="h5"
           >
             No solution submitted yet.
           </Typography>
-        )}
-        {dialogData && (
-          <>
-            <ViewActivityJestSolutionDialog
-              activity={activity}
-              handleClose={this.handleClose}
-              open={open}
-              solution={solution}
-              student={student}
-            />
-
-            {activity.type === "jupyterInline" && (
-              <ViewActivitySolutionDialog
-                displayName={(student || {}).displayName}
-                handleClose={this.handleClose}
-                open={open}
-              >
-                <JupyterInlineActivity
-                  dispatch={emptyFn}
-                  handleClose={this.handleClose}
-                  onChange={emptyFn}
-                  onClose={this.handleClose}
-                  onCommit={emptyFn}
-                  open={open}
-                  problem={activity}
-                  problemSolutionAttemptRequest={emptyFn}
-                  readOnly={true}
-                  setProblemOpenTime={emptyFn}
-                  showPathActivity={false}
-                  solution={solution}
-                />
-              </ViewActivitySolutionDialog>
-            )}
-          </>
         )}
       </Fragment>
     );
