@@ -6,18 +6,23 @@ import { compose } from "redux";
 import { withRouter } from "react-router-dom";
 import { firebaseConnect } from "react-redux-firebase";
 
-import TableCell from "@material-ui/core/TableCell";
-import TableRow from "@material-ui/core/TableRow";
 import { withStyles } from "@material-ui/core/styles";
 
-import Grid from "@material-ui/core/Grid";
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 
-import Button from "@material-ui/core/Button/Button";
-import { distanceInWords } from "date-fns";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import Typography from "@material-ui/core/Typography";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ViewActivityJestSolutionDialog from "../../components/dialogs/ViewActivityJestSolutionDialog";
+import JupyterInlineActivity from "../../components/activityViews/JupyterInlineActivity";
 
-const styles = {
+import { distanceInWords } from "date-fns";
+function emptyFn() {}
+
+const styles = theme => ({
   avatar: {
     margin: 10
   },
@@ -25,60 +30,99 @@ const styles = {
     margin: 10,
     width: 60,
     height: 60
+  },
+  flex: {
+    display: "flex",
+    justifyContent: "space-between",
+    width: "100%"
+  },
+  quarter: {
+    fontSize: theme.typography.pxToRem(15),
+    fontWeight: theme.typography.fontWeightRegular,
+    width: "25%"
+  },
+  heading: {
+    backgroundColor: "#e8e8e8"
   }
-};
+});
 export class UserSolutionRow extends React.PureComponent {
   static propTypes = {
     userId: PropTypes.string,
     solution: PropTypes.any,
-    openSolution: PropTypes.func,
-    showViewSolutionBtn: PropTypes.bool,
-    status: PropTypes.any
+    status: PropTypes.any,
+    activity: PropTypes.any,
+    classes: PropTypes.object
   };
 
   static defaultProps = {
     pathName: "Default"
   };
 
-  state = {
-    errInImgLoad: false
+  getSolution = solution => {
+    let sol = (solution || {}).solution ? solution.solution : solution;
+    if (this.props.activity || {}.type === "jupyterInline") {
+      sol = typeof sol === "string" ? JSON.parse(sol) : sol;
+    }
+    return sol;
   };
-
-  setError = () => {
-    this.setState({ errInImgLoad: true });
-  };
-
   render() {
-    const {
-      openSolution,
-      userId,
-      solution,
-      status,
-      showViewSolutionBtn
-    } = this.props;
+    const { userId, solution, status, classes } = this.props;
+    const activity = this.props.activity || {};
+    const showActivitySolution = ["jupyterInline", "jest"].includes(
+      activity.type
+    );
     return (
-      <TableRow key={userId}>
-        <TableCell>
-          <Grid alignItems="center" container>
-            <a href={`/#/profile/${userId}`} target={"_blank"}>{userId}</a>
-          </Grid>
-        </TableCell>
-        <TableCell>
-          {solution.updatedAt || typeof(status)==="number"
-            ? distanceInWords(solution.updatedAt || status, new Date(), {
-                includeSeconds: true
-              }) + " ago"
-            : ""}
-        </TableCell>
-        <TableCell>{status ? <CheckIcon /> : <CloseIcon />}</TableCell>
-        {showViewSolutionBtn && (
-          <TableCell>
-            <Button onClick={() => openSolution(solution, {displayName: userId})}>
-              View Solution
-            </Button>
-          </TableCell>
+      <ExpansionPanel defaultExpanded>
+        <ExpansionPanelSummary
+          className={classes.heading}
+          expandIcon={showActivitySolution ? <ExpandMoreIcon /> : ""}
+        >
+          <div className={classes.flex}>
+            <Typography className={classes.quarter}>
+              Student ID: {"*****************"}
+              {userId.slice(userId.length - 4)}
+            </Typography>
+            <Typography className={classes.quarter}>
+              {solution.updatedAt || typeof status === "number"
+                ? "Updated At: " +
+                  distanceInWords(solution.updatedAt || status, new Date(), {
+                    includeSeconds: true
+                  }) +
+                  " ago"
+                : ""}
+            </Typography>
+            <Typography className={classes.quarter}>
+              Completed: {status ? <CheckIcon /> : <CloseIcon />}
+            </Typography>
+            <Typography />
+          </div>
+        </ExpansionPanelSummary>
+        {showActivitySolution && (
+          <ExpansionPanelDetails>
+            <div style={{ width: "100%" }}>
+              {activity.type === "jupyterInline" && (
+                <JupyterInlineActivity
+                  dispatch={emptyFn}
+                  onChange={emptyFn}
+                  onCommit={emptyFn}
+                  problem={activity}
+                  problemSolutionAttemptRequest={emptyFn}
+                  readOnly={true}
+                  setProblemOpenTime={emptyFn}
+                  showPathActivity={false}
+                  solution={this.getSolution(solution)}
+                />
+              )}
+              {activity.type === "jest" && (
+                <ViewActivityJestSolutionDialog
+                  activity={activity}
+                  solution={solution}
+                />
+              )}
+            </div>
+          </ExpansionPanelDetails>
         )}
-      </TableRow>
+      </ExpansionPanel>
     );
   }
 }
