@@ -1,0 +1,411 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CoursesTable> renders correctly when there are multiple courses 1`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Course name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Instructor
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+        style={
+          Object {
+            "width": 200,
+          }
+        }
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test2
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CoursesTable-link-1"
+          href="/courses/1"
+          onClick={[Function]}
+        >
+          <button
+            aria-label="Open course"
+            className="MuiButtonBase-root-29 MuiIconButton-root-23"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-28"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-32"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-41"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CoursesTable-link-1"
+          href="/courses/0"
+          onClick={[Function]}
+        >
+          <button
+            aria-label="Open course"
+            className="MuiButtonBase-root-29 MuiIconButton-root-23"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-28"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-32"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-41"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<CoursesTable> renders correctly when there are multiple courses 2`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Course name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Instructor
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+        style={
+          Object {
+            "width": 200,
+          }
+        }
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test2
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CoursesTable-link-1"
+          href="/courses/1"
+          onClick={[Function]}
+        >
+          <button
+            aria-label="Open course"
+            className="MuiButtonBase-root-29 MuiIconButton-root-23"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-28"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-32"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-41"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CoursesTable-link-1"
+          href="/courses/0"
+          onClick={[Function]}
+        >
+          <button
+            aria-label="Open course"
+            className="MuiButtonBase-root-29 MuiIconButton-root-23"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-28"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-32"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-41"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<CoursesTable> renders correctly when there are no courses 1`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Course name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Instructor
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+        style={
+          Object {
+            "width": 200,
+          }
+        }
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+        colSpan={5}
+      >
+        Empty list
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;

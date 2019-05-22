@@ -1,0 +1,436 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<TasksTable> renders correctly when there are multiple tasks 1`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Task name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Type
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="TasksTable-link-1"
+          href="/advanced/task1"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiButton-label-24"
+          >
+            Delete
+          </span>
+          <span
+            className="MuiTouchRipple-root-52"
+          />
+        </button>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="TasksTable-link-1"
+          href="/advanced/task2"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiButton-label-24"
+          >
+            Delete
+          </span>
+          <span
+            className="MuiTouchRipple-root-52"
+          />
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<TasksTable> renders correctly when there are multiple tasks 2`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Task name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Type
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="TasksTable-link-1"
+          href="/advanced/task1"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiButton-label-24"
+          >
+            Delete
+          </span>
+          <span
+            className="MuiTouchRipple-root-52"
+          />
+        </button>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="TasksTable-link-1"
+          href="/advanced/task2"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 TasksTable-button-2"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiButton-label-24"
+          >
+            Delete
+          </span>
+          <span
+            className="MuiTouchRipple-root-52"
+          />
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<TasksTable> renders correctly when there are no tasks 1`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Task name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Type
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+        colSpan={5}
+      >
+        Empty list
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
