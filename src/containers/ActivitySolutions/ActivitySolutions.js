@@ -88,6 +88,8 @@ export class ActivitySolution extends React.PureComponent {
       );
     }
 
+    // delete owner solution from problemSolutions object
+    delete problemSolutions[this.props.uid]
     const hasSolutions = Object.keys(problemSolutions).length > 0;
     const sortedSolutionsKeys = Object.keys(problemSolutions).sort((a, b) => {
       if (problemSolutions[a].updatedAt && problemSolutions[b].updatedAt) {
@@ -190,7 +192,7 @@ export default compose(
         : [
             {
               path: `/problemSolutions/${ownProps.match.params.problemId}`,
-              queryParams: ["rderByChild=updatedAt"]
+              queryParams: ["orderByChild=updatedAt"]
             },
             {
               path: `/activities/${ownProps.match.params.problemId}`,
