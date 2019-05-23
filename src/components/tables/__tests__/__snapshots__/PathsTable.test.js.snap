@@ -1,0 +1,526 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
+<table
+  className="MuiTable-root-2"
+>
+  <thead
+    className="MuiTableHead-root-3"
+  >
+    <tr
+      className="MuiTableRow-root-4 MuiTableRow-head-7"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+      >
+        Path name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+        style={
+          Object {
+            "width": 150,
+          }
+        }
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-21"
+  >
+    <tr
+      className="MuiTableRow-root-4 MuiTableRow-hover-6"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      >
+        <a
+          className="PathsTable-link-1"
+          href="/paths/LEOF9dedq3V-gx1"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-27"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-31"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-40"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label-27"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root-31"
+              focusable="false"
+              role="presentation"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+              />
+              <path
+                d="M0 0h24v24H0z"
+                fill="none"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root-40"
+          />
+        </button>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-4 MuiTableRow-hover-6"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      >
+        <a
+          className="PathsTable-link-1"
+          href="/paths/LEOF9dedgfV-gx3"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-27"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-31"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-40"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label-27"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root-31"
+              focusable="false"
+              role="presentation"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+              />
+              <path
+                d="M0 0h24v24H0z"
+                fill="none"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root-40"
+          />
+        </button>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-4 MuiTableRow-hover-6"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      >
+        <a
+          className="PathsTable-link-1"
+          href="/paths/LEOF9debgbV-gx5"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-27"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-31"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-40"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label-27"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root-31"
+              focusable="false"
+              role="presentation"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+              />
+              <path
+                d="M0 0h24v24H0z"
+                fill="none"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root-40"
+          />
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<PathsTable> renders correctly when there are no paths 1`] = `
+<table
+  className="MuiTable-root-2"
+>
+  <thead
+    className="MuiTableHead-root-3"
+  >
+    <tr
+      className="MuiTableRow-root-4 MuiTableRow-head-7"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+      >
+        Path name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+        style={
+          Object {
+            "width": 150,
+          }
+        }
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-21"
+  >
+    <tr
+      className="MuiTableRow-root-4"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+        colSpan={3}
+      >
+        Empty
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<PathsTable> renders correctly when there is one path 1`] = `
+<table
+  className="MuiTable-root-2"
+>
+  <thead
+    className="MuiTableHead-root-3"
+  >
+    <tr
+      className="MuiTableRow-root-4 MuiTableRow-head-7"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+      >
+        Path name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+        style={
+          Object {
+            "width": 150,
+          }
+        }
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-21"
+  >
+    <tr
+      className="MuiTableRow-root-4 MuiTableRow-hover-6"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      >
+        <a
+          className="PathsTable-link-1"
+          href="/paths/LEOF9dedq3V-gx1"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiIconButton-label-27"
+            >
+              <svg
+                aria-hidden="true"
+                className="MuiSvgIcon-root-31"
+                focusable="false"
+                role="presentation"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"
+                />
+                <path
+                  d="M0 0h24v24H0z"
+                  fill="none"
+                />
+              </svg>
+            </span>
+            <span
+              className="MuiTouchRipple-root-40"
+            />
+          </button>
+        </a>
+        <button
+          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiIconButton-label-27"
+          >
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root-31"
+              focusable="false"
+              role="presentation"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+              />
+              <path
+                d="M0 0h24v24H0z"
+                fill="none"
+              />
+            </svg>
+          </span>
+          <span
+            className="MuiTouchRipple-root-40"
+          />
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
