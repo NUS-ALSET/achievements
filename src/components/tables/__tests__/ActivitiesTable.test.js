@@ -39,7 +39,7 @@ describe("<ActivitiesTable>", () => {
       />
     );
 
-    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
+    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(4);
 
     expect(wrapper.find(Button).length).toEqual(2);
     // wrapper
@@ -54,20 +54,20 @@ describe("<ActivitiesTable>", () => {
     //   })
     // ).toEqual(true);
 
-      // wrapper
-      //   .find(Button)
-      //   .at(2)
-      //   .simulate("click");
+    // wrapper
+    //   .find(Button)
+    //   .at(2)
+    //   .simulate("click");
 
-      // expect(
-      //   mockDispatch.calledWith(
-      //     {
-      //       id: "test",
-      //       name: "Test"
-      //     },
-      //     "up"
-      //   )
-      // ).toEqual(true);
+    // expect(
+    //   mockDispatch.calledWith(
+    //     {
+    //       id: "test",
+    //       name: "Test"
+    //     },
+    //     "up"
+    //   )
+    // ).toEqual(true);
     // wrapper
     //   .find(Button)
     //   .at(3)
@@ -123,45 +123,58 @@ describe("<ActivitiesTable>", () => {
     );
 
     expect(wrapper.find(TableHead).find(TableCell).length).toEqual(4);
-    expect(wrapper.find(TableBody).find(TableRow).find(TableCell).length).toEqual(4);
+    expect(
+      wrapper
+        .find(TableBody)
+        .find(TableRow)
+        .find(TableCell).length
+    ).toEqual(4);
   });
 
   it("should open analysisDialog", () => {
-    const wrapper = shallow(<ActivitiesTable
-      activities={[
-        {
-          id: "test",
-          name: "Test"
-        }
-      ]}
-      currentUserId="abcd"
-      onDeleteActivity={mockDispatch}
-      onEditActivity={mockDispatch}
-      onMoveActivity={mockDispatch}
-      onOpenActivity={mockDispatch}
-      pathStatus="joined"
-    />);
+    const wrapper = shallow(
+      <ActivitiesTable
+        activities={[
+          {
+            id: "test",
+            name: "Test"
+          }
+        ]}
+        currentUserId="abcd"
+        onDeleteActivity={mockDispatch}
+        onEditActivity={mockDispatch}
+        onMoveActivity={mockDispatch}
+        onOpenActivity={mockDispatch}
+        pathStatus="joined"
+      />
+    );
     const componentInstance = wrapper.instance();
     componentInstance.openAnalysisDialog("r4rrr5f", "name");
-    expect(wrapper.state("analysisDialog")).toEqual({ open: true, name: "name", activityId: "r4rrr5f" });
+    expect(wrapper.state("analysisDialog")).toEqual({
+      open: true,
+      name: "name",
+      activityId: "r4rrr5f"
+    });
   });
 
   it("should get acivity status", () => {
-    const wrapper = shallow(<ActivitiesTable
-      activities={[
-        {
-          id: "test",
-          name: "Test",
-          type: "profile"
-        }
-      ]}
-      currentUserId="abcd"
-      onDeleteActivity={mockDispatch}
-      onEditActivity={mockDispatch}
-      onMoveActivity={mockDispatch}
-      onOpenActivity={mockDispatch}
-      pathStatus="joined"
-    />);
+    const wrapper = shallow(
+      <ActivitiesTable
+        activities={[
+          {
+            id: "test",
+            name: "Test",
+            type: "profile"
+          }
+        ]}
+        currentUserId="abcd"
+        onDeleteActivity={mockDispatch}
+        onEditActivity={mockDispatch}
+        onMoveActivity={mockDispatch}
+        onOpenActivity={mockDispatch}
+        pathStatus="joined"
+      />
+    );
     const componentInstance = wrapper.instance();
     const status = componentInstance.getStatus({
       id: "test",
@@ -184,19 +197,22 @@ describe("<ActivitiesTable>", () => {
         type: "profile"
       }
     ];
-    const wrapper = shallow(<ActivitiesTable
-      activities={activities}
-      currentUserId="abcd"
-      onDeleteActivity={mockDispatch}
-      onEditActivity={mockDispatch}
-      onMoveActivity={mockDispatch}
-      onOpenActivity={mockDispatch}
-      pathStatus="joined"
-    />);
+    const wrapper = shallow(
+      <ActivitiesTable
+        activities={activities}
+        currentUserId="abcd"
+        onDeleteActivity={mockDispatch}
+        onEditActivity={mockDispatch}
+        onMoveActivity={mockDispatch}
+        onOpenActivity={mockDispatch}
+        pathStatus="joined"
+      />
+    );
 
     // Expect the wrapper object to be defined
     expect(wrapper.find(TableBody)).toBeDefined();
-    expect(wrapper.find(TableBody).find(TableRow)).toHaveLength(activities.length);
+    expect(wrapper.find(TableBody).find(TableRow)).toHaveLength(
+      activities.length
+    );
   });
-
 });

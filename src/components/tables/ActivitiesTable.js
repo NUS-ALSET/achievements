@@ -46,14 +46,14 @@ const styles = theme => ({
     whiteSpace: "nowrap"
   },
   noTextDecoration: {
-    textDecoration : "none",
-    color : "inherit",
+    textDecoration: "none",
+    color: "inherit",
     padding: "11px 16px"
   },
-  listLink :{
-     margin: theme.spacing.unit,
-     height: "auto",
-     padding : "0px",
+  listLink: {
+    margin: theme.spacing.unit,
+    height: "auto",
+    padding: "0px",
     "&:hover": {
       backgroundColor: "rgba(0, 0, 0, 0.08)"
     }
@@ -161,12 +161,9 @@ class ActivitiesTable extends React.PureComponent {
             <TableRow>
               <TableCell>Activity name</TableCell>
               <TableCell>Type</TableCell>
-              {!canChange && (
-                <TableCell>
-                  Status {totals.totalSolvedActivities} /{" "}
-                  {totals.totalActivities}
-                </TableCell>
-              )}
+              <TableCell>
+                Status {totals.totalSolvedActivities} / {totals.totalActivities}
+              </TableCell>
               <TableCell style={{ width: COLUMN_ACTIONS_WIDTH }}>
                 Actions
               </TableCell>
@@ -181,15 +178,13 @@ class ActivitiesTable extends React.PureComponent {
                 <TableCell className={classes.noWrap}>
                   {activity.description}
                 </TableCell>
-                {!canChange && (
-                  <TableCell>
-                    {this.getStatus(activity) && activity.solved && (
-                      <Icon>
-                        <DoneIcon />
-                      </Icon>
-                    )}
-                  </TableCell>
-                )}
+                <TableCell>
+                  {this.getStatus(activity) && activity.solved && (
+                    <Icon>
+                      <DoneIcon />
+                    </Icon>
+                  )}
+                </TableCell>
                 <TableCell
                   className={classes.noWrap}
                   style={{ textAlign: "left" }}
@@ -285,11 +280,14 @@ class ActivitiesTable extends React.PureComponent {
             >
               Delete
             </MenuItem>
-            <MenuItem
-              className={classes.listLink}
-              variant="contained"
-            >
-            <Link className={classes.noTextDecoration} to={`/activitySolutions/${(this.state.activity || {}).id}`}> View Solutions</Link>
+            <MenuItem className={classes.listLink} variant="contained">
+              <Link
+                className={classes.noTextDecoration}
+                to={`/activitySolutions/${(this.state.activity || {}).id}`}
+              >
+                {" "}
+                View Solutions
+              </Link>
             </MenuItem>
             {this.state.activity &&
               this.state.activity.orderIndex !== minOrderIndex && (
