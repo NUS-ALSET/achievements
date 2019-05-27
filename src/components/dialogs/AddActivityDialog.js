@@ -22,7 +22,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -225,6 +224,7 @@ class AddActivityDialog extends React.PureComponent {
     let {
       activity,
       activityExampleSolution,
+      classes,
       restrictedType,
       tasks,
       thirdPartiesLevels
@@ -401,6 +401,9 @@ class AddActivityDialog extends React.PureComponent {
       case ACTIVITY_TYPES.jupyter.id:
         return (
           <Fragment>
+            <Link className={classes.link} to="/advanced/new">
+              <Button fullWidth>Create in Achievement</Button>
+            </Link>
             <TextField
               defaultValue={activity.problemURL}
               fullWidth
@@ -463,7 +466,8 @@ class AddActivityDialog extends React.PureComponent {
             </Typography>
             <br />
             <Typography gutterBottom variant="body2">
-              Step 1: Get the Shareable Link from Google Colab/github commit ipynb
+              Step 1: Get the Shareable Link from Google Colab/github commit
+              ipynb
             </Typography>
             <img alt="JupyterNotebookStep1" src={JupyterNotebookStep1} />
             <a
@@ -920,14 +924,7 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   render() {
-    const {
-      activity,
-      classes,
-      open,
-      pathId,
-      pathsInfo,
-      restrictedType
-    } = this.props;
+    const { activity, open, pathId, pathsInfo, restrictedType } = this.props;
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -989,10 +986,6 @@ class AddActivityDialog extends React.PureComponent {
                 {ACTIVITY_TYPES[key].caption}
               </MenuItem>
             ))}
-            <Divider />
-            <Link className={classes.link} to="/advanced/new">
-              <MenuItem value="advanced">Create in Achievements</MenuItem>
-            </Link>
           </TextField>
           {this.getTypeSpecificElements()}
         </DialogContent>
