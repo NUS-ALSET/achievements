@@ -798,7 +798,7 @@ export class PathsService {
           }
           break;
         case ACTIVITY_TYPES.jupyterLocal.id:
-          if (typeof solution.payload || solution === "object") {
+          if (typeof (solution.payload || solution) === "object") {
             solution = JSON.stringify(solution);
           }
           return firebase
