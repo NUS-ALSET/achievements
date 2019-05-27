@@ -6,6 +6,8 @@ const axios = require("axios");
 const Queue = require("firebase-queue");
 
 function updateProfile(data, resolve) {
+     let logged_data = Object.assign({}, data);     
+     logged_data["triggerType"] = "updateProfile";     
      return  Promise.all([
         admin
         .database()
@@ -16,7 +18,17 @@ function updateProfile(data, resolve) {
           .database()
           .ref(`/userAchievements/${data.uid}/${data.service}/achievements`)
           .once("value")
-          .then(existing => existing.val() || {})
+          .then(existing => existing.val() || {}),          
+        admin
+          .firestore()
+          .collection("/logged_events")
+          .add({
+            createdAt: Date.now(),
+            type: "FIREBASE_TRIGGERS",
+            uid: data.uid,
+            sGen: true,
+            otherActionData: logged_data
+          })            
       ])
       .then(([services]) =>{
         const serviceId = services[data.service] ? data.service : "CodeCombat"
@@ -35,6 +47,7 @@ function updateProfile(data, resolve) {
               .ref(`/userAchievements/${data.uid}/${data.service}`)
               .remove()
             }
+            
             return admin
               .database()
               .ref(`/userAchievements/${data.uid}/${data.service}`)
