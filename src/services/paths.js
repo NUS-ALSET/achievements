@@ -13,6 +13,7 @@ import { problemSolutionAttemptRequest } from "../containers/Activity/actions";
 import { fetchGithubFilesSuccess } from "../containers/Path/actions";
 
 import "firebase/firestore";
+import { TASK_TYPES } from "./tasks";
 
 const NOT_FOUND_ERROR = 404;
 const JUPYTER_NOTEBOOL_BASE_URL = "https://colab.research.google.com";
@@ -613,7 +614,7 @@ export class PathsService {
             json => {
               this.saveGivenSkillInProblem(json, key, uid, solutionURL, pathId);
             },
-            err => console.log(err.message)
+            err => console.error(err.message)
           );
         }
         if (problemURL) {
@@ -621,7 +622,7 @@ export class PathsService {
             json => {
               this.saveJupyterProblemToFirebase({ json, key, info });
             },
-            err => console.log(err.message)
+            err => console.error(err.message)
           );
         }
         /*
@@ -797,21 +798,32 @@ export class PathsService {
           }
           break;
         case ACTIVITY_TYPES.jupyterLocal.id:
+          if (typeof solution.payload || solution === "object") {
+            solution = JSON.stringify(solution);
+          }
           return firebase
             .functions()
             .httpsCallable("runLocalTask")({
-              solution: solution.payload,
+              solution: solution.payload || solution,
               taskId: pathProblem.taskInfo.id
             })
-            .then(solution => {
-              if (solution && solution.data) {
-                solution.failed = !solution.data.isComplete;
-                if (solution.data.jsonFeedback) {
-                  const json = JSON.parse(solution.data.jsonFeedback);
-                  solution.failed = json.solved === false;
-                }
+            .then(response => {
+              switch (pathProblem.taskInfo.type) {
+                case TASK_TYPES.jupyter.id:
+                  response = JSON.parse(response.data);
+                  break;
+                case TASK_TYPES.custom.id:
+                  if (response && response.data) {
+                    response.failed = !response.data.isComplete;
+                    if (response.data.jsonFeedback) {
+                      const json = JSON.parse(response.data.jsonFeedback);
+                      response.failed = json.solved === false;
+                    }
+                  }
+                  break;
+                default:
               }
-              return solution;
+              return response;
             });
         case ACTIVITY_TYPES.creator.id:
         case ACTIVITY_TYPES.educator.id:

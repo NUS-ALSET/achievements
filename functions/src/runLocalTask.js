@@ -6,6 +6,26 @@ const axios = require("axios");
 
 const CALL_TIMEOUT = 50000;
 
+const jupyterLambdaProcessor =
+  "https://bi3umkz9u7.execute-api.ap-southeast-1.amazonaws.com" +
+  "/prod/notebook_runner";
+
+function runJupyterTask(owner, task, solution) {
+  return admin
+    .database()
+    .ref("/config/jupyterLambdaProcessor")
+    .once("value")
+    .then(lambdaProcessor => lambdaProcessor.val())
+    .then(lambdaProcessor =>
+      axios({
+        url: lambdaProcessor || jupyterLambdaProcessor,
+        method: "post",
+        data: { notebook: JSON.parse(solution) }
+      })
+    )
+    .then(response => JSON.stringify(response.data.ipynb));
+}
+
 function runCustomTask(uid, task, solution) {
   const json = JSON.parse(task.json);
   const request = {};
@@ -56,6 +76,8 @@ function runLocalTask(data, context) {
     .then(snap => snap.val())
     .then(task => {
       switch (task.type) {
+        case "jupyter":
+          return runJupyterTask(context.auth.uid, task, data.solution);
         case "custom":
           return runCustomTask(context.auth.uid, task, data.solution);
         default:
