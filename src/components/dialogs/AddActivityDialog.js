@@ -22,6 +22,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Divider from "@material-ui/core/Divider";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -77,6 +78,13 @@ const styles = () => ({
   }
 });
 const cells = new Array(MAX_CELLS).fill().map((value, index) => index + 1);
+
+// Required for search jupyter-related activities
+const jupyterTypes = [
+  ACTIVITY_TYPES.jupyter.id,
+  ACTIVITY_TYPES.jupyterInline.id,
+  ACTIVITY_TYPES.jupyterLocal.id
+];
 
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
@@ -176,6 +184,48 @@ class AddActivityDialog extends React.PureComponent {
     });
   };
 
+  /**
+   * Returns menu option by ACTIVITY_TYPES key. Required for combining jupyter
+   * activites into singe option
+   */
+  getTypeOption = key => {
+    const { activity, restrictedType } = this.props;
+    const type =
+      restrictedType ||
+      this.state.type ||
+      (activity && activity.type) ||
+      "text";
+    switch (key) {
+      case ACTIVITY_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
+      case ACTIVITY_TYPES.jupyterLocal.id:
+        if (jupyterTypes.includes(type)) {
+          if (key !== type) {
+            return null;
+          }
+          return (
+            <MenuItem key={key} value={key}>
+              Jupyter
+            </MenuItem>
+          );
+        } else if (key === ACTIVITY_TYPES.jupyter.id) {
+          return (
+            <MenuItem key={key} value={key}>
+              Jupyter
+            </MenuItem>
+          );
+        }
+
+        break;
+      default:
+        return (
+          <MenuItem key={key} value={key}>
+            {ACTIVITY_TYPES[key].caption}
+          </MenuItem>
+        );
+    }
+  };
+
   getServicesList = () => {
     let { thirdPartiesServices, activity } = this.props;
     activity = Object.assign(activity || {}, this.state);
@@ -224,7 +274,6 @@ class AddActivityDialog extends React.PureComponent {
     let {
       activity,
       activityExampleSolution,
-      classes,
       restrictedType,
       tasks,
       thirdPartiesLevels
@@ -401,9 +450,6 @@ class AddActivityDialog extends React.PureComponent {
       case ACTIVITY_TYPES.jupyter.id:
         return (
           <Fragment>
-            <Link className={classes.link} to="/advanced/new">
-              <Button fullWidth>Create in Achievement</Button>
-            </Link>
             <TextField
               defaultValue={activity.problemURL}
               fullWidth
@@ -924,7 +970,20 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   render() {
-    const { activity, open, pathId, pathsInfo, restrictedType } = this.props;
+    const {
+      activity,
+      classes,
+      open,
+      pathId,
+      pathsInfo,
+      restrictedType
+    } = this.props;
+    const type =
+      restrictedType ||
+      this.state.type ||
+      (activity && activity.type) ||
+      "text";
+
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -974,19 +1033,31 @@ class AddActivityDialog extends React.PureComponent {
             onChange={e => this.onFieldChange("type", e.target.value)}
             readOnly={!!restrictedType}
             select
-            value={
-              restrictedType ||
-              this.state.type ||
-              (activity && activity.type) ||
-              "text"
-            }
+            value={type}
           >
-            {Object.keys(ACTIVITY_TYPES).map(key => (
-              <MenuItem key={key} value={key}>
-                {ACTIVITY_TYPES[key].caption}
-              </MenuItem>
-            ))}
+            {Object.keys(ACTIVITY_TYPES).map(key => this.getTypeOption(key))}
           </TextField>
+          {jupyterTypes.includes(type) && (
+            <TextField
+              fullWidth
+              label="Jupyter type"
+              margin="dense"
+              onChange={e => this.onFieldChange("type", e.target.value)}
+              readOnly={!!restrictedType}
+              select
+              value={type}
+            >
+              {jupyterTypes.map(key => (
+                <MenuItem key={key} value={key}>
+                  {ACTIVITY_TYPES[key].caption}
+                </MenuItem>
+              ))}
+              <Divider />
+              <Link className={classes.link} to="/advanced/new">
+                <MenuItem>Create in achievements</MenuItem>
+              </Link>
+            </TextField>
+          )}
           {this.getTypeSpecificElements()}
         </DialogContent>
         <DialogActions>
