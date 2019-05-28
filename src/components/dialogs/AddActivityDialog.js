@@ -79,6 +79,13 @@ const styles = () => ({
 });
 const cells = new Array(MAX_CELLS).fill().map((value, index) => index + 1);
 
+// Required for search jupyter-related activities
+const jupyterTypes = [
+  ACTIVITY_TYPES.jupyter.id,
+  ACTIVITY_TYPES.jupyterInline.id,
+  ACTIVITY_TYPES.jupyterLocal.id
+];
+
 class AddActivityDialog extends React.PureComponent {
   static propTypes = {
     activity: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
@@ -175,6 +182,48 @@ class AddActivityDialog extends React.PureComponent {
     this.setState({
       cell: e.target.value
     });
+  };
+
+  /**
+   * Returns menu option by ACTIVITY_TYPES key. Required for combining jupyter
+   * activites into singe option
+   */
+  getTypeOption = key => {
+    const { activity, restrictedType } = this.props;
+    const type =
+      restrictedType ||
+      this.state.type ||
+      (activity && activity.type) ||
+      "text";
+    switch (key) {
+      case ACTIVITY_TYPES.jupyter.id:
+      case ACTIVITY_TYPES.jupyterInline.id:
+      case ACTIVITY_TYPES.jupyterLocal.id:
+        if (jupyterTypes.includes(type)) {
+          if (key !== type) {
+            return null;
+          }
+          return (
+            <MenuItem key={key} value={key}>
+              Jupyter
+            </MenuItem>
+          );
+        } else if (key === ACTIVITY_TYPES.jupyter.id) {
+          return (
+            <MenuItem key={key} value={key}>
+              Jupyter
+            </MenuItem>
+          );
+        }
+
+        break;
+      default:
+        return (
+          <MenuItem key={key} value={key}>
+            {ACTIVITY_TYPES[key].caption}
+          </MenuItem>
+        );
+    }
   };
 
   getServicesList = () => {
@@ -463,7 +512,8 @@ class AddActivityDialog extends React.PureComponent {
             </Typography>
             <br />
             <Typography gutterBottom variant="body2">
-              Step 1: Get the Shareable Link from Google Colab/github commit ipynb
+              Step 1: Get the Shareable Link from Google Colab/github commit
+              ipynb
             </Typography>
             <img alt="JupyterNotebookStep1" src={JupyterNotebookStep1} />
             <a
@@ -928,6 +978,12 @@ class AddActivityDialog extends React.PureComponent {
       pathsInfo,
       restrictedType
     } = this.props;
+    const type =
+      restrictedType ||
+      this.state.type ||
+      (activity && activity.type) ||
+      "text";
+
     return (
       <Dialog fullWidth onClose={this.onClose} open={open}>
         <DialogTitle>
@@ -977,23 +1033,31 @@ class AddActivityDialog extends React.PureComponent {
             onChange={e => this.onFieldChange("type", e.target.value)}
             readOnly={!!restrictedType}
             select
-            value={
-              restrictedType ||
-              this.state.type ||
-              (activity && activity.type) ||
-              "text"
-            }
+            value={type}
           >
-            {Object.keys(ACTIVITY_TYPES).map(key => (
-              <MenuItem key={key} value={key}>
-                {ACTIVITY_TYPES[key].caption}
-              </MenuItem>
-            ))}
-            <Divider />
-            <Link className={classes.link} to="/advanced/new">
-              <MenuItem value="advanced">Create in Achievements</MenuItem>
-            </Link>
+            {Object.keys(ACTIVITY_TYPES).map(key => this.getTypeOption(key))}
           </TextField>
+          {jupyterTypes.includes(type) && (
+            <TextField
+              fullWidth
+              label="Jupyter type"
+              margin="dense"
+              onChange={e => this.onFieldChange("type", e.target.value)}
+              readOnly={!!restrictedType}
+              select
+              value={type}
+            >
+              {jupyterTypes.map(key => (
+                <MenuItem key={key} value={key}>
+                  {ACTIVITY_TYPES[key].caption}
+                </MenuItem>
+              ))}
+              <Divider />
+              <Link className={classes.link} to="/advanced/new">
+                <MenuItem>Create in achievements</MenuItem>
+              </Link>
+            </TextField>
+          )}
           {this.getTypeSpecificElements()}
         </DialogContent>
         <DialogActions>

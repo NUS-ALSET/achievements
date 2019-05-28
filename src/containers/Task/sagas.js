@@ -50,7 +50,7 @@ export function* taskSaveRequestHandler(action) {
       action.taskInfo
     );
     if (action.taskId === "new") {
-      yield put(push("/tasks/" + taskId));
+      yield put(push("/advanced/" + taskId));
       yield put(taskOpen(taskId));
     }
     yield put(taskSaveSuccess(action.taskId));
