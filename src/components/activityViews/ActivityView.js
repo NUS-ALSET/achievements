@@ -12,7 +12,7 @@ import ProfileActivity from "./ProfileActivity";
 
 import JupyterActivity from "./JupyterColabActivity";
 import JupyterInlineActivity from "./JupyterInlineActivity";
-import LocalTaskActivity from "./LocalTaskActivity";
+import AdvancedActivity from "./AdvancedActivity";
 import YouTubeActivity from "./YouTubeActivity";
 
 import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog";
@@ -26,7 +26,7 @@ const views = {
   profile: ProfileActivity,
   jupyter: JupyterActivity,
   jupyterInline: JupyterInlineActivity,
-  jupyterLocal: LocalTaskActivity,
+  jupyterLocal: AdvancedActivity,
   youtube: YouTubeActivity,
   jest: AddJestSolutionDialog,
   game: AddGameSolutionDialog,
@@ -37,6 +37,7 @@ const views = {
 
 class ActivityView extends React.PureComponent {
   static propTypes = {
+    uid: PropTypes.string,
     dispatch: PropTypes.func,
     pathProblem: PropTypes.any,
     onClose: PropTypes.func,
@@ -78,6 +79,7 @@ class ActivityView extends React.PureComponent {
   }
   render() {
     const {
+      uid,
       dispatch,
       onClose,
       onProblemChange,
@@ -107,6 +109,7 @@ class ActivityView extends React.PureComponent {
     return (
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         <SpecificView
+          uid={uid}
           dispatch={dispatch}
           onChange={onProblemChange}
           onClose={onClose}

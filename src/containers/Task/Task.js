@@ -215,7 +215,7 @@ class Task extends React.PureComponent {
       <React.Fragment>
         <Breadcrumbs
           paths={[
-            { label: "Tasks", link: "/tasks" },
+            { label: "Advanced Activities", link: "/advanced" },
             { label: (task && task.name) || "New Task" }
           ]}
         />

@@ -1,0 +1,12 @@
+html {
+  scroll-behavior: smooth;
+}
+.next-previous-btn {
+  position: fixed;
+  right: 24px;
+  top: 100px;
+  z-index: 999;
+}
+.user-solution{
+  margin-bottom: 20px;
+}

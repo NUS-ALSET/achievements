@@ -6,9 +6,30 @@ const axios = require("axios");
 
 const CALL_TIMEOUT = 50000;
 
-function runCustomTask(task, solution) {
+const jupyterLambdaProcessor =
+  "https://bi3umkz9u7.execute-api.ap-southeast-1.amazonaws.com" +
+  "/prod/notebook_runner";
+
+function runJupyterTask(owner, task, solution) {
+  return admin
+    .database()
+    .ref("/config/jupyterLambdaProcessor")
+    .once("value")
+    .then(lambdaProcessor => lambdaProcessor.val())
+    .then(lambdaProcessor =>
+      axios({
+        url: lambdaProcessor || jupyterLambdaProcessor,
+        method: "post",
+        data: { notebook: JSON.parse(solution) }
+      })
+    )
+    .then(response => JSON.stringify(response.data.ipynb));
+}
+
+function runCustomTask(uid, task, solution) {
   const json = JSON.parse(task.json);
   const request = {};
+  request["userToken"] = uid.slice(0, 5);
   for (const [index, cell] of json.cells.entries()) {
     switch (cell.metadata.achievements.type) {
       case "shown":
@@ -43,8 +64,11 @@ function runCustomTask(task, solution) {
  * @param {String} data.taskId
  * @param {String} data.url
  * @param {*} data.solution
+ * @param {Object} context
+ * @param {Object} context.auth
+ * @param {String} context.auth.uid
  */
-function runLocalTask(data) {
+function runLocalTask(data, context) {
   return admin
     .database()
     .ref(`/tasks/${data.taskId}`)
@@ -52,8 +76,10 @@ function runLocalTask(data) {
     .then(snap => snap.val())
     .then(task => {
       switch (task.type) {
+        case "jupyter":
+          return runJupyterTask(context.auth.uid, task, data.solution);
         case "custom":
-          return runCustomTask(task, data.solution);
+          return runCustomTask(context.auth.uid, task, data.solution);
         default:
           throw new Error("Unsupported task/activity type");
       }

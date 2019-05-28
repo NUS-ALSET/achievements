@@ -88,7 +88,7 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.jupyterInline.id:
       return "Jupyter Notebook Activity";
     case ACTIVITY_TYPES.jupyterLocal.id:
-      return "Local Task Activity";
+      return "Advanced Activity";
     case ACTIVITY_TYPES.youtube.id:
       return "YouTube Video Activity";
     case ACTIVITY_TYPES.game.id:

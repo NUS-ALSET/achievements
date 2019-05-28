@@ -1,0 +1,377 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CohortCoursesTable> renders without throwing 1`] = `
+<table
+  className="MuiTable-root-5 withRouter-CohortCoursesTable--table-1"
+>
+  <thead
+    className="MuiTableHead-root-6"
+  >
+    <tr
+      className="MuiTableRow-root-7 MuiTableRow-head-10"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-head-13 withRouter-CohortCoursesTable--narrowCell-2"
+        scope="col"
+      >
+        <span
+          className="MuiButtonBase-root-29 MuiTableSortLabel-root-24"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          role="button"
+          tabIndex="0"
+        >
+          Course Rank
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root-32 MuiTableSortLabel-icon-26 MuiTableSortLabel-iconDirectionAsc-28"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
+            />
+          </svg>
+        </span>
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-head-13 withRouter-CohortCoursesTable--narrowCell-2"
+        scope="col"
+      >
+        <span
+          className="MuiButtonBase-root-29 MuiTableSortLabel-root-24"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          role="button"
+          tabIndex="0"
+        >
+          Paths for Cohort
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root-32 MuiTableSortLabel-icon-26 MuiTableSortLabel-iconDirectionAsc-28"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
+            />
+          </svg>
+        </span>
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-head-13 withRouter-CohortCoursesTable--narrowCell-2"
+        scope="col"
+      >
+        <span
+          className="MuiButtonBase-root-29 MuiTableSortLabel-root-24"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          role="button"
+          tabIndex="0"
+        >
+          Explorers (
+          NaN
+          )
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root-32 MuiTableSortLabel-icon-26 MuiTableSortLabel-iconDirectionAsc-28"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
+            />
+          </svg>
+        </span>
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-head-13 withRouter-CohortCoursesTable--narrowCell-2"
+        scope="col"
+      >
+        <span
+          className="MuiButtonBase-root-29 MuiTableSortLabel-root-24"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          role="button"
+          tabIndex="0"
+        >
+          Total Students (
+          NaN
+          )
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root-32 MuiTableSortLabel-icon-26 MuiTableSortLabel-iconDirectionAsc-28"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
+            />
+          </svg>
+        </span>
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-head-13 withRouter-CohortCoursesTable--narrowCell-2"
+        scope="col"
+        style={
+          Object {
+            "textAlign": "center",
+            "width": "50%",
+          }
+        }
+      >
+        <span
+          className="MuiButtonBase-root-29 MuiTableSortLabel-root-24"
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          role="button"
+          tabIndex="0"
+        >
+          Course
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root-32 MuiTableSortLabel-icon-26 MuiTableSortLabel-iconDirectionAsc-28"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"
+            />
+          </svg>
+        </span>
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-head-13"
+        scope="col"
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-41"
+  >
+    <tr
+      className="MuiTableRow-root-7 MuiTableRow-hover-9 withRouter-CohortCoursesTable--row-4"
+      style={
+        Object {
+          "height": 18,
+        }
+      }
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      >
+        <strong />
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+        style={
+          Object {
+            "textAlign": "center",
+            "width": "50%",
+          }
+        }
+      >
+        <a
+          href="/courses/_PofghTkjdEDyhj-"
+          onClick={[Function]}
+        >
+          course 1
+        </a>
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      >
+        <button
+          className="MuiButtonBase-root-29 MuiButton-root-42 MuiButton-text-44 MuiButton-textSecondary-46 MuiButton-flat-47 MuiButton-flatSecondary-49 MuiButton-sizeSmall-65"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiButton-label-43"
+          >
+            Remove
+          </span>
+          <span
+            className="MuiTouchRipple-root-68"
+          />
+        </button>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-7 MuiTableRow-hover-9 withRouter-CohortCoursesTable--row-4"
+      style={
+        Object {
+          "height": 18,
+        }
+      }
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      >
+        <strong />
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+        style={
+          Object {
+            "textAlign": "center",
+            "width": "50%",
+          }
+        }
+      >
+        <a
+          href="/courses/_TjJHGlkjdEDyhj-"
+          onClick={[Function]}
+        >
+          course 2
+        </a>
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-12 MuiTableCell-body-14 withRouter-CohortCoursesTable--narrowCell-2"
+      >
+        <button
+          className="MuiButtonBase-root-29 MuiButton-root-42 MuiButton-text-44 MuiButton-textSecondary-46 MuiButton-flat-47 MuiButton-flatSecondary-49 MuiButton-sizeSmall-65"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onContextMenu={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex="0"
+          type="button"
+        >
+          <span
+            className="MuiButton-label-43"
+          >
+            Remove
+          </span>
+          <span
+            className="MuiTouchRipple-root-68"
+          />
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;

@@ -47,6 +47,7 @@ import { PATH_GAPI_AUTHORIZED } from "../Paths/actions";
 import { APP_SETTING } from "../../achievementsApp/config";
 import { pathFetchProblemsSolutionsSuccess } from "../Path/actions";
 import { accountService } from "../../services/account";
+import { TASK_TYPES } from "../../services/tasks";
 
 const ONE_MINUTE = 60000;
 const ONE_SECOND = 1000;
@@ -221,6 +222,21 @@ export function* problemSolutionRefreshRequestHandler(action) {
     });
     if (timedOut) {
       throw new Error(SOLUTION_PROCESSING_TIMEOUT);
+    }
+    if (data.pathProblem.type === ACTIVITY_TYPES.jupyterLocal.id) {
+      switch (data.pathProblem.taskInfo.type) {
+        case TASK_TYPES.custom.id:
+          if (solution.failed) {
+            yield put(problemSolutionCalculatedWrong());
+            yield put(
+              notificationShow(
+                "Failing - Your solution did not pass the provided tests."
+              )
+            );
+          }
+          break;
+        default:
+      }
     }
     if (solution && solution.cells && solution.cells.slice) {
       let solutionFailed = false;

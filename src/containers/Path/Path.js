@@ -422,9 +422,9 @@ export class Path extends React.Component {
                   Collaborators
                 </Button>
               )}
-              <Link className={classes.linkButton} to="/tasks">
+              <Link className={classes.linkButton} to="/advanced">
                 <Button className={classes.toolbarButton} variant="contained">
-                  Local tasks
+                  Advanced Activities
                 </Button>
               </Link>
             </React.Fragment>

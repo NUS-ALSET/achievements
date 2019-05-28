@@ -30,6 +30,7 @@ import Contribute from "../Contribute/Contribute";
 import AllDestinations from "../Destinations/AllDestinations";
 import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
+import MyLearning from "../MyLearning/MyLearning";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
 // HomeV3 is a prototype for homepage
@@ -62,7 +63,7 @@ import ZiYun from "../IdeaLab/ZiYun/ZiYun";
 import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
 import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
 import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
-import ActivitySolutions from "../ActivitySolutions/ActivitySolutions"
+import ActivitySolutions from "../ActivitySolutions/ActivitySolutions";
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -346,12 +347,17 @@ class AppFrame extends React.Component {
                   path="/(account|profile)/:accountId"
                 />
                 <Route component={Contribute} exact path="/contribute" />
-                <Route component={Tasks} exact path="/tasks" />
-                <Route component={Task} exact path="/tasks/:taskId" />
+                <Route component={Tasks} exact path="/advanced" />
+                <Route component={Task} exact path="/advanced/:taskId" />
                 <Route
                   component={CustomActivity}
                   exact
                   path="/customactivity"
+                />
+                <Route
+                  render={routeProps => (
+                    <MyLearning {...routeProps} {...userId} />
+                  )}
                 />
                 <Route component={NoMatch} />
               </Switch>

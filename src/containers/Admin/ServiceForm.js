@@ -54,6 +54,7 @@ class ServiceForm extends React.Component {
             <Grid container spacing={24}>
                 <Grid item xs={12}>
                     <TextField
+                        disabled={this.props.editing}
                         fullWidth
                         label={"Service Name"}
                         onChange={this.handleServiceChange("name")}

@@ -11,6 +11,11 @@ const ONE_HOURS = 3600000;
  */
 
 function analyzeDiffPythonCode(activityKey, userKey, data) {
+  let logged_data = Object.assign({}, data);
+  if ("solution" in logged_data) {
+    delete logged_data.solution;
+  }
+  logged_data["triggerType"] = "processActivitySolution";
   return Promise.all([
     admin
       .database()
@@ -21,7 +26,23 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
       .database()
       .ref(`/activities/${activityKey}`)
       .once("value")
-      .then(snap => snap.val())
+      .then(snap => snap.val()).then(activity =>
+        
+        admin
+          .firestore()
+          .collection("/logged_events")
+          .add({
+            createdAt: Date.now(),
+            type: "FIREBASE_TRIGGERS",
+            uid: userKey,
+            sGen: true,
+            activityKey: activityKey,
+            pathKey: activity.path,
+            otherActionData: logged_data
+          })
+          
+          )
+          
   ]).then(([analyzeUrl, activity]) => {
     switch (activity.type) {
       case "jupyterInline":
@@ -155,5 +176,7 @@ exports.handler = (activityKey, userKey, solution) =>
               ".sv": "timestamp"
             }
           })
+          
       )
-  ]);
+      
+  ])

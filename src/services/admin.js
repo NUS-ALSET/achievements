@@ -14,7 +14,11 @@ export class AdminService {
   }
 
   getData = data => {
-    data.id = data.id || this.sliggify(data.name);
+    data.id =
+      data.id ||
+      String(data.name)
+        .replace(/\s/g, "")
+        .trim();
     const createdAtOrUpdatedAt =
       "createdAt" in data ? "updatedAt" : "createdAt";
     data[createdAtOrUpdatedAt] = { ".sv": "timestamp" };

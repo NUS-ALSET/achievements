@@ -43,7 +43,7 @@ class Tasks extends React.PureComponent {
   };
   state = {};
 
-  onAddTaskClick = () => this.props.onPush("/tasks/new");
+  onAddTaskClick = () => this.props.onPush("/advanced/new");
   onDeleteTaskClick = taskId => this.props.onTasksDeleteTaskDialogShow(taskId);
   onDeleteTaskRequest = () =>
     this.props.onTasksDeleteTaskRequest(this.props.ui.taskId);
@@ -53,7 +53,7 @@ class Tasks extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Breadcrumbs paths={[{ label: "Tasks" }]} />
+        <Breadcrumbs paths={[{ label: "Advanced Activities" }]} />
         <TasksTable
           onDeleteClick={this.onDeleteTaskClick}
           tasks={tasks || {}}
@@ -66,7 +66,7 @@ class Tasks extends React.PureComponent {
           <AddIcon />
         </Fab>
         <DeleteConfirmationDialog
-          message="This will remove Task"
+          message="This will remove Activity"
           onClose={this.props.onTasksDialogHide}
           onCommit={this.onDeleteTaskRequest}
           open={ui.dialogType === "DELETE_TASK"}

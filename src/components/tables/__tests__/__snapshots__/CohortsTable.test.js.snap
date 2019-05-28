@@ -1,0 +1,336 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CohortsTable> renders correctly when there are multiple cohorts 1`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Cohort name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Instructor
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CohortsTable-link-1"
+          href="/cohorts/cohort1"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 CohortsTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test2
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CohortsTable-link-1"
+          href="/cohorts/cohort2"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 CohortsTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<CohortsTable> renders without crashing when there are no cohorts 1`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Cohort name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Instructor
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+        colSpan={5}
+      >
+        Empty list
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;
+
+exports[`<CohortsTable> renders without throwing with multiple cohorts 1`] = `
+<table
+  className="MuiTable-root-3"
+>
+  <thead
+    className="MuiTableHead-root-4"
+  >
+    <tr
+      className="MuiTableRow-root-5 MuiTableRow-head-8"
+    >
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Cohort name
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Instructor
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-head-11"
+        scope="col"
+      >
+        Actions
+      </th>
+    </tr>
+  </thead>
+  <tbody
+    className="MuiTableBody-root-22"
+  >
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CohortsTable-link-1"
+          href="/cohorts/cohort1"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 CohortsTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+    <tr
+      className="MuiTableRow-root-5"
+    >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        Test2
+      </td>
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-10 MuiTableCell-body-12"
+      >
+        <a
+          className="CohortsTable-link-1"
+          href="/cohorts/cohort2"
+          onClick={[Function]}
+        >
+          <button
+            className="MuiButtonBase-root-49 MuiButton-root-23 MuiButton-contained-34 MuiButton-raised-37 CohortsTable-button-2"
+            disabled={false}
+            onBlur={[Function]}
+            onContextMenu={[Function]}
+            onFocus={[Function]}
+            onKeyDown={[Function]}
+            onKeyUp={[Function]}
+            onMouseDown={[Function]}
+            onMouseLeave={[Function]}
+            onMouseUp={[Function]}
+            onTouchEnd={[Function]}
+            onTouchMove={[Function]}
+            onTouchStart={[Function]}
+            tabIndex="0"
+            type="button"
+          >
+            <span
+              className="MuiButton-label-24"
+            >
+              View
+            </span>
+            <span
+              className="MuiTouchRipple-root-52"
+            />
+          </button>
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;

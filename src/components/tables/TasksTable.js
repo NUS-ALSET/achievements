@@ -46,28 +46,34 @@ class TasksTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.keys(tasks)
-            .map(id => ({ ...tasks[id], id }))
-            .map(task => (
-              <TableRow key={task.id}>
-                <TableCell>{task.name}</TableCell>
-                <TableCell>{task.type}</TableCell>
-                <TableCell>
-                  <Link className={classes.link} to={`/tasks/${task.id}`}>
-                    <Button className={classes.button} variant="contained">
-                      View
+          {!Object.keys(tasks).length ? (
+            <TableRow>
+              <TableCell colSpan={5}>Empty list</TableCell>
+            </TableRow>
+          ) : (
+            Object.keys(tasks)
+              .map(id => ({ ...tasks[id], id }))
+              .map(task => (
+                <TableRow key={task.id}>
+                  <TableCell>{task.name}</TableCell>
+                  <TableCell>{task.type}</TableCell>
+                  <TableCell>
+                    <Link className={classes.link} to={`/advanced/${task.id}`}>
+                      <Button className={classes.button} variant="contained">
+                        View
+                      </Button>
+                    </Link>
+                    <Button
+                      className={classes.button}
+                      onClick={() => onDeleteClick(task.id)}
+                      variant="contained"
+                    >
+                      Delete
                     </Button>
-                  </Link>
-                  <Button
-                    className={classes.button}
-                    onClick={() => onDeleteClick(task.id)}
-                    variant="contained"
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                </TableRow>
+              ))
+          )}
         </TableBody>
       </Table>
     );
