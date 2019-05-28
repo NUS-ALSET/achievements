@@ -6,6 +6,7 @@ import {
   COURSE_NEW_DIALOG_CHANGE,
   COURSE_NEW_REQUEST
 } from "../containers/Courses/actions";
+import { getJSSkillsDifference } from "./javascript-ast";
 import firebase from "firebase/app";
 import "firebase/firestore";
 export class ActionsService {
@@ -21,7 +22,7 @@ export class ActionsService {
     PROBLEM_INIT_SUCCESS: ["payload"]
   };
 
-  static clearKeysFromAction = ["files", "cells"];
+  static clearKeysFromAction = ["files", "cells", "solvedFiles"];
   static deleteExtraKeys(action) {
     const obj = JSON.parse(JSON.stringify(action));
     const keysTodelete = ActionsService.clearKeysFromAction;
@@ -42,6 +43,27 @@ export class ActionsService {
   }
   static pickActionData(action) {
     action = Object.assign({}, action);
+    if (
+      action.type === "PROBLEM_SOLUTION_SUBMIT_REQUEST" &&
+      action.problemId.type === "jest"
+    ) {
+      action.language = "javascript";
+      action.difference = getJSSkillsDifference(
+        action.payload.solvedFiles,
+        action.problemId.files
+      );
+    }
+    if (
+      action.type === "ASSIGNMENT_SOLUTION_REQUEST" &&
+      (action.options.pathProblem || {}).type === "jest"
+    ) {
+      action.language = "javascript";
+      action.difference = getJSSkillsDifference(
+        action.solution.solvedFiles,
+        action.options.pathProblem.files
+      );
+      delete action.options;
+    }
     const clearInfo = ActionsService.clearActions[action.type];
 
     if (clearInfo) {
@@ -107,7 +129,7 @@ export class ActionsService {
           });
 
         const firestore_db = firebase.firestore();
-        // Added firestore related changes             
+        // Added firestore related changes
         firestore_db.collection("/logged_events").add({
           ...data,
           createdAt: firebase.firestore.Timestamp.now().toMillis(),

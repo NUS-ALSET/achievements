@@ -4,6 +4,7 @@
   "version": "0.0.42",
   "repository": "https://github.com/NUS-ALSET",
   "dependencies": {
+    "@babel/parser": "^7.4.5",
     "@material-ui/core": "3.7.0",
     "@material-ui/icons": "^3.0.1",
     "@nteract/notebook-preview": "7.1.0",

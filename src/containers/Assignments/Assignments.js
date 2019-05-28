@@ -72,7 +72,8 @@ class Assignments extends React.Component {
     readOnly: PropTypes.bool,
     ui: PropTypes.object.isRequired,
     fieldAutoUpdated: PropTypes.bool,
-    isAdmin: PropTypes.bool
+    isAdmin: PropTypes.bool,
+    pathProblem: PropTypes.any
   };
   state = {
     password: "",
@@ -139,10 +140,10 @@ class Assignments extends React.Component {
   };
 
   onPathProblemSolutionCommit = value => {
-    const { course, ui, dispatch } = this.props;
+    const { course, ui, dispatch, pathProblem } = this.props;
 
     dispatch(
-      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value)
+      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value, { pathProblem })
     );
     // this.closeDialog();
   };
@@ -435,9 +436,10 @@ const mapStateToProps = (state, ownProps) => ({
   course: getCourseProps(state, ownProps),
   auth: state.firebase.auth,
   assistants: state.assignments.assistants,
-  readOnly: state.problem && state.problem.readOnly,
+  readOnly: (state.problem || {}).readOnly,
   fieldAutoUpdated: state.assignments.fieldAutoUpdated,
-  isAdmin: state.account.isAdmin
+  isAdmin: state.account.isAdmin,
+  pathProblem : (state.problem || {}).pathProblem
 });
 
 const mapDispatchToProps = dispatch => ({
