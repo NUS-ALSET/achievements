@@ -169,7 +169,7 @@ export const pathActivityCodeCombatOpen = (
   pathId,
   activityId,
   codeCombatProfile,
-  service="codecombat"
+  service="CodeCombat"
 ) => ({
   type: PATH_ACTIVITY_CODECOMBAT_OPEN,
   pathId,
