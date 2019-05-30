@@ -1342,7 +1342,7 @@ class MyLearning extends React.Component {
       .then(querySnapshot =>
         querySnapshot.forEach(doc => {
           const dbData = doc.data();         
-          const json_dump  = JSON.parse(dbData.otherActionData);
+          //const json_dump  = JSON.parse(dbData.otherActionData);
           dataContainer[doc.id]={}
           dataContainer[doc.id]["name"]=doc.id
           dataContainer[doc.id]["id"]=doc.id
@@ -1371,7 +1371,7 @@ class MyLearning extends React.Component {
       .then(querySnapshot =>
         querySnapshot.forEach(doc => {
           const dbData = doc.data();          
-          const json_dump  = JSON.parse(dbData.otherActionData);
+          //const json_dump  = JSON.parse(dbData.otherActionData);
           dataContainer[doc.id]={}
           dataContainer[doc.id]["id"]=doc.id
           dataContainer[doc.id]["date"]=dbData.createdAt
@@ -1405,8 +1405,8 @@ class MyLearning extends React.Component {
          // console.log(problemId)
           
           if('activityKey' in json_dump['payload'] &&  
-            (json_dump['payload']['activityType']=='codeCombat' 
-           || json_dump['payload']['activityType']=='codeCombatMultiPlayerLevel'))
+            (json_dump['payload']['activityType']==='codeCombat' 
+           || json_dump['payload']['activityType']==='codeCombatMultiPlayerLevel'))
            {
            
             dataContainer[count]={}
@@ -1416,7 +1416,7 @@ class MyLearning extends React.Component {
             
             dataContainer[count]["activityName"]=json_dump['payload']['activityKey'] 
             console.log("Activity Name")
-            let activityId = json_dump['payload']['activityKey']
+           // let activityId = json_dump['payload']['activityKey']
                      
             count++
           }
