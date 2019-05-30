@@ -413,7 +413,6 @@ const countDetails = (dataArray, nameOfTotal = "total") => {
 
 const CreatorStats = props => {
   const { createdActivities, createdPaths } = props.data;
-
   const createdActivitiesToDates = convertDataToDates(createdActivities);
   const createdPathsToDates = convertDataToDates(createdPaths);
 
@@ -1324,9 +1323,116 @@ class MyLearning extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.id !== this.props.id) {
       this.getMyLearning(this.props.id);
+      //this.getActivitiesExplored(this.props.id);
+      this.getCreatedPaths(this.props.id);
+      this.getCreatedActivities(this.props.id);
     }
   }
 
+ getCreatedPaths = uid =>{
+  let db = firebase.firestore();
+  const dataContainer = [];  
+  let query = db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PATH_CHANGE_SUCCESS")     
+      .orderBy("createdAt","desc").limit(200);
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const dbData = doc.data();         
+          //const json_dump  = JSON.parse(dbData.otherActionData);
+          dataContainer[doc.id]={}
+          dataContainer[doc.id]["name"]=doc.id
+          dataContainer[doc.id]["id"]=doc.id
+          dataContainer[doc.id]["date"]=dbData.createdAt
+          
+    }))
+
+    this.setState({       
+      createdPaths:dataContainer      
+    });
+    console.log("Paths")
+    console.log(dataContainer)
+ }
+
+
+ getCreatedActivities = uid =>{
+  let db = firebase.firestore();
+  const dataContainer = [];  
+  let query = db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PATH_ACTIVITY_CHANGE_SUCCESS")     
+      .orderBy("createdAt","desc").limit(200);
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const dbData = doc.data();          
+          //const json_dump  = JSON.parse(dbData.otherActionData);
+          dataContainer[doc.id]={}
+          dataContainer[doc.id]["id"]=doc.id
+          dataContainer[doc.id]["date"]=dbData.createdAt
+          
+    }))
+
+    this.setState({       
+      createdActivities:dataContainer      
+    });
+    console.log("Activities")
+    console.log(dataContainer)
+ }
+
+ getActivitiesExplored = uid =>{       
+    let db = firebase.firestore();
+    const dataContainer = {};       
+    let count =0
+    let query = db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")      
+      .orderBy("createdAt","desc").limit(200);
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const dbData = doc.data();
+          console.log(dbData)
+          const json_dump  = JSON.parse(dbData.otherActionData);
+          //console.log("problemId")
+         // console.log(problemId)
+          
+          if('activityKey' in json_dump['payload'] &&  
+            (json_dump['payload']['activityType']==='codeCombat' 
+           || json_dump['payload']['activityType']==='codeCombatMultiPlayerLevel'))
+           {
+           
+            dataContainer[count]={}
+            dataContainer[count]["id"]=doc.id
+            dataContainer[count]["date"]=dbData.createdAt
+
+            
+            dataContainer[count]["activityName"]=json_dump['payload']['activityKey'] 
+            console.log("Activity Name")
+           // let activityId = json_dump['payload']['activityKey']
+                     
+            count++
+          }
+        }
+        
+        )
+        
+      )
+      .then(() => {        
+        this.setState({       
+          newActivitiesExplored: dataContainer
+          });
+        console.log("Getting the attempted activities")
+        console.log(this.state.newActivitiesExplored)
+      });
+  };
   getMyLearning = uid => {
     let db = firebase.firestore();
     const dataContainer = {};
@@ -1362,6 +1468,14 @@ class MyLearning extends React.Component {
         });
       });
   };
+
+  getActivityName(snapshot){
+    //let activityName = ""
+   // return firebase.database().ref().child("activities/"+activityId)
+     // .once("value",function(snapshot) {activityName = snapshot.val().name}) 
+    //return activityName  
+    return snapshot.val().name;
+  }
 
   render() {
     return (
