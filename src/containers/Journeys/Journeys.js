@@ -21,6 +21,7 @@ import ArrowDownIcon from "@material-ui/icons/ArrowDownward";
 import IconButton from "@material-ui/core/IconButton";
 import Input from "@material-ui/core/Input";
 import SaveIcon from "@material-ui/icons/Save";
+import FilterIcon from "@material-ui/icons/FilterList";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -65,12 +66,14 @@ class Journeys extends React.PureComponent {
           {
             status: true,
             name: "Hello World",
-            description: "basic python 1"
+            description: "basic python 1",
+            pathName: "Python basics by ALSET"
           },
           {
             status: false,
             name: "Hello pandas",
-            description: "basic python 2"
+            description: "basic python 2",
+            pathName: "Python basics by ALSET"
           }
         ],
         editable: false,
@@ -85,17 +88,20 @@ class Journeys extends React.PureComponent {
           {
             status: true,
             name: "Firebase Intro",
-            description: "Watch an overview of Firebase"
+            description: "Watch an overview of Firebase",
+            pathName: "Firebase basics by ALSET"
           },
           {
             status: false,
             name: "Create firestore",
-            description: "Initialise firestore in your app"
+            description: "Initialise firestore in your app",
+            pathName: "Firebase basics by ALSET"
           },
           {
             status: false,
             name: "Firebase Auth",
-            description: "Allow your app to authenticate visitors"
+            description: "Allow your app to authenticate visitors",
+            pathName: "Firebase basics by ALSET"
           }
         ],
         editable: false,
@@ -134,6 +140,31 @@ class Journeys extends React.PureComponent {
             id: 125,
             name: "Basic tools for ML",
             description: "Get acquainted with tools for ML"
+          }
+        ]
+      },
+      {
+        name: "Database Ops",
+        id: 34643635434,
+        description: "Learn some firebase tricks",
+        activities: [
+          {
+            status: true,
+            id: 131,
+            name: "Firebase Intro",
+            description: "Watch an overview of Firebase"
+          },
+          {
+            status: false,
+            id: 132,
+            name: "Create firestore",
+            description: "Initialise firestore in your app"
+          },
+          {
+            status: false,
+            id: 133,
+            name: "Firebase Auth",
+            description: "Allow your app to authenticate visitors"
           }
         ]
       }
@@ -465,8 +496,22 @@ class Journeys extends React.PureComponent {
                   <Grid container spacing={8}>
                     {[
                       { name: "No", gridSpace: 1 },
-                      { name: "Status", gridSpace: 2 },
-                      { name: "Name", gridSpace: 3 },
+                      {
+                        name: (
+                          <span
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between"
+                            }}
+                          >
+                            Status
+                            <FilterIcon />
+                          </span>
+                        ),
+                        gridSpace: 1
+                      },
+                      { name: "Name", gridSpace: 2 },
+                      { name: "Path", gridSpace: 2 },
                       { name: "Description", gridSpace: 4 },
                       { name: "Actions", gridSpace: 2 }
                     ].map(headerField => (
@@ -485,7 +530,7 @@ class Journeys extends React.PureComponent {
                           <Grid item style={{ alignSelf: "center" }} xs={1}>
                             {activityIndex + 1}
                           </Grid>
-                          <Grid item style={{ alignSelf: "center" }} xs={2}>
+                          <Grid item style={{ alignSelf: "center" }} xs={1}>
                             {activity.status ? (
                               <CheckCircleIcon
                                 style={{ color: "forestgreen" }}
@@ -494,8 +539,11 @@ class Journeys extends React.PureComponent {
                               <CheckboxBlankCircle />
                             )}
                           </Grid>
-                          <Grid item style={{ alignSelf: "center" }} xs={3}>
-                            {activity.name}
+                          <Grid item style={{ alignSelf: "center" }} xs={2}>
+                            <a href="#">{activity.name}</a>
+                          </Grid>
+                          <Grid item style={{ alignSelf: "center" }} xs={2}>
+                            <a href="#">{activity.pathName}</a>
                           </Grid>
                           <Grid item style={{ alignSelf: "center" }} xs={4}>
                             {activity.description}
@@ -540,6 +588,11 @@ class Journeys extends React.PureComponent {
                         </Fragment>
                       )
                     )}
+                    <Grid>
+                      <Button color="primary" xs={12}>
+                        Add new activity
+                      </Button>
+                    </Grid>
                   </Grid>
                 </ExpansionPanelDetails>
                 <Divider />
@@ -656,12 +709,11 @@ class Journeys extends React.PureComponent {
                 helperText="Choose activities from the path"
                 label="Select"
                 margin="normal"
-                // onChange={e => this.handleAddJourneyPathActivities(e)}
                 select
                 value=""
               >
-                <FormControl component="fieldset" required>
-                  <FormLabel component="legend">Pick two</FormLabel>
+                <FormControl style={{ padding: "1rem", outline: "none" }}>
+                  <FormLabel component="legend">Path Activities</FormLabel>
                   <FormGroup>
                     {this.state.mockPaths
                       .find(
@@ -692,8 +744,10 @@ class Journeys extends React.PureComponent {
                         />
                       ))}
                   </FormGroup>
-                  <FormHelperText>
-                    You can select multiple activities to add
+                  <FormHelperText style={{ whiteSpace: "pre-line" }}>
+                    {
+                      "Multiple activities can be added. \nYou can select a different path from menu above \nto add activities from it."
+                    }
                   </FormHelperText>
                 </FormControl>
               </TextField>

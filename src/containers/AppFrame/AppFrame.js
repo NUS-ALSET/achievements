@@ -38,6 +38,7 @@ import HomeV3 from "../HomeV3/HomeV3";
 import Task from "../Task/Task";
 import Tasks from "../Tasks/Tasks";
 import CustomActivity from "../CustomActivity/CustomActivity";
+import Journeys from "../Journeys/Journeys";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -354,6 +355,7 @@ class AppFrame extends React.Component {
                   exact
                   path="/customactivity"
                 />
+                <Route component={Journeys} exact path="/journeys" />
                 <Route
                   render={routeProps => (
                     <MyLearning {...routeProps} {...userId} />
