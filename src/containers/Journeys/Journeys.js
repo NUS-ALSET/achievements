@@ -540,10 +540,10 @@ class Journeys extends React.PureComponent {
                             )}
                           </Grid>
                           <Grid item style={{ alignSelf: "center" }} xs={2}>
-                            <a href="#">{activity.name}</a>
+                            {activity.name}
                           </Grid>
                           <Grid item style={{ alignSelf: "center" }} xs={2}>
-                            <a href="#">{activity.pathName}</a>
+                            {activity.pathName}
                           </Grid>
                           <Grid item style={{ alignSelf: "center" }} xs={4}>
                             {activity.description}

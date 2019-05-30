@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import * as firebase from "firebase";
 import "firebase/firestore";
 import moment from "moment";
@@ -8,10 +7,8 @@ import moment from "moment";
 import {
   BarChart,
   Bar,
-  Cell,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer
@@ -1362,7 +1359,7 @@ class MyLearning extends React.Component {
             ...this.state.newActivitiesExplored,
             ...dataContainer
           }
-        })
+        });
       });
   };
 
