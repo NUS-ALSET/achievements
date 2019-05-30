@@ -73,6 +73,22 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
           <ListItemText primary="Paths" />
         </ListItem>
       </MenuItem>
+      <MenuItem
+        component={Link}
+        selected={/^\/journeys/.test(location.pathname)}
+        to="/journeys"
+      >
+        <ListItem>
+          <ListItemIcon>
+            {/^\/journeys/.test(location.pathname) ? (
+              <Explore style={{ fill: "red" }} />
+            ) : (
+              <Explore />
+            )}
+          </ListItemIcon>
+          <ListItemText primary="Journeys" />
+        </ListItem>
+      </MenuItem>
     </MenuList>
 
     <Divider />
