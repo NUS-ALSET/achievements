@@ -464,56 +464,86 @@ const CreatorStats = props => {
     >
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastWeek}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="activitiesCreated"
-                fill="#8884d8"
-                name="Activities created"
-              />
-              <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastWeek.some(e => e.activitiesCreated || e.pathsCreated) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastWeek}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {data.lastWeek.some(e => e.activitiesCreated) && (
+                  <Bar
+                    dataKey="activitiesCreated"
+                    fill="#8884d8"
+                    name="Activities created"
+                  />
+                )}
+                {data.lastWeek.some(e => e.pathsCreated) && (
+                  <Bar
+                    dataKey="pathsCreated"
+                    fill="#82ca9d"
+                    name="Paths created"
+                  />
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastMonth}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="activitiesCreated"
-                fill="#8884d8"
-                name="Activities created"
-              />
-              <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastMonth.some(e => e.activitiesCreated || e.pathsCreated) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastMonth}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {data.lastMonth.some(e => e.activitiesCreated) && (
+                  <Bar
+                    dataKey="activitiesCreated"
+                    fill="#8884d8"
+                    name="Activities created"
+                  />
+                )}
+                {data.lastMonth.some(e => e.pathsCreated) && (
+                  <Bar
+                    dataKey="pathsCreated"
+                    fill="#82ca9d"
+                    name="Paths created"
+                  />
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.allTime}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="activitiesCreated"
-                fill="#8884d8"
-                name="Activities created"
-              />
-              <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.allTime.some(e => e.activitiesCreated || e.pathsCreated) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.allTime}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {data.allTime.some(e => e.activitiesCreated) && (
+                  <Bar
+                    dataKey="activitiesCreated"
+                    fill="#8884d8"
+                    name="Activities created"
+                  />
+                )}
+                {data.allTime.some(e => e.pathsCreated) && (
+                  <Bar
+                    dataKey="pathsCreated"
+                    fill="#82ca9d"
+                    name="Paths created"
+                  />
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabAllTime>
       )}
     </Accordion>
@@ -1323,159 +1353,114 @@ class MyLearning extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.id !== this.props.id) {
       this.getMyLearning(this.props.id);
-      //this.getActivitiesExplored(this.props.id);
-      this.getCreatedPaths(this.props.id);
-      this.getCreatedActivities(this.props.id);
     }
   }
 
- getCreatedPaths = uid =>{
-  let db = firebase.firestore();
-  const dataContainer = [];  
-  let query = db
-      .collection("logged_events")
-      .where("uid", "==", uid)
-      .where("type", "==", "PATH_CHANGE_SUCCESS")     
-      .orderBy("createdAt","desc").limit(200);
-    query
-      .get()
-      .then(querySnapshot =>
-        querySnapshot.forEach(doc => {
-          const dbData = doc.data();         
-          //const json_dump  = JSON.parse(dbData.otherActionData);
-          dataContainer[doc.id]={}
-          dataContainer[doc.id]["name"]=doc.id
-          dataContainer[doc.id]["id"]=doc.id
-          dataContainer[doc.id]["date"]=dbData.createdAt
-          
-    }))
-
-    this.setState({       
-      createdPaths:dataContainer      
-    });
-    console.log("Paths")
-    console.log(dataContainer)
- }
-
-
- getCreatedActivities = uid =>{
-  let db = firebase.firestore();
-  const dataContainer = [];  
-  let query = db
-      .collection("logged_events")
-      .where("uid", "==", uid)
-      .where("type", "==", "PATH_ACTIVITY_CHANGE_SUCCESS")     
-      .orderBy("createdAt","desc").limit(200);
-    query
-      .get()
-      .then(querySnapshot =>
-        querySnapshot.forEach(doc => {
-          const dbData = doc.data();          
-          //const json_dump  = JSON.parse(dbData.otherActionData);
-          dataContainer[doc.id]={}
-          dataContainer[doc.id]["id"]=doc.id
-          dataContainer[doc.id]["date"]=dbData.createdAt
-          
-    }))
-
-    this.setState({       
-      createdActivities:dataContainer      
-    });
-    console.log("Activities")
-    console.log(dataContainer)
- }
-
- getActivitiesExplored = uid =>{       
-    let db = firebase.firestore();
-    const dataContainer = {};       
-    let count =0
+  getCreatedPaths = (uid, db) => {
+    const dataContainer = [];
     let query = db
       .collection("logged_events")
       .where("uid", "==", uid)
-      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")      
-      .orderBy("createdAt","desc").limit(200);
-    query
-      .get()
-      .then(querySnapshot =>
-        querySnapshot.forEach(doc => {
-          const dbData = doc.data();
-          console.log(dbData)
-          const json_dump  = JSON.parse(dbData.otherActionData);
-          //console.log("problemId")
-         // console.log(problemId)
-          
-          if('activityKey' in json_dump['payload'] &&  
-            (json_dump['payload']['activityType']==='codeCombat' 
-           || json_dump['payload']['activityType']==='codeCombatMultiPlayerLevel'))
-           {
-           
-            dataContainer[count]={}
-            dataContainer[count]["id"]=doc.id
-            dataContainer[count]["date"]=dbData.createdAt
-
-            
-            dataContainer[count]["activityName"]=json_dump['payload']['activityKey'] 
-            console.log("Activity Name")
-           // let activityId = json_dump['payload']['activityKey']
-                     
-            count++
-          }
-        }
-        
-        )
-        
-      )
-      .then(() => {        
-        this.setState({       
-          newActivitiesExplored: dataContainer
-          });
-        console.log("Getting the attempted activities")
-        console.log(this.state.newActivitiesExplored)
-      });
-  };
-  getMyLearning = uid => {
-    let db = firebase.firestore();
-    const dataContainer = {};
-    let query = db
-      .collection("logged_events")
-      .where("uid", "==", uid)
-      .where("type", "==", "PROBLEM_SOLUTION_PROVIDED_SUCCESS")
+      .where("type", "==", "PATH_CHANGE_SUCCESS")
       .orderBy("createdAt", "desc")
-      .limit(10);
+      .limit(200);
     query
       .get()
       .then(querySnapshot =>
         querySnapshot.forEach(doc => {
           const dbData = doc.data();
-          const { problemId } = JSON.parse(dbData.otherActionData);
-          if (problemId in dataContainer) {
-            dataContainer[problemId]["attempts"]++;
-          } else {
-            dataContainer[problemId] = {};
-            dataContainer[problemId]["id"] = problemId;
-            dataContainer[problemId]["attempts"] = 1;
-            dataContainer[problemId]["isComplete"] = true;
-            dataContainer[problemId]["date"] = dbData.createdAt;
+          dataContainer[doc.id] = {};
+          dataContainer[doc.id]["name"] = doc.id;
+          dataContainer[doc.id]["id"] = doc.id;
+          dataContainer[doc.id]["date"] = dbData.createdAt;
+        })
+      )
+      .then(() =>
+        this.setState({
+          createdPaths: Object.values(dataContainer)
+        })
+      );
+  };
+
+  getCreatedActivities = (uid, db) => {
+    const dataContainer = [];
+    let query = db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PATH_ACTIVITY_CHANGE_SUCCESS")
+      .orderBy("createdAt", "desc")
+      .limit(200);
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const dbData = doc.data();
+          dataContainer[doc.id] = {};
+          dataContainer[doc.id]["id"] = doc.id;
+          dataContainer[doc.id]["date"] = dbData.createdAt;
+        })
+      )
+      .then(() =>
+        this.setState({
+          createdActivities: Object.values(dataContainer)
+        })
+      );
+    console.log("Activities");
+    console.log(Object.values(dataContainer));
+  };
+
+  getActivitiesExplored = (uid, db) => {
+    const dataContainer = {};
+    let count = 0;
+    let query = db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")
+      .orderBy("createdAt", "desc")
+      .limit(200);
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const dbData = doc.data();
+          console.log(dbData);
+          const json_dump = JSON.parse(dbData.otherActionData);
+          //console.log("problemId")
+          // console.log(problemId)
+
+          if (
+            "activityKey" in json_dump["payload"] &&
+            (json_dump["payload"]["activityType"] === "codeCombat" ||
+              json_dump["payload"]["activityType"] ===
+                "codeCombatMultiPlayerLevel")
+          ) {
+            dataContainer[count] = {};
+            dataContainer[count]["id"] = doc.id;
+            dataContainer[count]["date"] = dbData.createdAt;
+
+            dataContainer[count]["activityName"] =
+              json_dump["payload"]["activityKey"];
+            console.log("Activity Name");
+            // let activityId = json_dump['payload']['activityKey']
+
+            count++;
           }
         })
       )
       .then(() => {
         this.setState({
-          newActivitiesExplored: {
-            ...this.state.newActivitiesExplored,
-            ...dataContainer
-          }
+          newActivitiesExplored: dataContainer
         });
+        console.log("Getting the attempted activities");
+        console.log(this.state.newActivitiesExplored);
       });
   };
 
-  getActivityName(snapshot){
-    //let activityName = ""
-   // return firebase.database().ref().child("activities/"+activityId)
-     // .once("value",function(snapshot) {activityName = snapshot.val().name}) 
-    //return activityName  
-    return snapshot.val().name;
-  }
+  getMyLearning = uid => {
+    const db = firebase.firestore();
+    this.getCreatedPaths(uid, db);
+    this.getCreatedActivities(uid, db);
+  };
 
   render() {
     return (
