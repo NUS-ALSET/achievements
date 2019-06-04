@@ -38,9 +38,15 @@ import download from "downloadjs";
 
 function* signInHandler() {
   const uid = yield select(state => state.firebase.auth.uid);
-
+  const promocode = yield select(state => state.appFrame.promocode);
   try {
     if (uid) {
+      if (promocode) {
+        yield call(accountService.savePromoCode, {
+          uid,
+          promocode
+        });
+      }
       const adminStatus = yield call(accountService.checkAdminStatus, uid);
       yield call(accountService.authTimeUpdate, uid);
       yield put(accountChangeAdminStatus(adminStatus));

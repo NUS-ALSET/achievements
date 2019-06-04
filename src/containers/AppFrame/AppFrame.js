@@ -8,7 +8,8 @@ import {
   loginMenuClose,
   loginMenuOpen,
   mainDrawerToggle,
-  getDynamicPathtitle
+  getDynamicPathtitle,
+  savePromoCode
 } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
 
@@ -161,6 +162,14 @@ class AppFrame extends React.Component {
     this.props.dispatch(
       getDynamicPathtitle(this.props.history.location.pathname)
     );
+    const url = window.location.href;
+    const firstEl = url.split("/#/")[0];
+    let promoCode;
+    if (firstEl.includes("?")) {
+      const sub = firstEl.substring(firstEl.indexOf("?"));
+      promoCode = sub.substring(sub.indexOf("?") + 1);
+      this.props.dispatch(savePromoCode(promoCode));
+    }
   }
 
   componentDidUpdate(prevProps) {

@@ -20,3 +20,9 @@ export const getDynamicPathtitle = pathname => ({
   type: GET_DYNAMIC_PATHTITLE,
   pathname
 });
+
+export const SAVE_PROMO_CODE = "SAVE_PROMO_CODE";
+export const savePromoCode = code => ({
+  type: SAVE_PROMO_CODE,
+  code
+});

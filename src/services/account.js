@@ -372,6 +372,19 @@ export class AccountService {
         });
     });
   }
+
+  savePromoCode(data) {
+    const db = firebase.firestore();
+    const code = data.promocode.split("=");
+    debugger;
+    return db.collection("/logged_events").add({
+      createdAt: Date.now(),
+      uid: data.uid,
+      query: {
+        [code[0]]: code[1]
+      }
+    });
+  }
 }
 
 /**
