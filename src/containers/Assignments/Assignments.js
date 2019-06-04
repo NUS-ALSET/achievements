@@ -279,20 +279,33 @@ class Assignments extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            (currentUser && [
-              {
-                label: "Refresh",
-                handler: this.refreshSolutions
-              },
-              {
-                label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
-                handler: this.toggleHiddenShow
-              },
-              {
-                label: "Message",
-                handler: this.toggleMessageModal
-              }
-            ]) || [
+            (currentUser && (
+              ui.currentTab===1 ? // Edit tab
+              [
+                {
+                  label: "Refresh",
+                  handler: this.refreshSolutions
+                },
+                {
+                  label: "Message",
+                  handler: this.toggleMessageModal
+                }
+              ]
+              : [
+                  {
+                    label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
+                    handler: this.toggleHiddenShow
+                  },
+                  {
+                    label: "Refresh",
+                    handler: this.refreshSolutions
+                  },
+                  {
+                    label: "Message",
+                    handler: this.toggleMessageModal
+                  }
+                ]
+            )) || [
               {
                 label: "Message",
                 handler: this.toggleMessageModal
