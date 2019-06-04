@@ -376,14 +376,30 @@ export class AccountService {
   savePromoCode(data) {
     const db = firebase.firestore();
     const code = data.promocode.split("=");
-    debugger;
     return db.collection("/logged_events").add({
+      type :  data.type,
       createdAt: Date.now(),
       uid: data.uid,
       query: {
         [code[0]]: code[1]
       }
     });
+  }
+
+  saveNavigationChange(data) {
+    const db = firebase.firestore();
+    const code = data.promocode.split("=");
+    const PROMO_CODE_NAV_TRACK = "PROMO_CODE_NAV_TRACK";
+    const output = {
+      type : PROMO_CODE_NAV_TRACK,
+      createdAt: Date.now(),
+      uid: data.uid,
+      query: {
+        [code[0]]: code[1]
+      },
+      visitedPath : data.pathName
+    };
+    return db.collection("/logged_events").add(output);
   }
 }
 

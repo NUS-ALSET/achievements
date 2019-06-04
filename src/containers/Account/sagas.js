@@ -32,7 +32,9 @@ import { push } from "connected-react-router";
 import { notificationShow } from "../Root/actions";
 import {
   getDynamicPathtitle,
-  GET_DYNAMIC_PATHTITLE
+  GET_DYNAMIC_PATHTITLE,
+  SAVE_PROMO_CODE,
+  ROUTES_CHANGED
 } from "../AppFrame/actions";
 import download from "downloadjs";
 
@@ -44,7 +46,8 @@ function* signInHandler() {
       if (promocode) {
         yield call(accountService.savePromoCode, {
           uid,
-          promocode
+          promocode,
+          type: SAVE_PROMO_CODE
         });
       }
       const adminStatus = yield call(accountService.checkAdminStatus, uid);
@@ -273,6 +276,22 @@ function* fetchUserDataHandler() {
   }
 }
 
+function* routeChangeHandler(action){
+  try {
+    const uid = yield select(state => state.firebase.auth.uid);
+    const promocode = yield select(state => state.appFrame.promocode);
+    if (uid && promocode) {
+       yield call(accountService.saveNavigationChange, {
+        uid,
+        promocode,
+        pathName : action.pathName
+      });
+      }
+  } catch (err) {
+    // do nothing
+  }
+}
+
 export default [
   function* watchSignIn() {
     yield takeLatest("@@reactReduxFirebase/LOGIN", signInHandler);
@@ -315,5 +334,8 @@ export default [
   },
   function* watchFetchUserData() {
     yield takeLatest(FETCH_USER_DATA, fetchUserDataHandler);
+  },
+  function* watchRouteChange(){
+    yield takeLatest(ROUTES_CHANGED, routeChangeHandler);
   }
 ];

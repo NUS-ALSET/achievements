@@ -26,3 +26,9 @@ export const savePromoCode = code => ({
   type: SAVE_PROMO_CODE,
   code
 });
+
+export const ROUTES_CHANGED = "ROUTES_CHANGED";
+export const routeChanged = pathName => ({
+  type: ROUTES_CHANGED,
+  pathName
+});
