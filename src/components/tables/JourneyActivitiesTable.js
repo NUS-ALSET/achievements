@@ -49,12 +49,13 @@ class JourneyActivitiesTable extends React.PureComponent {
     const {
       activities,
       classes,
+      journeyId,
       onDeleteActivityClick,
       onMoveActivityClick
     } = this.props;
 
     return (
-      <Table>
+      <Table key={journeyId}>
         <TableHead>
           <TableRow>
             <TableCell>No</TableCell>

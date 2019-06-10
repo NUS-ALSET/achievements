@@ -10,15 +10,8 @@ import TextField from "@material-ui/core/TextField";
 
 export class AddJourneyDialog extends React.PureComponent {
   static propTypes = {
-    activities: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string,
-        name: PropTypes.string
-      })
-    ),
     journey: PropTypes.any,
     onClose: PropTypes.func,
-    onPathSelect: PropTypes.func,
     onCommit: PropTypes.func,
     open: PropTypes.bool
   };
