@@ -383,16 +383,15 @@ class AssignmentsTable extends React.PureComponent {
                     {assignment.name}
                   </TableSortLabel>
                   <div>
-                    {!(assignment.questionType === "PathProgress") &&
-                      assignment.details && (
-                        <a
-                          href={assignment.details}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          link
-                        </a>
-                      )}
+                    {assignment.details && (
+                      <a
+                        href={assignment.details}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        link
+                      </a>
+                    )}
                     {" (" + assignment.progress + " students submitted)"}
                   </div>
                   <div>
