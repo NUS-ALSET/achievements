@@ -4,15 +4,7 @@ import * as firebase from "firebase";
 import "firebase/firestore";
 import moment from "moment";
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -24,6 +16,13 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+
+const lastWeekEpochTime = moment()
+  .subtract(7, "days")
+  .valueOf();
+const lastMonthEpochTime = moment()
+  .subtract(28, "days")
+  .valueOf();
 
 const TabLastWeek = props => {
   return (
@@ -61,14 +60,8 @@ const Accordion = props => {
     // defaultExpanded
     <ExpansionPanel>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography
-          style={{ width: "30%", fontWeight: 550, alignSelf: "center" }}
-        >
-          {props.title}
-        </Typography>
-        <Typography style={{ paddingRight: "0.25rem", alignSelf: "center" }}>
-          {props.description}
-        </Typography>
+        <Typography style={{ width: "30%", fontWeight: 550, alignSelf: "center" }}>{props.title}</Typography>
+        <Typography style={{ paddingRight: "0.25rem", alignSelf: "center" }}>{props.description}</Typography>
       </ExpansionPanelSummary>
       <ExpansionPanelDetails style={{ flexDirection: "column" }}>
         <Tabs
@@ -93,18 +86,10 @@ const PlainAccordionNoTabs = props => {
     // defaultExpanded
     <ExpansionPanel>
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography
-          style={{ width: "30%", fontWeight: 550, alignSelf: "center" }}
-        >
-          {props.title}
-        </Typography>
-        <Typography style={{ paddingRight: "0.25rem", alignSelf: "center" }}>
-          {props.description}
-        </Typography>
+        <Typography style={{ width: "30%", fontWeight: 550, alignSelf: "center" }}>{props.title}</Typography>
+        <Typography style={{ paddingRight: "0.25rem", alignSelf: "center" }}>{props.description}</Typography>
       </ExpansionPanelSummary>
-      <ExpansionPanelDetails style={{ flexDirection: "column" }}>
-        {props.children}
-      </ExpansionPanelDetails>
+      <ExpansionPanelDetails style={{ flexDirection: "column" }}>{props.children}</ExpansionPanelDetails>
     </ExpansionPanel>
   );
 };
@@ -133,8 +118,6 @@ const countDataByDate = (convertedDataWithDates, dataParam = "") =>
       const { createdAt, dateDDmmFormat, details = "" } = dateObject;
       // destructure accumulator - the structure is declared as argument to reduce func
       const { lastWeek, lastMonth, allTime } = accumulator;
-      const lastWeekEpochTime = moment().subtract(7, "days");
-      const lastMonthEpochTime = moment().subtract(28, "days");
       if (createdAt >= lastWeekEpochTime) {
         if (dateDDmmFormat in lastWeek) {
           lastWeek[dateDDmmFormat]++;
@@ -209,8 +192,6 @@ const countNumericDataByDate = (convertedDataWithDates, dataParam = "") =>
       const { createdAt, dateDDmmFormat, details = "" } = dateObject;
       // destructure accumulator - the structure is declared as argument to reduce func
       const { lastWeek, lastMonth, allTime } = accumulator;
-      const lastWeekEpochTime = moment().subtract(7, "days");
-      const lastMonthEpochTime = moment().subtract(28, "days");
       if (createdAt >= lastWeekEpochTime) {
         if (dateDDmmFormat in lastWeek) {
           lastWeek[dateDDmmFormat]++;
@@ -224,20 +205,17 @@ const countNumericDataByDate = (convertedDataWithDates, dataParam = "") =>
         // Add dateDDmmFormat to details[dataParam] so that we can map each details[dataParam] to its date
         if (dataParam) {
           if (dateDDmmFormat + dataParam in lastWeek) {
-            lastWeek[dateDDmmFormat + dataParam] =
-              lastWeek[dateDDmmFormat + dataParam] + details[dataParam];
+            lastWeek[dateDDmmFormat + dataParam] = lastWeek[dateDDmmFormat + dataParam] + details[dataParam];
           } else {
             lastWeek[dateDDmmFormat + dataParam] = details[dataParam];
           }
           if (dateDDmmFormat + dataParam in lastMonth) {
-            lastMonth[dateDDmmFormat + dataParam] =
-              lastMonth[dateDDmmFormat + dataParam] + details[dataParam];
+            lastMonth[dateDDmmFormat + dataParam] = lastMonth[dateDDmmFormat + dataParam] + details[dataParam];
           } else {
             lastMonth[dateDDmmFormat + dataParam] = details[dataParam];
           }
           if (dateDDmmFormat + dataParam in allTime) {
-            allTime[dateDDmmFormat + dataParam] =
-              allTime[dateDDmmFormat + dataParam] + details[dataParam];
+            allTime[dateDDmmFormat + dataParam] = allTime[dateDDmmFormat + dataParam] + details[dataParam];
           } else {
             allTime[dateDDmmFormat + dataParam] = details[dataParam];
           }
@@ -252,14 +230,12 @@ const countNumericDataByDate = (convertedDataWithDates, dataParam = "") =>
         }
         if (dataParam) {
           if (dateDDmmFormat + dataParam in lastMonth) {
-            lastMonth[dateDDmmFormat + dataParam] =
-              lastMonth[dateDDmmFormat + dataParam] + details[dataParam];
+            lastMonth[dateDDmmFormat + dataParam] = lastMonth[dateDDmmFormat + dataParam] + details[dataParam];
           } else {
             lastMonth[dateDDmmFormat + dataParam] = details[dataParam];
           }
           if (dateDDmmFormat + dataParam in allTime) {
-            allTime[dateDDmmFormat + dataParam] =
-              allTime[dateDDmmFormat + dataParam] + details[dataParam];
+            allTime[dateDDmmFormat + dataParam] = allTime[dateDDmmFormat + dataParam] + details[dataParam];
           } else {
             allTime[dateDDmmFormat + dataParam] = details[dataParam];
           }
@@ -272,8 +248,7 @@ const countNumericDataByDate = (convertedDataWithDates, dataParam = "") =>
         }
         if (dataParam) {
           if (dateDDmmFormat + dataParam in allTime) {
-            allTime[dateDDmmFormat + dataParam] =
-              allTime[dateDDmmFormat + dataParam] + details[dataParam];
+            allTime[dateDDmmFormat + dataParam] = allTime[dateDDmmFormat + dataParam] + details[dataParam];
           } else {
             allTime[dateDDmmFormat + dataParam] = details[dataParam];
           }
@@ -288,30 +263,25 @@ const countNumericDataByDate = (convertedDataWithDates, dataParam = "") =>
 const dataFormatting = (dataInTimeCategories, filter = "") => {
   // the aim of reduce function below is to collapse the various data fields under the date
   // eg "15/10/12":2 and "15/10/12createdPath":2 to 15/10/12:{value:2, createdPath:2}
-  const collatedDataInDate = Object.keys(dataInTimeCategories).reduce(
-    (accumulator, item) => {
-      const otherValueMatcher = item.match(/(\d\d\/\d\d\/\d\d)(\w.*)/);
-      if (otherValueMatcher) {
-        if (otherValueMatcher[1] in accumulator) {
-          accumulator[otherValueMatcher[1]][otherValueMatcher[2]] =
-            dataInTimeCategories[item];
-        } else {
-          accumulator[otherValueMatcher[1]] = {};
-          accumulator[otherValueMatcher[1]]["value"] =
-            dataInTimeCategories[item];
-        }
+  const collatedDataInDate = Object.keys(dataInTimeCategories).reduce((accumulator, item) => {
+    const otherValueMatcher = item.match(/(\d\d\/\d\d\/\d\d)(\w.*)/);
+    if (otherValueMatcher) {
+      if (otherValueMatcher[1] in accumulator) {
+        accumulator[otherValueMatcher[1]][otherValueMatcher[2]] = dataInTimeCategories[item];
       } else {
-        if (item in accumulator) {
-          accumulator[item]["value"] = dataInTimeCategories[item];
-        } else {
-          accumulator[item] = {};
-          accumulator[item]["value"] = dataInTimeCategories[item];
-        }
+        accumulator[otherValueMatcher[1]] = {};
+        accumulator[otherValueMatcher[1]]["value"] = dataInTimeCategories[item];
       }
-      return accumulator;
-    },
-    {}
-  );
+    } else {
+      if (item in accumulator) {
+        accumulator[item]["value"] = dataInTimeCategories[item];
+      } else {
+        accumulator[item] = {};
+        accumulator[item]["value"] = dataInTimeCategories[item];
+      }
+    }
+    return accumulator;
+  }, {});
   let formattedData = Object.keys(collatedDataInDate).map(item => {
     return { date: item, ...collatedDataInDate[item] };
   });
@@ -337,10 +307,7 @@ const dataFormatting = (dataInTimeCategories, filter = "") => {
 
 // This function calculates the total to display to viewer in accordion text
 const sumUpByValueField = (datasource, field = "value") =>
-  datasource.reduce(
-    (accumulator, datasourceItem) => accumulator + datasourceItem[field],
-    0
-  );
+  datasource.reduce((accumulator, datasourceItem) => accumulator + datasourceItem[field], 0);
 
 // reference: https://repl.it/repls/HarmoniousInfiniteInverse
 const concatArray = (array1, array2, array1ValueName, array2ValueName) => {
@@ -385,14 +352,11 @@ const randomHsl = () => "hsla(" + Math.random() * 360 + ", 50%, 50%, 0.5)";
 // eg. {lastweek:[{date:22/02/19, somePath:3}, {date:23/02/19, somePath:2}] contains 2 dupes of somePath}
 // it returns ["somePath"]
 const removeDupeData = dataArray => {
-  const aggregatedDataWithDupes = dataArray.reduce(
-    (accumulator, { date, value, ...duplicatedData }) => {
-      const keyOfDupes = Object.keys(duplicatedData);
-      keyOfDupes.forEach(dataPoint => accumulator.push(dataPoint));
-      return accumulator;
-    },
-    []
-  );
+  const aggregatedDataWithDupes = dataArray.reduce((accumulator, { date, value, ...duplicatedData }) => {
+    const keyOfDupes = Object.keys(duplicatedData);
+    keyOfDupes.forEach(dataPoint => accumulator.push(dataPoint));
+    return accumulator;
+  }, []);
   const removedDupes = new Set(aggregatedDataWithDupes);
   return Array.from(removedDupes);
 };
@@ -443,77 +407,89 @@ const CreatorStats = props => {
       "activitiesCreated",
       "pathsCreated"
     ),
-    allTime: concatArray(
-      activitiesCreatorData.allTime,
-      pathsCreatorData.allTime,
-      "activitiesCreated",
-      "pathsCreated"
-    )
+    allTime: concatArray(activitiesCreatorData.allTime, pathsCreatorData.allTime, "activitiesCreated", "pathsCreated")
   };
 
+  const handleTabChangeCreatorStats = (e, tabValue) => {
+    props.handleTabChange(e, tabValue);
+    if (tabValue === "lastMonth") {
+      props.getCreatedPaths(props.uid, lastMonthEpochTime);
+      props.getCreatedActivities(props.uid, lastMonthEpochTime);
+    }
+    if (tabValue === "allTime") {
+      props.getCreatedPaths(props.uid, 0);
+      props.getCreatedActivities(props.uid, 0);
+    }
+  };
   return (
     <Accordion
       description={`you have created ${sumUpByValueField(
         activitiesCreatorData[props.tabValue]
-      )} activities and ${sumUpByValueField(
-        pathsCreatorData[props.tabValue]
-      )} paths ${mapTabValueToLabel(props.tabValue)}`}
-      handleTabChange={props.handleTabChange}
+      )} activities and ${sumUpByValueField(pathsCreatorData[props.tabValue])} paths ${mapTabValueToLabel(
+        props.tabValue
+      )}`}
+      handleTabChange={handleTabChangeCreatorStats}
       tabValue={props.tabValue}
       title={"Creator stats"}
     >
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastWeek}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="activitiesCreated"
-                fill="#8884d8"
-                name="Activities created"
-              />
-              <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastWeek.some(e => e.activitiesCreated || e.pathsCreated) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastWeek}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {data.lastWeek.some(e => e.activitiesCreated) && (
+                  <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
+                )}
+                {data.lastWeek.some(e => e.pathsCreated) && (
+                  <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastMonth}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="activitiesCreated"
-                fill="#8884d8"
-                name="Activities created"
-              />
-              <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastMonth.some(e => e.activitiesCreated || e.pathsCreated) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastMonth}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {data.lastMonth.some(e => e.activitiesCreated) && (
+                  <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
+                )}
+                {data.lastMonth.some(e => e.pathsCreated) && (
+                  <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.allTime}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="activitiesCreated"
-                fill="#8884d8"
-                name="Activities created"
-              />
-              <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.allTime.some(e => e.activitiesCreated || e.pathsCreated) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.allTime}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                {data.allTime.some(e => e.activitiesCreated) && (
+                  <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
+                )}
+                {data.allTime.some(e => e.pathsCreated) && (
+                  <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabAllTime>
       )}
     </Accordion>
@@ -555,13 +531,7 @@ const SolversCreatedPaths = props => {
               <Tooltip />
               <Legend />
               {pathsLastWeek.map(pathName => (
-                <Bar
-                  dataKey={pathName}
-                  fill={randomHsl()}
-                  key={pathName}
-                  name={pathName}
-                  stackId={1}
-                />
+                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
               ))}
             </BarChart>
           </ResponsiveContainer>
@@ -576,13 +546,7 @@ const SolversCreatedPaths = props => {
               <Tooltip />
               <Legend />
               {pathsLastMonth.map(pathName => (
-                <Bar
-                  dataKey={pathName}
-                  fill={randomHsl()}
-                  key={pathName}
-                  name={pathName}
-                  stackId={1}
-                />
+                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
               ))}
             </BarChart>
           </ResponsiveContainer>
@@ -597,13 +561,7 @@ const SolversCreatedPaths = props => {
               <Tooltip />
               <Legend />
               {pathsAllTime.map(pathName => (
-                <Bar
-                  dataKey={pathName}
-                  fill={randomHsl()}
-                  key={pathName}
-                  name={pathName}
-                  stackId={1}
-                />
+                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
               ))}
             </BarChart>
           </ResponsiveContainer>
@@ -618,31 +576,19 @@ const SelfExploration = props => {
 
   const activitiesExploredDataToDates = convertDataToDates(activitiesExplored);
 
-  const countActivitiesByDate = countDataByDate(
-    activitiesExploredDataToDates,
-    "pathName"
-  );
+  const countActivitiesByDate = countDataByDate(activitiesExploredDataToDates, "pathName");
 
   const data = {
-    lastWeek: countDetails(
-      dataFormatting(countActivitiesByDate.lastWeek),
-      "pathsCompleted"
-    ),
-    lastMonth: countDetails(
-      dataFormatting(countActivitiesByDate.lastMonth),
-      "pathsCompleted"
-    ),
-    allTime: countDetails(
-      dataFormatting(countActivitiesByDate.allTime),
-      "pathsCompleted"
-    )
+    lastWeek: countDetails(dataFormatting(countActivitiesByDate.lastWeek), "pathsCompleted"),
+    lastMonth: countDetails(dataFormatting(countActivitiesByDate.lastMonth), "pathsCompleted"),
+    allTime: countDetails(dataFormatting(countActivitiesByDate.allTime), "pathsCompleted")
   };
 
   return (
     <Accordion
-      description={`you have explored ${sumUpByValueField(
-        data[props.tabValue]
-      )} activities ${mapTabValueToLabel(props.tabValue)}`}
+      description={`you have explored ${sumUpByValueField(data[props.tabValue])} activities ${mapTabValueToLabel(
+        props.tabValue
+      )}`}
       handleTabChange={props.handleTabChange}
       tabValue={props.tabValue}
       title={"Self Exploration"}
@@ -655,18 +601,8 @@ const SelfExploration = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={"activities completed"}
-                name={"activities completed"}
-              />
-              <Bar
-                dataKey={"pathsCompleted"}
-                fill={randomHsl()}
-                key={"paths explored"}
-                name={"paths explored"}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
+              <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastWeek>
@@ -679,18 +615,8 @@ const SelfExploration = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={"activities completed"}
-                name={"activities completed"}
-              />
-              <Bar
-                dataKey={"pathsCompleted"}
-                fill={randomHsl()}
-                key={"paths explored"}
-                name={"paths explored"}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
+              <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastMonth>
@@ -703,18 +629,8 @@ const SelfExploration = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={"activities completed"}
-                name={"activities completed"}
-              />
-              <Bar
-                dataKey={"pathsCompleted"}
-                fill={randomHsl()}
-                key={"paths explored"}
-                name={"paths explored"}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
+              <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} />
             </BarChart>
           </ResponsiveContainer>
         </TabAllTime>
@@ -729,31 +645,19 @@ const DisplaySpecificPath = props => {
 
   const activitiesExploredDataToDates = convertDataToDates(activitiesExplored);
 
-  const countActivitiesByDate = countDataByDate(
-    activitiesExploredDataToDates,
-    "pathName"
-  );
+  const countActivitiesByDate = countDataByDate(activitiesExploredDataToDates, "pathName");
 
   const data = {
-    lastWeek: countDetails(
-      dataFormatting(countActivitiesByDate.lastWeek, pathName),
-      "pathsCompleted"
-    ),
-    lastMonth: countDetails(
-      dataFormatting(countActivitiesByDate.lastMonth, pathName),
-      "pathsCompleted"
-    ),
-    allTime: countDetails(
-      dataFormatting(countActivitiesByDate.allTime, pathName),
-      "pathsCompleted"
-    )
+    lastWeek: countDetails(dataFormatting(countActivitiesByDate.lastWeek, pathName), "pathsCompleted"),
+    lastMonth: countDetails(dataFormatting(countActivitiesByDate.lastMonth, pathName), "pathsCompleted"),
+    allTime: countDetails(dataFormatting(countActivitiesByDate.allTime, pathName), "pathsCompleted")
   };
 
   return (
     <Accordion
-      description={`you have explored ${sumUpByValueField(
-        data[props.tabValue]
-      )} ${title} ${mapTabValueToLabel(props.tabValue)}`}
+      description={`you have explored ${sumUpByValueField(data[props.tabValue])} ${title} ${mapTabValueToLabel(
+        props.tabValue
+      )}`}
       handleTabChange={props.handleTabChange}
       tabValue={props.tabValue}
       title={title}
@@ -766,12 +670,7 @@ const DisplaySpecificPath = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastWeek>
@@ -784,12 +683,7 @@ const DisplaySpecificPath = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastMonth>
@@ -802,12 +696,7 @@ const DisplaySpecificPath = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabAllTime>
@@ -831,9 +720,9 @@ const DisplayGenericOneField = props => {
 
   return (
     <Accordion
-      description={`you have had ${sumUpByValueField(
-        data[props.tabValue]
-      )} ${title} ${mapTabValueToLabel(props.tabValue)}`}
+      description={`you have had ${sumUpByValueField(data[props.tabValue])} ${title} ${mapTabValueToLabel(
+        props.tabValue
+      )}`}
       handleTabChange={props.handleTabChange}
       tabValue={props.tabValue}
       title={title}
@@ -846,12 +735,7 @@ const DisplayGenericOneField = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastWeek>
@@ -864,12 +748,7 @@ const DisplayGenericOneField = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastMonth>
@@ -882,12 +761,7 @@ const DisplayGenericOneField = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabAllTime>
@@ -911,9 +785,9 @@ const DisplayGenericOneFieldSpecificItem = props => {
 
   return (
     <Accordion
-      description={`you have had ${sumUpByValueField(
-        data[props.tabValue]
-      )} ${title} ${mapTabValueToLabel(props.tabValue)}`}
+      description={`you have had ${sumUpByValueField(data[props.tabValue])} ${title} ${mapTabValueToLabel(
+        props.tabValue
+      )}`}
       handleTabChange={props.handleTabChange}
       tabValue={props.tabValue}
       title={title}
@@ -926,12 +800,7 @@ const DisplayGenericOneFieldSpecificItem = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastWeek>
@@ -944,12 +813,7 @@ const DisplayGenericOneFieldSpecificItem = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabLastMonth>
@@ -962,12 +826,7 @@ const DisplayGenericOneFieldSpecificItem = props => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar
-                dataKey={"value"}
-                fill={randomHsl()}
-                key={chartName}
-                name={chartName}
-              />
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
             </BarChart>
           </ResponsiveContainer>
         </TabAllTime>
@@ -1026,9 +885,7 @@ const DisplayVisitsMyLearning = props => {
 
   return (
     <PlainAccordionNoTabs
-      description={`you visited the My Learning page ${
-        dateAccessed.length
-      } times to review your progress`}
+      description={`you visited the My Learning page ${dateAccessed.length} times to review your progress`}
       title={"Visits to MyLearning"}
     >
       <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -1042,12 +899,7 @@ const DisplayVisitsMyLearning = props => {
             </ul>
           </div>
         )}
-        {!dateAccessed && (
-          <p>
-            Tip: MyLearning provides analytics tools on your progress within
-            Achievements!
-          </p>
-        )}
+        {!dateAccessed && <p>Tip: MyLearning provides analytics tools on your progress within Achievements!</p>}
       </Typography>
     </PlainAccordionNoTabs>
   );
@@ -1061,16 +913,14 @@ const DisplayRequestsAdditionalActivities = props => {
       description={
         paths
           ? `you have requested additional activities on ${paths.length} paths`
-          : `you have yet to request additional activities on any paths`
+          : "you have yet to request additional activities on any paths"
       }
       title={"Requests for additional activities"}
     >
       <Typography component="div" style={{ padding: 8 * 3 }}>
         {paths && (
           <div>
-            <p>
-              You have requested additional activities on the following paths:
-            </p>
+            <p>You have requested additional activities on the following paths:</p>
             <ul>
               {paths.map(pathInfo => (
                 <li key={pathInfo.id}>{pathInfo.pathName}</li>
@@ -1078,12 +928,7 @@ const DisplayRequestsAdditionalActivities = props => {
             </ul>
           </div>
         )}
-        {!paths && (
-          <p>
-            Tip: You can make requests for path creators to add more activities
-            within Achievements !
-          </p>
-        )}
+        {!paths && <p>Tip: You can make requests for path creators to add more activities within Achievements !</p>}
       </Typography>
     </PlainAccordionNoTabs>
   );
@@ -1096,21 +941,16 @@ const DisplayRecommendedActivitiesClick = props => {
     <PlainAccordionNoTabs
       description={
         recommendedActivityClicks
-          ? `you have clicked on ${
-              recommendedActivityClicks.length
-            } recommended activities on the home
+          ? `you have clicked on ${recommendedActivityClicks.length} recommended activities on the home
           screen`
-          : `you have yet to click on any recommended activities`
+          : "you have yet to click on any recommended activities"
       }
       title={"Clicks on recommended activities"}
     >
       <Typography component="div" style={{ padding: 8 * 3 }}>
         {recommendedActivityClicks && (
           <div>
-            <p>
-              You have clicked on the following recommended activities on the
-              home screen:
-            </p>
+            <p>You have clicked on the following recommended activities on the home screen:</p>
             <table style={{ borderSpacing: "1rem" }}>
               <thead>
                 <tr style={{ fontWeight: 500 }}>
@@ -1130,10 +970,7 @@ const DisplayRecommendedActivitiesClick = props => {
           </div>
         )}
         {!recommendedActivityClicks && (
-          <p>
-            Tip: You can browse the recommended activities in the homescreen to
-            discover new activities to try!
-          </p>
+          <p>Tip: You can browse the recommended activities in the homescreen to discover new activities to try!</p>
         )}
       </Typography>
     </PlainAccordionNoTabs>
@@ -1142,22 +979,8 @@ const DisplayRecommendedActivitiesClick = props => {
 
 class MyLearning extends React.Component {
   state = {
-    createdPaths: [
-      { name: "helloWorld1", id: 123, date: 1557893183000 },
-      { name: "helloWorld2", id: 124, date: 1558072658000 },
-      { name: "helloPython", id: 125, date: 1557461183000 },
-      { name: "helloPython1", id: 126, date: 1557374783000 },
-      { name: "helloWorld3", id: 127, date: 1557903283000 },
-      { name: "helloPython2", id: 128, date: 1557461183000 },
-      { name: "helloPython3", id: 129, date: 1557574783000 },
-      { name: "helloPython4", id: 130, date: 1554782783000 }
-    ],
-    createdActivities: [
-      { id: 1, date: 1558072658000 },
-      { id: 2, date: 1557899858000 },
-      { id: 3, date: 1557813458000 },
-      { id: 4, date: 1557025046000 }
-    ],
+    createdPaths: [],
+    createdActivities: [],
     solversCreatedActivities: [
       { pathId: 123, pathName: "helloWorld1", date: 1557894183000 },
       { pathId: 123, pathName: "helloWorld1", date: 1557895183000 },
@@ -1268,14 +1091,7 @@ class MyLearning extends React.Component {
     publicCloudServices: {
       lastWeek: ["AWS S3", "AWS Lambda"],
       lastMonth: ["AWS S3", "AWS Lambda", "Azure Functions"],
-      allTime: [
-        "AWS S3",
-        "AWS Lambda",
-        "Azure Functions",
-        "Azure Storage",
-        "Firebase Functions",
-        "Google Functions"
-      ]
+      allTime: ["AWS S3", "AWS Lambda", "Azure Functions", "Azure Storage", "Firebase Functions", "Google Functions"]
     },
     codeCombatMultiplayerLevels: {
       lastWeek: ["King of the Hill"],
@@ -1307,10 +1123,7 @@ class MyLearning extends React.Component {
     ],
     visitsToMyLearning: { dateAccessed: [1557574783000] },
     requestsAdditionalActivities: {
-      paths: [
-        { id: 888, pathName: "CodeCombat" },
-        { id: 131, pathName: "jupyterNotebook" }
-      ]
+      paths: [{ id: 888, pathName: "CodeCombat" }, { id: 131, pathName: "jupyterNotebook" }]
     },
     tabValue: "lastWeek",
     newActivitiesExplored: {}
@@ -1323,159 +1136,101 @@ class MyLearning extends React.Component {
   componentDidUpdate(prevProps) {
     if (prevProps.id !== this.props.id) {
       this.getMyLearning(this.props.id);
-      //this.getActivitiesExplored(this.props.id);
-      this.getCreatedPaths(this.props.id);
-      this.getCreatedActivities(this.props.id);
     }
   }
 
- getCreatedPaths = uid =>{
-  let db = firebase.firestore();
-  const dataContainer = [];  
-  let query = db
+  db = firebase.firestore();
+
+  getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = [];
+    let query = this.db
       .collection("logged_events")
       .where("uid", "==", uid)
-      .where("type", "==", "PATH_CHANGE_SUCCESS")     
-      .orderBy("createdAt","desc").limit(200);
-    query
-      .get()
-      .then(querySnapshot =>
-        querySnapshot.forEach(doc => {
-          const dbData = doc.data();         
-          //const json_dump  = JSON.parse(dbData.otherActionData);
-          dataContainer[doc.id]={}
-          dataContainer[doc.id]["name"]=doc.id
-          dataContainer[doc.id]["id"]=doc.id
-          dataContainer[doc.id]["date"]=dbData.createdAt
-          
-    }))
-
-    this.setState({       
-      createdPaths:dataContainer      
-    });
-    console.log("Paths")
-    console.log(dataContainer)
- }
-
-
- getCreatedActivities = uid =>{
-  let db = firebase.firestore();
-  const dataContainer = [];  
-  let query = db
-      .collection("logged_events")
-      .where("uid", "==", uid)
-      .where("type", "==", "PATH_ACTIVITY_CHANGE_SUCCESS")     
-      .orderBy("createdAt","desc").limit(200);
-    query
-      .get()
-      .then(querySnapshot =>
-        querySnapshot.forEach(doc => {
-          const dbData = doc.data();          
-          //const json_dump  = JSON.parse(dbData.otherActionData);
-          dataContainer[doc.id]={}
-          dataContainer[doc.id]["id"]=doc.id
-          dataContainer[doc.id]["date"]=dbData.createdAt
-          
-    }))
-
-    this.setState({       
-      createdActivities:dataContainer      
-    });
-    console.log("Activities")
-    console.log(dataContainer)
- }
-
- getActivitiesExplored = uid =>{       
-    let db = firebase.firestore();
-    const dataContainer = {};       
-    let count =0
-    let query = db
-      .collection("logged_events")
-      .where("uid", "==", uid)
-      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")      
-      .orderBy("createdAt","desc").limit(200);
+      .where("type", "==", "PATH_CHANGE_SUCCESS")
+      .where("createdAt", ">", epochTime)
+      .orderBy("createdAt", "desc");
     query
       .get()
       .then(querySnapshot =>
         querySnapshot.forEach(doc => {
           const dbData = doc.data();
-          console.log(dbData)
-          const json_dump  = JSON.parse(dbData.otherActionData);
-          //console.log("problemId")
-         // console.log(problemId)
-          
-          if('activityKey' in json_dump['payload'] &&  
-            (json_dump['payload']['activityType']==='codeCombat' 
-           || json_dump['payload']['activityType']==='codeCombatMultiPlayerLevel'))
-           {
-           
-            dataContainer[count]={}
-            dataContainer[count]["id"]=doc.id
-            dataContainer[count]["date"]=dbData.createdAt
-
-            
-            dataContainer[count]["activityName"]=json_dump['payload']['activityKey'] 
-            console.log("Activity Name")
-           // let activityId = json_dump['payload']['activityKey']
-                     
-            count++
-          }
-        }
-        
-        )
-        
+          dataContainer[doc.id] = {};
+          dataContainer[doc.id]["name"] = doc.id;
+          dataContainer[doc.id]["id"] = doc.id;
+          dataContainer[doc.id]["date"] = dbData.createdAt;
+        })
       )
-      .then(() => {        
-        this.setState({       
-          newActivitiesExplored: dataContainer
-          });
-        console.log("Getting the attempted activities")
-        console.log(this.state.newActivitiesExplored)
-      });
+      .then(() =>
+        this.setState({
+          createdPaths: Object.values(dataContainer)
+        })
+      );
   };
-  getMyLearning = uid => {
-    let db = firebase.firestore();
-    const dataContainer = {};
-    let query = db
+
+  getCreatedActivities = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = [];
+    let query = this.db
       .collection("logged_events")
       .where("uid", "==", uid)
-      .where("type", "==", "PROBLEM_SOLUTION_PROVIDED_SUCCESS")
-      .orderBy("createdAt", "desc")
-      .limit(10);
+      .where("type", "==", "PATH_ACTIVITY_CHANGE_SUCCESS")
+      .where("createdAt", ">", epochTime)
+      .orderBy("createdAt", "desc");
     query
       .get()
       .then(querySnapshot =>
         querySnapshot.forEach(doc => {
           const dbData = doc.data();
-          const { problemId } = JSON.parse(dbData.otherActionData);
-          if (problemId in dataContainer) {
-            dataContainer[problemId]["attempts"]++;
-          } else {
-            dataContainer[problemId] = {};
-            dataContainer[problemId]["id"] = problemId;
-            dataContainer[problemId]["attempts"] = 1;
-            dataContainer[problemId]["isComplete"] = true;
-            dataContainer[problemId]["date"] = dbData.createdAt;
+          dataContainer[doc.id] = {};
+          dataContainer[doc.id]["id"] = doc.id;
+          dataContainer[doc.id]["date"] = dbData.createdAt;
+        })
+      )
+      .then(() =>
+        this.setState({
+          createdActivities: Object.values(dataContainer)
+        })
+      );
+  };
+
+  getActivitiesExplored = uid => {
+    const dataContainer = {};
+    let count = 0;
+    let query = this.db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")
+      .orderBy("createdAt", "desc");
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const dbData = doc.data();
+          const json_dump = JSON.parse(dbData.otherActionData);
+          if (
+            "activityKey" in json_dump["payload"] &&
+            (json_dump["payload"]["activityType"] === "codeCombat" ||
+              json_dump["payload"]["activityType"] === "codeCombatMultiPlayerLevel")
+          ) {
+            dataContainer[count] = {};
+            dataContainer[count]["id"] = doc.id;
+            dataContainer[count]["date"] = dbData.createdAt;
+
+            dataContainer[count]["activityName"] = json_dump["payload"]["activityKey"];
+            count++;
           }
         })
       )
       .then(() => {
         this.setState({
-          newActivitiesExplored: {
-            ...this.state.newActivitiesExplored,
-            ...dataContainer
-          }
+          newActivitiesExplored: dataContainer
         });
       });
   };
 
-  getActivityName(snapshot){
-    //let activityName = ""
-   // return firebase.database().ref().child("activities/"+activityId)
-     // .once("value",function(snapshot) {activityName = snapshot.val().name}) 
-    //return activityName  
-    return snapshot.val().name;
-  }
+  getMyLearning = uid => {
+    this.getCreatedPaths(uid);
+    this.getCreatedActivities(uid);
+  };
 
   render() {
     return (
@@ -1496,13 +1251,15 @@ class MyLearning extends React.Component {
                     createdActivities: this.state.createdActivities,
                     createdPaths: this.state.createdPaths
                   }}
+                  getCreatedActivities={this.getCreatedActivities}
+                  getCreatedPaths={this.getCreatedPaths}
                   handleTabChange={this.handleTabChange}
                   tabValue={this.state.tabValue}
+                  uid={this.props.id}
                 />
                 <SolversCreatedPaths
                   data={{
-                    solversCreatedActivities: this.state
-                      .solversCreatedActivities
+                    solversCreatedActivities: this.state.solversCreatedActivities
                   }}
                   handleTabChange={this.handleTabChange}
                   tabValue={this.state.tabValue}
@@ -1566,12 +1323,8 @@ class MyLearning extends React.Component {
                   }}
                 />
                 <DisplayVisitsMyLearning data={this.state.visitsToMyLearning} />
-                <DisplayRequestsAdditionalActivities
-                  data={this.state.requestsAdditionalActivities}
-                />
-                <DisplayRecommendedActivitiesClick
-                  data={this.state.recommendedActivitiesClick}
-                />
+                <DisplayRequestsAdditionalActivities data={this.state.requestsAdditionalActivities} />
+                <DisplayRecommendedActivitiesClick data={this.state.recommendedActivitiesClick} />
               </Grid>
             </Grid>
           </Fragment>

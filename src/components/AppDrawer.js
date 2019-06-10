@@ -46,9 +46,18 @@ class AppDrawer extends React.PureComponent {
     userId: PropTypes.string,
     mobileDrawerOpen: PropTypes.bool.isRequired,
     onRequestClose: PropTypes.func.isRequired,
-    location: PropTypes.object
+    location: PropTypes.object,
+    onRouteChange: PropTypes.func,
+    history: PropTypes.object
   }
-
+  constructor(props){
+    super(props);
+    // listen route change
+     props.history.listen((location) => {
+      props.onRouteChange(location.pathname);
+    });
+  }
+  
   render() {
     const {
       classes,
