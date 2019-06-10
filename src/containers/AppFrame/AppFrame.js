@@ -65,6 +65,7 @@ import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkill
 import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
 import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
 import ActivitySolutions from "../ActivitySolutions/ActivitySolutions";
+import MockJourneys from "../Journeys/MockJourneys";
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -356,6 +357,7 @@ class AppFrame extends React.Component {
                   path="/customactivity"
                 />
                 <Route component={Journeys} exact path="/journeys" />
+                <Route component={MockJourneys} exact path="/mock-journeys" />
                 <Route
                   render={routeProps => (
                     <MyLearning {...routeProps} {...userId} />

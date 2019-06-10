@@ -2,6 +2,8 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import PropTypes from "prop-types";
+import { firebaseConnect } from "react-redux-firebase";
+import { push } from "connected-react-router";
 
 import Fab from "@material-ui/core/Fab";
 import withStyles from "@material-ui/core/styles/withStyles";
@@ -17,9 +19,7 @@ import {
   tasksDeleteTaskDialogShow,
   tasksDeleteTaskRequest
 } from "./actions";
-import { push } from "connected-react-router";
 import DeleteConfirmationDialog from "../../components/dialogs/DeleteConfirmationDialog";
-import { firebaseConnect } from "react-redux-firebase";
 
 const styles = () => ({
   fabButton: {
