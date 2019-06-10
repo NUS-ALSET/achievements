@@ -411,7 +411,7 @@ const CreatorStats = props => {
   };
 
   const handleTabChangeCreatorStats = (e, tabValue) => {
-    props.handleTabChange(e, tabValue);
+    props.handleTabChange(e, tabValue, "Creator stats");
     if (tabValue === "lastMonth") {
       props.getCreatedPaths(props.uid, lastMonthEpochTime);
       props.getCreatedActivities(props.uid, lastMonthEpochTime);
@@ -1126,11 +1126,12 @@ class MyLearning extends React.Component {
       paths: [{ id: 888, pathName: "CodeCombat" }, { id: 131, pathName: "jupyterNotebook" }]
     },
     tabValue: "lastWeek",
+    tabvalueSpecificPanels: {},
     newActivitiesExplored: {}
   };
 
-  handleTabChange = (event, tabValue) => {
-    this.setState({ tabValue });
+  handleTabChange = (event, tabValue, title) => {
+    this.setState({ tabvalueSpecificPanels: { ...this.state.tabvalueSpecificPanels, [title]: tabValue } });
   };
 
   componentDidUpdate(prevProps) {
@@ -1254,7 +1255,7 @@ class MyLearning extends React.Component {
                   getCreatedActivities={this.getCreatedActivities}
                   getCreatedPaths={this.getCreatedPaths}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
+                  tabValue={this.state.tabvalueSpecificPanels["Creator stats"] || this.state.tabValue}
                   uid={this.props.id}
                 />
                 <SolversCreatedPaths
