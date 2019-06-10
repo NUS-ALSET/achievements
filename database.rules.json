@@ -196,10 +196,6 @@
         ".read": true
       }
     },
-    "thirdPartyServices": {
-      ".read": true,
-      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
-    },
     "courseMembers": {
       ".read": "auth != null",
       "$courseKey": {
@@ -279,6 +275,14 @@
               )
             )"
         }
+    },
+    "journeyActivities": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "journeys": {
+      ".read": true,
+      ".write": "auth != null"
     },
     "jupyterSolutionsQueue": {
       "responses": {
@@ -541,6 +545,10 @@
     "thirdPartiesLevels":{
       ".read": "auth != null",
       ".write": false,
+    },
+    "thirdPartyServices": {
+      ".read": true,
+      ".write": "auth != null && root.child('/admins/' + auth.uid).val() == true"
     },
     "visibleSolutions": {
       "$courseKey": {
