@@ -10,6 +10,7 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import Typography from "@material-ui/core/Typography";
 
 // material-ui icons in front of the drawer tabs
 // Home
@@ -26,8 +27,8 @@ import Mood from "@material-ui/icons/Mood";
 import Security from "@material-ui/icons/Security";
 // for Github icon
 import GithubIcon from "./icons/GithubIcon";
-
-import Typography from "@material-ui/core/Typography";
+// Journeys
+import PlaceIcon from "@material-ui/icons/Place";
 
 const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
   <Fragment>
@@ -71,6 +72,22 @@ const AppDrawerElements = (onRequestClose, userId, isAdmin, location) => (
             )}
           </ListItemIcon>
           <ListItemText primary="Paths" />
+        </ListItem>
+      </MenuItem>
+      <MenuItem
+        component={Link}
+        selected={/^\/journeys/.test(location.pathname)}
+        to="/journeys"
+      >
+        <ListItem>
+          <ListItemIcon>
+            {/^\/journeys/.test(location.pathname) ? (
+              <PlaceIcon style={{ fill: "red" }} />
+            ) : (
+              <PlaceIcon />
+            )}
+          </ListItemIcon>
+          <ListItemText primary="Journeys" />
         </ListItem>
       </MenuItem>
     </MenuList>

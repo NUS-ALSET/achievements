@@ -30,7 +30,7 @@ import { assignmentInfo } from "../../types";
 
 const styles = () => ({
   actionCol: {
-    minWidth: 240
+    minWidth: 280
   },
   dateEdit: {
     width: 246
@@ -114,8 +114,8 @@ class AssignmentsEditorTable extends React.Component {
             <TableCell>Solution Visible</TableCell>
             <TableCell>Open</TableCell>
             <TableCell>Deadline</TableCell>
-            <TableCell>Resource Link</TableCell>
             <TableCell className={classes.actionCol}>Actions</TableCell>
+            <TableCell>Resource Link</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -183,7 +183,6 @@ class AssignmentsEditorTable extends React.Component {
                     type="datetime-local"
                   />
                 </TableCell>
-                <TableCell>{assignment.details}</TableCell>
                 <TableCell>
                   <IconButton
                     onClick={() => this.onEditAssignmentClick(assignment)}
@@ -206,6 +205,7 @@ class AssignmentsEditorTable extends React.Component {
                     <ExpandMoreIcon />
                   </IconButton>
                 </TableCell>
+                <TableCell>{assignment.details}</TableCell>
               </TableRow>
             ))
           )}
