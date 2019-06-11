@@ -12,7 +12,7 @@ export const publicPathSelector = createSelector(
     if (joinedPaths && isEmpty(joinedPaths)) {
       return publicPaths;
     }
-    var modifiedPublicPaths = { ...publicPaths };
+    let modifiedPublicPaths = { ...publicPaths };
     Object.keys(joinedPaths || {}).forEach(key => {
       if (publicPaths && publicPaths[key]) {
         modifiedPublicPaths[key].solutions = joinedPaths[key].solutions;
