@@ -26,26 +26,10 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
       .database()
       .ref(`/activities/${activityKey}`)
       .once("value")
-      .then(snap => snap.val()).then(activity =>
-        
-        admin
-          .firestore()
-          .collection("/logged_events")
-          .add({
-            createdAt: Date.now(),
-            type: "FIREBASE_TRIGGERS",
-            uid: userKey,
-            sGen: true,
-            activityKey: activityKey,
-            pathKey: activity.path,
-            otherActionData: logged_data
-          })
-          
-          )
-          
+      .then(snap => snap.val())          
   ]).then(([analyzeUrl, activity]) => {
     switch (activity.type) {
-      case "jupyterInline":
+      case "jupyterInline":        
         let solution = JSON.parse(data.solution);
         let b1 = solution.result.cells; //given notebook cells
         let b2 = solution.cells; // solution notebook cells
@@ -99,8 +83,9 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
                 pathKey: activity.path
               })
           );
-      default:
+      default:        
         return Promise.resolve();
+          
     }
   });
 }

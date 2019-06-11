@@ -2,7 +2,8 @@ import {
   LOGIN_MENU_CLOSE,
   LOGIN_MENU_OPEN,
   MAIN_DRAWER_TOGGLE,
-  GET_DYNAMIC_PATHTITLE
+  GET_DYNAMIC_PATHTITLE,
+  SAVE_PROMO_CODE
 } from "./actions";
 
 export const initialState = {
@@ -40,6 +41,11 @@ export const appFrame = (state = initialState, action) => {
                 .replace(/\b[a-z]/g, name => name.toUpperCase())
                 .replace(/[/].*/, "")
           : "getting the title"
+      };
+    case SAVE_PROMO_CODE:
+      return {
+        ...state,
+        promocode: action.code
       };
     default:
       return state;

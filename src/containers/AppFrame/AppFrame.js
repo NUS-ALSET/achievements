@@ -8,7 +8,9 @@ import {
   loginMenuClose,
   loginMenuOpen,
   mainDrawerToggle,
-  getDynamicPathtitle
+  getDynamicPathtitle,
+  savePromoCode,
+  routeChanged
 } from "./actions";
 import { signInRequest, signOutRequest } from "../Root/actions";
 
@@ -65,6 +67,7 @@ import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkill
 import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
 import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
 import ActivitySolutions from "../ActivitySolutions/ActivitySolutions";
+import MockJourneys from "../Journeys/MockJourneys";
 
 /* this AppFrame is the main framework of our UI,
  * it describes the responsive drawer with an appbar
@@ -157,10 +160,28 @@ class AppFrame extends React.Component {
     dynamicPathTitle: PropTypes.string
   };
 
+  getPromoCode(){
+    const url = window.location.href;
+    const firstEl = url.split("/#/")[0];
+    if (firstEl.includes("?")) {
+      const sub = firstEl.substring(firstEl.indexOf("?"));
+      return sub.substring(sub.indexOf("?") + 1);
+    }
+    return null;
+  }
+
+  saveRoutesChange=(pathName)=>{
+      this.props.dispatch(routeChanged(pathName))
+  }
+
   componentDidMount() {
     this.props.dispatch(
       getDynamicPathtitle(this.props.history.location.pathname)
     );
+    const promoCode = this.getPromoCode();
+    if (promoCode){
+      this.props.dispatch(savePromoCode(promoCode));
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -269,6 +290,7 @@ class AppFrame extends React.Component {
               isAdmin={isAdmin}
               mobileDrawerOpen={this.props.mainDrawerOpen}
               onRequestClose={this.handleDrawerClose}
+              onRouteChange={this.saveRoutesChange}
               userId={userId}
             />
             <main className={classes.content}>
@@ -356,6 +378,7 @@ class AppFrame extends React.Component {
                   path="/customactivity"
                 />
                 <Route component={Journeys} exact path="/journeys" />
+                <Route component={MockJourneys} exact path="/mock-journeys" />
                 <Route
                   render={routeProps => (
                     <MyLearning {...routeProps} {...userId} />
