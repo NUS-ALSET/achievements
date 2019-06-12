@@ -83,9 +83,8 @@ class PathsTable extends React.PureComponent {
                     {path.solutions !== undefined && path.totalActivities
                       ? `${path.solutions} of ${path.totalActivities}`
                       : path.owner === uid
-                        ? "owner"
-                        : "not joined"
-                    }
+                      ? "owner"
+                      : "not joined"}
                   </TableCell>
                 )}
                 <TableCell>
