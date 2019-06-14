@@ -48,6 +48,7 @@ const fetchUserJSON = (taskKey, uid) => {
         const allActions = [];
         querySnapshot.forEach(function(doc) {
           allActions.push({ [doc.id]: doc.data() });
+                 
         });
         return allActions;
       })
@@ -58,7 +59,9 @@ const fetchUserJSON = (taskKey, uid) => {
         userAchievements,
         userPrivate,
         completedActivities,
-        solutions
+        solutions,
+        activityAttempts,
+        filteredEvents
       ]) => {
         let problemSolutions = solutions;
         const userSolutions = Object.keys(problemSolutions).reduce(
@@ -85,6 +88,7 @@ const fetchUserJSON = (taskKey, uid) => {
           {}
         );
         solutions = userSolutions;
+        
         admin
           .database()
           .ref(`/newFetchUserJSONQueue/responses/${taskKey}`)
@@ -97,9 +101,10 @@ const fetchUserJSON = (taskKey, uid) => {
               completedActivities,
               solutions,
               activityAttempts,
-              loggedEvents: fileredEvents
+              loggedEvents: filteredEvents
             }
           });
+          
       }
     )
     .catch(err => console.log(err));
