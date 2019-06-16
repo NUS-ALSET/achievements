@@ -7,13 +7,16 @@ import {
   JOURNEY_DELETE_CONFIRMATION_REQUEST,
   JOURNEYS_PATHS_LOADED,
   JOURNEY_PATH_ACTIVITIES_FETCH_SUCCESS,
-  JOURNEY_ACTIVITIES_FETCH_SUCCESS
+  JOURNEY_ACTIVITIES_FETCH_SUCCESS,
+  JOURNEY_MOVE_ACTIVITY_SUCCESS,
+  JOURNEY_ADD_ACTIVITIES_SUCCESS
 } from "./actions";
 
 export const journeys = (
   state = {
     activities: [],
     journeyActivities: {},
+    changes: {},
     ui: {
       dialog: {}
     },
@@ -24,6 +27,7 @@ export const journeys = (
   },
   action
 ) => {
+  let targetIndex;
   switch (action.type) {
     case JOURNEY_SHOW_DIALOG:
       return {
@@ -47,7 +51,57 @@ export const journeys = (
         ...state,
         activities: action.activities
       };
-
+    case JOURNEY_MOVE_ACTIVITY_SUCCESS:
+      targetIndex = state.journeyActivities[action.journeyId].findIndex(
+        activity => activity.id === action.activityId
+      );
+      switch (action.direction) {
+        case "down":
+          if (
+            targetIndex !==
+            state.journeyActivities[action.journeyId].length - 1
+          ) {
+            return {
+              ...state,
+              changed: true,
+              journeyActivities: {
+                ...state.journeyActivities,
+                [action.journeyId]: state.journeyActivities[action.journeyId]
+                  .slice(0, targetIndex)
+                  .concat(
+                    state.journeyActivities[action.journeyId][targetIndex + 1],
+                    state.journeyActivities[action.journeyId][targetIndex],
+                    ...state.journeyActivities[action.journeyId].slice(
+                      targetIndex + 1 + 1
+                    )
+                  )
+              }
+            };
+          }
+          return state;
+        case "up":
+          if (targetIndex) {
+            return {
+              ...state,
+              changed: true,
+              journeyActivities: {
+                ...state.journeyActivities,
+                [action.journeyId]: state.journeyActivities[action.journeyId]
+                  .slice(0, targetIndex - 1)
+                  .concat(
+                    state.journeyActivities[action.journeyId][targetIndex],
+                    state.journeyActivities[action.journeyId][targetIndex - 1],
+                    ...state.journeyActivities[action.journeyId].slice(
+                      targetIndex + 1
+                    )
+                  )
+              }
+            };
+          }
+          return state;
+        default:
+          return state;
+      }
     case JOURNEY_ACTIVITIES_FETCH_SUCCESS:
       return {
         ...state,
@@ -56,6 +110,18 @@ export const journeys = (
           [action.journeyId]: action.activities
         }
       };
+    case JOURNEY_ADD_ACTIVITIES_SUCCESS: {
+      return {
+        ...state,
+        changed: true,
+        journeyActivities: {
+          ...state.journeyActivities,
+          [action.journeyId]: (
+            state.journeyActivities[action.journeyId] || []
+          ).concat(action.activities)
+        }
+      };
+    }
     case JOURNEY_DELETE_CONFIRMATION_REQUEST:
       return {
         ...state,

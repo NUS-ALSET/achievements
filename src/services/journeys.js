@@ -67,25 +67,19 @@ export class JourneysService {
    *
    * @param {String} journeyId
    * @param {Array<String>} activities
+   * @param {Array<String>} existing
    */
-  async addActivities(journeyId, activities) {
-    const existing = await this.getActivities(journeyId);
-    const ids = Object.values(existing).sort();
-    let lastId = ids[ids.length - 1] || 0;
+  async addActivities(journeyId, activities, existing) {
+    const ids = Object.assign(
+      {},
+      ...activities
+        .filter(id => !existing.includes(id))
+        .map((id, index) => ({
+          [id]: index + 1
+        }))
+    );
 
-    await firebase
-      .database()
-      .ref(`/journeyActivities/${journeyId}`)
-      .update(
-        Object.assign(
-          {},
-          ...activities
-            .filter(id => !existing[id])
-            .map(id => ({
-              [id]: ++lastId
-            }))
-        )
-      );
+    return this.fetchJourneyActivities(journeyId, ids);
   }
 
   /**
@@ -128,6 +122,7 @@ export class JourneysService {
 
   /**
    * Reorder activity position at journey
+   *
    * @param {String} journeyId
    * @param {String} activityId
    * @param {"up"|"down"} direction
@@ -162,29 +157,35 @@ export class JourneysService {
         break;
       default:
     }
-    if (changes) {
-      await firebase
-        .database()
-        .ref(`/journeyActivities/${journeyId}`)
-        .update(changes);
-    }
+    return Object.assign(orders, changes);
   }
 
-  async fetchJourneyActivities(journeyId) {
-    const snap = await firebase
-      .database()
-      .ref(`/journeyActivities/${journeyId}`)
-      .once("value");
-    const journeyActivities = (await snap.val()) || {};
+  /**
+   * Returns activities data with path data for journeys
+   *
+   * @param {String} journeyId
+   * @param {Array<String>} [ids] optional parameter. Ignores journey id if
+   *  providen
+   */
+  async fetchJourneyActivities(journeyId, ids) {
+    const snap =
+      !ids &&
+      (await firebase
+        .database()
+        .ref(`/journeyActivities/${journeyId}`)
+        .once("value"));
+    const journeyActivities = ids || (await snap.val()) || {};
     const pathsMap = {};
     const activities = await Promise.all(
-      Object.keys(journeyActivities).map(async activityId => {
-        const snapshot = await firebase
-          .database()
-          .ref(`/activities/${activityId}`)
-          .once("value");
-        return { id: activityId, ...((await snapshot.val()) || {}) };
-      })
+      Object.keys(journeyActivities)
+        .sort((a, b) => (journeyActivities[a] > journeyActivities[b] ? 1 : -1))
+        .map(async activityId => {
+          const snapshot = await firebase
+            .database()
+            .ref(`/activities/${activityId}`)
+            .once("value");
+          return { id: activityId, ...((await snapshot.val()) || {}) };
+        })
     );
 
     for (const activity of activities) {
@@ -205,10 +206,8 @@ export class JourneysService {
       id: activity.id,
       name: activity.name,
       description: activity.description,
-      index: journeyActivities[activity.id],
       pathId: activity.path,
-      pathName: pathsMap[activity.path].name,
-      status: true
+      pathName: pathsMap[activity.path].name
     }));
   }
 }

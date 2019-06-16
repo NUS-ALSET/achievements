@@ -76,12 +76,16 @@ export function* journeyUpsertRequestHandler(action) {
 
 export function* journeyAddActivitiesRequestHandler(action) {
   try {
-    yield call(
+    const existing = yield select(
+      state => state.journeys.journeyActivities[action.journeyId]
+    );
+    const activities = yield call(
       [journeysService, journeysService.addActivities],
       action.journeyId,
-      action.activities
+      action.activities,
+      existing.map(activity => activity.id)
     );
-    yield put(journeyAddActivitiesSuccess(action.journeyId));
+    yield put(journeyAddActivitiesSuccess(action.journeyId, activities));
     yield put(journeyDialogClose());
   } catch (err) {
     yield put(notificationShow(err.message));

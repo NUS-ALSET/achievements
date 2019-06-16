@@ -21,7 +21,9 @@ import {
   journeyAddActivitiesRequest,
   journeysOpen,
   journeyPathActivitiesFetchRequest,
-  journeyActivitiesFetchRequest
+  journeyActivitiesFetchRequest,
+  journeyDeleteActivityRequest,
+  journeyMoveActivityRequest
 } from "./actions";
 import { AddJourneyDialog } from "../../components/dialogs/AddJourneyDialog";
 import { sagaInjector } from "../../services/saga";
@@ -42,11 +44,13 @@ class Journeys extends React.PureComponent {
     journeys: PropTypes.any,
     journeyAddActivitiesRequest: PropTypes.func,
     journeyAddDialogToggle: PropTypes.func,
+    journeyDeleteActivityRequest: PropTypes.func,
     journeyDeleteRequest: PropTypes.func,
     journeyDialogClose: PropTypes.func,
     journeyDeleteConfirmationRequest: PropTypes.func,
-    journeysOpen: PropTypes.func,
+    journeyMoveActivityRequest: PropTypes.func,
     journeyPathActivitiesFetchRequest: PropTypes.func,
+    journeysOpen: PropTypes.func,
     journeyUpsertRequest: PropTypes.func,
     loadingJourneys: PropTypes.bool,
     paths: PropTypes.shape({
@@ -74,8 +78,10 @@ class Journeys extends React.PureComponent {
       journeys,
       journeyAddActivitiesRequest,
       journeyAddDialogToggle,
+      journeyDeleteActivityRequest,
       journeyDeleteConfirmationRequest,
       journeyDialogClose,
+      journeyMoveActivityRequest,
       journeyUpsertRequest,
       journeyPathActivitiesFetchRequest,
       loadingJourneys,
@@ -110,7 +116,9 @@ class Journeys extends React.PureComponent {
                   journey={journey}
                   key={journey.id}
                   onAddActivityClick={journeyAddDialogToggle}
+                  onDeleteActivityClick={journeyDeleteActivityRequest}
                   onExpand={journeyActivitiesFetchRequest}
+                  onMoveActivityClick={journeyMoveActivityRequest}
                   onRemoveClick={journeyDeleteConfirmationRequest}
                 />
               </Grid>
@@ -161,13 +169,23 @@ const mapDispatchToProps = {
   journeyAddActivitiesRequest,
   journeyDeleteRequest,
   journeyDeleteConfirmationRequest,
+  journeyDeleteActivityRequest,
+  journeyMoveActivityRequest,
   journeyDialogClose,
   journeyPathActivitiesFetchRequest,
   journeyUpsertRequest
 };
 
 export default compose(
-  firebaseConnect(["/journeys"]),
+  firebaseConnect((ownProps, store) => {
+    const auth = store.getState().firebase.auth;
+    return [
+      {
+        path: "/journeys",
+        queryParams: ["orderByChild=owner", `equalTo=${auth.uid}`]
+      }
+    ];
+  }),
   connect(
     mapStateToProps,
     mapDispatchToProps

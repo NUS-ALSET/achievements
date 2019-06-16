@@ -119,9 +119,10 @@ export const journeyAddActivitiesRequest = (journeyId, activities) => ({
 });
 
 export const JOURNEY_ADD_ACTIVITIES_SUCCESS = "JOURNEY_ADD_ACTIVITIES_SUCCESS";
-export const journeyAddActivitiesSuccess = journeyId => ({
+export const journeyAddActivitiesSuccess = (journeyId, activities) => ({
   type: JOURNEY_ADD_ACTIVITIES_SUCCESS,
-  journeyId
+  journeyId,
+  activities
 });
 
 export const JOURNEY_ADD_ACTIVITIES_FAIL = "JOURNEY_ADD_ACTIVITIES_FAIL";
