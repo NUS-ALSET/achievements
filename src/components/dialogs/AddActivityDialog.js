@@ -38,10 +38,14 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-
+import Grid from "@material-ui/core/Grid";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CloudDownload from "@material-ui/icons/CloudDownload";
 import LinkIcon from "@material-ui/icons/Link";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import CheckIcon from "@material-ui/icons/Check";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Fab from "@material-ui/core/Fab";
 
 import { GameActivity, TournamentActivity } from "../AddActivitiesForm/";
 
@@ -565,6 +569,77 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
               type="number"
             />
+            <Typography gutterBottom style={{ marginTop: 30 }} variant="body2">
+              Step 4:(optional) Submit public data file
+            </Typography>
+            <Grid container spacing={8}>
+              <Grid item xs={4}>
+                <input
+                  style={{ display: "none" }}
+                  id="raised-button-file-public"
+                  type="file"
+                  onChange={this.handlePublicUpload}
+                />
+                <label htmlFor="raised-button-file-public">
+                  <Button variant="contained" component="span" color="default">
+                    Upload Public Data
+                    <CloudUploadIcon />
+                  </Button>
+                </label>
+              </Grid>
+              <Grid
+                item
+                xs={6}
+                style={{
+                  color: "green",
+                  display: "flex",
+                  alignItems: "center",
+                  visibility: this.state.files ? "visible" : "hidden"
+                }}
+              >
+                <CheckIcon />
+                {this.state.files && this.state.files.name}
+                &nbsp;&nbsp;
+                <Fab
+                  size="small"
+                  style={{ marginLeft: "5px" }}
+                  aria-label="Delete"
+                  onClick={this.onDelete}
+                >
+                  <DeleteIcon />
+                </Fab>
+              </Grid>
+              {/* <Grid
+                item
+                xs={3}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  visibility: this.state.files ? "visible" : "hidden"
+                }}
+              >
+                <IconButton aria-label="Delete" onClick={this.onDelete}>
+                  <DeleteIcon />
+                </IconButton>
+              </Grid> */}
+            </Grid>
+            {/* <Grid container spacing={8}>
+              <Grid item xs={6}>
+                <input
+                  style={{ display: "none" }}
+                  id="raised-button-file-private"
+                  multiple
+                  type="file"
+                  onChange={this.handlePrivateUpload}
+                />
+                <label htmlFor="raised-button-file-private">
+                  <Button variant="contained" component="span">
+                    Upload Private Data
+                  </Button>
+                </label>
+              </Grid>
+            </Grid> */}
           </Fragment>
         );
       case ACTIVITY_TYPES.jupyterLocal.id:
@@ -856,6 +931,26 @@ class AddActivityDialog extends React.PureComponent {
     this.props.fetchGithubFiles(this.state.githubURL);
   };
 
+  handlePublicUpload = ({ target }) => {
+    const currentFile = target.files[0];
+    let FileSize = currentFile.size / 1024 / 1024; // in MB
+    if (FileSize > 1) {
+      alert("File size exceeds 1 MB");
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(currentFile);
+    fileReader.onload = e => {
+      let fileInfo = {
+        name: currentFile.name,
+        content: btoa(e.target.result)
+      };
+      this.setState(() => ({
+        files: { ...fileInfo }
+      }));
+    };
+  };
+
   isIncorrect = () => {
     const { activity } = this.props;
     if (
@@ -877,6 +972,9 @@ class AddActivityDialog extends React.PureComponent {
         !(this.state.files && this.state.files.length > 0))
     );
   };
+
+  //TODO : Delete file -> Commit -> Should delete file from problem
+  onDelete = () => this.setState({ files: undefined });
 
   onPathChange = e =>
     this.setState({
