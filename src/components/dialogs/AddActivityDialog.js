@@ -38,7 +38,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
-
+import Grid from "@material-ui/core/Grid";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CloudDownload from "@material-ui/icons/CloudDownload";
 import LinkIcon from "@material-ui/icons/Link";
@@ -565,6 +565,38 @@ class AddActivityDialog extends React.PureComponent {
               onChange={e => this.onFieldChange("code", Number(e.target.value))}
               type="number"
             />
+            <Typography gutterBottom style={{ marginTop: 30 }} variant="body2">
+              Step 4:(optional) Submit public data file
+            </Typography>
+            <Grid container spacing={8}>
+              <Grid item xs={6}>
+                <input
+                  style={{ display: "none" }}
+                  id="raised-button-file-public"
+                  type="file"
+                  onChange={this.handlePublicUpload}
+                />
+                <label htmlFor="raised-button-file-public">
+                  <Button variant="contained" component="span">
+                    Upload Public Data
+                  </Button>
+                </label>
+              </Grid>
+              <Grid item xs={6}>
+                {/* <input
+                  style={{ display: "none" }}
+                  id="raised-button-file-private"
+                  multiple
+                  type="file"
+                  onChange={this.handlePrivateUpload}
+                />
+                <label htmlFor="raised-button-file-private">
+                  <Button variant="contained" component="span">
+                    Upload Private Data
+                  </Button>
+                </label> */}
+              </Grid>
+            </Grid>
           </Fragment>
         );
       case ACTIVITY_TYPES.jupyterLocal.id:
@@ -854,6 +886,21 @@ class AddActivityDialog extends React.PureComponent {
     this.fetchedGithubURL = "";
     this.setState({ files: [] });
     this.props.fetchGithubFiles(this.state.githubURL);
+  };
+
+  handlePublicUpload = ({ target }) => {
+    const currentFile = target.files[0];
+    const fileReader = new FileReader();
+    fileReader.readAsBinaryString(currentFile);
+    fileReader.onload = e => {
+      let fileInfo = {
+        name: currentFile.name,
+        content: btoa(e.target.result)
+      };
+      this.setState(() => ({
+        files: { ...fileInfo }
+      }));
+    };
   };
 
   isIncorrect = () => {

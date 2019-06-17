@@ -12,6 +12,13 @@ const executeJupyterSolution = (data, taskKey, owner, triggerName) => {
     delete logged_data.solution;
   }
   logged_data["triggerType"] = triggerName;
+  let lambdaReqData = { notebook: JSON.parse(data.solution) };
+  if (data.files) {
+    let file = JSON.parse(data.files);
+    lambdaReqData.files = {
+      [file.name]: file.content
+    };
+  }
   return Promise.all([
     admin
       .database()
@@ -42,7 +49,7 @@ const executeJupyterSolution = (data, taskKey, owner, triggerName) => {
       axios({
         url: lambdaProcessor || jupyterLambdaProcessor,
         method: "post",
-        data: { notebook: JSON.parse(data.solution) }
+        data: lambdaReqData
       })
     )
     .then(response =>

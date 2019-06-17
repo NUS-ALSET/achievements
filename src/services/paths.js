@@ -548,6 +548,7 @@ export class PathsService {
     let next;
     let solutionURL = null;
     let problemURL = null;
+    let uploadedFiles = undefined;
 
     this.validateProblem(problemInfo);
     if (
@@ -557,6 +558,7 @@ export class PathsService {
     ) {
       solutionURL = problemInfo.solutionURL;
       problemURL = problemInfo.problemURL;
+      uploadedFiles = problemInfo.files;
       delete problemInfo.solutionURL;
     }
     problemInfo.owner = uid;
@@ -620,7 +622,14 @@ export class PathsService {
         if (problemURL) {
           this.fetchNotebookFiles(solutionURL, uid).then(
             json => {
-              this.saveJupyterProblemToFirebase({ json, key, info });
+              uploadedFiles && !uploadedFiles.isEmpty
+                ? this.saveJupyterProblemToFirebase({
+                    json,
+                    key,
+                    info,
+                    uploadedFiles
+                  })
+                : this.saveJupyterProblemToFirebase({ json, key, info });
             },
             err => console.error(err.message)
           );
@@ -649,11 +658,21 @@ export class PathsService {
     ) {
       const ref = firebase.database().ref(`/activityData/${data.key}`);
       const { path, owner } = data.info;
-      ref.set({
-        problemData: JSON.stringify(data.json),
-        path,
-        owner
-      });
+      // If JupyterNotebook has uploaded files, store it along with the problem data
+      if (data.uploadedFiles) {
+        ref.set({
+          problemData: JSON.stringify(data.json),
+          path,
+          owner,
+          files: data.uploadedFiles
+        });
+      } else {
+        ref.set({
+          problemData: JSON.stringify(data.json),
+          path,
+          owner
+        });
+      }
     }
   }
 
@@ -757,7 +776,6 @@ export class PathsService {
                 .database()
                 .ref(answerPath)
                 .push().key;
-
               firebase
                 .database()
                 .ref(`${answerPath}${answerKey}`)
@@ -765,7 +783,6 @@ export class PathsService {
                   if (response.val() === null) {
                     return;
                   }
-
                   firebase
                     .database()
                     .ref(`${answerPath}${answerKey}`)
@@ -783,17 +800,22 @@ export class PathsService {
                           )
                     );
                 });
-
+              let jupyterSolQueueTaskData = {
+                owner: uid,
+                taskKey: answerKey,
+                problem: pathProblem.problemId,
+                solution: JSON.stringify(json),
+                open: pathProblem.openTime
+              };
+              if (pathProblem.files) {
+                jupyterSolQueueTaskData.files = JSON.stringify(
+                  pathProblem.files
+                );
+              }
               return firebase
                 .database()
                 .ref(`/jupyterSolutionsQueue/tasks/${answerKey}`)
-                .set({
-                  owner: uid,
-                  taskKey: answerKey,
-                  problem: pathProblem.problemId,
-                  solution: JSON.stringify(json),
-                  open: pathProblem.openTime
-                });
+                .set(jupyterSolQueueTaskData);
             });
           }
           break;
