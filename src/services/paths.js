@@ -448,7 +448,7 @@ export class PathsService {
 
   validateProblem(problemInfo) {
     if (!problemInfo) throw new Error("Missing activity");
-    if (problemInfo.id) return;
+    //if (problemInfo.id) return;
     if (!problemInfo.name) throw new Error("Missing activity name");
     if (!problemInfo.type) throw new Error("Missing activity type");
     switch (problemInfo.type) {
@@ -494,8 +494,7 @@ export class PathsService {
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.jupyterInline.id:
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
-        if (!problemInfo.solutionURL && !problemInfo.id)
-          throw new Error("Missing solutionURL");
+        if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
         if (!problemInfo.frozen) throw new Error("Missing frozen field");
         if (problemInfo.type === "jupyterInline" && !problemInfo.code)
           throw new Error("Missing code field");
