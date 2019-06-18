@@ -67,9 +67,13 @@ class AddJestSolutionDialog extends React.PureComponent {
     editMode: false
   };
 
-  componentDidMount(){
+  componentDidMount() {
     // eslint-disable-next-line no-unused-expressions
-    this.props.setProblemOpenTime && this.props.setProblemOpenTime((this.props.problem || {}).problemId, (new Date()).getTime());
+    this.props.setProblemOpenTime &&
+      this.props.setProblemOpenTime(
+        (this.props.problem || {}).problemId,
+        new Date().getTime()
+      );
   }
 
   onChangeSolution = event => {
@@ -102,13 +106,13 @@ class AddJestSolutionDialog extends React.PureComponent {
 
   handleEdit = () => {
     this.setState({ editMode: true });
-  }
+  };
 
   handleSave = () => {
-    this.setState({ editMode: false })
+    this.setState({ editMode: false });
     const files = this.jestRunner.current.state.files;
     this.props.onSaveProblem(this.props.problem, files);
-  }
+  };
 
   handleFileChange = name => event => {
     this.setState({ [name]: event.target.value });
@@ -116,9 +120,8 @@ class AddJestSolutionDialog extends React.PureComponent {
 
   addFile = () => {
     this.props.addNewFile(this.state.name);
-    this.setState({ name: "" })
-  }
-
+    this.setState({ name: "" });
+  };
 
   render() {
     const {
@@ -159,48 +162,57 @@ class AddJestSolutionDialog extends React.PureComponent {
               <Typography color="inherit" variant="h6">
                 {/* ALSET Editor */}
               </Typography>
-              {
-                isOwner && this.state.editMode &&
-                  <div >
-                    <TextField
-                      className={classes.textField}
-                      id="standard-name"
-                      margin="normal"
-                      onChange={this.handleFileChange("name")}
-                      placeholder="File Name"
-                      style={{ backgroundColor: "#fff", borderRadius : "4px", padding : "4px 10px"}}
-                      value={this.state.name || ""}
-                    />
-                    <Button
-                      className={classes.button}
-                      color="default"
-                      disabled={this.state.name === "" || !this.state.name}
-                      onClick={this.addFile}
-                      style={{margin: "18px 20px 15px 20px"}}
-                      variant="contained"
-                    >
-                      ADD
-                    </Button>
-                  </div>
-              }
-              {
-                isOwner &&
-                <>
+              {isOwner && this.state.editMode && (
+                <div>
+                  <TextField
+                    className={classes.textField}
+                    id="standard-name"
+                    margin="normal"
+                    onChange={this.handleFileChange("name")}
+                    placeholder="File Name"
+                    style={{
+                      backgroundColor: "#fff",
+                      borderRadius: "4px",
+                      padding: "4px 10px"
+                    }}
+                    value={this.state.name || ""}
+                  />
                   <Button
                     className={classes.button}
                     color="default"
-                    onClick={this.state.editMode ? this.handleSave : this.handleEdit}
-                    style={{marginRight: "20px"}}
+                    disabled={this.state.name === "" || !this.state.name}
+                    onClick={this.addFile}
+                    style={{ margin: "18px 20px 15px 20px" }}
+                    variant="contained"
+                  >
+                    ADD
+                  </Button>
+                </div>
+              )}
+              {isOwner && (
+                <div>
+                  <Button
+                    className={classes.button}
+                    color="default"
+                    onClick={
+                      this.state.editMode ? this.handleSave : this.handleEdit
+                    }
+                    style={{ marginRight: "20px" }}
                     variant="contained"
                   >
                     {this.state.editMode ? "SAVE" : "EDIT PROBLEM"}
                   </Button>
-                  {this.state.editMode &&
-                    <span onClick={() => this.setState({ editMode: false })} style={{ margin: "0 15px 0 0", cursor: "pointer"}}><Cancel /></span>
-                  }
-                </>
-              }
-              
+                  {this.state.editMode && (
+                    <span
+                      onClick={() => this.setState({ editMode: false })}
+                      style={{ margin: "0 15px 0 0", cursor: "pointer" }}
+                    >
+                      <Cancel />
+                    </span>
+                  )}
+                </div>
+              )}
+
               {problem && (
                 <Tooltip title="Open in Codesandbox">
                   <a
@@ -223,7 +235,6 @@ class AddJestSolutionDialog extends React.PureComponent {
                   </a>
                 </Tooltip>
               )}
-              
             </Toolbar>
           </AppBar>
           {open && problem && (
