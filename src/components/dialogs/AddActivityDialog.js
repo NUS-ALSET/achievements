@@ -589,7 +589,7 @@ class AddActivityDialog extends React.PureComponent {
               </Grid>
               <Grid
                 item
-                xs={6}
+                xs={8}
                 style={{
                   color: "green",
                   display: "flex",
@@ -609,37 +609,7 @@ class AddActivityDialog extends React.PureComponent {
                   <DeleteIcon />
                 </Fab>
               </Grid>
-              {/* <Grid
-                item
-                xs={3}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  visibility: this.state.files ? "visible" : "hidden"
-                }}
-              >
-                <IconButton aria-label="Delete" onClick={this.onDelete}>
-                  <DeleteIcon />
-                </IconButton>
-              </Grid> */}
             </Grid>
-            {/* <Grid container spacing={8}>
-              <Grid item xs={6}>
-                <input
-                  style={{ display: "none" }}
-                  id="raised-button-file-private"
-                  multiple
-                  type="file"
-                  onChange={this.handlePrivateUpload}
-                />
-                <label htmlFor="raised-button-file-private">
-                  <Button variant="contained" component="span">
-                    Upload Private Data
-                  </Button>
-                </label>
-              </Grid>
-            </Grid> */}
           </Fragment>
         );
       case ACTIVITY_TYPES.jupyterLocal.id:
@@ -934,8 +904,10 @@ class AddActivityDialog extends React.PureComponent {
   handlePublicUpload = ({ target }) => {
     const currentFile = target.files[0];
     let FileSize = currentFile.size / 1024 / 1024; // in MB
-    if (FileSize > 1) {
-      alert("File size exceeds 1 MB");
+    if (FileSize > APP_SETTING.JUPYTER_FILE_UPLOAD_LIMIT) {
+      alert(
+        "File size exceeds " + APP_SETTING.JUPYTER_FILE_UPLOAD_LIMIT + " MB"
+      );
       return;
     }
     const fileReader = new FileReader();
@@ -974,7 +946,9 @@ class AddActivityDialog extends React.PureComponent {
   };
 
   //TODO : Delete file -> Commit -> Should delete file from problem
-  onDelete = () => this.setState({ files: undefined });
+  onDelete = () => {
+    this.setState({ files: undefined });
+  };
 
   onPathChange = e =>
     this.setState({

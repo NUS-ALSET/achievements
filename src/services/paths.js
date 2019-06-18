@@ -659,20 +659,12 @@ export class PathsService {
       const ref = firebase.database().ref(`/activityData/${data.key}`);
       const { path, owner } = data.info;
       // If JupyterNotebook has uploaded files, store it along with the problem data
-      if (data.uploadedFiles) {
-        ref.set({
-          problemData: JSON.stringify(data.json),
-          path,
-          owner,
-          files: data.uploadedFiles
-        });
-      } else {
-        ref.set({
-          problemData: JSON.stringify(data.json),
-          path,
-          owner
-        });
-      }
+      ref.set({
+        problemData: JSON.stringify(data.json),
+        path,
+        owner,
+        files: data.uploadedFiles || {}
+      });
     }
   }
 
