@@ -157,11 +157,6 @@ class AddActivityDialog extends React.PureComponent {
         };
         this.fetchedGithubURL = nextProps.activity.githubURL || "";
       }
-      console.log(
-        "Next Props : ",
-        nextProps.activity.files && nextProps.activity.files.name
-      );
-      console.log("State : ", state.files && state.files.name);
       this.setState({
         ...nextProps.activity,
         ...state

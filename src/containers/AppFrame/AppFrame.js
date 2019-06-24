@@ -41,6 +41,7 @@ import Task from "../Task/Task";
 import Tasks from "../Tasks/Tasks";
 import CustomActivity from "../CustomActivity/CustomActivity";
 import Journeys from "../Journeys/Journeys";
+import CustomAnalysis from "../CustomAnalysis/CustomAnalysis";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -160,7 +161,7 @@ class AppFrame extends React.Component {
     dynamicPathTitle: PropTypes.string
   };
 
-  getPromoCode(){
+  getPromoCode() {
     const url = window.location.href;
     const firstEl = url.split("/#/")[0];
     if (firstEl.includes("?")) {
@@ -170,16 +171,16 @@ class AppFrame extends React.Component {
     return null;
   }
 
-  saveRoutesChange=(pathName)=>{
-      this.props.dispatch(routeChanged(pathName))
-  }
+  saveRoutesChange = pathName => {
+    this.props.dispatch(routeChanged(pathName));
+  };
 
   componentDidMount() {
     this.props.dispatch(
       getDynamicPathtitle(this.props.history.location.pathname)
     );
     const promoCode = this.getPromoCode();
-    if (promoCode){
+    if (promoCode) {
       this.props.dispatch(savePromoCode(promoCode));
     }
   }
@@ -378,6 +379,11 @@ class AppFrame extends React.Component {
                   path="/customactivity"
                 />
                 <Route component={Journeys} exact path="/journeys" />
+                <Route
+                  component={CustomAnalysis}
+                  exact
+                  path="/customAnalysis"
+                />
                 <Route component={MockJourneys} exact path="/mock-journeys" />
                 <Route
                   render={routeProps => (
