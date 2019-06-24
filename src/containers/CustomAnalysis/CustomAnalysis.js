@@ -88,9 +88,9 @@ class CustomAnalysis extends React.PureComponent {
   }
 
   static propTypes = {
-    classes: PropTypes.object,
-    myPaths: PropTypes.object,
-    myCourses: PropTypes.any
+    classes: PropTypes.object
+    // myPaths: PropTypes.object,
+    // myCourses: PropTypes.any
   };
 
   state = {
