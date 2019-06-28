@@ -13,6 +13,11 @@ const AceEditor = Loadable({
   loading: () => <LinearProgress />
 });
 
+const NotebookPreview = Loadable({
+  loader: () => import("@nteract/notebook-preview"),
+  loading: () => <LinearProgress />
+});
+
 const styles = {
   iframeStyle: {
     width: "100%"
@@ -70,14 +75,12 @@ export class CustomTaskResponseForm extends React.PureComponent {
             readOnly={true}
             setOptions={{ showLineNumbers: false }}
             theme="github"
-            value={JSON.stringify(
-              JSON.parse(taskInfo.response.data[tabIndex]),
-              null,
-              "  "
-            )}
+            value={JSON.stringify(taskInfo.response.data[tabIndex], null, "  ")}
             width={"100%"}
           />
         );
+      case "ipynbFeedback":
+        return <NotebookPreview notebook={taskInfo.response.data[tabIndex]} />;
       default:
         return taskInfo.response.data[tabIndex];
     }
@@ -94,6 +97,7 @@ export class CustomTaskResponseForm extends React.PureComponent {
           <Tab label="HTML" value="htmlFeedback" />
           <Tab label="JSON" value="jsonFeedback" />
           <Tab label="Text" value="textFeedback" />
+          <Tab label="ipynb" value="ipynbFeedback" />
         </Tabs>
         <iframe
           hidden={tabIndex !== "htmlFeedback"}
