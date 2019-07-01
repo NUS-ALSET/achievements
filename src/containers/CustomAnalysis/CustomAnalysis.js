@@ -455,7 +455,7 @@ const mapDispatchToProps = {
 
 export default compose(
   withStyles(styles),
-  firestoreConnect(store => {
+  firestoreConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;
     return firebaseAuth.isEmpty
       ? []
@@ -467,7 +467,7 @@ export default compose(
           }
         ];
   }),
-  firebaseConnect(store => {
+  firebaseConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;
     return firebaseAuth.isEmpty
       ? []
