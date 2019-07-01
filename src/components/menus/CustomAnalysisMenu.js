@@ -7,6 +7,8 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 
+import isEmpty from "lodash/isEmpty";
+
 // Import MaterialUI components
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -24,16 +26,18 @@ class CustomAnalysisMenu extends React.PureComponent {
   };
   state = {
     anchorEl: null,
-    selectedIndex: 0
+    selectedIndex: 0,
+    selectedName: ""
   };
 
   handleClickListItem = event => {
     this.setAnchorEl(event.currentTarget);
   };
 
-  handleMenuItemClick = (event, index, optionsToDisplay) => {
+  handleMenuItemClick = (event, index, option) => {
     this.setSelectedIndex(index);
-    this.props.listHandler(this.props.listType, optionsToDisplay[index]);
+    this.setSelectedName(option.name);
+    this.props.listHandler(this.props.listType, option);
     this.setAnchorEl(null);
   };
 
@@ -48,20 +52,48 @@ class CustomAnalysisMenu extends React.PureComponent {
   setSelectedIndex = index => {
     this.setState({ selectedIndex: index });
   };
+  setSelectedName = name => {
+    this.setState({ selectedName: name });
+  };
 
   render() {
-    const { classes, type, listType, optionsToDisplay } = this.props;
+    const { classes, type, listType, menuContent } = this.props;
     let textToDisplay = "";
+    let option = "";
+    let optionsToDisplay = [];
 
     switch (listType) {
       case "Type":
         textToDisplay = type;
+        if (menuContent && !isEmpty(menuContent)) {
+          Object.keys(menuContent).forEach(customAnalysisKey => {
+            option = Object.assign(
+              {
+                id: customAnalysisKey
+              },
+              menuContent[customAnalysisKey]
+            );
+            optionsToDisplay.push(option);
+          });
+        }
         break;
       case "Activity":
         textToDisplay = type === "Path" ? "Activity" : "Assignment";
+        optionsToDisplay = menuContent;
         break;
       case "Analysis":
         textToDisplay = "Analysis";
+        if (menuContent && !isEmpty(menuContent)) {
+          Object.keys(menuContent).forEach(customAnalysisKey => {
+            option = Object.assign(
+              {
+                id: customAnalysisKey
+              },
+              menuContent[customAnalysisKey]
+            );
+            optionsToDisplay.push(option);
+          });
+        }
         break;
       default:
         return <div>Unsupported List Type</div>;
@@ -79,7 +111,7 @@ class CustomAnalysisMenu extends React.PureComponent {
             >
               <ListItemText
                 primary={textToDisplay}
-                secondary={optionsToDisplay[this.state.selectedIndex]}
+                secondary={this.state.selectedName}
               />
             </ListItem>
           </List>
@@ -93,13 +125,13 @@ class CustomAnalysisMenu extends React.PureComponent {
               //TODO : index can go out of range is type switched. Handle this case.
               //
               <MenuItem
-                key={option}
+                key={index}
                 selected={index === this.state.selectedIndex}
                 onClick={event =>
-                  this.handleMenuItemClick(event, index, optionsToDisplay)
+                  this.handleMenuItemClick(event, index, option)
                 }
               >
-                {option}
+                {(option && option.name) || ""}
               </MenuItem>
             ))}
           </Menu>

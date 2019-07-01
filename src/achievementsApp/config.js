@@ -7,6 +7,9 @@ import "firebase/auth";
 // Import Firebase Realtime Database (optional)
 import "firebase/database";
 
+// Import Firestore Database
+import "firebase/firestore";
+
 // Import Firebase Functions (optional)
 import "firebase/functions";
 
@@ -44,4 +47,8 @@ const config = {
 };
 
 firebase.initializeApp(config);
+
+// initialize Firestore
+firebase.firestore();
+
 export const firebaseConfig = firebase;

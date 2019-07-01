@@ -17,7 +17,8 @@
         messagingSenderId: "479020625755"
       };
     firebase.initializeApp(config);
-    
+    // initialize Firestore
+    firebase.firestore()
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
         // User is signed in.

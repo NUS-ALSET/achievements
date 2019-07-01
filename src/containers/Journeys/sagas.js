@@ -1,4 +1,4 @@
-import { takeLatest } from "redux-saga";
+import { takeLatest } from "redux-saga/effects";
 import {
   JOURNEY_UPSERT_REQUEST,
   journeyUpsertFail,
