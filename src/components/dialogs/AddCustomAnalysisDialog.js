@@ -26,7 +26,8 @@ import Typography from "@material-ui/core/Typography";
 
 class AddCustomAnalysisDialog extends React.PureComponent {
   static propTypes = {
-    classes: PropTypes.object
+    classes: PropTypes.object,
+    addCustomAnalysisHandler: PropTypes.func
   };
   state = {
     open: false,
@@ -42,10 +43,8 @@ class AddCustomAnalysisDialog extends React.PureComponent {
   setOpen = open => this.setState({ open: open });
 
   handleCommit = () => {
-    console.log(
-      "Write the values to firebase. URL : ",
+    this.props.addCustomAnalysisHandler(
       this.state.analysisURL,
-      " name : ",
       this.state.name
     );
     this.handleClose();

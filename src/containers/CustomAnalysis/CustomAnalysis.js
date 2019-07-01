@@ -9,8 +9,17 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { firebaseConnect } from "react-redux-firebase";
-//import { sagaInjector } from "../../services/saga";
+import { firebaseConnect, firestoreConnect } from "react-redux-firebase";
+
+import { sagaInjector } from "../../services/saga";
+import sagas from "./sagas";
+import {
+  ANALYSE_FAIL,
+  ANALYSE_SUCCESS,
+  customAnalysisOpen,
+  addCustomAnalysisRequest,
+  analyseRequest
+} from "./actions";
 
 // Import components
 import CustomAnalysisMenu from "../../components/menus/CustomAnalysisMenu";
@@ -28,6 +37,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const styles = theme => ({
   activitySelection: {
@@ -52,87 +62,234 @@ const styles = theme => ({
   }
 });
 
-//DONE
-const pathOptions = ["Python Basics", "Path 2", "Path 3"];
-const courseOptions = ["BT3103", "Course 2", "Course 3"];
-
-//TODO
-const activityOptions = ["Python Dictionary", "Activity 2", "Activity 3"];
-const assignmentOptions = [
-  "Submit your Lambda URL",
-  "Assignment 2",
-  "Assignment 3"
-];
-const analysisOptions = ["Default", "My new analysis"];
+/**
+ * Things to do -
+ * 1. [DONE] Iterate through the options you've created
+ * 2. Disable options
+ * 3. Clear to clear all fields
+ * 4. [VERIFY] Handle empty cases
+ * 5. [DONE] Store analysis data from dialog
+ * 6. [DONE] Update activities/assignments when path/course option changes
+ * 7. Reset state and clear fields when someone toggles between path and course
+ * 8. [DONE] Change custom activity to expect json as jsonFeedback and then change your lambda
+ * 9. Read the analyse chart from firestore and display as last updated at
+ * 10. [DONE] Pass dummy solutions and display analysis
+ * 11. [DONE] Display ipnb feedback
+ * 12. [DONE] Move the service function to firebase functions
+ */
 
 class CustomAnalysis extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.listHandler = this.listHandler.bind(this);
-  }
-  listHandler(key, val) {
-    switch (key) {
-      case "Type":
-        this.setState({ ...this.state, typeID: val });
-        break;
-      case "Activity":
-        this.setState({ ...this.state, activityID: val });
-        break;
-      case "Analysis":
-        this.setState({ ...this.state, analysisID: val });
-        break;
-      default:
-        break;
-    }
-  }
-
   static propTypes = {
-    classes: PropTypes.object
-    // myPaths: PropTypes.object,
-    // myCourses: PropTypes.any
+    classes: PropTypes.object,
+    addCustomActivity: PropTypes.func,
+    onAnalyse: PropTypes.func,
+    onOpen: PropTypes.func,
+    // uid: PropTypes.string,
+    myPaths: PropTypes.object,
+    myCourses: PropTypes.any,
+    myActivities: PropTypes.any,
+    myAssignments: PropTypes.any,
+    myAnalysis: PropTypes.object,
+    dialog: PropTypes.string,
+    analysisResults: PropTypes.object
+    // solutionsSelected: PropTypes.array
   };
 
   state = {
     type: "Path",
-    typeID: "",
+    pathID: "",
+    courseID: "",
     activityID: "",
+    assignmentID: "",
     analysisID: "",
+    activityOptions: [],
     displayResponse: false
   };
 
+  constructor(props) {
+    super(props);
+
+    this.listHandler = this.listHandler.bind(this);
+    this.addCustomAnalysisHandler = this.addCustomAnalysisHandler.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.onOpen();
+  }
+
+  listHandler(listType, listValue) {
+    let data;
+    switch (listType) {
+      case "Type":
+        data =
+          this.state.type === "Path"
+            ? {
+                pathID: listValue.id,
+                courseID: ""
+              }
+            : {
+                pathID: "",
+                courseID: listValue.id
+              };
+        break;
+      case "Activity":
+        data =
+          this.state.type === "Path"
+            ? {
+                activityID: listValue.id,
+                assignmentID: ""
+              }
+            : {
+                activityID: "",
+                assignmentID: listValue.id
+              };
+        break;
+      case "Analysis":
+        data = { analysisID: listValue.id };
+        break;
+      default:
+        break;
+    }
+    this.setState({ ...this.state, ...data }, () =>
+      this.setActivityOptions(this.calcActivityOptions())
+    );
+  }
+
+  addCustomAnalysisHandler(url, name) {
+    this.props.addCustomActivity(url, name);
+  }
+
   handleChange = event => {
+    this.resetState();
     this.setType(event.target.value);
+  };
+
+  handleSubmit = () => {
+    this.setState({ ...this.state, displayResponse: true });
+    switch (this.state.type) {
+      case "Path":
+        this.props.onAnalyse(
+          this.state.type,
+          this.state.pathID,
+          this.state.activityID,
+          this.state.analysisID
+        );
+        break;
+      case "Course":
+        this.props.onAnalyse(
+          this.state.type,
+          this.state.courseID,
+          this.state.assignmentID,
+          this.state.analysisID
+        );
+        break;
+      default:
+        break;
+    }
+  };
+  handleClear = () => {
+    this.resetState();
   };
 
   setType = type => {
     this.setState({ ...this.state, type: type });
   };
 
-  handleSubmit = () => {
-    this.setState({ ...this.state, displayResponse: true });
-    console.log("Submitted");
-  };
-  handleClear = () => {
-    this.setState({ ...this.state, displayResponse: false });
+  setActivityOptions = options => {
+    this.setState({ ...this.state, activityOptions: options });
   };
 
-  getTaskInfo = () => ({
-    response: {
-      data: {
-        isComplete: false,
-        jsonFeedback:
-          '{  "results": [    {      "correct": "True",      "score": "40",      "text": "Machine Learning"    },    {      "correct": "True",      "score": "30",      "text": "Artificial Intelligence"    },    {      "correct": "True",      "score": "20",      "text": "Data Structure"    },    {      "correct": "True",      "score": "10",      "text": "Web Development"    } ]}',
-        htmlFeedback:
-          '<!DOCTYPE html><html><head><style>#customers {  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;  border-collapse: collapse;  width: 100%;}#customers td, #customers th {  border: 1px solid #ddd;  padding: 8px;}#customers tr:nth-child(even){background-color: #f2f2f2;}#customers tr:hover {background-color: #ddd;}#customers th {  padding-top: 12px;  padding-bottom: 12px;  text-align: left;  background-color: #4CAF50;  color: white;}</style></head><body><h1>Analysis of Text Solutions : </h1><br/><h3>Which topic did you find most challenging ? </h3><br/><table id="customers">  <tr>    <th>Score</th>    <th>Topic</th>  </tr>  <tr>    <td>30</td>    <td>Machine Learning</td>  </tr>  <tr>    <td>40</td>    <td>Artificial Intelligence</td>  </tr>  <tr>    <td>20</td>    <td>Data Structures</td>  </tr>  <tr>    <td>10</td>    <td>Web Development</td>  </tr></table></body></html>',
-        textFeedback:
-          "All tests passed: True\n\n40% of the students found Machine Learning topic to be challenging.\n\n30% of the students found Artificial Intelligence topic to be challenging.\n\n20% of the students found Data Structures topic to be challenging.\n\n10% of the students found Web Development topic to be challenging.\n\n"
+  getTaskInfo = (dialog, analysisResults) => {
+    if (dialog === ANALYSE_SUCCESS && analysisResults) {
+      let results = analysisResults.results
+        ? analysisResults.results
+        : analysisResults.result;
+      let data = {
+        response: {
+          data: {
+            isComplete: results.isComplete,
+            jsonFeedback: results.jsonFeedback,
+            htmlFeedback: results.htmlFeedback,
+            textFeedback: results.textFeedback,
+            ipynbFeedback: analysisResults.ipynb
+          }
+        }
+      };
+      return data;
+    } else if (dialog === ANALYSE_FAIL && analysisResults) {
+      return {
+        response: {
+          data: {
+            isComplete: false,
+            jsonFeedback: "",
+            htmlFeedback: JSON.stringify(analysisResults),
+            textFeedback: ""
+          }
+        }
+      };
+    } else {
+      return {
+        response: {
+          data: {
+            isComplete: false,
+            jsonFeedback: "",
+            htmlFeedback: "",
+            textFeedback: ""
+          }
+        }
+      };
+    }
+  };
+
+  resetState = () => {
+    this.setState({
+      ...this.state,
+      type: "Path",
+      pathID: "",
+      courseID: "",
+      activityID: "",
+      assignmentID: "",
+      analysisID: "",
+      activityOptions: [],
+      displayResponse: false
+    });
+  };
+
+  calcActivityOptions = () => {
+    if (this.state.type === "Path") {
+      if (this.state.pathID) {
+        for (let key in this.props.myActivities) {
+          if (this.state.pathID === this.props.myActivities[key].id) {
+            return this.props.myActivities[key].activities;
+          }
+        }
+        return [];
+      } else {
+        return [];
+      }
+    } else {
+      if (this.state.courseID) {
+        for (let key in this.props.myAssignments) {
+          if (this.state.courseID === this.props.myAssignments[key].id) {
+            return this.props.myAssignments[key].assignments;
+          }
+        }
+        return [];
+      } else {
+        return [];
       }
     }
-  });
+  };
 
   render() {
-    const { classes } = this.props;
+    const {
+      classes,
+      myPaths,
+      myCourses,
+      //myActivities,
+      //myAssignments,
+      myAnalysis
+    } = this.props;
     return (
       <div>
         <Table className={classes.table} size="small">
@@ -207,9 +364,7 @@ class CustomAnalysis extends React.PureComponent {
                   listHandler={this.listHandler}
                   type={this.state.type}
                   listType={"Type"}
-                  optionsToDisplay={
-                    this.state.type === "Path" ? pathOptions : courseOptions
-                  }
+                  menuContent={this.state.type === "Path" ? myPaths : myCourses}
                 />
               </TableCell>
               <TableCell align="right">
@@ -218,11 +373,7 @@ class CustomAnalysis extends React.PureComponent {
                   listHandler={this.listHandler}
                   type={this.state.type}
                   listType={"Activity"}
-                  optionsToDisplay={
-                    this.state.type === "Path"
-                      ? activityOptions
-                      : assignmentOptions
-                  }
+                  menuContent={this.state.activityOptions}
                 />
               </TableCell>
               <TableCell align="right">
@@ -231,11 +382,14 @@ class CustomAnalysis extends React.PureComponent {
                   listHandler={this.listHandler}
                   type={this.state.type}
                   listType={"Analysis"}
-                  optionsToDisplay={analysisOptions}
+                  menuContent={myAnalysis}
                 />
               </TableCell>
               <TableCell align="right">
-                <AddCustomAnalysisDialog classes={classes} />
+                <AddCustomAnalysisDialog
+                  classes={classes}
+                  addCustomAnalysisHandler={this.addCustomAnalysisHandler}
+                />
               </TableCell>
             </TableRow>
           </TableBody>
@@ -250,7 +404,7 @@ class CustomAnalysis extends React.PureComponent {
               onClick={this.handleSubmit}
               variant="contained"
             >
-              ANALYZE
+              ANALYSE
             </Button>
             &nbsp;&nbsp;
             <Button
@@ -263,26 +417,57 @@ class CustomAnalysis extends React.PureComponent {
             </Button>
           </div>
         </div>
-        {this.state.displayResponse && (
-          <CustomTaskResponseForm taskInfo={this.getTaskInfo()} />
-        )}
+        <br />
+        {(this.state.displayResponse &&
+          this.props.dialog !== ANALYSE_SUCCESS &&
+          this.props.dialog !== ANALYSE_FAIL && <LinearProgress />) ||
+          (this.state.displayResponse && (
+            <CustomTaskResponseForm
+              taskInfo={this.getTaskInfo(
+                this.props.dialog,
+                this.props.analysisResults
+              )}
+            />
+          ))}
       </div>
     );
   }
 }
-//sagaInjector.inject(sagas);
+sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
   myPaths: state.firebase.data.myPaths,
-  myCourses: state.firebase.data.myCourses
+  myCourses: state.firebase.data.myCourses,
+  myActivities: state.customAnalysis.myActivities,
+  myAssignments: state.customAnalysis.myAssignments,
+  myAnalysis: state.firestore.data.myAnalysis,
+  dialog: state.customAnalysis.dialog,
+  analysisResults: state.customAnalysis.analysisResults,
+  solutionsSelected: state.customAnalysis.solutionsSelected
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = {
+  onOpen: customAnalysisOpen,
+  addCustomActivity: addCustomAnalysisRequest,
+  onAnalyse: analyseRequest
+};
 
 export default compose(
   withStyles(styles),
-  firebaseConnect((ownProps, store) => {
+  firestoreConnect(store => {
+    const firebaseAuth = store.getState().firebase.auth;
+    return firebaseAuth.isEmpty
+      ? []
+      : [
+          {
+            collection: "customAnalysis",
+            where: [["uid", "==", firebaseAuth.uid]],
+            storeAs: "myAnalysis"
+          }
+        ];
+  }),
+  firebaseConnect(store => {
     const firebaseAuth = store.getState().firebase.auth;
     return firebaseAuth.isEmpty
       ? []
