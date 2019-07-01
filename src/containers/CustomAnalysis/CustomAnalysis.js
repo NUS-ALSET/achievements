@@ -84,16 +84,15 @@ class CustomAnalysis extends React.PureComponent {
     addCustomActivity: PropTypes.func,
     onAnalyse: PropTypes.func,
     onOpen: PropTypes.func,
-    fetchSolutions: PropTypes.func,
-    uid: PropTypes.string,
+    // uid: PropTypes.string,
     myPaths: PropTypes.object,
     myCourses: PropTypes.any,
     myActivities: PropTypes.any,
     myAssignments: PropTypes.any,
     myAnalysis: PropTypes.object,
     dialog: PropTypes.string,
-    analysisResults: PropTypes.object,
-    solutionsSelected: PropTypes.array
+    analysisResults: PropTypes.object
+    // solutionsSelected: PropTypes.array
   };
 
   state = {
@@ -187,8 +186,6 @@ class CustomAnalysis extends React.PureComponent {
       default:
         break;
     }
-
-    //this.props.onAnalyse(this.props.solutionsSelected, this.state.analysisID);
   };
   handleClear = () => {
     this.resetState();
@@ -438,7 +435,7 @@ class CustomAnalysis extends React.PureComponent {
 }
 sagaInjector.inject(sagas);
 
-const mapStateToProps = (state, ownProps) => ({
+const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
   myPaths: state.firebase.data.myPaths,
   myCourses: state.firebase.data.myCourses,
@@ -458,7 +455,7 @@ const mapDispatchToProps = {
 
 export default compose(
   withStyles(styles),
-  firestoreConnect((ownProps, store) => {
+  firestoreConnect(store => {
     const firebaseAuth = store.getState().firebase.auth;
     return firebaseAuth.isEmpty
       ? []
@@ -470,7 +467,7 @@ export default compose(
           }
         ];
   }),
-  firebaseConnect((ownProps, store) => {
+  firebaseConnect(store => {
     const firebaseAuth = store.getState().firebase.auth;
     return firebaseAuth.isEmpty
       ? []

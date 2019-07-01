@@ -22,7 +22,7 @@ class CustomAnalysisMenu extends React.PureComponent {
     type: PropTypes.string,
     listType: PropTypes.string,
     listHandler: PropTypes.func,
-    optionsToDisplay: PropTypes.array
+    menuContent: PropTypes.any
   };
   state = {
     anchorEl: null,
