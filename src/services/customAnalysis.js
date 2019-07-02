@@ -71,7 +71,7 @@ export class CustomAnalysisService {
    * This method returns all solutions for the selected
    * path/course assignment/activity
    *
-   * @param {String} uid user id of path creator
+   * @param {String} uid user id of creator
    *
    * @returns {Object} Object containing all activities created
    */
@@ -189,7 +189,7 @@ export class CustomAnalysisService {
    * 2. Cloud Function :
    *    Custom Analysis type : "cloudFunction"
    *
-   * @param {String} uid user id of course creator
+   * @param {String} uid user id of creator
    * @param {String} customAnalysisUrl Colab URL/ Cloud Function url for analysis
    * @param {String} customAnalysisName Custom Analysis name
    *
@@ -221,9 +221,25 @@ export class CustomAnalysisService {
   }
 
   /**
+   * This method removes the custom activity of the given
+   * custom analysis id and user id
+   *
+   * @param {String} uid user id of creator
+   * @param {String} customAnalysisID customAnalysis ID to be deleted
+   *
+   */
+  async deleteCustomAnalysis(uid, customAnalysisID) {
+    await firebase
+      .firestore()
+      .collection("/customAnalysis")
+      .doc(customAnalysisID)
+      .delete();
+  }
+
+  /**
    * This method stores the Custom Analysis response
    *
-   * @param {String} uid user id of course creator
+   * @param {String} uid user id of creator
    * @param {String} response collection of user solutions to be analysed
    * @param {String} analysisID Custom Analysis ID
    *
@@ -251,7 +267,7 @@ export class CustomAnalysisService {
    * 2. Analysis Type - Cloud Function link:
    *    Call the Cloud function with solutions in the request body
    *
-   * @param {String} uid user id of course creator
+   * @param {String} uid user id of creator
    * @param {Array} solutions collection of user solutions to be analysed
    * @param {String} analysisID Custom Analysis ID
    *

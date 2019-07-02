@@ -66,7 +66,7 @@ function runCustomAnalysis(data, context) {
           console.log("Cloud function being called");
           return runCloudFuncAnalysis(
             data.uid,
-            customAnlysis.url,
+            customAnalysis.url,
             data.solutions,
             data.analysisID
           );
