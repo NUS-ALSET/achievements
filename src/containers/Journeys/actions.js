@@ -73,23 +73,36 @@ export const journeyDeleteConfirmationRequest = id => ({
   id
 });
 
+export const JOURNEY_CHANGES_CANCEL = "JOURNEY_CHANGES_CANCEL";
+export const journeyChangesCancel = journeyId => ({
+  type: JOURNEY_CHANGES_CANCEL,
+  journeyId
+});
+
 export const JOURNEY_UPSERT_REQUEST = "JOURNEY_UPSERT_REQUEST";
-export const journeyUpsertRequest = journeyData => ({
+export const journeyUpsertRequest = journeyId => ({
   type: JOURNEY_UPSERT_REQUEST,
-  journeyData
+  journeyId
 });
 
 export const JOURNEY_UPSERT_FAIL = "JOURNEY_UPSERT_FAIL";
-export const journeyUpsertFail = (journeyData, reason) => ({
+export const journeyUpsertFail = (journeyId, reason) => ({
   type: JOURNEY_UPSERT_FAIL,
-  journeyData,
+  journeyId,
   reason
 });
 
 export const JOURNEY_UPSERT_SUCCESS = "JOURNEY_UPSERT_SUCCESS";
-export const journeyUpsertSuccess = journeyData => ({
+export const journeyUpsertSuccess = journeyId => ({
   type: JOURNEY_UPSERT_SUCCESS,
-  journeyData
+  journeyId
+});
+
+export const JOURNEY_DATA_UPDATE = "JOURNEY_DATA_UPDATE";
+export const journeyDataUpdate = (id, changes) => ({
+  type: JOURNEY_DATA_UPDATE,
+  id,
+  changes
 });
 
 export const JOURNEY_DELETE_REQUEST = "JOURNEY_DELETE_REQUEST";

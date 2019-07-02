@@ -47,17 +47,27 @@ const styles = () => ({
 export class JourneyForm extends React.PureComponent {
   static propTypes = {
     activities: PropTypes.any,
+    changed: PropTypes.bool,
     classes: PropTypes.shape({
       expandIcon: PropTypes.string,
+      expanded: PropTypes.string,
+      content: PropTypes.string,
       summary: PropTypes.string,
-      summaryName: PropTypes.string
+      summaryName: PropTypes.string,
+      summaryNameEdit: PropTypes.string,
+      summaryDescription: PropTypes.string,
+      summaryDescriptionEdit: PropTypes.string
     }),
+    completed: PropTypes.object,
     journey: PropTypes.object.isRequired,
     onAddActivityClick: PropTypes.func,
+    onCancelClick: PropTypes.func,
+    onDataUpdate: PropTypes.func,
     onDeleteActivityClick: PropTypes.func,
     onMoveActivityClick: PropTypes.func,
     onExpand: PropTypes.func,
-    onRemoveClick: PropTypes.func
+    onRemoveClick: PropTypes.func,
+    onSaveClick: PropTypes.func
   };
 
   state = {
@@ -76,19 +86,35 @@ export class JourneyForm extends React.PureComponent {
   onExpand = () =>
     !this.props.activities && this.props.onExpand(this.props.journey.id);
 
+  onCancelClick = () => {
+    this.setState({ changes: {} });
+    this.props.onCancelClick(this.props.journey.id);
+  };
+
   onChangeField = field => e =>
     this.setState({
       changes: { ...this.state.changes, [field]: e.target.value }
     });
+
   onChangingToggle = e => {
+    if (this.state.inChange) {
+      this.props.onDataUpdate(this.props.journey.id, {
+        ...this.state.changes,
+        id: this.props.journey.id
+      });
+    }
     this.setState({ inChange: !this.state.inChange });
     e.stopPropagation();
   };
 
+  onSaveClick = () => this.props.onSaveClick(this.props.journey.id);
+
   render() {
     const {
       activities,
+      changed,
       classes,
+      completed,
       journey,
       onDeleteActivityClick,
       onMoveActivityClick,
@@ -163,6 +189,7 @@ export class JourneyForm extends React.PureComponent {
             <Grid item xs={12}>
               <JourneyActivitiesTable
                 activities={activities}
+                completed={completed}
                 journeyId={journeyData.id}
                 onDeleteActivityClick={onDeleteActivityClick}
                 onMoveActivityClick={onMoveActivityClick}
@@ -179,30 +206,15 @@ export class JourneyForm extends React.PureComponent {
         </ExpansionPanelDetails>
         <Divider />
         <ExpansionPanelActions>
-          <Button
-            onClick={() => {
-              // only allow user to save if he has made changes
-              if (this.state.baseState) {
-                this.setState({
-                  journeys: this.state.baseState
-                });
-              }
-            }}
-            size="small"
-          >
+          <Button disabled={!changed} onClick={this.onCancelClick} size="small">
             Cancel
           </Button>
           <Button
             color="primary"
-            onClick={() => {
-              if (this.state.baseState) {
-                window.alert("saved!");
-                this.setState({
-                  baseState: null
-                });
-              }
-            }}
+            disabled={!changed}
+            onClick={this.onSaveClick}
             size="small"
+            variant={changed ? "contained" : "text"}
           >
             Save
           </Button>

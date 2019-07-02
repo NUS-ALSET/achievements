@@ -9,13 +9,20 @@ import {
   JOURNEY_PATH_ACTIVITIES_FETCH_SUCCESS,
   JOURNEY_ACTIVITIES_FETCH_SUCCESS,
   JOURNEY_MOVE_ACTIVITY_SUCCESS,
-  JOURNEY_ADD_ACTIVITIES_SUCCESS
+  JOURNEY_ADD_ACTIVITIES_SUCCESS,
+  JOURNEY_DATA_UPDATE,
+  JOURNEY_CHANGES_CANCEL,
+  JOURNEY_DELETE_ACTIVITY_REQUEST
 } from "./actions";
 
 export const journeys = (
   state = {
     activities: [],
+    // Hash map with journey id as index and activities array as values
     journeyActivities: {},
+    // Same as journey activities but populated only on activities changes.
+    // Required for `cancel` click
+    persistendActivities: {},
     changes: {},
     ui: {
       dialog: {}
@@ -51,6 +58,17 @@ export const journeys = (
         ...state,
         activities: action.activities
       };
+    case JOURNEY_CHANGES_CANCEL:
+      return {
+        ...state,
+        changes: {
+          ...state.changes,
+          [action.journeyId]: false
+        },
+        journeyActivities: {
+          [action.journeyId]: state.persistendActivities[action.journeyId] || []
+        }
+      };
     case JOURNEY_MOVE_ACTIVITY_SUCCESS:
       targetIndex = state.journeyActivities[action.journeyId].findIndex(
         activity => activity.id === action.activityId
@@ -63,7 +81,15 @@ export const journeys = (
           ) {
             return {
               ...state,
-              changed: true,
+              changes: {
+                [action.journeyId]: state.changes[action.journeyId] || {}
+              },
+              persistendActivities: {
+                [action.journeyId]:
+                  state.persistendActivities[action.journeyId] ||
+                  state.journeyActivities[action.journeyId] ||
+                  []
+              },
               journeyActivities: {
                 ...state.journeyActivities,
                 [action.journeyId]: state.journeyActivities[action.journeyId]
@@ -83,7 +109,15 @@ export const journeys = (
           if (targetIndex) {
             return {
               ...state,
-              changed: true,
+              changes: {
+                [action.journeyId]: state.changes[action.journeyId] || {}
+              },
+              persistendActivities: {
+                [action.journeyId]:
+                  state.persistendActivities[action.journeyId] ||
+                  state.journeyActivities[action.journeyId] ||
+                  []
+              },
               journeyActivities: {
                 ...state.journeyActivities,
                 [action.journeyId]: state.journeyActivities[action.journeyId]
@@ -113,7 +147,15 @@ export const journeys = (
     case JOURNEY_ADD_ACTIVITIES_SUCCESS: {
       return {
         ...state,
-        changed: true,
+        changes: {
+          [action.journeyId]: state.changes[action.journeyId] || {}
+        },
+        persistendActivities: {
+          [action.journeyId]:
+            state.persistendActivities[action.journeyId] ||
+            state.journeyActivities[action.journeyId] ||
+            []
+        },
         journeyActivities: {
           ...state.journeyActivities,
           [action.journeyId]: (
@@ -133,6 +175,24 @@ export const journeys = (
           }
         }
       };
+    case JOURNEY_DELETE_ACTIVITY_REQUEST:
+      return {
+        ...state,
+        persistendActivities: {
+          [action.journeyId]:
+            state.persistendActivities[action.journeyId] ||
+            state.journeyActivities[action.journeyId] ||
+            []
+        },
+        changes: {
+          [action.journeyId]: state.changes[action.journeyId] || {}
+        },
+        journeyActivities: {
+          [action.journeyId]: (
+            state.journeyActivities[action.journeyId] || []
+          ).filter(activity => activity.id !== action.activityId)
+        }
+      };
     case JOURNEY_DIALOG_CLOSE:
     case JOURNEY_DELETE_SUCCESS:
     case JOURNEY_DELETE_FAIL:
@@ -140,6 +200,17 @@ export const journeys = (
       return {
         ...state,
         ui: { ...state.ui, dialog: {} }
+      };
+    case JOURNEY_DATA_UPDATE:
+      return {
+        ...state,
+        changes: {
+          ...state.changes,
+          [action.id]: {
+            ...(state.changes || {}),
+            ...action.changes
+          }
+        }
       };
     default:
       return state;

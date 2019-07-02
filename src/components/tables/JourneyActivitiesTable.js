@@ -46,6 +46,7 @@ class JourneyActivitiesTable extends React.PureComponent {
       actionsColumn: PropTypes.string,
       link: PropTypes.string
     }),
+    completed: PropTypes.object,
     journeyId: PropTypes.string,
     onDeleteActivityClick: PropTypes.func,
     onMoveActivityClick: PropTypes.func
@@ -55,6 +56,7 @@ class JourneyActivitiesTable extends React.PureComponent {
     const {
       activities,
       classes,
+      completed,
       journeyId,
       onDeleteActivityClick,
       onMoveActivityClick
@@ -78,7 +80,9 @@ class JourneyActivitiesTable extends React.PureComponent {
               <TableRow key={activityInfo.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  {activityInfo.status ? (
+                  {completed &&
+                  completed[activityInfo.pathId] &&
+                  completed[activityInfo.pathId][activityInfo.id] ? (
                     <CheckCircleIcon style={{ color: "forestgreen" }} />
                   ) : (
                     <RadioButtonUncheckedIcon />

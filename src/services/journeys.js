@@ -33,6 +33,7 @@ export class JourneysService {
    * @param {String} [journeyInfo.id]
    * @param {String} journeyInfo.name
    * @param {String} journeyInfo.description
+   * @param {Array} journeyInfo.activities
    *
    * @returns {String} id of affected journey
    */
@@ -43,6 +44,19 @@ export class JourneysService {
         .database()
         .ref(`/journeys/${journeyInfo.id}`)
         .update(journeyInfo);
+      if (journeyInfo.activities && journeyInfo.activities.length) {
+        await firebase
+          .database()
+          .ref(`/journeyActivities/${journeyInfo.id}`)
+          .update(
+            Object.assign(
+              {},
+              ...journeyInfo.activities.map((activity, index) => ({
+                [activity.id]: index + 1
+              }))
+            )
+          );
+      }
       return journeyInfo.id;
     }
     const key = firebase
@@ -204,10 +218,10 @@ export class JourneysService {
     );
     return activities.map(activity => ({
       id: activity.id,
-      name: activity.name,
-      description: activity.description,
-      pathId: activity.path,
-      pathName: pathsMap[activity.path].name
+      name: activity.name || "",
+      description: activity.description || "",
+      pathId: activity.path || "",
+      pathName: pathsMap[activity.path].name || ""
     }));
   }
 }

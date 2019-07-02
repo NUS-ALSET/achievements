@@ -1,9 +1,9 @@
 import { runSaga } from "redux-saga";
 import firebase from "firebase/app";
 import {
-  journeyUpsertRequest,
-  journeyUpsertSuccess,
-  journeyUpsertFail,
+  // journeyUpsertRequest,
+  // journeyUpsertSuccess,
+  // journeyUpsertFail,
   journeyAddActivitiesRequest,
   journeyAddActivitiesSuccess,
   journeyDeleteActivityRequest,
@@ -19,7 +19,7 @@ import {
   journeyActivitiesFetchSuccess
 } from "../actions";
 import {
-  journeyUpsertRequestHandler,
+  // journeyUpsertRequestHandler,
   journeyAddActivitiesRequestHandler,
   journeyDeleteActivityRequestHandler,
   journeyMoveActivityRequestHandler,
@@ -27,7 +27,7 @@ import {
   journeyPathActivitiesFetchRequestHandler,
   journeyActivitiesFetchRequestHandler
 } from "../sagas";
-import { notificationShow } from "../../Root/actions";
+// import { notificationShow } from "../../Root/actions";
 
 describe("Journeys sagas", () => {
   let dispatched = [];
@@ -68,6 +68,7 @@ describe("Journeys sagas", () => {
     });
   });
 
+  /*
   describe("create journey", () => {
     it("should create new journey", async() => {
       const journeyData = {
@@ -134,6 +135,7 @@ describe("Journeys sagas", () => {
       ]);
     });
   });
+  */
 
   it("should add activities", async() => {
     const update = jest.fn();
