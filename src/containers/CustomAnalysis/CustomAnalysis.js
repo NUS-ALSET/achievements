@@ -1,7 +1,7 @@
 /**
  * @file Custom Analysis container module
  * @author Aishwarya Lakshminarasimhan <aishwaryarln@gmail.com>
- * @created 22.02.18
+ * @created 30.06.18
  */
 
 import * as React from "react";
@@ -18,12 +18,14 @@ import {
   ANALYSE_SUCCESS,
   customAnalysisOpen,
   addCustomAnalysisRequest,
+  deleteCustomAnalysisRequest,
   analyseRequest
 } from "./actions";
 
 // Import components
 import CustomAnalysisMenu from "../../components/menus/CustomAnalysisMenu";
 import AddCustomAnalysisDialog from "../../components/dialogs/AddCustomAnalysisDialog";
+import DeleteCustomAnalysisDialog from "../../components/dialogs/DeleteCustomAnalysisDialog";
 import { CustomTaskResponseForm } from "../../components/forms/CustomTaskResponseForm";
 
 // Import MaterialUI components
@@ -59,6 +61,9 @@ const styles = theme => ({
   },
   analyseButton: {
     display: "inline-block"
+  },
+  analysisTypeSelection: {
+    marginLeft: 10
   }
 });
 
@@ -82,6 +87,7 @@ class CustomAnalysis extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     addCustomActivity: PropTypes.func,
+    deleteCustomAnalysis: PropTypes.func,
     onAnalyse: PropTypes.func,
     onOpen: PropTypes.func,
     // uid: PropTypes.string,
@@ -111,6 +117,9 @@ class CustomAnalysis extends React.PureComponent {
 
     this.listHandler = this.listHandler.bind(this);
     this.addCustomAnalysisHandler = this.addCustomAnalysisHandler.bind(this);
+    this.deleteCustomAnalysisHandler = this.deleteCustomAnalysisHandler.bind(
+      this
+    );
   }
 
   componentDidMount() {
@@ -157,6 +166,10 @@ class CustomAnalysis extends React.PureComponent {
 
   addCustomAnalysisHandler(url, name) {
     this.props.addCustomActivity(url, name);
+  }
+
+  deleteCustomAnalysisHandler(analysisID) {
+    this.props.deleteCustomAnalysis(analysisID);
   }
 
   handleChange = event => {
@@ -390,6 +403,13 @@ class CustomAnalysis extends React.PureComponent {
                   classes={classes}
                   addCustomAnalysisHandler={this.addCustomAnalysisHandler}
                 />
+                <br />
+                <DeleteCustomAnalysisDialog
+                  classes={classes}
+                  myAnalysis={myAnalysis}
+                  listHandler={this.listHandler}
+                  deleteCustomAnalysisHandler={this.deleteCustomAnalysisHandler}
+                />
               </TableCell>
             </TableRow>
           </TableBody>
@@ -450,6 +470,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   onOpen: customAnalysisOpen,
   addCustomActivity: addCustomAnalysisRequest,
+  deleteCustomAnalysis: deleteCustomAnalysisRequest,
   onAnalyse: analyseRequest
 };
 

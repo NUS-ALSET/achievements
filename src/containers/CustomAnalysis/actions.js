@@ -84,3 +84,22 @@ export const addCustomAnalysisFail = (
   customAnalysisName,
   error
 });
+
+export const DELETE_CUSTOM_ANALYSIS_REQUEST = "DELETE_CUSTOM_ANALYSIS_REQUEST";
+export const deleteCustomAnalysisRequest = customAnalysisID => ({
+  type: DELETE_CUSTOM_ANALYSIS_REQUEST,
+  customAnalysisID
+});
+
+export const DELETE_CUSTOM_ANALYSIS_SUCCESS = "DELETE_CUSTOM_ANALYSIS_SUCCESS";
+export const deleteCustomAnalysisSuccess = customAnalysisID => ({
+  type: DELETE_CUSTOM_ANALYSIS_SUCCESS,
+  customAnalysisID
+});
+
+export const DELETE_CUSTOM_ANALYSIS_FAIL = "DELETE_CUSTOM_ANALYSIS_FAIL";
+export const deleteCustomAnalysisFail = (customAnalysisID, error) => ({
+  type: DELETE_CUSTOM_ANALYSIS_FAIL,
+  customAnalysisID,
+  error
+});

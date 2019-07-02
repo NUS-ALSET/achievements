@@ -4,7 +4,8 @@ import {
   ADD_CUSTOM_ANALYSIS_SUCCESS,
   ANALYSE_SUCCESS,
   ANALYSE_FAIL,
-  FETCH_SOLUTIONS_SUCCESS
+  FETCH_SOLUTIONS_SUCCESS,
+  DELETE_CUSTOM_ANALYSIS_SUCCESS
 } from "./actions";
 
 export const customAnalysis = (
@@ -42,6 +43,11 @@ export const customAnalysis = (
           customAnalysisUrl: action.customAnalysisUrl,
           customAnalysisName: action.customAnalysisName
         }
+      };
+    case DELETE_CUSTOM_ANALYSIS_SUCCESS:
+      return {
+        ...state,
+        dialog: "DELETE_CUSTOM_ANALYSIS_SUCCESS"
       };
     case ANALYSE_SUCCESS:
       return {

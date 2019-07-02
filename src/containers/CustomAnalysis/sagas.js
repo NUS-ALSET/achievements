@@ -3,13 +3,16 @@ import {
   CUSTOM_ANALYSIS_OPEN,
   ADD_CUSTOM_ANALYSIS_REQUEST,
   ANALYSE_REQUEST,
+  DELETE_CUSTOM_ANALYSIS_REQUEST,
   myActivitiesLoaded,
   myAssignmentsLoaded,
   addCustomAnalysisSuccess,
   addCustomAnalysisFail,
   analyseSuccess,
   analyseFail,
-  fetchSolutionsSuccess
+  fetchSolutionsSuccess,
+  deleteCustomAnalysisSuccess,
+  deleteCustomAnalysisFail
 } from "./actions";
 import { customAnalysisService } from "../../services/customAnalysis.js";
 import { notificationShow } from "../Root/actions";
@@ -62,6 +65,25 @@ export function* addCustomAnalysisHandler(action) {
   }
 }
 
+export function* deleteCustomAnalysisHandler(action) {
+  try {
+    let uid = yield select(state => state.firebase.auth.uid);
+    if (!uid) {
+      yield take("@@reactReduxFirebase/LOGIN");
+      uid = yield select(state => state.firebase.auth.uid);
+    }
+    yield call(
+      customAnalysisService.deleteCustomAnalysis,
+      uid,
+      action.customAnalysisID
+    );
+    yield put(deleteCustomAnalysisSuccess(action.customAnalysisID));
+  } catch (err) {
+    yield put(deleteCustomAnalysisFail(action.customAnalysisID, err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
 export function* analyseHandler(action) {
   try {
     let uid = yield select(state => state.firebase.auth.uid);
@@ -98,5 +120,11 @@ export default [
   },
   function* watchAnalyse() {
     yield takeLatest(ANALYSE_REQUEST, analyseHandler);
+  },
+  function* watchDeleteCustomAnalysis() {
+    yield takeLatest(
+      DELETE_CUSTOM_ANALYSIS_REQUEST,
+      deleteCustomAnalysisHandler
+    );
   }
 ];
