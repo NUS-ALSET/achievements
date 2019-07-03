@@ -15,10 +15,13 @@ import { firestoreConnect } from "react-redux-firebase";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 
+import isEmpty from "lodash/isEmpty";
+
 import {
   adminCustomAnalysisOpen,
   addAdminCustomAnalysisRequest,
-  deleteAdminCustomAnalysisRequest
+  deleteAdminCustomAnalysisRequest,
+  adminAnalyseRequest
 } from "./actions";
 
 // Import components
@@ -26,6 +29,7 @@ import CustomAnalysisMenu from "../../components/menus/CustomAnalysisMenu";
 import AddCustomAnalysisDialog from "../../components/dialogs/AddCustomAnalysisDialog";
 import DeleteCustomAnalysisDialog from "../../components/dialogs/DeleteCustomAnalysisDialog";
 import AddAdminCustomQueryDialog from "../../components/dialogs/AddAdminCustomQueryDialog";
+import { CustomTaskResponseForm } from "../../components/forms/CustomTaskResponseForm";
 
 //Import Material UI components
 import { Typography } from "@material-ui/core";
@@ -40,6 +44,7 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Button from "@material-ui/core/Button";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const styles = theme => ({
   activitySelection: {
@@ -72,6 +77,9 @@ const styles = theme => ({
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary
+  },
+  hidden: {
+    display: "none"
   }
 });
 
@@ -82,7 +90,9 @@ class AdminCustomAnalysis extends React.PureComponent {
     onOpen: PropTypes.func,
     deleteAdminCustomAnalysis: PropTypes.func,
     addAdminCustomAnalysis: PropTypes.func,
-    adminAnalysis: PropTypes.object
+    analyseRequest: PropTypes.func,
+    adminAnalysis: PropTypes.object,
+    analysisResponse: PropTypes.object
   };
 
   componentDidMount() {
@@ -103,7 +113,8 @@ class AdminCustomAnalysis extends React.PureComponent {
     query: {
       firebase: [],
       firestore: []
-    }
+    },
+    displayResponse: "Clear"
   };
 
   listHandler(listType, listValue) {
@@ -149,9 +160,38 @@ class AdminCustomAnalysis extends React.PureComponent {
       }
     });
   };
-  render() {
-    const { classes, isAdmin, adminAnalysis } = this.props;
 
+  handleSubmit = () => {
+    this.setState({ displayResponse: "Loading" });
+    this.props.onAnalyse(this.state.adminAnalysisID, this.state.query);
+    //console.log("submitted");
+  };
+
+  handleResponseClear = () => {
+    this.setState({ displayResponse: "Clear" });
+    //console.log("Clear Response");
+  };
+
+  getTaskInfo = analysisResponse => {
+    if (analysisResponse && !isEmpty(analysisResponse)) {
+      //console.log("Setting state to loaded");
+      this.setState({ displayResponse: "Loaded" });
+    }
+    return {
+      response: {
+        data: {
+          isComplete: false,
+          jsonFeedback: analysisResponse,
+          htmlFeedback: "<h1>Sample HTML Response</h1>",
+          textFeedback: "Sample Text Response"
+        }
+      }
+    };
+  };
+
+  render() {
+    const { classes, isAdmin, adminAnalysis, analysisResponse } = this.props;
+    const taskInfo = this.getTaskInfo(analysisResponse);
     if (!isAdmin) {
       return (
         <Typography variant="body2" gutterBottom>
@@ -246,6 +286,50 @@ class AdminCustomAnalysis extends React.PureComponent {
             </Table>
           </ExpansionPanelDetails>
         </ExpansionPanel>
+        <br />
+        <div>
+          <div className={classes.buttonContainer}>
+            <Button
+              className={classes.analyseButton}
+              color="primary"
+              disabled={false}
+              onClick={this.handleSubmit}
+              variant="contained"
+            >
+              ANALYSE
+            </Button>
+            &nbsp;&nbsp;
+            <Button
+              className={classes.analyseButton}
+              variant="contained"
+              onClick={this.handleResponseClear}
+              color="default"
+            >
+              CLEAR RESPONSE
+            </Button>
+          </div>
+        </div>
+        <br />
+        <div
+          className={
+            this.state.displayResponse === "Clear" ? classes.hidden : ""
+          }
+        >
+          {!(taskInfo && isEmpty(taskInfo)) ? (
+            <LinearProgress
+              className={
+                this.state.displayResponse === "Loading" ? "" : classes.hidden
+              }
+            />
+          ) : (
+            <CustomTaskResponseForm
+              className={
+                this.state.displayResponse === "Loaded" ? "" : classes.hidden
+              }
+              taskInfo={taskInfo}
+            />
+          )}
+        </div>
       </div>
     );
   }
@@ -256,13 +340,15 @@ sagaInjector.inject(sagas);
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
   isAdmin: state.adminCustomAnalysis.isAdmin,
-  adminAnalysis: state.firestore.data.adminAnalysis
+  adminAnalysis: state.firestore.data.adminAnalysis,
+  analysisResponse: state.adminCustomAnalysis.analysisResponse
 });
 
 const mapDispatchToProps = {
   onOpen: adminCustomAnalysisOpen,
   addAdminCustomAnalysis: addAdminCustomAnalysisRequest,
-  deleteAdminCustomAnalysis: deleteAdminCustomAnalysisRequest
+  deleteAdminCustomAnalysis: deleteAdminCustomAnalysisRequest,
+  onAnalyse: adminAnalyseRequest
 };
 
 export default compose(

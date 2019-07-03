@@ -2,7 +2,9 @@ import {
   ADMIN_STATUS_LOADED,
   ADMIN_STATUS_ERROR,
   ADD_ADMIN_CUSTOM_ANALYSIS_SUCCESS,
-  DELETE_ADMIN_CUSTOM_ANALYSIS_SUCCESS
+  DELETE_ADMIN_CUSTOM_ANALYSIS_SUCCESS,
+  ADMIN_ANALYSE_SUCCESS,
+  ADMIN_ANALYSE_FAIL
 } from "./actions";
 
 export const adminCustomAnalysis = (
@@ -13,7 +15,8 @@ export const adminCustomAnalysis = (
     newCustomAnalysis: {
       customAnalysisUrl: "",
       customAnalysisName: ""
-    }
+    },
+    analysisResponse: {}
   },
   action
 ) => {
@@ -44,6 +47,18 @@ export const adminCustomAnalysis = (
       return {
         ...state,
         dialog: "DELETE_ADMIN_CUSTOM_ANALYSIS_SUCCESS"
+      };
+    case ADMIN_ANALYSE_SUCCESS:
+      return {
+        ...state,
+        dialog: "ADMIN_ANALYSE_SUCCESS",
+        analysisResponse: action.analysisResponse
+      };
+    case ADMIN_ANALYSE_FAIL:
+      return {
+        ...state,
+        dialog: "ADMIN_ANALYSE_FAIL",
+        error: action.error
       };
     default:
       return state;

@@ -72,3 +72,30 @@ export const deleteAdminCustomAnalysisFail = (customAnalysisID, error) => ({
   customAnalysisID,
   error
 });
+
+export const ADMIN_ANALYSE_REQUEST = "ADMIN_ANALYSE_REQUEST";
+export const adminAnalyseRequest = (adminAnalysisID, query) => ({
+  type: ADMIN_ANALYSE_REQUEST,
+  adminAnalysisID,
+  query
+});
+
+export const ADMIN_ANALYSE_SUCCESS = "ADMIN_ANALYSE_SUCCESS";
+export const adminAnalyseSuccess = (
+  adminAnalysisID,
+  query,
+  analysisResponse
+) => ({
+  type: ADMIN_ANALYSE_SUCCESS,
+  adminAnalysisID,
+  query,
+  analysisResponse
+});
+
+export const ADMIN_ANALYSE_FAIL = "ADMIN_ANALYSE_FAIL";
+export const adminAnalyseFail = (adminAnalysisID, query, error) => ({
+  type: ADMIN_ANALYSE_FAIL,
+  adminAnalysisID,
+  query,
+  error
+});

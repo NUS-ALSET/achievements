@@ -3,12 +3,15 @@ import {
   ADMIN_CUSTOM_ANALYSIS_OPEN,
   ADD_ADMIN_CUSTOM_ANALYSIS_REQUEST,
   DELETE_ADMIN_CUSTOM_ANALYSIS_REQUEST,
+  ADMIN_ANALYSE_REQUEST,
   adminStatusLoaded,
   adminStatusError,
   addAdminCustomAnalysisSuccess,
   addAdminCustomAnalysisFail,
   deleteAdminCustomAnalysisSuccess,
-  deleteAdminCustomAnalysisFail
+  deleteAdminCustomAnalysisFail,
+  adminAnalyseSuccess,
+  adminAnalyseFail
 } from "./actions";
 import { adminCustomAnalysisService } from "../../services/adminCustomAnalysis";
 import { notificationShow } from "../Root/actions";
@@ -81,6 +84,28 @@ export function* deleteAdminCustomAnalysisHandler(action) {
   }
 }
 
+export function* onAdminAnalyseHandler(action) {
+  try {
+    let analysisResponse = yield call(
+      adminCustomAnalysisService.onAdminAnalyse,
+      action.adminAnalysisID,
+      action.query
+    );
+    yield put(
+      adminAnalyseSuccess(
+        action.adminAnalysisID,
+        action.query,
+        analysisResponse
+      )
+    );
+  } catch (err) {
+    yield put(
+      adminAnalyseFail(action.adminAnalysisID, action.query, err.message)
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
 export default [
   function* watchAdminCustomAnalysisOpen() {
     yield takeLatest(
@@ -99,5 +124,8 @@ export default [
       DELETE_ADMIN_CUSTOM_ANALYSIS_REQUEST,
       deleteAdminCustomAnalysisHandler
     );
+  },
+  function* watchDeleteCustomAnalysis() {
+    yield takeLatest(ADMIN_ANALYSE_REQUEST, onAdminAnalyseHandler);
   }
 ];

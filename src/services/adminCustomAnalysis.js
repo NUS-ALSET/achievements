@@ -134,5 +134,17 @@ export class AdminCustomAnalysisService {
       .doc(customAnalysisID)
       .delete();
   }
+
+  /**
+   * This method removes the custom activity of the given
+   * custom analysis id and user id
+   *
+   * @param {String} adminCustomAnalysisID customAnalysis ID to be deleted
+   * @param {String} query queries to be executed to fetch data from the database
+   *
+   */
+  onAdminAnalyse(adminCustomAnalysisID, query) {
+    return { response: "Dummy Response" };
+  }
 }
 export const adminCustomAnalysisService = new AdminCustomAnalysisService();
