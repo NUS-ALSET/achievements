@@ -49,7 +49,7 @@ function runCustomTask(uid, task, solution) {
   }
 
   const checkIfUrlIsFromColab = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(task.url);
-  if (checkIfUrlIsFromColab[0] && checkIfUrlIsFromColab[1]) {
+  if (checkIfUrlIsFromColab && checkIfUrlIsFromColab[0] && checkIfUrlIsFromColab[1]) {
     // fetch notebook from url
     const docId = checkIfUrlIsFromColab[1];
     const googleUrl = "https://drive.google.com/uc?export=download&id=" + docId;
