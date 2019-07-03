@@ -67,26 +67,10 @@ const styles = theme => ({
   }
 });
 
-/**
- * Things to do -
- * 1. [DONE] Iterate through the options you've created
- * 2. Disable options
- * 3. Clear to clear all fields
- * 4. [VERIFY] Handle empty cases
- * 5. [DONE] Store analysis data from dialog
- * 6. [DONE] Update activities/assignments when path/course option changes
- * 7. Reset state and clear fields when someone toggles between path and course
- * 8. [DONE] Change custom activity to expect json as jsonFeedback and then change your lambda
- * 9. Read the analyse chart from firestore and display as last updated at
- * 10. [DONE] Pass dummy solutions and display analysis
- * 11. [DONE] Display ipnb feedback
- * 12. [DONE] Move the service function to firebase functions
- */
-
 class CustomAnalysis extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
-    addCustomActivity: PropTypes.func,
+    addCustomAnalysis: PropTypes.func,
     deleteCustomAnalysis: PropTypes.func,
     onAnalyse: PropTypes.func,
     onOpen: PropTypes.func,
@@ -127,7 +111,7 @@ class CustomAnalysis extends React.PureComponent {
   }
 
   listHandler(listType, listValue) {
-    let data;
+    let data = {};
     switch (listType) {
       case "Type":
         data =
@@ -165,7 +149,7 @@ class CustomAnalysis extends React.PureComponent {
   }
 
   addCustomAnalysisHandler(url, name) {
-    this.props.addCustomActivity(url, name);
+    this.props.addCustomAnalysis(url, name);
   }
 
   deleteCustomAnalysisHandler(analysisID) {
@@ -469,7 +453,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   onOpen: customAnalysisOpen,
-  addCustomActivity: addCustomAnalysisRequest,
+  addCustomAnalysis: addCustomAnalysisRequest,
   deleteCustomAnalysis: deleteCustomAnalysisRequest,
   onAnalyse: analyseRequest
 };

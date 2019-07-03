@@ -1,7 +1,7 @@
 /**
  * @file Add Custom Analysis Dialog Component
  * @author Aishwarya Lakshminarasimhan <aishwaryarln@gmail.com>
- * @created 30.06.18
+ * @created 02.07.18
  */
 
 import * as React from "react";
@@ -10,9 +10,11 @@ import PropTypes from "prop-types";
 // RegExp rules
 import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
 
-// images for user guide in the dialog
-import JupyterNotebookStep1 from "../../assets/JupyterNotebookSampleActivityImg.png";
+// Import components
+import FirebaseQueryTable from "../tables/FirebaseQueryTable";
+import FirestoreQueryTable from "../tables/FirestoreQueryTable";
 
+// Import MaterialUI components
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -28,27 +30,33 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
+import InputAdornment from "@material-ui/core/InputAdornment";
 
-class AddCustomAnalysisDialog extends React.PureComponent {
+class AddAdminCustomQueryDialog extends React.PureComponent {
   constructor(props) {
     super(props);
     this.steps = this.getSteps();
+    this.firebaseQueryHandler = this.firebaseQueryHandler.bind(this);
+    this.firestoreQueryHandler = this.firestoreQueryHandler.bind(this);
   }
   static propTypes = {
     classes: PropTypes.object,
-    addCustomAnalysisHandler: PropTypes.func
+    addCustomQueryHandler: PropTypes.func
   };
   state = {
     activeStep: 0,
     skipped: new Set(),
     open: false,
-    analysisURL: null,
-    name: "",
+    fileName: "",
     isCorrectInput: false,
-    type: "Jupyter"
+    type: "Firebase",
+    query: {
+      firebase: { ref: "", orderByChild: "", equalTo: "", once: "" },
+      firestore: {}
+    }
   };
   getSteps = () => {
-    return ["Select Analysis Type", "Enter Analysis Details"];
+    return ["Select Database Type", "Create your query"];
   };
 
   getStepContent = step => {
@@ -58,7 +66,7 @@ class AddCustomAnalysisDialog extends React.PureComponent {
         return (
           <div className={classes.analysisTypeSelection}>
             <Typography className={classes.instructions}>
-              Select your Analysis Type
+              Select your Database Type
             </Typography>
             <FormControl component="fieldset" className={classes.formControl}>
               <RadioGroup
@@ -69,28 +77,26 @@ class AddCustomAnalysisDialog extends React.PureComponent {
                 onChange={this.handleChange}
               >
                 <FormControlLabel
-                  value="Jupyter"
+                  value="Firebase"
                   control={<Radio />}
-                  label="Jupyter Notebook"
+                  label="Firebase"
                 />
 
                 <FormControlLabel
-                  value="Cloud Function"
+                  value="Firestore"
                   control={<Radio />}
-                  label="Cloud Function"
+                  label="Firestore"
                 />
               </RadioGroup>
             </FormControl>
           </div>
         );
       case 1:
-        if (this.state.type === "Jupyter") {
+        if (this.state.type === "Firebase") {
           return (
             <div>
               <Typography className={classes.instructions}>
-                To add your custom analysis function, please enter your public
-                colaboratory notebook URL and the name of your analysis function
-                below.
+                Fill in values for your firebase realtime-database query.
               </Typography>
               <TextField
                 autoFocus
@@ -101,35 +107,20 @@ class AddCustomAnalysisDialog extends React.PureComponent {
                     ? ""
                     : "Name should not be empty or too long or have invalid characters"
                 }
-                label="Name"
+                label="Query Results File Name"
                 margin="dense"
-                onChange={e => this.onFieldChange("name", e.target.value)}
+                onChange={e => this.onFieldChange("fileName", e.target.value)}
                 required
-                value={this.state.name || ""}
+                value={this.state.fileName || ""}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">.json</InputAdornment>
+                  )
+                }}
               />
-              <Typography gutterBottom variant="body2">
-                Get the Shareable Link from Google Colab/github commit ipynb
-              </Typography>
-              <img alt="JupyterNotebookStep1" src={JupyterNotebookStep1} />
-              <a
-                href="https://colab.research.google.com/drive/1Rx_oOoslo2bbT7CY6nXmWuwzJXootjzA"
-                rel="noopener noreferrer"
-                target="_blank"
-              >
-                <Typography align="center" gutterBottom variant="caption">
-                  Sample Google Colab ipynb Link
-                </Typography>
-              </a>
-              <TextField
-                defaultValue={this.state.analysisURL}
-                fullWidth
-                helperText="Make sure the ipynb's Link Sharing is on"
-                label="Google Colab ipynb URL for this Activity"
-                margin="dense"
-                required
-                onChange={e =>
-                  this.onFieldChange("analysisURL", e.target.value)
-                }
+              <FirebaseQueryTable
+                classes={this.props.classes}
+                firebaseQueryHandler={this.firebaseQueryHandler}
               />
             </div>
           );
@@ -137,7 +128,7 @@ class AddCustomAnalysisDialog extends React.PureComponent {
           return (
             <div>
               <Typography className={classes.instructions}>
-                Enter your Cloud Function details.
+                Fill in values for your cloud firestore query.
               </Typography>
               <TextField
                 autoFocus
@@ -148,21 +139,20 @@ class AddCustomAnalysisDialog extends React.PureComponent {
                     ? ""
                     : "Name should not be empty or too long or have invalid characters"
                 }
-                label="Name"
+                label="Query Results File Name"
                 margin="dense"
-                onChange={e => this.onFieldChange("name", e.target.value)}
+                onChange={e => this.onFieldChange("fileName", e.target.value)}
                 required
-                value={this.state.name || ""}
+                value={this.state.fileName || ""}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">.json</InputAdornment>
+                  )
+                }}
               />
-              <TextField
-                defaultValue={this.state.analysisURL}
-                fullWidth
-                label="Cloud Function URL"
-                margin="dense"
-                required
-                onChange={e =>
-                  this.onFieldChange("analysisURL", e.target.value)
-                }
+              <FirestoreQueryTable
+                classes={this.props.classes}
+                firestoreQueryHandler={this.firestoreQueryHandler}
               />
             </div>
           );
@@ -235,16 +225,12 @@ class AddCustomAnalysisDialog extends React.PureComponent {
   setOpen = open => this.setState({ open: open });
 
   handleCommit = () => {
-    this.props.addCustomAnalysisHandler(
-      this.state.analysisURL,
-      this.state.name
-    );
+    this.props.addCustomQueryHandler(this.state.type, this.state.query);
     this.handleClose();
   };
-
   onFieldChange = (field, value) => {
     // validate name input
-    if (field === "name") {
+    if (field === "fileName") {
       if (AddName.test(value) && NoStartWhiteSpace.test(value)) {
         this.setState({
           isCorrectInput: true
@@ -259,16 +245,27 @@ class AddCustomAnalysisDialog extends React.PureComponent {
   };
 
   isIncorrect = () => {
-    if (
-      this.state.analysisURL &&
-      this.state.name &&
-      this.state.isCorrectInput
-    ) {
+    if (this.state.fileName && this.state.isCorrectInput) {
       return false;
     } else {
       return true;
     }
   };
+
+  firebaseQueryHandler(data) {
+    this.setState({
+      ...this.state,
+      query: { fileName: this.state.fileName + ".json", query: data }
+    });
+  }
+
+  firestoreQueryHandler(data) {
+    this.setState({
+      ...this.state,
+      query: { fileName: this.state.fileName + ".json", query: data }
+    });
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -280,16 +277,14 @@ class AddCustomAnalysisDialog extends React.PureComponent {
             onClick={this.handleClickOpen}
           >
             <AddIcon className={classes.addIcon} />
-            Add Custom Analysis&nbsp;&nbsp;&nbsp;&nbsp;
+            Add Custom Query
           </Button>
           <Dialog
             open={this.state.open}
             onClose={this.handleClose}
             aria-labelledby="form-dialog-title"
           >
-            <DialogTitle id="form-dialog-title">
-              Add Custom Analysis
-            </DialogTitle>
+            <DialogTitle id="form-dialog-title">Add Custom Query</DialogTitle>
             <DialogContent>
               <Stepper activeStep={this.state.activeStep}>
                 {this.steps.map((label, index) => {
@@ -381,4 +376,4 @@ class AddCustomAnalysisDialog extends React.PureComponent {
     );
   }
 }
-export default AddCustomAnalysisDialog;
+export default AddAdminCustomQueryDialog;
