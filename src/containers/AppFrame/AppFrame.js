@@ -38,7 +38,7 @@ import HomeV2 from "../HomeV2/HomeV2";
 // HomeV3 is a prototype for homepage
 import HomeV3 from "../HomeV3/HomeV3";
 // HomeV4 is a prototype for homepage
-import HomeV4 from "../HomeV4/HomeV4";
+import HomePage from "../HomeV4/HomeV4";
 import Task from "../Task/Task";
 import Tasks from "../Tasks/Tasks";
 import CustomActivity from "../CustomActivity/CustomActivity";
@@ -279,9 +279,15 @@ class AppFrame extends React.Component {
             />
             <main className={classes.content}>
               <Switch>
-                <Route component={HomeV2} exact path="(/|/home)" />
+                {!userId && (
+                  <Route
+                    exact
+                    path="(/|/home)"
+                    render={props => <HomePage {...props} loginHandler={this.handleLogin} />}
+                  />
+                )}
+                {userId && <Route component={HomeV2} exact path="(/|/home)" />}
                 <Route component={HomeV3} exact path="(/|/homev3)" />
-                <Route component={HomeV4} exact path="(/|/homev4)" />
                 <Route component={Admin} exact path="/admin" />
                 <Route component={Courses} exact path="/courses" />
                 <Route component={Assignments} exact path="/courses/:courseId" />
