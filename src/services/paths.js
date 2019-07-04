@@ -152,7 +152,7 @@ export class PathsService {
         window.gapi.client
           .init({
             apiKey: "AIzaSyC27mcZBSKrWavXNhsDA1HJCeUurPluc1E",
-            clientId: "765594031611-aitdj645mls974mu5oo7h7m27bh50prc.apps." + "googleusercontent.com",
+            clientId: "765594031611-aitdj645mls974mu5oo7h7m27bh50prc.apps.googleusercontent.com",
             discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
           })
           .then(resolve);
