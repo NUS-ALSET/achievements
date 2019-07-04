@@ -50,7 +50,13 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
     isCorrectInput: false,
     type: "Firebase",
     query: {
-      firebase: { ref: "", orderByChild: "", equalTo: "" },
+      firebase: {
+        ref: "",
+        orderByChild: "",
+        equalTo: "",
+        limitToFirst: "",
+        limitToLast: ""
+      },
       firestore: {}
     }
   };
@@ -265,7 +271,13 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
 
   firebaseQueryHandler(data) {
     let parsedData = {
-      firebase: { ref: "", orderByChild: "", equalTo: "" }
+      firebase: {
+        ref: "",
+        orderByChild: "",
+        equalTo: "",
+        limitToFirst: "",
+        limitToLast: ""
+      }
     };
     Object.keys(data.firebase).forEach(option => {
       parsedData.firebase[option] = this.parseValue(data.firebase[option]);

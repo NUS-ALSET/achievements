@@ -23,7 +23,13 @@ class FirebaseQueryTable extends React.PureComponent {
   };
   state = {
     query: {
-      firebase: { ref: "", orderByChild: "", equalTo: "" }
+      firebase: {
+        ref: "",
+        orderByChild: "",
+        equalTo: "",
+        limitToFirst: "",
+        limitToLast: ""
+      }
     }
   };
 
@@ -38,6 +44,12 @@ class FirebaseQueryTable extends React.PureComponent {
         break;
       case "equalTo":
         data.firebase.equalTo = value;
+        break;
+      case "limitToFirst":
+        data.firebase.limitToFirst = value;
+        break;
+      case "limitToLast":
+        data.firebase.limitToLast = value;
         break;
       default:
         break;
@@ -126,6 +138,46 @@ class FirebaseQueryTable extends React.PureComponent {
                 className={classes.textField}
                 value={this.state.query.firebase.equalTo}
                 onChange={e => this.onFieldChange("equalTo", e.target.value)}
+                margin="dense"
+                variant="outlined"
+              />
+            </TableCell>
+          </TableRow>
+          <TableRow key="limitToFirst">
+            <TableCell align="right">
+              <Typography className={classes.instructions}>
+                .limitToFirst({this.state.query.firebase.limitToFirst})
+              </Typography>
+            </TableCell>
+            <TableCell align="left">
+              <TextField
+                id="outlined-name"
+                label="limitToFirst"
+                className={classes.textField}
+                value={this.state.query.firebase.limitToFirst}
+                onChange={e =>
+                  this.onFieldChange("limitToFirst", e.target.value)
+                }
+                margin="dense"
+                variant="outlined"
+              />
+            </TableCell>
+          </TableRow>
+          <TableRow key="limitToLast">
+            <TableCell align="right">
+              <Typography className={classes.instructions}>
+                .limitToLast({this.state.query.firebase.limitToLast})
+              </Typography>
+            </TableCell>
+            <TableCell align="left">
+              <TextField
+                id="outlined-name"
+                label="limitToLast"
+                className={classes.textField}
+                value={this.state.query.firebase.limitToLast}
+                onChange={e =>
+                  this.onFieldChange("limitToLast", e.target.value)
+                }
                 margin="dense"
                 variant="outlined"
               />

@@ -201,17 +201,32 @@ class CustomAnalysis extends React.PureComponent {
       let results = analysisResults.results
         ? analysisResults.results
         : analysisResults.result;
-      let data = {
-        response: {
-          data: {
-            isComplete: results.isComplete,
-            jsonFeedback: results.jsonFeedback,
-            htmlFeedback: results.htmlFeedback,
-            textFeedback: results.textFeedback,
-            ipynbFeedback: analysisResults.ipynb
+      let data;
+      if (!results) {
+        data = {
+          response: {
+            data: {
+              isComplete: false,
+              jsonFeedback: "",
+              htmlFeedback: "Please write into results.json file",
+              textFeedback: "",
+              ipynbFeedback: analysisResults.ipynb
+            }
           }
-        }
-      };
+        };
+      } else {
+        data = {
+          response: {
+            data: {
+              isComplete: results.isComplete,
+              jsonFeedback: results.jsonFeedback,
+              htmlFeedback: results.htmlFeedback,
+              textFeedback: results.textFeedback,
+              ipynbFeedback: analysisResults.ipynb
+            }
+          }
+        };
+      }
       return data;
     } else if (dialog === ANALYSE_FAIL && analysisResults) {
       return {

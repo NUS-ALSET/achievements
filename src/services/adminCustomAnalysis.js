@@ -147,13 +147,6 @@ export class AdminCustomAnalysisService {
       });
   }
 
-  enquote(v) {
-    if (typeof v === "string") {
-      return '"' + v + '"';
-    }
-    return v;
-  }
-
   async buildFirebaseQuery(firebaseQueries) {
     try {
       let firebaseQuery;
@@ -166,9 +159,7 @@ export class AdminCustomAnalysisService {
 
         for (let option of Object.keys(oneQuery.query.firebase)) {
           if (option !== "ref") {
-            let value = oneQuery.query.firebase[option]
-              ? this.enquote(oneQuery.query.firebase[option])
-              : null;
+            let value = oneQuery.query.firebase[option] || null;
             if (value) {
               firebaseQuery = firebaseQuery[option](value);
             }
@@ -178,8 +169,8 @@ export class AdminCustomAnalysisService {
         firebaseResults.push({
           [oneQuery.name]: tempResults
         });
-        return firebaseResults;
       }
+      return firebaseResults;
     } catch (error) {
       console.error(error.message);
     }

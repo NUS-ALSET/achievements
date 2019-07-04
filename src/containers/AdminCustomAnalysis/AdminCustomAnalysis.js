@@ -90,7 +90,7 @@ class AdminCustomAnalysis extends React.PureComponent {
     onOpen: PropTypes.func,
     deleteAdminCustomAnalysis: PropTypes.func,
     addAdminCustomAnalysis: PropTypes.func,
-    analyseRequest: PropTypes.func,
+    onAnalyse: PropTypes.func,
     adminAnalysis: PropTypes.object,
     analysisResponse: PropTypes.object
   };
@@ -175,17 +175,32 @@ class AdminCustomAnalysis extends React.PureComponent {
       let results = analysisResponse.results
         ? analysisResponse.results
         : analysisResponse.result;
-      return {
-        response: {
-          data: {
-            isComplete: results.isComplete,
-            jsonFeedback: results.jsonFeedback,
-            htmlFeedback: results.htmlFeedback,
-            textFeedback: results.textFeedback,
-            ipynbFeedback: analysisResponse.ipynb
+      if (results) {
+        return {
+          response: {
+            data: {
+              isComplete: results.isComplete,
+              jsonFeedback: results.jsonFeedback,
+              htmlFeedback: results.htmlFeedback,
+              textFeedback: results.textFeedback,
+              ipynbFeedback: analysisResponse.ipynb
+            }
           }
-        }
-      };
+        };
+      } else {
+        return {
+          response: {
+            data: {
+              isComplete: false,
+              jsonFeedback: "",
+              htmlFeedback: "Please write into results.json file.",
+              textFeedback: "",
+              ipynbFeedback: analysisResponse.ipynb
+            }
+          }
+        };
+      }
+
       //this.setState({ displayResponse: "Loaded" });
     }
     return {
@@ -194,8 +209,7 @@ class AdminCustomAnalysis extends React.PureComponent {
           isComplete: false,
           jsonFeedback: { dummyKey: "dummyValue" },
           htmlFeedback: "<h1>Sample HTML Response</h1>",
-          textFeedback: "Sample Text Response",
-          ipynbFeedback: analysisResponse.ipynb
+          textFeedback: "Sample Text Response"
         }
       }
     };
