@@ -1243,7 +1243,10 @@ class MyLearning extends React.Component {
       <Fragment>
         {!this.props.id ? (
           <Fragment>
-            Loading Learning Summary...
+            If you have already logged in, please wait...
+            <br/>
+            <br/>
+            Loading Learning Summary
             <LinearProgress />
           </Fragment>
         ) : (
