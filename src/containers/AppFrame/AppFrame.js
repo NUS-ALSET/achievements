@@ -44,6 +44,7 @@ import Tasks from "../Tasks/Tasks";
 import CustomActivity from "../CustomActivity/CustomActivity";
 import Journeys from "../Journeys/Journeys";
 import CustomAnalysis from "../CustomAnalysis/CustomAnalysis";
+import AdminCustomAnalysis from "../AdminCustomAnalysis/AdminCustomAnalysis";
 
 // from Material-UI
 import AppBar from "@material-ui/core/AppBar";
@@ -314,7 +315,16 @@ class AppFrame extends React.Component {
                 <Route component={Task} exact path="/advanced/:taskId" />
                 <Route component={CustomActivity} exact path="/customactivity" />
                 <Route component={Journeys} exact path="/journeys" />
-                <Route component={CustomAnalysis} exact path="/customAnalysis" />
+                <Route
+                  component={CustomAnalysis}
+                  exact
+                  path="/customAnalysis"
+                />
+                <Route
+                  component={AdminCustomAnalysis}
+                  exact
+                  path="/adminCustomAnalysis"
+                />
                 <Route component={MockJourneys} exact path="/mock-journeys" />
                 <Route render={routeProps => <MyLearning {...routeProps} {...userId} />} />
                 <Route component={NoMatch} />

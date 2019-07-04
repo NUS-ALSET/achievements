@@ -50,13 +50,18 @@ function runJupyterAnalysis(analysisNotebook, solutions) {
  * @param {String} data.uid
  * @param {Object} data.solutions
  * @param {String} data.analysisID
+ * @param {String} data.analysisType - customAnalysis or adminCustomAnalysis
  * @param {Object} context
  */
 function runCustomAnalysis(data, context) {
   console.log(data);
+  let firestore_node = "customAnalysis";
+  if (data.analysisType) {
+    firestore_node = data.analysisType;
+  }
   return admin
     .firestore()
-    .collection("/customAnalysis")
+    .collection(`/${firestore_node}`)
     .doc(data.analysisID)
     .get()
     .then(doc => {
