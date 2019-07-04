@@ -25,6 +25,9 @@ export class AdminCustomAnalysisService {
 
   constructor() {
     this.addAdminCustomAnalysis = this.addAdminCustomAnalysis.bind(this);
+    this.onAdminAnalyse = this.onAdminAnalyse.bind(this);
+    this.getQueryResults = this.getQueryResults.bind(this);
+    this.buildFirebaseQuery = this.buildFirebaseQuery.bind(this);
   }
   auth() {
     return new Promise(resolve =>
@@ -135,16 +138,110 @@ export class AdminCustomAnalysisService {
       .delete();
   }
 
+  async executeFirebaseQuery(firebaseQuery) {
+    return await firebaseQuery
+      .once("value")
+      .then(snap => snap.val() || {})
+      .catch(err => {
+        console.error(err.message);
+      });
+  }
+
+  enquote(v) {
+    if (typeof v === "string") {
+      return '"' + v + '"';
+    }
+    return v;
+  }
+
+  async buildFirebaseQuery(firebaseQueries) {
+    try {
+      let firebaseQuery;
+      let firebaseResults = [];
+
+      for (let oneQuery of firebaseQueries) {
+        firebaseQuery = firebase
+          .database()
+          .ref(`/${oneQuery.query.firebase["ref"]}`);
+
+        for (let option of Object.keys(oneQuery.query.firebase)) {
+          if (option !== "ref") {
+            let value = oneQuery.query.firebase[option]
+              ? this.enquote(oneQuery.query.firebase[option])
+              : null;
+            if (value) {
+              firebaseQuery = firebaseQuery[option](value);
+            }
+          }
+        }
+        let tempResults = await this.executeFirebaseQuery(firebaseQuery);
+        firebaseResults.push({
+          [oneQuery.name]: tempResults
+        });
+        return firebaseResults;
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  async getQueryResults(queries) {
+    let allResults = [];
+    let firebaseResults = await this.buildFirebaseQuery(queries.firebase);
+    //let firestoreResults = this.buildFirestoreQuery(queries.firestore);
+    allResults.push.apply(allResults, firebaseResults);
+    return allResults;
+  }
+
   /**
-   * This method removes the custom activity of the given
-   * custom analysis id and user id
+   * This method stores the Custom Analysis response
    *
-   * @param {String} adminCustomAnalysisID customAnalysis ID to be deleted
-   * @param {String} query queries to be executed to fetch data from the database
+   * @param {String} uid user id of creator
+   * @param {String} response Analysis Response
+   * @param {String} analysisID Custom Analysis ID
    *
    */
-  onAdminAnalyse(adminCustomAnalysisID, query) {
-    return { response: "Dummy Response" };
+
+  async storeAnalysis(uid, response, analysisID) {
+    await firebase
+      .firestore()
+      .collection("/adminCustomAnalysisResponse")
+      .add({
+        createdAt: firebase.firestore.Timestamp.now().toMillis(),
+        uid: uid,
+        analysisID: analysisID,
+        response: response
+      });
+    return JSON.parse(response.data);
+  }
+
+  /**
+   * This method calls analysis after fetching the data from firebase/firestore
+   * based on the query passed in.
+   *
+   * @param {String} uid user id of creator
+   * @param {String} adminCustomAnalysisID customAnalysis ID to be deleted
+   * @param {Object} query queries to be executed to fetch data from the database
+   *
+   */
+  async onAdminAnalyse(uid, adminCustomAnalysisID, queries) {
+    try {
+      let results = await this.getQueryResults(queries).then();
+      return await firebase
+        .functions()
+        .httpsCallable("runCustomAnalysis")({
+          uid,
+          solutions: results,
+          analysisID: adminCustomAnalysisID,
+          analysisType: "adminCustomAnalysis"
+        })
+        .then(response =>
+          this.storeAnalysis(uid, response, adminCustomAnalysisID)
+        )
+        .catch(err => console.error(err));
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 }
 export const adminCustomAnalysisService = new AdminCustomAnalysisService();

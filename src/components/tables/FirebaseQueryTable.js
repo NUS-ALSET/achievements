@@ -23,7 +23,7 @@ class FirebaseQueryTable extends React.PureComponent {
   };
   state = {
     query: {
-      firebase: { ref: "", orderByChild: "", equalTo: "", once: "" }
+      firebase: { ref: "", orderByChild: "", equalTo: "" }
     }
   };
 
@@ -38,9 +38,6 @@ class FirebaseQueryTable extends React.PureComponent {
         break;
       case "equalTo":
         data.firebase.equalTo = value;
-        break;
-      case "once":
-        data.firebase.once = value;
         break;
       default:
         break;
@@ -71,14 +68,8 @@ class FirebaseQueryTable extends React.PureComponent {
         <TableBody>
           <TableRow key="firebase">
             <TableCell align="right">
-              <Typography className={classes.instructions}>firebase</Typography>
-            </TableCell>
-            <TableCell align="left"> </TableCell>
-          </TableRow>
-          <TableRow key="database">
-            <TableCell align="right">
               <Typography className={classes.instructions}>
-                .database()
+                firebase.database()
               </Typography>
             </TableCell>
             <TableCell align="left"> </TableCell>
@@ -86,7 +77,7 @@ class FirebaseQueryTable extends React.PureComponent {
           <TableRow key="ref">
             <TableCell align="right">
               <Typography className={classes.instructions}>
-                .ref("{this.state.query.firebase.ref}")
+                .ref({this.state.query.firebase.ref})
               </Typography>
             </TableCell>
             <TableCell align="left">
@@ -104,8 +95,7 @@ class FirebaseQueryTable extends React.PureComponent {
           <TableRow key="orderByChild">
             <TableCell align="right">
               <Typography className={classes.instructions}>
-                .orderByChild("{this.state.query.firebase.orderByChild}
-                ")
+                .orderByChild({this.state.query.firebase.orderByChild})
               </Typography>
             </TableCell>
             <TableCell align="left">
@@ -126,7 +116,7 @@ class FirebaseQueryTable extends React.PureComponent {
           <TableRow key="equalTo">
             <TableCell align="right">
               <Typography className={classes.instructions}>
-                .equalTo("{this.state.query.firebase.equalTo}")
+                .equalTo({this.state.query.firebase.equalTo})
               </Typography>
             </TableCell>
             <TableCell align="left">
@@ -144,20 +134,10 @@ class FirebaseQueryTable extends React.PureComponent {
           <TableRow key="once">
             <TableCell align="right">
               <Typography className={classes.instructions}>
-                .once("{this.state.query.firebase.once}")
+                .once("value")
               </Typography>
             </TableCell>
-            <TableCell align="left">
-              <TextField
-                id="outlined-name"
-                label="once"
-                className={classes.textField}
-                value={this.state.query.firebase.once}
-                onChange={e => this.onFieldChange("once", e.target.value)}
-                margin="dense"
-                variant="outlined"
-              />
-            </TableCell>
+            <TableCell align="left" />
           </TableRow>
         </TableBody>
       </Table>

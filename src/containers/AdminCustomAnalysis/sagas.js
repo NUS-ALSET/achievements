@@ -86,8 +86,14 @@ export function* deleteAdminCustomAnalysisHandler(action) {
 
 export function* onAdminAnalyseHandler(action) {
   try {
+    let uid = yield select(state => state.firebase.auth.uid);
+    if (!uid) {
+      yield take("@@reactReduxFirebase/LOGIN");
+      uid = yield select(state => state.firebase.auth.uid);
+    }
     let analysisResponse = yield call(
       adminCustomAnalysisService.onAdminAnalyse,
+      uid,
       action.adminAnalysisID,
       action.query
     );

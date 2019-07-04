@@ -30,7 +30,6 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import TextField from "@material-ui/core/TextField";
-import InputAdornment from "@material-ui/core/InputAdornment";
 
 class AddAdminCustomQueryDialog extends React.PureComponent {
   constructor(props) {
@@ -47,11 +46,11 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
     activeStep: 0,
     skipped: new Set(),
     open: false,
-    fileName: "",
+    name: "",
     isCorrectInput: false,
     type: "Firebase",
     query: {
-      firebase: { ref: "", orderByChild: "", equalTo: "", once: "" },
+      firebase: { ref: "", orderByChild: "", equalTo: "" },
       firestore: {}
     }
   };
@@ -107,16 +106,11 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
                     ? ""
                     : "Name should not be empty or too long or have invalid characters"
                 }
-                label="Query Results File Name"
+                label="Query Name"
                 margin="dense"
-                onChange={e => this.onFieldChange("fileName", e.target.value)}
+                onChange={e => this.onFieldChange("name", e.target.value)}
                 required
-                value={this.state.fileName || ""}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">.json</InputAdornment>
-                  )
-                }}
+                value={this.state.name || ""}
               />
               <FirebaseQueryTable
                 classes={this.props.classes}
@@ -139,16 +133,11 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
                     ? ""
                     : "Name should not be empty or too long or have invalid characters"
                 }
-                label="Query Results File Name"
+                label="Query Name"
                 margin="dense"
-                onChange={e => this.onFieldChange("fileName", e.target.value)}
+                onChange={e => this.onFieldChange("name", e.target.value)}
                 required
-                value={this.state.fileName || ""}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">.json</InputAdornment>
-                  )
-                }}
+                value={this.state.name || ""}
               />
               <FirestoreQueryTable
                 classes={this.props.classes}
@@ -230,7 +219,7 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
   };
   onFieldChange = (field, value) => {
     // validate name input
-    if (field === "fileName") {
+    if (field === "name") {
       if (AddName.test(value) && NoStartWhiteSpace.test(value)) {
         this.setState({
           isCorrectInput: true
@@ -245,24 +234,52 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
   };
 
   isIncorrect = () => {
-    if (this.state.fileName && this.state.isCorrectInput) {
+    if (this.state.name && this.state.isCorrectInput) {
       return false;
     } else {
       return true;
     }
   };
 
+  parseValue(v) {
+    if (v === "") {
+      return undefined;
+    }
+
+    if (/^"(.*)"$/.test(v)) {
+      return v.substring(1, v.length - 1);
+    } else if (/^-?[0-9]+$/.test(v)) {
+      return parseInt(v, 10);
+    }
+    switch (v) {
+      case "true":
+        return true;
+      case "false":
+        return false;
+      case "null":
+        return null;
+      default:
+        return v;
+    }
+  }
+
   firebaseQueryHandler(data) {
+    let parsedData = {
+      firebase: { ref: "", orderByChild: "", equalTo: "" }
+    };
+    Object.keys(data.firebase).forEach(option => {
+      parsedData.firebase[option] = this.parseValue(data.firebase[option]);
+    });
     this.setState({
       ...this.state,
-      query: { fileName: this.state.fileName + ".json", query: data }
+      query: { name: this.state.name, query: parsedData }
     });
   }
 
   firestoreQueryHandler(data) {
     this.setState({
       ...this.state,
-      query: { fileName: this.state.fileName + ".json", query: data }
+      query: { name: this.state.name, query: data }
     });
   }
 

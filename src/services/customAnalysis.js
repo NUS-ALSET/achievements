@@ -240,7 +240,7 @@ export class CustomAnalysisService {
    * This method stores the Custom Analysis response
    *
    * @param {String} uid user id of creator
-   * @param {String} response collection of user solutions to be analysed
+   * @param {String} response Analysis Response
    * @param {String} analysisID Custom Analysis ID
    *
    */
@@ -278,7 +278,8 @@ export class CustomAnalysisService {
       .httpsCallable("runCustomAnalysis")({
         uid,
         solutions,
-        analysisID
+        analysisID,
+        analysisType: "customAnalysis"
       })
       .then(response => this.storeAnalysis(uid, response, analysisID))
       .catch(err => console.error(err));

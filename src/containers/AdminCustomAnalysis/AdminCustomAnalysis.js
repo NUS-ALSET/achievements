@@ -164,34 +164,63 @@ class AdminCustomAnalysis extends React.PureComponent {
   handleSubmit = () => {
     this.setState({ displayResponse: "Loading" });
     this.props.onAnalyse(this.state.adminAnalysisID, this.state.query);
-    //console.log("submitted");
   };
 
   handleResponseClear = () => {
     this.setState({ displayResponse: "Clear" });
-    //console.log("Clear Response");
   };
 
   getTaskInfo = analysisResponse => {
     if (analysisResponse && !isEmpty(analysisResponse)) {
-      //console.log("Setting state to loaded");
-      this.setState({ displayResponse: "Loaded" });
+      let results = analysisResponse.results
+        ? analysisResponse.results
+        : analysisResponse.result;
+      return {
+        response: {
+          data: {
+            isComplete: results.isComplete,
+            jsonFeedback: results.jsonFeedback,
+            htmlFeedback: results.htmlFeedback,
+            textFeedback: results.textFeedback,
+            ipynbFeedback: analysisResponse.ipynb
+          }
+        }
+      };
+      //this.setState({ displayResponse: "Loaded" });
     }
     return {
       response: {
         data: {
           isComplete: false,
-          jsonFeedback: analysisResponse,
+          jsonFeedback: { dummyKey: "dummyValue" },
           htmlFeedback: "<h1>Sample HTML Response</h1>",
-          textFeedback: "Sample Text Response"
+          textFeedback: "Sample Text Response",
+          ipynbFeedback: analysisResponse.ipynb
         }
       }
     };
   };
 
+  getCustomResponseForm = () => {
+    if (this.props.analysisResponse && !isEmpty(this.props.analysisResponse)) {
+      const taskInfo = this.getTaskInfo(this.props.analysisResponse);
+      return <CustomTaskResponseForm taskInfo={taskInfo} />;
+    } else {
+      return (
+        <LinearProgress
+          className={
+            this.state.displayResponse === "Loading"
+              ? ""
+              : this.props.classes.hidden
+          }
+        />
+      );
+    }
+  };
+
   render() {
-    const { classes, isAdmin, adminAnalysis, analysisResponse } = this.props;
-    const taskInfo = this.getTaskInfo(analysisResponse);
+    const { classes, isAdmin, adminAnalysis } = this.props;
+
     if (!isAdmin) {
       return (
         <Typography variant="body2" gutterBottom>
@@ -315,20 +344,7 @@ class AdminCustomAnalysis extends React.PureComponent {
             this.state.displayResponse === "Clear" ? classes.hidden : ""
           }
         >
-          {!(taskInfo && isEmpty(taskInfo)) ? (
-            <LinearProgress
-              className={
-                this.state.displayResponse === "Loading" ? "" : classes.hidden
-              }
-            />
-          ) : (
-            <CustomTaskResponseForm
-              className={
-                this.state.displayResponse === "Loaded" ? "" : classes.hidden
-              }
-              taskInfo={taskInfo}
-            />
-          )}
+          {this.getCustomResponseForm()}
         </div>
       </div>
     );
