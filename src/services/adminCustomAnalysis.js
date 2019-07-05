@@ -2,7 +2,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 
 import { SOLUTION_PRIVATE_LINK } from "../containers/Root/actions";
-
+import { notificationShow } from "../containers/Root/actions";
 const NOT_FOUND_ERROR = 404;
 
 export class AdminCustomAnalysisService {
@@ -28,6 +28,7 @@ export class AdminCustomAnalysisService {
     this.onAdminAnalyse = this.onAdminAnalyse.bind(this);
     this.getQueryResults = this.getQueryResults.bind(this);
     this.buildFirebaseQuery = this.buildFirebaseQuery.bind(this);
+    this.buildFirestoreQuery = this.buildFirestoreQuery.bind(this);
   }
   auth() {
     return new Promise(resolve =>
@@ -176,11 +177,102 @@ export class AdminCustomAnalysisService {
     }
   }
 
+  checkOptions(queryOptions, optionsToCheck) {
+    let result = optionsToCheck.every(function(val) {
+      return queryOptions.indexOf(val) !== -1;
+    });
+    return result;
+  }
+
+  async executeFirestoreQuery(firestoreQuery) {
+    let queryResults = {};
+    let querySnapshot = await firestoreQuery
+      .get()
+      .then(querySnapshot => querySnapshot)
+      .catch(error => {
+        console.log("Error getting documents: ", error);
+        notificationShow("Error getting documents: ", error);
+      });
+    querySnapshot.forEach(doc => {
+      queryResults[doc.id] = doc.data();
+    });
+    return queryResults;
+  }
+
+  async buildFirestoreQuery(firestoreQueries) {
+    try {
+      let firestoreQuery;
+      let firestoreResults = [];
+      for (let oneQuery of firestoreQueries) {
+        let queryOptions = [];
+        Object.keys(oneQuery.query.firestore).forEach(option => {
+          if (oneQuery.query.firestore[option]) {
+            queryOptions.push(option);
+          }
+        });
+        // Check for collection and doc
+        if (this.checkOptions(queryOptions, ["collection", "doc"])) {
+          firestoreQuery = firebase
+            .firestore()
+            .collection(oneQuery.query.firestore["collection"])
+            .doc(oneQuery.query.firestore["doc"]);
+        }
+        // Check for collection
+        if (this.checkOptions(queryOptions, ["collection"])) {
+          firestoreQuery = firebase
+            .firestore()
+            .collection(oneQuery.query.firestore["collection"]);
+        }
+        // Check for where
+        if (
+          this.checkOptions(queryOptions, [
+            "whereTest",
+            "whereCondition",
+            "whereTestValue"
+          ])
+        ) {
+          firestoreQuery = firestoreQuery.where(
+            oneQuery.query.firestore["whereTest"],
+            oneQuery.query.firestore["whereCondition"],
+            oneQuery.query.firestore["whereTestValue"]
+          );
+        }
+        // Check for orderBy
+        if (this.checkOptions(queryOptions, ["orderBy", "orderByDirection"])) {
+          firestoreQuery = firestoreQuery.orderBy(
+            oneQuery.query.firestore["orderBy"],
+            oneQuery.query.firestore["orderByDirection"]
+          );
+        }
+        // Check for orderBy
+        if (this.checkOptions(queryOptions, ["orderBy"])) {
+          firestoreQuery = firestoreQuery.orderBy(
+            oneQuery.query.firestore["orderBy"]
+          );
+        }
+        // Check for limit
+        if (this.checkOptions(queryOptions, ["limit"])) {
+          firestoreQuery = firestoreQuery.limit(
+            oneQuery.query.firestore["limit"]
+          );
+        }
+        let tempResults = await this.executeFirestoreQuery(firestoreQuery);
+        firestoreResults.push({
+          [oneQuery.name]: tempResults
+        });
+      }
+      return firestoreResults;
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
   async getQueryResults(queries) {
     let allResults = [];
     let firebaseResults = await this.buildFirebaseQuery(queries.firebase);
-    //let firestoreResults = this.buildFirestoreQuery(queries.firestore);
+    let firestoreResults = await this.buildFirestoreQuery(queries.firestore);
     allResults.push.apply(allResults, firebaseResults);
+    allResults.push.apply(allResults, firestoreResults);
     return allResults;
   }
 
