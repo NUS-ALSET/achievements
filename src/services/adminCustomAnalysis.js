@@ -191,7 +191,7 @@ export class AdminCustomAnalysisService {
       .then(querySnapshot => querySnapshot)
       .catch(error => {
         console.log("Error getting documents: ", error);
-        notificationShow("Error getting documents: ", error);
+        notificationShow(error.message);
       });
     querySnapshot.forEach(doc => {
       queryResults[doc.id] = doc.data();
