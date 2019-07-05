@@ -94,6 +94,7 @@ class FirebaseQueryTable extends React.PureComponent {
             </TableCell>
             <TableCell align="left">
               <TextField
+                required
                 id="outlined-name"
                 label="ref"
                 className={classes.textField}
@@ -153,6 +154,7 @@ class FirebaseQueryTable extends React.PureComponent {
               <TextField
                 id="outlined-name"
                 label="limitToFirst"
+                type="number"
                 className={classes.textField}
                 value={this.state.query.firebase.limitToFirst}
                 onChange={e =>
@@ -173,6 +175,7 @@ class FirebaseQueryTable extends React.PureComponent {
               <TextField
                 id="outlined-name"
                 label="limitToLast"
+                type="number"
                 className={classes.textField}
                 value={this.state.query.firebase.limitToLast}
                 onChange={e =>

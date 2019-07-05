@@ -10,6 +10,8 @@ import PropTypes from "prop-types";
 // RegExp rules
 import { AddName, NoStartWhiteSpace } from "../regexp-rules/RegExpRules";
 
+import { APP_SETTING } from "../../achievementsApp/config";
+
 // Import components
 import FirebaseQueryTable from "../tables/FirebaseQueryTable";
 import FirestoreQueryTable from "../tables/FirestoreQueryTable";
@@ -50,12 +52,15 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
     isCorrectInput: false,
     type: "Firebase",
     query: {
-      firebase: {
-        ref: "",
-        orderByChild: "",
-        equalTo: "",
-        limitToFirst: "",
-        limitToLast: ""
+      name: "",
+      query: {
+        firebase: {
+          ref: "",
+          orderByChild: "",
+          equalTo: "",
+          limitToFirst: "",
+          limitToLast: ""
+        }
       },
       firestore: {
         collection: "",
@@ -249,7 +254,14 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
   };
 
   isIncorrect = () => {
-    if (this.state.name && this.state.isCorrectInput) {
+    if (
+      this.state.name &&
+      this.state.isCorrectInput &&
+      ((this.state.query.query.firebase &&
+        this.state.query.query.firebase.ref) ||
+        (this.state.query.query.firestore &&
+          this.state.query.query.firestore.collection))
+    ) {
       return false;
     } else {
       return true;
@@ -288,8 +300,30 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
         limitToLast: ""
       }
     };
+
     Object.keys(data.firebase).forEach(option => {
-      parsedData.firebase[option] = this.parseValue(data.firebase[option]);
+      let value = this.parseValue(data.firebase[option]);
+
+      switch (option) {
+        case "limitToFirst":
+          value =
+            value > APP_SETTING.ADMIN_ANALYSIS_LIMIT
+              ? APP_SETTING.ADMIN_ANALYSIS_LIMIT
+              : value;
+          break;
+        case "limitToLast":
+          value = value
+            ? value > APP_SETTING.ADMIN_ANALYSIS_LIMIT
+              ? APP_SETTING.ADMIN_ANALYSIS_LIMIT
+              : value
+            : this.parseValue(data.firebase["limitToFirst"])
+            ? value
+            : APP_SETTING.ADMIN_ANALYSIS_LIMIT;
+          break;
+        default:
+          break;
+      }
+      parsedData.firebase[option] = value;
     });
     this.setState({
       ...this.state,
@@ -311,7 +345,20 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
       }
     };
     Object.keys(data.firestore).forEach(option => {
-      parsedData.firestore[option] = this.parseValue(data.firestore[option]);
+      let value = this.parseValue(data.firestore[option]);
+
+      switch (option) {
+        case "limit":
+          value = value
+            ? value > APP_SETTING.ADMIN_ANALYSIS_LIMIT
+              ? APP_SETTING.ADMIN_ANALYSIS_LIMIT
+              : value
+            : APP_SETTING.ADMIN_ANALYSIS_LIMIT;
+          break;
+        default:
+          break;
+      }
+      parsedData.firestore[option] = value;
     });
     this.setState({
       ...this.state,

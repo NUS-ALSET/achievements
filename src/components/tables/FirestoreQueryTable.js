@@ -93,6 +93,7 @@ class FirestoreQueryTable extends React.PureComponent {
             </TableCell>
             <TableCell align="left">
               <TextField
+                required
                 id="outlined-name"
                 label="collection"
                 className={classes.textField}
@@ -209,6 +210,7 @@ class FirestoreQueryTable extends React.PureComponent {
               <TextField
                 id="outlined-name"
                 label="limit"
+                type="number"
                 className={classes.textField}
                 value={this.state.query.firestore.limit}
                 onChange={e => this.onFieldChange("limit", e.target.value)}
