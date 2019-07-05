@@ -57,7 +57,16 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
         limitToFirst: "",
         limitToLast: ""
       },
-      firestore: {}
+      firestore: {
+        collection: "",
+        doc: "",
+        whereTest: "",
+        whereCondition: "",
+        whereTestValue: "",
+        orderBy: "",
+        orderByDirection: "",
+        limit: ""
+      }
     }
   };
   getSteps = () => {
@@ -289,9 +298,24 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
   }
 
   firestoreQueryHandler(data) {
+    let parsedData = {
+      firestore: {
+        collection: "",
+        doc: "",
+        whereTest: "",
+        whereCondition: "",
+        whereTestValue: "",
+        orderBy: "",
+        orderByDirection: "",
+        limit: ""
+      }
+    };
+    Object.keys(data.firestore).forEach(option => {
+      parsedData.firestore[option] = this.parseValue(data.firestore[option]);
+    });
     this.setState({
       ...this.state,
-      query: { name: this.state.name, query: data }
+      query: { name: this.state.name, query: parsedData }
     });
   }
 

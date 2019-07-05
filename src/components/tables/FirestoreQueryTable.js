@@ -16,11 +16,23 @@ import TableRow from "@material-ui/core/TableRow";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 
+export const QUERY_OPTIONS = [
+  "collection",
+  "doc",
+  "whereTest",
+  "whereCondition",
+  "whereTestValue",
+  "orderBy",
+  "orderByDirection",
+  "limit"
+];
+
 class FirestoreQueryTable extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object.isRequired,
     firestoreQueryHandler: PropTypes.func
   };
+
   state = {
     query: {
       firestore: {
@@ -38,33 +50,8 @@ class FirestoreQueryTable extends React.PureComponent {
 
   onFieldChange = (field, value) => {
     let data = { ...this.state.query };
-    switch (field) {
-      case "collection":
-        data.firestore.collection = value;
-        break;
-      case "doc":
-        data.firestore.doc = value;
-        break;
-      case "whereTest":
-        data.firestore.whereTest = value;
-        break;
-      case "whereCondition":
-        data.firestore.whereCondition = value;
-        break;
-      case "whereTestValue":
-        data.firestore.whereTestValue = value;
-        break;
-      case "orderBy":
-        data.firestore.orderBy = value;
-        break;
-      case "orderByDirection":
-        data.firestore.orderByDirection = value;
-        break;
-      case "limit":
-        data.firestore.limit = value;
-        break;
-      default:
-        break;
+    if (QUERY_OPTIONS.indexOf(field) !== -1) {
+      data.firestore[field] = value;
     }
     this.setState({ ...this.state, query: data });
     this.props.firestoreQueryHandler(data);
@@ -92,14 +79,8 @@ class FirestoreQueryTable extends React.PureComponent {
         <TableBody>
           <TableRow key="firebase">
             <TableCell align="right">
-              <Typography className={classes.instructions}>firebase</Typography>
-            </TableCell>
-            <TableCell align="left"> </TableCell>
-          </TableRow>
-          <TableRow key="firestore">
-            <TableCell align="right">
               <Typography className={classes.instructions}>
-                .firestore()
+                firebase.firestore()
               </Typography>
             </TableCell>
             <TableCell align="left"> </TableCell>
@@ -221,7 +202,7 @@ class FirestoreQueryTable extends React.PureComponent {
           <TableRow key="limit">
             <TableCell align="right">
               <Typography className={classes.instructions}>
-                .limit("{this.state.query.firestore.limit}")
+                .limit({this.state.query.firestore.limit})
               </Typography>
             </TableCell>
             <TableCell align="left">
