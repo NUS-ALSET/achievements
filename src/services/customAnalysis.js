@@ -253,7 +253,9 @@ export class CustomAnalysisService {
         createdAt: firebase.firestore.Timestamp.now().toMillis(),
         uid: uid,
         analysisID: analysisID,
-        response: response
+        response: JSON.parse(response.data).results
+          ? JSON.stringify(JSON.parse(response.data).results)
+          : JSON.parse(response.data).result
       });
     return JSON.parse(response.data);
   }
