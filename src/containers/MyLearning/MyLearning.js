@@ -1072,6 +1072,13 @@ class MyLearning extends React.Component {
   handleTabChange = (event, tabValue, title, uid, getterFunction1, getterFunction2 = "") => {
     this.setState({ tabvalueSpecificPanels: { ...this.state.tabvalueSpecificPanels, [title]: tabValue } });
     this.getLastMonthAllTimeData(tabValue, uid, getterFunction1, getterFunction2);
+    this.db.collection("/logged_events").add({
+      createdAt: Date.now(),
+      type: "FIREBASE_TRIGGERS",
+      uid: uid,
+      sGen: true,
+      otherActionData: { tabValue: tabValue, title: title }
+    });
   };
 
   getLastMonthAllTimeData = (tabValue, uid, getterFunction1, getterFunction2) => {
