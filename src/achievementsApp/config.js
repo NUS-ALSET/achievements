@@ -33,7 +33,8 @@ export const APP_SETTING = {
   GITHUB_BASE_URL: "https://github.com/",
   AWS_SERVER_URL:
     "https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest",
-  JUPYTER_FILE_UPLOAD_LIMIT: 1 //in MB
+  JUPYTER_FILE_UPLOAD_LIMIT: 1, //in MB
+  ADMIN_ANALYSIS_LIMIT: 500
 };
 
 // Initialize Firebase
