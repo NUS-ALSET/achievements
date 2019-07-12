@@ -18,6 +18,7 @@ import {
   ANALYSE_SUCCESS,
   customAnalysisOpen,
   addCustomAnalysisRequest,
+  updateCustomAnalysisRequest,
   deleteCustomAnalysisRequest,
   analyseRequest
 } from "./actions";
@@ -25,7 +26,7 @@ import {
 // Import components
 import CustomAnalysisMenu from "../../components/menus/CustomAnalysisMenu";
 import AddCustomAnalysisDialog from "../../components/dialogs/AddCustomAnalysisDialog";
-import DeleteCustomAnalysisDialog from "../../components/dialogs/DeleteCustomAnalysisDialog";
+import ModifyCustomAnalysisDialog from "../../components/dialogs/ModifyCustomAnalysisDialog";
 import { CustomTaskResponseForm } from "../../components/forms/CustomTaskResponseForm";
 
 // Import MaterialUI components
@@ -101,6 +102,9 @@ class CustomAnalysis extends React.PureComponent {
 
     this.listHandler = this.listHandler.bind(this);
     this.addCustomAnalysisHandler = this.addCustomAnalysisHandler.bind(this);
+    this.updateCustomAnalysisHandler = this.updateCustomAnalysisHandler.bind(
+      this
+    );
     this.deleteCustomAnalysisHandler = this.deleteCustomAnalysisHandler.bind(
       this
     );
@@ -154,6 +158,9 @@ class CustomAnalysis extends React.PureComponent {
 
   deleteCustomAnalysisHandler(analysisID) {
     this.props.deleteCustomAnalysis(analysisID);
+  }
+  updateCustomAnalysisHandler(analysisID) {
+    this.props.updateCustomAnalysis(analysisID);
   }
 
   handleChange = event => {
@@ -403,10 +410,11 @@ class CustomAnalysis extends React.PureComponent {
                   addCustomAnalysisHandler={this.addCustomAnalysisHandler}
                 />
                 <br />
-                <DeleteCustomAnalysisDialog
+                <ModifyCustomAnalysisDialog
                   classes={classes}
                   myAnalysis={myAnalysis}
                   listHandler={this.listHandler}
+                  updateCustomAnalysisHandler={this.updateCustomAnalysisHandler}
                   deleteCustomAnalysisHandler={this.deleteCustomAnalysisHandler}
                 />
               </TableCell>
@@ -469,6 +477,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   onOpen: customAnalysisOpen,
   addCustomAnalysis: addCustomAnalysisRequest,
+  updateCustomAnalysis: updateCustomAnalysisRequest,
   deleteCustomAnalysis: deleteCustomAnalysisRequest,
   onAnalyse: analyseRequest
 };

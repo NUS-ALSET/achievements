@@ -7,8 +7,10 @@ const NOT_FOUND_ERROR = 404;
 
 export class CustomAnalysisService {
   constructor() {
+    this.formAnalysisContents = this.formAnalysisContents.bind(this);
     this.addCustomAnalysis = this.addCustomAnalysis.bind(this);
     this.analyseHandler = this.analyseHandler.bind(this);
+    this.updateCustomAnalysis = this.updateCustomAnalysis.bind(this);
   }
   auth() {
     return new Promise(resolve =>
@@ -181,6 +183,32 @@ export class CustomAnalysisService {
   }
 
   /**
+   * This method forms the contents of the analysis notebook.
+   * If the url submitted is for a cloud function then the type is set.
+   * Otherwise for jupyter notebook urls the notebook contents are fetched.
+   *
+   * @param {String} uid user id of creator
+   * @param {String} customAnalysisUrl Colab URL/ Cloud Function url for analysis
+   *
+   */
+  async formAnalysisContents(customAnalysisUrl) {
+    let storeData = {};
+    let result = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(
+      customAnalysisUrl
+    );
+    if (result && result[1]) {
+      // Colaboratory link. Fetch notebook contents
+      let fileID = result[1];
+      let data = await this.fetchFile(fileID);
+      storeData = { analysisNotebook: JSON.stringify(data), type: "jupyter" };
+    } else {
+      // Cloud function. No notebook contents to fetch.
+      storeData = { type: "cloudFunction" };
+    }
+    return storeData;
+  }
+
+  /**
    * This method adds custom analysis details to firestore.
    * URL stored can be of two types -
    * 1. Colaboratory URL :
@@ -195,19 +223,7 @@ export class CustomAnalysisService {
    *
    */
   async addCustomAnalysis(uid, customAnalysisUrl, customAnalysisName) {
-    let storeData = {};
-    let result = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(
-      customAnalysisUrl
-    );
-    if (result && result[1]) {
-      // Colaboratory link. Fetch notebook contents
-      let fileID = result[1];
-      let data = await this.fetchFile(fileID);
-      storeData = { analysisNotebook: JSON.stringify(data), type: "jupyter" };
-    } else {
-      // Cloud function. No notebook contents to fetch.
-      storeData = { type: "cloudFunction" };
-    }
+    let storeData = await this.formAnalysisContents(customAnalysisUrl);
     return await firebase
       .firestore()
       .collection("/customAnalysis")
@@ -234,6 +250,28 @@ export class CustomAnalysisService {
       .collection("/customAnalysis")
       .doc(customAnalysisID)
       .delete();
+  }
+
+  /**
+   * This method updates the custom activity of the given
+   * custom analysis id and user id
+   *
+   * @param {String} customAnalysisID customAnalysis ID to be deleted
+   *
+   */
+  async updateCustomAnalysis(customAnalysisID) {
+    let docRef = firebase
+      .firestore()
+      .collection("/customAnalysis")
+      .doc(customAnalysisID);
+    await docRef.get().then(async doc => {
+      let customAnalysis = doc.data();
+      let storeData = await this.formAnalysisContents(customAnalysis.url);
+      docRef.update({
+        createdAt: firebase.firestore.Timestamp.now().toMillis(),
+        ...storeData
+      });
+    });
   }
 
   /**

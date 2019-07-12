@@ -2,6 +2,7 @@ import {
   ADMIN_STATUS_LOADED,
   ADMIN_STATUS_ERROR,
   ADD_ADMIN_CUSTOM_ANALYSIS_SUCCESS,
+  UPDATE_ADMIN_CUSTOM_ANALYSIS_SUCCESS,
   DELETE_ADMIN_CUSTOM_ANALYSIS_SUCCESS,
   ADMIN_ANALYSE_SUCCESS,
   ADMIN_ANALYSE_FAIL
@@ -47,6 +48,11 @@ export const adminCustomAnalysis = (
       return {
         ...state,
         dialog: "DELETE_ADMIN_CUSTOM_ANALYSIS_SUCCESS"
+      };
+    case UPDATE_ADMIN_CUSTOM_ANALYSIS_SUCCESS:
+      return {
+        ...state,
+        dialog: "UPDATE_ADMIN_CUSTOM_ANALYSIS_SUCCESS"
       };
     case ADMIN_ANALYSE_SUCCESS:
       return {

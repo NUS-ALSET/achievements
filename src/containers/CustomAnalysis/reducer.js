@@ -5,6 +5,7 @@ import {
   ANALYSE_SUCCESS,
   ANALYSE_FAIL,
   FETCH_SOLUTIONS_SUCCESS,
+  UPDATE_CUSTOM_ANALYSIS_SUCCESS,
   DELETE_CUSTOM_ANALYSIS_SUCCESS
 } from "./actions";
 
@@ -48,6 +49,11 @@ export const customAnalysis = (
       return {
         ...state,
         dialog: "DELETE_CUSTOM_ANALYSIS_SUCCESS"
+      };
+    case UPDATE_CUSTOM_ANALYSIS_SUCCESS:
+      return {
+        ...state,
+        dialog: "UPDATE_CUSTOM_ANALYSIS_SUCCESS"
       };
     case ANALYSE_SUCCESS:
       return {
