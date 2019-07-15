@@ -74,8 +74,14 @@ export function* addAdminCustomAnalysisHandler(action) {
 
 export function* deleteAdminCustomAnalysisHandler(action) {
   try {
+    let uid = yield select(state => state.firebase.auth.uid);
+    if (!uid) {
+      yield take("@@reactReduxFirebase/LOGIN");
+      uid = yield select(state => state.firebase.auth.uid);
+    }
     yield call(
       adminCustomAnalysisService.deleteAdminCustomAnalysis,
+      uid,
       action.customAnalysisID
     );
     yield put(deleteAdminCustomAnalysisSuccess(action.customAnalysisID));
@@ -89,8 +95,14 @@ export function* deleteAdminCustomAnalysisHandler(action) {
 
 export function* updateAdminCustomAnalysisHandler(action) {
   try {
+    let uid = yield select(state => state.firebase.auth.uid);
+    if (!uid) {
+      yield take("@@reactReduxFirebase/LOGIN");
+      uid = yield select(state => state.firebase.auth.uid);
+    }
     yield call(
       adminCustomAnalysisService.updateAdminCustomAnalysis,
+      uid,
       action.customAnalysisID
     );
     yield put(updateAdminCustomAnalysisSuccess(action.customAnalysisID));
