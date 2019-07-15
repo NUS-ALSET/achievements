@@ -84,7 +84,6 @@ class CustomAnalysis extends React.PureComponent {
     myActivities: PropTypes.any,
     myAssignments: PropTypes.any,
     myAnalysis: PropTypes.object,
-    dialog: PropTypes.string,
     analysisResults: PropTypes.object
     // solutionsSelected: PropTypes.array
   };
@@ -471,7 +470,6 @@ const mapStateToProps = state => ({
   myActivities: state.customAnalysis.myActivities,
   myAssignments: state.customAnalysis.myAssignments,
   myAnalysis: state.firestore.data.myAnalysis,
-  dialog: state.customAnalysis.dialog,
   analysisResults: state.customAnalysis.analysisResults,
   solutionsSelected: state.customAnalysis.solutionsSelected
 });
