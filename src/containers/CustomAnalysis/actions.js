@@ -103,3 +103,22 @@ export const deleteCustomAnalysisFail = (customAnalysisID, error) => ({
   customAnalysisID,
   error
 });
+
+export const UPDATE_CUSTOM_ANALYSIS_REQUEST = "UPDATE_CUSTOM_ANALYSIS_REQUEST";
+export const updateCustomAnalysisRequest = customAnalysisID => ({
+  type: UPDATE_CUSTOM_ANALYSIS_REQUEST,
+  customAnalysisID
+});
+
+export const UPDATE_CUSTOM_ANALYSIS_SUCCESS = "UPDATE_CUSTOM_ANALYSIS_SUCCESS";
+export const updateCustomAnalysisSuccess = customAnalysisID => ({
+  type: UPDATE_CUSTOM_ANALYSIS_SUCCESS,
+  customAnalysisID
+});
+
+export const UPDATE_CUSTOM_ANALYSIS_FAIL = "UPDATE_CUSTOM_ANALYSIS_FAIL";
+export const updateCustomAnalysisFail = (customAnalysisID, error) => ({
+  type: UPDATE_CUSTOM_ANALYSIS_FAIL,
+  customAnalysisID,
+  error
+});

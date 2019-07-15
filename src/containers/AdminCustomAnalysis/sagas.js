@@ -3,6 +3,7 @@ import {
   ADMIN_CUSTOM_ANALYSIS_OPEN,
   ADD_ADMIN_CUSTOM_ANALYSIS_REQUEST,
   DELETE_ADMIN_CUSTOM_ANALYSIS_REQUEST,
+  UPDATE_ADMIN_CUSTOM_ANALYSIS_REQUEST,
   ADMIN_ANALYSE_REQUEST,
   adminStatusLoaded,
   adminStatusError,
@@ -10,6 +11,8 @@ import {
   addAdminCustomAnalysisFail,
   deleteAdminCustomAnalysisSuccess,
   deleteAdminCustomAnalysisFail,
+  updateAdminCustomAnalysisSuccess,
+  updateAdminCustomAnalysisFail,
   adminAnalyseSuccess,
   adminAnalyseFail
 } from "./actions";
@@ -84,6 +87,21 @@ export function* deleteAdminCustomAnalysisHandler(action) {
   }
 }
 
+export function* updateAdminCustomAnalysisHandler(action) {
+  try {
+    yield call(
+      adminCustomAnalysisService.updateAdminCustomAnalysis,
+      action.customAnalysisID
+    );
+    yield put(updateAdminCustomAnalysisSuccess(action.customAnalysisID));
+  } catch (err) {
+    yield put(
+      updateAdminCustomAnalysisFail(action.customAnalysisID, err.message)
+    );
+    yield put(notificationShow(err.message));
+  }
+}
+
 export function* onAdminAnalyseHandler(action) {
   try {
     let uid = yield select(state => state.firebase.auth.uid);
@@ -129,6 +147,12 @@ export default [
     yield takeLatest(
       DELETE_ADMIN_CUSTOM_ANALYSIS_REQUEST,
       deleteAdminCustomAnalysisHandler
+    );
+  },
+  function* watchUpdateCustomAnalysis() {
+    yield takeLatest(
+      UPDATE_ADMIN_CUSTOM_ANALYSIS_REQUEST,
+      updateAdminCustomAnalysisHandler
     );
   },
   function* watchDeleteCustomAnalysis() {

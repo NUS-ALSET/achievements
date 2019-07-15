@@ -20,6 +20,7 @@ import isEmpty from "lodash/isEmpty";
 import {
   adminCustomAnalysisOpen,
   addAdminCustomAnalysisRequest,
+  updateAdminCustomAnalysisRequest,
   deleteAdminCustomAnalysisRequest,
   adminAnalyseRequest
 } from "./actions";
@@ -27,7 +28,7 @@ import {
 // Import components
 import CustomAnalysisMenu from "../../components/menus/CustomAnalysisMenu";
 import AddCustomAnalysisDialog from "../../components/dialogs/AddCustomAnalysisDialog";
-import DeleteCustomAnalysisDialog from "../../components/dialogs/DeleteCustomAnalysisDialog";
+import ModifyCustomAnalysisDialog from "../../components/dialogs/ModifyCustomAnalysisDialog";
 import AddAdminCustomQueryDialog from "../../components/dialogs/AddAdminCustomQueryDialog";
 import { CustomTaskResponseForm } from "../../components/forms/CustomTaskResponseForm";
 
@@ -102,6 +103,9 @@ class AdminCustomAnalysis extends React.PureComponent {
     this.addAdminCustomAnalysisHandler = this.addAdminCustomAnalysisHandler.bind(
       this
     );
+    this.updateAdminCustomAnalysisHandler = this.updateAdminCustomAnalysisHandler.bind(
+      this
+    );
     this.deleteAdminCustomAnalysisHandler = this.deleteAdminCustomAnalysisHandler.bind(
       this
     );
@@ -135,6 +139,9 @@ class AdminCustomAnalysis extends React.PureComponent {
 
   deleteAdminCustomAnalysisHandler(analysisID) {
     this.props.deleteAdminCustomAnalysis(analysisID);
+  }
+  updateAdminCustomAnalysisHandler(analysisID) {
+    this.props.updateAdminCustomAnalysis(analysisID);
   }
 
   addCustomQueryHandler(type, query) {
@@ -315,10 +322,13 @@ class AdminCustomAnalysis extends React.PureComponent {
                       }
                     />
                     <br />
-                    <DeleteCustomAnalysisDialog
+                    <ModifyCustomAnalysisDialog
                       classes={classes}
                       myAnalysis={adminAnalysis}
                       listHandler={this.listHandler}
+                      updateCustomAnalysisHandler={
+                        this.updateAdminCustomAnalysisHandler
+                      }
                       deleteCustomAnalysisHandler={
                         this.deleteAdminCustomAnalysisHandler
                       }
@@ -377,6 +387,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   onOpen: adminCustomAnalysisOpen,
   addAdminCustomAnalysis: addAdminCustomAnalysisRequest,
+  updateAdminCustomAnalysis: updateAdminCustomAnalysisRequest,
   deleteAdminCustomAnalysis: deleteAdminCustomAnalysisRequest,
   onAnalyse: adminAnalyseRequest
 };

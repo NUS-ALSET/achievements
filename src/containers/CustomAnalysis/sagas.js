@@ -4,6 +4,7 @@ import {
   ADD_CUSTOM_ANALYSIS_REQUEST,
   ANALYSE_REQUEST,
   DELETE_CUSTOM_ANALYSIS_REQUEST,
+  UPDATE_CUSTOM_ANALYSIS_REQUEST,
   myActivitiesLoaded,
   myAssignmentsLoaded,
   addCustomAnalysisSuccess,
@@ -12,7 +13,9 @@ import {
   analyseFail,
   fetchSolutionsSuccess,
   deleteCustomAnalysisSuccess,
-  deleteCustomAnalysisFail
+  deleteCustomAnalysisFail,
+  updateCustomAnalysisSuccess,
+  updateCustomAnalysisFail
 } from "./actions";
 import { customAnalysisService } from "../../services/customAnalysis.js";
 import { notificationShow } from "../Root/actions";
@@ -84,6 +87,19 @@ export function* deleteCustomAnalysisHandler(action) {
   }
 }
 
+export function* updateCustomAnalysisHandler(action) {
+  try {
+    yield call(
+      customAnalysisService.updateCustomAnalysis,
+      action.customAnalysisID
+    );
+    yield put(updateCustomAnalysisSuccess(action.customAnalysisID));
+  } catch (err) {
+    yield put(updateCustomAnalysisFail(action.customAnalysisID, err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
 export function* analyseHandler(action) {
   try {
     let uid = yield select(state => state.firebase.auth.uid);
@@ -125,6 +141,12 @@ export default [
     yield takeLatest(
       DELETE_CUSTOM_ANALYSIS_REQUEST,
       deleteCustomAnalysisHandler
+    );
+  },
+  function* watchUpdateCustomAnalysis() {
+    yield takeLatest(
+      UPDATE_CUSTOM_ANALYSIS_REQUEST,
+      updateCustomAnalysisHandler
     );
   }
 ];

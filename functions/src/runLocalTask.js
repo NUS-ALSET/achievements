@@ -6,7 +6,9 @@ const axios = require("axios");
 
 const CALL_TIMEOUT = 50000;
 
-const jupyterLambdaProcessor = "https://bi3umkz9u7.execute-api.ap-southeast-1.amazonaws.com" + "/prod/notebook_runner";
+const jupyterLambdaProcessor =
+  "https://bi3umkz9u7.execute-api.ap-southeast-1.amazonaws.com" +
+  "/prod/notebook_runner";
 
 function runJupyterTask(owner, task, solution) {
   return admin
@@ -48,8 +50,14 @@ function runCustomTask(uid, task, solution) {
     }
   }
 
-  const checkIfUrlIsFromColab = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(task.url);
-  if (checkIfUrlIsFromColab && checkIfUrlIsFromColab[0] && checkIfUrlIsFromColab[1]) {
+  const checkIfUrlIsFromColab = /https:\/\/colab.research.google.com\/drive\/([^/&?#]+)/.exec(
+    task.url
+  );
+  if (
+    checkIfUrlIsFromColab &&
+    checkIfUrlIsFromColab[0] &&
+    checkIfUrlIsFromColab[1]
+  ) {
     // fetch notebook from url
     const docId = checkIfUrlIsFromColab[1];
     const googleUrl = "https://drive.google.com/uc?export=download&id=" + docId;
@@ -70,7 +78,11 @@ function runCustomTask(uid, task, solution) {
             method: "post",
             data: {
               notebook: response.data,
-              files: { "data.json": Buffer.from(JSON.stringify(request["editable"][0])).toString("base64") }
+              files: {
+                "data.json": Buffer.from(
+                  JSON.stringify(request["editable"][0])
+                ).toString("base64")
+              }
             }
           }).then(nextResponse => {
             const {
@@ -79,7 +91,10 @@ function runCustomTask(uid, task, solution) {
             } = nextResponse;
             if (results) {
               if ("jsonFeedback" in results) {
-                results.jsonFeedback = JSON.stringify(results.jsonFeedback);
+                results.jsonFeedback =
+                  typeof results.jsonFeedback == "string"
+                    ? JSON.parse(results.jsonFeedback)
+                    : results.jsonFeedback;
               }
               if ("ipynb" in data) {
                 results["ipynbFeedback"] = "";
@@ -89,7 +104,10 @@ function runCustomTask(uid, task, solution) {
             } else if (result) {
               const parsedResult = JSON.parse(result);
               if ("jsonFeedback" in parsedResult) {
-                parsedResult.jsonFeedback = JSON.stringify(parsedResult.jsonFeedback);
+                parsedResult.jsonFeedback =
+                  typeof parsedResult.jsonFeedback == "string"
+                    ? JSON.parse(parsedResult.jsonFeedback)
+                    : parsedResult.jsonFeedback;
               }
               if ("ipynb" in data) {
                 parsedResult["ipynbFeedback"] = "";
