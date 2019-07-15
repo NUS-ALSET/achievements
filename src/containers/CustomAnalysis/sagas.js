@@ -89,8 +89,14 @@ export function* deleteCustomAnalysisHandler(action) {
 
 export function* updateCustomAnalysisHandler(action) {
   try {
+    let uid = yield select(state => state.firebase.auth.uid);
+    if (!uid) {
+      yield take("@@reactReduxFirebase/LOGIN");
+      uid = yield select(state => state.firebase.auth.uid);
+    }
     yield call(
       customAnalysisService.updateCustomAnalysis,
+      uid,
       action.customAnalysisID
     );
     yield put(updateCustomAnalysisSuccess(action.customAnalysisID));

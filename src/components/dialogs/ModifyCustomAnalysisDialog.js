@@ -302,7 +302,7 @@ class ModifyCustomAnalysisDialog extends React.PureComponent {
               <Button color="secondary" onClick={this.handleClose}>
                 Cancel
               </Button>
-              {false ? (
+              {this.state.type === "Delete" ? (
                 <Button
                   color="secondary"
                   onClick={this.handleDelete}

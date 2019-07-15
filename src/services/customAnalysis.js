@@ -233,6 +233,18 @@ export class CustomAnalysisService {
         name: customAnalysisName,
         url: customAnalysisUrl,
         ...storeData
+      })
+      .then(docRef => {
+        firebase
+          .firestore()
+          .collection("/logged_events")
+          .add({
+            createdAt: firebase.firestore.Timestamp.now().toMillis(),
+            type: "CUSTOM_ANALYSIS_CREATE",
+            uid: uid,
+            version: process.env.REACT_APP_VERSION,
+            otherActionData: { customAnalysis: docRef.id }
+          });
       });
   }
 
@@ -249,17 +261,30 @@ export class CustomAnalysisService {
       .firestore()
       .collection("/customAnalysis")
       .doc(customAnalysisID)
-      .delete();
+      .delete()
+      .then(() => {
+        firebase
+          .firestore()
+          .collection("/logged_events")
+          .add({
+            createdAt: firebase.firestore.Timestamp.now().toMillis(),
+            type: "CUSTOM_ANALYSIS_DELETE",
+            uid: uid,
+            version: process.env.REACT_APP_VERSION,
+            otherActionData: { customAnalysis: customAnalysisID }
+          });
+      });
   }
 
   /**
    * This method updates the custom activity of the given
    * custom analysis id and user id
    *
+   * @param {String} uid user id of creator
    * @param {String} customAnalysisID customAnalysis ID to be deleted
    *
    */
-  async updateCustomAnalysis(customAnalysisID) {
+  async updateCustomAnalysis(uid, customAnalysisID) {
     let docRef = firebase
       .firestore()
       .collection("/customAnalysis")
@@ -267,10 +292,23 @@ export class CustomAnalysisService {
     await docRef.get().then(async doc => {
       let customAnalysis = doc.data();
       let storeData = await this.formAnalysisContents(customAnalysis.url);
-      docRef.update({
-        createdAt: firebase.firestore.Timestamp.now().toMillis(),
-        ...storeData
-      });
+      docRef
+        .update({
+          createdAt: firebase.firestore.Timestamp.now().toMillis(),
+          ...storeData
+        })
+        .then(() => {
+          firebase
+            .firestore()
+            .collection("/logged_events")
+            .add({
+              createdAt: firebase.firestore.Timestamp.now().toMillis(),
+              type: "CUSTOM_ANALYSIS_UPDATE",
+              uid: uid,
+              version: process.env.REACT_APP_VERSION,
+              otherActionData: { customAnalysis: customAnalysisID }
+            });
+        });
     });
   }
 
@@ -295,6 +333,18 @@ export class CustomAnalysisService {
           ? JSON.stringify(JSON.parse(response.data).results)
           : JSON.parse(response.data).result,
         ipynb: JSON.stringify(JSON.parse(response.data).ipynb)
+      })
+      .then(docRef => {
+        firebase
+          .firestore()
+          .collection("/logged_events")
+          .add({
+            createdAt: firebase.firestore.Timestamp.now().toMillis(),
+            type: "CUSTOM_ANALYSIS_EXECUTE",
+            uid: uid,
+            version: process.env.REACT_APP_VERSION,
+            otherActionData: { customAnalysisResponse: docRef.id }
+          });
       });
     return JSON.parse(response.data);
   }
