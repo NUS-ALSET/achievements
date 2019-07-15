@@ -11,11 +11,11 @@ import { compose } from "redux";
 import { connect } from "react-redux";
 import { firebaseConnect, firestoreConnect } from "react-redux-firebase";
 
+import isEmpty from "lodash/isEmpty";
+
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import {
-  ANALYSE_FAIL,
-  ANALYSE_SUCCESS,
   customAnalysisOpen,
   addCustomAnalysisRequest,
   updateCustomAnalysisRequest,
@@ -65,6 +65,9 @@ const styles = theme => ({
   },
   analysisTypeSelection: {
     marginLeft: 10
+  },
+  hidden: {
+    display: "none"
   }
 });
 
@@ -169,7 +172,7 @@ class CustomAnalysis extends React.PureComponent {
   };
 
   handleSubmit = () => {
-    this.setState({ ...this.state, displayResponse: true });
+    this.setState({ ...this.state, displayResponse: "Loading" });
     switch (this.state.type) {
       case "Path":
         this.props.onAnalyse(
@@ -192,7 +195,7 @@ class CustomAnalysis extends React.PureComponent {
     }
   };
   handleClear = () => {
-    this.resetState();
+    this.setState({ displayResponse: "Clear" });
   };
 
   setType = type => {
@@ -203,26 +206,13 @@ class CustomAnalysis extends React.PureComponent {
     this.setState({ ...this.state, activityOptions: options });
   };
 
-  getTaskInfo = (dialog, analysisResults) => {
-    if (dialog === ANALYSE_SUCCESS && analysisResults) {
+  getTaskInfo = analysisResults => {
+    if (analysisResults && !isEmpty(analysisResults)) {
       let results = analysisResults.results
         ? analysisResults.results
         : analysisResults.result;
-      let data;
-      if (!results) {
-        data = {
-          response: {
-            data: {
-              isComplete: false,
-              jsonFeedback: "",
-              htmlFeedback: "Please write into results.json file",
-              textFeedback: "",
-              ipynbFeedback: analysisResults.ipynb
-            }
-          }
-        };
-      } else {
-        data = {
+      if (results) {
+        return {
           response: {
             data: {
               isComplete: results.isComplete,
@@ -233,31 +223,32 @@ class CustomAnalysis extends React.PureComponent {
             }
           }
         };
+      } else {
+        return {
+          response: {
+            data: {
+              isComplete: false,
+              jsonFeedback: "",
+              htmlFeedback: "Please write into results.json file.",
+              textFeedback: "",
+              ipynbFeedback: analysisResults.ipynb
+            }
+          }
+        };
       }
-      return data;
-    } else if (dialog === ANALYSE_FAIL && analysisResults) {
-      return {
-        response: {
-          data: {
-            isComplete: false,
-            jsonFeedback: "",
-            htmlFeedback: JSON.stringify(analysisResults),
-            textFeedback: ""
-          }
-        }
-      };
-    } else {
-      return {
-        response: {
-          data: {
-            isComplete: false,
-            jsonFeedback: "",
-            htmlFeedback: "",
-            textFeedback: ""
-          }
-        }
-      };
+
+      //this.setState({ displayResponse: "Loaded" });
     }
+    return {
+      response: {
+        data: {
+          isComplete: false,
+          jsonFeedback: { dummyKey: "dummyValue" },
+          htmlFeedback: "<h1>Sample HTML Response</h1>",
+          textFeedback: "Sample Text Response"
+        }
+      }
+    };
   };
 
   resetState = () => {
@@ -269,8 +260,7 @@ class CustomAnalysis extends React.PureComponent {
       activityID: "",
       assignmentID: "",
       analysisID: "",
-      activityOptions: [],
-      displayResponse: false
+      activityOptions: []
     });
   };
 
@@ -297,6 +287,22 @@ class CustomAnalysis extends React.PureComponent {
       } else {
         return [];
       }
+    }
+  };
+  getCustomResponseForm = () => {
+    if (this.props.analysisResults && !isEmpty(this.props.analysisResults)) {
+      const taskInfo = this.getTaskInfo(this.props.analysisResults);
+      return <CustomTaskResponseForm taskInfo={taskInfo} />;
+    } else {
+      return (
+        <LinearProgress
+          className={
+            this.state.displayResponse === "Loading"
+              ? ""
+              : this.props.classes.hidden
+          }
+        />
+      );
     }
   };
 
@@ -445,17 +451,13 @@ class CustomAnalysis extends React.PureComponent {
           </div>
         </div>
         <br />
-        {(this.state.displayResponse &&
-          this.props.dialog !== ANALYSE_SUCCESS &&
-          this.props.dialog !== ANALYSE_FAIL && <LinearProgress />) ||
-          (this.state.displayResponse && (
-            <CustomTaskResponseForm
-              taskInfo={this.getTaskInfo(
-                this.props.dialog,
-                this.props.analysisResults
-              )}
-            />
-          ))}
+        <div
+          className={
+            this.state.displayResponse === "Clear" ? classes.hidden : ""
+          }
+        >
+          {this.getCustomResponseForm()}
+        </div>
       </div>
     );
   }
