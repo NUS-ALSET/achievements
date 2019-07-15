@@ -383,7 +383,7 @@ class AssignmentsTable extends React.PureComponent {
                     {assignment.name}
                   </TableSortLabel>
                   <div>
-                    {!(assignment.questionType === "PathProgress") &&
+                    {assignment.questionType !== "PathProgress" &&
                       assignment.details && (
                         <a
                           href={assignment.details}
