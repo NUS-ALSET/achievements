@@ -514,6 +514,11 @@ export default compose(
         `equalTo=${store.getState().firebase.auth.uid}`
       ]
     },
+    {
+      path: "/paths",
+      storeAs: "publicPaths",
+      queryParams: ["orderByChild=isPublic", "equalTo=true"]
+    },
     `/userAchievements/${store.getState().firebase.auth.uid}`,
     "/thirdPartyServices"
   ]),

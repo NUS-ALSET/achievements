@@ -1,12 +1,12 @@
 import { createSelector } from "reselect";
 import isEmpty from "lodash/isEmpty";
 
-const getJoinedPath = state => state.paths.joinedPaths;
-const getPublicPath = state => state.firebase.data.publicPaths;
+const getJoinedPaths = state => state.paths.joinedPaths;
+const getPublicPaths = state => state.firebase.data.publicPaths;
 
 export const publicPathSelector = createSelector(
-  getPublicPath,
-  getJoinedPath,
+  getPublicPaths,
+  getJoinedPaths,
   (publicPaths, joinedPaths) => {
     let counter = false;
     if (joinedPaths && isEmpty(joinedPaths)) {
