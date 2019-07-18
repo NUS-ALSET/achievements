@@ -587,6 +587,11 @@ export class PathsService {
       ) {
         info[infoKey] = problemInfo[infoKey];
       }
+      // If the files have been deleted
+      // Store info["files"] as null to remove it from firebase activities node
+      if (info.type === "jupyterInline" && problemInfo.files === undefined) {
+        info["files"] = null;
+      }
     }
     if (info.id) {
       delete info.id;
