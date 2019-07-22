@@ -7,7 +7,7 @@ export const TASK_TYPES = {
   },
   custom: {
     id: "custom",
-    name: "Custom Task"
+    name: "Custom Activity"
   }
 };
 
@@ -157,8 +157,7 @@ export class TasksService {
     for (const cell of json.cells) {
       cell.metadata = cell.metadata || {};
       cell.metadata.achievements = cell.metadata.achievements || {};
-      cell.metadata.achievements.language_info = cell.metadata.achievements
-        .language_info || {
+      cell.metadata.achievements.language_info = cell.metadata.achievements.language_info || {
         name: "python"
       };
       cell.outputs = cell.outputs || [];
@@ -193,13 +192,12 @@ export class TasksService {
       .then(snap => snap.val() || {})
       .then(presets =>
         Promise.all(
-          Object.keys({ ...presets, basic: presets.basic || BASIC_PRESET }).map(
-            presetId =>
-              firebase
-                .database()
-                .ref(`/tasks/${presetId}`)
-                .once("value")
-                .then(snap => ({ id: presetId, ...(snap.val() || {}) }))
+          Object.keys({ ...presets, basic: presets.basic || BASIC_PRESET }).map(presetId =>
+            firebase
+              .database()
+              .ref(`/tasks/${presetId}`)
+              .once("value")
+              .then(snap => ({ id: presetId, ...(snap.val() || {}) }))
           )
         )
       );
@@ -328,11 +326,9 @@ export class TasksService {
     switch (taskInfo.type) {
       case "jupyter":
         for (const cell of taskInfo.json.cells) {
-          editableExists =
-            editableExists || cell.metadata.achievements.editable;
+          editableExists = editableExists || cell.metadata.achievements.editable;
         }
-        if (!editableExists)
-          throw new Error("Missing required `editable` field");
+        if (!editableExists) throw new Error("Missing required `editable` field");
         break;
       default:
         return true;

@@ -1,0 +1,25 @@
+.textContent {
+  margin: 1rem auto;
+  width: 90%;
+}
+
+.topHighlightCards {
+  flex-grow: 1;
+  text-align: center;
+  margin: 0.5rem;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 4px 0px, rgba(0, 0, 0, 0.28) 0px 4px 8px 0px;
+  max-width: 90%;
+}
+
+.fullWidthCards {
+  width: 100%;
+  min-height: 200px;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  box-shadow: rgba(0, 0, 0, 0.14) 0px 0px 4px 0px, rgba(0, 0, 0, 0.28) 0px 4px 8px 0px;
+}

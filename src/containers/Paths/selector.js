@@ -1,21 +1,28 @@
 import { createSelector } from "reselect";
+import isEmpty from "lodash/isEmpty";
 
-const getJoinedPath = state => state.paths.joinedPaths;
-const getPublicPath = state => state.firebase.data.publicPaths;
+const getJoinedPaths = state => state.paths.joinedPaths;
+const getPublicPaths = state => state.firebase.data.publicPaths;
 
 export const publicPathSelector = createSelector(
-  getPublicPath,
-  getJoinedPath,
+  getPublicPaths,
+  getJoinedPaths,
   (publicPaths, joinedPaths) => {
-    //let counter = false;
-    Object.keys(publicPaths || {}).forEach(key => {
-      if (joinedPaths && joinedPaths[key]) {
-        publicPaths[key].solutions = joinedPaths[key].solutions;
-        publicPaths[key].totalActivities = joinedPaths[key].totalActivities;
-        //counter = true;
+    let counter = false;
+    if (joinedPaths && isEmpty(joinedPaths)) {
+      return publicPaths;
+    }
+    let modifiedPublicPaths = { ...publicPaths };
+    Object.keys(joinedPaths || {}).forEach(key => {
+      if (publicPaths && publicPaths[key]) {
+        modifiedPublicPaths[key].solutions = joinedPaths[key].solutions;
+        modifiedPublicPaths[key].totalActivities =
+          joinedPaths[key].totalActivities;
+        counter = true;
       }
     });
-    //FIXIT : fix progress to be rendered on initial load of paths screen
-    return publicPaths;
+    if (counter) {
+      return modifiedPublicPaths;
+    }
   }
 );

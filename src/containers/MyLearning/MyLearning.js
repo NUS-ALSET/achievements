@@ -351,15 +351,15 @@ const randomHsl = () => "hsla(" + Math.random() * 360 + ", 50%, 50%, 0.5)";
 // this function is designed to remove dupes for stacked barcharts categories
 // eg. {lastweek:[{date:22/02/19, somePath:3}, {date:23/02/19, somePath:2}] contains 2 dupes of somePath}
 // it returns ["somePath"]
-const removeDupeData = dataArray => {
-  const aggregatedDataWithDupes = dataArray.reduce((accumulator, { date, value, ...duplicatedData }) => {
-    const keyOfDupes = Object.keys(duplicatedData);
-    keyOfDupes.forEach(dataPoint => accumulator.push(dataPoint));
-    return accumulator;
-  }, []);
-  const removedDupes = new Set(aggregatedDataWithDupes);
-  return Array.from(removedDupes);
-};
+// const removeDupeData = dataArray => {
+//   const aggregatedDataWithDupes = dataArray.reduce((accumulator, { date, value, ...duplicatedData }) => {
+//     const keyOfDupes = Object.keys(duplicatedData);
+//     keyOfDupes.forEach(dataPoint => accumulator.push(dataPoint));
+//     return accumulator;
+//   }, []);
+//   const removedDupes = new Set(aggregatedDataWithDupes);
+//   return Array.from(removedDupes);
+// };
 
 // This function counts the number of times the additional detail parameter occurs
 // Eg. we want to capture number of pathNames completed per date
@@ -410,17 +410,6 @@ const CreatorStats = props => {
     allTime: concatArray(activitiesCreatorData.allTime, pathsCreatorData.allTime, "activitiesCreated", "pathsCreated")
   };
 
-  const handleTabChangeCreatorStats = (e, tabValue) => {
-    props.handleTabChange(e, tabValue);
-    if (tabValue === "lastMonth") {
-      props.getCreatedPaths(props.uid, lastMonthEpochTime);
-      props.getCreatedActivities(props.uid, lastMonthEpochTime);
-    }
-    if (tabValue === "allTime") {
-      props.getCreatedPaths(props.uid, 0);
-      props.getCreatedActivities(props.uid, 0);
-    }
-  };
   return (
     <Accordion
       description={`you have created ${sumUpByValueField(
@@ -428,7 +417,16 @@ const CreatorStats = props => {
       )} activities and ${sumUpByValueField(pathsCreatorData[props.tabValue])} paths ${mapTabValueToLabel(
         props.tabValue
       )}`}
-      handleTabChange={handleTabChangeCreatorStats}
+      handleTabChange={(e, tabValue) =>
+        props.handleTabChange(
+          e,
+          tabValue,
+          "Creator stats",
+          props.uid,
+          props.getCreatedPaths,
+          props.getCreatedActivities
+        )
+      }
       tabValue={props.tabValue}
       title={"Creator stats"}
     >
@@ -496,80 +494,86 @@ const CreatorStats = props => {
   );
 };
 
-const SolversCreatedPaths = props => {
-  const { solversCreatedActivities } = props.data;
+// const SolversCreatedPaths = props => {
+//   const { solversCreatedActivities } = props.data;
 
-  const solversDataToDates = convertDataToDates(solversCreatedActivities);
+//   const solversDataToDates = convertDataToDates(solversCreatedActivities);
 
-  const countSolversByDate = countDataByDate(solversDataToDates, "pathName");
+//   const countSolversByDate = countDataByDate(solversDataToDates, "pathName");
 
-  const data = {
-    lastWeek: dataFormatting(countSolversByDate.lastWeek),
-    lastMonth: dataFormatting(countSolversByDate.lastMonth),
-    allTime: dataFormatting(countSolversByDate.allTime)
-  };
+//   const data = {
+//     lastWeek: dataFormatting(countSolversByDate.lastWeek),
+//     lastMonth: dataFormatting(countSolversByDate.lastMonth),
+//     allTime: dataFormatting(countSolversByDate.allTime)
+//   };
 
-  const pathsLastWeek = removeDupeData(data.lastWeek);
-  const pathsLastMonth = removeDupeData(data.lastMonth);
-  const pathsAllTime = removeDupeData(data.allTime);
+//   const pathsLastWeek = removeDupeData(data.lastWeek);
+//   const pathsLastMonth = removeDupeData(data.lastMonth);
+//   const pathsAllTime = removeDupeData(data.allTime);
 
-  return (
-    <Accordion
-      description={`your activities have been solved by ${sumUpByValueField(
-        data[props.tabValue]
-      )} users ${mapTabValueToLabel(props.tabValue)}`}
-      handleTabChange={props.handleTabChange}
-      tabValue={props.tabValue}
-      title={"Solvers of created activities"}
-    >
-      {props.tabValue === "lastWeek" && (
-        <TabLastWeek>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastWeek}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              {pathsLastWeek.map(pathName => (
-                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </TabLastWeek>
-      )}
-      {props.tabValue === "lastMonth" && (
-        <TabLastMonth>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastMonth}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              {pathsLastMonth.map(pathName => (
-                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </TabLastMonth>
-      )}
-      {props.tabValue === "allTime" && (
-        <TabAllTime>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.allTime}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              {pathsAllTime.map(pathName => (
-                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-              ))}
-            </BarChart>
-          </ResponsiveContainer>
-        </TabAllTime>
-      )}
-    </Accordion>
-  );
-};
+//   return (
+//     <PlainAccordionNoTabs description={"Coming soon"} title={"Solvers of created activities"}>
+//       <Typography component="div" style={{ padding: 8 * 3 }}>
+//         <p>This feature is coming soon.</p>
+//       </Typography>
+//     </PlainAccordionNoTabs>
+//     <Accordion
+//       description={`your activities have been solved by ${sumUpByValueField(
+//         data[props.tabValue]
+//       )} users ${mapTabValueToLabel(props.tabValue)}`}
+//       handleTabChange={props.handleTabChange}
+//       tabValue={props.tabValue}
+//       title={"Solvers of created activities"}
+//     >
+//       {props.tabValue === "lastWeek" && (
+//         <TabLastWeek>
+//           <p>This feature is coming soon.</p>
+//           <ResponsiveContainer height={500} width="95%">
+//             <BarChart data={data.lastWeek}>
+//               <XAxis dataKey="date" name="Date" />
+//               <YAxis />
+//               <Tooltip />
+//               <Legend />
+//               {pathsLastWeek.map(pathName => (
+//                 <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+//               ))}
+//             </BarChart>
+//           </ResponsiveContainer>
+//         </TabLastWeek>
+//       )}
+//       {props.tabValue === "lastMonth" && (
+//         <TabLastMonth>
+//           <ResponsiveContainer height={500} width="95%">
+//             <BarChart data={data.lastMonth}>
+//               <XAxis dataKey="date" name="Date" />
+//               <YAxis />
+//               <Tooltip />
+//               <Legend />
+//               {pathsLastMonth.map(pathName => (
+//                 <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+//               ))}
+//             </BarChart>
+//           </ResponsiveContainer>
+//         </TabLastMonth>
+//       )}
+//       {props.tabValue === "allTime" && (
+//         <TabAllTime>
+//           <ResponsiveContainer height={500} width="95%">
+//             <BarChart data={data.allTime}>
+//               <XAxis dataKey="date" name="Date" />
+//               <YAxis />
+//               <Tooltip />
+//               <Legend />
+//               {pathsAllTime.map(pathName => (
+//                 <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+//               ))}
+//             </BarChart>
+//           </ResponsiveContainer>
+//         </TabAllTime>
+//       )}
+//     </Accordion>
+//   );
+// };
 
 const SelfExploration = props => {
   const { activitiesExplored } = props.data;
@@ -589,125 +593,139 @@ const SelfExploration = props => {
       description={`you have explored ${sumUpByValueField(data[props.tabValue])} activities ${mapTabValueToLabel(
         props.tabValue
       )}`}
-      handleTabChange={props.handleTabChange}
+      handleTabChange={(e, tabValue) =>
+        props.handleTabChange(e, tabValue, "SelfExploration", props.uid, props.getActivitiesExplored)
+      }
       tabValue={props.tabValue}
       title={"Self Exploration"}
     >
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastWeek}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
-              <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastWeek.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastWeek}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={"activities explored"} name={"activities completed"} />
+                {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastMonth}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
-              <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastMonth.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastMonth}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
+                {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.allTime}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
-              <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.allTime.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.allTime}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
+                {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabAllTime>
       )}
     </Accordion>
   );
 };
 
-const DisplaySpecificPath = props => {
-  const { activitiesExplored } = props.data;
-  const { pathName, title, chartName } = props.componentDetails;
+// const DisplaySpecificPath = props => {
+//   const { activitiesExplored } = props.data;
+//   const { pathName, title, chartName } = props.componentDetails;
 
-  const activitiesExploredDataToDates = convertDataToDates(activitiesExplored);
+//   const activitiesExploredDataToDates = convertDataToDates(activitiesExplored);
 
-  const countActivitiesByDate = countDataByDate(activitiesExploredDataToDates, "pathName");
+//   const countActivitiesByDate = countDataByDate(activitiesExploredDataToDates, "pathName");
 
-  const data = {
-    lastWeek: countDetails(dataFormatting(countActivitiesByDate.lastWeek, pathName), "pathsCompleted"),
-    lastMonth: countDetails(dataFormatting(countActivitiesByDate.lastMonth, pathName), "pathsCompleted"),
-    allTime: countDetails(dataFormatting(countActivitiesByDate.allTime, pathName), "pathsCompleted")
-  };
+//   const data = {
+//     lastWeek: countDetails(dataFormatting(countActivitiesByDate.lastWeek, pathName), "pathsCompleted"),
+//     lastMonth: countDetails(dataFormatting(countActivitiesByDate.lastMonth, pathName), "pathsCompleted"),
+//     allTime: countDetails(dataFormatting(countActivitiesByDate.allTime, pathName), "pathsCompleted")
+//   };
 
-  return (
-    <Accordion
-      description={`you have explored ${sumUpByValueField(data[props.tabValue])} ${title} ${mapTabValueToLabel(
-        props.tabValue
-      )}`}
-      handleTabChange={props.handleTabChange}
-      tabValue={props.tabValue}
-      title={title}
-    >
-      {props.tabValue === "lastWeek" && (
-        <TabLastWeek>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastWeek}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
-        </TabLastWeek>
-      )}
-      {props.tabValue === "lastMonth" && (
-        <TabLastMonth>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastMonth}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
-        </TabLastMonth>
-      )}
-      {props.tabValue === "allTime" && (
-        <TabAllTime>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.allTime}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
-        </TabAllTime>
-      )}
-    </Accordion>
-  );
-};
+//   return (
+//     <Accordion
+//       description={`you have explored ${sumUpByValueField(data[props.tabValue])} ${title} ${mapTabValueToLabel(
+//         props.tabValue
+//       )}`}
+//       handleTabChange={props.handleTabChange}
+//       tabValue={props.tabValue}
+//       title={title}
+//     >
+//       {props.tabValue === "lastWeek" && (
+//         <TabLastWeek>
+//           {data.lastWeek.some(e => e.date) && (
+//             <ResponsiveContainer height={500} width="95%">
+//               <BarChart data={data.lastWeek}>
+//                 <XAxis dataKey="date" name="Date" />
+//                 <YAxis />
+//                 <Tooltip />
+//                 <Legend />
+//                 <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+//               </BarChart>
+//             </ResponsiveContainer>
+//           )}
+//         </TabLastWeek>
+//       )}
+//       {props.tabValue === "lastMonth" && (
+//         <TabLastMonth>
+//           {data.lastMonth.some(e => e.date) && (
+//             <ResponsiveContainer height={500} width="95%">
+//               <BarChart data={data.lastMonth}>
+//                 <XAxis dataKey="date" name="Date" />
+//                 <YAxis />
+//                 <Tooltip />
+//                 <Legend />
+//                 <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+//               </BarChart>
+//             </ResponsiveContainer>
+//           )}
+//         </TabLastMonth>
+//       )}
+//       {props.tabValue === "allTime" && (
+//         <TabAllTime>
+//           {data.allTime.some(e => e.date) && (
+//             <ResponsiveContainer height={500} width="95%">
+//               <BarChart data={data.allTime}>
+//                 <XAxis dataKey="date" name="Date" />
+//                 <YAxis />
+//                 <Tooltip />
+//                 <Legend />
+//                 <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+//               </BarChart>
+//             </ResponsiveContainer>
+//           )}
+//         </TabAllTime>
+//       )}
+//     </Accordion>
+//   );
+// };
 
 const DisplayGenericOneField = props => {
   const rawData = props.data;
-  const { field, title, chartName } = props.componentDetails;
+  const { field, title, chartName, getterFunction1, getterFunction2 = "" } = props.componentDetails;
 
   const dataToDates = convertDataToDates(rawData);
   const countDataPointsByDate = countNumericDataByDate(dataToDates, field);
@@ -723,47 +741,55 @@ const DisplayGenericOneField = props => {
       description={`you have had ${sumUpByValueField(data[props.tabValue])} ${title} ${mapTabValueToLabel(
         props.tabValue
       )}`}
-      handleTabChange={props.handleTabChange}
+      handleTabChange={(e, tabValue) =>
+        props.handleTabChange(e, tabValue, title, props.uid, getterFunction1, getterFunction2)
+      }
       tabValue={props.tabValue}
       title={title}
     >
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastWeek}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastWeek.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastWeek}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastMonth}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastMonth.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastMonth}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.allTime}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.allTime.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.allTime}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabAllTime>
       )}
     </Accordion>
@@ -772,7 +798,7 @@ const DisplayGenericOneField = props => {
 
 const DisplayGenericOneFieldSpecificItem = props => {
   const rawData = props.data;
-  const { field, fieldItem, title, chartName } = props.componentDetails;
+  const { field, fieldItem, title, chartName, getterFunction1, getterFunction2 = "" } = props.componentDetails;
 
   const dataToDates = convertDataToDates(rawData);
   const countDataPointsByDate = countDataByDate(dataToDates, field);
@@ -788,125 +814,180 @@ const DisplayGenericOneFieldSpecificItem = props => {
       description={`you have had ${sumUpByValueField(data[props.tabValue])} ${title} ${mapTabValueToLabel(
         props.tabValue
       )}`}
-      handleTabChange={props.handleTabChange}
+      handleTabChange={(e, tabValue) =>
+        props.handleTabChange(e, tabValue, title, props.uid, getterFunction1, getterFunction2)
+      }
       tabValue={props.tabValue}
       title={title}
     >
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastWeek}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastWeek.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastWeek}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.lastMonth}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.lastMonth.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastMonth}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
-          <ResponsiveContainer height={500} width="95%">
-            <BarChart data={data.allTime}>
-              <XAxis dataKey="date" name="Date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-            </BarChart>
-          </ResponsiveContainer>
+          {data.allTime.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.allTime}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </TabAllTime>
       )}
     </Accordion>
   );
 };
 
-const DisplayCompletedPaths = props => {
-  const { activitiesExplored, pathInfo } = props.data;
+// const DisplayCompletedPaths = props => {
+//   const { activitiesExplored, pathInfo } = props.data;
 
-  const uniqueActivitiesByPathDone = activitiesDoneArray => {
-    const uniqueActivitySet = new Set([]);
-    activitiesDoneArray.map(activity => uniqueActivitySet.add(activity.id));
-    return uniqueActivitySet;
-  };
+//   const uniqueActivitiesByPathDone = activitiesDoneArray => {
+//     const uniqueActivitySet = new Set([]);
+//     activitiesDoneArray.map(activity => uniqueActivitySet.add(activity.id));
+//     return uniqueActivitySet;
+//   };
 
-  const uniqueActivities = uniqueActivitiesByPathDone(activitiesExplored);
+//   const uniqueActivities = uniqueActivitiesByPathDone(activitiesExplored);
 
-  const checkIfPathCompleted = pathInfoArray => {
-    const completedPaths = [];
-    for (const path of pathInfoArray) {
-      for (let i = 0; i < path.activityId.length; i++) {
-        if (!uniqueActivities.has(path.activityId[i])) {
-          continue;
-        }
-        if (i === path.activityId.length - 1) {
-          completedPaths.push({ pathName: path.name });
-        }
-      }
-    }
-    return completedPaths;
-  };
+//   const checkIfPathCompleted = pathInfoArray => {
+//     const completedPaths = [];
+//     for (const path of pathInfoArray) {
+//       for (let i = 0; i < path.activityId.length; i++) {
+//         if (!uniqueActivities.has(path.activityId[i])) {
+//           continue;
+//         }
+//         if (i === path.activityId.length - 1) {
+//           completedPaths.push({ pathName: path.name });
+//         }
+//       }
+//     }
+//     return completedPaths;
+//   };
 
-  const completedPaths = checkIfPathCompleted(pathInfo);
+//   const completedPaths = checkIfPathCompleted(pathInfo);
 
-  return (
-    <PlainAccordionNoTabs
-      description={`you have completed ${completedPaths.length} paths in total`}
-      title={"Completed Paths"}
-    >
-      <Typography component="div" style={{ padding: 8 * 3 }}>
-        <p>You have completed the following paths:</p>
-        <ul>
-          {completedPaths.map(path => (
-            <li key={path.pathName}>{path.pathName}</li>
-          ))}
-        </ul>
-      </Typography>
-    </PlainAccordionNoTabs>
-  );
-};
+//   return (
+//     <PlainAccordionNoTabs
+//       description={"Coming soon"} //`you have completed ${completedPaths.length} paths in total`}
+//       title={"Completed Paths"}
+//     >
+//       <Typography component="div" style={{ padding: 8 * 3 }}>
+//         <p>This feature is coming soon.</p>
+//         <p>You have completed the following paths:</p>
+//         <ul>
+//           {completedPaths.map(path => (
+//             <li key={path.pathName}>{path.pathName}</li>
+//           ))}
+//         </ul>
+//       </Typography>
+//     </PlainAccordionNoTabs>
+//   );
+// };
 
 const DisplayVisitsMyLearning = props => {
-  const { dateAccessed } = props.data;
+  const { visitsToMyLearning } = props.data;
+  const visitsToMyLearningToDates = convertDataToDates(visitsToMyLearning);
 
+  const countVisitsByDate = countDataByDate(visitsToMyLearningToDates);
+
+  const data = {
+    lastWeek: dataFormatting(countVisitsByDate.lastWeek),
+    lastMonth: dataFormatting(countVisitsByDate.lastMonth),
+    allTime: dataFormatting(countVisitsByDate.allTime)
+  };
   return (
-    <PlainAccordionNoTabs
-      description={`you visited the My Learning page ${dateAccessed.length} times to review your progress`}
+    <Accordion
+      description={`you have reviewed myLearning ${sumUpByValueField(data[props.tabValue])} times ${mapTabValueToLabel(
+        props.tabValue
+      )}`}
+      handleTabChange={(e, tabValue) =>
+        props.handleTabChange(e, tabValue, "VisitsMyLearning", props.uid, props.getVisitsMyLearning)
+      }
+      tabValue={props.tabValue}
       title={"Visits to MyLearning"}
     >
-      <Typography component="div" style={{ padding: 8 * 3 }}>
-        {dateAccessed && (
-          <div>
-            <p>You have visited MyLearning on these occasions:</p>
-            <ul>
-              {dateAccessed.map(date => (
-                <li key={date}>{moment(date).format("DD/MM/YY")}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {!dateAccessed && <p>Tip: MyLearning provides analytics tools on your progress within Achievements!</p>}
-      </Typography>
-    </PlainAccordionNoTabs>
+      {props.tabValue === "lastWeek" && (
+        <TabLastWeek>
+          {data.lastWeek.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastWeek}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={"visits to myLearning"} name={"visits to myLearning"} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </TabLastWeek>
+      )}
+      {props.tabValue === "lastMonth" && (
+        <TabLastMonth>
+          {data.lastMonth.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.lastMonth}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={"visits to myLearning"} name={"visits to myLearning"} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </TabLastMonth>
+      )}
+      {props.tabValue === "allTime" && (
+        <TabAllTime>
+          {data.allTime.some(e => e.date) && (
+            <ResponsiveContainer height={500} width="95%">
+              <BarChart data={data.allTime}>
+                <XAxis dataKey="date" name="Date" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey={"value"} fill={randomHsl()} key={"visits to myLearning"} name={"visits to myLearning"} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </TabAllTime>
+      )}
+    </Accordion>
   );
 };
 
 const DisplayRequestsAdditionalActivities = props => {
-  const { paths } = props.data;
+  const paths = props.data;
 
   return (
     <PlainAccordionNoTabs
@@ -920,12 +1001,7 @@ const DisplayRequestsAdditionalActivities = props => {
       <Typography component="div" style={{ padding: 8 * 3 }}>
         {paths && (
           <div>
-            <p>You have requested additional activities on the following paths:</p>
-            <ul>
-              {paths.map(pathInfo => (
-                <li key={pathInfo.id}>{pathInfo.pathName}</li>
-              ))}
-            </ul>
+            <p>{`You have requested additional activities on ${paths.length} paths`}</p>
           </div>
         )}
         {!paths && <p>Tip: You can make requests for path creators to add more activities within Achievements !</p>}
@@ -941,8 +1017,7 @@ const DisplayRecommendedActivitiesClick = props => {
     <PlainAccordionNoTabs
       description={
         recommendedActivityClicks
-          ? `you have clicked on ${recommendedActivityClicks.length} recommended activities on the home
-          screen`
+          ? `you have opened ${recommendedActivityClicks.length} recommended activities`
           : "you have yet to click on any recommended activities"
       }
       title={"Clicks on recommended activities"}
@@ -950,23 +1025,7 @@ const DisplayRecommendedActivitiesClick = props => {
       <Typography component="div" style={{ padding: 8 * 3 }}>
         {recommendedActivityClicks && (
           <div>
-            <p>You have clicked on the following recommended activities on the home screen:</p>
-            <table style={{ borderSpacing: "1rem" }}>
-              <thead>
-                <tr style={{ fontWeight: 500 }}>
-                  <td>Activity Name</td>
-                  <td>Path Name</td>
-                </tr>
-              </thead>
-              <tbody>
-                {recommendedActivityClicks.map(activity => (
-                  <tr key={activity.activityName}>
-                    <td>{activity.activityName}</td>
-                    <td>{activity.pathName}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <p>{`You have opened ${recommendedActivityClicks.length} recommended activities so far`}</p>
           </div>
         )}
         {!recommendedActivityClicks && (
@@ -981,6 +1040,13 @@ class MyLearning extends React.Component {
   state = {
     createdPaths: [],
     createdActivities: [],
+    activitiesExplored: [],
+    requestsAdditionalActivities: [],
+    tabValue: "lastWeek",
+    tabvalueSpecificPanels: {},
+    visitsToMyLearning: [],
+    recommendedActivitiesClick: [],
+    // these below are not used
     solversCreatedActivities: [
       { pathId: 123, pathName: "helloWorld1", date: 1557894183000 },
       { pathId: 123, pathName: "helloWorld1", date: 1557895183000 },
@@ -991,98 +1057,6 @@ class MyLearning extends React.Component {
       { pathId: 126, pathName: "helloPython1", date: 1557474783000 },
       { pathId: 130, pathName: "helloPython3", date: 1557574783000 }
     ],
-    activitiesExplored: [
-      {
-        id: 1,
-        pathId: 888,
-        activityName: "dungeon1",
-        pathName: "CodeCombat",
-        date: 1557894183000,
-        attempts: 1,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 2,
-        pathId: 888,
-        activityName: "dungeon12",
-        pathName: "CodeCombat",
-        date: 1557895183000,
-        attempts: 1,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 3,
-        pathId: 131,
-        activityName: "hello strings",
-        pathName: "jupyterNotebook",
-        date: 1557903283000,
-        attempts: 2,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 4,
-        pathId: 128,
-        activityName: "hello lists",
-        pathName: "helloPython2",
-        date: 1558003283000,
-        attempts: 3,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 5,
-        pathId: 123,
-        activityName: "hello functions",
-        pathName: "helloPython2",
-        date: 1558103283000,
-        attempts: 1,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 6,
-        pathId: 123,
-        activityName: "hello loops",
-        pathName: "helloPython2",
-        date: 1558203283000,
-        attempts: 1,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 7,
-        pathId: 131,
-        activityName: "what are expressions?",
-        pathName: "jupyterNotebook",
-        date: 1557474783000,
-        attempts: 2,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 8,
-        pathId: 131,
-        activityName: "Jupyter notebook intro",
-        pathName: "jupyterNotebook",
-        date: 1557574783000,
-        isComplete: true,
-        attempts: 3,
-        otherTags: ""
-      },
-      {
-        id: 9,
-        pathId: 888,
-        activityName: "Arena",
-        pathName: "CodeCombat",
-        date: 1557574783000,
-        isComplete: true,
-        attempts: 3,
-        otherTags: "CodeCombat Multiplayer"
-      }
-    ],
     pathInfo: [
       { name: "CodeCombat", id: 888, activityId: [1, 2, 9] },
       { name: "jupyterNotebook", id: 131, activityId: [3, 7, 8] },
@@ -1092,45 +1066,34 @@ class MyLearning extends React.Component {
       lastWeek: ["AWS S3", "AWS Lambda"],
       lastMonth: ["AWS S3", "AWS Lambda", "Azure Functions"],
       allTime: ["AWS S3", "AWS Lambda", "Azure Functions", "Azure Storage", "Firebase Functions", "Google Functions"]
-    },
-    codeCombatMultiplayerLevels: {
-      lastWeek: ["King of the Hill"],
-      lastMonth: ["King of the Hill", "Queen of the Desert"],
-      allTime: ["King of the Hill", "Queen of the Desert", "Tesla Tesoro"]
-    },
-    codeCombatLevels: { lastWeek: 7, lastMonth: 10, allTime: 20 },
-    jupyterNotebookActivities: { lastWeek: 11, lastMonth: 20, allTime: 48 },
-    recommendedActivitiesClick: [
-      {
-        id: 2,
-        pathId: 888,
-        activityName: "dungeon12",
-        pathName: "CodeCombat",
-        dateClicked: 1557895183000,
-        attempts: 1,
-        isComplete: true,
-        otherTags: ""
-      },
-      {
-        id: 3,
-        pathId: 131,
-        activityName: "hello strings",
-        pathName: "jupyterNotebook",
-        dateClicked: 1557903283000,
-        isComplete: true,
-        otherTags: ""
-      }
-    ],
-    visitsToMyLearning: { dateAccessed: [1557574783000] },
-    requestsAdditionalActivities: {
-      paths: [{ id: 888, pathName: "CodeCombat" }, { id: 131, pathName: "jupyterNotebook" }]
-    },
-    tabValue: "lastWeek",
-    newActivitiesExplored: {}
+    }
   };
 
-  handleTabChange = (event, tabValue) => {
-    this.setState({ tabValue });
+  handleTabChange = (event, tabValue, title, uid, getterFunction1, getterFunction2 = "") => {
+    this.setState({ tabvalueSpecificPanels: { ...this.state.tabvalueSpecificPanels, [title]: tabValue } });
+    this.getLastMonthAllTimeData(tabValue, uid, getterFunction1, getterFunction2);
+    this.db.collection("/logged_events").add({
+      createdAt: Date.now(),
+      type: "FIREBASE_TRIGGERS",
+      uid: uid,
+      sGen: true,
+      otherActionData: { tabValue: tabValue, title: title }
+    });
+  };
+
+  getLastMonthAllTimeData = (tabValue, uid, getterFunction1, getterFunction2) => {
+    if (tabValue === "lastMonth") {
+      getterFunction1(uid, lastMonthEpochTime);
+      if (getterFunction2) {
+        getterFunction2(uid, lastMonthEpochTime);
+      }
+    }
+    if (tabValue === "allTime") {
+      getterFunction1(uid, 0);
+      if (getterFunction2) {
+        getterFunction2(uid, 0);
+      }
+    }
   };
 
   componentDidUpdate(prevProps) {
@@ -1141,95 +1104,138 @@ class MyLearning extends React.Component {
 
   db = firebase.firestore();
 
-  getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
-    const dataContainer = [];
-    let query = this.db
+  queryActionType = (actionType, uid, epochTime) =>
+    this.db
       .collection("logged_events")
       .where("uid", "==", uid)
-      .where("type", "==", "PATH_CHANGE_SUCCESS")
+      .where("type", "==", actionType)
       .where("createdAt", ">", epochTime)
       .orderBy("createdAt", "desc");
-    query
-      .get()
-      .then(querySnapshot =>
-        querySnapshot.forEach(doc => {
-          const dbData = doc.data();
-          dataContainer[doc.id] = {};
-          dataContainer[doc.id]["name"] = doc.id;
-          dataContainer[doc.id]["id"] = doc.id;
-          dataContainer[doc.id]["date"] = dbData.createdAt;
-        })
-      )
-      .then(() =>
-        this.setState({
-          createdPaths: Object.values(dataContainer)
-        })
-      );
+
+  queryActionTypeOtherActionData = (actionType, paramName, uid, epochTime) =>
+    this.db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", actionType)
+      .where(`otherActionData`, "==", paramName)
+      .where("createdAt", ">", epochTime)
+      .orderBy("createdAt", "desc");
+
+  processQuerySnapshot = (query, dataContainer) =>
+    query.get().then(querySnapshot =>
+      querySnapshot.forEach(doc => {
+        const dbData = doc.data();
+        dataContainer[doc.id] = {};
+        dataContainer[doc.id]["name"] = doc.id;
+        dataContainer[doc.id]["id"] = doc.id;
+        dataContainer[doc.id]["date"] = dbData.createdAt;
+      })
+    );
+  getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = [];
+    let query = this.queryActionType("PATH_CHANGE_SUCCESS", uid, epochTime);
+    this.processQuerySnapshot(query, dataContainer).then(() =>
+      this.setState({
+        createdPaths: Object.values(dataContainer)
+      })
+    );
   };
 
   getCreatedActivities = (uid, epochTime = lastWeekEpochTime) => {
     const dataContainer = [];
+    let query = this.queryActionType("PATH_ACTIVITY_CHANGE_SUCCESS", uid, epochTime);
+    this.processQuerySnapshot(query, dataContainer).then(() =>
+      this.setState({
+        createdActivities: Object.values(dataContainer)
+      })
+    );
+  };
+
+  // notes: actionType "PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS" doesn't contain codecombat activities whereas "PROBLEM_SOLUTION_ATTEMPT_REQUEST" does
+  // actionType "PROBLEM_FINALIZE" doesn't have any otheractiondata or any indicator to the activity "finalized"
+  // actionType "PROBLEM_SOLUTION_PROVIDED_SUCCESS" only works on notebooks
+
+  getActivitiesExplored = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = {};
     let query = this.db
       .collection("logged_events")
       .where("uid", "==", uid)
-      .where("type", "==", "PATH_ACTIVITY_CHANGE_SUCCESS")
+      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")
       .where("createdAt", ">", epochTime)
       .orderBy("createdAt", "desc");
     query
       .get()
       .then(querySnapshot =>
         querySnapshot.forEach(doc => {
-          const dbData = doc.data();
-          dataContainer[doc.id] = {};
-          dataContainer[doc.id]["id"] = doc.id;
-          dataContainer[doc.id]["date"] = dbData.createdAt;
-        })
-      )
-      .then(() =>
-        this.setState({
-          createdActivities: Object.values(dataContainer)
-        })
-      );
-  };
-
-  getActivitiesExplored = uid => {
-    const dataContainer = {};
-    let count = 0;
-    let query = this.db
-      .collection("logged_events")
-      .where("uid", "==", uid)
-      .where("type", "==", "PROBLEM_SOLUTION_ATTEMPT_REQUEST")
-      .orderBy("createdAt", "desc");
-    query
-      .get()
-      .then(querySnapshot =>
-        querySnapshot.forEach(doc => {
-          const dbData = doc.data();
-          const json_dump = JSON.parse(dbData.otherActionData);
-          if (
-            "activityKey" in json_dump["payload"] &&
-            (json_dump["payload"]["activityType"] === "codeCombat" ||
-              json_dump["payload"]["activityType"] === "codeCombatMultiPlayerLevel")
-          ) {
-            dataContainer[count] = {};
-            dataContainer[count]["id"] = doc.id;
-            dataContainer[count]["date"] = dbData.createdAt;
-
-            dataContainer[count]["activityName"] = json_dump["payload"]["activityKey"];
-            count++;
+          const parsedData = doc.data();
+          parsedData["otherActionData"] = JSON.parse(parsedData["otherActionData"]);
+          if ("activityKey" in parsedData["otherActionData"]["payload"]) {
+            const {
+              createdAt,
+              otherActionData: {
+                payload: { activityKey, pathKey, activityType }
+              }
+            } = parsedData;
+            if (dataContainer[activityKey]) {
+              dataContainer[activityKey]["attempts"]++;
+            } else {
+              dataContainer[activityKey] = {};
+              dataContainer[activityKey]["id"] = activityKey;
+              dataContainer[activityKey]["date"] = createdAt;
+              dataContainer[activityKey]["pathId"] = pathKey;
+              dataContainer[activityKey]["attempts"] = 1;
+              if (activityType) {
+                dataContainer[activityKey]["otherTags"] = [];
+                dataContainer[activityKey]["otherTags"].push(activityType);
+              }
+            }
           }
         })
       )
       .then(() => {
         this.setState({
-          newActivitiesExplored: dataContainer
+          activitiesExplored: Object.values(dataContainer)
         });
       });
+  };
+
+  getRequestMoreProblems = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = [];
+    let query = this.queryActionType("PATH_MORE_PROBLEMS_SUCCESS", uid, epochTime);
+    this.processQuerySnapshot(query, dataContainer).then(() =>
+      this.setState({
+        requestsAdditionalActivities: Object.values(dataContainer)
+      })
+    );
+  };
+
+  getVisitsMyLearning = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = [];
+    let query = this.queryActionTypeOtherActionData("ROUTES_CHANGED", `{"pathName":"/mylearning"}`, uid, epochTime);
+    this.processQuerySnapshot(query, dataContainer).then(() =>
+      this.setState({
+        visitsToMyLearning: Object.values(dataContainer)
+      })
+    );
+  };
+
+  getClickRecommendedActivity = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = [];
+    let query = this.queryActionType("HOME_OPEN_RECOMMENDATION", uid, epochTime);
+    this.processQuerySnapshot(query, dataContainer).then(() =>
+      this.setState({
+        recommendedActivitiesClick: Object.values(dataContainer)
+      })
+    );
   };
 
   getMyLearning = uid => {
     this.getCreatedPaths(uid);
     this.getCreatedActivities(uid);
+    this.getActivitiesExplored(uid);
+    this.getRequestMoreProblems(uid, 0);
+    this.getVisitsMyLearning(uid);
+    this.getClickRecommendedActivity(uid, 0);
   };
 
   render() {
@@ -1237,7 +1243,10 @@ class MyLearning extends React.Component {
       <Fragment>
         {!this.props.id ? (
           <Fragment>
-            Loading Learning Summary...
+            If you have already logged in, please wait...
+            <br/>
+            <br/>
+            Loading Learning Summary
             <LinearProgress />
           </Fragment>
         ) : (
@@ -1254,77 +1263,95 @@ class MyLearning extends React.Component {
                   getCreatedActivities={this.getCreatedActivities}
                   getCreatedPaths={this.getCreatedPaths}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
+                  tabValue={this.state.tabvalueSpecificPanels["Creator stats"] || this.state.tabValue}
                   uid={this.props.id}
-                />
-                <SolversCreatedPaths
-                  data={{
-                    solversCreatedActivities: this.state.solversCreatedActivities
-                  }}
-                  handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
                 />
                 <SelfExploration
                   data={{
                     activitiesExplored: this.state.activitiesExplored
                   }}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
+                  tabValue={this.state.tabvalueSpecificPanels["SelfExploration"] || this.state.tabValue}
+                  getActivitiesExplored={this.getActivitiesExplored}
+                  uid={this.props.id}
                 />
-                <DisplaySpecificPath
+                <DisplayGenericOneFieldSpecificItem
                   componentDetails={{
-                    pathName: "CodeCombat",
+                    field: "otherTags",
+                    fieldItem: "codeCombat",
                     title: "CodeCombat activities",
-                    chartName: "CodeCombat activities completed"
+                    chartName: "CodeCombat activities completed",
+                    getterFunction1: this.getActivitiesExplored
                   }}
-                  data={{
-                    activitiesExplored: this.state.activitiesExplored
-                  }}
+                  data={this.state.activitiesExplored}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
+                  tabValue={this.state.tabvalueSpecificPanels["CodeCombat activities"] || this.state.tabValue}
+                  uid={this.props.id}
                 />
-                <DisplaySpecificPath
+                <DisplayGenericOneFieldSpecificItem
                   componentDetails={{
-                    pathName: "jupyterNotebook",
+                    field: "otherTags",
+                    fieldItem: "jupyterInline",
                     title: "Jupyter Notebook activities",
-                    chartName: "Jupyter Notebook activities completed"
+                    chartName: "Jupyter Notebook activities completed",
+                    getterFunction1: this.getActivitiesExplored
                   }}
-                  data={{
-                    activitiesExplored: this.state.activitiesExplored
-                  }}
+                  data={this.state.activitiesExplored}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
+                  tabValue={this.state.tabvalueSpecificPanels["Jupyter Notebook activities"] || this.state.tabValue}
+                  uid={this.props.id}
                 />
                 <DisplayGenericOneField
                   componentDetails={{
                     field: "attempts",
                     title: "Activity attempts",
-                    chartName: "Activity attempts"
+                    chartName: "Activity attempts",
+                    getterFunction1: this.getActivitiesExplored
                   }}
                   data={this.state.activitiesExplored}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
+                  tabValue={this.state.tabvalueSpecificPanels["Activity attempts"] || this.state.tabValue}
+                  uid={this.props.id}
                 />
                 <DisplayGenericOneFieldSpecificItem
                   componentDetails={{
                     field: "otherTags",
-                    fieldItem: "CodeCombat Multiplayer",
+                    fieldItem: "codeCombatMultiPlayerLevel",
                     title: "CodeCombat Multiplayer activities",
-                    chartName: "CodeCombat Multiplayer activities"
+                    chartName: "CodeCombat Multiplayer activities",
+                    getterFunction1: this.getActivitiesExplored
                   }}
                   data={this.state.activitiesExplored}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
+                  tabValue={
+                    this.state.tabvalueSpecificPanels["CodeCombat Multiplayer activities"] || this.state.tabValue
+                  }
+                  uid={this.props.id}
                 />
-                <DisplayCompletedPaths
+                <DisplayRequestsAdditionalActivities data={this.state.requestsAdditionalActivities} />
+                <DisplayVisitsMyLearning
+                  data={{
+                    visitsToMyLearning: this.state.visitsToMyLearning
+                  }}
+                  handleTabChange={this.handleTabChange}
+                  tabValue={this.state.tabvalueSpecificPanels["VisitsMyLearning"] || this.state.tabValue}
+                  getVisitsMyLearning={this.getVisitsMyLearning}
+                  uid={this.props.id}
+                />
+                <DisplayRecommendedActivitiesClick data={this.state.recommendedActivitiesClick} />
+                {/* <SolversCreatedPaths
+                  data={{
+                    solversCreatedActivities: this.state.solversCreatedActivities
+                  }}
+                  handleTabChange={this.handleTabChange}
+                  tabValue={this.state.tabValue}
+                /> */}
+                {/* <DisplayCompletedPaths
                   data={{
                     activitiesExplored: this.state.activitiesExplored,
                     pathInfo: this.state.pathInfo
                   }}
-                />
-                <DisplayVisitsMyLearning data={this.state.visitsToMyLearning} />
-                <DisplayRequestsAdditionalActivities data={this.state.requestsAdditionalActivities} />
-                <DisplayRecommendedActivitiesClick data={this.state.recommendedActivitiesClick} />
+                /> */}
               </Grid>
             </Grid>
           </Fragment>

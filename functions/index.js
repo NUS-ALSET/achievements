@@ -23,6 +23,7 @@ const userJSONTrigger = require("./src/fetchUserJSON");
 const cohortCalulateQualifiedUser = require("./src/cohortCalulateQualifiedUser");
 const createCustomToken = require("./src/createCustomToken");
 const runLocalTask = require("./src/runLocalTask");
+const runCustomAnalyis = require("./src/runCustomAnalysis");
 const fetchNotebookFromGitTrigger = require("./src/fetchNotebookFromGit");
 
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
@@ -150,6 +151,11 @@ exports.getTeamAssignmentSolutions = functions.https.onCall(
  * Method that allows to run advanced activities with CORS workaround
  */
 exports.runLocalTask = functions.https.onCall(runLocalTask.handler);
+
+/**
+ * Method that allows to run custom Analysis with CORS workaround
+ */
+exports.runCustomAnalysis = functions.https.onCall(runCustomAnalyis.handler);
 
 exports.handleUserSkills = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")

@@ -23,8 +23,7 @@ export const YOUTUBE_QUESTIONS = {
     "What topics were covered in this video? Put each topic on a new line",
   questionAfter: "What question do you have after watching this video",
   questionAnswer:
-    "What is a question someone who watched this video " +
-    "should be able to answer",
+    "What is a question someone who watched this video should be able to answer",
   questionCustom: "Custom question after watching this video",
   multipleQuestion: "Select answer options for question"
 };
@@ -160,8 +159,7 @@ export class PathsService {
           .init({
             apiKey: "AIzaSyC27mcZBSKrWavXNhsDA1HJCeUurPluc1E",
             clientId:
-              "765594031611-aitdj645mls974mu5oo7h7m27bh50prc.apps." +
-              "googleusercontent.com",
+              "765594031611-aitdj645mls974mu5oo7h7m27bh50prc.apps.googleusercontent.com",
             discoveryDocs: [
               "https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"
             ]
@@ -448,7 +446,7 @@ export class PathsService {
 
   validateProblem(problemInfo) {
     if (!problemInfo) throw new Error("Missing activity");
-    if (problemInfo.id) return;
+    //if (problemInfo.id) return;
     if (!problemInfo.name) throw new Error("Missing activity name");
     if (!problemInfo.type) throw new Error("Missing activity type");
     switch (problemInfo.type) {
@@ -494,8 +492,7 @@ export class PathsService {
       case ACTIVITY_TYPES.jupyter.id:
       case ACTIVITY_TYPES.jupyterInline.id:
         if (!problemInfo.problemURL) throw new Error("Missing problemURL");
-        if (!problemInfo.solutionURL && !problemInfo.id)
-          throw new Error("Missing solutionURL");
+        if (!problemInfo.solutionURL) throw new Error("Missing solutionURL");
         if (!problemInfo.frozen) throw new Error("Missing frozen field");
         if (problemInfo.type === "jupyterInline" && !problemInfo.code)
           throw new Error("Missing code field");
@@ -548,6 +545,7 @@ export class PathsService {
     let next;
     let solutionURL = null;
     let problemURL = null;
+    let uploadedFiles = undefined;
 
     this.validateProblem(problemInfo);
     if (
@@ -557,6 +555,7 @@ export class PathsService {
     ) {
       solutionURL = problemInfo.solutionURL;
       problemURL = problemInfo.problemURL;
+      uploadedFiles = problemInfo.files;
       delete problemInfo.solutionURL;
     }
     problemInfo.owner = uid;
@@ -587,6 +586,11 @@ export class PathsService {
         problemInfo[infoKey] !== undefined
       ) {
         info[infoKey] = problemInfo[infoKey];
+      }
+      // If the files have been deleted
+      // Store info["files"] as null to remove it from firebase activities node
+      if (info.type === "jupyterInline" && problemInfo.files === undefined) {
+        info["files"] = null;
       }
     }
     if (info.id) {
@@ -620,7 +624,14 @@ export class PathsService {
         if (problemURL) {
           this.fetchNotebookFiles(solutionURL, uid).then(
             json => {
-              this.saveJupyterProblemToFirebase({ json, key, info });
+              uploadedFiles && !uploadedFiles.isEmpty
+                ? this.saveJupyterProblemToFirebase({
+                    json,
+                    key,
+                    info,
+                    uploadedFiles
+                  })
+                : this.saveJupyterProblemToFirebase({ json, key, info });
             },
             err => console.error(err.message)
           );
@@ -649,10 +660,12 @@ export class PathsService {
     ) {
       const ref = firebase.database().ref(`/activityData/${data.key}`);
       const { path, owner } = data.info;
+      // If JupyterNotebook has uploaded files, store it along with the problem data
       ref.set({
         problemData: JSON.stringify(data.json),
         path,
-        owner
+        owner,
+        files: data.uploadedFiles || {}
       });
     }
   }
@@ -757,7 +770,6 @@ export class PathsService {
                 .database()
                 .ref(answerPath)
                 .push().key;
-
               firebase
                 .database()
                 .ref(`${answerPath}${answerKey}`)
@@ -765,7 +777,6 @@ export class PathsService {
                   if (response.val() === null) {
                     return;
                   }
-
                   firebase
                     .database()
                     .ref(`${answerPath}${answerKey}`)
@@ -783,17 +794,22 @@ export class PathsService {
                           )
                     );
                 });
-
+              let jupyterSolQueueTaskData = {
+                owner: uid,
+                taskKey: answerKey,
+                problem: pathProblem.problemId,
+                solution: JSON.stringify(json),
+                open: pathProblem.openTime
+              };
+              if (pathProblem.files) {
+                jupyterSolQueueTaskData.files = JSON.stringify(
+                  pathProblem.files
+                );
+              }
               return firebase
                 .database()
                 .ref(`/jupyterSolutionsQueue/tasks/${answerKey}`)
-                .set({
-                  owner: uid,
-                  taskKey: answerKey,
-                  problem: pathProblem.problemId,
-                  solution: JSON.stringify(json),
-                  open: pathProblem.openTime
-                });
+                .set(jupyterSolQueueTaskData);
             });
           }
           break;
@@ -816,8 +832,13 @@ export class PathsService {
                   if (response && response.data) {
                     response.failed = !response.data.isComplete;
                     if (response.data.jsonFeedback) {
-                      const json = JSON.parse(response.data.jsonFeedback);
-                      response.failed = json.solved === false;
+                      const json =
+                        typeof response.data.jsonFeedback == "string"
+                          ? JSON.parse(response.data.jsonFeedback)
+                          : response.data.jsonFeedback;
+                      if (json.solved === false) {
+                        response.failed = true;
+                      }
                     }
                   }
                   break;
