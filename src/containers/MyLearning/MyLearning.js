@@ -1041,7 +1041,7 @@ class MyLearning extends React.Component {
           dataContainer[doc.id]["date"] = createdAt;
           if ("pathKey" in parsedData["otherActionData"]) {
             dataContainer[doc.id]["pathKey"] = pathKey;
-            dataContainer[doc.id]["activities"] = [];
+            dataContainer[doc.id]["activities"] = {};
             return this.rtdb
               .ref(`activities`)
               .orderByChild("path")
@@ -1050,7 +1050,7 @@ class MyLearning extends React.Component {
               .then(snap => {
                 const activityData = snap.val();
                 const activityId = Object.keys(activityData);
-                dataContainer[doc.id]["activities"].push(activityId);
+                dataContainer[doc.id]["activities"][activityId] = {};
                 return activityId;
               })
               .then(activityId => {
@@ -1058,7 +1058,8 @@ class MyLearning extends React.Component {
                   .ref(`problemSolutions/${activityId}`)
                   .once("value")
                   .then(snap => {
-                    console.log(snap.val());
+                    dataContainer[doc.id]["activities"][activityId]["count"] = Object.keys(snap.val()).length;
+                    return true;
                   });
               });
           }
