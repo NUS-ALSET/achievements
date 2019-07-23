@@ -376,7 +376,7 @@ class MockJourneys extends React.PureComponent {
     });
   };
 
-  handleAddNewJourney = event => {
+  handleAddNewJourney = () => {
     this.state.journeys.push({
       name: this.state.newJourneyName,
       id: 14332313,

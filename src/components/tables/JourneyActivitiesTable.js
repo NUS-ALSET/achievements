@@ -10,13 +10,19 @@ import IconButton from "@material-ui/core/IconButton";
 
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import RadioButtonUncheckedIcon from "@material-ui/icons/RadioButtonUnchecked";
-import SearchIcon from "@material-ui/icons/Search";
+
+import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import DeleteIcon from "@material-ui/icons/Delete";
 
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
 const styles = () => ({
+  actionsColumn: {
+    minWidth: 200
+  },
   link: {
     color: "black",
     cursor: "pointer",
@@ -30,7 +36,6 @@ class JourneyActivitiesTable extends React.PureComponent {
       PropTypes.shape({
         description: PropTypes.string,
         id: PropTypes.string,
-        index: PropTypes.number,
         name: PropTypes.string,
         pathId: PropTypes.string,
         pathName: PropTypes.string,
@@ -38,17 +43,20 @@ class JourneyActivitiesTable extends React.PureComponent {
       })
     ),
     classes: PropTypes.shape({
+      actionsColumn: PropTypes.string,
       link: PropTypes.string
     }),
+    completed: PropTypes.object,
     journeyId: PropTypes.string,
-    onDeleteActivityClick: PropTypes.string,
-    onMoveActivityClick: PropTypes.string
+    onDeleteActivityClick: PropTypes.func,
+    onMoveActivityClick: PropTypes.func
   };
 
   render() {
     const {
       activities,
       classes,
+      completed,
       journeyId,
       onDeleteActivityClick,
       onMoveActivityClick
@@ -63,16 +71,18 @@ class JourneyActivitiesTable extends React.PureComponent {
             <TableCell>Name</TableCell>
             <TableCell>Path</TableCell>
             <TableCell>Description</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell className={classes.actionsColumn}>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {activities && activities.length ? (
-            activities.map(activityInfo => (
+            activities.map((activityInfo, index) => (
               <TableRow key={activityInfo.id}>
-                <TableCell>{activityInfo.index}</TableCell>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  {activityInfo.status ? (
+                  {completed &&
+                  completed[activityInfo.pathId] &&
+                  completed[activityInfo.pathId][activityInfo.id] ? (
                     <CheckCircleIcon style={{ color: "forestgreen" }} />
                   ) : (
                     <RadioButtonUncheckedIcon />
@@ -99,9 +109,25 @@ class JourneyActivitiesTable extends React.PureComponent {
                 <TableCell>{activityInfo.description}</TableCell>
                 <TableCell>
                   <IconButton
-                    onClick={onMoveActivityClick || onDeleteActivityClick}
+                    onClick={() =>
+                      onMoveActivityClick(journeyId, activityInfo.id, "up")
+                    }
                   >
-                    <SearchIcon />
+                    <ArrowUpwardIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      onMoveActivityClick(journeyId, activityInfo.id, "down")
+                    }
+                  >
+                    <ArrowDownwardIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      onDeleteActivityClick(journeyId, activityInfo.id)
+                    }
+                  >
+                    <DeleteIcon />
                   </IconButton>
                 </TableCell>
               </TableRow>

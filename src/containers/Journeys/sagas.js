@@ -6,7 +6,6 @@ import {
   JOURNEY_ADD_ACTIVITIES_REQUEST,
   journeyAddActivitiesFail,
   journeyAddActivitiesSuccess,
-  JOURNEY_DELETE_ACTIVITY_REQUEST,
   journeyDeleteActivitySuccess,
   journeyDeleteActivityFail,
   JOURNEY_MOVE_ACTIVITY_REQUEST,
@@ -51,37 +50,55 @@ export function* journeyPathActivitiesFetchRequestHandler(action) {
   }
 }
 
+// TODO: split upsert to insert and update
 export function* journeyUpsertRequestHandler(action) {
   const data = yield select(state => ({
-    uid: state.firebase.auth.uid
+    uid: state.firebase.auth.uid,
+    activities: state.journeys.journeyActivities[action.journeyId],
+    changes: state.journeys.changes[action.journeyId],
+    journey: (state.firebase.data.journeys || {})[action.journeyId]
   }));
 
   try {
+    // Combine journey data from varios sources
+    const journeyData =
+      typeof action.journeyId === "object"
+        ? action.journeyId
+        : {
+            id: action.journeyId,
+            ...data.journey,
+            ...(data.changes || {}),
+            activities: data.activities || []
+          };
     yield call(
       [journeysService, journeysService.setJourney],
       data.uid,
-      action.journeyData
+      journeyData
     );
-    if (action.journeyData.id) {
+    if (action.journeyId) {
       yield put(notificationShow("Journey updated"));
     } else {
       yield put(notificationShow("New journey created"));
     }
-    yield put(journeyUpsertSuccess(action.journeyData));
+    yield put(journeyUpsertSuccess(action.journeyId));
   } catch (err) {
     yield put(notificationShow(err.message));
-    yield put(journeyUpsertFail(action.journeyData, err.message));
+    yield put(journeyUpsertFail(action.journeyId, err.message));
   }
 }
 
 export function* journeyAddActivitiesRequestHandler(action) {
   try {
-    yield call(
+    const existing = yield select(
+      state => state.journeys.journeyActivities[action.journeyId]
+    );
+    const activities = yield call(
       [journeysService, journeysService.addActivities],
       action.journeyId,
-      action.activities
+      action.activities,
+      existing.map(activity => activity.id)
     );
-    yield put(journeyAddActivitiesSuccess(action.journeyId));
+    yield put(journeyAddActivitiesSuccess(action.journeyId, activities));
     yield put(journeyDialogClose());
   } catch (err) {
     yield put(notificationShow(err.message));
@@ -171,12 +188,12 @@ export default [
       journeyAddActivitiesRequestHandler
     );
   },
-  function* watchJourneyDeleteActivityRequest() {
-    yield takeLatest(
-      JOURNEY_DELETE_ACTIVITY_REQUEST,
-      journeyDeleteActivityRequestHandler
-    );
-  },
+  // function* watchJourneyDeleteActivityRequest() {
+  //   yield takeLatest(
+  //     JOURNEY_DELETE_ACTIVITY_REQUEST,
+  //     journeyDeleteActivityRequestHandler
+  //   );
+  // },
   function* watchJourneyMoveActivityRequest() {
     yield takeLatest(
       JOURNEY_MOVE_ACTIVITY_REQUEST,

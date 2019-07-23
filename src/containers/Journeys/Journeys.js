@@ -21,12 +21,17 @@ import {
   journeyAddActivitiesRequest,
   journeysOpen,
   journeyPathActivitiesFetchRequest,
-  journeyActivitiesFetchRequest
+  journeyActivitiesFetchRequest,
+  journeyDeleteActivityRequest,
+  journeyMoveActivityRequest,
+  journeyDataUpdate,
+  journeyChangesCancel
 } from "./actions";
 import { AddJourneyDialog } from "../../components/dialogs/AddJourneyDialog";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import { AddJourneyActivitiesDialog } from "../../components/dialogs/AddJourneyActivitiesDialog";
+import { selectJourneys } from "./selectors";
 
 class Journeys extends React.PureComponent {
   static propTypes = {
@@ -36,17 +41,23 @@ class Journeys extends React.PureComponent {
         name: PropTypes.string
       })
     ),
+    changes: PropTypes.object,
+    completedActivities: PropTypes.object,
     isInitializing: PropTypes.bool,
     journeyActivities: PropTypes.any,
     journeyActivitiesFetchRequest: PropTypes.func,
     journeys: PropTypes.any,
     journeyAddActivitiesRequest: PropTypes.func,
     journeyAddDialogToggle: PropTypes.func,
+    journeyChangesCancel: PropTypes.func,
+    journeyDataUpdate: PropTypes.func,
+    journeyDeleteActivityRequest: PropTypes.func,
     journeyDeleteRequest: PropTypes.func,
     journeyDialogClose: PropTypes.func,
     journeyDeleteConfirmationRequest: PropTypes.func,
-    journeysOpen: PropTypes.func,
+    journeyMoveActivityRequest: PropTypes.func,
     journeyPathActivitiesFetchRequest: PropTypes.func,
+    journeysOpen: PropTypes.func,
     journeyUpsertRequest: PropTypes.func,
     loadingJourneys: PropTypes.bool,
     paths: PropTypes.shape({
@@ -68,14 +79,20 @@ class Journeys extends React.PureComponent {
   render() {
     const {
       activities,
+      changes,
+      completedActivities,
       isInitializing,
       journeyActivities,
       journeyActivitiesFetchRequest,
       journeys,
       journeyAddActivitiesRequest,
       journeyAddDialogToggle,
+      journeyChangesCancel,
+      journeyDataUpdate,
+      journeyDeleteActivityRequest,
       journeyDeleteConfirmationRequest,
       journeyDialogClose,
+      journeyMoveActivityRequest,
       journeyUpsertRequest,
       journeyPathActivitiesFetchRequest,
       loadingJourneys,
@@ -107,11 +124,18 @@ class Journeys extends React.PureComponent {
               <Grid item key={journey.id} xs={12}>
                 <JourneyForm
                   activities={journeyActivities[journey.id]}
+                  changed={!!changes[journey.id]}
+                  completed={completedActivities}
                   journey={journey}
                   key={journey.id}
                   onAddActivityClick={journeyAddDialogToggle}
+                  onCancelClick={journeyChangesCancel}
+                  onDataUpdate={journeyDataUpdate}
+                  onDeleteActivityClick={journeyDeleteActivityRequest}
                   onExpand={journeyActivitiesFetchRequest}
+                  onMoveActivityClick={journeyMoveActivityRequest}
                   onRemoveClick={journeyDeleteConfirmationRequest}
+                  onSaveClick={journeyUpsertRequest}
                 />
               </Grid>
             ))
@@ -146,7 +170,9 @@ sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   activities: state.journeys.activities,
-  journeys: state.firebase.data.journeys || {},
+  changes: state.journeys.changes,
+  completedActivities: state.firebase.data.completedActivities,
+  journeys: selectJourneys(state),
   journeyActivities: state.journeys.journeyActivities,
   ui: state.journeys.ui,
   paths: state.journeys.paths,
@@ -159,15 +185,34 @@ const mapDispatchToProps = {
   journeyActivitiesFetchRequest,
   journeyAddDialogToggle: journeyShowDialog,
   journeyAddActivitiesRequest,
+  journeyChangesCancel,
+  journeyDataUpdate,
   journeyDeleteRequest,
   journeyDeleteConfirmationRequest,
+  journeyDeleteActivityRequest,
   journeyDialogClose,
+  journeyMoveActivityRequest,
   journeyPathActivitiesFetchRequest,
   journeyUpsertRequest
 };
 
 export default compose(
-  firebaseConnect(["/journeys"]),
+  firebaseConnect((ownProps, store) => {
+    const auth = store.getState().firebase.auth;
+    if (!(auth && auth.uid)) {
+      return [];
+    }
+    return [
+      {
+        path: "/journeys",
+        queryParams: ["orderByChild=owner", `equalTo=${auth.uid}`]
+      },
+      {
+        path: `/completedActivities/${auth.uid}`,
+        storeAs: "completedActivities"
+      }
+    ];
+  }),
   connect(
     mapStateToProps,
     mapDispatchToProps
