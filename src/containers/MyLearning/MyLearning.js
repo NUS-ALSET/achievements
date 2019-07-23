@@ -979,6 +979,7 @@ class MyLearning extends React.Component {
   }
 
   db = firebase.firestore();
+  rtdb = firebase.database();
 
   queryActionType = (actionType, uid, epochTime) =>
     this.db
@@ -1018,8 +1019,56 @@ class MyLearning extends React.Component {
 
   getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
     const dataContainer = [];
-    let query = this.queryActionType("PATH_CHANGE_SUCCESS", uid, epochTime);
-    this.processSetState(query, dataContainer, "createdPaths");
+    let query = this.db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PATH_CHANGE_SUCCESS")
+      .where("createdAt", ">", epochTime)
+      .orderBy("createdAt", "desc");
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const parsedData = doc.data();
+          parsedData["otherActionData"] = JSON.parse(parsedData["otherActionData"]);
+          const {
+            createdAt,
+            otherActionData: { pathKey }
+          } = parsedData;
+          dataContainer[doc.id] = {};
+          dataContainer[doc.id]["name"] = doc.id;
+          dataContainer[doc.id]["id"] = doc.id;
+          dataContainer[doc.id]["date"] = createdAt;
+          if ("pathKey" in parsedData["otherActionData"]) {
+            dataContainer[doc.id]["pathKey"] = pathKey;
+            dataContainer[doc.id]["activities"] = [];
+            return this.rtdb
+              .ref(`activities`)
+              .orderByChild("path")
+              .equalTo(pathKey)
+              .once("value")
+              .then(snap => {
+                const activityData = snap.val();
+                const activityId = Object.keys(activityData);
+                dataContainer[doc.id]["activities"].push(activityId);
+                return activityId;
+              })
+              .then(activityId => {
+                return this.rtdb
+                  .ref(`problemSolutions/${activityId}`)
+                  .once("value")
+                  .then(snap => {
+                    console.log(snap.val());
+                  });
+              });
+          }
+        })
+      )
+      .then(() => {
+        this.setState({
+          createdPaths: Object.values(dataContainer)
+        });
+      });
   };
 
   getCreatedActivities = (uid, epochTime = lastWeekEpochTime) => {
