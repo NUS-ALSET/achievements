@@ -1101,6 +1101,11 @@ class MyLearning extends React.Component {
       this.getMyLearning(this.props.id);
     }
   }
+  componentDidMount() {
+    if (this.props.id) {
+      this.getMyLearning(this.props.id);
+    }
+  }
 
   db = firebase.firestore();
 
@@ -1244,8 +1249,8 @@ class MyLearning extends React.Component {
         {!this.props.id ? (
           <Fragment>
             If you have already logged in, please wait...
-            <br/>
-            <br/>
+            <br />
+            <br />
             Loading Learning Summary
             <LinearProgress />
           </Fragment>
