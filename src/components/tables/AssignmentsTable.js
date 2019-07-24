@@ -340,6 +340,8 @@ class AssignmentsTable extends React.PureComponent {
   };
 
   render() {
+    
+
     const {
       classes,
       /** @type AssignmentCourse */
@@ -383,7 +385,7 @@ class AssignmentsTable extends React.PureComponent {
                     {assignment.name}
                   </TableSortLabel>
                   <div>
-                    {assignment.questionType !== "PathActivity" &&
+                    {!(assignment.questionType === "PathActivity") &&
                       assignment.details && (
                         <a
                           href={assignment.details}
@@ -432,6 +434,9 @@ class AssignmentsTable extends React.PureComponent {
           <TableBody>
             {Object.keys(course.members).map(id => {
               const studentInfo = course.members[id];
+              if(studentInfo.progress.totalSolutions>course.totalAssignments){
+                studentInfo.progress.totalSolutions = course.totalAssignments
+              }
               return (
                 <TableRow key={studentInfo.id}>
                   <TableCell className={classes.nowrap}>
@@ -545,6 +550,9 @@ class AssignmentsTable extends React.PureComponent {
                       }`}
                     </TableCell>
                   )}
+                  {
+                    console.log(studentInfo.progress.totalSolutions+" "+course.totalAssignments)
+                  }
                   {isInstructor && (
                     <TableCell className={classes.nowrap}>
                       {`${studentInfo.progress.totalSolutions} / ${
