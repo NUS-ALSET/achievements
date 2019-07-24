@@ -313,7 +313,7 @@ export class AdminCustomAnalysisService {
             oneQuery.query.firestore["whereTestValue"]
           );
         }
-        // Check for orderBy
+        // Check for orderBy with direction
         if (this.checkOptions(queryOptions, ["orderBy", "orderByDirection"])) {
           firestoreQuery = firestoreQuery.orderBy(
             oneQuery.query.firestore["orderBy"],
@@ -321,7 +321,7 @@ export class AdminCustomAnalysisService {
           );
         }
         // Check for orderBy
-        if (this.checkOptions(queryOptions, ["orderBy"])) {
+        else if (this.checkOptions(queryOptions, ["orderBy"])) {
           firestoreQuery = firestoreQuery.orderBy(
             oneQuery.query.firestore["orderBy"]
           );
