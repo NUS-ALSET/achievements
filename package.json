@@ -24,6 +24,7 @@
     "history": "^4.7.2",
     "html-react-parser": "^0.7.0",
     "lodash": "^4.17.10",
+    "lodash.merge": "^4.6.2",
     "mdi-react": "^2.1.19",
     "mobx": "^5.1.0",
     "mobx-react": "^5.2.8",

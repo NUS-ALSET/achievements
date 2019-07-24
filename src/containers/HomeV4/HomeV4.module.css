@@ -3,6 +3,10 @@
   width: 90%;
 }
 
+.endingParagraph {
+  margin-bottom: 2rem;
+}
+
 .topHighlightCards {
   flex-grow: 1;
   text-align: center;

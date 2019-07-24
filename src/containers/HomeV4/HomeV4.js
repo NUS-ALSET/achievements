@@ -41,7 +41,7 @@ function HomePage(props) {
           <h3>Master Python</h3>
           <ul style={{ textAlign: "left" }}>
             <li>Practice on Jupyter notebooks</li>
-            <li>Over 100 CodeCombat levels to explore</li>
+            <li>Explore over 100 CodeCombat levels</li>
             <li>Attempt Machine Learning problems</li>
           </ul>
         </article>
@@ -74,7 +74,9 @@ function HomePage(props) {
               }}
             />
             <h3>Jupyter notebooks</h3>
-            <p>Our notebook problems support popular packages such as Pandas, Scikit-Learn and even Tensorflow etc</p>
+            <p className={styles.endingParagraph}>
+              Our notebook problems support popular packages such as Pandas, Scikit-Learn and even Tensorflow etc
+            </p>
           </section>
           <section style={{ width: "100%" }}>
             <div
@@ -84,7 +86,7 @@ function HomePage(props) {
               }}
             />
             <h3>Learning analytics</h3>
-            <p>Track your own learning analytics</p>
+            <p className={styles.endingParagraph}>Track your own learning analytics</p>
           </section>
           <section style={{ width: "100%" }}>
             <div
@@ -102,9 +104,11 @@ function HomePage(props) {
         <hr style={{ marginTop: "2rem" }} />
         <h2>Accessing Achievements</h2>
         <h3>Pricing</h3>
-        <p>All the features and course material in Achievements are free for everyone to access.</p>
+        <p className={styles.endingParagraph}>
+          All the features and course material in Achievements are free for everyone to access.
+        </p>
         <h3>Guide</h3>
-        <p>
+        <p className={styles.endingParagraph}>
           We have an extensive catalogue of publicly accessible activities curated into{" "}
           <i>
             <b>Paths</b>
@@ -128,7 +132,7 @@ function HomePage(props) {
         <h2>Achievements for educators</h2>
         <h3>Paths and path activities</h3>
         <p>Create your own paths and path activities to share with your students, friends and family.</p>
-        <p>
+        <p className={styles.endingParagraph}>
           Choose from a wide range of options when creating your activities ie. from youtube / text to Jupyter notebooks
           problems.
         </p>
@@ -137,7 +141,7 @@ function HomePage(props) {
           Anyone can also create courses to enroll students, assign problems for them to complete and track their
           progress.
         </p>
-        <p>Use Cohorts to organise multiple courses.</p>
+        <p className={styles.endingParagraph}>Use Cohorts to organise multiple courses.</p>
         <h3>Getting started</h3>
         <p>Login with your Google account to start educating on Achievements!</p>
         <Button
