@@ -94,6 +94,20 @@ const PlainAccordionNoTabs = props => {
   );
 };
 
+const BarChartBoilerPlate = props => {
+  return (
+    <ResponsiveContainer height={500} width="95%">
+      <BarChart data={props.data[props.tabValue]}>
+        <XAxis dataKey="date" name="Date" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        {props.children}
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
+
 const convertDataToDates = dataSource => {
   const convertedData = dataSource.map(dataItem => {
     const { date, ...otherStuff } = dataItem;
@@ -433,60 +447,42 @@ const CreatorStats = props => {
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
           {data.lastWeek.some(e => e.activitiesCreated || e.pathsCreated) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastWeek}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                {data.lastWeek.some(e => e.activitiesCreated) && (
-                  <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
-                )}
-                {data.lastWeek.some(e => e.pathsCreated) && (
-                  <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-                )}
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastWeek"}>
+              {data.lastWeek.some(e => e.activitiesCreated) && (
+                <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
+              )}
+              {data.lastWeek.some(e => e.pathsCreated) && (
+                <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
+              )}
+            </BarChartBoilerPlate>
           )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
           {data.lastMonth.some(e => e.activitiesCreated || e.pathsCreated) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastMonth}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                {data.lastMonth.some(e => e.activitiesCreated) && (
-                  <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
-                )}
-                {data.lastMonth.some(e => e.pathsCreated) && (
-                  <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-                )}
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastMonth"}>
+              {data.lastMonth.some(e => e.activitiesCreated) && (
+                <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
+              )}
+              {data.lastMonth.some(e => e.pathsCreated) && (
+                <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
+              )}
+            </BarChartBoilerPlate>
           )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
           {data.allTime.some(e => e.activitiesCreated || e.pathsCreated) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.allTime}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                {data.allTime.some(e => e.activitiesCreated) && (
-                  <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
-                )}
-                {data.allTime.some(e => e.pathsCreated) && (
-                  <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
-                )}
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"allTime"}>
+              {data.allTime.some(e => e.activitiesCreated) && (
+                <Bar dataKey="activitiesCreated" fill="#8884d8" name="Activities created" />
+              )}
+              {data.allTime.some(e => e.pathsCreated) && (
+                <Bar dataKey="pathsCreated" fill="#82ca9d" name="Paths created" />
+              )}
+            </BarChartBoilerPlate>
           )}
         </TabAllTime>
       )}
@@ -602,48 +598,30 @@ const SelfExploration = props => {
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
           {data.lastWeek.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastWeek}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={"activities explored"} name={"activities completed"} />
-                {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastWeek"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={"activities explored"} name={"activities completed"} />
+              {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
+            </BarChartBoilerPlate>
           )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
           {data.lastMonth.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastMonth}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
-                {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastMonth"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
+              {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
+            </BarChartBoilerPlate>
           )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
           {data.allTime.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.allTime}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
-                {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"allTime"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={"activities completed"} name={"activities completed"} />
+              {/* <Bar dataKey={"pathsCompleted"} fill={randomHsl()} key={"paths explored"} name={"paths explored"} /> */}
+            </BarChartBoilerPlate>
           )}
         </TabAllTime>
       )}
@@ -750,45 +728,27 @@ const DisplayGenericOneField = props => {
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
           {data.lastWeek.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastWeek}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastWeek"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+            </BarChartBoilerPlate>
           )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
           {data.lastMonth.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastMonth}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastMonth"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+            </BarChartBoilerPlate>
           )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
           {data.allTime.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.allTime}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"allTime"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+            </BarChartBoilerPlate>
           )}
         </TabAllTime>
       )}
@@ -823,45 +783,27 @@ const DisplayGenericOneFieldSpecificItem = props => {
       {props.tabValue === "lastWeek" && (
         <TabLastWeek>
           {data.lastWeek.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastWeek}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastWeek"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+            </BarChartBoilerPlate>
           )}
         </TabLastWeek>
       )}
       {props.tabValue === "lastMonth" && (
         <TabLastMonth>
           {data.lastMonth.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastMonth}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"lastMonth"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+            </BarChartBoilerPlate>
           )}
         </TabLastMonth>
       )}
       {props.tabValue === "allTime" && (
         <TabAllTime>
           {data.allTime.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.allTime}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
-              </BarChart>
-            </ResponsiveContainer>
+            <BarChartBoilerPlate data={data} tabValue={"allTime"}>
+              <Bar dataKey={"value"} fill={randomHsl()} key={chartName} name={chartName} />
+            </BarChartBoilerPlate>
           )}
         </TabAllTime>
       )}
@@ -914,77 +856,6 @@ const DisplayGenericOneFieldSpecificItem = props => {
 //     </PlainAccordionNoTabs>
 //   );
 // };
-
-const DisplayVisitsMyLearning = props => {
-  const { visitsToMyLearning } = props.data;
-  const visitsToMyLearningToDates = convertDataToDates(visitsToMyLearning);
-
-  const countVisitsByDate = countDataByDate(visitsToMyLearningToDates);
-
-  const data = {
-    lastWeek: dataFormatting(countVisitsByDate.lastWeek),
-    lastMonth: dataFormatting(countVisitsByDate.lastMonth),
-    allTime: dataFormatting(countVisitsByDate.allTime)
-  };
-  return (
-    <Accordion
-      description={`you have reviewed myLearning ${sumUpByValueField(data[props.tabValue])} times ${mapTabValueToLabel(
-        props.tabValue
-      )}`}
-      handleTabChange={(e, tabValue) =>
-        props.handleTabChange(e, tabValue, "VisitsMyLearning", props.uid, props.getVisitsMyLearning)
-      }
-      tabValue={props.tabValue}
-      title={"Visits to MyLearning"}
-    >
-      {props.tabValue === "lastWeek" && (
-        <TabLastWeek>
-          {data.lastWeek.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastWeek}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={"visits to myLearning"} name={"visits to myLearning"} />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </TabLastWeek>
-      )}
-      {props.tabValue === "lastMonth" && (
-        <TabLastMonth>
-          {data.lastMonth.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.lastMonth}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={"visits to myLearning"} name={"visits to myLearning"} />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </TabLastMonth>
-      )}
-      {props.tabValue === "allTime" && (
-        <TabAllTime>
-          {data.allTime.some(e => e.date) && (
-            <ResponsiveContainer height={500} width="95%">
-              <BarChart data={data.allTime}>
-                <XAxis dataKey="date" name="Date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey={"value"} fill={randomHsl()} key={"visits to myLearning"} name={"visits to myLearning"} />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </TabAllTime>
-      )}
-    </Accordion>
-  );
-};
 
 const DisplayRequestsAdditionalActivities = props => {
   const paths = props.data;
@@ -1108,6 +979,7 @@ class MyLearning extends React.Component {
   }
 
   db = firebase.firestore();
+  rtdb = firebase.database();
 
   queryActionType = (actionType, uid, epochTime) =>
     this.db
@@ -1136,24 +1008,74 @@ class MyLearning extends React.Component {
         dataContainer[doc.id]["date"] = dbData.createdAt;
       })
     );
-  getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
-    const dataContainer = [];
-    let query = this.queryActionType("PATH_CHANGE_SUCCESS", uid, epochTime);
+
+  processSetState = (query, dataContainer, stateKey) => {
     this.processQuerySnapshot(query, dataContainer).then(() =>
       this.setState({
-        createdPaths: Object.values(dataContainer)
+        [stateKey]: Object.values(dataContainer)
       })
     );
+  };
+
+  getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
+    const dataContainer = [];
+    let query = this.db
+      .collection("logged_events")
+      .where("uid", "==", uid)
+      .where("type", "==", "PATH_CHANGE_SUCCESS")
+      .where("createdAt", ">", epochTime)
+      .orderBy("createdAt", "desc");
+    query
+      .get()
+      .then(querySnapshot =>
+        querySnapshot.forEach(doc => {
+          const parsedData = doc.data();
+          parsedData["otherActionData"] = JSON.parse(parsedData["otherActionData"]);
+          const {
+            createdAt,
+            otherActionData: { pathKey }
+          } = parsedData;
+          dataContainer[doc.id] = {};
+          dataContainer[doc.id]["name"] = doc.id;
+          dataContainer[doc.id]["id"] = doc.id;
+          dataContainer[doc.id]["date"] = createdAt;
+          if ("pathKey" in parsedData["otherActionData"]) {
+            dataContainer[doc.id]["pathKey"] = pathKey;
+            dataContainer[doc.id]["activities"] = {};
+            return this.rtdb
+              .ref(`activities`)
+              .orderByChild("path")
+              .equalTo(pathKey)
+              .once("value")
+              .then(snap => {
+                const activityData = snap.val();
+                const activityId = Object.keys(activityData);
+                dataContainer[doc.id]["activities"][activityId] = {};
+                return activityId;
+              })
+              .then(activityId => {
+                return this.rtdb
+                  .ref(`problemSolutions/${activityId}`)
+                  .once("value")
+                  .then(snap => {
+                    dataContainer[doc.id]["activities"][activityId]["count"] = Object.keys(snap.val()).length;
+                    return true;
+                  });
+              });
+          }
+        })
+      )
+      .then(() => {
+        this.setState({
+          createdPaths: Object.values(dataContainer)
+        });
+      });
   };
 
   getCreatedActivities = (uid, epochTime = lastWeekEpochTime) => {
     const dataContainer = [];
     let query = this.queryActionType("PATH_ACTIVITY_CHANGE_SUCCESS", uid, epochTime);
-    this.processQuerySnapshot(query, dataContainer).then(() =>
-      this.setState({
-        createdActivities: Object.values(dataContainer)
-      })
-    );
+    this.processSetState(query, dataContainer, "createdActivities");
   };
 
   // notes: actionType "PATH_FETCH_PROBLEMS_SOLUTIONS_SUCCESS" doesn't contain codecombat activities whereas "PROBLEM_SOLUTION_ATTEMPT_REQUEST" does
@@ -1207,31 +1129,19 @@ class MyLearning extends React.Component {
   getRequestMoreProblems = (uid, epochTime = lastWeekEpochTime) => {
     const dataContainer = [];
     let query = this.queryActionType("PATH_MORE_PROBLEMS_SUCCESS", uid, epochTime);
-    this.processQuerySnapshot(query, dataContainer).then(() =>
-      this.setState({
-        requestsAdditionalActivities: Object.values(dataContainer)
-      })
-    );
+    this.processSetState(query, dataContainer, "requestsAdditionalActivities");
   };
 
   getVisitsMyLearning = (uid, epochTime = lastWeekEpochTime) => {
     const dataContainer = [];
     let query = this.queryActionTypeOtherActionData("ROUTES_CHANGED", `{"pathName":"/mylearning"}`, uid, epochTime);
-    this.processQuerySnapshot(query, dataContainer).then(() =>
-      this.setState({
-        visitsToMyLearning: Object.values(dataContainer)
-      })
-    );
+    this.processSetState(query, dataContainer, "visitsToMyLearning");
   };
 
   getClickRecommendedActivity = (uid, epochTime = lastWeekEpochTime) => {
     const dataContainer = [];
     let query = this.queryActionType("HOME_OPEN_RECOMMENDATION", uid, epochTime);
-    this.processQuerySnapshot(query, dataContainer).then(() =>
-      this.setState({
-        recommendedActivitiesClick: Object.values(dataContainer)
-      })
-    );
+    this.processSetState(query, dataContainer, "recommendedActivitiesClick");
   };
 
   getMyLearning = uid => {
@@ -1334,13 +1244,16 @@ class MyLearning extends React.Component {
                   uid={this.props.id}
                 />
                 <DisplayRequestsAdditionalActivities data={this.state.requestsAdditionalActivities} />
-                <DisplayVisitsMyLearning
-                  data={{
-                    visitsToMyLearning: this.state.visitsToMyLearning
+                <DisplayGenericOneField
+                  componentDetails={{
+                    field: "",
+                    title: "Visits to MyLearning",
+                    chartName: "Visits to MyLearning",
+                    getterFunction1: this.getVisitsMyLearning
                   }}
+                  data={this.state.visitsToMyLearning}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabvalueSpecificPanels["VisitsMyLearning"] || this.state.tabValue}
-                  getVisitsMyLearning={this.getVisitsMyLearning}
+                  tabValue={this.state.tabvalueSpecificPanels["Visits to MyLearning"] || this.state.tabValue}
                   uid={this.props.id}
                 />
                 <DisplayRecommendedActivitiesClick data={this.state.recommendedActivitiesClick} />
