@@ -65,9 +65,7 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
       firestore: {
         collection: "",
         doc: "",
-        whereTest: "",
-        whereCondition: "",
-        whereTestValue: "",
+        where: { 0: { whereTest: "", whereCondition: "", whereTestValue: "" } },
         orderBy: "",
         orderByDirection: "",
         limit: ""
@@ -336,9 +334,7 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
       firestore: {
         collection: "",
         doc: "",
-        whereTest: "",
-        whereCondition: "",
-        whereTestValue: "",
+        where: { 0: { whereTest: "", whereCondition: "", whereTestValue: "" } },
         orderBy: "",
         orderByDirection: "",
         limit: ""
@@ -346,7 +342,6 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
     };
     Object.keys(data.firestore).forEach(option => {
       let value = this.parseValue(data.firestore[option]);
-
       switch (option) {
         case "limit":
           value = value
@@ -354,6 +349,16 @@ class AddAdminCustomQueryDialog extends React.PureComponent {
               ? APP_SETTING.ADMIN_ANALYSIS_LIMIT
               : value
             : APP_SETTING.ADMIN_ANALYSIS_LIMIT;
+          break;
+
+        case "where":
+          Object.keys(value).forEach(whereNumber => {
+            Object.keys(value[whereNumber]).forEach(whereOption => {
+              value[whereNumber][whereOption] = this.parseValue(
+                value[whereNumber][whereOption]
+              );
+            });
+          });
           break;
         default:
           break;

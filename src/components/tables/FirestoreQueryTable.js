@@ -7,6 +7,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import isEmpty from "lodash/isEmpty";
+
 //Import MaterialUI components
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -15,6 +17,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
+import AddIcon from "@material-ui/icons/Add";
+import Button from "@material-ui/core/Button";
 
 export const QUERY_OPTIONS = [
   "collection",
@@ -38,9 +42,7 @@ class FirestoreQueryTable extends React.PureComponent {
       firestore: {
         collection: "",
         doc: "",
-        whereTest: "",
-        whereCondition: "",
-        whereTestValue: "",
+        where: { 0: { whereTest: "", whereCondition: "", whereTestValue: "" } },
         orderBy: "",
         orderByDirection: "",
         limit: ""
@@ -57,6 +59,15 @@ class FirestoreQueryTable extends React.PureComponent {
     this.props.firestoreQueryHandler(data);
   };
 
+  onWhereFieldChange = (whereClause, field, value) => {
+    let data = { ...this.state.query };
+    if (QUERY_OPTIONS.indexOf(field) !== -1) {
+      data.firestore.where[whereClause][field] = value;
+    }
+    this.setState({ ...this.state, query: data });
+    this.props.firestoreQueryHandler(data);
+  };
+
   isIncorrect = () => {
     if (this.state.name && this.state.isCorrectInput) {
       return false;
@@ -64,10 +75,108 @@ class FirestoreQueryTable extends React.PureComponent {
       return true;
     }
   };
+  handleAddWhereClause = () => {
+    let nextWhereClause = null;
+    if (
+      this.state.query.firestore.where &&
+      !isEmpty(this.state.query.firestore.where)
+    ) {
+      nextWhereClause = Object.keys(this.state.query.firestore.where).length;
+    } else {
+      nextWhereClause = 0;
+    }
+    let data = { ...this.state };
+    data.query.firestore.where[nextWhereClause] = {
+      whereTest: "",
+      whereCondition: "",
+      whereTestValue: ""
+    };
+    this.setState({ ...this.state, data });
+  };
+
+  getWhereClause = () => {
+    const { classes } = this.props;
+    let allWhereClause = [];
+
+    Object.keys(this.state.query.firestore.where).forEach(whereClause => {
+      let tempWhereTest =
+        this.state.query.firestore.where[whereClause].whereTest != null
+          ? String(this.state.query.firestore.where[whereClause].whereTest)
+          : "";
+      let tempWhereCondition =
+        this.state.query.firestore.where[whereClause].whereCondition != null
+          ? String(this.state.query.firestore.where[whereClause].whereCondition)
+          : "";
+      let tempWhereTestValue =
+        this.state.query.firestore.where[whereClause].whereTestValue != null
+          ? String(this.state.query.firestore.where[whereClause].whereTestValue)
+          : "";
+      allWhereClause.push(
+        <TableRow key={"where" + whereClause}>
+          <TableCell align="right">
+            <Typography className={classes.instructions}>
+              .where( "{tempWhereTest}", "{tempWhereCondition}", "
+              {tempWhereTestValue}" )
+            </Typography>
+          </TableCell>
+          <TableCell align="left">
+            <div>
+              <TextField
+                id="outlined-name"
+                label="whereTest"
+                className={classes.textField}
+                value={tempWhereTest}
+                onChange={e =>
+                  this.onWhereFieldChange(
+                    whereClause,
+                    "whereTest",
+                    e.target.value
+                  )
+                }
+                margin="dense"
+                variant="outlined"
+              />
+              <TextField
+                id="outlined-name"
+                label="whereCondition"
+                className={classes.textField}
+                value={tempWhereCondition}
+                onChange={e =>
+                  this.onWhereFieldChange(
+                    whereClause,
+                    "whereCondition",
+                    e.target.value
+                  )
+                }
+                margin="dense"
+                variant="outlined"
+              />
+              <TextField
+                id="outlined-name"
+                label="whereTestValue"
+                className={classes.textField}
+                value={tempWhereTestValue}
+                onChange={e =>
+                  this.onWhereFieldChange(
+                    whereClause,
+                    "whereTestValue",
+                    e.target.value
+                  )
+                }
+                margin="dense"
+                variant="outlined"
+              />
+            </div>
+          </TableCell>
+        </TableRow>
+      );
+    });
+    return allWhereClause;
+  };
 
   render() {
     const { classes } = this.props;
-
+    let allWhereClause = this.getWhereClause();
     return (
       <Table className={classes.table} size="small">
         <TableHead>
@@ -124,50 +233,16 @@ class FirestoreQueryTable extends React.PureComponent {
               />
             </TableCell>
           </TableRow>
-          <TableRow key="where">
-            <TableCell align="right">
-              <Typography className={classes.instructions}>
-                .where( "{this.state.query.firestore.whereTest}", "
-                {this.state.query.firestore.whereCondition}", "
-                {this.state.query.firestore.whereTestValue}" )
-              </Typography>
-            </TableCell>
+          {allWhereClause}
+          <TableRow key="WhereClause">
+            <TableCell align="right" />
             <TableCell align="left">
-              <div>
-                <TextField
-                  id="outlined-name"
-                  label="whereTest"
-                  className={classes.textField}
-                  value={this.state.query.firestore.whereTest}
-                  onChange={e =>
-                    this.onFieldChange("whereTest", e.target.value)
-                  }
-                  margin="dense"
-                  variant="outlined"
-                />
-                <TextField
-                  id="outlined-name"
-                  label="whereCondition"
-                  className={classes.textField}
-                  value={this.state.query.firestore.whereCondition}
-                  onChange={e =>
-                    this.onFieldChange("whereCondition", e.target.value)
-                  }
-                  margin="dense"
-                  variant="outlined"
-                />
-                <TextField
-                  id="outlined-name"
-                  label="whereTestValue"
-                  className={classes.textField}
-                  value={this.state.query.firestore.whereTestValue}
-                  onChange={e =>
-                    this.onFieldChange("whereTestValue", e.target.value)
-                  }
-                  margin="dense"
-                  variant="outlined"
-                />
-              </div>
+              <Button variant="contained" onClick={this.handleAddWhereClause}>
+                <AddIcon className={classes.addIcon} />
+                <Typography className={classes.instructions}>
+                  Add Where Clause&nbsp;
+                </Typography>
+              </Button>
             </TableCell>
           </TableRow>
           <TableRow key="orderBy">

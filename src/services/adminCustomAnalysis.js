@@ -300,18 +300,14 @@ export class AdminCustomAnalysisService {
             .collection(oneQuery.query.firestore["collection"]);
         }
         // Check for where
-        if (
-          this.checkOptions(queryOptions, [
-            "whereTest",
-            "whereCondition",
-            "whereTestValue"
-          ])
-        ) {
-          firestoreQuery = firestoreQuery.where(
-            oneQuery.query.firestore["whereTest"],
-            oneQuery.query.firestore["whereCondition"],
-            oneQuery.query.firestore["whereTestValue"]
-          );
+        if (this.checkOptions(queryOptions, ["where"])) {
+          for (let whereNumber of Object.keys(oneQuery.query.firestore.where)) {
+            firestoreQuery = firestoreQuery.where(
+              oneQuery.query.firestore.where[whereNumber]["whereTest"],
+              oneQuery.query.firestore.where[whereNumber]["whereCondition"],
+              oneQuery.query.firestore.where[whereNumber]["whereTestValue"]
+            );
+          }
         }
         // Check for orderBy with direction
         if (this.checkOptions(queryOptions, ["orderBy", "orderByDirection"])) {
