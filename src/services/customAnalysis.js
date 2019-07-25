@@ -109,7 +109,8 @@ export class CustomAnalysisService {
    *
    * @param {String} uid user id of creator
    *
-   * @returns {Object} Object containing all activities created
+   * @returns {Object} Object containing solutions for
+   * the activities/assignment created/collaborated by the user
    */
   async fetchSolutionsHandler(typeSelected, typeID, activityID) {
     if (typeSelected === "Path") {
@@ -144,41 +145,76 @@ export class CustomAnalysisService {
     }
   }
   /**
-   * This method returns all assignments for the course created
-   * by user with uid
+   * This method returns all courses where the user is
+   * either the owner or an assistant
    *
-   * @param {String} uid user id of course creator
+   * @param {String} uid user id of path creator/assistant
    *
-   * @returns {Object} Object containing all assignments created
+   * @returns {Object} Object containing all courses related to user
    */
-  async fetchMyAssignments(uid) {
-    return await firebase
-      .database()
-      .ref("/courses")
-      .orderByChild("owner")
-      .equalTo(uid)
-      .once("value")
-      .then(response => response.val() || {})
-      .then(courses =>
-        Promise.all(
-          Object.keys(courses || {}).map(courseKey =>
-            firebase
-              .database()
-              .ref(`/assignments/${courseKey}`)
-              .once("value")
-              .then(snap => snap.val() || {})
-              .then(assignments => ({
-                id: courseKey,
-                name: courses[courseKey].name,
-                assignments: Object.keys(assignments).map(assignmentsKey => ({
-                  id: assignmentsKey,
-                  name: assignments[assignmentsKey].name,
-                  type: assignments[assignmentsKey].type
-                }))
-              }))
+  fetchMyCourses(uid) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref("/courses")
+        .orderByChild("owner")
+        .equalTo(uid)
+        .once("value")
+        .then(snap => snap.val() || {}),
+      firebase
+        .database()
+        .ref("/courseAssistants")
+        .orderByChild(uid)
+        .equalTo(true)
+        .once("value")
+        .then(snap => snap.val() || {})
+        .then(assistantCourses =>
+          Promise.all(
+            Object.keys(assistantCourses || {}).map(courseKey =>
+              firebase
+                .database()
+                .ref(`/courses/${courseKey}`)
+                .once("value")
+                .then(snap => (snap.val() ? { [courseKey]: snap.val() } : {}))
+            )
           )
         )
-      );
+    ]).then(([myCourses, assistantCourses]) => {
+      let courses = Object.assign({}, myCourses);
+      assistantCourses.forEach(assistantCourse => {
+        courses = { ...courses, ...assistantCourse };
+      });
+      return courses;
+    });
+  }
+
+  /**
+   * This method returns all assignments for the paths created/assisted
+   * by user with uid
+   *
+   * @param {Object} courses all the courses either created/assisted by the user
+   *
+   * @returns {Object} Object containing all assignments created/assisted
+   */
+  fetchMyAssignments(courses) {
+    return Promise.all(
+      Object.keys(courses || {}).map(courseKey =>
+        firebase
+          .database()
+          .ref(`/assignments/${courseKey}`)
+          .once("value")
+          .then(snap => snap.val() || {})
+          .then(assignments => ({
+            id: courseKey,
+            name: courses[courseKey].name,
+            assignments: Object.keys(assignments).map(assignmentKey => ({
+              id: assignmentKey,
+              name: assignments[assignmentKey].name,
+              type: assignments[assignmentKey].type
+            }))
+          }))
+      )
+    );
   }
 
   /**
