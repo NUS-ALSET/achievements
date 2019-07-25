@@ -302,11 +302,13 @@ export class AdminCustomAnalysisService {
         // Check for where
         if (this.checkOptions(queryOptions, ["where"])) {
           for (let whereNumber of Object.keys(oneQuery.query.firestore.where)) {
-            firestoreQuery = firestoreQuery.where(
-              oneQuery.query.firestore.where[whereNumber]["whereTest"],
-              oneQuery.query.firestore.where[whereNumber]["whereCondition"],
-              oneQuery.query.firestore.where[whereNumber]["whereTestValue"]
-            );
+            if (oneQuery.query.firestore.where[whereNumber].values != null) {
+              firestoreQuery = firestoreQuery.where(
+                oneQuery.query.firestore.where[whereNumber]["whereTest"],
+                oneQuery.query.firestore.where[whereNumber]["whereCondition"],
+                oneQuery.query.firestore.where[whereNumber]["whereTestValue"]
+              );
+            }
           }
         }
         // Check for orderBy with direction
