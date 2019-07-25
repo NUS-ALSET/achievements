@@ -465,7 +465,7 @@ sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
-  myPaths: state.firebase.data.myPaths,
+  myPaths: state.customAnalysis.myPaths,
   myCourses: state.firebase.data.myCourses,
   myActivities: state.customAnalysis.myActivities,
   myAssignments: state.customAnalysis.myAssignments,
@@ -501,11 +501,6 @@ export default compose(
     return firebaseAuth.isEmpty
       ? []
       : [
-          {
-            path: "/paths",
-            storeAs: "myPaths",
-            queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
-          },
           {
             path: "/courses",
             storeAs: "myCourses",

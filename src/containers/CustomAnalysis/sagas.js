@@ -5,6 +5,7 @@ import {
   ANALYSE_REQUEST,
   DELETE_CUSTOM_ANALYSIS_REQUEST,
   UPDATE_CUSTOM_ANALYSIS_REQUEST,
+  myPathsLoaded,
   myActivitiesLoaded,
   myAssignmentsLoaded,
   addCustomAnalysisSuccess,
@@ -27,10 +28,18 @@ export function* customAnalysisOpenHandler() {
       yield take("@@reactReduxFirebase/LOGIN");
       uid = yield select(state => state.firebase.auth.uid);
     }
-    let myActivities, myAssignments;
-    myActivities = yield call(customAnalysisService.fetchMyActivities, uid);
-    myAssignments = yield call(customAnalysisService.fetchMyAssignments, uid);
+    let myPaths, myActivities, myAssignments;
+
+    // Fetch all user created/collaborated by user
+    myPaths = yield call(customAnalysisService.fetchMyPaths, uid);
+    yield put(myPathsLoaded(myPaths));
+
+    // Fetch all activities for user related paths
+    myActivities = yield call(customAnalysisService.fetchMyActivities, myPaths);
     yield put(myActivitiesLoaded(myActivities));
+
+    //Fetch all assignments for user related courses
+    myAssignments = yield call(customAnalysisService.fetchMyAssignments, uid);
     yield put(myAssignmentsLoaded(myAssignments));
   } catch (err) {
     yield put(notificationShow(err.message));

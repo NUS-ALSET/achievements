@@ -1,4 +1,5 @@
 import {
+  MY_PATHS_LOADED,
   MY_ACTIVITIES_LOADED,
   MY_ASSIGNMENTS_LOADED,
   ADD_CUSTOM_ANALYSIS_SUCCESS,
@@ -17,6 +18,7 @@ export const customAnalysis = (
       customAnalysisName: ""
     },
     analysisResults: {},
+    myPaths: {},
     myActivities: {},
     myAssignments: {},
     solutionsSelected: []
@@ -24,6 +26,12 @@ export const customAnalysis = (
   action
 ) => {
   switch (action.type) {
+    case MY_PATHS_LOADED:
+      return {
+        ...state,
+        dialog: "MY_PATHS_LOADED",
+        myPaths: action.myPaths
+      };
     case MY_ACTIVITIES_LOADED:
       return {
         ...state,

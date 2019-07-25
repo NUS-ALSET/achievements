@@ -30,43 +30,77 @@ export class CustomAnalysisService {
     );
   }
   /**
-   * This method returns all activities for the paths created
+   * This method returns all paths where the user is
+   * either the owner or a colllaborator
+   *
+   * @param {String} uid user id of path creator/collaborator
+   *
+   * @returns {Object} Object containing all paths related to user
+   */
+  fetchMyPaths(uid) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref("/paths")
+        .orderByChild("owner")
+        .equalTo(uid)
+        .once("value")
+        .then(snap => snap.val() || {}),
+      firebase
+        .database()
+        .ref("/pathAssistants")
+        .orderByChild(uid)
+        .equalTo(true)
+        .once("value")
+        .then(snap => snap.val() || {})
+        .then(assistantPaths =>
+          Promise.all(
+            Object.keys(assistantPaths || {}).map(pathKey =>
+              firebase
+                .database()
+                .ref(`/paths/${pathKey}`)
+                .once("value")
+                .then(snap => (snap.val() ? { [pathKey]: snap.val() } : {}))
+            )
+          )
+        )
+    ]).then(([myPaths, assistantPaths]) => {
+      let paths = Object.assign({}, myPaths);
+      assistantPaths.forEach(assistantPath => {
+        paths = { ...paths, ...assistantPath };
+      });
+      return paths;
+    });
+  }
+  /**
+   * This method returns all activities for the paths created/collaborated
    * by user with uid
    *
-   * @param {String} uid user id of path creator
+   * @param {Object} paths all the paths either created/collaborated by the user
    *
    * @returns {Object} Object containing all activities created
    */
-  async fetchMyActivities(uid) {
-    return await firebase
-      .database()
-      .ref("/paths")
-      .orderByChild("owner")
-      .equalTo(uid)
-      .once("value")
-      .then(snap => snap.val() || {})
-      .then(paths =>
-        Promise.all(
-          Object.keys(paths || {}).map(pathKey =>
-            firebase
-              .database()
-              .ref("/activities")
-              .orderByChild("path")
-              .equalTo(pathKey)
-              .once("value")
-              .then(snap => snap.val() || {})
-              .then(activities => ({
-                id: pathKey,
-                name: paths[pathKey].name,
-                activities: Object.keys(activities).map(activityKey => ({
-                  id: activityKey,
-                  name: activities[activityKey].name,
-                  type: activities[activityKey].type
-                }))
-              }))
-          )
-        )
-      );
+  fetchMyActivities(paths) {
+    return Promise.all(
+      Object.keys(paths || {}).map(pathKey =>
+        firebase
+          .database()
+          .ref("/activities")
+          .orderByChild("path")
+          .equalTo(pathKey)
+          .once("value")
+          .then(snap => snap.val() || {})
+          .then(activities => ({
+            id: pathKey,
+            name: paths[pathKey].name,
+            activities: Object.keys(activities).map(activityKey => ({
+              id: activityKey,
+              name: activities[activityKey].name,
+              type: activities[activityKey].type
+            }))
+          }))
+      )
+    );
   }
 
   /**
