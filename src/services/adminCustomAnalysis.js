@@ -302,7 +302,11 @@ export class AdminCustomAnalysisService {
         // Check for where
         if (this.checkOptions(queryOptions, ["where"])) {
           for (let whereNumber of Object.keys(oneQuery.query.firestore.where)) {
-            if (oneQuery.query.firestore.where[whereNumber].values != null) {
+            if (
+              Object.values(oneQuery.query.firestore.where[whereNumber]).every(
+                x => x != null && x !== ""
+              )
+            ) {
               firestoreQuery = firestoreQuery.where(
                 oneQuery.query.firestore.where[whereNumber]["whereTest"],
                 oneQuery.query.firestore.where[whereNumber]["whereCondition"],
