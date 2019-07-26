@@ -30,43 +30,77 @@ export class CustomAnalysisService {
     );
   }
   /**
-   * This method returns all activities for the paths created
+   * This method returns all paths where the user is
+   * either the owner or a colllaborator
+   *
+   * @param {String} uid user id of path creator/collaborator
+   *
+   * @returns {Object} Object containing all paths related to user
+   */
+  fetchMyPaths(uid) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref("/paths")
+        .orderByChild("owner")
+        .equalTo(uid)
+        .once("value")
+        .then(snap => snap.val() || {}),
+      firebase
+        .database()
+        .ref("/pathAssistants")
+        .orderByChild(uid)
+        .equalTo(true)
+        .once("value")
+        .then(snap => snap.val() || {})
+        .then(assistantPaths =>
+          Promise.all(
+            Object.keys(assistantPaths || {}).map(pathKey =>
+              firebase
+                .database()
+                .ref(`/paths/${pathKey}`)
+                .once("value")
+                .then(snap => (snap.val() ? { [pathKey]: snap.val() } : {}))
+            )
+          )
+        )
+    ]).then(([myPaths, assistantPaths]) => {
+      let paths = Object.assign({}, myPaths);
+      assistantPaths.forEach(assistantPath => {
+        paths = { ...paths, ...assistantPath };
+      });
+      return paths;
+    });
+  }
+  /**
+   * This method returns all activities for the paths created/collaborated
    * by user with uid
    *
-   * @param {String} uid user id of path creator
+   * @param {Object} paths all the paths either created/collaborated by the user
    *
    * @returns {Object} Object containing all activities created
    */
-  async fetchMyActivities(uid) {
-    return await firebase
-      .database()
-      .ref("/paths")
-      .orderByChild("owner")
-      .equalTo(uid)
-      .once("value")
-      .then(snap => snap.val() || {})
-      .then(paths =>
-        Promise.all(
-          Object.keys(paths || {}).map(pathKey =>
-            firebase
-              .database()
-              .ref("/activities")
-              .orderByChild("path")
-              .equalTo(pathKey)
-              .once("value")
-              .then(snap => snap.val() || {})
-              .then(activities => ({
-                id: pathKey,
-                name: paths[pathKey].name,
-                activities: Object.keys(activities).map(activityKey => ({
-                  id: activityKey,
-                  name: activities[activityKey].name,
-                  type: activities[activityKey].type
-                }))
-              }))
-          )
-        )
-      );
+  fetchMyActivities(paths) {
+    return Promise.all(
+      Object.keys(paths || {}).map(pathKey =>
+        firebase
+          .database()
+          .ref("/activities")
+          .orderByChild("path")
+          .equalTo(pathKey)
+          .once("value")
+          .then(snap => snap.val() || {})
+          .then(activities => ({
+            id: pathKey,
+            name: paths[pathKey].name,
+            activities: Object.keys(activities).map(activityKey => ({
+              id: activityKey,
+              name: activities[activityKey].name,
+              type: activities[activityKey].type
+            }))
+          }))
+      )
+    );
   }
 
   /**
@@ -75,7 +109,8 @@ export class CustomAnalysisService {
    *
    * @param {String} uid user id of creator
    *
-   * @returns {Object} Object containing all activities created
+   * @returns {Object} Object containing solutions for
+   * the activities/assignment created/collaborated by the user
    */
   async fetchSolutionsHandler(typeSelected, typeID, activityID) {
     if (typeSelected === "Path") {
@@ -110,41 +145,76 @@ export class CustomAnalysisService {
     }
   }
   /**
-   * This method returns all assignments for the course created
-   * by user with uid
+   * This method returns all courses where the user is
+   * either the owner or an assistant
    *
-   * @param {String} uid user id of course creator
+   * @param {String} uid user id of path creator/assistant
    *
-   * @returns {Object} Object containing all assignments created
+   * @returns {Object} Object containing all courses related to user
    */
-  async fetchMyAssignments(uid) {
-    return await firebase
-      .database()
-      .ref("/courses")
-      .orderByChild("owner")
-      .equalTo(uid)
-      .once("value")
-      .then(response => response.val() || {})
-      .then(courses =>
-        Promise.all(
-          Object.keys(courses || {}).map(courseKey =>
-            firebase
-              .database()
-              .ref(`/assignments/${courseKey}`)
-              .once("value")
-              .then(snap => snap.val() || {})
-              .then(assignments => ({
-                id: courseKey,
-                name: courses[courseKey].name,
-                assignments: Object.keys(assignments).map(assignmentsKey => ({
-                  id: assignmentsKey,
-                  name: assignments[assignmentsKey].name,
-                  type: assignments[assignmentsKey].type
-                }))
-              }))
+  fetchMyCourses(uid) {
+    return Promise.all([
+      firebase
+        .database()
+        .ref("/courses")
+        .orderByChild("owner")
+        .equalTo(uid)
+        .once("value")
+        .then(snap => snap.val() || {}),
+      firebase
+        .database()
+        .ref("/courseAssistants")
+        .orderByChild(uid)
+        .equalTo(true)
+        .once("value")
+        .then(snap => snap.val() || {})
+        .then(assistantCourses =>
+          Promise.all(
+            Object.keys(assistantCourses || {}).map(courseKey =>
+              firebase
+                .database()
+                .ref(`/courses/${courseKey}`)
+                .once("value")
+                .then(snap => (snap.val() ? { [courseKey]: snap.val() } : {}))
+            )
           )
         )
-      );
+    ]).then(([myCourses, assistantCourses]) => {
+      let courses = Object.assign({}, myCourses);
+      assistantCourses.forEach(assistantCourse => {
+        courses = { ...courses, ...assistantCourse };
+      });
+      return courses;
+    });
+  }
+
+  /**
+   * This method returns all assignments for the paths created/assisted
+   * by user with uid
+   *
+   * @param {Object} courses all the courses either created/assisted by the user
+   *
+   * @returns {Object} Object containing all assignments created/assisted
+   */
+  fetchMyAssignments(courses) {
+    return Promise.all(
+      Object.keys(courses || {}).map(courseKey =>
+        firebase
+          .database()
+          .ref(`/assignments/${courseKey}`)
+          .once("value")
+          .then(snap => snap.val() || {})
+          .then(assignments => ({
+            id: courseKey,
+            name: courses[courseKey].name,
+            assignments: Object.keys(assignments).map(assignmentKey => ({
+              id: assignmentKey,
+              name: assignments[assignmentKey].name,
+              type: assignments[assignmentKey].type
+            }))
+          }))
+      )
+    );
   }
 
   /**
@@ -322,30 +392,31 @@ export class CustomAnalysisService {
    */
 
   async storeAnalysis(uid, response, analysisID) {
-    await firebase
+    let docRef = firebase
       .firestore()
       .collection("/customAnalysisResponse")
-      .add({
-        createdAt: firebase.firestore.Timestamp.now().toMillis(),
-        uid: uid,
-        analysisID: analysisID,
-        response: JSON.parse(response.data).results
-          ? JSON.stringify(JSON.parse(response.data).results)
-          : JSON.parse(response.data).result,
-        ipynb: JSON.stringify(JSON.parse(response.data).ipynb)
-      })
-      .then(docRef => {
-        firebase
-          .firestore()
-          .collection("/logged_events")
-          .add({
-            createdAt: firebase.firestore.Timestamp.now().toMillis(),
-            type: "CUSTOM_ANALYSIS_EXECUTE",
-            uid: uid,
-            version: process.env.REACT_APP_VERSION,
-            otherActionData: { customAnalysisResponse: docRef.id }
-          });
-      });
+      .doc(analysisID);
+    let data = {};
+    data = {
+      createdAt: firebase.firestore.Timestamp.now().toMillis(),
+      uid: uid,
+      response: JSON.parse(response.data).results
+        ? JSON.stringify(JSON.parse(response.data).results)
+        : JSON.parse(response.data).result,
+      ipynb: JSON.stringify(JSON.parse(response.data).ipynb)
+    };
+    await docRef.set(data).then(() => {
+      firebase
+        .firestore()
+        .collection("/logged_events")
+        .add({
+          createdAt: firebase.firestore.Timestamp.now().toMillis(),
+          type: "CUSTOM_ANALYSIS_EXECUTE",
+          uid: uid,
+          version: process.env.REACT_APP_VERSION,
+          otherActionData: { customAnalysisResponse: analysisID }
+        });
+    });
     return JSON.parse(response.data);
   }
 

@@ -3,6 +3,18 @@ export const customAnalysisOpen = () => ({
   type: CUSTOM_ANALYSIS_OPEN
 });
 
+export const MY_PATHS_LOADED = "MY_PATHS_LOADED";
+export const myPathsLoaded = myPaths => ({
+  type: MY_PATHS_LOADED,
+  myPaths
+});
+
+export const MY_COURSES_LOADED = "MY_COURSES_LOADED";
+export const myCoursesLoaded = myCourses => ({
+  type: MY_COURSES_LOADED,
+  myCourses
+});
+
 export const MY_ACTIVITIES_LOADED = "MY_ACTIVITIES_LOADED";
 export const myActivitiesLoaded = myActivities => ({
   type: MY_ACTIVITIES_LOADED,

@@ -9,7 +9,7 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import { compose } from "redux";
 import { connect } from "react-redux";
-import { firebaseConnect, firestoreConnect } from "react-redux-firebase";
+import { firestoreConnect } from "react-redux-firebase";
 
 import isEmpty from "lodash/isEmpty";
 
@@ -465,8 +465,8 @@ sagaInjector.inject(sagas);
 
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
-  myPaths: state.firebase.data.myPaths,
-  myCourses: state.firebase.data.myCourses,
+  myPaths: state.customAnalysis.myPaths,
+  myCourses: state.customAnalysis.myCourses,
   myActivities: state.customAnalysis.myActivities,
   myAssignments: state.customAnalysis.myAssignments,
   myAnalysis: state.firestore.data.myAnalysis,
@@ -493,23 +493,6 @@ export default compose(
             collection: "customAnalysis",
             where: [["uid", "==", firebaseAuth.uid]],
             storeAs: "myAnalysis"
-          }
-        ];
-  }),
-  firebaseConnect((ownProps, store) => {
-    const firebaseAuth = store.getState().firebase.auth;
-    return firebaseAuth.isEmpty
-      ? []
-      : [
-          {
-            path: "/paths",
-            storeAs: "myPaths",
-            queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
-          },
-          {
-            path: "/courses",
-            storeAs: "myCourses",
-            queryParams: ["orderByChild=owner", `equalTo=${firebaseAuth.uid}`]
           }
         ];
   }),
