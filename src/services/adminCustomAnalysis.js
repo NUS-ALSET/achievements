@@ -146,7 +146,7 @@ export class AdminCustomAnalysisService {
             type: "ADMIN_CUSTOM_ANALYSIS_CREATE",
             uid: uid,
             version: process.env.REACT_APP_VERSION,
-            otherActionData: { customAnalysis: docRef.id }
+            otherActionData: { adminCustomAnalysis: docRef.id }
           });
       });
   }
@@ -174,7 +174,7 @@ export class AdminCustomAnalysisService {
             type: "ADMIN_CUSTOM_ANALYSIS_DELETE",
             uid: uid,
             version: process.env.REACT_APP_VERSION,
-            otherActionData: { customAnalysis: customAnalysisID }
+            otherActionData: { adminCustomAnalysis: customAnalysisID }
           });
       });
   }
@@ -209,7 +209,7 @@ export class AdminCustomAnalysisService {
               type: "ADMIN_CUSTOM_ANALYSIS_UPDATE",
               uid: uid,
               version: process.env.REACT_APP_VERSION,
-              otherActionData: { customAnalysis: customAnalysisID }
+              otherActionData: { adminCustomAnalysis: customAnalysisID }
             });
         });
     });
@@ -364,30 +364,31 @@ export class AdminCustomAnalysisService {
    */
 
   async storeAnalysis(uid, response, analysisID) {
-    await firebase
+    let docRef = firebase
       .firestore()
       .collection("/adminCustomAnalysisResponse")
-      .add({
-        createdAt: firebase.firestore.Timestamp.now().toMillis(),
-        uid: uid,
-        analysisID: analysisID,
-        response: JSON.parse(response.data).results
-          ? JSON.stringify(JSON.parse(response.data).results)
-          : JSON.parse(response.data).result,
-        ipynb: JSON.stringify(JSON.parse(response.data).ipynb)
-      })
-      .then(docRef => {
-        firebase
-          .firestore()
-          .collection("/logged_events")
-          .add({
-            createdAt: firebase.firestore.Timestamp.now().toMillis(),
-            type: "ADMIN_CUSTOM_ANALYSIS_EXECUTE",
-            uid: uid,
-            version: process.env.REACT_APP_VERSION,
-            otherActionData: { adminCustomAnalysisResponse: docRef.id }
-          });
-      });
+      .doc(analysisID);
+    let data = {};
+    data = {
+      createdAt: firebase.firestore.Timestamp.now().toMillis(),
+      uid: uid,
+      response: JSON.parse(response.data).results
+        ? JSON.stringify(JSON.parse(response.data).results)
+        : JSON.parse(response.data).result,
+      ipynb: JSON.stringify(JSON.parse(response.data).ipynb)
+    };
+    await docRef.set(data).then(() => {
+      firebase
+        .firestore()
+        .collection("/logged_events")
+        .add({
+          createdAt: firebase.firestore.Timestamp.now().toMillis(),
+          type: "ADMIN_CUSTOM_ANALYSIS_EXECUTE",
+          uid: uid,
+          version: process.env.REACT_APP_VERSION,
+          otherActionData: { adminCustomAnalysisResponse: analysisID }
+        });
+    });
     return JSON.parse(response.data);
   }
 
