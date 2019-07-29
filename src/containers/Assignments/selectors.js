@@ -1,5 +1,6 @@
 /* eslint-disable no-continue */
 // Tab with instructor view
+
 import { ASSIGNMENTS_TYPES } from "../../services/courses";
 
 const INSTRUCTOR_TAB_EDIT = 1;
@@ -26,7 +27,6 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
   const solutions = options.onlyVisible
     ? {}
     : getFrom(getFrom(state.firebase.data.solutions, courseId), student.id);
-
   // Published (visible) results should be fetched in any case, to get info - was that solution published
   const publishedSolutions = getFrom(
     getFrom(state.firebase.data.visibleSolutions, courseId),
@@ -34,7 +34,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
   );
   const pathsData = state.assignments.pathsData || {};
   const result = Object.assign({}, publishedSolutions, solutions);
-
+  
   Object.keys(Object.assign({}, solutions, publishedSolutions)).forEach(
     assignmentId => {
       const assignment = assignments[assignmentId] || {};
@@ -46,6 +46,7 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       const pathActivities = pathsData[assignmentId];
 
       solution = solution && solution.value;
+
 
       if (!solution) {
         return true;
@@ -130,7 +131,6 @@ const getStudentSolutions = (state, courseId, student, options = {}) => {
       }
     }
   );
-
   return result;
 };
 
@@ -322,17 +322,17 @@ function getPathProgressAssignments(assignments) {
 }
 
 function getStudentPathProgress(member, targetAssignments, pathsData) {
-  const result = {
+    const result = {
     totalActivities: 0,
     totalSolutions: 0,
     lastSolutionTime: 0
   };
   for (const pathId of Object.keys(pathsData || {})) {
     result.totalActivities += pathsData[pathId];
-  }
+  } 
   try {
     for (const key of targetAssignments) {
-      const solution = member.solutions[key];
+      const solution = member.solutions[key];      
       if (solution && solution.value && solution.createdAt) {
         let value = /^(\d+) of (\d+)$/.exec(solution.value || "");
         value =
@@ -341,7 +341,14 @@ function getStudentPathProgress(member, targetAssignments, pathsData) {
           [];
 
         solution.value = solution.value.replace(" /", " of ");
-        result.totalSolutions += Number(value[1] || 0);
+        let newSol = solution.value.split(" ");        
+        if(parseInt(newSol[0])>parseInt(newSol[2]))
+        {
+          newSol[0]=newSol[2]
+          solution.value=newSol.join(" ")       
+        }
+
+        result.totalSolutions += Number(value[1] || 0);        
         result.lastSolutionTime = Math.max(
           result.lastSolutionTime,
           solution.createdAt
@@ -505,7 +512,7 @@ export const getCourseProps = (state, ownProps) => {
     sortedMembers[member.id].name = sortedMembers[member.id].name || "";
     return true;
   });
-
+  
   return {
     id: courseId,
     ...courseData,
