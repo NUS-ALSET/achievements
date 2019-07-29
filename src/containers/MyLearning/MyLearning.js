@@ -278,7 +278,7 @@ const dataFormatting = (dataInTimeCategories, filter = "") => {
   // the aim of reduce function below is to collapse the various data fields under the date
   // eg "15/10/12":2 and "15/10/12createdPath":2 to 15/10/12:{value:2, createdPath:2}
   const collatedDataInDate = Object.keys(dataInTimeCategories).reduce((accumulator, item) => {
-    const otherValueMatcher = item.match(/(\d\d\/\d\d\/\d\d)(\w.*)/);
+    const otherValueMatcher = item.match(/(\d\d\/\d\d\/\d\d)(\S.*)/);
     if (otherValueMatcher) {
       if (otherValueMatcher[1] in accumulator) {
         accumulator[otherValueMatcher[1]][otherValueMatcher[2]] = dataInTimeCategories[item];
@@ -365,15 +365,15 @@ const randomHsl = () => "hsla(" + Math.random() * 360 + ", 50%, 50%, 0.5)";
 // this function is designed to remove dupes for stacked barcharts categories
 // eg. {lastweek:[{date:22/02/19, somePath:3}, {date:23/02/19, somePath:2}] contains 2 dupes of somePath}
 // it returns ["somePath"]
-// const removeDupeData = dataArray => {
-//   const aggregatedDataWithDupes = dataArray.reduce((accumulator, { date, value, ...duplicatedData }) => {
-//     const keyOfDupes = Object.keys(duplicatedData);
-//     keyOfDupes.forEach(dataPoint => accumulator.push(dataPoint));
-//     return accumulator;
-//   }, []);
-//   const removedDupes = new Set(aggregatedDataWithDupes);
-//   return Array.from(removedDupes);
-// };
+const removeDupeData = dataArray => {
+  const aggregatedDataWithDupes = dataArray.reduce((accumulator, { date, value, ...duplicatedData }) => {
+    const keyOfDupes = Object.keys(duplicatedData);
+    keyOfDupes.forEach(dataPoint => accumulator.push(dataPoint));
+    return accumulator;
+  }, []);
+  const removedDupes = new Set(aggregatedDataWithDupes);
+  return Array.from(removedDupes);
+};
 
 // This function counts the number of times the additional detail parameter occurs
 // Eg. we want to capture number of pathNames completed per date
@@ -490,86 +490,71 @@ const CreatorStats = props => {
   );
 };
 
-// const SolversCreatedPaths = props => {
-//   const { solversCreatedActivities } = props.data;
+const SolversCreatedPaths = props => {
+  const solversCreatedActivities = props.data;
 
-//   const solversDataToDates = convertDataToDates(solversCreatedActivities);
+  const solversDataToDates = convertDataToDates(solversCreatedActivities);
 
-//   const countSolversByDate = countDataByDate(solversDataToDates, "pathName");
+  const countSolversByDate = countDataByDate(solversDataToDates, "path");
 
-//   const data = {
-//     lastWeek: dataFormatting(countSolversByDate.lastWeek),
-//     lastMonth: dataFormatting(countSolversByDate.lastMonth),
-//     allTime: dataFormatting(countSolversByDate.allTime)
-//   };
+  const data = {
+    lastWeek: dataFormatting(countSolversByDate.lastWeek),
+    lastMonth: dataFormatting(countSolversByDate.lastMonth),
+    allTime: dataFormatting(countSolversByDate.allTime)
+  };
 
-//   const pathsLastWeek = removeDupeData(data.lastWeek);
-//   const pathsLastMonth = removeDupeData(data.lastMonth);
-//   const pathsAllTime = removeDupeData(data.allTime);
+  // removeDupeData just returns an array of paths in this case
+  const pathsLastWeek = removeDupeData(data.lastWeek);
+  const pathsLastMonth = removeDupeData(data.lastMonth);
+  const pathsAllTime = removeDupeData(data.allTime);
 
-//   return (
-//     <PlainAccordionNoTabs description={"Coming soon"} title={"Solvers of created activities"}>
-//       <Typography component="div" style={{ padding: 8 * 3 }}>
-//         <p>This feature is coming soon.</p>
-//       </Typography>
-//     </PlainAccordionNoTabs>
-//     <Accordion
-//       description={`your activities have been solved by ${sumUpByValueField(
-//         data[props.tabValue]
-//       )} users ${mapTabValueToLabel(props.tabValue)}`}
-//       handleTabChange={props.handleTabChange}
-//       tabValue={props.tabValue}
-//       title={"Solvers of created activities"}
-//     >
-//       {props.tabValue === "lastWeek" && (
-//         <TabLastWeek>
-//           <p>This feature is coming soon.</p>
-//           <ResponsiveContainer height={500} width="95%">
-//             <BarChart data={data.lastWeek}>
-//               <XAxis dataKey="date" name="Date" />
-//               <YAxis />
-//               <Tooltip />
-//               <Legend />
-//               {pathsLastWeek.map(pathName => (
-//                 <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-//               ))}
-//             </BarChart>
-//           </ResponsiveContainer>
-//         </TabLastWeek>
-//       )}
-//       {props.tabValue === "lastMonth" && (
-//         <TabLastMonth>
-//           <ResponsiveContainer height={500} width="95%">
-//             <BarChart data={data.lastMonth}>
-//               <XAxis dataKey="date" name="Date" />
-//               <YAxis />
-//               <Tooltip />
-//               <Legend />
-//               {pathsLastMonth.map(pathName => (
-//                 <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-//               ))}
-//             </BarChart>
-//           </ResponsiveContainer>
-//         </TabLastMonth>
-//       )}
-//       {props.tabValue === "allTime" && (
-//         <TabAllTime>
-//           <ResponsiveContainer height={500} width="95%">
-//             <BarChart data={data.allTime}>
-//               <XAxis dataKey="date" name="Date" />
-//               <YAxis />
-//               <Tooltip />
-//               <Legend />
-//               {pathsAllTime.map(pathName => (
-//                 <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-//               ))}
-//             </BarChart>
-//           </ResponsiveContainer>
-//         </TabAllTime>
-//       )}
-//     </Accordion>
-//   );
-// };
+  return (
+    <Accordion
+      description={`your activities have been solved by ${sumUpByValueField(
+        data[props.tabValue]
+      )} users ${mapTabValueToLabel(props.tabValue)}`}
+      handleTabChange={(e, tabValue) =>
+        props.handleTabChange(e, tabValue, "SolversCreatedPaths", props.uid, props.getCreatedPaths)
+      }
+      tabValue={props.tabValue}
+      title={"Solvers of created activities"}
+    >
+      {props.tabValue === "lastWeek" && (
+        <TabLastWeek>
+          {data.lastWeek.some(e => e.date) && (
+            <BarChartBoilerPlate data={data} tabValue={"lastWeek"}>
+              {pathsLastWeek.map(pathName => (
+                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+              ))}
+            </BarChartBoilerPlate>
+          )}
+        </TabLastWeek>
+      )}
+      {props.tabValue === "lastMonth" && (
+        <TabLastMonth>
+          {data.lastMonth.some(e => e.date) && (
+            <BarChartBoilerPlate data={data} tabValue={"lastMonth"}>
+              {pathsLastMonth.map(pathName => (
+                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+              ))}
+            </BarChartBoilerPlate>
+          )}
+        </TabLastMonth>
+      )}
+      {props.tabValue === "allTime" && (
+        <TabAllTime>
+          {data.allTime.some(e => e.date) && (
+            <BarChartBoilerPlate data={data} tabValue={"allTime"}>
+              {pathsAllTime.map(pathName => (
+                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+              ))}
+            </BarChartBoilerPlate>
+          )}
+        </TabAllTime>
+      )}
+    </Accordion>
+  );
+};
 
 const SelfExploration = props => {
   const { activitiesExplored } = props.data;
@@ -917,17 +902,8 @@ class MyLearning extends React.Component {
     tabvalueSpecificPanels: {},
     visitsToMyLearning: [],
     recommendedActivitiesClick: [],
+    solversCreatedActivities: [],
     // these below are not used
-    solversCreatedActivities: [
-      { pathId: 123, pathName: "helloWorld1", date: 1557894183000 },
-      { pathId: 123, pathName: "helloWorld1", date: 1557895183000 },
-      { pathId: 128, pathName: "helloPython2", date: 1557903283000 },
-      { pathId: 128, pathName: "helloPython2", date: 1558003283000 },
-      { pathId: 123, pathName: "helloPython2", date: 1558103283000 },
-      { pathId: 123, pathName: "helloPython2", date: 1558203283000 },
-      { pathId: 126, pathName: "helloPython1", date: 1557474783000 },
-      { pathId: 130, pathName: "helloPython3", date: 1557574783000 }
-    ],
     pathInfo: [
       { name: "CodeCombat", id: 888, activityId: [1, 2, 9] },
       { name: "jupyterNotebook", id: 131, activityId: [3, 7, 8] },
@@ -1018,7 +994,8 @@ class MyLearning extends React.Component {
   };
 
   getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
-    const dataContainer = [];
+    const dataContainer = {};
+    const solversOfCreatedPaths = {};
     let query = this.db
       .collection("logged_events")
       .where("uid", "==", uid)
@@ -1027,7 +1004,9 @@ class MyLearning extends React.Component {
       .orderBy("createdAt", "desc");
     query
       .get()
-      .then(querySnapshot =>
+      .then(querySnapshot => {
+        // Collect all paths from snapshot into an array
+        const paths = [];
         querySnapshot.forEach(doc => {
           const parsedData = doc.data();
           parsedData["otherActionData"] = JSON.parse(parsedData["otherActionData"]);
@@ -1041,33 +1020,83 @@ class MyLearning extends React.Component {
           dataContainer[doc.id]["date"] = createdAt;
           if ("pathKey" in parsedData["otherActionData"]) {
             dataContainer[doc.id]["pathKey"] = pathKey;
-            dataContainer[doc.id]["activities"] = {};
+            paths.push(pathKey);
+          }
+        });
+        return paths;
+      })
+      .then(paths => {
+        return Promise.all(
+          paths.map(pathKey => {
             return this.rtdb
-              .ref(`activities`)
-              .orderByChild("path")
-              .equalTo(pathKey)
+              .ref(`paths/${pathKey}`)
               .once("value")
               .then(snap => {
-                const activityData = snap.val();
-                const activityId = Object.keys(activityData);
-                dataContainer[doc.id]["activities"][activityId] = {};
-                return activityId;
+                return snap.val().name;
               })
-              .then(activityId => {
+              .then(pathName => {
                 return this.rtdb
-                  .ref(`problemSolutions/${activityId}`)
+                  .ref(`activities`)
+                  .orderByChild("path")
+                  .equalTo(pathKey)
                   .once("value")
                   .then(snap => {
-                    dataContainer[doc.id]["activities"][activityId]["count"] = Object.keys(snap.val()).length;
-                    return true;
+                    const activityData = snap.val();
+                    // store the information to pass down to .then using activityInfo
+                    const activityInfo = {};
+                    activityInfo.activityId = Object.keys(activityData);
+                    activityInfo.activityId.forEach(activityID => {
+                      activityInfo[activityID] = {};
+                      activityInfo[activityID]["path"] = pathName;
+                      if ("type" in activityData[activityID]) {
+                        activityInfo[activityID]["type"] = activityData[activityID]["type"];
+                      } else {
+                        activityInfo[activityID]["type"] = "undocumentedType";
+                      }
+                      if ("name" in activityData[activityID]) {
+                        activityInfo[activityID]["name"] = activityData[activityID]["name"];
+                      } else {
+                        activityInfo[activityID]["type"] = "undocumentedName";
+                      }
+                    });
+                    return activityInfo;
                   });
+              })
+              .then(activityInfo => {
+                return Promise.all(
+                  activityInfo.activityId.map(activityKey => {
+                    return this.rtdb
+                      .ref(`problemSolutions/${activityKey}`)
+                      .once("value")
+                      .then(snap => {
+                        if (snap.val()) {
+                          const activitySolutions = snap.val();
+                          Object.keys(activitySolutions).map(userID => {
+                            const activitySolutionID = activityKey + userID;
+                            // only save activityinfo to state if there's a timestamp. Text activity no timestamps
+                            if (activitySolutions[userID]["updatedAt"]) {
+                              solversOfCreatedPaths[activitySolutionID] = {};
+                              solversOfCreatedPaths[activitySolutionID]["date"] =
+                                activitySolutions[userID]["updatedAt"];
+                              solversOfCreatedPaths[activitySolutionID]["name"] = activityInfo[activityKey]["name"];
+                              solversOfCreatedPaths[activitySolutionID]["type"] = activityInfo[activityKey]["type"];
+                              solversOfCreatedPaths[activitySolutionID]["path"] = activityInfo[activityKey]["path"];
+                            }
+                            return true;
+                          });
+                        }
+                        return true;
+                      });
+                  })
+                );
               });
-          }
-        })
-      )
+          })
+        );
+      })
       .then(() => {
         this.setState({
-          createdPaths: Object.values(dataContainer)
+          createdPaths: Object.values(dataContainer),
+          solversCreatedActivities: Object.values(solversOfCreatedPaths)
         });
       });
   };
@@ -1257,13 +1286,13 @@ class MyLearning extends React.Component {
                   uid={this.props.id}
                 />
                 <DisplayRecommendedActivitiesClick data={this.state.recommendedActivitiesClick} />
-                {/* <SolversCreatedPaths
-                  data={{
-                    solversCreatedActivities: this.state.solversCreatedActivities
-                  }}
+                <SolversCreatedPaths
+                  data={this.state.solversCreatedActivities}
                   handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabValue}
-                /> */}
+                  tabValue={this.state.tabvalueSpecificPanels["SolversCreatedPaths"] || this.state.tabValue}
+                  getCreatedPaths={this.getCreatedPaths}
+                  uid={this.props.id}
+                />
                 {/* <DisplayCompletedPaths
                   data={{
                     activitiesExplored: this.state.activitiesExplored,
