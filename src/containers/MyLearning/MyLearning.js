@@ -1227,7 +1227,7 @@ class MyLearning extends React.Component {
       .orderByChild(uid)
       .equalTo(true)
       .once("value")
-      .then(snap => Object.keys(snap.val()) || [])
+      .then(snap => Object.keys(snap.val()))
     ]).then(([myPaths, assistantPaths]) => {
       return myPaths.concat(assistantPaths);
     }).then(paths => {
