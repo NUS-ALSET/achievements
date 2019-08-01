@@ -257,6 +257,11 @@ export class Path extends React.Component {
     });
   };
 
+  handleCommit = () => {
+    this.props.onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
+    return this.setState({ selectedActivityId: "" });
+  };
+
   render() {
     const {
       classes,
@@ -266,7 +271,6 @@ export class Path extends React.Component {
       onAddAssistant,
       onAssistantKeyChange,
       onCloseDialog,
-      onActivityDeleteRequest,
       onActivityDialogShow,
       onProfileUpdate,
       onShowCollaboratorsClick,
@@ -316,11 +320,6 @@ export class Path extends React.Component {
 
     pathName = pathName || (pathActivities.path && pathActivities.path.name) || "";
     pathDesc = (pathActivities.path && pathActivities.path.description) || "None Provided";
-
-    const handleCommit = () => {
-      onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
-      return this.setState({ selectedActivityId: "" });
-    };
 
     return (
       <Fragment>
@@ -505,7 +504,7 @@ export class Path extends React.Component {
         <DeleteConfirmationDialog
           message="This will remove activity"
           onClose={() => this.setState({ selectedActivityId: "" })}
-          onCommit={handleCommit}
+          onCommit={this.handleCommit}
           open={!!this.state.selectedActivityId}
         />
         <ControlAssistantsDialog
