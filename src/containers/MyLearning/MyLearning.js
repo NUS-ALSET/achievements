@@ -17,6 +17,20 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
+import EqualizerIcon from "@material-ui/icons/Equalizer";
+import ViewListIcon from "@material-ui/icons/ViewList";
+import IconButton from "@material-ui/core/IconButton";
+
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+
+import isEmpty from "lodash/isEmpty";
+
 const lastWeekEpochTime = moment()
   .subtract(7, "days")
   .valueOf();
@@ -508,58 +522,204 @@ const SolversCreatedPaths = props => {
   const pathsLastMonth = removeDupeData(data.lastMonth);
   const pathsAllTime = removeDupeData(data.allTime);
 
+  const currentView = props.selectedTabView["SolversCreatedPaths"];
+
+  const graphData = function() {
+    switch (props.tabValue) {
+      case "lastMonth":
+        return (
+          <TabLastMonth>
+            {data.lastMonth.some(e => e.date) && (
+              <BarChartBoilerPlate data={data} tabValue={"lastMonth"}>
+                {pathsLastMonth.map(pathName => (
+                  <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+                ))}
+              </BarChartBoilerPlate>
+            )}
+          </TabLastMonth>
+        );
+      case "allTime":
+        return (
+          <TabAllTime>
+            {data.allTime.some(e => e.date) && (
+              <BarChartBoilerPlate data={data} tabValue={"allTime"}>
+                {pathsAllTime.map(pathName => (
+                  <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+                ))}
+              </BarChartBoilerPlate>
+            )}
+          </TabAllTime>
+        );
+      default:
+        return (
+          <TabLastWeek>
+            {data.lastWeek.some(e => e.date) && (
+              <BarChartBoilerPlate data={data} tabValue={"lastWeek"}>
+                {pathsLastWeek.map(pathName => (
+                  <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
+                ))}
+              </BarChartBoilerPlate>
+            )}
+          </TabLastWeek>
+        );
+    }
+  };
+
+  const filteredDataPathActivityType = (() => {
+    let filteredData = props.data.filter(
+      dataItem => dataItem.path === props.selectedFilters["SolversCreatedPaths"].path
+    );
+
+    if (props.selectedFilters["SolversCreatedPaths"].activityType !== "all") {
+      filteredData = filteredData.filter(
+        dataItem => dataItem.type === props.selectedFilters["SolversCreatedPaths"].activityType
+      );
+    }
+    return isEmpty(filteredData)
+      ? { "Either no activity or no solvers yet": { totalCount: 0, activities:{"Either no activity or no solvers yet":0} } }
+      : filteredData.reduce((accumulator, item) => {
+          if (accumulator[item.type]) {
+            accumulator[item.type]["totalCount"]++;
+          } else {
+            accumulator[item.type] = {};
+            accumulator[item.type]["totalCount"] = 1;
+            accumulator[item.type]["activities"] = {};
+          }
+          if (accumulator[item.type]["activities"][item.name]) {
+            accumulator[item.type]["activities"][item.name]++;
+          } else {
+            accumulator[item.type]["activities"][item.name] = {};
+            accumulator[item.type]["activities"][item.name] = 1;
+          }
+          return accumulator;
+        }, {});
+  })();
+
+  const tableData = function() {
+    return (
+      <div>
+        <Typography component="div">
+          <section style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 3fr" }}>
+              <p>Select a Path:</p>
+              <Select
+                value={props.selectedFilters["SolversCreatedPaths"].path}
+                onChange={e => props.handleChangeFilter(e.target.value, "SolversCreatedPaths", "path")}
+              >
+                <MenuItem selected disabled value="none">
+                  <em>None</em>
+                </MenuItem>
+                {/* to get the unique values in dropdown box, filter out unique values then map to MenuItems */}
+                {[...new Set(props.data.map(item => item.path))].map(pathName => (
+                  <MenuItem value={pathName} key={pathName}>
+                    {pathName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 3fr" }}>
+              <p>Select Activity Type:</p>
+              <Select
+                value={props.selectedFilters["SolversCreatedPaths"].activityType}
+                onChange={e => props.handleChangeFilter(e.target.value, "SolversCreatedPaths", "activityType")}
+              >
+                <MenuItem value={"all"} key={"all"}>
+                  all
+                </MenuItem>
+                {/* to get the unique values in dropdown box, filter out unique values then map to MenuItems */}
+                {[...new Set(props.data.map(item => item.type))].map(activityTypeName => (
+                  <MenuItem value={activityTypeName} key={activityTypeName}>
+                    {activityTypeName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </div>
+          </section>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Activity Type</TableCell>
+                <TableCell>Count</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.keys(filteredDataPathActivityType).map(activityType => (
+                <TableRow key={activityType}>
+                  <TableCell component="th" scope="row">
+                    {activityType}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {filteredDataPathActivityType[activityType]["totalCount"]}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <br />
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Activity</TableCell>
+                <TableCell>Count</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.keys(filteredDataPathActivityType).map(activityType => {
+                if (filteredDataPathActivityType[activityType]["activities"]) {
+                  return Object.keys(filteredDataPathActivityType[activityType]["activities"]).map(activity => (
+                    <TableRow key={activity}>
+                      <TableCell component="th" scope="row">
+                        {activity}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {filteredDataPathActivityType[activityType]["activities"][activity]}
+                      </TableCell>
+                    </TableRow>
+                  ));
+                }
+                return true
+              })}
+            </TableBody>
+          </Table>
+        </Typography>
+      </div>
+    );
+  };
   return (
     <Accordion
-      description={`your activities have been solved by ${sumUpByValueField(
+      description={`Activities on your created or collaborated paths have been solved ${sumUpByValueField(
         data[props.tabValue]
-      )} users ${mapTabValueToLabel(props.tabValue)}`}
+      )} times ${mapTabValueToLabel(props.tabValue)}`}
       handleTabChange={(e, tabValue) =>
         props.handleTabChange(e, tabValue, "SolversCreatedPaths", props.uid, props.getCreatedPaths)
       }
       tabValue={props.tabValue}
-      title={"Solvers of created activities"}
+      title={"Created / collaborated paths stats"}
     >
-      {props.tabValue === "lastWeek" && (
-        <TabLastWeek>
-          {data.lastWeek.some(e => e.date) && (
-            <BarChartBoilerPlate data={data} tabValue={"lastWeek"}>
-              {pathsLastWeek.map(pathName => (
-                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-              ))}
-            </BarChartBoilerPlate>
-          )}
-        </TabLastWeek>
-      )}
-      {props.tabValue === "lastMonth" && (
-        <TabLastMonth>
-          {data.lastMonth.some(e => e.date) && (
-            <BarChartBoilerPlate data={data} tabValue={"lastMonth"}>
-              {pathsLastMonth.map(pathName => (
-                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-              ))}
-            </BarChartBoilerPlate>
-          )}
-        </TabLastMonth>
-      )}
-      {props.tabValue === "allTime" && (
-        <TabAllTime>
-          {data.allTime.some(e => e.date) && (
-            <BarChartBoilerPlate data={data} tabValue={"allTime"}>
-              {pathsAllTime.map(pathName => (
-                <Bar dataKey={pathName} fill={randomHsl()} key={pathName} name={pathName} stackId={1} />
-              ))}
-            </BarChartBoilerPlate>
-          )}
-        </TabAllTime>
-      )}
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <IconButton
+          onClick={() => props.handleChangeView("graph", "SolversCreatedPaths")}
+          color={currentView === "graph" ? "primary" : "inherit"}
+        >
+          <EqualizerIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => props.handleChangeView("table", "SolversCreatedPaths")}
+          color={currentView === "table" ? "primary" : "inherit"}
+        >
+          <ViewListIcon />
+        </IconButton>
+      </div>
+      {currentView === "table" && tableData()}
+      {currentView === "graph" && graphData()}
     </Accordion>
   );
 };
 
 const SelfExploration = props => {
-  const { activitiesExplored } = props.data;
+  const { SelfExploration } = props.data;
 
-  const activitiesExploredDataToDates = convertDataToDates(activitiesExplored);
+  const activitiesExploredDataToDates = convertDataToDates(SelfExploration);
 
   const countActivitiesByDate = countDataByDate(activitiesExploredDataToDates, "pathName");
 
@@ -575,7 +735,15 @@ const SelfExploration = props => {
         props.tabValue
       )}`}
       handleTabChange={(e, tabValue) =>
-        props.handleTabChange(e, tabValue, "SelfExploration", props.uid, props.getActivitiesExplored)
+        props.handleTabChange(
+          e,
+          tabValue,
+          "SelfExploration",
+          props.uid,
+          props.getActivitiesExplored,
+          "",
+          "SelfExploration"
+        )
       }
       tabValue={props.tabValue}
       title={"Self Exploration"}
@@ -688,7 +856,7 @@ const SelfExploration = props => {
 
 const DisplayGenericOneField = props => {
   const rawData = props.data;
-  const { field, title, chartName, getterFunction1, getterFunction2 = "" } = props.componentDetails;
+  const { field, title, chartName, getterFunction1, getterFunction2 = "", container = "" } = props.componentDetails;
 
   const dataToDates = convertDataToDates(rawData);
   const countDataPointsByDate = countNumericDataByDate(dataToDates, field);
@@ -705,7 +873,7 @@ const DisplayGenericOneField = props => {
         props.tabValue
       )}`}
       handleTabChange={(e, tabValue) =>
-        props.handleTabChange(e, tabValue, title, props.uid, getterFunction1, getterFunction2)
+        props.handleTabChange(e, tabValue, title, props.uid, getterFunction1, getterFunction2, container)
       }
       tabValue={props.tabValue}
       title={title}
@@ -743,7 +911,15 @@ const DisplayGenericOneField = props => {
 
 const DisplayGenericOneFieldSpecificItem = props => {
   const rawData = props.data;
-  const { field, fieldItem, title, chartName, getterFunction1, getterFunction2 = "" } = props.componentDetails;
+  const {
+    field,
+    fieldItem,
+    title,
+    chartName,
+    getterFunction1,
+    getterFunction2 = "",
+    container = ""
+  } = props.componentDetails;
 
   const dataToDates = convertDataToDates(rawData);
   const countDataPointsByDate = countDataByDate(dataToDates, field);
@@ -760,7 +936,7 @@ const DisplayGenericOneFieldSpecificItem = props => {
         props.tabValue
       )}`}
       handleTabChange={(e, tabValue) =>
-        props.handleTabChange(e, tabValue, title, props.uid, getterFunction1, getterFunction2)
+        props.handleTabChange(e, tabValue, title, props.uid, getterFunction1, getterFunction2, container)
       }
       tabValue={props.tabValue}
       title={title}
@@ -903,6 +1079,13 @@ class MyLearning extends React.Component {
     visitsToMyLearning: [],
     recommendedActivitiesClick: [],
     solversCreatedActivities: [],
+    selectedTabView: { SolversCreatedPaths: "graph" },
+    selectedFilters: { SolversCreatedPaths: { path: "none", activityType: "all" } },
+    SelfExploration: [],
+    codeCombatActivities: [],
+    codeCombatMultiPlayerLevelActivities: [],
+    ActivityAttempts: [],
+    jupyterNotebookActivities: [],
     // these below are not used
     pathInfo: [
       { name: "CodeCombat", id: 888, activityId: [1, 2, 9] },
@@ -916,9 +1099,10 @@ class MyLearning extends React.Component {
     }
   };
 
-  handleTabChange = (event, tabValue, title, uid, getterFunction1, getterFunction2 = "") => {
+  handleTabChange = (event, tabValue, title, uid, getterFunction1, getterFunction2 = "", container = "") => {
     this.setState({ tabvalueSpecificPanels: { ...this.state.tabvalueSpecificPanels, [title]: tabValue } });
-    this.getLastMonthAllTimeData(tabValue, uid, getterFunction1, getterFunction2);
+    // Note: getLastMonthAllTimeData also gets data for this week only during tab change
+    this.getLastMonthAllTimeData(tabValue, uid, getterFunction1, getterFunction2, container);
     this.db.collection("/logged_events").add({
       createdAt: Date.now(),
       type: "FIREBASE_TRIGGERS",
@@ -928,17 +1112,31 @@ class MyLearning extends React.Component {
     });
   };
 
-  getLastMonthAllTimeData = (tabValue, uid, getterFunction1, getterFunction2) => {
-    if (tabValue === "lastMonth") {
-      getterFunction1(uid, lastMonthEpochTime);
+  handleChangeView = (value, title) => {
+    return this.setState({ selectedTabView: { ...this.state.selectedTabView, [title]: value } });
+  };
+
+  handleChangeFilter = (value, title, filter) => {
+    return this.setState({ selectedFilters: { [title]: { ...this.state.selectedFilters[title], [filter]: value } } });
+  };
+
+  getLastMonthAllTimeData = (tabValue, uid, getterFunction1, getterFunction2, container) => {
+    if (tabValue === "lastWeek") {
+      getterFunction1(uid, lastWeekEpochTime, container);
       if (getterFunction2) {
-        getterFunction2(uid, lastMonthEpochTime);
+        getterFunction2(uid, lastWeekEpochTime, container);
+      }
+    }
+    if (tabValue === "lastMonth") {
+      getterFunction1(uid, lastMonthEpochTime, container);
+      if (getterFunction2) {
+        getterFunction2(uid, lastMonthEpochTime, container);
       }
     }
     if (tabValue === "allTime") {
-      getterFunction1(uid, 0);
+      getterFunction1(uid, 0, container);
       if (getterFunction2) {
-        getterFunction2(uid, 0);
+        getterFunction2(uid, 0, container);
       }
     }
   };
@@ -996,13 +1194,13 @@ class MyLearning extends React.Component {
   getCreatedPaths = (uid, epochTime = lastWeekEpochTime) => {
     const dataContainer = {};
     const solversOfCreatedPaths = {};
-    let query = this.db
+    return Promise.all([
+      this.db
       .collection("logged_events")
       .where("uid", "==", uid)
       .where("type", "==", "PATH_CHANGE_SUCCESS")
       .where("createdAt", ">", epochTime)
-      .orderBy("createdAt", "desc");
-    query
+      .orderBy("createdAt", "desc")
       .get()
       .then(querySnapshot => {
         // Collect all paths from snapshot into an array
@@ -1024,8 +1222,15 @@ class MyLearning extends React.Component {
           }
         });
         return paths;
-      })
-      .then(paths => {
+      }),
+      this.rtdb.ref("/pathAssistants")
+      .orderByChild(uid)
+      .equalTo(true)
+      .once("value")
+      .then(snap => Object.keys(snap.val()))
+    ]).then(([myPaths, assistantPaths]) => {
+      return myPaths.concat(assistantPaths);
+    }).then(paths => {
         return Promise.all(
           paths.map(pathKey => {
             return this.rtdb
@@ -1111,7 +1316,7 @@ class MyLearning extends React.Component {
   // actionType "PROBLEM_FINALIZE" doesn't have any otheractiondata or any indicator to the activity "finalized"
   // actionType "PROBLEM_SOLUTION_PROVIDED_SUCCESS" only works on notebooks
 
-  getActivitiesExplored = (uid, epochTime = lastWeekEpochTime) => {
+  getActivitiesExplored = (uid, epochTime = lastWeekEpochTime, container = "activitiesExplored") => {
     const dataContainer = {};
     let query = this.db
       .collection("logged_events")
@@ -1150,7 +1355,7 @@ class MyLearning extends React.Component {
       )
       .then(() => {
         this.setState({
-          activitiesExplored: Object.values(dataContainer)
+          [container]: Object.values(dataContainer)
         });
       });
   };
@@ -1210,9 +1415,20 @@ class MyLearning extends React.Component {
                   tabValue={this.state.tabvalueSpecificPanels["Creator stats"] || this.state.tabValue}
                   uid={this.props.id}
                 />
+                                <SolversCreatedPaths
+                  data={this.state.solversCreatedActivities}
+                  handleTabChange={this.handleTabChange}
+                  tabValue={this.state.tabvalueSpecificPanels["SolversCreatedPaths"] || this.state.tabValue}
+                  getCreatedPaths={this.getCreatedPaths}
+                  uid={this.props.id}
+                  selectedTabView={this.state.selectedTabView}
+                  handleChangeView={this.handleChangeView}
+                  selectedFilters={this.state.selectedFilters}
+                  handleChangeFilter={this.handleChangeFilter}
+                />
                 <SelfExploration
                   data={{
-                    activitiesExplored: this.state.activitiesExplored
+                    SelfExploration: this.state.SelfExploration
                   }}
                   handleTabChange={this.handleTabChange}
                   tabValue={this.state.tabvalueSpecificPanels["SelfExploration"] || this.state.tabValue}
@@ -1225,9 +1441,10 @@ class MyLearning extends React.Component {
                     fieldItem: "codeCombat",
                     title: "CodeCombat activities",
                     chartName: "CodeCombat activities completed",
-                    getterFunction1: this.getActivitiesExplored
+                    getterFunction1: this.getActivitiesExplored,
+                    container: "codeCombatActivities"
                   }}
-                  data={this.state.activitiesExplored}
+                  data={this.state.codeCombatActivities}
                   handleTabChange={this.handleTabChange}
                   tabValue={this.state.tabvalueSpecificPanels["CodeCombat activities"] || this.state.tabValue}
                   uid={this.props.id}
@@ -1238,9 +1455,10 @@ class MyLearning extends React.Component {
                     fieldItem: "jupyterInline",
                     title: "Jupyter Notebook activities",
                     chartName: "Jupyter Notebook activities completed",
-                    getterFunction1: this.getActivitiesExplored
+                    getterFunction1: this.getActivitiesExplored,
+                    container: "jupyterNotebookActivities"
                   }}
-                  data={this.state.activitiesExplored}
+                  data={this.state.jupyterNotebookActivities}
                   handleTabChange={this.handleTabChange}
                   tabValue={this.state.tabvalueSpecificPanels["Jupyter Notebook activities"] || this.state.tabValue}
                   uid={this.props.id}
@@ -1250,9 +1468,10 @@ class MyLearning extends React.Component {
                     field: "attempts",
                     title: "Activity attempts",
                     chartName: "Activity attempts",
-                    getterFunction1: this.getActivitiesExplored
+                    getterFunction1: this.getActivitiesExplored,
+                    container: "ActivityAttempts"
                   }}
-                  data={this.state.activitiesExplored}
+                  data={this.state.ActivityAttempts}
                   handleTabChange={this.handleTabChange}
                   tabValue={this.state.tabvalueSpecificPanels["Activity attempts"] || this.state.tabValue}
                   uid={this.props.id}
@@ -1263,9 +1482,10 @@ class MyLearning extends React.Component {
                     fieldItem: "codeCombatMultiPlayerLevel",
                     title: "CodeCombat Multiplayer activities",
                     chartName: "CodeCombat Multiplayer activities",
-                    getterFunction1: this.getActivitiesExplored
+                    getterFunction1: this.getActivitiesExplored,
+                    container: "codeCombatMultiPlayerLevelActivities"
                   }}
-                  data={this.state.activitiesExplored}
+                  data={this.state.codeCombatMultiPlayerLevelActivities}
                   handleTabChange={this.handleTabChange}
                   tabValue={
                     this.state.tabvalueSpecificPanels["CodeCombat Multiplayer activities"] || this.state.tabValue
@@ -1286,13 +1506,6 @@ class MyLearning extends React.Component {
                   uid={this.props.id}
                 />
                 <DisplayRecommendedActivitiesClick data={this.state.recommendedActivitiesClick} />
-                <SolversCreatedPaths
-                  data={this.state.solversCreatedActivities}
-                  handleTabChange={this.handleTabChange}
-                  tabValue={this.state.tabvalueSpecificPanels["SolversCreatedPaths"] || this.state.tabValue}
-                  getCreatedPaths={this.getCreatedPaths}
-                  uid={this.props.id}
-                />
                 {/* <DisplayCompletedPaths
                   data={{
                     activitiesExplored: this.state.activitiesExplored,
