@@ -317,6 +317,11 @@ export class Path extends React.Component {
     pathName = pathName || (pathActivities.path && pathActivities.path.name) || "";
     pathDesc = (pathActivities.path && pathActivities.path.description) || "None Provided";
 
+    const handleCommit = () => {
+      onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
+      return this.setState({ selectedActivityId: "" });
+    };
+
     return (
       <Fragment>
         <Breadcrumbs
@@ -328,7 +333,7 @@ export class Path extends React.Component {
               },
               !allFinished && {
                 label: "Refresh",
-                handler: this.refreshSolutions.bind(this)
+                handler: this.refreshSolutions
               },
               uid && {
                 label: pathStatus === PATH_STATUS_JOINED ? "Leave" : "Join",
@@ -500,10 +505,7 @@ export class Path extends React.Component {
         <DeleteConfirmationDialog
           message="This will remove activity"
           onClose={() => this.setState({ selectedActivityId: "" })}
-          onCommit={() => {
-            onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
-            this.setState({ selectedActivityId: "" });
-          }}
+          onCommit={handleCommit}
           open={!!this.state.selectedActivityId}
         />
         <ControlAssistantsDialog
