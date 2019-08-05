@@ -163,7 +163,6 @@ export class ActionsService {
             version: process.env.REACT_APP_VERSION,
             otherActionData: actionDataToSave
           }).then((snap)=>{
-             dbKey=snap.key
              firebase
               .database()
                 .ref("/logged_events/"+snap.key).update(JSON.parse( JSON.stringify(objIndItems)))
@@ -178,8 +177,7 @@ export class ActionsService {
           uid: currentUserId,
           version: process.env.REACT_APP_VERSION,
           otherActionData: actionDataToSave          
-        }).then((snap)=>{
-          dbKey=snap.id         
+        }).then((snap)=>{                   
           firestore_db.collection("/logged_events").doc(snap.id).update(JSON.parse( JSON.stringify(objIndItems)))
        });
        
