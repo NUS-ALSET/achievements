@@ -148,8 +148,7 @@ export class ActionsService {
         }
         if(actionDataJSON["cohortId"]){          
           objIndItems.cohortId=actionDataJSON["cohortId"]
-        }
-        let dbKey;        
+        }      
         firebase
           .database()
           .ref("/logged_events")
