@@ -111,9 +111,45 @@ export class ActionsService {
       currentUserId
     ) {
       try {
+        const actionDataJSON=ActionsService.pickActionData(action)
+
         const actionDataToSave = JSON.stringify(
-          ActionsService.pickActionData(action)
+          //ActionsService.pickActionData(action)
+          actionDataJSON
         );
+        
+        let objIndItems={}
+       
+        if(actionDataJSON["courseId"]){          
+          objIndItems.courseId=actionDataJSON["courseId"]
+        }
+        
+              
+        if(actionDataJSON["pathId"]){         
+          objIndItems.pathId=actionDataJSON["pathId"]
+        }
+        if(actionDataJSON["pathKey"]){
+          objIndItems.pathId=actionDataJSON["pathKey"]
+        }
+        if(actionDataJSON["problemId"]){          
+          objIndItems.activityId=actionDataJSON["problemId"]
+        }
+        if(actionDataJSON["assignmentId"]){
+          objIndItems.assignmentId=actionDataJSON["assignmentId"]
+        }
+        
+        if(actionDataJSON["payload"]){          
+          if( actionDataJSON["payload"]["activityKey"]){          
+          objIndItems.activityId=actionDataJSON["payload"]["activityKey"]
+          }
+          if( actionDataJSON["payload"]["pathKey"]){          
+            objIndItems.pathId=actionDataJSON["payload"]["pathKey"]
+            }
+        }
+        if(actionDataJSON["cohortId"]){          
+          objIndItems.cohortId=actionDataJSON["cohortId"]
+        }
+        let dbKey;        
         firebase
           .database()
           .ref("/logged_events")
@@ -126,8 +162,13 @@ export class ActionsService {
             uid: currentUserId,
             version: process.env.REACT_APP_VERSION,
             otherActionData: actionDataToSave
+          }).then((snap)=>{
+             dbKey=snap.key
+             firebase
+              .database()
+                .ref("/logged_events/"+snap.key).update(JSON.parse( JSON.stringify(objIndItems)))
           });
-
+        
         const firestore_db = firebase.firestore();
         // Added firestore related changes
         firestore_db.collection("/logged_events").add({
@@ -136,8 +177,12 @@ export class ActionsService {
           type: action.type,
           uid: currentUserId,
           version: process.env.REACT_APP_VERSION,
-          otherActionData: actionDataToSave
-        });
+          otherActionData: actionDataToSave          
+        }).then((snap)=>{
+          dbKey=snap.id         
+          firestore_db.collection("/logged_events").doc(snap.id).update(JSON.parse( JSON.stringify(objIndItems)))
+       });
+       
       } catch (err) {
         console.error(err, action);
       }
