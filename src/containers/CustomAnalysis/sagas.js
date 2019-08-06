@@ -3,6 +3,8 @@ import {
   CUSTOM_ANALYSIS_OPEN,
   ADD_CUSTOM_ANALYSIS_REQUEST,
   ANALYSE_REQUEST,
+  LOG_ANALYSE_REQUEST,
+  USER_ANALYSE_REQUEST,
   DELETE_CUSTOM_ANALYSIS_REQUEST,
   UPDATE_CUSTOM_ANALYSIS_REQUEST,
   myPathsLoaded,
@@ -13,6 +15,10 @@ import {
   addCustomAnalysisFail,
   analyseSuccess,
   analyseFail,
+  logAnalyseSuccess,
+  logAnalyseFail,
+  userAnalyseSuccess,
+  userAnalyseFail,
   fetchSolutionsSuccess,
   deleteCustomAnalysisSuccess,
   deleteCustomAnalysisFail,
@@ -143,9 +149,74 @@ export function* analyseHandler(action) {
       solutionsSelected,
       action.analysisID
     );
+    result = result
+      ? result
+      : { results: { htmlFeedback: "Empty response, please check logs" } };
     yield put(analyseSuccess(result));
   } catch (err) {
     yield put(analyseFail(err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* logAnalyseHandler(action) {
+  try {
+    let uid = yield select(state => state.firebase.auth.uid);
+    if (!uid) {
+      yield take("@@reactReduxFirebase/LOGIN");
+      uid = yield select(state => state.firebase.auth.uid);
+    }
+    // Fetch logs
+    let logsSelected = yield call(
+      customAnalysisService.fetchLogsHandler,
+      action.typeSelected,
+      action.typeID,
+      action.activityID
+    );
+    // [Enhancement] : Can store the logs in redux state for downloading
+    // Call Analysis on logs
+    let result = yield call(
+      customAnalysisService.logAnalyseHandler,
+      uid,
+      logsSelected,
+      action.analysisID
+    );
+    result = result
+      ? result
+      : { results: { htmlFeedback: "Empty response, please check logs" } };
+    yield put(logAnalyseSuccess(result));
+  } catch (err) {
+    yield put(logAnalyseFail(err.message));
+    yield put(notificationShow(err.message));
+  }
+}
+
+export function* userAnalyseHandler(action) {
+  try {
+    let uid = yield select(state => state.firebase.auth.uid);
+    if (!uid) {
+      yield take("@@reactReduxFirebase/LOGIN");
+      uid = yield select(state => state.firebase.auth.uid);
+    }
+    // Fetch logs
+    let userLogsSelected = yield call(
+      customAnalysisService.fetchUserLogsHandler,
+      uid
+    );
+    // [Enhancement] : Can store the logs in redux state for downloading
+    // Call Analysis on logs
+    let result = yield call(
+      customAnalysisService.logAnalyseHandler,
+      uid,
+      userLogsSelected,
+      action.analysisID
+    );
+    result = result
+      ? result
+      : { results: { htmlFeedback: "Empty response, please check logs" } };
+    yield put(userAnalyseSuccess(result));
+  } catch (err) {
+    yield put(userAnalyseFail(err.message));
     yield put(notificationShow(err.message));
   }
 }
@@ -159,6 +230,12 @@ export default [
   },
   function* watchAnalyse() {
     yield takeLatest(ANALYSE_REQUEST, analyseHandler);
+  },
+  function* watchLogAnalyse() {
+    yield takeLatest(LOG_ANALYSE_REQUEST, logAnalyseHandler);
+  },
+  function* watchUserAnalyse() {
+    yield takeLatest(USER_ANALYSE_REQUEST, userAnalyseHandler);
   },
   function* watchDeleteCustomAnalysis() {
     yield takeLatest(

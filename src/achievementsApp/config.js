@@ -34,7 +34,9 @@ export const APP_SETTING = {
   AWS_SERVER_URL:
     "https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest",
   JUPYTER_FILE_UPLOAD_LIMIT: 1, //in MB
-  ADMIN_ANALYSIS_LIMIT: 500
+  ADMIN_ANALYSIS_LIMIT: 500,
+  LOG_ANALYSIS_LIMIT: 100,
+  USER_ANALYSIS_LIMIT: 100
 };
 
 // Initialize Firebase

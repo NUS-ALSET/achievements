@@ -41,6 +41,26 @@ export const analyseRequest = (
   analysisID
 });
 
+export const LOG_ANALYSE_REQUEST = "LOG_ANALYSE_REQUEST";
+export const logAnalyseRequest = (
+  typeSelected,
+  typeID,
+  activityID,
+  analysisID
+) => ({
+  type: LOG_ANALYSE_REQUEST,
+  typeSelected,
+  typeID,
+  activityID,
+  analysisID
+});
+
+export const USER_ANALYSE_REQUEST = "USER_ANALYSE_REQUEST";
+export const userAnalyseRequest = analysisID => ({
+  type: USER_ANALYSE_REQUEST,
+  analysisID
+});
+
 export const ANALYSE_SUCCESS = "ANALYSE_SUCCESS";
 export const analyseSuccess = result => ({
   type: ANALYSE_SUCCESS,
@@ -50,6 +70,30 @@ export const analyseSuccess = result => ({
 export const ANALYSE_FAIL = "ANALYSE_FAIL";
 export const analyseFail = error => ({
   type: ANALYSE_FAIL,
+  error
+});
+
+export const LOG_ANALYSE_SUCCESS = "LOG_ANALYSE_SUCCESS";
+export const logAnalyseSuccess = result => ({
+  type: LOG_ANALYSE_SUCCESS,
+  result
+});
+
+export const LOG_ANALYSE_FAIL = "LOG_ANALYSE_FAIL";
+export const logAnalyseFail = error => ({
+  type: LOG_ANALYSE_FAIL,
+  error
+});
+
+export const USER_ANALYSE_SUCCESS = "USER_ANALYSE_SUCCESS";
+export const userAnalyseSuccess = result => ({
+  type: USER_ANALYSE_SUCCESS,
+  result
+});
+
+export const USER_ANALYSE_FAIL = "USER_ANALYSE_FAIL";
+export const userAnalyseFail = error => ({
+  type: USER_ANALYSE_FAIL,
   error
 });
 
