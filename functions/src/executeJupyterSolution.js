@@ -41,6 +41,8 @@ const executeJupyterSolution = (data, taskKey, owner, triggerName) => {
             sGen: true,
             activityKey: data.problem,
             pathKey: activity.path,
+            pathId: activity.path,
+            activityId: data.problem,
             otherActionData: logged_data
           })
       )
