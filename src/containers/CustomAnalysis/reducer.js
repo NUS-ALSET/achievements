@@ -6,6 +6,10 @@ import {
   ADD_CUSTOM_ANALYSIS_SUCCESS,
   ANALYSE_SUCCESS,
   ANALYSE_FAIL,
+  LOG_ANALYSE_SUCCESS,
+  LOG_ANALYSE_FAIL,
+  USER_ANALYSE_SUCCESS,
+  USER_ANALYSE_FAIL,
   FETCH_SOLUTIONS_SUCCESS,
   UPDATE_CUSTOM_ANALYSIS_SUCCESS,
   DELETE_CUSTOM_ANALYSIS_SUCCESS
@@ -19,6 +23,8 @@ export const customAnalysis = (
       customAnalysisName: ""
     },
     analysisResults: {},
+    logAnalysisResults: {},
+    userAnalysisResults: {},
     myPaths: {},
     myCourses: {},
     myActivities: {},
@@ -81,7 +87,31 @@ export const customAnalysis = (
       return {
         ...state,
         dialog: "ANALYSE_FAIL",
-        analysisResults: action.error
+        analysisResults: { error: action.error }
+      };
+    case LOG_ANALYSE_SUCCESS:
+      return {
+        ...state,
+        dialog: "LOG_ANALYSE_SUCCESS",
+        logAnalysisResults: action.result
+      };
+    case LOG_ANALYSE_FAIL:
+      return {
+        ...state,
+        dialog: "LOG_ANALYSE_FAIL",
+        logAnalysisResults: { error: action.error }
+      };
+    case USER_ANALYSE_SUCCESS:
+      return {
+        ...state,
+        dialog: "USER_ANALYSE_SUCCESS",
+        userAnalysisResults: action.result
+      };
+    case USER_ANALYSE_FAIL:
+      return {
+        ...state,
+        dialog: "USER_ANALYSE_SUCCESS",
+        userAnalysisResults: { error: action.error }
       };
     case FETCH_SOLUTIONS_SUCCESS:
       return {

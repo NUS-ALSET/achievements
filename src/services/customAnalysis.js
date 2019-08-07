@@ -2,6 +2,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 
 import { SOLUTION_PRIVATE_LINK } from "../containers/Root/actions";
+import { APP_SETTING } from "../achievementsApp/config";
 
 const NOT_FOUND_ERROR = 404;
 
@@ -11,6 +12,7 @@ export class CustomAnalysisService {
     this.addCustomAnalysis = this.addCustomAnalysis.bind(this);
     this.analyseHandler = this.analyseHandler.bind(this);
     this.updateCustomAnalysis = this.updateCustomAnalysis.bind(this);
+    this.logAnalyseHandler = this.logAnalyseHandler.bind(this);
   }
   auth() {
     return new Promise(resolve =>
@@ -107,7 +109,9 @@ export class CustomAnalysisService {
    * This method returns all solutions for the selected
    * path/course assignment/activity
    *
-   * @param {String} uid user id of creator
+   * @param {String} typeSelected path/course type selected
+   * @param {String} typeID path/course ID selected
+   * @param {String} activityID activity/assignment ID selected
    *
    * @returns {Object} Object containing solutions for
    * the activities/assignment created/collaborated by the user
@@ -186,6 +190,82 @@ export class CustomAnalysisService {
       });
       return courses;
     });
+  }
+
+  /**
+   * This method returns all logs for the selected
+   * path/course assignment/activity
+   *
+   * @param {String} typeSelected path/course type selected
+   * @param {String} typeID path/course ID selected
+   * @param {String} activityID activity/assignment ID selected
+   *
+   * @returns {Object} Object containing logs for
+   * the activities/assignment created/collaborated by the user
+   */
+  async fetchLogsHandler(typeSelected, typeID, activityID = "") {
+    let dbRef = firebase.firestore().collection("/logged_events");
+    switch (typeSelected) {
+      case "Path":
+        if (activityID) {
+          dbRef = dbRef.where("activityId", "==", activityID);
+        } else {
+          dbRef = dbRef.where("pathId", "==", typeID);
+        }
+
+        break;
+      case "Course":
+        if (activityID) {
+          dbRef = dbRef.where("assignmentId", "==", activityID);
+        } else {
+          dbRef = dbRef.where("courseId", "==", typeID);
+        }
+        break;
+      default:
+        break;
+    }
+    dbRef = dbRef.orderBy("createdAt", "desc");
+    dbRef = dbRef.limit(APP_SETTING.LOG_ANALYSIS_LIMIT);
+    return await dbRef
+      .get()
+      .then(function(querySnapshot) {
+        let logs = [];
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          logs.push(doc.data());
+        });
+        return logs;
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+      });
+  }
+
+  /**
+   * This method returns all user logs for a user
+   *
+   * @param {String} uid User ID of the analysis generator
+   *
+   * @returns {Object} Object containing logs for the given user
+   */
+  async fetchUserLogsHandler(uid) {
+    let dbRef = firebase.firestore().collection("/logged_events");
+    dbRef = dbRef.where("uid", "==", uid);
+    dbRef = dbRef.orderBy("createdAt", "desc");
+    dbRef = dbRef.limit(APP_SETTING.USER_ANALYSIS_LIMIT);
+    return await dbRef
+      .get()
+      .then(function(querySnapshot) {
+        let userLogs = [];
+        querySnapshot.forEach(function(doc) {
+          // doc.data() is never undefined for query doc snapshots
+          userLogs.push(doc.data());
+        });
+        return userLogs;
+      })
+      .catch(function(error) {
+        console.log("Error getting documents: ", error);
+      });
   }
 
   /**
@@ -402,8 +482,7 @@ export class CustomAnalysisService {
       uid: uid,
       response: JSON.parse(response.data).results
         ? JSON.stringify(JSON.parse(response.data).results)
-        : JSON.parse(response.data).result,
-      ipynb: JSON.stringify(JSON.parse(response.data).ipynb)
+        : JSON.parse(response.data).result
     };
     await docRef.set(data).then(() => {
       firebase
@@ -440,6 +519,33 @@ export class CustomAnalysisService {
       .httpsCallable("runCustomAnalysis")({
         uid,
         solutions,
+        analysisID,
+        analysisType: "customAnalysis"
+      })
+      .then(response => this.storeAnalysis(uid, response, analysisID))
+      .catch(err => console.error(err));
+  }
+
+  /**
+   * This method calls the custom analysis cloud function - runCustomAnalysis
+   * Two possible cases -
+   * 1. Analysis Type - Jupyter/Colab link:
+   *    Call the Jupyter Executer with the colab notebook contents and
+   *    the solutions as a data.json file.
+   * 2. Analysis Type - Cloud Function link:
+   *    Call the Cloud function with solutions in the request body
+   *
+   * @param {String} uid user id of creator
+   * @param {Array} logs collection of logs to be analysed
+   * @param {String} analysisID Custom Analysis ID
+   *
+   */
+  async logAnalyseHandler(uid, logs, analysisID) {
+    return await firebase
+      .functions()
+      .httpsCallable("runCustomAnalysis")({
+        uid,
+        solutions: logs,
         analysisID,
         analysisType: "customAnalysis"
       })
