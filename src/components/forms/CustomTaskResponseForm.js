@@ -79,6 +79,19 @@ export class CustomTaskResponseForm extends React.PureComponent {
             width={"100%"}
           />
         );
+      case "analysisInput":
+        return (
+          <AceEditor
+            maxLines={Infinity}
+            minLines={3}
+            mode="json"
+            readOnly={true}
+            setOptions={{ showLineNumbers: false }}
+            theme="github"
+            value={JSON.stringify(taskInfo.response.data[tabIndex], null, "  ")}
+            width={"100%"}
+          />
+        );
       case "ipynbFeedback":
         return <NotebookPreview notebook={taskInfo.response.data[tabIndex]} />;
       default:
@@ -97,7 +110,18 @@ export class CustomTaskResponseForm extends React.PureComponent {
           <Tab label="HTML" value="htmlFeedback" />
           <Tab label="JSON" value="jsonFeedback" />
           <Tab label="Text" value="textFeedback" />
-          <Tab label="ipynb" value="ipynbFeedback" />
+          {taskInfo &&
+            taskInfo.response &&
+            taskInfo.response.data &&
+            taskInfo.response.data["ipynbFeedback"] && (
+              <Tab label="ipynb" value="ipynbFeedback" />
+            )}
+          {taskInfo &&
+            taskInfo.response &&
+            taskInfo.response.data &&
+            taskInfo.response.data["analysisInput"] && (
+              <Tab label="Analysis Input" value="analysisInput" />
+            )}
         </Tabs>
         <iframe
           hidden={tabIndex !== "htmlFeedback"}

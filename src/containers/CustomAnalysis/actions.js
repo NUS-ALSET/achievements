@@ -3,6 +3,21 @@ export const customAnalysisOpen = () => ({
   type: CUSTOM_ANALYSIS_OPEN
 });
 
+export const SOLUTION_CLEAR_REQUEST = "SOLUTION_CLEAR_REQUEST";
+export const solutionClearRequest = () => ({
+  type: SOLUTION_CLEAR_REQUEST
+});
+
+export const LOGS_CLEAR_REQUEST = "LOGS_CLEAR_REQUEST";
+export const logsClearRequest = () => ({
+  type: LOGS_CLEAR_REQUEST
+});
+
+export const USER_LOGS_CLEAR_REQUEST = "USER_LOGS_CLEAR_REQUEST";
+export const userLogsClearRequest = () => ({
+  type: USER_LOGS_CLEAR_REQUEST
+});
+
 export const MY_PATHS_LOADED = "MY_PATHS_LOADED";
 export const myPathsLoaded = myPaths => ({
   type: MY_PATHS_LOADED,
@@ -107,6 +122,17 @@ export const FETCH_SOLUTIONS_FAIL = "FETCH_SOLUTIONS_FAIL";
 export const fetchSolutionsFail = error => ({
   type: FETCH_SOLUTIONS_FAIL,
   error
+});
+
+export const FETCH_LOGS_SUCCESS = "FETCH_LOGS_SUCCESS";
+export const fetchLogsSuccess = logsSelected => ({
+  type: FETCH_LOGS_SUCCESS,
+  logsSelected
+});
+export const FETCH_USER_LOGS_SUCCESS = "FETCH_USER_LOGS_SUCCESS";
+export const fetchUserLogsSuccess = userLogsSelected => ({
+  type: FETCH_USER_LOGS_SUCCESS,
+  userLogsSelected
 });
 
 export const ADD_CUSTOM_ANALYSIS_REQUEST = "ADD_CUSTOM_ANALYSIS_REQUEST";

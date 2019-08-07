@@ -15,6 +15,7 @@ import isEmpty from "lodash/isEmpty";
 
 import {
   addCustomAnalysisRequest,
+  logsClearRequest,
   updateCustomAnalysisRequest,
   deleteCustomAnalysisRequest,
   logAnalyseRequest
@@ -80,7 +81,8 @@ class LogCustomAnalysis extends React.PureComponent {
     myActivities: PropTypes.any,
     myAssignments: PropTypes.any,
     myAnalysis: PropTypes.object,
-    analysisResults: PropTypes.object
+    analysisResults: PropTypes.object,
+    logsSelected: PropTypes.array
   };
 
   state = {
@@ -195,6 +197,7 @@ class LogCustomAnalysis extends React.PureComponent {
   };
   handleClear = () => {
     this.setState({ displayResponse: "Clear" });
+    this.props.onClear();
   };
 
   setType = type => {
@@ -218,7 +221,8 @@ class LogCustomAnalysis extends React.PureComponent {
               jsonFeedback: results.jsonFeedback,
               htmlFeedback: results.htmlFeedback,
               textFeedback: results.textFeedback,
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.logsSelected
             }
           }
         };
@@ -230,7 +234,8 @@ class LogCustomAnalysis extends React.PureComponent {
               jsonFeedback: "",
               htmlFeedback: "Please write into results.json file.",
               textFeedback: "",
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.logsSelected
             }
           }
         };
@@ -244,7 +249,8 @@ class LogCustomAnalysis extends React.PureComponent {
           isComplete: false,
           jsonFeedback: { dummyKey: "dummyValue" },
           htmlFeedback: "<h1>Sample HTML Response</h1>",
-          textFeedback: "Sample Text Response"
+          textFeedback: "Sample Text Response",
+          analysisInput: this.props.logsSelected
         }
       }
     };
@@ -518,14 +524,16 @@ const mapStateToProps = state => ({
   myActivities: state.customAnalysis.myActivities,
   myAssignments: state.customAnalysis.myAssignments,
   myAnalysis: state.firestore.data.myAnalysis,
-  analysisResults: state.customAnalysis.logAnalysisResults
+  analysisResults: state.customAnalysis.logAnalysisResults,
+  logsSelected: state.customAnalysis.logsSelected
 });
 
 const mapDispatchToProps = {
   addCustomAnalysis: addCustomAnalysisRequest,
   updateCustomAnalysis: updateCustomAnalysisRequest,
   deleteCustomAnalysis: deleteCustomAnalysisRequest,
-  onAnalyse: logAnalyseRequest
+  onAnalyse: logAnalyseRequest,
+  onClear: logsClearRequest
 };
 
 export default compose(

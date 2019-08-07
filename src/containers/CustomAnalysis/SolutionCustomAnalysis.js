@@ -15,6 +15,7 @@ import isEmpty from "lodash/isEmpty";
 
 import {
   customAnalysisOpen,
+  solutionClearRequest,
   addCustomAnalysisRequest,
   updateCustomAnalysisRequest,
   deleteCustomAnalysisRequest,
@@ -82,7 +83,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
     myActivities: PropTypes.any,
     myAssignments: PropTypes.any,
     myAnalysis: PropTypes.object,
-    analysisResults: PropTypes.object
+    analysisResults: PropTypes.object,
+    solutionsSelected: PropTypes.array
   };
 
   state = {
@@ -201,6 +203,7 @@ class SolutionCustomAnalysis extends React.PureComponent {
   };
   handleClear = () => {
     this.setState({ displayResponse: "Clear" });
+    this.props.onClear();
   };
 
   setType = type => {
@@ -224,7 +227,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
               jsonFeedback: results.jsonFeedback,
               htmlFeedback: results.htmlFeedback,
               textFeedback: results.textFeedback,
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.solutionsSelected
             }
           }
         };
@@ -236,7 +240,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
               jsonFeedback: "",
               htmlFeedback: "Please write into results.json file.",
               textFeedback: "",
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.solutionsSelected
             }
           }
         };
@@ -250,7 +255,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
           isComplete: false,
           jsonFeedback: { dummyKey: "dummyValue" },
           htmlFeedback: "<h1>Sample HTML Response</h1>",
-          textFeedback: "Sample Text Response"
+          textFeedback: "Sample Text Response",
+          analysisInput: this.props.solutionsSelected
         }
       }
     };
@@ -553,7 +559,8 @@ const mapDispatchToProps = {
   addCustomAnalysis: addCustomAnalysisRequest,
   updateCustomAnalysis: updateCustomAnalysisRequest,
   deleteCustomAnalysis: deleteCustomAnalysisRequest,
-  onAnalyse: analyseRequest
+  onAnalyse: analyseRequest,
+  onClear: solutionClearRequest
 };
 
 export default compose(
