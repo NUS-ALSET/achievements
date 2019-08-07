@@ -41,7 +41,8 @@ const styles = theme => ({
   activitySelection: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid #d3d4d5"
   },
   root: {
     width: "100%",
