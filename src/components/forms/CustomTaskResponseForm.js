@@ -110,12 +110,18 @@ export class CustomTaskResponseForm extends React.PureComponent {
           <Tab label="HTML" value="htmlFeedback" />
           <Tab label="JSON" value="jsonFeedback" />
           <Tab label="Text" value="textFeedback" />
-          {taskInfo.response.data["ipynbFeedback"] && (
-            <Tab label="ipynb" value="ipynbFeedback" />
-          )}
-          {taskInfo.response.data["analysisInput"] && (
-            <Tab label="Analysis Input" value="analysisInput" />
-          )}
+          {taskInfo &&
+            taskInfo.response &&
+            taskInfo.response.data &&
+            taskInfo.response.data["ipynbFeedback"] && (
+              <Tab label="ipynb" value="ipynbFeedback" />
+            )}
+          {taskInfo &&
+            taskInfo.response &&
+            taskInfo.response.data &&
+            taskInfo.response.data["analysisInput"] && (
+              <Tab label="Analysis Input" value="analysisInput" />
+            )}
         </Tabs>
         <iframe
           hidden={tabIndex !== "htmlFeedback"}
