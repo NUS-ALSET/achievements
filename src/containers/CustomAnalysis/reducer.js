@@ -1,4 +1,7 @@
 import {
+  SOLUTION_CLEAR_REQUEST,
+  LOGS_CLEAR_REQUEST,
+  USER_LOGS_CLEAR_REQUEST,
   MY_PATHS_LOADED,
   MY_COURSES_LOADED,
   MY_ACTIVITIES_LOADED,
@@ -34,6 +37,21 @@ export const customAnalysis = (
   action
 ) => {
   switch (action.type) {
+    case SOLUTION_CLEAR_REQUEST:
+      return {
+        ...state,
+        analysisResults: {}
+      };
+    case LOGS_CLEAR_REQUEST:
+      return {
+        ...state,
+        logAnalysisResults: {}
+      };
+    case USER_LOGS_CLEAR_REQUEST:
+      return {
+        ...state,
+        userAnalysisResults: {}
+      };
     case MY_PATHS_LOADED:
       return {
         ...state,

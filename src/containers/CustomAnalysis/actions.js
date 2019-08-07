@@ -3,6 +3,21 @@ export const customAnalysisOpen = () => ({
   type: CUSTOM_ANALYSIS_OPEN
 });
 
+export const SOLUTION_CLEAR_REQUEST = "SOLUTION_CLEAR_REQUEST";
+export const solutionClearRequest = () => ({
+  type: SOLUTION_CLEAR_REQUEST
+});
+
+export const LOGS_CLEAR_REQUEST = "LOGS_CLEAR_REQUEST";
+export const logsClearRequest = () => ({
+  type: LOGS_CLEAR_REQUEST
+});
+
+export const USER_LOGS_CLEAR_REQUEST = "USER_LOGS_CLEAR_REQUEST";
+export const userLogsClearRequest = () => ({
+  type: USER_LOGS_CLEAR_REQUEST
+});
+
 export const MY_PATHS_LOADED = "MY_PATHS_LOADED";
 export const myPathsLoaded = myPaths => ({
   type: MY_PATHS_LOADED,

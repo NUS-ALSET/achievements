@@ -15,6 +15,7 @@ import isEmpty from "lodash/isEmpty";
 
 import {
   addCustomAnalysisRequest,
+  userLogsClearRequest,
   updateCustomAnalysisRequest,
   deleteCustomAnalysisRequest,
   userAnalyseRequest
@@ -123,6 +124,7 @@ class UserCustomAnalysis extends React.PureComponent {
   };
   handleClear = () => {
     this.setState({ displayResponse: "Clear" });
+    this.props.onClear();
   };
 
   getTaskInfo = analysisResults => {
@@ -287,7 +289,8 @@ const mapDispatchToProps = {
   addCustomAnalysis: addCustomAnalysisRequest,
   updateCustomAnalysis: updateCustomAnalysisRequest,
   deleteCustomAnalysis: deleteCustomAnalysisRequest,
-  onAnalyse: userAnalyseRequest
+  onAnalyse: userAnalyseRequest,
+  onClear: userLogsClearRequest
 };
 
 export default compose(

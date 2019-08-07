@@ -15,6 +15,7 @@ import isEmpty from "lodash/isEmpty";
 
 import {
   customAnalysisOpen,
+  solutionClearRequest,
   addCustomAnalysisRequest,
   updateCustomAnalysisRequest,
   deleteCustomAnalysisRequest,
@@ -201,6 +202,7 @@ class SolutionCustomAnalysis extends React.PureComponent {
   };
   handleClear = () => {
     this.setState({ displayResponse: "Clear" });
+    this.props.onClear();
   };
 
   setType = type => {
@@ -553,7 +555,8 @@ const mapDispatchToProps = {
   addCustomAnalysis: addCustomAnalysisRequest,
   updateCustomAnalysis: updateCustomAnalysisRequest,
   deleteCustomAnalysis: deleteCustomAnalysisRequest,
-  onAnalyse: analyseRequest
+  onAnalyse: analyseRequest,
+  onClear: solutionClearRequest
 };
 
 export default compose(
