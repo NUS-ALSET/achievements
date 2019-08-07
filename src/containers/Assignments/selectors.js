@@ -329,11 +329,19 @@ function getStudentPathProgress(member, targetAssignments, pathsData) {
   };
   for (const pathId of Object.keys(pathsData || {})) {
     result.totalActivities += pathsData[pathId];
-  } 
+  }
   try {
     for (const key of targetAssignments) {
       const solution = member.solutions[key];      
       if (solution && solution.value && solution.createdAt) {
+        
+        let newSol = solution.value.split(" ");        
+        if(parseInt(newSol[0])>parseInt(newSol[2]))
+        {
+          newSol[0]=newSol[2]
+          solution.value=newSol.join(" ")       
+        }
+       
         let value = /^(\d+) of (\d+)$/.exec(solution.value || "");
         value =
           value ||
@@ -341,14 +349,7 @@ function getStudentPathProgress(member, targetAssignments, pathsData) {
           [];
 
         solution.value = solution.value.replace(" /", " of ");
-        let newSol = solution.value.split(" ");        
-        if(parseInt(newSol[0])>parseInt(newSol[2]))
-        {
-          newSol[0]=newSol[2]
-          solution.value=newSol.join(" ")       
-        }
-
-        result.totalSolutions += Number(value[1] || 0);        
+        result.totalSolutions += Number(value[1] || 0);   
         result.lastSolutionTime = Math.max(
           result.lastSolutionTime,
           solution.createdAt
