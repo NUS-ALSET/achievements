@@ -355,7 +355,7 @@ class SolutionCustomAnalysis extends React.PureComponent {
     return (
       <div>
         <div>
-          <Table className={classes.table} size="small">
+          <Table className={classes.table} size="small" padding="checkbox">
             <TableHead>
               <TableRow>
                 <TableCell>Type*</TableCell>
@@ -451,7 +451,7 @@ class SolutionCustomAnalysis extends React.PureComponent {
                     menuContent={myAnalysis}
                   />
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align="left">
                   <AddCustomAnalysisDialog
                     classes={classes}
                     addCustomAnalysisHandler={this.addCustomAnalysisHandler}

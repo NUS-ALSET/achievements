@@ -337,7 +337,7 @@ class LogCustomAnalysis extends React.PureComponent {
     } = this.props;
     return (
       <div>
-        <Table className={classes.table} size="small">
+        <Table className={classes.table} size="small" padding="checkbox">
           <TableHead>
             <TableRow>
               <TableCell>Type*</TableCell>
@@ -346,6 +346,7 @@ class LogCustomAnalysis extends React.PureComponent {
               <TableCell align="left">
                 Select {this.state.type === "Path" ? "Activity" : "Assignment"}
               </TableCell>
+              <TableCell align="left">Select log event type</TableCell>
               <TableCell align="left" colSpan={2}>
                 Select / Add Analysis*
               </TableCell>
@@ -421,6 +422,7 @@ class LogCustomAnalysis extends React.PureComponent {
                   menuContent={this.state.activityOptions}
                 />
               </TableCell>
+              <TableCell align="right">Dummy</TableCell>
               <TableCell align="right">
                 <CustomAnalysisMenu
                   classes={classes}
@@ -430,7 +432,7 @@ class LogCustomAnalysis extends React.PureComponent {
                   menuContent={myAnalysis}
                 />
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="left">
                 <AddCustomAnalysisDialog
                   classes={classes}
                   addCustomAnalysisHandler={this.addCustomAnalysisHandler}

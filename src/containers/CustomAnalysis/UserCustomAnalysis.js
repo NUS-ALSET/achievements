@@ -203,7 +203,7 @@ class UserCustomAnalysis extends React.PureComponent {
     const { classes, myAnalysis } = this.props;
     return (
       <div>
-        <Table className={classes.table} size="small">
+        <Table className={classes.table} size="small" padding="checkbox">
           <TableHead>
             <TableRow>
               <TableCell align="left" colSpan={2}>
