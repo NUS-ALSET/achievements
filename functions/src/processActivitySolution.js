@@ -66,7 +66,9 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
                 difference: response.difference,
                 solutionFeatures: response.solutionFeatures,
                 type: "CODE_ANALYSIS",
-                pathKey: activity.path
+                pathKey: activity.path,
+                activityId:activityKey,
+                pathId: activity.path
               })
           )
           .catch(err =>
@@ -80,7 +82,9 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
                 sGen: true,
                 type: "CODE_ANALYSIS_ERROR",
                 errorMsg: String(err),
-                pathKey: activity.path
+                pathKey: activity.path,
+                activityId:activityKey,
+                pathId: activity.path
               })
           );
       default:        
