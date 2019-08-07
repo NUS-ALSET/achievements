@@ -13,6 +13,8 @@ import { firestoreConnect } from "react-redux-firebase";
 
 import isEmpty from "lodash/isEmpty";
 
+import { APP_SETTING } from "../../achievementsApp/config";
+
 import {
   addCustomAnalysisRequest,
   logsClearRequest,
@@ -99,7 +101,9 @@ class LogCustomAnalysis extends React.PureComponent {
     assignmentName: "",
     analysisName: "",
     activityOptions: [],
-    displayResponse: "Clear"
+    displayResponse: "Clear",
+    queryTypeOptions: APP_SETTING.LOG_ANALYSIS_TYPE,
+    queryTypeSelected: ""
   };
 
   constructor(props) {
@@ -149,6 +153,8 @@ class LogCustomAnalysis extends React.PureComponent {
       case "Analysis":
         data = { analysisID: listValue.id, analysisName: listValue.name };
         break;
+      case "Query":
+        data = { queryTypeSelected: listValue };
       default:
         break;
     }
@@ -181,7 +187,8 @@ class LogCustomAnalysis extends React.PureComponent {
           this.state.type,
           this.state.pathID,
           this.state.activityID,
-          this.state.analysisID
+          this.state.analysisID,
+          this.state.queryTypeSelected
         );
         break;
       case "Course":
@@ -189,7 +196,8 @@ class LogCustomAnalysis extends React.PureComponent {
           this.state.type,
           this.state.courseID,
           this.state.assignmentID,
-          this.state.analysisID
+          this.state.analysisID,
+          this.state.queryTypeSelected
         );
         break;
       default:
@@ -423,7 +431,15 @@ class LogCustomAnalysis extends React.PureComponent {
                   menuContent={this.state.activityOptions}
                 />
               </TableCell>
-              <TableCell align="right">Dummy</TableCell>
+              <TableCell align="right">
+                <CustomAnalysisMenu
+                  classes={classes}
+                  listHandler={this.listHandler}
+                  type={this.state.type}
+                  listType={"Query"}
+                  menuContent={this.state.queryTypeOptions}
+                />
+              </TableCell>
               <TableCell align="right">
                 <CustomAnalysisMenu
                   classes={classes}
@@ -501,6 +517,16 @@ class LogCustomAnalysis extends React.PureComponent {
                 this.state.type === "Path"
                   ? "Activity : " + this.state.activityName
                   : "Assignment : " + this.state.assignmentName
+              }
+              color="primary"
+              className={classes.chip}
+            />
+            &nbsp;&nbsp;
+            <Chip
+              label={
+                "Log Type : " +
+                (this.state.queryTypeSelected &&
+                  this.state.queryTypeSelected.name)
               }
               color="primary"
               className={classes.chip}

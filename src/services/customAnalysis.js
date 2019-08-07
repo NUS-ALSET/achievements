@@ -196,6 +196,7 @@ export class CustomAnalysisService {
    * This method returns all logs for the selected
    * path/course assignment/activity
    *
+   * @param {String} queryTypeSelected log event type selected
    * @param {String} typeSelected path/course type selected
    * @param {String} typeID path/course ID selected
    * @param {String} activityID activity/assignment ID selected
@@ -203,7 +204,12 @@ export class CustomAnalysisService {
    * @returns {Object} Object containing logs for
    * the activities/assignment created/collaborated by the user
    */
-  async fetchLogsHandler(typeSelected, typeID, activityID = "") {
+  async fetchLogsHandler(
+    queryTypeSelected,
+    typeSelected,
+    typeID,
+    activityID = ""
+  ) {
     let dbRef = firebase.firestore().collection("/logged_events");
     switch (typeSelected) {
       case "Path":
@@ -224,6 +230,10 @@ export class CustomAnalysisService {
       default:
         break;
     }
+    if (queryTypeSelected) {
+      dbRef = dbRef.where("type", "==", queryTypeSelected.name);
+    }
+
     dbRef = dbRef.orderBy("createdAt", "desc");
     dbRef = dbRef.limit(APP_SETTING.LOG_ANALYSIS_LIMIT);
     return await dbRef

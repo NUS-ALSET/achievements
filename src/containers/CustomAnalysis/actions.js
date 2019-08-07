@@ -61,13 +61,15 @@ export const logAnalyseRequest = (
   typeSelected,
   typeID,
   activityID,
-  analysisID
+  analysisID,
+  queryTypeSelected
 ) => ({
   type: LOG_ANALYSE_REQUEST,
   typeSelected,
   typeID,
   activityID,
-  analysisID
+  analysisID,
+  queryTypeSelected
 });
 
 export const USER_ANALYSE_REQUEST = "USER_ANALYSE_REQUEST";

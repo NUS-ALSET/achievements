@@ -95,6 +95,11 @@ class CustomAnalysisMenu extends React.PureComponent {
           });
         }
         break;
+      case "Query":
+        textToDisplay = "Log Type";
+        optionsToDisplay = menuContent;
+        break;
+        break;
       default:
         return <div>Unsupported List Type</div>;
     }
