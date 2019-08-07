@@ -576,7 +576,12 @@ const SolversCreatedPaths = props => {
       );
     }
     return isEmpty(filteredData)
-      ? { "Either no activity or no solvers yet": { totalCount: 0, activities:{"Either no activity or no solvers yet":0} } }
+      ? {
+          "Either no activity or no solvers yet": {
+            totalCount: 0,
+            activities: { "Either no activity or no solvers yet": 0 }
+          }
+        }
       : filteredData.reduce((accumulator, item) => {
           if (accumulator[item.type]) {
             accumulator[item.type]["totalCount"]++;
@@ -677,7 +682,7 @@ const SolversCreatedPaths = props => {
                     </TableRow>
                   ));
                 }
-                return true
+                return true;
               })}
             </TableBody>
           </Table>
@@ -1105,9 +1110,9 @@ class MyLearning extends React.Component {
     this.getLastMonthAllTimeData(tabValue, uid, getterFunction1, getterFunction2, container);
     this.db.collection("/logged_events").add({
       createdAt: Date.now(),
-      type: "FIREBASE_TRIGGERS",
+      type: "MYLEARNING_NAVIGATION",
       uid: uid,
-      sGen: true,
+      version: process.env.REACT_APP_VERSION,
       otherActionData: { tabValue: tabValue, title: title }
     });
   };
@@ -1196,41 +1201,44 @@ class MyLearning extends React.Component {
     const solversOfCreatedPaths = {};
     return Promise.all([
       this.db
-      .collection("logged_events")
-      .where("uid", "==", uid)
-      .where("type", "==", "PATH_CHANGE_SUCCESS")
-      .where("createdAt", ">", epochTime)
-      .orderBy("createdAt", "desc")
-      .get()
-      .then(querySnapshot => {
-        // Collect all paths from snapshot into an array
-        const paths = [];
-        querySnapshot.forEach(doc => {
-          const parsedData = doc.data();
-          parsedData["otherActionData"] = JSON.parse(parsedData["otherActionData"]);
-          const {
-            createdAt,
-            otherActionData: { pathKey }
-          } = parsedData;
-          dataContainer[doc.id] = {};
-          dataContainer[doc.id]["name"] = doc.id;
-          dataContainer[doc.id]["id"] = doc.id;
-          dataContainer[doc.id]["date"] = createdAt;
-          if ("pathKey" in parsedData["otherActionData"]) {
-            dataContainer[doc.id]["pathKey"] = pathKey;
-            paths.push(pathKey);
-          }
-        });
-        return paths;
-      }),
-      this.rtdb.ref("/pathAssistants")
-      .orderByChild(uid)
-      .equalTo(true)
-      .once("value")
-      .then(snap => Object.keys(snap.val()))
-    ]).then(([myPaths, assistantPaths]) => {
-      return myPaths.concat(assistantPaths);
-    }).then(paths => {
+        .collection("logged_events")
+        .where("uid", "==", uid)
+        .where("type", "==", "PATH_CHANGE_SUCCESS")
+        .where("createdAt", ">", epochTime)
+        .orderBy("createdAt", "desc")
+        .get()
+        .then(querySnapshot => {
+          // Collect all paths from snapshot into an array
+          const paths = [];
+          querySnapshot.forEach(doc => {
+            const parsedData = doc.data();
+            parsedData["otherActionData"] = JSON.parse(parsedData["otherActionData"]);
+            const {
+              createdAt,
+              otherActionData: { pathKey }
+            } = parsedData;
+            dataContainer[doc.id] = {};
+            dataContainer[doc.id]["name"] = doc.id;
+            dataContainer[doc.id]["id"] = doc.id;
+            dataContainer[doc.id]["date"] = createdAt;
+            if ("pathKey" in parsedData["otherActionData"]) {
+              dataContainer[doc.id]["pathKey"] = pathKey;
+              paths.push(pathKey);
+            }
+          });
+          return paths;
+        }),
+      this.rtdb
+        .ref("/pathAssistants")
+        .orderByChild(uid)
+        .equalTo(true)
+        .once("value")
+        .then(snap => Object.keys(snap.val()))
+    ])
+      .then(([myPaths, assistantPaths]) => {
+        return myPaths.concat(assistantPaths);
+      })
+      .then(paths => {
         return Promise.all(
           paths.map(pathKey => {
             return this.rtdb
@@ -1415,7 +1423,7 @@ class MyLearning extends React.Component {
                   tabValue={this.state.tabvalueSpecificPanels["Creator stats"] || this.state.tabValue}
                   uid={this.props.id}
                 />
-                                <SolversCreatedPaths
+                <SolversCreatedPaths
                   data={this.state.solversCreatedActivities}
                   handleTabChange={this.handleTabChange}
                   tabValue={this.state.tabvalueSpecificPanels["SolversCreatedPaths"] || this.state.tabValue}
