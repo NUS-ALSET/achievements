@@ -83,7 +83,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
     myActivities: PropTypes.any,
     myAssignments: PropTypes.any,
     myAnalysis: PropTypes.object,
-    analysisResults: PropTypes.object
+    analysisResults: PropTypes.object,
+    solutionsSelected: PropTypes.array
   };
 
   state = {
@@ -226,7 +227,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
               jsonFeedback: results.jsonFeedback,
               htmlFeedback: results.htmlFeedback,
               textFeedback: results.textFeedback,
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.solutionsSelected
             }
           }
         };
@@ -238,7 +240,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
               jsonFeedback: "",
               htmlFeedback: "Please write into results.json file.",
               textFeedback: "",
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.solutionsSelected
             }
           }
         };
@@ -252,7 +255,8 @@ class SolutionCustomAnalysis extends React.PureComponent {
           isComplete: false,
           jsonFeedback: { dummyKey: "dummyValue" },
           htmlFeedback: "<h1>Sample HTML Response</h1>",
-          textFeedback: "Sample Text Response"
+          textFeedback: "Sample Text Response",
+          analysisInput: this.props.solutionsSelected
         }
       }
     };

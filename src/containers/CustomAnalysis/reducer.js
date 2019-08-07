@@ -14,6 +14,8 @@ import {
   USER_ANALYSE_SUCCESS,
   USER_ANALYSE_FAIL,
   FETCH_SOLUTIONS_SUCCESS,
+  FETCH_LOGS_SUCCESS,
+  FETCH_USER_LOGS_SUCCESS,
   UPDATE_CUSTOM_ANALYSIS_SUCCESS,
   DELETE_CUSTOM_ANALYSIS_SUCCESS
 } from "./actions";
@@ -32,7 +34,9 @@ export const customAnalysis = (
     myCourses: {},
     myActivities: {},
     myAssignments: {},
-    solutionsSelected: []
+    solutionsSelected: [],
+    logsSelected: [],
+    userLogsSelected: []
   },
   action
 ) => {
@@ -136,6 +140,18 @@ export const customAnalysis = (
         ...state,
         dialog: "FETCH_SOLUTIONS_SUCCESS",
         solutionsSelected: action.solutionsSelected
+      };
+    case FETCH_LOGS_SUCCESS:
+      return {
+        ...state,
+        dialog: "FETCH_LOGS_SUCCESS",
+        logsSelected: action.logsSelected
+      };
+    case FETCH_USER_LOGS_SUCCESS:
+      return {
+        ...state,
+        dialog: "FETCH_USER_LOGS_SUCCESS",
+        userLogsSelected: action.userLogsSelected
       };
     default:
       return state;

@@ -73,7 +73,8 @@ class UserCustomAnalysis extends React.PureComponent {
     deleteCustomAnalysis: PropTypes.func,
     onAnalyse: PropTypes.func,
     myAnalysis: PropTypes.object,
-    analysisResults: PropTypes.object
+    analysisResults: PropTypes.object,
+    userLogsSelected: PropTypes.array
   };
 
   state = {
@@ -140,7 +141,8 @@ class UserCustomAnalysis extends React.PureComponent {
               jsonFeedback: results.jsonFeedback,
               htmlFeedback: results.htmlFeedback,
               textFeedback: results.textFeedback,
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.userLogsSelected
             }
           }
         };
@@ -152,7 +154,8 @@ class UserCustomAnalysis extends React.PureComponent {
               jsonFeedback: "",
               htmlFeedback: "Please write into results.json file.",
               textFeedback: "",
-              ipynbFeedback: analysisResults.ipynb
+              ipynbFeedback: analysisResults.ipynb,
+              analysisInput: this.props.userLogsSelected
             }
           }
         };
@@ -166,7 +169,8 @@ class UserCustomAnalysis extends React.PureComponent {
           isComplete: false,
           jsonFeedback: { dummyKey: "dummyValue" },
           htmlFeedback: "<h1>Sample HTML Response</h1>",
-          textFeedback: "Sample Text Response"
+          textFeedback: "Sample Text Response",
+          analysisInput: this.props.userLogsSelected
         }
       }
     };
@@ -282,7 +286,8 @@ class UserCustomAnalysis extends React.PureComponent {
 const mapStateToProps = state => ({
   uid: state.firebase.auth.uid,
   myAnalysis: state.firestore.data.myAnalysis,
-  analysisResults: state.customAnalysis.userAnalysisResults
+  analysisResults: state.customAnalysis.userAnalysisResults,
+  userLogsSelected: state.customAnalysis.userLogsSelected
 });
 
 const mapDispatchToProps = {

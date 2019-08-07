@@ -20,6 +20,8 @@ import {
   userAnalyseSuccess,
   userAnalyseFail,
   fetchSolutionsSuccess,
+  fetchLogsSuccess,
+  fetchUserLogsSuccess,
   deleteCustomAnalysisSuccess,
   deleteCustomAnalysisFail,
   updateCustomAnalysisSuccess,
@@ -173,6 +175,7 @@ export function* logAnalyseHandler(action) {
       action.typeID,
       action.activityID
     );
+    yield put(fetchLogsSuccess(logsSelected));
     // [Enhancement] : Can store the logs in redux state for downloading
     // Call Analysis on logs
     let result = yield call(
@@ -203,6 +206,7 @@ export function* userAnalyseHandler(action) {
       customAnalysisService.fetchUserLogsHandler,
       uid
     );
+    yield put(fetchUserLogsSuccess(userLogsSelected));
     // [Enhancement] : Can store the logs in redux state for downloading
     // Call Analysis on logs
     let result = yield call(

@@ -124,6 +124,17 @@ export const fetchSolutionsFail = error => ({
   error
 });
 
+export const FETCH_LOGS_SUCCESS = "FETCH_LOGS_SUCCESS";
+export const fetchLogsSuccess = logsSelected => ({
+  type: FETCH_LOGS_SUCCESS,
+  logsSelected
+});
+export const FETCH_USER_LOGS_SUCCESS = "FETCH_USER_LOGS_SUCCESS";
+export const fetchUserLogsSuccess = userLogsSelected => ({
+  type: FETCH_USER_LOGS_SUCCESS,
+  userLogsSelected
+});
+
 export const ADD_CUSTOM_ANALYSIS_REQUEST = "ADD_CUSTOM_ANALYSIS_REQUEST";
 export const addCustomAnalysisRequest = (
   customAnalysisUrl,
