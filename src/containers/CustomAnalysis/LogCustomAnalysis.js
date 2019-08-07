@@ -155,6 +155,7 @@ class LogCustomAnalysis extends React.PureComponent {
         break;
       case "Query":
         data = { queryTypeSelected: listValue };
+        break;
       default:
         break;
     }
