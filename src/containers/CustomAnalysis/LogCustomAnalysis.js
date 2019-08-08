@@ -102,7 +102,9 @@ class LogCustomAnalysis extends React.PureComponent {
     analysisName: "",
     activityOptions: [],
     displayResponse: "Clear",
-    queryTypeOptions: APP_SETTING.LOG_ANALYSIS_TYPE,
+    queryTypeOptions: APP_SETTING.LOG_ANALYSIS_PATH_TYPE.concat(
+      APP_SETTING.LOG_ANALYSIS_COMMON_TYPE
+    ),
     queryTypeSelected: ""
   };
 
@@ -211,7 +213,27 @@ class LogCustomAnalysis extends React.PureComponent {
   };
 
   setType = type => {
-    this.setState({ ...this.state, type: type });
+    this.setState({ ...this.state, type: type }, () =>
+      this.setQueryTypeOptions(type)
+    );
+  };
+
+  setQueryTypeOptions = type => {
+    if (type === "Path") {
+      this.setState({
+        ...this.state,
+        queryTypeOptions: APP_SETTING.LOG_ANALYSIS_PATH_TYPE.concat(
+          APP_SETTING.LOG_ANALYSIS_COMMON_TYPE
+        )
+      });
+    } else {
+      this.setState({
+        ...this.state,
+        queryTypeOptions: APP_SETTING.LOG_ANALYSIS_COURSE_TYPE.concat(
+          APP_SETTING.LOG_ANALYSIS_COMMON_TYPE
+        )
+      });
+    }
   };
 
   setActivityOptions = options => {

@@ -60,7 +60,7 @@ class CustomAnalysisMenu extends React.PureComponent {
     const { classes, type, listType, menuContent } = this.props;
     let textToDisplay = "";
     let option = "";
-    let optionsToDisplay = [];
+    let optionsToDisplay = [{ name: "" }];
 
     switch (listType) {
       case "Type":
@@ -79,7 +79,7 @@ class CustomAnalysisMenu extends React.PureComponent {
         break;
       case "Activity":
         textToDisplay = type === "Path" ? "Activity" : "Assignment";
-        optionsToDisplay = menuContent;
+        optionsToDisplay = optionsToDisplay.concat(menuContent);
         break;
       case "Analysis":
         textToDisplay = "Analysis";
@@ -97,7 +97,7 @@ class CustomAnalysisMenu extends React.PureComponent {
         break;
       case "Query":
         textToDisplay = "Log Type";
-        optionsToDisplay = menuContent;
+        optionsToDisplay = optionsToDisplay.concat(menuContent);
         break;
       default:
         return <div>Unsupported List Type</div>;
