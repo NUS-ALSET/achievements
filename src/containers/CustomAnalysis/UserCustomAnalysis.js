@@ -41,7 +41,8 @@ const styles = theme => ({
   activitySelection: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid #d3d4d5"
   },
   root: {
     width: "100%",
@@ -203,7 +204,7 @@ class UserCustomAnalysis extends React.PureComponent {
     const { classes, myAnalysis } = this.props;
     return (
       <div>
-        <Table className={classes.table} size="small">
+        <Table className={classes.table} size="small" padding="checkbox">
           <TableHead>
             <TableRow>
               <TableCell align="left" colSpan={2}>

@@ -171,6 +171,7 @@ export function* logAnalyseHandler(action) {
     // Fetch logs
     let logsSelected = yield call(
       customAnalysisService.fetchLogsHandler,
+      action.queryTypeSelected,
       action.typeSelected,
       action.typeID,
       action.activityID

@@ -13,6 +13,8 @@ import { firestoreConnect } from "react-redux-firebase";
 
 import isEmpty from "lodash/isEmpty";
 
+import { APP_SETTING } from "../../achievementsApp/config";
+
 import {
   addCustomAnalysisRequest,
   logsClearRequest,
@@ -45,7 +47,8 @@ const styles = theme => ({
   activitySelection: {
     width: "100%",
     maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
+    border: "1px solid #d3d4d5"
   },
   root: {
     width: "100%",
@@ -98,7 +101,9 @@ class LogCustomAnalysis extends React.PureComponent {
     assignmentName: "",
     analysisName: "",
     activityOptions: [],
-    displayResponse: "Clear"
+    displayResponse: "Clear",
+    queryTypeOptions: APP_SETTING.LOG_ANALYSIS_TYPE,
+    queryTypeSelected: ""
   };
 
   constructor(props) {
@@ -148,6 +153,9 @@ class LogCustomAnalysis extends React.PureComponent {
       case "Analysis":
         data = { analysisID: listValue.id, analysisName: listValue.name };
         break;
+      case "Query":
+        data = { queryTypeSelected: listValue };
+        break;
       default:
         break;
     }
@@ -180,7 +188,8 @@ class LogCustomAnalysis extends React.PureComponent {
           this.state.type,
           this.state.pathID,
           this.state.activityID,
-          this.state.analysisID
+          this.state.analysisID,
+          this.state.queryTypeSelected
         );
         break;
       case "Course":
@@ -188,7 +197,8 @@ class LogCustomAnalysis extends React.PureComponent {
           this.state.type,
           this.state.courseID,
           this.state.assignmentID,
-          this.state.analysisID
+          this.state.analysisID,
+          this.state.queryTypeSelected
         );
         break;
       default:
@@ -337,7 +347,7 @@ class LogCustomAnalysis extends React.PureComponent {
     } = this.props;
     return (
       <div>
-        <Table className={classes.table} size="small">
+        <Table className={classes.table} size="small" padding="checkbox">
           <TableHead>
             <TableRow>
               <TableCell>Type*</TableCell>
@@ -346,6 +356,7 @@ class LogCustomAnalysis extends React.PureComponent {
               <TableCell align="left">
                 Select {this.state.type === "Path" ? "Activity" : "Assignment"}
               </TableCell>
+              <TableCell align="left">Select log event type</TableCell>
               <TableCell align="left" colSpan={2}>
                 Select / Add Analysis*
               </TableCell>
@@ -426,11 +437,20 @@ class LogCustomAnalysis extends React.PureComponent {
                   classes={classes}
                   listHandler={this.listHandler}
                   type={this.state.type}
+                  listType={"Query"}
+                  menuContent={this.state.queryTypeOptions}
+                />
+              </TableCell>
+              <TableCell align="right">
+                <CustomAnalysisMenu
+                  classes={classes}
+                  listHandler={this.listHandler}
+                  type={this.state.type}
                   listType={"Analysis"}
                   menuContent={myAnalysis}
                 />
               </TableCell>
-              <TableCell align="right">
+              <TableCell align="left">
                 <AddCustomAnalysisDialog
                   classes={classes}
                   addCustomAnalysisHandler={this.addCustomAnalysisHandler}
@@ -498,6 +518,16 @@ class LogCustomAnalysis extends React.PureComponent {
                 this.state.type === "Path"
                   ? "Activity : " + this.state.activityName
                   : "Assignment : " + this.state.assignmentName
+              }
+              color="primary"
+              className={classes.chip}
+            />
+            &nbsp;&nbsp;
+            <Chip
+              label={
+                "Log Type : " +
+                (this.state.queryTypeSelected &&
+                  this.state.queryTypeSelected.name)
               }
               color="primary"
               className={classes.chip}

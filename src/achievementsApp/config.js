@@ -35,8 +35,15 @@ export const APP_SETTING = {
     "https://dgiy2j88ll.execute-api.us-east-1.amazonaws.com/dev/helloTest",
   JUPYTER_FILE_UPLOAD_LIMIT: 1, //in MB
   ADMIN_ANALYSIS_LIMIT: 500,
-  LOG_ANALYSIS_LIMIT: 100,
-  USER_ANALYSIS_LIMIT: 100
+  LOG_ANALYSIS_LIMIT: 500,
+  USER_ANALYSIS_LIMIT: 500,
+  LOG_ANALYSIS_TYPE: [
+    { name: "PATH_OPEN" },
+    { name: "PROBLEM_SOLUTION_SUBMIT_SUCCESS" },
+    { name: "PROBLEM_SOLUTION_SUBMIT_REQUEST" },
+    { name: "PROBLEM_SOLUTION_ATTEMPT_REQUEST" },
+    { name: "CODE_ANALYSIS" }
+  ]
 };
 
 // Initialize Firebase
