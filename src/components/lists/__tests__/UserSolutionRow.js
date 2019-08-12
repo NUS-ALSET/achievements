@@ -10,7 +10,7 @@ describe("<UserSolutionRow />", () => {
     mockDispatch = sinon.spy();
   });
 
-  it("Should test getSolution function with string solution", () => {
+  it("Should test getSolution function with without activity in props", () => {
     const props = {
       dispatch: mockDispatch,
       userId: "12345678910111213",
