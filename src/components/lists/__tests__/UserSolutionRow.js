@@ -1,12 +1,12 @@
 import React from "react";
 import sinon from "sinon";
-import { createShallow, createMount } from "@material-ui/core/test-utils";
+import { createMount } from "@material-ui/core/test-utils";
 import { UserSolutionRow } from "../UserSolutionRow";
 
 describe("<UserSolutionRow />", () => {
-  let shallow, mockDispatch;
+  let mount, mockDispatch;
   beforeEach(() => {
-    shallow = createMount();
+    mount = createMount();
     mockDispatch = sinon.spy();
   });
 
@@ -20,7 +20,7 @@ describe("<UserSolutionRow />", () => {
       classes: {},
       solution: { solution: "Test text solution", updatedAt: new Date() }
     };
-    const component = shallow(<UserSolutionRow {...props} />);
+    const component = mount(<UserSolutionRow {...props} />);
     const text_sol = component.instance().getSolution(props.solution);
     expect(text_sol).toEqual("Test text solution");
   });
@@ -38,7 +38,7 @@ describe("<UserSolutionRow />", () => {
       }
     };
     //parse json
-    const component = shallow(<UserSolutionRow {...props} />);
+    const component = mount(<UserSolutionRow {...props} />);
     const text_sol = component.instance().getSolution(props.solution);
     expect(text_sol).toEqual({ test: "Test text solution" });
   });
