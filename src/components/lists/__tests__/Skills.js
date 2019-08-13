@@ -1,8 +1,6 @@
 import React from "react";
-import sinon from "sinon";
 import { createMount } from "@material-ui/core/test-utils";
 import Skills from "../Skills";
-import { isThisHour } from "date-fns";
 
 describe("<Skills />", () => {
   let mount;
