@@ -56,8 +56,8 @@ const recommendations = {
   codeCombat: "CodeCombat Activities",
   jupyter: "Colaboratory Notebook Activities",
   jupyterInline: "Jupyter Notebook Activities",
-  youtube: "YouTube Video Activities",
-  game: "Game Activities"
+  youtube: "YouTube Video Activities"
+  //game: "Game Activities"
 };
 const urls = {
   jupyterLambdaProcessor: "Jupyter Solver url",

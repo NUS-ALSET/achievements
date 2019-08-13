@@ -16,7 +16,7 @@ import AdvancedActivity from "./AdvancedActivity";
 import YouTubeActivity from "./YouTubeActivity";
 
 import AddJestSolutionDialog from "../dialogs/AddJestSolutionDialog";
-import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog";
+//import AddGameSolutionDialog from "../dialogs/AddGameSolutionDialog";
 import CodeCombatActivity from "./CodeCombatActivity";
 import { MultipleQuestionActivity } from "./MultipleQuestionActivity";
 
@@ -29,7 +29,7 @@ const views = {
   jupyterLocal: AdvancedActivity,
   youtube: YouTubeActivity,
   jest: AddJestSolutionDialog,
-  game: AddGameSolutionDialog,
+  //game: AddGameSolutionDialog,
   codeCombat: CodeCombatActivity,
   codeCombatNumber: CodeCombatActivity,
   codeCombatMultiPlayerLevel: CodeCombatActivity

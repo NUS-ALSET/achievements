@@ -83,19 +83,11 @@ export const ACTIVITY_TYPES = {
   youtube: {
     id: "youtube",
     caption: "YouTube"
-  },
-  game: {
-    id: "game",
-    caption: "Game"
-  },
+  }, 
   jest: {
     id: "jest",
     caption: "Jest"
-  },
-  gameTournament: {
-    id: "gameTournament",
-    caption: "Game Tournament"
-  },
+  },  
   creator: {
     id: "creator",
     caption: "Creator"
@@ -523,10 +515,6 @@ export class PathsService {
           throw new Error("Missing any of following questions");
         }
         break;
-      case ACTIVITY_TYPES.game.id:
-        break;
-      case ACTIVITY_TYPES.gameTournament.id:
-        break;
       case ACTIVITY_TYPES.jest.id:
         if (!problemInfo.githubURL) throw new Error("Missing GithubURL");
         if (!problemInfo.files) throw new Error("Missing Files");
@@ -948,19 +936,20 @@ export class PathsService {
             (pathProblem.problemId || pathProblem.id)
         ) {
           let isCompleted = 1;
+          console.log("In Submit Solution")
           switch (pathProblem.type) {
             // case ACTIVITY_TYPES.codeCombat.id:
             // case ACTIVITY_TYPES.codeCombatNumber.id:
             // case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
-            case ACTIVITY_TYPES.game.id:
+            //case ACTIVITY_TYPES.game.id:
             case ACTIVITY_TYPES.jest.id:
             case ACTIVITY_TYPES.codeCombat.id:
             case ACTIVITY_TYPES.multipleQuestion.id:
             case ACTIVITY_TYPES.text.id:
             case ACTIVITY_TYPES.youtube.id:
-              if (ACTIVITY_TYPES.game.id === pathProblem.type) {
+              /*if (ACTIVITY_TYPES.game.id === pathProblem.type) {
                 isCompleted = solution.result === "WIN" ? 1 : 0;
-              }
+              }*/
               if (ACTIVITY_TYPES.multipleQuestion.id === pathProblem.type) {
                 isCompleted = +pathProblem.options[solution.id].correct;
               }
@@ -996,8 +985,7 @@ export class PathsService {
               });
           case ACTIVITY_TYPES.text.id:
           case ACTIVITY_TYPES.profile.id:
-          case ACTIVITY_TYPES.youtube.id:
-          case ACTIVITY_TYPES.game.id:
+          case ACTIVITY_TYPES.youtube.id:          
           case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
           case ACTIVITY_TYPES.jupyterLocal.id:
             return firebase
@@ -1564,6 +1552,7 @@ export class PathsService {
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
     // Added code to save to firestore
+    
     firestore_db
       .collection("analytics")
       .doc("activityAnalytics")
