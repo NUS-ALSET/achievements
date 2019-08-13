@@ -9,8 +9,8 @@ const ACTIVITY_TYPES = {
   codeCombat: "CodeCombat Activities",
   jupyter: "Colaboratory Notebook Activities",
   jupyterInline: "Jupyter Notebook Activities",
-  youtube: "YouTube Video Activities",
-  game: "Game Activities"
+  youtube: "YouTube Video Activities"
+ // game: "Game Activities"
 };
 
 exports.handler = userKey =>
@@ -80,8 +80,8 @@ exports.handler = userKey =>
           codeCombat: true,
           jupyter: true,
           jupyterInline: true,
-          youtube: true,
-          game: true
+          youtube: true
+          //game: true
         };
 
         for (const data of pathActivitiesData) {

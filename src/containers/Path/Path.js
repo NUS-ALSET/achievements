@@ -62,8 +62,8 @@ import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
-import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog";
-import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
+//import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog";
+//import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
 import { problemSolutionSubmitRequest, setProblemOpenTime } from "../Activity/actions";
@@ -406,21 +406,7 @@ export class Path extends React.Component {
           removeFile={removeFile}
           taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
-        <AddGameSolutionDialog
-          botsQuantity={this.state.botsQuantity}
-          onClose={onCloseDialog}
-          onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.game.id}Solution`}
-          problem={ui.dialog && ui.dialog.value}
-          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
-        />
-        <AddGameTournamentSolutionDialog
-          onClose={onCloseDialog}
-          onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.gameTournament.id}Solution`}
-          problem={ui.dialog && ui.dialog.value}
-          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
-        />
+       
         <AddCreatorSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
