@@ -985,8 +985,7 @@ export class PathsService {
               });
           case ACTIVITY_TYPES.text.id:
           case ACTIVITY_TYPES.profile.id:
-          case ACTIVITY_TYPES.youtube.id:
-          //case ACTIVITY_TYPES.game.id:
+          case ACTIVITY_TYPES.youtube.id:          
           case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
           case ACTIVITY_TYPES.jupyterLocal.id:
             return firebase
