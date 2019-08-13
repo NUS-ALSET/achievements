@@ -687,8 +687,7 @@ export class PathsService {
                 pathProblem.type,
                 0,
                 problemOpenTime.openTime,
-                new Date().getTime(),
-                pathProblem.score||""
+                new Date().getTime()
               )
             );
             throw new Error("Not correct answer");
@@ -961,8 +960,7 @@ export class PathsService {
                   pathProblem.type,
                   isCompleted,
                   problemOpenTime.openTime,
-                  new Date().getTime(),
-                  pathProblem.score||""
+                  new Date().getTime()
                 )
               );
               return;
@@ -1555,9 +1553,7 @@ export class PathsService {
   saveAttemptedSolution(uid, payload) {
     payload.userKey = uid;
     // Added code to save to firestore
-    console.log("In saveAttemptedSolution")
-    console.log(payload)
-    payload.score="0.0"
+    
     firestore_db
       .collection("analytics")
       .doc("activityAnalytics")
@@ -1569,8 +1565,7 @@ export class PathsService {
         open: payload.open,
         time: payload.time,
         userKey: payload.userKey,
-        pathKey: payload.pathKey,
-        score:payload.score||"0.1"
+        pathKey: payload.pathKey
       });
 
     return firebase
