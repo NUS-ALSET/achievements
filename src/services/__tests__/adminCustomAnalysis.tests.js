@@ -46,4 +46,58 @@ describe("Admin Custom Analysis service tests", () => {
       )
     ).toEqual({ type: "cloudFunction" });
   });
+
+  it("should get admin status", async () => {
+    firebase.refStub.withArgs("/admins/-admintestUser").returns({
+      once: () =>
+        Promise.resolve({
+          val() {
+            return true;
+          }
+        })
+    });
+
+    firebase.refStub.withArgs("/admins/-nonadmintestUser").returns({
+      once: () =>
+        Promise.resolve({
+          val() {
+            return false;
+          }
+        })
+    });
+
+    return await (adminCustomAnalysisService
+      .checkAdminStatus("-admintestUser")
+      .then(result => expect(result).toBe(true)) &&
+      adminCustomAnalysisService
+        .checkAdminStatus("-nonadmintestUser")
+        .then(result => expect(result).toBe(false)));
+  });
+
+  it("should check query options", () => {
+    expect(
+      adminCustomAnalysisService.checkOptions(
+        ["option1", "option2"],
+        ["option1"]
+      )
+    ).toBe(true);
+    expect(
+      adminCustomAnalysisService.checkOptions(
+        ["option1", "option2"],
+        ["option3"]
+      )
+    ).toBe(false);
+    expect(
+      adminCustomAnalysisService.checkOptions(
+        ["option1", "option2", "option3"],
+        ["option1", "option2"]
+      )
+    ).toBe(true);
+    expect(
+      adminCustomAnalysisService.checkOptions(
+        ["option1", "option2", "option3"],
+        ["option1", "option4"]
+      )
+    ).toBe(false);
+  });
 });
