@@ -91,12 +91,8 @@ const getActivitySelector = problem => {
       return "Advanced Activity";
     case ACTIVITY_TYPES.youtube.id:
       return "YouTube Video Activity";
-    case ACTIVITY_TYPES.game.id:
-      return "Game Activity";
     case ACTIVITY_TYPES.jest.id:
       return "Jest Activity";
-    case ACTIVITY_TYPES.gameTournament.id:
-      return "Tournament Activity";
     case ACTIVITY_TYPES.creator.id:
       return `Create ${
         (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
