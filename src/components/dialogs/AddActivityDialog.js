@@ -47,7 +47,7 @@ import CheckIcon from "@material-ui/icons/Check";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Fab from "@material-ui/core/Fab";
 
-import { GameActivity, TournamentActivity } from "../AddActivitiesForm/";
+//import { GameActivity, TournamentActivity } from "../AddActivitiesForm/";
 
 import { ACTIVITY_TYPES, YOUTUBE_QUESTIONS, CodeCombat_Multiplayer_Data, JEST_GIT_MAP } from "../../services/paths";
 import { APP_SETTING } from "../../achievementsApp/config";
@@ -62,14 +62,14 @@ import MultipleQuestionsForm from "../forms/MultipleQuestionsForm";
 
 const DEFAULT_COUNT = 2;
 const MAX_CELLS = 15;
-const gameDefaultData = {
+/*const gameDefaultData = {
   game: "passenger-picker",
   scoreToWin: 10,
   gameTime: 120,
   unitsPerSide: 1,
   levelsToWin: 1,
   playMode: "manual control"
-};
+};*/
 
 const styles = () => ({
   link: {
@@ -629,8 +629,8 @@ class AddActivityDialog extends React.PureComponent {
             </FormControl>
           </Fragment>
         );
-      case ACTIVITY_TYPES.game.id:
-        return <GameActivity activity={activity} onFieldChange={this.onFieldChange} />;
+     /* case ACTIVITY_TYPES.game.id:
+        return <GameActivity activity={activity} onFieldChange={this.onFieldChange} />;*/
       case ACTIVITY_TYPES.jest.id:
         return (
           <Fragment>
@@ -733,8 +733,8 @@ class AddActivityDialog extends React.PureComponent {
             )}
           </Fragment>
         );
-      case ACTIVITY_TYPES.gameTournament.id:
-        return <TournamentActivity activity={activity} onFieldChange={this.onFieldChange} />;
+    /*  case ACTIVITY_TYPES.gameTournament.id:
+        return <TournamentActivity activity={activity} onFieldChange={this.onFieldChange} />;*/
       case ACTIVITY_TYPES.creator.id:
       case ACTIVITY_TYPES.educator.id:
         return (
@@ -856,9 +856,9 @@ class AddActivityDialog extends React.PureComponent {
         frozen: 1
       };
     }
-    if (field === "type" && value === "game") {
+   /* if (field === "type" && value === "game") {
       state = { ...gameDefaultData };
-    }
+    }*/
     if (field === "level" && this.state.type === ACTIVITY_TYPES.codeCombat.id) {
       state = {
         name: APP_SETTING.CodeCombatLevels[value].name,
