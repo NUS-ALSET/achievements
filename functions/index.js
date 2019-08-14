@@ -27,10 +27,6 @@ const runCustomAnalyis = require("./src/runCustomAnalysis");
 const fetchNotebookFromGitTrigger = require("./src/fetchNotebookFromGit");
 
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
-const {
-  addDestination,
-  updateDestinationSkills
-} = require("./src/destinationHandler");
 
 //  dev-db is paid account now
 // const profilesRefreshApproach =
@@ -241,33 +237,6 @@ exports.handleUserAuth = functions.database
   .onWrite((snap, context) =>
     updateUserRecommendations.handler(context.params.userKey)
   );
-
-exports.addActivityDestination = functions.database
-  .ref("/activities/{activityId}")
-  .onCreate((snapshot, context) => {
-    const { activityId } = context.params;
-    const activity = snapshot.val();
-    const acceptedAcyivitiesTypes = ["jupyter", "jupyterInline"];
-    if (acceptedAcyivitiesTypes.includes(activity.type)) {
-      return addDestination(activity.name, activity.owner, activityId);
-    }
-    return Promise.resolve();
-  });
-
-exports.addPathDestination = functions.database
-  .ref("/paths/{pathId}")
-  .onCreate((snapshot, context) => {
-    const { pathId } = context.params;
-    const path = snapshot.val();
-    return addDestination(path.name, path.owner, pathId, true);
-  });
-
-exports.updateDestinationSkills = functions.database
-  .ref("activityExampleSolutions/{activityId}")
-  .onWrite((change, context) => {
-    const { activityId } = context.params;
-    return updateDestinationSkills(activityId, change.after.val());
-  });
 
 exports.cohortRecalculate = functions.database
   .ref("/cohortRecalculateQueue/{cohortKey}/{taskKey}")

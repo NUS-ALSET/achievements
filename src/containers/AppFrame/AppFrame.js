@@ -29,9 +29,7 @@ import Courses from "../Courses/Courses";
 import Path from "../Path/Path";
 import Paths from "../Paths/Paths";
 import Contribute from "../Contribute/Contribute";
-import AllDestinations from "../Destinations/AllDestinations";
-import MyDestinations from "../Destinations/MyDestinations";
-import ViewDestination from "../Destinations/ViewDestination";
+
 import MyLearning from "../MyLearning/MyLearning";
 // HomeV2 to test the kyGUI for Home Recommendation
 import HomeV2 from "../HomeV2/HomeV2";
@@ -58,18 +56,20 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
-
+/*import AllDestinations from "../Destinations/AllDestinations";
+import MyDestinations from "../Destinations/MyDestinations";
+import ViewDestination from "../Destinations/ViewDestination";
 // Idea lab for trial
-//import CRUDdemo from "../IdeaLab/CRUDdemo";
-//import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
-//import CohortAnalytics from "../IdeaLab/CohortAnalytics";
-//import Brenda from "../IdeaLab/Brenda/PathDashboard";
-//import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
-//import PathAnalytics from "../IdeaLab/pathAnalytics";
-//import ZiYun from "../IdeaLab/ZiYun/ZiYun";
-//import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
-//import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
-//import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
+import CRUDdemo from "../IdeaLab/CRUDdemo";
+import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
+import CohortAnalytics from "../IdeaLab/CohortAnalytics";
+import Brenda from "../IdeaLab/Brenda/PathDashboard";
+import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
+import PathAnalytics from "../IdeaLab/pathAnalytics";
+import ZiYun from "../IdeaLab/ZiYun/ZiYun";
+import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
+import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
+import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";*/
 import ActivitySolutions from "../ActivitySolutions/ActivitySolutions";
 import MockJourneys from "../Journeys/MockJourneys";
 
@@ -296,10 +296,11 @@ class AppFrame extends React.Component {
                 <Route component={Paths} exact path="/paths" />
                 <Route component={Path} exact path="/paths/:pathId" />
                 
-                <Route component={AllDestinations} exact path="/destinations" />
-                <Route component={MyDestinations} exact path="/my-destinations" />
+                
                 
                 {/*
+                <Route component={AllDestinations} exact path="/destinations" />
+                <Route component={MyDestinations} exact path="/my-destinations" />
                 <Route component={Brenda} exact path="/brenda" />
                 <Route component={ZiYun} exact path="/ziyun" />
                 <Route component={CRUDdemo} exact path="/CRUDdemo" />
@@ -314,8 +315,9 @@ class AppFrame extends React.Component {
                   exact
                   path="/pythonSkillsUsedToCompleteActivity/:problemId"
                 />
-                <Route component={pathAnalyticsDemo} exact path="/pathAnalyticsDemo" />*/}
-                <Route component={ViewDestination} exact path="/destinations/:destinationId" />
+                <Route component={pathAnalyticsDemo} exact path="/pathAnalyticsDemo" />
+                <Route component={ViewDestination} exact path="/destinations/:destinationId" />*/}
+                
                 <Route component={Activity} exact path="/paths/:pathId/activities/:problemId" />
                 <Route component={ActivitySolutions} exact path="/activitySolutions/:problemId" />
                 <Route component={Account} exact path="/(account|profile)/:accountId" />
