@@ -14,7 +14,7 @@ describe("<PathsList />", () => {
     const props = {
       dispatch: mockDispatch,
       header: "",
-      paths: {},
+      paths: { a: "a", b: "b", c: "c" },
       selectedPathId: "",
       userId: ""
     };

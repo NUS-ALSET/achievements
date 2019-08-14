@@ -140,9 +140,7 @@ export default compose(
   firebaseConnect(ownProps => {
     return [
       {
-        path: `/completedActivities/${ownProps.userId}/${ownProps.pathId}/${
-          ownProps.activityId
-        }`
+        path: `/completedActivities/${ownProps.userId}/${ownProps.pathId}/${ownProps.activityId}`
       }
     ];
   }),
