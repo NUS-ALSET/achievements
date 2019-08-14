@@ -11,8 +11,7 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/NUS-ALSET/achievements.svg?columns=all)](https://waffle.io/NUS-ALSET/achievements)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/NUS-ALSET/achievements.svg)](http://isitmaintained.com/project/NUS-ALSET/achievements "Average time to resolve an issue")
 [![Percentage of issues still open](http://isitmaintained.com/badge/open/NUS-ALSET/achievements.svg)](http://isitmaintained.com/project/NUS-ALSET/achievements "Percentage of issues still open")
-[![DeepScan](https://deepscan.io/api/teams/2993/projects/4465/branches/36055/badge/grade.svg)]  
-(https://deepscan.io/dashboard/#view=project&tid=2993&pid=4465&bid=36055)
+[![DeepScan](https://deepscan.io/api/teams/2993/projects/4465/branches/36055/badge/grade.svg)](https://deepscan.io/dashboard/#view=project&tid=2993&pid=4465&bid=36055)
 
 
 **An integrated web application for learning and teaching programming:computer:**
