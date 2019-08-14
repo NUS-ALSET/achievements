@@ -9,7 +9,7 @@ import { assignments } from "../containers/Assignments/reducer";
 import { cohorts } from "../containers/Cohorts/reducer";
 import { cohort } from "../containers/Cohort/reducer";
 import { courses } from "../containers/Courses/reducer";
-import { CRUDdemo } from "../containers/IdeaLab/reducer";
+//import { CRUDdemo } from "../containers/IdeaLab/reducer";
 import { journeys } from "../containers/Journeys/reducer";
 import { message } from "../containers/Message/reducer";
 import { path } from "../containers/Path/reducer";
@@ -31,7 +31,7 @@ export default combineReducers({
   cohort,
   courses,
   customAnalysis,
-  CRUDdemo,
+  //CRUDdemo,
   firebase,
   firestore,
   journeys,
