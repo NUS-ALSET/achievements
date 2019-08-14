@@ -300,7 +300,7 @@ export class CustomAnalysisService {
             assignments: Object.keys(assignments).map(assignmentKey => ({
               id: assignmentKey,
               name: assignments[assignmentKey].name,
-              type: assignments[assignmentKey].type
+              type: assignments[assignmentKey].questionType
             }))
           }))
       )
