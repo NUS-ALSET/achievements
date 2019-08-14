@@ -60,16 +60,16 @@ import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
 
 // Idea lab for trial
-import CRUDdemo from "../IdeaLab/CRUDdemo";
-import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
-import CohortAnalytics from "../IdeaLab/CohortAnalytics";
-import Brenda from "../IdeaLab/Brenda/PathDashboard";
-import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
-import PathAnalytics from "../IdeaLab/pathAnalytics";
-import ZiYun from "../IdeaLab/ZiYun/ZiYun";
-import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
-import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
-import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
+//import CRUDdemo from "../IdeaLab/CRUDdemo";
+//import AdditionalContentRequest from "../IdeaLab/AdditionalContentRequest";
+//import CohortAnalytics from "../IdeaLab/CohortAnalytics";
+//import Brenda from "../IdeaLab/Brenda/PathDashboard";
+//import pathAnalyticsDemo from "../IdeaLab/Ben/pathAnalyticsDemo";
+//import PathAnalytics from "../IdeaLab/pathAnalytics";
+//import ZiYun from "../IdeaLab/ZiYun/ZiYun";
+//import userDemonstratedPythonSkills from "../IdeaLab/userDemonstratedPythonSkills/userDemonstratedPythonSkills";
+//import pythonSkillsUsedToCompleteActivity from "../IdeaLab/pythonSkillsUsedToCompleteActivity/pythonSkillsUsedToCompleteActivity";
+//import ActivitiesAnalytics from "../IdeaLab/ActivitiesAnalytics";
 import ActivitySolutions from "../ActivitySolutions/ActivitySolutions";
 import MockJourneys from "../Journeys/MockJourneys";
 
@@ -295,9 +295,12 @@ class AppFrame extends React.Component {
                 <Route component={Cohort} exact path="/cohorts/:cohortId" />
                 <Route component={Paths} exact path="/paths" />
                 <Route component={Path} exact path="/paths/:pathId" />
-                <Route component={Brenda} exact path="/brenda" />
+                
                 <Route component={AllDestinations} exact path="/destinations" />
                 <Route component={MyDestinations} exact path="/my-destinations" />
+                
+                {/*
+                <Route component={Brenda} exact path="/brenda" />
                 <Route component={ZiYun} exact path="/ziyun" />
                 <Route component={CRUDdemo} exact path="/CRUDdemo" />
                 <Route component={AdditionalContentRequest} exact path="/AdditionalContentRequest" />
@@ -311,7 +314,7 @@ class AppFrame extends React.Component {
                   exact
                   path="/pythonSkillsUsedToCompleteActivity/:problemId"
                 />
-                <Route component={pathAnalyticsDemo} exact path="/pathAnalyticsDemo" />
+                <Route component={pathAnalyticsDemo} exact path="/pathAnalyticsDemo" />*/}
                 <Route component={ViewDestination} exact path="/destinations/:destinationId" />
                 <Route component={Activity} exact path="/paths/:pathId/activities/:problemId" />
                 <Route component={ActivitySolutions} exact path="/activitySolutions/:problemId" />
