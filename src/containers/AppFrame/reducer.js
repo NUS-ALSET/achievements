@@ -9,7 +9,8 @@ import {
 export const initialState = {
   dropdownAnchorElId: false,
   mainDrawerOpen: false,
-  dynamicPathTitle: ""
+  dynamicPathTitle: "",
+  promocode:""
 };
 
 export const appFrame = (state = initialState, action) => {
