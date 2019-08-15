@@ -6,8 +6,7 @@ describe("AppFrame reducer", () => {
     expect(reducer(undefined, {})).toEqual({
       dropdownAnchorElId: false,
       mainDrawerOpen: false,
-      dynamicPathTitle: "",
-      promocode:""
+      dynamicPathTitle: ""
     });
   });
 
@@ -92,17 +91,5 @@ describe("AppFrame reducer", () => {
       ...initialState,
       dynamicPathTitle: "getting the title"
     });
-  }); 
-  it("can save promo code", () => {
-    expect(
-      reducer(undefined, {
-        type: actions.SAVE_PROMO_CODE,
-        code: "abc"
-      })
-    ).toEqual({
-      ...initialState,
-      promocode: "abc"
-    });
   });
-
 });
