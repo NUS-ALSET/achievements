@@ -9,6 +9,14 @@ describe("AppFrame reducer", () => {
       dynamicPathTitle: ""
     });
   });
+  it("should save promocode to state", () => {
+    expect(
+      reducer(undefined, {
+        type: actions.SAVE_PROMO_CODE,
+        code: "dummy_promo_code"
+      })
+    ).toEqual({ ...initialState, promocode: "dummy_promo_code" });
+  });
 
   it("can activate dropdown menu when open login menu", () => {
     expect(
