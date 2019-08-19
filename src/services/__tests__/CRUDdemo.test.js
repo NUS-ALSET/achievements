@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import firebase from "firebase/app";
-import sinon from "sinon";
 import { _CRUDdemoService } from "../CRUDdemo";
 
 describe("CRUD demo service tests", () => {
