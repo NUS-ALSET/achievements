@@ -1233,7 +1233,11 @@ class MyLearning extends React.Component {
         .orderByChild(uid)
         .equalTo(true)
         .once("value")
-        .then(snap => Object.keys(snap.val()))
+        .then(snap => {
+          if (snap.val()) {
+            return Object.keys(snap.val());
+          } else return [];
+        })
     ])
       .then(([myPaths, assistantPaths]) => {
         return myPaths.concat(assistantPaths);
