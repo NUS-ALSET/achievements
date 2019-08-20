@@ -51,7 +51,7 @@ class FirebaseService {
     return firebase
       .database()
       .ref(`/${this.collectionName}/responses/${taskKey}`)
-      .remove()
+      .remove();
   }
 
   deleteTask(taskKey) {
@@ -62,10 +62,13 @@ class FirebaseService {
   }
 
   addTask(taskKey, data) {
-    return firebase.ref(`/${this.collectionName}/tasks/${taskKey}`).set({
-      taskKey,
-      ...data
-    });
+    return firebase
+      .database()
+      .ref(`/${this.collectionName}/tasks/${taskKey}`)
+      .set({
+        taskKey,
+        ...data
+      });
   }
 
   showNotification(message) {
@@ -81,7 +84,10 @@ class FirebaseService {
     this.dispatch(notificationHide());
     return new Promise((resolve, reject) => {
       this.showNotification("Start");
-      const taskKey = firebase.ref(`/${this.collectionName}/tasks`).push().key;
+      const taskKey = firebase
+        .database()
+        .ref(`/${this.collectionName}/tasks`)
+        .push().key;
       firebase
         .database()
         .ref(`/${this.collectionName}/responses/${taskKey}`)
