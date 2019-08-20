@@ -2,8 +2,6 @@ import React from "react";
 import { createShallow } from "@material-ui/core/test-utils";
 import sinon from "sinon";
 import RecommendationCard from "../RecommendationCard";
-import { isThisHour } from "date-fns";
-import { ExpansionPanelActions } from "@material-ui/core";
 
 describe("<RecommendationCard />", () => {
   let shallow = createShallow();
@@ -47,11 +45,3 @@ describe("<RecommendationCard />", () => {
     expect(testVidId).toEqual("RdZSrD4DUvs");
   });
 });
-
-// activity,
-// classes,
-// description,
-// pathId,
-// type,
-// subHeading,
-// video
