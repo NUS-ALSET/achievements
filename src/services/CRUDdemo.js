@@ -5,10 +5,10 @@ class CRUDdemoService {
     if (!firebase.auth()) {
       throw new Error("Not logged in");
     }
-    firebase.set(
-      `/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`,
-      value
-    );
+    firebase
+      .database()
+      .ref(`/analytics/CRUDdemo/${firebase.auth().currentUser.uid}/`)
+      .set(value);
     /* return firebase
     .database()
     .ref(`/analytics/CRUDdemo`)
