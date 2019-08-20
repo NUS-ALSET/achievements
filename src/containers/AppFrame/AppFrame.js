@@ -56,7 +56,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import withStyles from "@material-ui/core/styles/withStyles";
-/*import AllDestinations from "../Destinations/AllDestinations";
+/* import AllDestinations from "../Destinations/AllDestinations";
 import MyDestinations from "../Destinations/MyDestinations";
 import ViewDestination from "../Destinations/ViewDestination";
 // Idea lab for trial
@@ -151,7 +151,7 @@ const styles = theme => ({
   }
 });
 
-class AppFrame extends React.Component {
+export class AppFrame extends React.Component {
   static propTypes = {
     anchorElId: PropTypes.any,
     classes: PropTypes.object.isRequired,
@@ -179,7 +179,9 @@ class AppFrame extends React.Component {
   };
 
   componentDidMount() {
-    this.props.dispatch(getDynamicPathtitle(this.props.history.location.pathname));
+    this.props.dispatch(
+      getDynamicPathtitle(this.props.history.location.pathname)
+    );
     const promoCode = this.getPromoCode();
     if (promoCode) {
       this.props.dispatch(savePromoCode(promoCode));
@@ -188,7 +190,9 @@ class AppFrame extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.routerPathname !== this.props.routerPathname) {
-      this.props.dispatch(getDynamicPathtitle(this.props.history.location.pathname));
+      this.props.dispatch(
+        getDynamicPathtitle(this.props.history.location.pathname)
+      );
     }
   }
 
@@ -223,14 +227,27 @@ class AppFrame extends React.Component {
       <Router history={history}>
         <div className={classes.root}>
           <div className={classes.appFrame}>
-            <AppBar className={classes.appBar} color="primary" onClose={this.handleDrawerClose}>
+            <AppBar
+              className={classes.appBar}
+              color="primary"
+              onClose={this.handleDrawerClose}
+            >
               <Toolbar>
                 <Hidden implementation="css" lgUp>
-                  <IconButton aria-label="Open Drawer" color="inherit" onClick={this.handleDrawerToggle}>
+                  <IconButton
+                    aria-label="Open Drawer"
+                    color="inherit"
+                    onClick={this.handleDrawerToggle}
+                  >
                     <MenuIcon />
                   </IconButton>
                 </Hidden>
-                <Typography className={classes.appBarTitle} color="inherit" noWrap variant="h6">
+                <Typography
+                  className={classes.appBarTitle}
+                  color="inherit"
+                  noWrap
+                  variant="h6"
+                >
                   {this.props.dynamicPathTitle}
                 </Typography>
 
@@ -247,7 +264,10 @@ class AppFrame extends React.Component {
                       <AccountCircle />
                     </IconButton>
                     <Menu
-                      anchorEl={(anchorElId && document.getElementById(anchorElId)) || document.body}
+                      anchorEl={
+                        (anchorElId && document.getElementById(anchorElId)) ||
+                        document.body
+                      }
                       id="menuRight"
                       onClose={this.handleMenuClose}
                       open={!!anchorElId}
@@ -283,21 +303,25 @@ class AppFrame extends React.Component {
                   <Route
                     exact
                     path="(/|/home)"
-                    render={props => <HomePage {...props} loginHandler={this.handleLogin} />}
+                    render={props => (
+                      <HomePage {...props} loginHandler={this.handleLogin} />
+                    )}
                   />
                 )}
                 {userId && <Route component={HomeV2} exact path="(/|/home)" />}
                 <Route component={HomeV3} exact path="(/|/homev3)" />
                 <Route component={Admin} exact path="/admin" />
                 <Route component={Courses} exact path="/courses" />
-                <Route component={Assignments} exact path="/courses/:courseId" />
+                <Route
+                  component={Assignments}
+                  exact
+                  path="/courses/:courseId"
+                />
                 <Route component={Cohorts} exact path="/cohorts" />
                 <Route component={Cohort} exact path="/cohorts/:cohortId" />
                 <Route component={Paths} exact path="/paths" />
                 <Route component={Path} exact path="/paths/:pathId" />
-                
-                
-                
+
                 {/*
                 <Route component={AllDestinations} exact path="/destinations" />
                 <Route component={MyDestinations} exact path="/my-destinations" />
@@ -317,14 +341,30 @@ class AppFrame extends React.Component {
                 />
                 <Route component={pathAnalyticsDemo} exact path="/pathAnalyticsDemo" />
                 <Route component={ViewDestination} exact path="/destinations/:destinationId" />*/}
-                
-                <Route component={Activity} exact path="/paths/:pathId/activities/:problemId" />
-                <Route component={ActivitySolutions} exact path="/activitySolutions/:problemId" />
-                <Route component={Account} exact path="/(account|profile)/:accountId" />
+
+                <Route
+                  component={Activity}
+                  exact
+                  path="/paths/:pathId/activities/:problemId"
+                />
+                <Route
+                  component={ActivitySolutions}
+                  exact
+                  path="/activitySolutions/:problemId"
+                />
+                <Route
+                  component={Account}
+                  exact
+                  path="/(account|profile)/:accountId"
+                />
                 <Route component={Contribute} exact path="/contribute" />
                 <Route component={Tasks} exact path="/advanced" />
                 <Route component={Task} exact path="/advanced/:taskId" />
-                <Route component={CustomActivity} exact path="/customactivity" />
+                <Route
+                  component={CustomActivity}
+                  exact
+                  path="/customactivity"
+                />
                 <Route component={Journeys} exact path="/journeys" />
                 <Route
                   component={CustomAnalysis}
@@ -337,7 +377,11 @@ class AppFrame extends React.Component {
                   path="/adminCustomAnalysis"
                 />
                 <Route component={MockJourneys} exact path="/mock-journeys" />
-                <Route render={routeProps => <MyLearning {...routeProps} {...userId} />} />
+                <Route
+                  render={routeProps => (
+                    <MyLearning {...routeProps} {...userId} />
+                  )}
+                />
                 <Route component={NoMatch} />
               </Switch>
             </main>
