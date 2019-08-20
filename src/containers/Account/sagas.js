@@ -249,7 +249,7 @@ function* profileUpdateDataRequestHandler(action) {
   }
 }
 
-function* displayNameUpdateRequestHandler(action) {
+export function* displayNameUpdateRequestHandler(action) {
   const uid = yield select(state => state.firebase.auth.uid);
 
   try {
@@ -257,7 +257,7 @@ function* displayNameUpdateRequestHandler(action) {
     yield put(displayNameUpdateSuccess());
     yield put(displayNameEditToggle(false));
   } catch (err) {
-    yield put(displayNameUpdateFail(err.message));
+    yield put(displayNameUpdateFail(err.message)); 
     yield put(notificationShow(err.message));
   }
 }
