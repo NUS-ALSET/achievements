@@ -936,7 +936,6 @@ export class PathsService {
             (pathProblem.problemId || pathProblem.id)
         ) {
           let isCompleted = 1;
-          console.log("In Submit Solution")
           switch (pathProblem.type) {
             // case ACTIVITY_TYPES.codeCombat.id:
             // case ACTIVITY_TYPES.codeCombatNumber.id:
