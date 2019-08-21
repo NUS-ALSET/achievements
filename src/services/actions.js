@@ -145,7 +145,11 @@ export class ActionsService {
           if( actionDataJSON["payload"]["pathKey"]){          
             objIndItems.pathId=actionDataJSON["payload"]["pathKey"]
             }
+          if(actionDataJSON["payload"]["completed"]){          
+            objIndItems.isComplete=actionDataJSON["payload"]["completed"]
+            }
         }
+
         if(actionDataJSON["cohortId"]){          
           objIndItems.cohortId=actionDataJSON["cohortId"]
         }      
