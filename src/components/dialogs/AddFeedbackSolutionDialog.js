@@ -50,8 +50,6 @@ class AddFeedbackSolutionDialog extends React.PureComponent {
 
   onChangeHandler = event => {
     this.setState({ ...this.state, solution: event.target.value });
-    console.log(event.target.value);
-    console.log(this.props.taskId);
   };
   render() {
     const { onClose, onCommit, open, taskId } = this.props;
@@ -97,7 +95,7 @@ class AddFeedbackSolutionDialog extends React.PureComponent {
             color="primary"
             disabled={!this.state.solution}
             onClick={() => {
-              onCommit(this.state.solution, taskId);
+              onCommit(this.state.solution.trim(), taskId);
             }}
             variant="contained"
           >
