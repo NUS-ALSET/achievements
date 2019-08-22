@@ -10,12 +10,8 @@ const getUserId = state => state.firebase.auth.uid;
 
 const getCodeCombatProfile = state =>
   state.firebase.data.userAchievements &&
-  state.firebase.data.userAchievements[
-    state.path.ui.inspectedUser || state.firebase.auth.uid
-  ] &&
-  state.firebase.data.userAchievements[
-    state.path.ui.inspectedUser || state.firebase.auth.uid
-  ].CodeCombat;
+  state.firebase.data.userAchievements[state.path.ui.inspectedUser || state.firebase.auth.uid] &&
+  state.firebase.data.userAchievements[state.path.ui.inspectedUser || state.firebase.auth.uid].CodeCombat;
 
 const getPath = (state, ownProps) =>
   ownProps.match.params.pathId[0] === "-"
@@ -31,9 +27,7 @@ const getPath = (state, ownProps) =>
       };
 
 const getPathAssistants = (state, ownProps) =>
-  (state.firebase.data.pathAssistants &&
-    state.firebase.data.pathAssistants[ownProps.match.params.pathId]) ||
-  {};
+  (state.firebase.data.pathAssistants && state.firebase.data.pathAssistants[ownProps.match.params.pathId]) || {};
 
 const getJoinedPaths = state => state.paths.joinedPaths || {};
 
@@ -44,9 +38,7 @@ const getActivities = (state, ownProps) => {
 };
 
 const getActivitiesSolutions = state =>
-  (state.firebase.data.completedActivities || {})[
-    state.path.ui.inspectedUser || state.firebase.auth.uid
-  ] || {};
+  (state.firebase.data.completedActivities || {})[state.path.ui.inspectedUser || state.firebase.auth.uid] || {};
 
 export const pathStatusSelector = createSelector(
   getUserId,
@@ -71,16 +63,16 @@ const getActivitySelector = problem => {
   switch (problem.type) {
     case ACTIVITY_TYPES.text.id:
       return "Text Activity";
+    case ACTIVITY_TYPES.feedback.id:
+      return "Feedback Activity";
     case ACTIVITY_TYPES.multipleQuestion.id:
       return "Multiple Question Activity";
     case ACTIVITY_TYPES.profile.id:
       return `Fetch ${problem.service || "CodeCombat"} profile`;
     case ACTIVITY_TYPES.codeCombat.id:
-      return `Finish "${problem.level}" level at ${problem.service ||
-        "CodeCombat"}`;
+      return `Finish "${problem.level}" level at ${problem.service || "CodeCombat"}`;
     case ACTIVITY_TYPES.codeCombatNumber.id:
-      return `Finish ${problem.count} levels at ${problem.service ||
-        "CodeCombat"}`;
+      return `Finish ${problem.count} levels at ${problem.service || "CodeCombat"}`;
     case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
       return `Finish "${problem.level}" level at CodeCombat`;
     case ACTIVITY_TYPES.jupyter.id:
@@ -94,13 +86,9 @@ const getActivitySelector = problem => {
     case ACTIVITY_TYPES.jest.id:
       return "Jest Activity";
     case ACTIVITY_TYPES.creator.id:
-      return `Create ${
-        (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
-      } Activity`;
+      return `Create ${(ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption} Activity`;
     case ACTIVITY_TYPES.educator.id:
-      return `Educate ${
-        (ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption
-      } Activity`;
+      return `Educate ${(ACTIVITY_TYPES[problem.targetType] || { caption: "" }).caption} Activity`;
 
     default:
       return "Usual activity";
@@ -121,9 +109,7 @@ export const pathActivitiesSelector = createSelector(
         solved: solutions[path.id] && solutions[path.id][id]
       }))
       .filter(problem => problem.path === path.id)
-      .sort((a, b) =>
-        a.orderIndex === b.orderIndex ? 0 : a.orderIndex < b.orderIndex ? -1 : 1
-      )
+      .sort((a, b) => (a.orderIndex === b.orderIndex ? 0 : a.orderIndex < b.orderIndex ? -1 : 1))
   })
 );
 
