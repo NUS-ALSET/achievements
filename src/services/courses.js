@@ -31,6 +31,10 @@ export const ASSIGNMENTS_TYPES = {
     id: "Text",
     caption: "Text"
   },
+  Feedback: {
+    id: "Feedback",
+    caption: "Feedback"
+  },
   Profile: {
     id: "Profile",
     caption: "Fetch Profile"
