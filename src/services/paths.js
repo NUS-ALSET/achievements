@@ -885,6 +885,7 @@ export class PathsService {
             case ACTIVITY_TYPES.codeCombat.id:
             case ACTIVITY_TYPES.multipleQuestion.id:
             case ACTIVITY_TYPES.text.id:
+            case ACTIVITY_TYPES.feedback.id:
             case ACTIVITY_TYPES.youtube.id:
               /*if (ACTIVITY_TYPES.game.id === pathProblem.type) {
                 isCompleted = solution.result === "WIN" ? 1 : 0;
@@ -923,6 +924,7 @@ export class PathsService {
                 }
               });
           case ACTIVITY_TYPES.text.id:
+          case ACTIVITY_TYPES.feedback.id:
           case ACTIVITY_TYPES.profile.id:
           case ACTIVITY_TYPES.youtube.id:
           case ACTIVITY_TYPES.codeCombatMultiPlayerLevel.id:
