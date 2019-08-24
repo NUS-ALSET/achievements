@@ -1,5 +1,5 @@
 import React from "react";
-import { createShallow, createMount } from "@material-ui/core/test-utils";
+import { createShallow } from "@material-ui/core/test-utils";
 import sinon from "sinon";
 import { RecommendationsListCard } from "../RecommendationsListCard";
 import AdbIcon from "@material-ui/icons/Adb";
