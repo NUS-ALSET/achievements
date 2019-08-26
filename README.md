@@ -22,8 +22,8 @@
 ## Documentations :blue_book:
 Feel free to check out our :sparkles: **[Wiki](https://github.com/NUS-ALSET/achievements/wiki)** for information and resources on both the app usage and development guide:
 - For teachers/students  
-  -[User Manual](https://github.com/NUS-ALSET/achievements/wiki/User-Manual)  
-  -[Custom Activity](http://bit.ly/customActivity_ALSET)
+  - [User Manual](https://github.com/NUS-ALSET/achievements/wiki/User-Manual)  
+  - [Custom Activity](http://bit.ly/customActivity_ALSET)
 - [Developer Guide](https://github.com/NUS-ALSET/achievements/wiki/Get-Started-With-Development) - For developers
 
 ## Contributing :gift:
