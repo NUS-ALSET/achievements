@@ -63,7 +63,7 @@ const styles = {
   }
 };
 
-class RecommendationsListCard extends React.PureComponent {
+export class RecommendationsListCard extends React.PureComponent {
   static propTypes = {
     classes: PropTypes.object,
     data: PropTypes.array.isRequired,
@@ -94,8 +94,8 @@ class RecommendationsListCard extends React.PureComponent {
         return "Jupyter Notebook";
       case "youtube":
         return "";
-     // case "game":
-       // return "React-Python Game";
+      // case "game":
+      // return "React-Python Game";
       case "NotebookWithNewSkills":
       case "NotebookWithUsedSkills":
         return "Python Skills";
