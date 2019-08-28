@@ -56,6 +56,15 @@ class PathsTable extends React.PureComponent {
                 Progress
               </TableCell>
             )}
+
+            <TableCell
+              style={{
+                // eslint-disable-next-line no-magic-numbers
+                width: 150
+              }}
+            >
+              Count
+            </TableCell>
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
@@ -85,8 +94,9 @@ class PathsTable extends React.PureComponent {
                       : path.owner === uid
                       ? "owner"
                       : "not joined"}
-                  </TableCell>
+                  </TableCell>                  
                 )}
+                <TableCell>{path.attempts}</TableCell>
                 <TableCell>
                   <Link className={classes.link} to={`/paths/${path.id}`}>
                     <IconButton>

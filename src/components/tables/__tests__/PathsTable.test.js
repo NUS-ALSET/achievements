@@ -33,7 +33,7 @@ describe("<PathsTable>", () => {
       />
     );
 
-    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(2);
+    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
   });
 
   it("should generate rows without throwing", () => {
@@ -61,7 +61,7 @@ describe("<PathsTable>", () => {
       />
     );
 
-    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(3);
+    expect(wrapper.find(TableHead).find(TableCell).length).toEqual(4);
     expect(wrapper.find(IconButton).length).toEqual(1);
   });
 
@@ -83,7 +83,7 @@ describe("<PathsTable>", () => {
         viewCreatedTab={true}
       />
     );
-    expect(wrapper.find(TableHead).find(TableRow).find(TableCell).length).toEqual(2);
+    expect(wrapper.find(TableHead).find(TableRow).find(TableCell).length).toEqual(3);
   });
 
   it("renders correctly when there are no paths", () => {

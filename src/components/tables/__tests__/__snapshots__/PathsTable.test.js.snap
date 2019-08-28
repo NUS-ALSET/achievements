@@ -27,6 +27,18 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           }
         }
       >
+        Count
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+        style={
+          Object {
+            "width": 150,
+          }
+        }
+      >
         Actions
       </th>
     </tr>
@@ -37,6 +49,10 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
     <tr
       className="MuiTableRow-root-4 MuiTableRow-hover-6"
     >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
       <td
         aria-sort={null}
         className="MuiTableCell-root-9 MuiTableCell-body-11"
@@ -144,6 +160,10 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
       <td
         aria-sort={null}
         className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
       >
         <a
           className="PathsTable-link-1"
@@ -237,6 +257,10 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
     <tr
       className="MuiTableRow-root-4 MuiTableRow-hover-6"
     >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
       <td
         aria-sort={null}
         className="MuiTableCell-root-9 MuiTableCell-body-11"
@@ -365,6 +389,18 @@ exports[`<PathsTable> renders correctly when there are no paths 1`] = `
           }
         }
       >
+        Count
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+        style={
+          Object {
+            "width": 150,
+          }
+        }
+      >
         Actions
       </th>
     </tr>
@@ -414,6 +450,18 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
           }
         }
       >
+        Count
+      </th>
+      <th
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-head-10"
+        scope="col"
+        style={
+          Object {
+            "width": 150,
+          }
+        }
+      >
         Actions
       </th>
     </tr>
@@ -424,6 +472,10 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
     <tr
       className="MuiTableRow-root-4 MuiTableRow-hover-6"
     >
+      <td
+        aria-sort={null}
+        className="MuiTableCell-root-9 MuiTableCell-body-11"
+      />
       <td
         aria-sort={null}
         className="MuiTableCell-root-9 MuiTableCell-body-11"

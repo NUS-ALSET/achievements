@@ -21,7 +21,7 @@ import {
   fetchUserData,
   inspectPathAsUser
 } from "./actions";
-import { firebaseConnect } from "react-redux-firebase";
+import { firebaseConnect, firestoreConnect } from "react-redux-firebase";
 import { notificationShow } from "../Root/actions";
 import { sagaInjector } from "../../services/saga";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
@@ -451,6 +451,7 @@ class Account extends React.PureComponent {
 sagaInjector.inject(sagas);
 
 const mapStateToProps = (state, ownProps) => ({
+  
   achievementsRefreshingInProgress:
     state.account.achievementsRefreshingInProgress,
   auth: state.firebase.auth,
@@ -498,7 +499,6 @@ const mapDispatchToProps = {
   profileUpdateDataRequest,
   fetchUserData
 };
-
 export default compose(
   withRouter,
   firebaseConnect((ownProps, store) => [
@@ -523,8 +523,19 @@ export default compose(
     "/thirdPartyServices"
   ]),
   withStyles(styles),
+  firestoreConnect((ownProps, store)=>[
+    {
+      path: "/path_statistics",
+      storeAs: "pathStats",
+      queryParams: ["orderByChild=endDate", "limitToLast=100"]
+    },
+  ]),
   connect(
     mapStateToProps,
     mapDispatchToProps
   )
+  
 )(Account);
+
+
+

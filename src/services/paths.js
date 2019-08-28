@@ -424,7 +424,7 @@ export class PathsService {
         if (!problemInfo.question) throw new Error("Missing question");
         break;
       case ACTIVITY_TYPES.feedback.id:
-        if (!problemInfo.question) throw new Error("Missing question");
+        //if (!problemInfo.question) throw new Error("Missing question");
         break;
       case ACTIVITY_TYPES.multipleQuestion.id:
         if (!(problemInfo.options && Object.keys(problemInfo.options).length)) {
