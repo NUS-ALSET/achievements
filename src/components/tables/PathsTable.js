@@ -8,8 +8,6 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import Table from "@material-ui/core/Table";
-import Menu from "@material-ui/core/Menu"
-import MenuItem from "@material-ui/core/MenuItem"
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
