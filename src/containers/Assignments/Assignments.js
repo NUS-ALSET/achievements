@@ -31,6 +31,7 @@ import { sagaInjector } from "../../services/saga";
 
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
+import AddFeedbackSolutionDialog from "../../components/dialogs/AddFeedbackSolutionDialog";
 import AssignmentsTable from "../../components/tables/AssignmentsTable";
 import Button from "@material-ui/core/Button";
 
@@ -143,7 +144,9 @@ class Assignments extends React.Component {
     const { course, ui, dispatch, pathProblem } = this.props;
 
     dispatch(
-      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value, { pathProblem })
+      assignmentSolutionRequest(course.id, ui.currentAssignment.id, value, {
+        pathProblem
+      })
     );
     // this.closeDialog();
   };
@@ -279,33 +282,34 @@ class Assignments extends React.Component {
       <Fragment>
         <Breadcrumbs
           action={
-            (currentUser && (
-              ui.currentTab===1 ? // Edit tab
-              [
-                {
-                  label: "Refresh",
-                  handler: this.refreshSolutions
-                },
-                {
-                  label: "Message",
-                  handler: this.toggleMessageModal
-                }
-              ]
-              : [
-                  {
-                    label: ui.showHiddenAssignments ? "Hide closed" : "Show closed",
-                    handler: this.toggleHiddenShow
-                  },
-                  {
-                    label: "Refresh",
-                    handler: this.refreshSolutions
-                  },
-                  {
-                    label: "Message",
-                    handler: this.toggleMessageModal
-                  }
-                ]
-            )) || [
+            (currentUser &&
+              (ui.currentTab === 1 // Edit tab
+                ? [
+                    {
+                      label: "Refresh",
+                      handler: this.refreshSolutions
+                    },
+                    {
+                      label: "Message",
+                      handler: this.toggleMessageModal
+                    }
+                  ]
+                : [
+                    {
+                      label: ui.showHiddenAssignments
+                        ? "Hide closed"
+                        : "Show closed",
+                      handler: this.toggleHiddenShow
+                    },
+                    {
+                      label: "Refresh",
+                      handler: this.refreshSolutions
+                    },
+                    {
+                      label: "Message",
+                      handler: this.toggleMessageModal
+                    }
+                  ])) || [
               {
                 label: "Message",
                 handler: this.toggleMessageModal
@@ -390,6 +394,16 @@ class Assignments extends React.Component {
           solution={ui && ui.dialog && ui.dialog.value}
           taskId={ui && ui.currentAssignment && ui.currentAssignment.id}
         />
+        <AddFeedbackSolutionDialog
+          onClose={this.closeDialog}
+          onCommit={this.commitTextSolution}
+          open={
+            ui && ui.dialog && ui.dialog.type === ASSIGNMENTS_TYPES.Feedback.id
+          }
+          options={ui && ui.dialog && ui.dialog.options}
+          solution={ui && ui.dialog && ui.dialog.value}
+          taskId={ui && ui.currentAssignment && ui.currentAssignment.id}
+        />
         <AddPathActivitySolutionDialog
           assignment={ui && ui.currentAssignment}
           dispatch={dispatch}
@@ -452,7 +466,7 @@ const mapStateToProps = (state, ownProps) => ({
   readOnly: (state.problem || {}).readOnly,
   fieldAutoUpdated: state.assignments.fieldAutoUpdated,
   isAdmin: state.account.isAdmin,
-  pathProblem : (state.problem || {}).pathProblem
+  pathProblem: (state.problem || {}).pathProblem
 });
 
 const mapDispatchToProps = dispatch => ({
