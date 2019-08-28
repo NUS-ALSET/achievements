@@ -28,7 +28,8 @@ class PathTabs extends React.Component {
     joinedPaths: PropTypes.object,
     uid: PropTypes.string,
     currentPathTab: PropTypes.number,
-    handleSwitchPathTab: PropTypes.func
+    handleSwitchPathTab: PropTypes.func,
+    pathStats: PropTypes.object
   };
 
   onAddPathClick = () => {

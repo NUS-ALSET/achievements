@@ -8,6 +8,8 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import Table from "@material-ui/core/Table";
+import Menu from "@material-ui/core/Menu"
+import MenuItem from "@material-ui/core/MenuItem"
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
@@ -56,6 +58,15 @@ class PathsTable extends React.PureComponent {
                 Progress
               </TableCell>
             )}
+
+            <TableCell
+              style={{
+                // eslint-disable-next-line no-magic-numbers
+                width: 150
+              }}
+            >
+              Count
+            </TableCell>
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
@@ -85,8 +96,9 @@ class PathsTable extends React.PureComponent {
                       : path.owner === uid
                       ? "owner"
                       : "not joined"}
-                  </TableCell>
+                  </TableCell>                  
                 )}
+                <TableCell>{path.attempts}</TableCell>
                 <TableCell>
                   <Link className={classes.link} to={`/paths/${path.id}`}>
                     <IconButton>

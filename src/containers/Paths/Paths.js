@@ -8,7 +8,7 @@ import React, { Fragment } from "react";
 import { compose } from "redux";
 import { connect } from "react-redux";
 
-import { firebaseConnect } from "react-redux-firebase";
+import { firebaseConnect,firestoreConnect } from "react-redux-firebase";
 
 import PropTypes from "prop-types";
 
@@ -42,7 +42,8 @@ class Paths extends React.PureComponent {
     pathChangeRequest: PropTypes.func,
     pathDialogHide: PropTypes.func,
     handleSwitchPathTab: PropTypes.func,
-    currentPathTab: PropTypes.number
+    currentPathTab: PropTypes.number,
+    pathStats:PropTypes.object
   };
 
   componentDidMount() {
@@ -60,6 +61,7 @@ class Paths extends React.PureComponent {
       uid,
       pathDialogShow,
       currentPathTab,
+      pathStats,
       handleSwitchPathTab
     } = this.props;
     return (
@@ -82,8 +84,10 @@ class Paths extends React.PureComponent {
                 )}
                 pathDialogShow={pathDialogShow}
                 publicPaths={publicPaths}
+                pathStats={pathStats}
                 uid={uid}
-              />
+                
+              />              
               <AddPathDialog
                 open={ui.dialog.type === "PathChange"}
                 path={ui.dialog.value}
@@ -117,7 +121,8 @@ const mapStateToProps = state => ({
   myPaths: state.firebase.data.myPaths,
   joinedPaths: state.paths.joinedPaths,
   publicPaths: publicPathSelector(state),
-  currentPathTab: state.paths.currentPathTab
+  currentPathTab: state.paths.currentPathTab,
+  pathStats:state.firestore.data.pathStats
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -128,7 +133,15 @@ const mapDispatchToProps = dispatch => ({
   handleSwitchPathTab: tabIndex => dispatch(switchPathTab(tabIndex))
 });
 
-export default compose(
+export default compose(  
+  firestoreConnect((ownProps, store)=>[
+    {
+      path: "/path_statistics",
+      collection:"path_statistics",
+      storeAs: "pathStats",
+      orderBy: ['endDate', 'desc'],
+      limit:1
+    }]),
   firebaseConnect((ownProps, store) => {
     const firebaseAuth = store.getState().firebase.auth;
     return [
@@ -136,7 +149,7 @@ export default compose(
         path: "/paths",
         storeAs: "publicPaths",
         queryParams: ["orderByChild=isPublic", "equalTo=true"]
-      }
+      }      
     ].concat(
       firebaseAuth.isEmpty
         ? []
@@ -148,8 +161,8 @@ export default compose(
             }
           ]
     );
-  }),
-  connect(
+  }), 
+   connect(
     mapStateToProps,
     mapDispatchToProps
   )
