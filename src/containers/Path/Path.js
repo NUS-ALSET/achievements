@@ -61,12 +61,16 @@ import AddActivityDialog from "../../components/dialogs/AddActivityDialog";
 import { sagaInjector } from "../../services/saga";
 import sagas from "./sagas";
 import AddTextSolutionDialog from "../../components/dialogs/AddTextSolutionDialog";
+import AddFeedbackSolutionDialog from "../../components/dialogs/AddFeedbackSolutionDialog";
 import AddJestSolutionDialog from "../../components/dialogs/AddJestSolutionDialog";
 //import AddGameSolutionDialog from "../../components/dialogs/AddGameSolutionDialog";
 //import AddGameTournamentSolutionDialog from "../../components/dialogs/AddGameTournamentSolutionDialog";
 import { ACTIVITY_TYPES } from "../../services/paths";
 import { notificationShow } from "../Root/actions";
-import { problemSolutionSubmitRequest, setProblemOpenTime } from "../Activity/actions";
+import {
+  problemSolutionSubmitRequest,
+  setProblemOpenTime
+} from "../Activity/actions";
 import FetchCodeCombatDialog from "../../components/dialogs/FetchCodeCombatDialog";
 import { externalProfileUpdateRequest } from "../Account/actions";
 import { pathActivities } from "../../types/index";
@@ -164,7 +168,8 @@ export class Path extends React.Component {
     this.setState(() => ({
       botsQuantity: activity.unitsPerSide
     }));
-    const userServiceAchievements = userAchievements[activity.service || "CodeCombat"];
+    const userServiceAchievements =
+      userAchievements[activity.service || "CodeCombat"];
     switch (activity.type) {
       case ACTIVITY_TYPES.profile.id:
       case ACTIVITY_TYPES.codeCombat.id:
@@ -182,7 +187,9 @@ export class Path extends React.Component {
       case ACTIVITY_TYPES.jupyterInline.id:
       case ACTIVITY_TYPES.jupyterLocal.id:
       case ACTIVITY_TYPES.youtube.id:
-        onPushPath(`/paths/${pathActivities.path.id}/activities/${activity.id}`);
+        onPushPath(
+          `/paths/${pathActivities.path.id}/activities/${activity.id}`
+        );
         break;
       case ACTIVITY_TYPES.jest.id:
         if (activity.version >= 1) {
@@ -206,7 +213,8 @@ export class Path extends React.Component {
       this.props.pathActivities.activities.length
     );
 
-  refreshSolutions = () => this.props.onRefreshSolutions(this.props.pathActivities.path.id);
+  refreshSolutions = () =>
+    this.props.onRefreshSolutions(this.props.pathActivities.path.id);
 
   changeJoinStatus = () =>
     this.props.onToggleJoinStatus(
@@ -217,16 +225,35 @@ export class Path extends React.Component {
 
   onAddActivityClick = () => this.props.onActivityDialogShow();
   onTextSolutionSubmit = (solution, activityId) => {
-    const { onCloseDialog, onActivitySolutionSubmit, pathActivities } = this.props;
-    const activity = pathActivities.activities.find(activity => activity.id === activityId);
-    onActivitySolutionSubmit(pathActivities.path.id, { ...activity, problemId: activity.id }, solution);
+    const {
+      onCloseDialog,
+      onActivitySolutionSubmit,
+      pathActivities
+    } = this.props;
+    const activity = pathActivities.activities.find(
+      activity => activity.id === activityId
+    );
+    onActivitySolutionSubmit(
+      pathActivities.path.id,
+      { ...activity, problemId: activity.id },
+      solution
+    );
     onCloseDialog();
   };
   onProfileUpdate = profile => {
-    const { onCloseDialog, onActivitySolutionSubmit, onProfileUpdate, ui } = this.props;
+    const {
+      onCloseDialog,
+      onActivitySolutionSubmit,
+      onProfileUpdate,
+      ui
+    } = this.props;
 
     onProfileUpdate(profile, "CodeCombat");
-    onActivitySolutionSubmit(ui.dialog.value.path, { ...ui.dialog.value, problemId: ui.dialog.value.id }, profile);
+    onActivitySolutionSubmit(
+      ui.dialog.value.path,
+      { ...ui.dialog.value, problemId: ui.dialog.value.id },
+      profile
+    );
     onCloseDialog();
   };
 
@@ -244,7 +271,10 @@ export class Path extends React.Component {
     if (!data.id) {
       let maxOrderIndex = -Infinity;
       activities.forEach(activity => {
-        maxOrderIndex = activity.orderIndex > maxOrderIndex ? activity.orderIndex : maxOrderIndex;
+        maxOrderIndex =
+          activity.orderIndex > maxOrderIndex
+            ? activity.orderIndex
+            : maxOrderIndex;
       });
       maxOrderIndex = maxOrderIndex === -Infinity ? 1 : maxOrderIndex + 1;
       additionalData = {
@@ -258,7 +288,10 @@ export class Path extends React.Component {
   };
 
   handleCommit = () => {
-    this.props.onActivityDeleteRequest(this.state.selectedActivityId, this.state.selectedPathId);
+    this.props.onActivityDeleteRequest(
+      this.state.selectedActivityId,
+      this.state.selectedPathId
+    );
     return this.setState({ selectedActivityId: "" });
   };
 
@@ -296,12 +329,14 @@ export class Path extends React.Component {
     }
 
     const allFinished =
-      (pathActivities.activities || []).filter(problem => problem.solved).length ===
-      (pathActivities.activities || []).length;
+      (pathActivities.activities || []).filter(problem => problem.solved)
+        .length === (pathActivities.activities || []).length;
     const hasActivities =
       ui.dialog &&
       ui.dialog.pathsInfo &&
-      ui.dialog.pathsInfo.filter(pathInfo => pathInfo.activities && pathInfo.activities.length).length;
+      ui.dialog.pathsInfo.filter(
+        pathInfo => pathInfo.activities && pathInfo.activities.length
+      ).length;
     // Flag that used for creator and educator activities to force
     // AddActivityDialog to create new activity of required type instead of
     // editing existing activity
@@ -318,14 +353,19 @@ export class Path extends React.Component {
       pathName = "Default";
     }
 
-    pathName = pathName || (pathActivities.path && pathActivities.path.name) || "";
-    pathDesc = (pathActivities.path && pathActivities.path.description) || "None Provided";
+    pathName =
+      pathName || (pathActivities.path && pathActivities.path.name) || "";
+    pathDesc =
+      (pathActivities.path && pathActivities.path.description) ||
+      "None Provided";
 
     return (
       <Fragment>
         <Breadcrumbs
           action={
-            (![PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) && [
+            (![PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(
+              pathStatus
+            ) && [
               allFinished && {
                 label: "Request more",
                 handler: this.requestMoreDialogShow
@@ -366,13 +406,19 @@ export class Path extends React.Component {
         {[PATH_STATUS_OWNER, PATH_STATUS_COLLABORATOR].includes(pathStatus) && (
           <Toolbar>
             <React.Fragment>
-              <Button color="primary" onClick={this.onAddActivityClick} variant="contained">
+              <Button
+                color="primary"
+                onClick={this.onAddActivityClick}
+                variant="contained"
+              >
                 Add Activity
               </Button>
               {pathStatus === PATH_STATUS_OWNER && (
                 <Button
                   className={classes.toolbarButton}
-                  onClick={() => onShowCollaboratorsClick(pathActivities.path.id)}
+                  onClick={() =>
+                    onShowCollaboratorsClick(pathActivities.path.id)
+                  }
                   variant="contained"
                 >
                   Collaborators
@@ -389,7 +435,21 @@ export class Path extends React.Component {
         <AddTextSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
-          open={ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.text.id}Solution`}
+          open={
+            ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.text.id}Solution`
+          }
+          problem={ui.dialog && ui.dialog.value}
+          setProblemOpenTime={setProblemOpenTime}
+          solution={ui.dialog && ui.dialog.solution}
+          taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
+        />
+        <AddFeedbackSolutionDialog
+          onClose={onCloseDialog}
+          onCommit={this.onTextSolutionSubmit}
+          open={
+            ui.dialog &&
+            ui.dialog.type === `${ACTIVITY_TYPES.feedback.id}Solution`
+          }
           problem={ui.dialog && ui.dialog.value}
           setProblemOpenTime={setProblemOpenTime}
           solution={ui.dialog && ui.dialog.solution}
@@ -401,18 +461,22 @@ export class Path extends React.Component {
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           onSaveProblem={onSaveProblem}
-          open={ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`}
+          open={
+            ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.jest.id}Solution`
+          }
           problem={ui.dialog && ui.dialog.value}
           removeFile={removeFile}
           taskId={ui.dialog && ui.dialog.value && ui.dialog.value.id}
         />
-       
+
         <AddCreatorSolutionDialog
           onClose={onCloseDialog}
           onCommit={this.onTextSolutionSubmit}
           open={
             !!(
-              ["creatorSolution", "educatorSolution"].includes(ui.dialog && ui.dialog.type) &&
+              ["creatorSolution", "educatorSolution"].includes(
+                ui.dialog && ui.dialog.type
+              ) &&
               ui.dialog.pathsInfo &&
               hasActivities
             )
@@ -432,7 +496,10 @@ export class Path extends React.Component {
           }}
           onClose={onCloseDialog}
           onCommit={this.onProfileUpdate}
-          open={ui.dialog && ui.dialog.type === `${ACTIVITY_TYPES.profile.id}Solution`}
+          open={
+            ui.dialog &&
+            ui.dialog.type === `${ACTIVITY_TYPES.profile.id}Solution`
+          }
           userAchievements={userAchievements}
         />
         <ActivitiesTable
@@ -472,18 +539,24 @@ export class Path extends React.Component {
           open={
             (ui.dialog && ui.dialog.type === "ProblemChange") ||
             !!(
-              ["creatorSolution", "educatorSolution"].includes(ui.dialog.type) &&
+              ["creatorSolution", "educatorSolution"].includes(
+                ui.dialog.type
+              ) &&
               ui.dialog.pathsInfo &&
               !hasActivities
             )
           }
           pathId={
-            ["creatorSolution", "educatorSolution"].includes(ui.dialog && ui.dialog.type)
+            ["creatorSolution", "educatorSolution"].includes(
+              ui.dialog && ui.dialog.type
+            )
               ? ""
               : pathActivities.path.id || ""
           }
           pathsInfo={(ui.dialog && ui.dialog.pathsInfo) || []}
-          restrictedType={isCreatorActivity && ui.dialog && ui.dialog.value.targetType}
+          restrictedType={
+            isCreatorActivity && ui.dialog && ui.dialog.value.targetType
+          }
           tasks={tasks}
           uid={uid || "Anonymous"}
         />
@@ -505,7 +578,9 @@ export class Path extends React.Component {
           target={pathActivities.path && pathActivities.path.id}
         />
         <FetchCodeCombatLevelDialog
-          activity={pathActivities.activities.find(activity => activity.id === pendingActivityId)}
+          activity={pathActivities.activities.find(
+            activity => activity.id === pendingActivityId
+          )}
           codeCombatId={codeCombatProfile && codeCombatProfile.id}
           onClose={onCloseDialog}
           open={ui.dialog && ui.dialog.type === "FetchCodeCombatLevel"}
@@ -533,7 +608,9 @@ const mapStateToProps = (state, ownProps) => ({
   ui: state.path.ui,
   uid: state.firebase.auth.uid,
   userAchievements:
-    (state.firebase.data.userAchievements || {})[ownProps.match.params.accountId || state.firebase.auth.uid] || {}
+    (state.firebase.data.userAchievements || {})[
+      ownProps.match.params.accountId || state.firebase.auth.uid
+    ] || {}
 });
 
 const mapDispatchToProps = {
@@ -574,7 +651,10 @@ export default compose(
     const pathId = ownProps.match.params.pathId;
 
     if (!uid) {
-      return [`/paths/${pathId}`, `/activities#orderByChild=path&equalTo=${pathId}`];
+      return [
+        `/paths/${pathId}`,
+        `/activities#orderByChild=path&equalTo=${pathId}`
+      ];
     }
 
     return [

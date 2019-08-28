@@ -13,11 +13,12 @@ describe("<RecommendationCard />", () => {
       description: "Finish 'dungeons-of-kithgard' level at CodeCombat",
       type: "codeCombat",
       problem: "-LOGaRA8Q88IJx1hOLu-",
-      name: "Dungeon 001 Dungeons of Kithgard"
+      name: "Dungeon 001 Dungeons of Kithgard",
+      level: "test"
     },
     classes: {
       mediaPython: "RecommendationCard-mediaPython-248",
-      mediaYoutube: "RecommendationCard-mediaYoutube-249"
+      mediaYouTube: "RecommendationCard-mediaYoutube-249"
     },
     description: "CodeCombat Level",
     pathId: "-LOG_ocLPebY5IodDO8C",
@@ -27,16 +28,28 @@ describe("<RecommendationCard />", () => {
     onRecommendationClick: spy
   };
   let component;
+  global.window = Object.create(window);
+  Object.defineProperty(window, "open", { value: spy });
+
   it("should test handleClick", () => {
     component = shallow(<RecommendationCard {...props} />);
     component
       .dive()
       .instance()
       .handleClick();
-    expect(spy.calledWith("-LOGaRA8Q88IJx1hOLu-", "-LOG_ocLPebY5IodDO8C"));
+    expect(
+      spy.calledWith("-LOGaRA8Q88IJx1hOLu-", "-LOG_ocLPebY5IodDO8C")
+    ).toEqual(true);
+    expect(
+      spy.calledWith("//codecombat.com/play/level/test", "_blank")
+    ).toEqual(true);
   });
   it("should test getVideoID", () => {
-    const pyLogoProp = { ...props, type: "python" };
+    const pyLogoProp = {
+      ...props,
+      type: "code",
+      activity: { ...props.activity, type: "python" }
+    };
     component = shallow(<RecommendationCard {...pyLogoProp} />);
     const testVidId = component
       .dive()
