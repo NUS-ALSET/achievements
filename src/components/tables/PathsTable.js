@@ -17,14 +17,34 @@ import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
 import EditIcon from "@material-ui/icons/Edit";
 
+import MenuItem from "@material-ui/core/MenuItem";
+
+import Select from "@material-ui/core/Select";
+
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+
+export const PATH_STATS_FILTER_TYPES={
+  attempts:{
+    id:"attempts",
+    caption:"Attempts"
+  },
+  solves:{
+    id:"solves",
+    caption:"Solves"
+  },
+  attempts_per_solve:{
+    id:"attempts_per_solve",
+    caption:"attempts_per_solve"
+  }
+}
 
 const styles = () => ({
   link: {
     textDecoration: "none"
   }
+  
 });
 
 class PathsTable extends React.PureComponent {
@@ -35,12 +55,35 @@ class PathsTable extends React.PureComponent {
     pathDialogShow: PropTypes.func.isRequired,
     uid: PropTypes.string
   };
+ 
+  constructor(props) {
+    super(props);
+    this.state = {sortedPaths: this.props.paths,
+                  selectedVal: "Attempts"};
+
+  }
 
   onEditClick = pathInfo => this.props.pathDialogShow(pathInfo);
-
+  sortPaths = (key) => {         
+          let publicPaths = {...this.props.paths}
+          let sorted = Object.values(publicPaths).sort((a, b) => 
+            a[key.target.value] === b[key.target.value] ? 0 : b[key.target.value] < a[key.target.value] ? -1 : 1);
+         
+          this.setState({
+            sortedPaths:sorted,
+            selectedVal:key.target.value
+          })
+          
+  }
+  componentDidMount(){
+    this.setState({
+      sortedPaths:this.props.paths,
+            
+    })   
+  }
   render() {
     const { classes, viewCreatedTab, paths, uid } = this.props;
-
+    
     return (
       <Table>
         <TableHead>
@@ -57,14 +100,18 @@ class PathsTable extends React.PureComponent {
               </TableCell>
             )}
 
-            <TableCell
-              style={{
-                // eslint-disable-next-line no-magic-numbers
-                width: 150
-              }}
-            >
-              Count
-            </TableCell>
+            <TableCell style={{
+                  // eslint-disable-next-line no-magic-numbers
+                  width: 150
+                }}>
+              <Select value={this.state.selectedVal} onChange={(event)=>this.sortPaths(event)}>
+                <MenuItem key={"attempts"} value={"attempts"}>Attempts</MenuItem>
+                <MenuItem key={"solves"} value={"solves"}>Solves</MenuItem>
+                <MenuItem key={"attempts_per_solve"} value={"attempts_per_solve"}>Attempts Per Solve</MenuItem>
+                <MenuItem key={"unique_users"} value={"unique_users"}>Unique users</MenuItem>
+              </Select>
+            </TableCell>  
+    
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
@@ -76,7 +123,7 @@ class PathsTable extends React.PureComponent {
           </TableRow>
         </TableHead>
         <TableBody>
-          {!Object.keys(paths).length && (
+          {!Object.keys(this.state.sortedPaths).length && (
             <TableRow>
               <TableCell colSpan={3}>Empty</TableCell>
             </TableRow>
@@ -96,7 +143,8 @@ class PathsTable extends React.PureComponent {
                       : "not joined"}
                   </TableCell>                  
                 )}
-                <TableCell>{path.attempts}</TableCell>
+                
+                <TableCell>{path[this.state.selectedVal]}</TableCell>
                 <TableCell>
                   <Link className={classes.link} to={`/paths/${path.id}`}>
                     <IconButton>
