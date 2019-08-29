@@ -61,14 +61,12 @@ class PathsTable extends React.PureComponent {
     this.state = {sortedPaths: this.props.paths,
                   selectedVal: "Attempts"};
 
-    this.sortPaths = this.sortPaths.bind(this);
-    
   }
 
   onEditClick = pathInfo => this.props.pathDialogShow(pathInfo);
   sortPaths = (key) => {         
           let publicPaths = {...this.props.paths}
-          let sorted = Object.values(publicPaths||{}).sort((a, b) => 
+          let sorted = Object.values(publicPaths).sort((a, b) => 
             a[key.target.value] === b[key.target.value] ? 0 : b[key.target.value] < a[key.target.value] ? -1 : 1);
          
           this.setState({
