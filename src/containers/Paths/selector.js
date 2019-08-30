@@ -23,7 +23,7 @@ const sortPublicPaths=(inputPaths,pathStats)=>{
    
     let returnPaths={}
     for(path in sorted){         
-        returnPaths[sorted[path].id]=sorted[path]     
+        returnPaths[sorted[path].pathKey]=sorted[path]     
     }
        
     return returnPaths
