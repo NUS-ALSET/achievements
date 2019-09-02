@@ -528,7 +528,8 @@ export default compose(
       path: "/path_statistics",
       collection:"path_statistics",
       storeAs: "pathStats",
-      queryParams: ["orderByChild=endDate", "limitToLast=100"]
+      orderBy: ['endDate', 'desc'],
+      limit:1
     },
   ]),
   connect(
