@@ -25,26 +25,29 @@ import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
 
-export const PATH_STATS_FILTER_TYPES={
-  attempts:{
-    id:"attempts",
-    caption:"Attempts"
+export const PATH_STATS_FILTER_TYPES = [
+  {
+    id: "attempts",
+    caption: "Attempts"
   },
-  solves:{
-    id:"solves",
-    caption:"Solves"
+  {
+    id: "solves",
+    caption: "Solves"
   },
-  attempts_per_solve:{
-    id:"attempts_per_solve",
-    caption:"attempts_per_solve"
+  {
+    id: "attempts_per_solve",
+    caption: "Attempts per solve"
+  },
+  {
+    id: "totalActivities",
+    caption: "Total Activities"
   }
-}
+];
 
 const styles = () => ({
   link: {
     textDecoration: "none"
   }
-  
 });
 
 class PathsTable extends React.PureComponent {
@@ -55,35 +58,42 @@ class PathsTable extends React.PureComponent {
     pathDialogShow: PropTypes.func.isRequired,
     uid: PropTypes.string
   };
- 
+
   constructor(props) {
     super(props);
-    this.state = {sortedPaths: this.props.paths,
-                  selectedVal: "Attempts"};
+    this.state = { sortedPaths: this.props.paths, selectedVal: "attempts" };
+  }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.paths !== prevState.sortedPaths) {
+      this.setState({ sortedPaths: this.props.paths });
+    }
   }
 
   onEditClick = pathInfo => this.props.pathDialogShow(pathInfo);
-  sortPaths = (key) => {         
-          let publicPaths = {...this.props.paths}
-          let sorted = Object.values(publicPaths).sort((a, b) => 
-            a[key.target.value] === b[key.target.value] ? 0 : b[key.target.value] < a[key.target.value] ? -1 : 1);
-         
-          this.setState({
-            sortedPaths:sorted,
-            selectedVal:key.target.value
-          })
-          
-  }
-  componentDidMount(){
+
+  sortPaths = key => {
+    let publicPaths = { ...this.props.paths };
+    let sorted = Object.values(publicPaths).sort((a, b) =>
+      a[key.target.value] === b[key.target.value]
+        ? 0
+        : b[key.target.value] < a[key.target.value]
+        ? -1
+        : 1
+    );
+
     this.setState({
-      sortedPaths:this.props.paths,
-            
-    })   
+      sortedPaths: sorted,
+      selectedVal: key.target.value
+    });
+  };
+  componentDidMount() {
+    this.setState({
+      sortedPaths: this.props.paths
+    });
   }
   render() {
-    const { classes, viewCreatedTab, paths, uid } = this.props;
-    
+    const { classes, viewCreatedTab, uid } = this.props;
     return (
       <Table>
         <TableHead>
@@ -100,18 +110,24 @@ class PathsTable extends React.PureComponent {
               </TableCell>
             )}
 
-            <TableCell style={{
-                  // eslint-disable-next-line no-magic-numbers
-                  width: 150
-                }}>
-              <Select value={this.state.selectedVal} onChange={(event)=>this.sortPaths(event)}>
-                <MenuItem key={"attempts"} value={"attempts"}>Attempts</MenuItem>
-                <MenuItem key={"solves"} value={"solves"}>Solves</MenuItem>
-                <MenuItem key={"attempts_per_solve"} value={"attempts_per_solve"}>Attempts Per Solve</MenuItem>
-                <MenuItem key={"unique_users"} value={"unique_users"}>Unique users</MenuItem>
+            <TableCell
+              style={{
+                // eslint-disable-next-line no-magic-numbers
+                width: 150
+              }}
+            >
+              <Select
+                value={this.state.selectedVal}
+                onChange={event => this.sortPaths(event)}
+              >
+                {PATH_STATS_FILTER_TYPES.map((option, index) => (
+                  <MenuItem key={index} value={option.id}>
+                    {option.caption || ""}
+                  </MenuItem>
+                ))}
               </Select>
-            </TableCell>  
-    
+            </TableCell>
+
             <TableCell
               style={{
                 // eslint-disable-next-line no-magic-numbers
@@ -125,12 +141,14 @@ class PathsTable extends React.PureComponent {
         <TableBody>
           {!Object.keys(this.state.sortedPaths).length && (
             <TableRow>
-              <TableCell colSpan={3}>Empty</TableCell>
+              <TableCell colSpan={3}>
+                Empty {Object.keys(this.state.sortedPaths)}
+              </TableCell>
             </TableRow>
           )}
-          {Object.keys(paths)
-            .filter(id => paths[id])
-            .map(id => ({ ...paths[id], id }))
+          {Object.keys(this.state.sortedPaths)
+            .filter(id => this.state.sortedPaths[id])
+            .map(id => ({ ...this.state.sortedPaths[id], id }))
             .map(path => (
               <TableRow hover key={path.id}>
                 <TableCell>{path.name}</TableCell>
@@ -141,9 +159,9 @@ class PathsTable extends React.PureComponent {
                       : path.owner === uid
                       ? "owner"
                       : "not joined"}
-                  </TableCell>                  
+                  </TableCell>
                 )}
-                
+
                 <TableCell>{path[this.state.selectedVal]}</TableCell>
                 <TableCell>
                   <Link className={classes.link} to={`/paths/${path.id}`}>
