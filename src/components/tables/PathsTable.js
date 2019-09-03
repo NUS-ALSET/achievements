@@ -40,8 +40,8 @@ export const PATH_STATS_FILTER_TYPES = [
     caption: "Attempts per solve"
   },
   {
-    id: "totalActivities",
-    caption: "Total Activities"
+    id: "unique_users",
+    caption: "Unique users"
   }
 ];
 
@@ -83,7 +83,7 @@ class PathsTable extends React.PureComponent {
         ? -1
         : 1
     );
-
+   
     this.setState({
       sortedPaths: sorted,
       selectedVal: key.target.value
