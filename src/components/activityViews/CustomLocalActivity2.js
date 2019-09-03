@@ -85,11 +85,13 @@ class CustomLocalActivity2 extends React.PureComponent {
     display: "flex",
     flexDirection: "column",
     flexGrow: 1,
-    flex: "0 48%"
+    flex: "0 48%",
+    width: "100%",
+    margin: "0 0.5rem 0 0.5rem"
   };
   cardStyle = {
     minWidth: "250px",
-    margin: "1rem 0.5rem 0 0.5rem",
+    margin: "1rem 0 0 0",
     textAlign: "left",
     padding: "1rem"
   };
