@@ -26,8 +26,8 @@ describe("<PathsTable>", () => {
       <PathsTable
         pathDialogShow={mockDispatch}
         paths={{
-            "LEOF9q3Vdsd-gx1": {},
-            "LEOF9dedq3V-gx1": {}
+          "LEOF9q3Vdsd-gx1": { pathKey: "LEOF9q3Vdsd-gx1" },
+          "LEOF9dedq3V-gx1": { pathKey: "LEOF9dedq3V-gx1" }
         }}
         viewCreatedTab={true}
       />
@@ -41,8 +41,8 @@ describe("<PathsTable>", () => {
       <PathsTable
         pathDialogShow={mockDispatch}
         paths={{
-            "LEOF9q3Vdsd-gx1": {},
-            "LEOF9dedq3V-gx1": {}
+          "LEOF9q3Vdsd-gx1": { pathKey: "LEOF9q3Vdsd-gx1" },
+          "LEOF9dedq3V-gx1": { pathKey: "LEOF9dedq3V-gx1" }
         }}
         viewCreatedTab={true}
       />
@@ -55,7 +55,7 @@ describe("<PathsTable>", () => {
       <PathsTable
         pathDialogShow={mockDispatch}
         paths={{
-            "LEOF9q3Vdsd-gx1": {}
+          "LEOF9q3Vdsd-gx1": { pathKey: "LEOF9q3Vdsd-gx1" }
         }}
         viewCreatedTab={false}
       />
@@ -67,10 +67,7 @@ describe("<PathsTable>", () => {
 
   it("should render empty cell", () => {
     const wrapper = shallow(
-      <PathsTable
-        pathDialogShow={mockDispatch}
-        paths={{}}
-      />
+      <PathsTable pathDialogShow={mockDispatch} paths={{}} />
     );
     expect(wrapper.find(TableBody).find(TableRow).length).toEqual(1);
   });
@@ -83,52 +80,62 @@ describe("<PathsTable>", () => {
         viewCreatedTab={true}
       />
     );
-    expect(wrapper.find(TableHead).find(TableRow).find(TableCell).length).toEqual(3);
+    expect(
+      wrapper
+        .find(TableHead)
+        .find(TableRow)
+        .find(TableCell).length
+    ).toEqual(3);
   });
 
   it("renders correctly when there are no paths", () => {
-    const tree = renderer.create(
-      <PathsTable
-        pathDialogShow={mockDispatch}
-        paths={{}}
-        viewCreatedTab={true}
-      />
-    ).toJSON();
+    const tree = renderer
+      .create(
+        <PathsTable
+          pathDialogShow={mockDispatch}
+          paths={{}}
+          viewCreatedTab={true}
+        />
+      )
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
 
   it("renders correctly when there is one path", () => {
     const paths = {
-      "LEOF9dedq3V-gx1": {}
+      "LEOF9dedq3V-gx1": { pathKey: "LEOF9dedq3V-gx1" }
     };
-    const tree = renderer.create(
-      <Router>
-        <PathsTable
-          pathDialogShow={mockDispatch}
-          paths={paths}
-          viewCreatedTab={true}
-        />
-      </Router>
-      ).toJSON();
+    const tree = renderer
+      .create(
+        <Router>
+          <PathsTable
+            pathDialogShow={mockDispatch}
+            paths={paths}
+            viewCreatedTab={true}
+          />
+        </Router>
+      )
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
-  
+
   it("renders correctly when there are multiple paths", () => {
     const paths = {
-      "LEOF9dedq3V-gx1": {},
-      "LEOF9dedgfV-gx3": {},
-      "LEOF9debgbV-gx5": {}
-      
+      "LEOF9dedq3V-gx1": { pathKey: "LEOF9dedq3V-gx1" },
+      "LEOF9dedgfV-gx3": { pathKey: "LEOF9dedgfV-gx3" },
+      "LEOF9debgbV-gx5": { pathKey: "LEOF9debgbV-gx5" }
     };
-    const tree = renderer.create(
-      <Router>
-        <PathsTable
-          pathDialogShow={mockDispatch}
-          paths={paths}
-          viewCreatedTab={true}
-        />
-      </Router>
-    ).toJSON();
+    const tree = renderer
+      .create(
+        <Router>
+          <PathsTable
+            pathDialogShow={mockDispatch}
+            paths={paths}
+            viewCreatedTab={true}
+          />
+        </Router>
+      )
+      .toJSON();
     expect(tree).toMatchSnapshot();
   });
 });

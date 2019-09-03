@@ -83,12 +83,17 @@ class PathsTable extends React.PureComponent {
         ? -1
         : 1
     );
-   
+
     this.setState({
       sortedPaths: sorted,
       selectedVal: key.target.value
     });
   };
+  componentDidMount() {
+    this.setState({
+      sortedPaths: this.props.paths ? Object.values(this.props.paths) : []
+    });
+  }
   render() {
     const { classes, viewCreatedTab, uid } = this.props;
     return (
@@ -138,9 +143,7 @@ class PathsTable extends React.PureComponent {
         <TableBody>
           {!Object.keys(this.state.sortedPaths).length && (
             <TableRow>
-              <TableCell colSpan={3}>
-                Empty {Object.keys(this.state.sortedPaths)}
-              </TableCell>
+              <TableCell colSpan={4}>Empty</TableCell>
             </TableRow>
           )}
           {this.state.sortedPaths.map(path => (
