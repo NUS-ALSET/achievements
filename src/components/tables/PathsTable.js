@@ -24,6 +24,7 @@ import Select from "@material-ui/core/Select";
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+import isEmpty from "lodash/isEmpty";
 
 export const PATH_STATS_FILTER_TYPES = [
   {
@@ -61,12 +62,13 @@ class PathsTable extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = { sortedPaths: this.props.paths, selectedVal: "attempts" };
+    this.state = { sortedPaths: [], selectedVal: "attempts" };
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.paths !== prevState.sortedPaths) {
-      this.setState({ sortedPaths: this.props.paths });
+    if (isEmpty(prevState.sortedPaths) && !isEmpty(this.props.paths)) {
+      let sorted = this.props.paths ? Object.values(this.props.paths) : [];
+      this.setState({ sortedPaths: sorted });
     }
   }
 
@@ -87,11 +89,6 @@ class PathsTable extends React.PureComponent {
       selectedVal: key.target.value
     });
   };
-  componentDidMount() {
-    this.setState({
-      sortedPaths: this.props.paths
-    });
-  }
   render() {
     const { classes, viewCreatedTab, uid } = this.props;
     return (
@@ -146,37 +143,34 @@ class PathsTable extends React.PureComponent {
               </TableCell>
             </TableRow>
           )}
-          {Object.keys(this.state.sortedPaths)
-            .filter(id => this.state.sortedPaths[id])
-            .map(id => ({ ...this.state.sortedPaths[id], id }))
-            .map(path => (
-              <TableRow hover key={path.id}>
-                <TableCell>{path.name}</TableCell>
-                {!viewCreatedTab && (
-                  <TableCell>
-                    {path.solutions !== undefined && path.totalActivities
-                      ? `${path.solutions} of ${path.totalActivities}`
-                      : path.owner === uid
-                      ? "owner"
-                      : "not joined"}
-                  </TableCell>
-                )}
-
-                <TableCell>{path[this.state.selectedVal]}</TableCell>
+          {this.state.sortedPaths.map(path => (
+            <TableRow hover key={path.pathKey}>
+              <TableCell>{path.name}</TableCell>
+              {!viewCreatedTab && (
                 <TableCell>
-                  <Link className={classes.link} to={`/paths/${path.id}`}>
-                    <IconButton>
-                      <SearchIcon />
-                    </IconButton>
-                  </Link>
-                  {viewCreatedTab && (
-                    <IconButton onClick={() => this.onEditClick(path)}>
-                      <EditIcon />
-                    </IconButton>
-                  )}
+                  {path.solutions !== undefined && path.totalActivities
+                    ? `${path.solutions} of ${path.totalActivities}`
+                    : path.owner === uid
+                    ? "owner"
+                    : "not joined"}
                 </TableCell>
-              </TableRow>
-            ))}
+              )}
+
+              <TableCell>{path[this.state.selectedVal]}</TableCell>
+              <TableCell>
+                <Link className={classes.link} to={`/paths/${path.pathKey}`}>
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                </Link>
+                {viewCreatedTab && (
+                  <IconButton onClick={() => this.onEditClick(path)}>
+                    <EditIcon />
+                  </IconButton>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     );
