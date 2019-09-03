@@ -10,10 +10,11 @@ import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
 import HelpIcon from "@material-ui/icons/HelpOutline";
+
+import Card from "@material-ui/core/Card";
 
 import { CustomTaskResponseForm } from "./CustomTaskResponseForm";
 
@@ -101,6 +102,63 @@ export class CustomTaskPreviewForm extends React.PureComponent {
     this.props.onChange({ userView: e.target.checked });
   };
 
+  sectionStyle = {
+    display: "flex",
+    flexDirection: "column",
+    flexGrow: 1,
+    width: "100%",
+    margin: "0 0.5rem 0 0.5rem"
+  };
+  cardStyle = {
+    minWidth: "250px",
+    margin: "1rem 0 0 0",
+    textAlign: "left",
+    padding: "1rem"
+  };
+
+  filterBlocks = (taskInfo, blockType) => {
+    const filteredCells = taskInfo.cells.filter(
+      block =>
+        block.source.join("") && block.metadata.achievements.type === blockType
+    );
+    return filteredCells.length === 0
+      ? false
+      : filteredCells.map(block => this.renderBlock(block));
+  };
+
+  renderBlock = block => (
+    <React.Fragment
+      key={block.metadata.achievements.type + block.metadata.achievements.index}
+    >
+      {block.cell_type === "text" ? (
+        <Markdown source={block.source.join("\n")} />
+      ) : (
+        <AceEditor
+          maxLines={Infinity}
+          minLines={3}
+          mode={block.metadata.achievements.language_info.name}
+          readOnly={true}
+          setOptions={{ showLineNumbers: false }}
+          showGutter={true}
+          theme="github"
+          value={block.source.join("\n")}
+          width={"100%"}
+        />
+      )}
+      {block.metadata.achievements.type === "shown" &&
+        block.outputs &&
+        !!block.outputs.length &&
+        block.outputs.map(
+          (output, index) =>
+            output.data && (
+              <pre key={index} style={styles.output}>
+                {output.data["text/plain"]}
+              </pre>
+            )
+        )}
+    </React.Fragment>
+  );
+
   render() {
     const { isRunning, taskInfo, userView } = this.props;
     const { runTour, solution, steps } = this.state;
@@ -143,99 +201,112 @@ export class CustomTaskPreviewForm extends React.PureComponent {
             <HelpIcon style={{ marginLeft: "10px" }} />
           </Button>
         </Grid>
-        <Grid item xs={12}>
-          {taskInfo.json.cells
-            .filter(block =>
-              userView
-                ? block.source.join("") &&
-                  !["hidden", "editable"].includes(
-                    block.metadata.achievements.type
-                  )
-                : block.metadata.achievements.type !== "editable"
-            )
-            .map(block => (
-              <Paper
-                key={
-                  block.metadata.achievements.type +
-                  block.metadata.achievements.index
-                }
-                style={styles.paper}
-              >
-                {block.cell_type === "text" ? (
-                  <Markdown source={block.source.join("\n")} />
-                ) : (
-                  <AceEditor
-                    maxLines={Infinity}
-                    minLines={3}
-                    mode={block.metadata.achievements.language_info.name}
-                    readOnly={true}
-                    setOptions={{ showLineNumbers: false }}
-                    showGutter={true}
-                    theme="github"
-                    value={block.source.join("\n")}
-                    width={"100%"}
-                  />
-                )}
-                {block.metadata.achievements.type === "shown" &&
-                  block.outputs &&
-                  !!block.outputs.length &&
-                  block.outputs.map(
-                    (output, index) =>
-                      output.data && (
-                        <pre key={index} style={styles.output}>
-                          {output.data["text/plain"]}
-                        </pre>
-                      )
-                  )}
-              </Paper>
-            ))}
-        </Grid>
-        {taskInfo.response && (
-          <Grid item xs={12}>
-            <CustomTaskResponseForm taskInfo={taskInfo} />
-          </Grid>
-        )}
-        {userView &&
-          taskInfo.json.cells
-            .filter(block => block.metadata.achievements.type === "editable")
-            .map(block => (
-              <Grid item key="there-should-be-only-one" xs={12}>
-                <Paper style={styles.paper}>
-                  <Typography color="textSecondary">
-                    Please first read the Path Activity above. <br />
-                    Click the RUN button to test your solution.
+        <Grid
+          item
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            margin: "1rem",
+            justifyContent: "center",
+            overflowX: "auto"
+          }}
+          xs={12}
+        >
+          <section style={this.sectionStyle}>
+            <Card style={this.cardStyle}>
+              <Card-header>
+                <Card-header-text>
+                  <Typography variant="h6">Introduction</Typography>
+                </Card-header-text>
+              </Card-header>
+              <Card-content>
+                {this.filterBlocks(taskInfo.json, "public") || (
+                  <Typography variant="p">
+                    Edit the code in the editable code block below to pass the
+                    tests!
                   </Typography>
-                  <Grid container item spacing={8}>
-                    <Grid item xs={8}>
-                      <Typography variant="h6">
-                        Edit Your Solution Here
-                      </Typography>
+                )}
+              </Card-content>
+            </Card>
+            <Card style={this.cardStyle}>
+              <Card-content>
+                {taskInfo.json.cells
+                  .filter(
+                    block => block.metadata.achievements.type === "editable"
+                  )
+                  .map(block => (
+                    <Grid item key="there-should-be-only-one" xs={12}>
+                      <React.Fragment>
+                        <Grid
+                          container
+                          item
+                          spacing={8}
+                          style={{ alignItems: "center" }}
+                        >
+                          <Grid item xs={8}>
+                            <Typography variant="h6">
+                              Editable Code Block
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Button
+                              color="primary"
+                              disabled={!this.state.solution}
+                              onClick={this.onSolutionRunClick}
+                              variant="contained"
+                            >
+                              Run
+                            </Button>
+                          </Grid>
+                        </Grid>
+                        <AceEditor
+                          maxLines={Infinity}
+                          minLines={3}
+                          mode={block.metadata.achievements.language_info.name}
+                          onChange={this.onSolutionChange}
+                          readOnly="readOnly"
+                          setOptions={{ showLineNumbers: false }}
+                          showGutter={true}
+                          theme="github"
+                          value={
+                            this.state.solution === undefined
+                              ? (solution && solution.payload) ||
+                                block.source.join("\n")
+                              : this.state.solution
+                          }
+                          width={"100%"}
+                        />
+                      </React.Fragment>
                     </Grid>
-                    <Grid item xs={4}>
-                      <Button
-                        color="primary"
-                        disabled={!solution}
-                        onClick={this.onTaskRunRequest}
-                        variant="contained"
-                      >
-                        Run
-                      </Button>
-                    </Grid>
-                  </Grid>
-                  <AceEditor
-                    maxLines={Infinity}
-                    minLines={3}
-                    mode={block.metadata.achievements.language_info.name}
-                    onChange={this.onSolutionChange}
-                    setOptions={{ showLineNumbers: false }}
-                    showGutter={true}
-                    theme="github"
-                    value={solution || block.source.join("\n") || ""}
-                    width={"100%"}
-                  />
-                </Paper>
-              </Grid>
-            ))}
+                  ))}
+              </Card-content>
+            </Card>
+          </section>
+          <section style={this.sectionStyle}>
+            <Card style={this.cardStyle}>
+              <Card-header>
+                <Card-header-text>
+                  <Typography variant="h6">Tests</Typography>
+                </Card-header-text>
+              </Card-header>
+              <Card-content>
+                {this.filterBlocks(taskInfo.json, "shown")}
+              </Card-content>
+            </Card>
+            <Card style={this.cardStyle}>
+              <Card-header>
+                <Card-header-text>
+                  <Typography variant="h6">Results</Typography>
+                </Card-header-text>
+              </Card-header>
+              <Card-content>
+                {solution && solution.json && (
+                  <CustomTaskResponseForm taskInfo={this.getTaskInfo()} />
+                )}
+              </Card-content>
+            </Card>
+          </section>
+        </Grid>
       </React.Fragment>
     );
   }
