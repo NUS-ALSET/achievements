@@ -2,7 +2,7 @@ import * as React from "react";
 import PropTypes from "prop-types";
 import { TASK_TYPES } from "../../services/tasks";
 import JupyterLocalActivity from "./JupyterLocalActivity";
-import CustomLocalActivity from "./CustomLocalActivity";
+import CustomLocalActivity2 from "./CustomLocalActivity2";
 
 export class LocalTaskActivity extends React.PureComponent {
   static propTypes = {
@@ -20,7 +20,7 @@ export class LocalTaskActivity extends React.PureComponent {
       case TASK_TYPES.jupyter.id:
         return <JupyterLocalActivity {...this.props} />;
       case TASK_TYPES.custom.id:
-        return <CustomLocalActivity {...this.props} />;
+        return <CustomLocalActivity2 {...this.props} />;
       default:
         return <div>Wrong task type</div>;
     }
