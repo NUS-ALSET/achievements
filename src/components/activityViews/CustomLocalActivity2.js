@@ -1,22 +1,21 @@
 /* eslint-disable react/display-name */
-
 import * as React from "react";
 import PropTypes from "prop-types";
 import Loadable from "react-loadable";
-import ReactJoyride, { STATUS } from "react-joyride";
 
 import Button from "@material-ui/core/Button";
-import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 
-import HelpIcon from "@material-ui/icons/HelpOutline";
+import { CustomTaskResponseForm } from "../forms/CustomTaskResponseForm";
 
 import Card from "@material-ui/core/Card";
 
-import { CustomTaskResponseForm } from "./CustomTaskResponseForm";
+import {
+  problemSolutionRefreshFail,
+  problemSolveUpdate
+} from "../../containers/Activity/actions";
 
 const AceEditor = Loadable({
   loader: () => import("../../components/AceEditor"),
@@ -34,78 +33,59 @@ const styles = {
   output: { color: "red" }
 };
 
-export class CustomTaskPreviewForm extends React.PureComponent {
+class CustomLocalActivity2 extends React.PureComponent {
   static propTypes = {
-    isRunning: PropTypes.bool,
-    onChange: PropTypes.func.isRequired,
-    onTaskRunRequest: PropTypes.func,
-    taskInfo: PropTypes.object,
-    userView: PropTypes.bool
+    uid: PropTypes.string,
+    dispatch: PropTypes.func,
+    onChange: PropTypes.func,
+    onCommit: PropTypes.func,
+    problem: PropTypes.any,
+    readOnly: PropTypes.bool,
+    solution: PropTypes.object
   };
 
   state = {
-    solution: "",
-    runTour: false,
-    steps: [
-      {
-        target: "#custom-task-name",
-        content: "Name for new task"
-      },
-      {
-        target: "#custom-task-url",
-        content: "URL of custom task service"
-      },
-      {
-        target: "#custom-task-fallback",
-        content: "Format of custom task service output"
-      },
-      {
-        target: "#custom-task-mode-editable",
-        content: "Mode of block. Editable and hidden blocks could be only code"
-      },
-      {
-        target: "#custom-task-editor-editable",
-        content: "Default content of block available to edit by user"
-      },
-      {
-        target: "#custom-task-editor-hidden",
-        content:
-          "Block with hidden code. Usually used to validate user's solution"
-      },
-      {
-        target: "#custom-task-editor-shown",
-        content: "Displayed for user block"
-      },
-      {
-        target: "#custom-task-add-button",
-        content: "Click to add more displayed for user blocks"
-      }
-    ]
+    solution: undefined
   };
 
-  onJoyrideCallback = data =>
-    [STATUS.FINISHED, STATUS.SKIPPED].includes(data.status) &&
-    this.setState({ runTour: false });
+  componentDidMount() {
+    this.setState({
+      open: new Date().getTime()
+    });
+  }
+
+  getTaskInfo = () => ({
+    response: this.props.solution.json
+  });
+
   onSolutionChange = solution => this.setState({ solution });
 
-  onStartTour = () => this.setState({ runTour: true });
+  onSolutionRunClick = () => {
+    const { dispatch, onChange, problem } = this.props;
+    const { open, solution } = this.state;
 
-  onTaskRunRequest = () =>
-    this.props.onTaskRunRequest(
-      this.props.taskInfo.id,
-      this.props.taskInfo,
-      this.state.solution
+    dispatch(problemSolutionRefreshFail());
+    if (onChange) {
+      onChange({ payload: solution });
+    }
+
+    return dispatch(
+      problemSolveUpdate(
+        problem.pathId,
+        problem.problemId,
+        { payload: solution },
+        open
+      )
     );
-
-  onUserViewChange = e => {
-    this.setState({ userView: e.target.checked });
-    this.props.onChange({ userView: e.target.checked });
   };
+
+  onTaskRunRequest = () => this.props.onCommit();
 
   sectionStyle = {
     display: "flex",
     flexDirection: "column",
     flexGrow: 1,
+    flex: "0 48%",
     width: "100%",
     margin: "0 0.5rem 0 0.5rem"
   };
@@ -116,22 +96,16 @@ export class CustomTaskPreviewForm extends React.PureComponent {
     padding: "1rem"
   };
 
-  filterBlocks = (taskInfo, blockType) => {
-    const filteredCells = taskInfo.cells.filter(
-      block =>
-        block.source.join("") && block.metadata.achievements.type === blockType
-    );
-    return filteredCells.length === 0
-      ? false
-      : filteredCells.map(block => this.renderBlock(block));
-  };
-
-  renderBlock = block => (
+  renderBlock = (block, uid) => (
     <React.Fragment
       key={block.metadata.achievements.type + block.metadata.achievements.index}
     >
       {block.cell_type === "text" ? (
-        <Markdown source={block.source.join("\n")} />
+        <Markdown
+          source={block.source
+            .join("\n")
+            .replace("YOUR_USER_TOKEN", uid.slice(0, 5))}
+        />
       ) : (
         <AceEditor
           maxLines={Infinity}
@@ -141,7 +115,9 @@ export class CustomTaskPreviewForm extends React.PureComponent {
           setOptions={{ showLineNumbers: false }}
           showGutter={true}
           theme="github"
-          value={block.source.join("\n")}
+          value={block.source
+            .join("\n")
+            .replace("YOUR_USER_TOKEN", uid.slice(0, 5))}
           width={"100%"}
         />
       )}
@@ -159,48 +135,23 @@ export class CustomTaskPreviewForm extends React.PureComponent {
     </React.Fragment>
   );
 
-  render() {
-    const { isRunning, taskInfo, userView } = this.props;
-    const { runTour, solution, steps } = this.state;
+  filterBlocks = (problemJSON, blockType, uid) => {
+    const filteredCells = problemJSON.cells.filter(
+      block =>
+        block.source.join("") && block.metadata.achievements.type === blockType
+    );
+    return filteredCells.length === 0
+      ? false
+      : filteredCells.map(block => this.renderBlock(block, uid));
+  };
 
-    if (isRunning) {
-      return (
-        <Grid item xs={12}>
-          <LinearProgress />
-        </Grid>
-      );
+  render() {
+    const { uid, problem, solution, readOnly } = this.props;
+    if (!problem.problemJSON) {
+      return <LinearProgress />;
     }
     return (
-      <React.Fragment>
-        <ReactJoyride
-          callback={this.onJoyrideCallback}
-          continuous
-          run={runTour}
-          scrollToFirstStep
-          showProgress
-          showSkipButton
-          steps={steps}
-          styles={{
-            options: {
-              zIndex: 10000
-            }
-          }}
-        />
-        <Grid item style={styles.toolbar} xs={12}>
-          <FormControlLabel
-            control={
-              <Checkbox checked={userView} onChange={this.onUserViewChange} />
-            }
-            label="User view"
-          />
-
-          <Button onClick={this.onStartTour}>
-            <Typography align="right" variant="body1">
-              Help
-            </Typography>
-            <HelpIcon style={{ marginLeft: "10px" }} />
-          </Button>
-        </Grid>
+      <Grid container spacing={8} style={{ overflowY: "auto" }}>
         <Grid
           item
           style={{
@@ -220,7 +171,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
                 </Card-header-text>
               </Card-header>
               <Card-content>
-                {this.filterBlocks(taskInfo.json, "public") || (
+                {this.filterBlocks(problem.problemJSON, "public", uid) || (
                   <Typography variant="p">
                     Edit the code in the editable code block below to pass the
                     tests!
@@ -230,7 +181,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
             </Card>
             <Card style={this.cardStyle}>
               <Card-content>
-                {taskInfo.json.cells
+                {problem.problemJSON.cells
                   .filter(
                     block => block.metadata.achievements.type === "editable"
                   )
@@ -264,7 +215,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
                           minLines={3}
                           mode={block.metadata.achievements.language_info.name}
                           onChange={this.onSolutionChange}
-                          readOnly="readOnly"
+                          readOnly={readOnly}
                           setOptions={{ showLineNumbers: false }}
                           showGutter={true}
                           theme="github"
@@ -290,7 +241,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
                 </Card-header-text>
               </Card-header>
               <Card-content>
-                {this.filterBlocks(taskInfo.json, "shown")}
+                {this.filterBlocks(problem.problemJSON, "shown", uid)}
               </Card-content>
             </Card>
             <Card style={this.cardStyle}>
@@ -307,7 +258,9 @@ export class CustomTaskPreviewForm extends React.PureComponent {
             </Card>
           </section>
         </Grid>
-      </React.Fragment>
+      </Grid>
     );
   }
 }
+
+export default CustomLocalActivity2;
