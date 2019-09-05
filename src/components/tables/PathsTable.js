@@ -65,10 +65,31 @@ class PathsTable extends React.PureComponent {
     this.state = { sortedPaths: [], selectedVal: "attempts" };
   }
 
+  getValues = obj => {
+    let mapped = [];
+    for (let key in obj) {
+      if (obj[key]["id"]) {
+        mapped.push(obj[key]);
+      } else {
+        let temp = obj[key];
+        temp["id"] = key;
+        mapped.push(temp);
+      }
+    }
+    return mapped;
+  };
+
   componentDidUpdate(prevProps, prevState) {
     if (isEmpty(prevState.sortedPaths) && !isEmpty(this.props.paths)) {
-      let sorted = this.props.paths ? Object.values(this.props.paths) : [];
+      let sorted = this.props.paths ? this.getValues(this.props.paths) : [];
       this.setState({ sortedPaths: sorted });
+    } else if (
+      !isEmpty(this.props.paths) &&
+      prevProps.paths !== this.props.paths
+    ) {
+      this.setState({
+        sortedPaths: this.props.paths ? this.getValues(this.props.paths) : []
+      });
     }
   }
 
@@ -76,7 +97,7 @@ class PathsTable extends React.PureComponent {
 
   sortPaths = key => {
     let publicPaths = { ...this.props.paths };
-    let sorted = Object.values(publicPaths).sort((a, b) =>
+    let sorted = this.getValues(publicPaths).sort((a, b) =>
       a[key.target.value] === b[key.target.value]
         ? 0
         : b[key.target.value] < a[key.target.value]
@@ -89,11 +110,13 @@ class PathsTable extends React.PureComponent {
       selectedVal: key.target.value
     });
   };
+
   componentDidMount() {
     this.setState({
-      sortedPaths: this.props.paths ? Object.values(this.props.paths) : []
+      sortedPaths: this.props.paths ? this.getValues(this.props.paths) : []
     });
   }
+
   render() {
     const { classes, viewCreatedTab, uid } = this.props;
     return (
@@ -147,7 +170,7 @@ class PathsTable extends React.PureComponent {
             </TableRow>
           )}
           {this.state.sortedPaths.map(path => (
-            <TableRow hover key={path.pathKey}>
+            <TableRow hover key={path.id}>
               <TableCell>{path.name}</TableCell>
               {!viewCreatedTab && (
                 <TableCell>
@@ -161,7 +184,7 @@ class PathsTable extends React.PureComponent {
 
               <TableCell>{path[this.state.selectedVal]}</TableCell>
               <TableCell>
-                <Link className={classes.link} to={`/paths/${path.pathKey}`}>
+                <Link className={classes.link} to={`/paths/${path.id}`}>
                   <IconButton>
                     <SearchIcon />
                   </IconButton>

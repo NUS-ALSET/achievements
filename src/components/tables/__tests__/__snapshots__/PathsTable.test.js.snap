@@ -486,7 +486,7 @@ exports[`<PathsTable> renders correctly when there are no paths 1`] = `
       <td
         aria-sort={null}
         className="MuiTableCell-root-9 MuiTableCell-body-11"
-        colSpan={3}
+        colSpan={4}
       >
         Empty
       </td>
