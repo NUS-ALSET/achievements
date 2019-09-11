@@ -107,7 +107,7 @@ class CustomLocalActivity extends React.PureComponent {
                   <Markdown
                     source={block.source
                       .join("\n")
-                      .replace("YOUR_USER_TOKEN", uid.slice(0, 5))}
+                      .replace(/YOUR_USER_TOKEN/g, uid.slice(0, 5))}
                   />
                 ) : (
                   <AceEditor
@@ -120,7 +120,7 @@ class CustomLocalActivity extends React.PureComponent {
                     theme="github"
                     value={block.source
                       .join("\n")
-                      .replace("YOUR_USER_TOKEN", uid.slice(0, 5))}
+                      .replace(/YOUR_USER_TOKEN/g, uid.slice(0, 5))}
                     width={"100%"}
                   />
                 )}
