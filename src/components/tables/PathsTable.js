@@ -24,6 +24,7 @@ import Select from "@material-ui/core/Select";
 import { Link } from "react-router-dom";
 
 import withStyles from "@material-ui/core/styles/withStyles";
+import isEmpty from "lodash/isEmpty";
 
 export const PATH_STATS_FILTER_TYPES = [
   {
@@ -61,12 +62,34 @@ class PathsTable extends React.PureComponent {
 
   constructor(props) {
     super(props);
-    this.state = { sortedPaths: this.props.paths, selectedVal: "attempts" };
+    this.state = { sortedPaths: [], selectedVal: "attempts" };
   }
 
+  getValues = obj => {
+    let mapped = [];
+    for (let key in obj) {
+      if (obj[key]["id"]) {
+        mapped.push(obj[key]);
+      } else {
+        let temp = obj[key];
+        temp["id"] = key;
+        mapped.push(temp);
+      }
+    }
+    return mapped;
+  };
+
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.paths !== prevState.sortedPaths) {
-      this.setState({ sortedPaths: this.props.paths });
+    if (isEmpty(prevState.sortedPaths) && !isEmpty(this.props.paths)) {
+      let sorted = this.props.paths ? this.getValues(this.props.paths) : [];
+      this.setState({ sortedPaths: sorted });
+    } else if (
+      !isEmpty(this.props.paths) &&
+      prevProps.paths !== this.props.paths
+    ) {
+      this.setState({
+        sortedPaths: this.props.paths ? this.getValues(this.props.paths) : []
+      });
     }
   }
 
@@ -74,24 +97,26 @@ class PathsTable extends React.PureComponent {
 
   sortPaths = key => {
     let publicPaths = { ...this.props.paths };
-    let sorted = Object.values(publicPaths).sort((a, b) =>
+    let sorted = this.getValues(publicPaths).sort((a, b) =>
       a[key.target.value] === b[key.target.value]
         ? 0
         : b[key.target.value] < a[key.target.value]
         ? -1
         : 1
     );
-   
+
     this.setState({
       sortedPaths: sorted,
       selectedVal: key.target.value
     });
   };
+
   componentDidMount() {
     this.setState({
-      sortedPaths: this.props.paths
+      sortedPaths: this.props.paths ? this.getValues(this.props.paths) : []
     });
   }
+
   render() {
     const { classes, viewCreatedTab, uid } = this.props;
     return (
@@ -141,42 +166,37 @@ class PathsTable extends React.PureComponent {
         <TableBody>
           {!Object.keys(this.state.sortedPaths).length && (
             <TableRow>
-              <TableCell colSpan={3}>
-                Empty {Object.keys(this.state.sortedPaths)}
-              </TableCell>
+              <TableCell colSpan={4}>Empty</TableCell>
             </TableRow>
           )}
-          {Object.keys(this.state.sortedPaths)
-            .filter(id => this.state.sortedPaths[id])
-            .map(id => ({ ...this.state.sortedPaths[id], id }))
-            .map(path => (
-              <TableRow hover key={path.id}>
-                <TableCell>{path.name}</TableCell>
-                {!viewCreatedTab && (
-                  <TableCell>
-                    {path.solutions !== undefined && path.totalActivities
-                      ? `${path.solutions} of ${path.totalActivities}`
-                      : path.owner === uid
-                      ? "owner"
-                      : "not joined"}
-                  </TableCell>
-                )}
-
-                <TableCell>{path[this.state.selectedVal]}</TableCell>
+          {this.state.sortedPaths.map(path => (
+            <TableRow hover key={path.id}>
+              <TableCell>{path.name}</TableCell>
+              {!viewCreatedTab && (
                 <TableCell>
-                  <Link className={classes.link} to={`/paths/${path.id}`}>
-                    <IconButton>
-                      <SearchIcon />
-                    </IconButton>
-                  </Link>
-                  {viewCreatedTab && (
-                    <IconButton onClick={() => this.onEditClick(path)}>
-                      <EditIcon />
-                    </IconButton>
-                  )}
+                  {path.solutions !== undefined && path.totalActivities
+                    ? `${path.solutions} of ${path.totalActivities}`
+                    : path.owner === uid
+                    ? "owner"
+                    : "not joined"}
                 </TableCell>
-              </TableRow>
-            ))}
+              )}
+
+              <TableCell>{path[this.state.selectedVal]}</TableCell>
+              <TableCell>
+                <Link className={classes.link} to={`/paths/${path.id}`}>
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                </Link>
+                {viewCreatedTab && (
+                  <IconButton onClick={() => this.onEditClick(path)}>
+                    <EditIcon />
+                  </IconButton>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     );

@@ -27,7 +27,43 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           }
         }
       >
-        Count
+        <div
+          className="MuiInputBase-root-41 MuiInput-root-28 MuiInput-underline-32"
+          onClick={[Function]}
+        >
+          <div
+            className="MuiSelect-root-21"
+          >
+            <div
+              aria-haspopup="true"
+              aria-pressed="false"
+              className="MuiSelect-select-22 MuiSelect-selectMenu-25 MuiInputBase-input-51 MuiInput-input-36"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+              tabIndex={0}
+            >
+              Attempts
+            </div>
+            <input
+              type="hidden"
+              value="attempts"
+            />
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root-58 MuiSelect-icon-27"
+              focusable="false"
+              role="presentation"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 10l5 5 5-5z"
+              />
+            </svg>
+          </div>
+        </div>
       </th>
       <th
         aria-sort={null}
@@ -44,7 +80,7 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
     </tr>
   </thead>
   <tbody
-    className="MuiTableBody-root-21"
+    className="MuiTableBody-root-71"
   >
     <tr
       className="MuiTableRow-root-4 MuiTableRow-hover-6"
@@ -67,7 +103,7 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           onClick={[Function]}
         >
           <button
-            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            className="MuiButtonBase-root-78 MuiIconButton-root-72"
             disabled={false}
             onBlur={[Function]}
             onContextMenu={[Function]}
@@ -84,11 +120,11 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
             type="button"
           >
             <span
-              className="MuiIconButton-label-27"
+              className="MuiIconButton-label-77"
             >
               <svg
                 aria-hidden="true"
-                className="MuiSvgIcon-root-31"
+                className="MuiSvgIcon-root-58"
                 focusable="false"
                 role="presentation"
                 viewBox="0 0 24 24"
@@ -103,12 +139,12 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
               </svg>
             </span>
             <span
-              className="MuiTouchRipple-root-40"
+              className="MuiTouchRipple-root-81"
             />
           </button>
         </a>
         <button
-          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          className="MuiButtonBase-root-78 MuiIconButton-root-72"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -126,11 +162,11 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           type="button"
         >
           <span
-            className="MuiIconButton-label-27"
+            className="MuiIconButton-label-77"
           >
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root-31"
+              className="MuiSvgIcon-root-58"
               focusable="false"
               role="presentation"
               viewBox="0 0 24 24"
@@ -145,7 +181,7 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
             </svg>
           </span>
           <span
-            className="MuiTouchRipple-root-40"
+            className="MuiTouchRipple-root-81"
           />
         </button>
       </td>
@@ -171,7 +207,7 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           onClick={[Function]}
         >
           <button
-            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            className="MuiButtonBase-root-78 MuiIconButton-root-72"
             disabled={false}
             onBlur={[Function]}
             onContextMenu={[Function]}
@@ -188,11 +224,11 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
             type="button"
           >
             <span
-              className="MuiIconButton-label-27"
+              className="MuiIconButton-label-77"
             >
               <svg
                 aria-hidden="true"
-                className="MuiSvgIcon-root-31"
+                className="MuiSvgIcon-root-58"
                 focusable="false"
                 role="presentation"
                 viewBox="0 0 24 24"
@@ -207,12 +243,12 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
               </svg>
             </span>
             <span
-              className="MuiTouchRipple-root-40"
+              className="MuiTouchRipple-root-81"
             />
           </button>
         </a>
         <button
-          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          className="MuiButtonBase-root-78 MuiIconButton-root-72"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -230,11 +266,11 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           type="button"
         >
           <span
-            className="MuiIconButton-label-27"
+            className="MuiIconButton-label-77"
           >
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root-31"
+              className="MuiSvgIcon-root-58"
               focusable="false"
               role="presentation"
               viewBox="0 0 24 24"
@@ -249,7 +285,7 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
             </svg>
           </span>
           <span
-            className="MuiTouchRipple-root-40"
+            className="MuiTouchRipple-root-81"
           />
         </button>
       </td>
@@ -275,7 +311,7 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           onClick={[Function]}
         >
           <button
-            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            className="MuiButtonBase-root-78 MuiIconButton-root-72"
             disabled={false}
             onBlur={[Function]}
             onContextMenu={[Function]}
@@ -292,11 +328,11 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
             type="button"
           >
             <span
-              className="MuiIconButton-label-27"
+              className="MuiIconButton-label-77"
             >
               <svg
                 aria-hidden="true"
-                className="MuiSvgIcon-root-31"
+                className="MuiSvgIcon-root-58"
                 focusable="false"
                 role="presentation"
                 viewBox="0 0 24 24"
@@ -311,12 +347,12 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
               </svg>
             </span>
             <span
-              className="MuiTouchRipple-root-40"
+              className="MuiTouchRipple-root-81"
             />
           </button>
         </a>
         <button
-          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          className="MuiButtonBase-root-78 MuiIconButton-root-72"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -334,11 +370,11 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
           type="button"
         >
           <span
-            className="MuiIconButton-label-27"
+            className="MuiIconButton-label-77"
           >
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root-31"
+              className="MuiSvgIcon-root-58"
               focusable="false"
               role="presentation"
               viewBox="0 0 24 24"
@@ -353,7 +389,7 @@ exports[`<PathsTable> renders correctly when there are multiple paths 1`] = `
             </svg>
           </span>
           <span
-            className="MuiTouchRipple-root-40"
+            className="MuiTouchRipple-root-81"
           />
         </button>
       </td>
@@ -389,7 +425,43 @@ exports[`<PathsTable> renders correctly when there are no paths 1`] = `
           }
         }
       >
-        Count
+        <div
+          className="MuiInputBase-root-41 MuiInput-root-28 MuiInput-underline-32"
+          onClick={[Function]}
+        >
+          <div
+            className="MuiSelect-root-21"
+          >
+            <div
+              aria-haspopup="true"
+              aria-pressed="false"
+              className="MuiSelect-select-22 MuiSelect-selectMenu-25 MuiInputBase-input-51 MuiInput-input-36"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+              tabIndex={0}
+            >
+              Attempts
+            </div>
+            <input
+              type="hidden"
+              value="attempts"
+            />
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root-58 MuiSelect-icon-27"
+              focusable="false"
+              role="presentation"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 10l5 5 5-5z"
+              />
+            </svg>
+          </div>
+        </div>
       </th>
       <th
         aria-sort={null}
@@ -406,7 +478,7 @@ exports[`<PathsTable> renders correctly when there are no paths 1`] = `
     </tr>
   </thead>
   <tbody
-    className="MuiTableBody-root-21"
+    className="MuiTableBody-root-71"
   >
     <tr
       className="MuiTableRow-root-4"
@@ -414,7 +486,7 @@ exports[`<PathsTable> renders correctly when there are no paths 1`] = `
       <td
         aria-sort={null}
         className="MuiTableCell-root-9 MuiTableCell-body-11"
-        colSpan={3}
+        colSpan={4}
       >
         Empty
       </td>
@@ -450,7 +522,43 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
           }
         }
       >
-        Count
+        <div
+          className="MuiInputBase-root-41 MuiInput-root-28 MuiInput-underline-32"
+          onClick={[Function]}
+        >
+          <div
+            className="MuiSelect-root-21"
+          >
+            <div
+              aria-haspopup="true"
+              aria-pressed="false"
+              className="MuiSelect-select-22 MuiSelect-selectMenu-25 MuiInputBase-input-51 MuiInput-input-36"
+              onBlur={[Function]}
+              onClick={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              role="button"
+              tabIndex={0}
+            >
+              Attempts
+            </div>
+            <input
+              type="hidden"
+              value="attempts"
+            />
+            <svg
+              aria-hidden="true"
+              className="MuiSvgIcon-root-58 MuiSelect-icon-27"
+              focusable="false"
+              role="presentation"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M7 10l5 5 5-5z"
+              />
+            </svg>
+          </div>
+        </div>
       </th>
       <th
         aria-sort={null}
@@ -467,7 +575,7 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
     </tr>
   </thead>
   <tbody
-    className="MuiTableBody-root-21"
+    className="MuiTableBody-root-71"
   >
     <tr
       className="MuiTableRow-root-4 MuiTableRow-hover-6"
@@ -490,7 +598,7 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
           onClick={[Function]}
         >
           <button
-            className="MuiButtonBase-root-28 MuiIconButton-root-22"
+            className="MuiButtonBase-root-78 MuiIconButton-root-72"
             disabled={false}
             onBlur={[Function]}
             onContextMenu={[Function]}
@@ -507,11 +615,11 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
             type="button"
           >
             <span
-              className="MuiIconButton-label-27"
+              className="MuiIconButton-label-77"
             >
               <svg
                 aria-hidden="true"
-                className="MuiSvgIcon-root-31"
+                className="MuiSvgIcon-root-58"
                 focusable="false"
                 role="presentation"
                 viewBox="0 0 24 24"
@@ -526,12 +634,12 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
               </svg>
             </span>
             <span
-              className="MuiTouchRipple-root-40"
+              className="MuiTouchRipple-root-81"
             />
           </button>
         </a>
         <button
-          className="MuiButtonBase-root-28 MuiIconButton-root-22"
+          className="MuiButtonBase-root-78 MuiIconButton-root-72"
           disabled={false}
           onBlur={[Function]}
           onClick={[Function]}
@@ -549,11 +657,11 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
           type="button"
         >
           <span
-            className="MuiIconButton-label-27"
+            className="MuiIconButton-label-77"
           >
             <svg
               aria-hidden="true"
-              className="MuiSvgIcon-root-31"
+              className="MuiSvgIcon-root-58"
               focusable="false"
               role="presentation"
               viewBox="0 0 24 24"
@@ -568,7 +676,7 @@ exports[`<PathsTable> renders correctly when there is one path 1`] = `
             </svg>
           </span>
           <span
-            className="MuiTouchRipple-root-40"
+            className="MuiTouchRipple-root-81"
           />
         </button>
       </td>
