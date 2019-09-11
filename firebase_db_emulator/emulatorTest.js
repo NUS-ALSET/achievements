@@ -234,7 +234,7 @@ describe('Logged in user', () => {
 
   it('should NOT be able to overwrite random child nodes', async () => {
     for (let childNode of allAchievementsNodes) {
-      location = childNode+'/'+'someRandomChildNode';
+      let location = childNode+'/'+'someRandomChildNode';
       await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
     }
   });
@@ -244,14 +244,14 @@ describe('Logged in user', () => {
       !UserOverWritableNodes.includes(item)
     );
     for (let childNode of childNodes) {
-      location = childNode+'/'+'alice';
+      let location = childNode+'/'+'alice';
       await firebase.assertFails(alice.ref(location).set("SOME_DATA"));
     }
   });
 
   it('should be able to overwrite a child node for their userId ie UserOverWritableNodes', async () => {
     for (let childNode of UserOverWritableNodes) {
-      location = childNode+'/'+'alice';
+      let location = childNode+'/'+'alice';
       await firebase.assertSucceeds(alice.ref(location).set("SOME_DATA"));
     }
   });
