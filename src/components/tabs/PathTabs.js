@@ -15,9 +15,9 @@ import Zoom from "@material-ui/core/Zoom";
 import AddIcon from "@material-ui/icons/Add";
 import PathsTable from "../../components/tables/PathsTable";
 
-const PATHS_TAB_PUBLIC = 0;
-const PATHS_TAB_OWNED = 1;
-const PATHS_TAB_JOINED = 2;
+export const PATHS_TAB_PUBLIC = 0;
+export const PATHS_TAB_OWNED = 1;
+export const PATHS_TAB_JOINED = 2;
 
 class PathTabs extends React.Component {
   static propTypes = {
@@ -64,7 +64,7 @@ class PathTabs extends React.Component {
       default:
         throw new Error("Wrong tab index");
     }
-    paths = paths || {};
+    // paths = paths || {};
 
     return (
       <Fragment>
