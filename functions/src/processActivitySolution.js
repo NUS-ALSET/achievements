@@ -26,10 +26,10 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
       .database()
       .ref(`/activities/${activityKey}`)
       .once("value")
-      .then(snap => snap.val())          
+      .then(snap => snap.val())
   ]).then(([analyzeUrl, activity]) => {
     switch (activity.type) {
-      case "jupyterInline":        
+      case "jupyterInline":
         let solution = JSON.parse(data.solution);
         let b1 = solution.result.cells; //given notebook cells
         let b2 = solution.cells; // solution notebook cells
@@ -67,7 +67,7 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
                 solutionFeatures: response.solutionFeatures,
                 type: "CODE_ANALYSIS",
                 pathKey: activity.path,
-                activityId:activityKey,
+                activityId: activityKey,
                 pathId: activity.path
               })
           )
@@ -83,13 +83,12 @@ function analyzeDiffPythonCode(activityKey, userKey, data) {
                 type: "CODE_ANALYSIS_ERROR",
                 errorMsg: String(err),
                 pathKey: activity.path,
-                activityId:activityKey,
+                activityId: activityKey,
                 pathId: activity.path
               })
           );
-      default:        
+      default:
         return Promise.resolve();
-          
     }
   });
 }
@@ -109,13 +108,18 @@ exports.handler = (activityKey, userKey, solution) =>
   Promise.all([
     analyzeDiffPythonCode(activityKey, userKey, solution),
     admin
-      .database()
-      .ref("/logged_events")
-      .orderByChild("createdAt")
+      .firestore()
+      .collection("/logged_events")
+      .orderBy("createdAt")
       .startAt(new Date().getTime() - ONE_HOURS)
-      .once("value")
-      .then(snap => snap.val())
-      .then(events => Object.keys(events || {}).map(key => events[key]))
+      .get()
+      .then(querySnapshot => {
+        let temp = [];
+        querySnapshot.forEach(doc => {
+          temp.push(doc.data());
+        });
+        return temp;
+      })
       .then(data => {
         let inSession = true;
         let startedTime = 0;
@@ -165,7 +169,6 @@ exports.handler = (activityKey, userKey, solution) =>
               ".sv": "timestamp"
             }
           })
-          
       )
-      
-  ])
+      .catch(err => console.error(err))
+  ]);
