@@ -155,8 +155,9 @@ export class ActionsService {
 
         if(actionDataJSON["cohortId"]){          
           objIndItems.cohortId=actionDataJSON["cohortId"]
-        }      
-        firebase
+        }   
+        //Commenting out logging to firebase as all the logged_events will be in firestore gng fwd    
+        /*firebase
           .database()
           .ref("/logged_events")
           .push({
@@ -172,7 +173,7 @@ export class ActionsService {
              firebase
               .database()
                 .ref("/logged_events/"+snap.key).update(JSON.parse( JSON.stringify(objIndItems)))
-          });
+          });*/
         
         const firestore_db = firebase.firestore();
         // Added firestore related changes

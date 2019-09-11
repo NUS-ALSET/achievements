@@ -7,7 +7,7 @@ const checkToken = require("./utils/checkToken");
 exports.httpTrigger = functions.https.onRequest((req, res) => {
   return checkToken(req).then(() => {
     const { start, stop = 0 } = req.query;
-    const ref = admin.database().ref("logged_events");
+    const ref = admin.firestore().collection("logged_events");
     let promise;
     let startFrom;
     let stopAt;
@@ -16,27 +16,30 @@ exports.httpTrigger = functions.https.onRequest((req, res) => {
       if (stop) {
         stopAt = Date.now() - stop * 24 * 60 * 60 * 1000;
         promise = ref
-          .once("value")
-          .orderByChild("createdAt")
-          .endAt(stopAt);
+          .orderBy('createdAt')
+          .endAt(stopAt)
+          .limit(100).get();
+          ;
       } else {
-        promise = ref.once("value");
+        promise = ref.limit(100).get();
       }
     } else {
       if (stop) {
         stopAt = Date.now() - stop * 24 * 60 * 60 * 1000;
         startFrom = Date.now() - (start + 1) * 24 * 60 * 60 * 1000;
-        promise = ref
-          .orderByChild("createdAt")
+        promise = ref.get()
+          .orderBy("createdAt")
           .startAt(startFrom)
           .endAt(stopAt)
-          .once("value");
+          .limit(100)
+          .get();
       } else {
         startFrom = Date.now() - (start + 1) * 24 * 60 * 60 * 1000;
         promise = ref
-          .orderByChild("createdAt")
+          .orderBy("createdAt")
           .startAt(startFrom)
-          .once("value");
+          .limit(100)
+          .get();
       }
     }
 
