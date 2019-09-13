@@ -357,7 +357,8 @@
     "logged_events": {
       ".read": "auth != null",
       "$loggedeventKey": {
-        ".write": "auth != null && !root.child('logged_events/' + $loggedeventKey).exists() && !data.exists() && newData.exists() && newData.child('uid').val() == auth.uid"
+        ".write": "auth != null || !root.child('logged_events/' + $loggedeventKey).exists()
+        || !data.exists() && newData.exists() && newData.child('uid').val() == auth.uid"
       },
       ".indexOn": ["createdAt", "type"]
     },
@@ -375,6 +376,7 @@
       }
     },
     "pathAssistants": {
+      ".read": "auth != null",
       "$pathKey": {
         ".read": "auth != null",
         ".write": "auth != null && auth.uid == root.child('paths/' + $pathKey + '/owner').val()"
@@ -407,6 +409,18 @@
               $activityKey + '/path').val() + '/owner').val() == auth.uid
           )"
         }
+      }
+    },
+    "ownerPathProblemSolutions": {
+      "$userKey": {
+        ".read": "auth != null && auth.uid == $userKey",
+        ".write": "auth != null && auth.uid == $userKey"
+      }
+    },
+    "problemJSSkills":{
+      "$activityKey":{
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid == root.child('activities/' + $activityKey + '/owner').val()",
       }
     },
     "profileData": {
