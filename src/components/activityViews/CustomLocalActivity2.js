@@ -227,7 +227,7 @@ class CustomLocalActivity2 extends React.PureComponent {
                                 <Button
                                   color="primary"
                                   disabled={disabledCommitBtn}
-                                  onClick={this.onCommit}
+                                  onClick={this.props.onCommit}
                                   variant="contained"
                                 >
                                   Commit
