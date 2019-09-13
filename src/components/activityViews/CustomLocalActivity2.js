@@ -36,6 +36,7 @@ const styles = {
 class CustomLocalActivity2 extends React.PureComponent {
   static propTypes = {
     uid: PropTypes.string,
+    disabledCommitBtn: PropTypes.bool,
     dispatch: PropTypes.func,
     onChange: PropTypes.func,
     onCommit: PropTypes.func,
@@ -84,8 +85,7 @@ class CustomLocalActivity2 extends React.PureComponent {
   sectionStyle = {
     display: "flex",
     flexDirection: "column",
-    flexGrow: 1,
-    flex: "0 48%",
+    flex: "1 1 48%",
     width: "100%",
     margin: "0 0.5rem 0 0.5rem"
   };
@@ -146,7 +146,7 @@ class CustomLocalActivity2 extends React.PureComponent {
   };
 
   render() {
-    const { uid, problem, solution, readOnly } = this.props;
+    const { uid, problem, solution, readOnly, disabledCommitBtn } = this.props;
     if (!problem.problemJSON) {
       return <LinearProgress />;
     }
@@ -194,12 +194,19 @@ class CustomLocalActivity2 extends React.PureComponent {
                           spacing={8}
                           style={{ alignItems: "center" }}
                         >
-                          <Grid item xs={8}>
+                          <Grid item xs={7}>
                             <Typography variant="h6">
                               Editable Code Block
                             </Typography>
                           </Grid>
-                          <Grid item xs={4}>
+                          <Grid
+                            item
+                            xs={5}
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-around"
+                            }}
+                          >
                             <Button
                               color="primary"
                               disabled={!this.state.solution}
@@ -208,6 +215,25 @@ class CustomLocalActivity2 extends React.PureComponent {
                             >
                               Run
                             </Button>
+                            {!readOnly && uid && (
+                              <div
+                                style={{
+                                  bottom: 0,
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                  position: "relative"
+                                }}
+                              >
+                                <Button
+                                  color="primary"
+                                  disabled={disabledCommitBtn}
+                                  onClick={this.onCommit}
+                                  variant="contained"
+                                >
+                                  Commit
+                                </Button>
+                              </div>
+                            )}
                           </Grid>
                         </Grid>
                         <AceEditor

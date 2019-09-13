@@ -268,12 +268,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
                           setOptions={{ showLineNumbers: false }}
                           showGutter={true}
                           theme="github"
-                          value={
-                            this.state.solution === undefined
-                              ? (solution && solution.payload) ||
-                                block.source.join("\n")
-                              : this.state.solution
-                          }
+                          value={solution || block.source.join("\n") || ""}
                           width={"100%"}
                         />
                       </React.Fragment>
