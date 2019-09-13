@@ -264,7 +264,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
                           minLines={3}
                           mode={block.metadata.achievements.language_info.name}
                           onChange={this.onSolutionChange}
-                          readOnly="readOnly"
+                          readOnly={true}
                           setOptions={{ showLineNumbers: false }}
                           showGutter={true}
                           theme="github"
