@@ -49,15 +49,19 @@ export class CustomTaskPreviewForm extends React.PureComponent {
     steps: [
       {
         target: "#custom-task-name",
-        content: "Name for new task"
+        content: "Name for new custom activity"
       },
       {
         target: "#custom-task-url",
-        content: "URL of custom task service"
+        content: "URL of custom activity service"
       },
       {
         target: "#custom-task-fallback",
-        content: "Format of custom task service output"
+        content: "Format of custom activity service output"
+      },
+      {
+        target: "#custom-task-editor-public",
+        content: "Display introduction to activity"
       },
       {
         target: "#custom-task-mode-editable",
@@ -68,17 +72,17 @@ export class CustomTaskPreviewForm extends React.PureComponent {
         content: "Default content of block available to edit by user"
       },
       {
-        target: "#custom-task-editor-hidden",
-        content:
-          "Block with hidden code. Usually used to validate user's solution"
+        target: "#custom-task-editor-shown",
+        content: "Display tests"
       },
       {
-        target: "#custom-task-editor-shown",
-        content: "Displayed for user block"
+        target: "#custom-task-editor-hidden",
+        content:
+          "Block with hidden code. Usually used to store hidden tests for validating user's solution"
       },
       {
         target: "#custom-task-add-button",
-        content: "Click to add more displayed for user blocks"
+        content: "Click to add more blocks to the introduction section"
       }
     ]
   };
