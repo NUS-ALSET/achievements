@@ -82,6 +82,8 @@ class CustomLocalActivity2 extends React.PureComponent {
 
   onTaskRunRequest = () => this.props.onCommit();
 
+  resetSolution = () => this.setState({ solution: undefined });
+
   sectionStyle = {
     display: "flex",
     flexDirection: "column",
@@ -194,14 +196,14 @@ class CustomLocalActivity2 extends React.PureComponent {
                           spacing={8}
                           style={{ alignItems: "center" }}
                         >
-                          <Grid item xs={7}>
+                          <Grid item xs={5}>
                             <Typography variant="h6">
                               Editable Code Block
                             </Typography>
                           </Grid>
                           <Grid
                             item
-                            xs={5}
+                            xs={7}
                             style={{
                               display: "flex",
                               justifyContent: "space-around"
@@ -214,6 +216,14 @@ class CustomLocalActivity2 extends React.PureComponent {
                               variant="contained"
                             >
                               Run
+                            </Button>
+                            <Button
+                              color="primary"
+                              disabled={!this.state.solution}
+                              onClick={this.resetSolution}
+                              variant="contained"
+                            >
+                              Reset
                             </Button>
                             {!readOnly && uid && (
                               <div
