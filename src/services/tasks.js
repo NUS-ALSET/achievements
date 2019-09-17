@@ -149,6 +149,11 @@ export class TasksService {
     switch (type) {
       case TASK_TYPES.jupyter.id:
         json = json || DEFAULT_JUPYTER_TASK;
+        for (const [i, cell] of json.cells.entries()) {
+          if (cell.metadata.achievements.editable) {
+            json.editable = i;
+          }
+        }
         break;
       case TASK_TYPES.custom.id:
         // Add required blocks for `custom` Task

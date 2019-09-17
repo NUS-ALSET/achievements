@@ -191,12 +191,22 @@ class Task extends React.PureComponent {
 
   onSave = () => {
     const taskInfo = this.getTaskInfo();
-    this.props.onTaskSaveRequest(this.props.match.params.taskId, {
-      ...this.state.changes,
-      name: this.state.changes.name || taskInfo.name,
-      type: taskInfo.type,
-      json: taskInfo.json
-    });
+    if (taskInfo.json.editable) {
+      this.props.onTaskSaveRequest(this.props.match.params.taskId, {
+        ...this.state.changes,
+        name: this.state.changes.name || taskInfo.name,
+        type: taskInfo.type,
+        json: taskInfo.json,
+        editable: taskInfo.json.editable
+      });
+    } else {
+      this.props.onTaskSaveRequest(this.props.match.params.taskId, {
+        ...this.state.changes,
+        name: this.state.changes.name || taskInfo.name,
+        type: taskInfo.type,
+        json: taskInfo.json
+      });
+    }
     this.setState({
       isChanged: false
     });
