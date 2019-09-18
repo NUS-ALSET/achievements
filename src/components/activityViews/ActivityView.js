@@ -38,6 +38,7 @@ const views = {
 class ActivityView extends React.PureComponent {
   static propTypes = {
     uid: PropTypes.string,
+    disabledCommitBtn: PropTypes.bool,
     dispatch: PropTypes.func,
     pathProblem: PropTypes.any,
     onClose: PropTypes.func,
@@ -80,6 +81,7 @@ class ActivityView extends React.PureComponent {
   render() {
     const {
       uid,
+      disabledCommitBtn,
       dispatch,
       onClose,
       onProblemChange,
@@ -110,6 +112,7 @@ class ActivityView extends React.PureComponent {
       <div style={{ textAlign: "center", overflowX: "hidden" }}>
         <SpecificView
           uid={uid}
+          disabledCommitBtn={disabledCommitBtn}
           dispatch={dispatch}
           onChange={onProblemChange}
           onClose={onClose}

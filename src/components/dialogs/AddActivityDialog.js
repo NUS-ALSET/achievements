@@ -218,6 +218,12 @@ class AddActivityDialog extends React.PureComponent {
               Jupyter
             </MenuItem>
           );
+        } else if (key === ACTIVITY_TYPES.jupyterLocal.id) {
+          return (
+            <MenuItem key={key} value={key}>
+              Advanced Activity
+            </MenuItem>
+          );
         }
 
         break;

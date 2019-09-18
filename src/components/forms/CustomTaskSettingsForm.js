@@ -79,7 +79,7 @@ export class CustomTaskSettingsForm extends React.PureComponent {
           />
         ))}
         <Button id="custom-task-add-button" onClick={this.onAddBlock}>
-          Add more blocks <AddIcon />
+          Add more blocks to Introduction section <AddIcon />
         </Button>
       </React.Fragment>
     );

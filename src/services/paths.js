@@ -134,7 +134,11 @@ export const CodeCombat_Multiplayer_Data = {
     },
     "queen-of-the-desert": {
       id: "queen-of-the-desert",
-      name: "queen-of-the-desert"
+      name: "Queen of the Desert"
+    },
+    "potions-playground": {
+      id: "potions-playground",
+      name: "Potions Playground"
     }
   },
   rankingPercentile: [0, 10, 20, 30, 40, 50]

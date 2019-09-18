@@ -45,6 +45,20 @@ const DEFAULT_CUSTOM_TASK = {
   cells: [
     {
       cell_type: "code",
+      metadata: {
+        colab_type: "code",
+        achievements: {
+          title: "Introduction",
+          language_info: {
+            name: "python"
+          },
+          type: "public"
+        }
+      },
+      source: []
+    },
+    {
+      cell_type: "code",
       language_info: {
         name: "python"
       },
@@ -66,11 +80,11 @@ const DEFAULT_CUSTOM_TASK = {
       metadata: {
         colab_type: "code",
         achievements: {
-          title: "Hidden Code",
+          title: "Tests",
           language_info: {
             name: "python"
           },
-          type: "hidden"
+          type: "shown"
         }
       },
       source: []
@@ -80,11 +94,11 @@ const DEFAULT_CUSTOM_TASK = {
       metadata: {
         colab_type: "code",
         achievements: {
-          title: "Shown Code/Text",
+          title: "Hidden Code",
           language_info: {
             name: "python"
           },
-          type: "shown"
+          type: "hidden"
         }
       },
       source: []
@@ -135,6 +149,11 @@ export class TasksService {
     switch (type) {
       case TASK_TYPES.jupyter.id:
         json = json || DEFAULT_JUPYTER_TASK;
+        for (const [i, cell] of json.cells.entries()) {
+          if (cell.metadata.achievements.editable) {
+            json.editable = i;
+          }
+        }
         break;
       case TASK_TYPES.custom.id:
         // Add required blocks for `custom` Task
@@ -157,7 +176,8 @@ export class TasksService {
     for (const cell of json.cells) {
       cell.metadata = cell.metadata || {};
       cell.metadata.achievements = cell.metadata.achievements || {};
-      cell.metadata.achievements.language_info = cell.metadata.achievements.language_info || {
+      cell.metadata.achievements.language_info = cell.metadata.achievements
+        .language_info || {
         name: "python"
       };
       cell.outputs = cell.outputs || [];
@@ -192,12 +212,13 @@ export class TasksService {
       .then(snap => snap.val() || {})
       .then(presets =>
         Promise.all(
-          Object.keys({ ...presets, basic: presets.basic || BASIC_PRESET }).map(presetId =>
-            firebase
-              .database()
-              .ref(`/tasks/${presetId}`)
-              .once("value")
-              .then(snap => ({ id: presetId, ...(snap.val() || {}) }))
+          Object.keys({ ...presets, basic: presets.basic || BASIC_PRESET }).map(
+            presetId =>
+              firebase
+                .database()
+                .ref(`/tasks/${presetId}`)
+                .once("value")
+                .then(snap => ({ id: presetId, ...(snap.val() || {}) }))
           )
         )
       );
@@ -326,9 +347,11 @@ export class TasksService {
     switch (taskInfo.type) {
       case "jupyter":
         for (const cell of taskInfo.json.cells) {
-          editableExists = editableExists || cell.metadata.achievements.editable;
+          editableExists =
+            editableExists || cell.metadata.achievements.editable;
         }
-        if (!editableExists) throw new Error("Missing required `editable` field");
+        if (!editableExists)
+          throw new Error("Missing required `editable` field");
         break;
       default:
         return true;
