@@ -74,6 +74,22 @@ export class UserSolutionRow extends React.PureComponent {
     if (this.props.activity && this.props.activity.type === "jupyterLocal") {
       sol = sol.payload;
     }
+    if (this.props.activity && this.props.activity.type === "youtube") {
+      sol = JSON.stringify(sol.answers);
+    }
+    if (
+      this.props.activity &&
+      this.props.activity.type &&
+      [
+        "codeCombatNumber",
+        "codeCombatMultiPlayerLevel",
+        "creator",
+        "educator",
+        "multipleQuestion"
+      ].includes(this.props.activity.type)
+    ) {
+      sol = JSON.stringify(sol);
+    }
     return sol;
   };
   render() {
@@ -96,7 +112,7 @@ export class UserSolutionRow extends React.PureComponent {
               {userId.slice(userId.length - 4)}
             </Typography>
             <Typography className={classes.quarter}>
-              {solution.updatedAt || typeof status === "number"
+              {(solution && solution.updatedAt) || typeof status === "number"
                 ? "Updated At: " +
                   distanceInWords(solution.updatedAt || status, new Date(), {
                     includeSeconds: true
