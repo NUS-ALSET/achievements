@@ -20,6 +20,14 @@ import ViewActivityJestSolutionDialog from "../../components/dialogs/ViewActivit
 import JupyterInlineActivity from "../../components/activityViews/JupyterInlineActivity";
 
 import { distanceInWords } from "date-fns";
+import Loadable from "react-loadable";
+import LinearProgress from "@material-ui/core/LinearProgress";
+
+const AceEditor = Loadable({
+  loader: () => import("../../components/AceEditor"),
+  loading: () => <LinearProgress />
+});
+
 function emptyFn() {}
 
 const styles = theme => ({
@@ -60,17 +68,38 @@ export class UserSolutionRow extends React.PureComponent {
 
   getSolution = solution => {
     let sol = (solution || {}).solution ? solution.solution : solution;
-    if (this.props.activity || {}.type === "jupyterInline") {
+    if (this.props.activity && this.props.activity.type === "jupyterInline") {
       sol = typeof sol === "string" ? JSON.parse(sol) : sol;
+    }
+    if (this.props.activity && this.props.activity.type === "jupyterLocal") {
+      sol = sol.payload;
+    }
+    if (this.props.activity && this.props.activity.type === "youtube") {
+      sol = JSON.stringify(sol.answers);
+    }
+    if (
+      this.props.activity &&
+      this.props.activity.type &&
+      [
+        "codeCombatNumber",
+        "codeCombatMultiPlayerLevel",
+        "creator",
+        "educator",
+        "multipleQuestion"
+      ].includes(this.props.activity.type)
+    ) {
+      sol = JSON.stringify(sol);
     }
     return sol;
   };
   render() {
     const { userId, solution, status, classes } = this.props;
     const activity = this.props.activity || {};
-    const showActivitySolution = ["jupyterInline", "jest"].includes(
-      activity.type
-    );
+    const showActivitySolution = [
+      "jupyterInline",
+      "jupyterLocal",
+      "jest"
+    ].includes(activity.type);
     return (
       <ExpansionPanel defaultExpanded>
         <ExpansionPanelSummary
@@ -83,7 +112,7 @@ export class UserSolutionRow extends React.PureComponent {
               {userId.slice(userId.length - 4)}
             </Typography>
             <Typography className={classes.quarter}>
-              {solution.updatedAt || typeof status === "number"
+              {(solution && solution.updatedAt) || typeof status === "number"
                 ? "Updated At: " +
                   distanceInWords(solution.updatedAt || status, new Date(), {
                     includeSeconds: true
@@ -119,7 +148,25 @@ export class UserSolutionRow extends React.PureComponent {
                   solution={solution}
                 />
               )}
+              {activity.type === "jupyterLocal" && (
+                <AceEditor
+                  maxLines={Infinity}
+                  minLines={3}
+                  mode="python"
+                  readOnly={true}
+                  setOptions={{ showLineNumbers: false }}
+                  showGutter={true}
+                  theme="github"
+                  value={this.getSolution(solution)}
+                  width={"100%"}
+                />
+              )}
             </div>
+          </ExpansionPanelDetails>
+        )}
+        {!showActivitySolution && (
+          <ExpansionPanelDetails>
+            <div style={{ width: "100%" }}>{this.getSolution(solution)}</div>
           </ExpansionPanelDetails>
         )}
       </ExpansionPanel>
@@ -140,7 +187,9 @@ export default compose(
   firebaseConnect(ownProps => {
     return [
       {
-        path: `/completedActivities/${ownProps.userId}/${ownProps.pathId}/${ownProps.activityId}`
+        path: `/completedActivities/${ownProps.userId}/${ownProps.pathId}/${
+          ownProps.activityId
+        }`
       }
     ];
   }),
