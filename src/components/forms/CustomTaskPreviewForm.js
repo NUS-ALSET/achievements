@@ -225,7 +225,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
               </Card-header>
               <Card-content>
                 {this.filterBlocks(taskInfo.json, "public") || (
-                  <Typography variant="p">
+                  <Typography variant="body1">
                     Edit the code in the editable code block below to pass the
                     tests!
                   </Typography>
