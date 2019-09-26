@@ -150,7 +150,11 @@ export class TasksService {
       case TASK_TYPES.jupyter.id:
         json = json || DEFAULT_JUPYTER_TASK;
         for (const [i, cell] of json.cells.entries()) {
-          if (cell.metadata.achievements.editable) {
+          if (
+            cell.metadata &&
+            cell.metadata.achievements &&
+            cell.metadata.achievements.editable
+          ) {
             json.editable = i;
           }
         }
