@@ -42,6 +42,10 @@ export const PATH_STATS_FILTER_TYPES = [
   {
     id: "unique_users",
     caption: "Unique users"
+  },
+  {
+    id: "nps",
+    caption: "NPS"
   }
 ];
 
