@@ -127,6 +127,7 @@ class PathsTable extends React.PureComponent {
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell />
             <TableCell>Path name</TableCell>
             {!viewCreatedTab && (
               <TableCell
@@ -173,8 +174,9 @@ class PathsTable extends React.PureComponent {
               <TableCell colSpan={4}>Empty</TableCell>
             </TableRow>
           )}
-          {this.state.sortedPaths.map(path => (
+          {this.state.sortedPaths.map((path, index) => (
             <TableRow hover key={path.id}>
+              <TableCell>{index + 1}</TableCell>
               <TableCell>{path.name}</TableCell>
               {!viewCreatedTab && (
                 <TableCell>
