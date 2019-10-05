@@ -440,7 +440,7 @@ export class PathsService {
     return firebase
       .database()
       .ref(`/paths/${key}`)
-      .set({ ...pathInfo, totalActivities: 0, owner: uid })
+      .set({ ...pathInfo, totalActivities: 0, owner: uid,id:key })
       .then(() => key);
   }
 
