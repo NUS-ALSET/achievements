@@ -60,6 +60,7 @@ describe("Paths service tests", () => {
           .then(() => spy())
           .then(() =>
             expect(data).toEqual({
+              id: "deadbeef",
               name: "test",
               owner: "testOwner",
               totalActivities: 0
