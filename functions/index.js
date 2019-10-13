@@ -25,7 +25,7 @@ const createCustomToken = require("./src/createCustomToken");
 const runLocalTask = require("./src/runLocalTask");
 const runCustomAnalyis = require("./src/runCustomAnalysis");
 const fetchNotebookFromGitTrigger = require("./src/fetchNotebookFromGit");
-
+const pathStatsTrigger = require("./src/pathStatsGenerator")
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
 
 //  dev-db is paid account now
@@ -52,6 +52,14 @@ exports.handleNewProblemSolution =
         "handleNewProblemSolution"
       );
     });
+
+
+exports.pathStatsScheduler = functions.pubsub.schedule('08 00 * * *')
+  .timeZone("Asia/Singapore").
+  onRun((context) => {
+    console.log('This will be run every 5 minutes!');
+    return pathStatsTrigger.handler();
+  });
 
 exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
