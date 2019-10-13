@@ -67,9 +67,9 @@ const runPathStats = () => {
       }
     })
     var i = 0
-    for (path in publicPaths) {
+    for (let path in publicPaths) {
       publicPathID = publicPaths[path]["id"]
-      for (actKey in fb_act) {
+      for (let actKey in fb_act) {
 
         actVal = fb_act[actKey]
         pathKey = actVal["pathKey"]
@@ -99,7 +99,7 @@ const runPathStats = () => {
             num_solves = 0
           }
           let un_users = []
-          for (eachVal in unique_users) {
+          for (let eachVal in unique_users) {
             if (eachVal == pathKey) {
               un_users = unique_users[pathKey]
             }
