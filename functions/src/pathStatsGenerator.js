@@ -88,7 +88,7 @@ const runPathStats = () => {
           }
 
           if (completed == 1) {
-            for (eachVal in solves_arr) {
+            for (let eachVal in solves_arr) {
               if (eachVal == pathKey) {
 
                 num_solves = solves_arr[pathKey]
