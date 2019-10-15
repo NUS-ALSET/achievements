@@ -54,7 +54,7 @@ exports.handleNewProblemSolution =
     });
 
 
-exports.pathStatsScheduler = functions.pubsub.schedule('08 00 * * *')
+exports.pathStatsScheduler = functions.pubsub.schedule('00 07 * * *')
   .timeZone("Asia/Singapore").
   onRun((context) => {
     console.log('This will be run every 5 minutes!');

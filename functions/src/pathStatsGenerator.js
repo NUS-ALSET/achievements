@@ -119,8 +119,9 @@ const runPathStats = () => {
                 }else if(doc.val<6){
                   detractors = detractors+1
                 }
-                total_num=Object.keys(feedback_arr).length               
+                          
               }); 
+              total_num=Object.keys(feedback_arr).length   
               nps[publicPathID]= ((promoters/total_num)*100)-((detractors/total_num)*100)
               promoters=0
               detractors=0
@@ -134,48 +135,67 @@ const runPathStats = () => {
       }
       let divisor = 1
 
-      let num_users = 1
+      let num_users = 0
       
-      divisor = solves_arr[publicPathID]
+      
 
-
-      num_users = unique_users[publicPathID].length
-
+      if (unique_users[publicPathID]) {
+        num_users = unique_users[publicPathID].length
+      }      
       if (i == 0) {
         ref = admin
           .firestore()
           .collection("/path_statistics").doc();
-        ref.set({
+        await ref.set({
           'createdAt': admin.firestore.FieldValue.serverTimestamp(),
           'startDate': (admin.firestore.Timestamp.now().toMillis() - THIRTY_DAYS)
           , 'endDate': admin.firestore.FieldValue.serverTimestamp()
         });
-        await ref.set({
+       
+       /*await ref.set({
           'data': admin.firestore.FieldValue.arrayUnion({
             'pathName': publicPaths[path]["name"],
             'pathKey': publicPathID,
-            'unique_users': num_users,
-            'attempts': attempts_arr[publicPathID],
-            'solves': solves_arr[publicPathID],
-            'attempts_per_solve': (attempts_arr[publicPathID] / divisor).toFixed(2),
-            'nps':nps[publicPathID]
-
+            'unique_users': num_users
           })
-        })
+        })*/
+        
+      }
+      
+      
+      var strPathName = 'data.'+ i+'.pathName'
+      var strPathKey = 'data.'+ i+'.pathKey'
+      var strUniqueUsers = 'data.'+ i+'.unique_users'
+      
+      await ref.update({
+          [strPathName]: publicPaths[path]["name"],
+          [strPathKey]: publicPathID,
+          [strUniqueUsers]: num_users
+        
+      })
+      
+      if(nps[publicPathID]){
+        await ref.update({          
+            ['data.'+i+'.nps']:parseFloat((nps[publicPathID]).toFixed(2))        
+      })
       }
 
-      await ref.update({
-        'data': admin.firestore.FieldValue.arrayUnion({
-          'pathName': publicPaths[path]["name"],
-          'pathKey': publicPathID,
-          'unique_users': num_users,
-          'attempts': attempts_arr[publicPathID],
-          'solves': solves_arr[publicPathID],
-          'attempts_per_solve': (attempts_arr[publicPathID] / divisor).toFixed(2),
-          'nps':nps[publicPathID]
-
-        })
+      if(solves_arr[publicPathID]){
+        divisor = solves_arr[publicPathID]
+        await ref.update({          
+          ['data.'+i+'.solves']:solves_arr[publicPathID]
       })
+      }
+      
+      if(attempts_arr[publicPathID]){
+        await ref.update({          
+          ['data.'+i+'.attempts']:attempts_arr[publicPathID],
+          ['data.'+i+'.attempts_per_solve']: parseFloat((attempts_arr[publicPathID] / divisor).toFixed(2))        
+      })
+      }
+
+      
+      
       i = i + 1
     }    
   })  
