@@ -230,11 +230,11 @@ export class CustomAnalysisService {
       default:
         break;
     }
-    if (queryTypeSelected) {
+    if (queryTypeSelected && queryTypeSelected.name) {
       dbRef = dbRef.where("type", "==", queryTypeSelected.name);
     }
 
-    dbRef = dbRef.orderBy("createdAt", "desc");
+    dbRef = dbRef.orderBy("createdAt");
     dbRef = dbRef.limit(APP_SETTING.LOG_ANALYSIS_LIMIT);
     return await dbRef
       .get()
@@ -242,6 +242,7 @@ export class CustomAnalysisService {
         let logs = [];
         querySnapshot.forEach(function(doc) {
           // doc.data() is never undefined for query doc snapshots
+   
           logs.push(doc.data());
         });
         return logs;
