@@ -15,6 +15,10 @@ import Typography from "@material-ui/core/Typography";
 import HelpIcon from "@material-ui/icons/HelpOutline";
 
 import Card from "@material-ui/core/Card";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import { withStyles } from "@material-ui/core/styles";
 
 import { CustomTaskResponseForm } from "./CustomTaskResponseForm";
 
@@ -33,6 +37,12 @@ const styles = {
   paper: { margin: "24px 2px", padding: "2.5%" },
   output: { color: "red" }
 };
+
+const StyledTabs = withStyles({
+  flexContainer: {
+    flexWrap: "wrap"
+  }
+})(Tabs);
 
 export class CustomTaskPreviewForm extends React.PureComponent {
   static propTypes = {
@@ -84,7 +94,8 @@ export class CustomTaskPreviewForm extends React.PureComponent {
         target: "#custom-task-add-button",
         content: "Click to add more blocks to the introduction section"
       }
-    ]
+    ],
+    tabValue: "one"
   };
 
   onJoyrideCallback = data =>
@@ -125,9 +136,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
       block =>
         block.source.join("") && block.metadata.achievements.type === blockType
     );
-    return filteredCells.length === 0
-      ? false
-      : filteredCells.map(block => this.renderBlock(block));
+    return filteredCells.length === 0 ? false : filteredCells;
   };
 
   renderBlock = block => (
@@ -144,6 +153,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
           readOnly={true}
           setOptions={{ showLineNumbers: false }}
           showGutter={true}
+          style={{ marginTop: "1rem" }}
           theme="github"
           value={block.source.join("\n")}
           width={"100%"}
@@ -163,9 +173,26 @@ export class CustomTaskPreviewForm extends React.PureComponent {
     </React.Fragment>
   );
 
+  handleTabChange = (event, newValue) => {
+    this.setState({ tabValue: newValue });
+  };
+
+  TabPanel = props => {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div style={value !== index ? { display: "none" } : {}} {...other}>
+        {children}
+      </div>
+    );
+  };
+
   render() {
     const { isRunning, taskInfo, userView } = this.props;
     const { runTour, solution, steps } = this.state;
+
+    const introductoryBlocks = this.filterBlocks(taskInfo.json, "public");
+    const additionalIntroBlocks = introductoryBlocks.slice(1);
 
     if (isRunning) {
       return (
@@ -217,21 +244,51 @@ export class CustomTaskPreviewForm extends React.PureComponent {
           xs={12}
         >
           <section style={this.sectionStyle}>
-            <Card style={this.cardStyle}>
-              <Card-header>
-                <Card-header-text>
-                  <Typography variant="h6">Introduction</Typography>
-                </Card-header-text>
-              </Card-header>
-              <Card-content>
-                {this.filterBlocks(taskInfo.json, "public") || (
-                  <Typography variant="body1">
-                    Edit the code in the editable code block below to pass the
-                    tests!
-                  </Typography>
-                )}
-              </Card-content>
-            </Card>
+            <AppBar
+              position="static"
+              style={{ backgroundColor: "lightslategrey" }}
+            >
+              <StyledTabs
+                onChange={this.handleTabChange}
+                value={this.state.tabValue}
+              >
+                <Tab label="Introduction" value="one" />
+                <Tab label="Tests" value="two" />
+                {additionalIntroBlocks &&
+                  additionalIntroBlocks.map((block, index) => (
+                    <Tab
+                      key={index}
+                      label={block.metadata.achievements.title}
+                      value={block.metadata.achievements.title}
+                    />
+                  ))}
+              </StyledTabs>
+            </AppBar>
+            {this.TabPanel({
+              value: this.state.tabValue,
+              index: "one",
+              children: this.renderBlock(introductoryBlocks[0]) || (
+                <Typography variant="body1">
+                  Edit the code in the editable code block below to pass the
+                  tests!
+                </Typography>
+              )
+            })}
+            {this.TabPanel({
+              value: this.state.tabValue,
+              index: "two",
+              children: this.filterBlocks(taskInfo.json, "shown").map(
+                filteredBlock => this.renderBlock(filteredBlock)
+              )
+            })}
+            {additionalIntroBlocks &&
+              additionalIntroBlocks.map(block =>
+                this.TabPanel({
+                  value: this.state.tabValue,
+                  index: block.metadata.achievements.title,
+                  children: this.renderBlock(block)
+                })
+              )}
             <Card style={this.cardStyle}>
               <Card-content>
                 {taskInfo.json.cells
@@ -282,16 +339,6 @@ export class CustomTaskPreviewForm extends React.PureComponent {
             </Card>
           </section>
           <section style={this.sectionStyle}>
-            <Card style={this.cardStyle}>
-              <Card-header>
-                <Card-header-text>
-                  <Typography variant="h6">Tests</Typography>
-                </Card-header-text>
-              </Card-header>
-              <Card-content>
-                {this.filterBlocks(taskInfo.json, "shown")}
-              </Card-content>
-            </Card>
             <Card style={this.cardStyle}>
               <Card-header>
                 <Card-header-text>
