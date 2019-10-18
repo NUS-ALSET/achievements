@@ -267,7 +267,9 @@ export class CustomTaskPreviewForm extends React.PureComponent {
             {this.TabPanel({
               value: this.state.tabValue,
               index: "one",
-              children: this.renderBlock(introductoryBlocks[0]) || (
+              children: introductoryBlocks ? (
+                this.renderBlock(introductoryBlocks[0])
+              ) : (
                 <Typography variant="body1">
                   Edit the code in the editable code block below to pass the
                   tests!
