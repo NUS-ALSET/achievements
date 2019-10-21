@@ -8,11 +8,13 @@ import {
   PATH_REFRESH_SOLUTIONS_REQUEST,
   PATH_REMOVE_COLLABORATOR_REQUEST,
   PATH_SHOW_COLLABORATORS_DIALOG,
+  PATH_RUN_STATS_DIALOG,
   PATH_TOGGLE_JOIN_STATUS_REQUEST,
   FETCH_GITHUB_FILES,
   pathAddCollaboratorFail,
   pathAddCollaboratorSuccess,
   pathCollaboratorsFetchSuccess,
+  pathRunStatsInitiated,
   pathMoreProblemsFail,
   pathMoreProblemsSuccess,
   pathRefreshSolutionsFail,
@@ -248,6 +250,19 @@ export function* pathRemoveCollaboratorRequestHandler(action) {
         err.message
       )
     );
+    yield put(notificationShow(err.message));
+  }
+}
+//Path Stats
+export function* pathRunStatsDialogHandler(action) {
+  try {
+    const pathStats = yield call(
+      pathsService.runPathStats,
+      action.pathId,
+      action.userId
+    );
+    yield put(pathRunStatsInitiated(action.pathId,action.userId,pathStats));
+  } catch (err) {
     yield put(notificationShow(err.message));
   }
 }
@@ -576,6 +591,12 @@ export default [
     yield takeLatest(
       PATH_SHOW_COLLABORATORS_DIALOG,
       pathShowCollaboratorsDialogHandler
+    );
+  },
+  function* watchPathRunStatsDialog() {
+    yield takeLatest(
+      PATH_RUN_STATS_DIALOG,
+      pathRunStatsDialogHandler
     );
   },
   function* watchPathAddCollaboratorRequest() {

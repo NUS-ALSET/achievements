@@ -13,7 +13,7 @@ class PathStatisticsGenerator {
   
 }
 
-const runPathStats = () => {
+function runPathStats(data,context){
   console.log("In running pathStatsGenerator") 
   publicPaths=[]
   activityEvents=[]
@@ -152,14 +152,6 @@ const runPathStats = () => {
           , 'endDate': admin.firestore.FieldValue.serverTimestamp()
         });
        
-       /*await ref.set({
-          'data': admin.firestore.FieldValue.arrayUnion({
-            'pathName': publicPaths[path]["name"],
-            'pathKey': publicPathID,
-            'unique_users': num_users
-          })
-        })*/
-        
       }
       
       
@@ -178,6 +170,9 @@ const runPathStats = () => {
         await ref.update({          
             ['data.'+i+'.nps']:parseFloat((nps[publicPathID]).toFixed(2))        
       })
+      }else{
+        await ref.update({          
+          ['data.'+i+'.nps']:0})     
       }
 
       if(solves_arr[publicPathID]){
@@ -185,6 +180,9 @@ const runPathStats = () => {
         await ref.update({          
           ['data.'+i+'.solves']:solves_arr[publicPathID]
       })
+      }else{
+        await ref.update({          
+          ['data.'+i+'.solves']:0})
       }
       
       if(attempts_arr[publicPathID]){
@@ -192,12 +190,18 @@ const runPathStats = () => {
           ['data.'+i+'.attempts']:attempts_arr[publicPathID],
           ['data.'+i+'.attempts_per_solve']: parseFloat((attempts_arr[publicPathID] / divisor).toFixed(2))        
       })
-      }
+      }else{
+        await ref.update({          
+          ['data.'+i+'.attempts']:0,
+          ['data.'+i+'.attempts_per_solve']: 0     
+      })
+     }
 
       
       
       i = i + 1
     }    
+  
   })  
 };
 exports.handler = runPathStats;

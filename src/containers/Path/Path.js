@@ -41,6 +41,7 @@ import {
   pathRefreshSolutionsRequest,
   pathRemoveCollaboratorRequest,
   pathShowCollaboratorsDialog,
+  pathRunStatsDialog,
   pathToggleJoinStatusRequest,
   fetchGithubFiles,
   pathActivityCodeCombatOpen,
@@ -82,6 +83,7 @@ import RequestMorePathContentDialog from "../../components/dialogs/RequestMorePa
 import FetchCodeCombatLevelDialog from "../../components/dialogs/FetchCodeCombatLevelDialog";
 import AddProfileDialog from "../../components/dialogs/AddProfileDialog";
 import AddCreatorSolutionDialog from "../../components/dialogs/AddCreatorSolutionDialog";
+import DisplayPathStatsDialog from "../../components/dialogs/DisplayPathStatsDialog";
 
 const styles = theme => ({
   linkButton: {
@@ -120,6 +122,7 @@ export class Path extends React.Component {
     onRemoveAssistant: PropTypes.func,
     onRequestMoreProblems: PropTypes.func,
     onShowCollaboratorsClick: PropTypes.func,
+    onRunStatsClick:PropTypes.func,
     onToggleJoinStatus: PropTypes.func,
     openJestActivity: PropTypes.func,
     pathActivities: pathActivities,
@@ -307,6 +310,7 @@ export class Path extends React.Component {
       onActivityDialogShow,
       onProfileUpdate,
       onShowCollaboratorsClick,
+      onRunStatsClick,
       onRemoveAssistant,
       pathActivities,
       pathStatus,
@@ -422,6 +426,17 @@ export class Path extends React.Component {
                   variant="contained"
                 >
                   Collaborators
+                </Button>
+              )}
+              {pathStatus === PATH_STATUS_OWNER && (
+                <Button
+                  className={classes.toolbarButton}
+                  onClick={() =>
+                    onRunStatsClick(pathActivities.path.id,uid)
+                  }
+                  variant="contained"
+                >
+                  Path Statistics
                 </Button>
               )}
               <Link className={classes.linkButton} to="/advanced">
@@ -577,6 +592,14 @@ export class Path extends React.Component {
           open={ui.dialog && ui.dialog.type === "CollaboratorsControl"}
           target={pathActivities.path && pathActivities.path.id}
         />
+
+          <DisplayPathStatsDialog          
+          isOwner={pathStatus === PATH_STATUS_OWNER}
+          onClose={onCloseDialog}
+          open={ui.dialog && ui.dialog.type === "PathStats"}
+          target={pathActivities.path && pathActivities.path.id}
+        />
+
         <FetchCodeCombatLevelDialog
           activity={pathActivities.activities.find(
             activity => activity.id === pendingActivityId
@@ -621,6 +644,7 @@ const mapDispatchToProps = {
   onOpen: pathOpen,
   onClose: pathClose,
   onShowCollaboratorsClick: pathShowCollaboratorsDialog,
+  onRunStatsClick:pathRunStatsDialog,
   onProfileUpdate: externalProfileUpdateRequest,
   onOpenSolution: pathOpenSolutionDialog,
   onActivityChangeRequest: pathActivityChangeRequest,

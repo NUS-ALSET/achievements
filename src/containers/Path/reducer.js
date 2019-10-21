@@ -6,6 +6,7 @@ import {
   PATH_OPEN_SOLUTION_DIALOG,
   PATH_REMOVE_COLLABORATOR_SUCCESS,
   PATH_SHOW_COLLABORATORS_DIALOG,
+  PATH_RUN_STATS_DIALOG,
   FETCH_GITHUB_FILES_LOADING,
   FETCH_GITHUB_FILES_ERROR,
   FETCH_GITHUB_FILES_SUCCESS,
@@ -214,6 +215,17 @@ export const path = (
           ...state.ui,
           dialog: {
             type: "CollaboratorsControl",
+            assistants: false
+          }
+        }
+      };
+    case PATH_RUN_STATS_DIALOG:
+      return {
+        ...state,
+        ui: {
+          ...state.ui,
+          dialog: {
+            type: "PathStats",
             assistants: false
           }
         }

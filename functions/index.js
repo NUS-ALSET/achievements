@@ -27,6 +27,7 @@ const runCustomAnalyis = require("./src/runCustomAnalysis");
 const fetchNotebookFromGitTrigger = require("./src/fetchNotebookFromGit");
 const pathStatsTrigger = require("./src/pathStatsGenerator")
 const getTeamAssignmentSolutions = require("./src/getTeamAssignmentSolutions");
+const runCreatedPathStats =require("./src/createdPathStatsGenerator")
 
 //  dev-db is paid account now
 // const profilesRefreshApproach =
@@ -56,11 +57,11 @@ exports.handleNewProblemSolution =
 
 exports.pathStatsScheduler = functions.pubsub.schedule('00 07 * * *')
   .timeZone("Asia/Singapore").
-  onRun((context) => {
-    console.log('This will be run every 5 minutes!');
+  onRun((context) => {    
     return pathStatsTrigger.handler();
   });
 
+ 
 exports.handleGithubFilesFetchRequest = functions.database
   .ref("/fetchGithubFilesQueue/tasks/{requestId}")
   .onWrite(change => {
@@ -160,6 +161,8 @@ exports.runLocalTask = functions.https.onCall(runLocalTask.handler);
  * Method that allows to run custom Analysis with CORS workaround
  */
 exports.runCustomAnalysis = functions.https.onCall(runCustomAnalyis.handler);
+
+exports.runCreatedPathStats = functions.https.onCall(runCreatedPathStats.handler);
 
 exports.handleUserSkills = functions.database
   .ref("/solutions/{courseId}/{studentId}/{assignmentId}")
