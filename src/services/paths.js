@@ -1275,6 +1275,23 @@ export class PathsService {
       );
   }
 
+  async runPathStats(pathId,userId){
+    try{
+      
+      await firebase.functions().httpsCallable("runCreatedPathStats")({pathId,userId}).then(doc=>{
+        
+        return firestore_db
+        .collection("path_statistics").orderBy("endDate","desc").
+        limit(1)
+        .get().then(doc=>doc.val())
+      });
+    }catch (error) {
+      console.log(error)
+      console.error(error.message);
+    }
+  }
+  
+
   /**
    *
    * @param {String} pathId

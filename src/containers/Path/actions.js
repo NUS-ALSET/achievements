@@ -51,6 +51,22 @@ export const pathShowCollaboratorsDialog = pathId => ({
   pathId
 });
 
+export const PATH_RUN_STATS_DIALOG = "PATH_RUN_STATS_DIALOG";
+export const pathRunStatsDialog = (pathId,userId) => ({
+  type: PATH_RUN_STATS_DIALOG,
+  pathId,
+  userId
+});
+
+export const PATH_RUN_STATS_INITIATED =
+  "PATH_RUN_STATS_INITIATED";
+export const pathRunStatsInitiated = (pathId,userId,pathStats) => ({
+  type: PATH_RUN_STATS_INITIATED,
+  pathId,
+  userId,
+  pathStats
+});
+
 export const PATH_COLLABORATORS_FETCH_SUCCESS =
   "PATH_COLLABORATORS_FETCH_SUCCESS";
 export const pathCollaboratorsFetchSuccess = (pathId, assistants) => ({

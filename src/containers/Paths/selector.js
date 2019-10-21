@@ -4,7 +4,7 @@ import isEmpty from "lodash/isEmpty";
 const getJoinedPaths = state => state.paths.joinedPaths;
 const getPublicPaths = state => state.firebase.data.publicPaths;
 const getPathStats = state => state.firestore.data.pathStats;
-
+const getMyPaths = state => state.firebase.data.myPaths;
 const sortPublicPaths=(inputPaths,pathStats)=>{
   let path,rec;
     let pathStats_new={}
@@ -39,13 +39,14 @@ export const publicPathSelector = createSelector(
   getPublicPaths,
   getJoinedPaths,
   getPathStats,
-  (publicPaths, joinedPaths,pathStats) => {
+  getMyPaths,
+  (publicPaths, joinedPaths,pathStats,myPaths) => {
     let counter = false;   
     publicPaths={...sortPublicPaths(publicPaths,pathStats)}   
     if (joinedPaths && isEmpty(joinedPaths)) {      
       return publicPaths;
     }
-
+  
     let modifiedPublicPaths = { ...publicPaths };
     Object.keys(joinedPaths || {}).forEach(key => {
       if (publicPaths && publicPaths[key]) {
@@ -59,7 +60,7 @@ export const publicPathSelector = createSelector(
  
   
     if (counter) {      
-      modifiedPublicPaths={...sortPublicPaths(modifiedPublicPaths,pathStats)}   
+      modifiedPublicPaths={...sortPublicPaths(modifiedPublicPaths,pathStats)}    
       return modifiedPublicPaths;
     }
   }
