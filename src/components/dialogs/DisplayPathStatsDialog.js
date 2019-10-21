@@ -20,7 +20,6 @@ class DisplayPathStatsDialog extends React.PureComponent {
   static propTypes = {
     pathsInfo: PropTypes.any,
     onClose: PropTypes.func.isRequired,
-    onCommit: PropTypes.func,
     open: PropTypes.bool.isRequired,    
     taskId: PropTypes.string
   };
@@ -34,7 +33,7 @@ class DisplayPathStatsDialog extends React.PureComponent {
     });
 
   render() {
-    const { onClose, onCommit, open } = this.props;
+    const { onClose,open } = this.props;
        
     return (
       <Dialog onClose={onClose} open={open} maxWidth='sm' fullWidth='true'>
