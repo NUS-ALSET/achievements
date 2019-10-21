@@ -27,7 +27,7 @@ class DisplayPathStatsDialog extends React.PureComponent {
   static propTypes = {
     pathsInfo: PropTypes.any,
     onClose: PropTypes.func.isRequired,
-    onCommit: PropTypes.func.isRequired,
+    onCommit: PropTypes.func,
     open: PropTypes.bool.isRequired,    
     taskId: PropTypes.string
   };
@@ -50,7 +50,7 @@ class DisplayPathStatsDialog extends React.PureComponent {
         <DialogContent>
         <FormLabel component="legend">In progress..</FormLabel>
               <FormHelperText>
-                
+
                 Path Statistics are being generated in the background and will be displayed 
                 in the "Created Tabs" screen in a few minutes.
               </FormHelperText>
