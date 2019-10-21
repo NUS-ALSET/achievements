@@ -197,6 +197,7 @@ export class Activity extends React.PureComponent {
         ) : (
           <ActivityView
             uid={uid}
+            disabledCommitBtn={this.state.disabledCommitBtn}
             dispatch={dispatch}
             onCommit={this.onCommit}
             onProblemChange={this.props.onProblemChange || this.onProblemChange}
