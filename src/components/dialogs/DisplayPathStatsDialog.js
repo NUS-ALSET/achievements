@@ -10,18 +10,11 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import MenuItem from "@material-ui/core/MenuItem";
 import PropTypes from "prop-types";
 import React from "react";
-import TextField from "@material-ui/core/TextField";
 import { FormLabel } from "@material-ui/core";
 import FormHelperText from "@material-ui/core/FormHelperText";
 
-const styles = {
-  minWidthEditor: {
-    minWidth: 600
-  }
-};
 
 class DisplayPathStatsDialog extends React.PureComponent {
   static propTypes = {
@@ -42,8 +35,7 @@ class DisplayPathStatsDialog extends React.PureComponent {
 
   render() {
     const { onClose, onCommit, open } = this.props;
-    const stateSolution = this.state.solution;
-    
+       
     return (
       <Dialog onClose={onClose} open={open} maxWidth='sm' fullWidth='true'>
         <DialogTitle>PathStats</DialogTitle>
