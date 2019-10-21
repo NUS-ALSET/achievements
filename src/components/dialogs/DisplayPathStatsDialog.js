@@ -17,11 +17,9 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 
 
 class DisplayPathStatsDialog extends React.PureComponent {
-  static propTypes = {
-    pathsInfo: PropTypes.any,
+  static propTypes = {    
     onClose: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired,    
-    taskId: PropTypes.string
+    open: PropTypes.bool.isRequired
   };
 
   state = {    

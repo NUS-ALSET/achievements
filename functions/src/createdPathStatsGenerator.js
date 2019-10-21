@@ -28,7 +28,7 @@ function runOwnerPathStats(data, context) {
   let total_num = 1
   let feedback_arr = []
   const last_thirty_days = new Date().getTime() - THIRTY_DAYS
-  let ref
+
 
   return Promise.all([admin
     .database()
@@ -72,15 +72,15 @@ function runOwnerPathStats(data, context) {
         completed = actVal["completed"]
 
         if (createdPathID == pathKey && actVal["time"] >= last_thirty_days) {
-          if (attempts_arr) {
-            Object.keys(attempts_arr).forEach(eachVal => {
-              if (eachVal == pathKey) {
-                num_attempts = attempts_arr[eachVal]
-              }
-            })
-            attempts_arr[pathKey] = num_attempts + 1
-            num_attempts = 0
-          }
+
+          Object.keys(attempts_arr).forEach(eachVal => {
+            if (eachVal == pathKey) {
+              num_attempts = attempts_arr[eachVal]
+            }
+          })
+          attempts_arr[pathKey] = num_attempts + 1
+          num_attempts = 0
+
 
           if (completed == 1) {
             for (let eachVal in solves_arr) {
@@ -184,9 +184,9 @@ function runOwnerPathStats(data, context) {
           }
 
         })
-      
+
       i = i + 1
-          
+
     }
   })
 }
