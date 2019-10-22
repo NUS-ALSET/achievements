@@ -192,7 +192,9 @@ export class CustomTaskPreviewForm extends React.PureComponent {
     const { runTour, solution, steps } = this.state;
 
     const introductoryBlocks = this.filterBlocks(taskInfo.json, "public");
-    const additionalIntroBlocks = introductoryBlocks.slice(1);
+    const additionalIntroBlocks = introductoryBlocks
+      ? introductoryBlocks.slice(1)
+      : [];
 
     if (isRunning) {
       return (
@@ -279,7 +281,7 @@ export class CustomTaskPreviewForm extends React.PureComponent {
             {this.TabPanel({
               value: this.state.tabValue,
               index: "two",
-              children: this.filterBlocks(taskInfo.json, "shown").map(
+              children: (this.filterBlocks(taskInfo.json, "shown") || []).map(
                 filteredBlock => this.renderBlock(filteredBlock)
               )
             })}
