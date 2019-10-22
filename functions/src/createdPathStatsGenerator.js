@@ -9,7 +9,7 @@ const THIRTY_DAYS = 3600000 * 24 * 30;
 
 function runOwnerPathStats(data, context) {
   console.log("In running createdPathStatsGenerator")
-  console.log(data)
+  
   createdPaths = []
   activityEvents = []
   let pathVal
@@ -60,8 +60,6 @@ function runOwnerPathStats(data, context) {
       pathVal["id"] = pathKey
       createdPaths.push(pathVal)
     })
-    console.log("Created Paths")
-    console.log(createdPaths)
     var i = 0
     for (let path in createdPaths) {
       createdPathID = createdPaths[path]["id"]
@@ -117,6 +115,8 @@ function runOwnerPathStats(data, context) {
 
                 });
                 total_num = Object.keys(feedback_arr).length
+                console.log("Feedback Array")
+                console.log(feedback_arr)
                 nps[createdPathID] = ((promoters / total_num) * 100) - ((detractors / total_num) * 100)
                 promoters = 0
                 detractors = 0
@@ -171,16 +171,21 @@ function runOwnerPathStats(data, context) {
             })
           }
         }).then(ref => {
-          if (nps[createdPathID]) {
-            console.log("Printing NPS")
-            console.log(nps[createdPathID])
+          if (nps[createdPathID]) {           
             pathRef.update({
-              ['nps']: parseFloat((nps[createdPathID]).toFixed(2))
-            })
+              ['nps']: Math.round(nps[createdPathID])})
+            pathRef.update({
+              ['nps_users']: parseFloat(Math.round(nps[createdPathID])+"."+num_users) })
+            pathRef.update({
+              ['nps@users']: (Math.round(nps[createdPathID])*num_users)   })
+            
           } else {
             pathRef.update({
-              ['nps']: 0
-            })
+              ['nps']: 0  })
+            pathRef.update({
+              ['nps_users']: 0 })
+            pathRef.update({
+              ['nps@users']: 0 })
           }
 
         })

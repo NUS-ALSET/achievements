@@ -46,6 +46,14 @@ export const PATH_STATS_FILTER_TYPES = [
   {
     id: "nps",
     caption: "NPS"
+  },
+  {
+    id: "nps_users",
+    caption: "NPS.users"
+  },
+  {
+    id: "nps@users",
+    caption: "NPS*users"
   }
 ];
 

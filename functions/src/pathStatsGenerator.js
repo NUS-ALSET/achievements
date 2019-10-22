@@ -168,11 +168,20 @@ function runPathStats(data,context){
       
       if(nps[publicPathID]){
         await ref.update({          
-            ['data.'+i+'.nps']:parseFloat((nps[publicPathID]).toFixed(2))        
-      })
+            ['data.'+i+'.nps']:Math.round((nps[publicPathID]))})  
+        await ref.update({          
+          ['data.'+i+'.nps_users']:parseFloat(Math.round((nps[publicPathID]))+"."+num_users)})
+        await ref.update({          
+          ['data.'+i+'.nps@users']:(Math.round(nps[publicPathID])*num_users)})
       }else{
         await ref.update({          
           ['data.'+i+'.nps']:0})     
+          
+        await ref.update({          
+          ['data.'+i+'.nps_users']:0})     
+          
+        await ref.update({          
+          ['data.'+i+'.nps@users']:0})     
       }
 
       if(solves_arr[publicPathID]){
