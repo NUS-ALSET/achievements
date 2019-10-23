@@ -188,7 +188,10 @@ class CustomLocalActivity2 extends React.PureComponent {
       "public",
       uid
     );
-    const additionalIntroBlocks = introductoryBlocks.slice(1);
+    const additionalIntroBlocks = introductoryBlocks
+      ? introductoryBlocks.slice(1)
+      : [];
+
     return (
       <Grid container spacing={8} style={{ overflowY: "auto" }}>
         <Grid
@@ -327,10 +330,8 @@ class CustomLocalActivity2 extends React.PureComponent {
             {this.TabPanel({
               value: this.state.tabValue,
               index: "two",
-              children: this.filterBlocks(
-                problem.problemJSON,
-                "shown",
-                uid
+              children: (
+                this.filterBlocks(problem.problemJSON, "shown", uid) || []
               ).map(filteredBlock => this.renderBlock(filteredBlock, uid))
             })}
             {additionalIntroBlocks &&
