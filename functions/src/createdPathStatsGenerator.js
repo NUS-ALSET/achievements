@@ -105,7 +105,6 @@ function runOwnerPathStats(data, context) {
             await admin.database().ref('problemSolutions/' + actVal['activityKey'])
               .once("value").then(querysnapshot => {
                 querysnapshot.forEach(doc => {
-
                   feedback_arr.push(actVal['activityKey'])
                   if (doc.val() > 8) {
                     promoters = promoters + 1
@@ -115,8 +114,6 @@ function runOwnerPathStats(data, context) {
 
                 });
                 total_num = Object.keys(feedback_arr).length
-                console.log("Feedback Array")
-                console.log(feedback_arr)
                 nps[createdPathID] = ((promoters / total_num) * 100) - ((detractors / total_num) * 100)
                 promoters = 0
                 detractors = 0
@@ -174,8 +171,15 @@ function runOwnerPathStats(data, context) {
           if (nps[createdPathID]) {           
             pathRef.update({
               ['nps']: Math.round(nps[createdPathID])})
+            if(num_users%10==0){
+              var digits = num_users.toString().length
+              pathRef.update({
+                ['nps_users']: parseFloat(Math.round(nps[createdPathID])+"."+num_users)
+                .toFixed(digits) })
+            }else{
             pathRef.update({
               ['nps_users']: parseFloat(Math.round(nps[createdPathID])+"."+num_users) })
+            }
             pathRef.update({
               ['nps@users']: (Math.round(nps[createdPathID])*num_users)   })
             
