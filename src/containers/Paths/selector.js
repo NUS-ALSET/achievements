@@ -27,10 +27,10 @@ const sortPublicPaths=(inputPaths,pathStats)=>{
       returnPaths[sorted[path].id]=sorted[path] 
      else if(sorted[path].pathKey)
       returnPaths[sorted[path].pathKey]=sorted[path]
-     else{
+     /*else{
         console.log("No path key or id")
         console.log(sorted[path])
-     }      
+     }*/      
     }
        
     return returnPaths

@@ -169,8 +169,15 @@ function runPathStats(data,context){
       if(nps[publicPathID]){
         await ref.update({          
             ['data.'+i+'.nps']:Math.round((nps[publicPathID]))})  
+        if(num_users%10==0){
+          var digits = num_users.toString().length
+          pathRef.update({
+            ['nps_users']: parseFloat(Math.round(nps[createdPathID])+"."+num_users)
+            .toFixed(digits) })
+        }else{    
         await ref.update({          
           ['data.'+i+'.nps_users']:parseFloat(Math.round((nps[publicPathID]))+"."+num_users)})
+        }
         await ref.update({          
           ['data.'+i+'.nps@users']:(Math.round(nps[publicPathID])*num_users)})
       }else{
