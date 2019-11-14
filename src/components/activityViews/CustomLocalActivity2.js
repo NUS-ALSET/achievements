@@ -114,11 +114,13 @@ class CustomLocalActivity2 extends React.PureComponent {
       key={block.metadata.achievements.type + block.metadata.achievements.index}
     >
       {block.cell_type === "text" ? (
+        <div style={{textAlign:"left"}}>
         <Markdown
           source={block.source
             .join("\n")
             .replace(/YOUR_USER_TOKEN/g, uid.slice(0, 5))}
         />
+        </div>
       ) : (
         <AceEditor
           maxLines={Infinity}
