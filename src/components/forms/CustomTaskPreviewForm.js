@@ -144,7 +144,9 @@ export class CustomTaskPreviewForm extends React.PureComponent {
       key={block.metadata.achievements.type + block.metadata.achievements.index}
     >
       {block.cell_type === "text" ? (
+        <div style={{textAlign:"left"}}>
         <Markdown source={block.source.join("\n")} />
+        </div>
       ) : (
         <AceEditor
           maxLines={Infinity}
