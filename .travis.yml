@@ -26,7 +26,7 @@ after_success:
     echo "deploy for upstream master merge";
     cd ./functions;
     pwd;
-    npm install;
+    npm install -f;
     npm install -g firebase-tools;
     bash ../scripts/firebase-deploy.sh;
     if [ "$?" != 0 ]; then
