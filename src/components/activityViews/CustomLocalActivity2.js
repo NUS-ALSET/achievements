@@ -190,7 +190,6 @@ class CustomLocalActivity2 extends React.PureComponent {
       "public",
       uid
     );
-    console.log("additionalIntroBlocks data validation")
     const additionalIntroBlocks = introductoryBlocks
       ? introductoryBlocks.slice(1)
       : [];

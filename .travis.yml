@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - "10"
-  
 
 branches:
   only:
@@ -27,7 +26,7 @@ after_success:
     cd ./functions;
     pwd;
     npm install -f;
-    npm install -g firebase-tools;
+    npm install -g firebase-tools@latest;
     bash ../scripts/firebase-deploy.sh;
     if [ "$?" != 0 ]; then
     echo "ERROR with deployment";
