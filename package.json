@@ -29,7 +29,7 @@
     "mdi-react": "^2.1.19",
     "mobx": "^5.1.0",
     "mobx-react": "^5.2.8",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "nuka-carousel": "^4.3.6",
     "prop-types": "^15.6.2",
     "react": "^16.6.0",
